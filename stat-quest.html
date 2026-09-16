@@ -859,70 +859,6 @@
       transform: scale(1.04);
     }
 
-    /* 知识图谱图鉴 (CODEX) */
-    .codex-panel {
-      display: none;
-    }
-
-    .codex-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 20px;
-    }
-
-    .codex-card {
-      background: #ffffff;
-      border: 2px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .codex-title {
-      font-size: 17px;
-      font-weight: 900;
-      color: var(--primary);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 12px;
-      padding-bottom: 8px;
-      border-bottom: 1.5px solid #f1f5f9;
-    }
-
-    .codex-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .codex-item {
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .codex-term {
-      font-weight: 900;
-      color: #0f172a;
-      display: block;
-      margin-bottom: 2px;
-    }
-
-    .codex-def {
-      color: #475569;
-    }
-
-    .codex-math {
-      font-family: 'Fira Code', monospace;
-      background: #f1f5f9;
-      padding: 2px 6px;
-      border-radius: 4px;
-      color: #0369a1;
-      display: inline-block;
-      margin-top: 3px;
-    }
-
     /* 底部通用导航 */
     footer.site-footer {
       background: #ffffff;
@@ -968,6 +904,665 @@
       .q-text { font-size: 16px; }
       .opt-btn { padding: 12px 16px; font-size: 15px; }
     }
+  
+    /* ==========================================================================
+       4. 統計検定＆DS 総合知識事典 (STAT DICTIONARY / CODEX) スタイル
+       ========================================================================== */
+    .codex-panel {
+      display: none;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .codex-hero-card {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 50%, #1e293b 100%);
+      color: #ffffff;
+      border-radius: var(--radius-xl);
+      padding: 24px 28px;
+      margin-bottom: 22px;
+      box-shadow: var(--shadow-card);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .codex-hero-card::after {
+      content: "📐";
+      position: absolute;
+      right: 20px;
+      top: -10px;
+      font-size: 110px;
+      opacity: 0.12;
+      pointer-events: none;
+    }
+
+    .codex-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    .codex-hero-title {
+      font-size: 24px;
+      font-weight: 900;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .codex-hero-desc {
+      font-size: 14px;
+      color: #e0f2fe;
+      max-width: 680px;
+      line-height: 1.6;
+    }
+
+    /* 词典控制器工具栏 */
+    .codex-controls {
+      background: #ffffff;
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 18px 20px;
+      margin-bottom: 22px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .codex-search-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .codex-search-box {
+      flex: 1;
+      min-width: 260px;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .codex-search-icon {
+      position: absolute;
+      left: 14px;
+      font-size: 16px;
+      color: #94a3b8;
+      pointer-events: none;
+    }
+
+    .codex-search-input {
+      width: 100%;
+      padding: 12px 38px 12px 40px;
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-family: inherit;
+      background: #f8fafc;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .codex-search-input:focus {
+      border-color: var(--primary);
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12);
+    }
+
+    .codex-clear-btn {
+      position: absolute;
+      right: 12px;
+      background: #cbd5e1;
+      border: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 900;
+      color: #ffffff;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .codex-clear-btn:hover {
+      background: #64748b;
+    }
+
+    .codex-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .codex-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      border: 1.5px solid var(--border-subtle);
+      background: #ffffff;
+      color: var(--text-sub);
+      transition: all 0.18s;
+      white-space: nowrap;
+    }
+
+    .codex-btn:hover {
+      background: #f1f5f9;
+      border-color: var(--border-strong);
+    }
+
+    .codex-btn.active {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary-hover);
+    }
+
+    .codex-btn-accent {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 3px 10px rgba(245, 158, 11, 0.3);
+    }
+
+    .codex-btn-accent:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 14px rgba(245, 158, 11, 0.4);
+      background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+      color: #ffffff;
+    }
+
+    /* 筛选药丸行 */
+    .codex-filter-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 10px;
+      border-top: 1.5px dashed #f1f5f9;
+    }
+
+    .codex-filter-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .codex-filter-label {
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--text-muted);
+      min-width: 68px;
+    }
+
+    .codex-pill {
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 700;
+      border: 1.5px solid #e2e8f0;
+      background: #f8fafc;
+      color: var(--text-sub);
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .codex-pill:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+
+    .codex-pill.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.3);
+    }
+
+    /* 状态与统计摘要 */
+    .codex-meta-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      padding: 0 4px;
+    }
+
+    .codex-view-toggle {
+      display: flex;
+      background: #e2e8f0;
+      padding: 2px;
+      border-radius: var(--radius-pill);
+      gap: 2px;
+    }
+
+    .codex-view-btn {
+      border: none;
+      background: transparent;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      color: #64748b;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .codex-view-btn.active {
+      background: #ffffff;
+      color: var(--primary);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    /* 卡片网格展示 */
+    .codex-grid-v2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 18px;
+    }
+
+    .codex-item-card {
+      background: #ffffff;
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      position: relative;
+    }
+
+    .codex-item-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-card);
+      border-color: var(--border-strong);
+    }
+
+    .codex-item-card.highlighted {
+      animation: pulseBorder 1.5s 2;
+      border-color: var(--accent-amber);
+    }
+
+    @keyframes pulseBorder {
+      0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5); }
+      70% { box-shadow: 0 0 0 12px rgba(245, 158, 11, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+    }
+
+    .codex-card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .codex-badges {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .badge-tier {
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-tier-4 { background: #10b981; }
+    .badge-tier-3 { background: #059669; }
+    .badge-tier-2 { background: #0284c7; }
+    .badge-tier-ds-base { background: #8b5cf6; }
+    .badge-tier-ds-adv { background: #7c3aed; }
+    .badge-tier-semi1 { background: #f59e0b; }
+
+    .badge-cat {
+      background: #f1f5f9;
+      color: #475569;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .codex-fav-btn {
+      background: transparent;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: #cbd5e1;
+      padding: 2px 4px;
+      transition: transform 0.15s, color 0.15s;
+    }
+
+    .codex-fav-btn:hover {
+      transform: scale(1.2);
+      color: #fbbf24;
+    }
+
+    .codex-fav-btn.active {
+      color: #f59e0b;
+      text-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+    }
+
+    .codex-card-title-group {
+      margin-top: 2px;
+    }
+
+    .codex-card-title {
+      font-size: 17px;
+      font-weight: 900;
+      color: var(--text-main);
+      line-height: 1.35;
+    }
+
+    .codex-card-en {
+      font-size: 12px;
+      font-weight: 700;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    .codex-card-summary {
+      font-size: 13px;
+      line-height: 1.55;
+      color: #334155;
+      background: #f8fafc;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border-left: 3.5px solid var(--primary);
+    }
+
+    .codex-formula-box {
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      background: #0f172a;
+      color: #38bdf8;
+      padding: 8px 12px;
+      border-radius: 8px;
+      line-height: 1.4;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .codex-details-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      background: #f1f5f9;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--primary-hover);
+      cursor: pointer;
+      transition: background 0.18s;
+      margin-top: auto;
+    }
+
+    .codex-details-toggle:hover {
+      background: #e2e8f0;
+    }
+
+    .codex-details-content {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      padding-top: 8px;
+      border-top: 1.5px solid #f1f5f9;
+      font-size: 12.5px;
+      line-height: 1.55;
+    }
+
+    .codex-details-content.open {
+      display: flex;
+    }
+
+    .codex-section-label {
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 2px;
+    }
+
+    .codex-exam-tip {
+      background: #fffbeb;
+      border: 1.5px solid #fde68a;
+      border-radius: 8px;
+      padding: 8px 10px;
+      color: #92400e;
+      font-size: 12px;
+    }
+
+    .codex-example-box {
+      background: #f0fdf4;
+      border: 1.5px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 8px 10px;
+      color: #166534;
+      font-size: 12px;
+    }
+
+    .codex-tags-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 4px;
+    }
+
+    .codex-tag-item {
+      font-size: 11px;
+      padding: 2px 7px;
+      background: #f1f5f9;
+      color: #475569;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .codex-tag-item:hover {
+      background: #e2e8f0;
+      color: var(--primary);
+    }
+
+    /* 一览表视图 (Table View) */
+    .codex-table-card {
+      background: #ffffff;
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      overflow-x: auto;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .codex-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    .codex-table th {
+      background: #f8fafc;
+      padding: 12px 14px;
+      font-weight: 900;
+      color: #475569;
+      border-bottom: 2px solid #e2e8f0;
+      white-space: nowrap;
+    }
+
+    .codex-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: middle;
+    }
+
+    .codex-table tr:hover td {
+      background: #f8fafc;
+    }
+
+    .codex-empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      background: #ffffff;
+      border: 2px dashed var(--border-subtle);
+      border-radius: var(--radius-xl);
+      color: #64748b;
+    }
+
+    .codex-empty-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    /* 暗记卡自测弹窗 (Flashcard Modal) */
+    .flashcard-modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+
+    .flashcard-modal-backdrop.open {
+      display: flex;
+    }
+
+    .flashcard-container {
+      background: #ffffff;
+      border-radius: var(--radius-xl);
+      max-width: 540px;
+      width: 100%;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
+      border: 2px solid var(--border-strong);
+      overflow: hidden;
+      animation: modalSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalSlide {
+      from { transform: scale(0.92) translateY(20px); opacity: 0; }
+      to { transform: scale(1) translateY(0); opacity: 1; }
+    }
+
+    .flashcard-head {
+      background: #f8fafc;
+      border-bottom: 1.5px solid #e2e8f0;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .flashcard-title {
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .flashcard-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      color: #94a3b8;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .flashcard-body {
+      padding: 24px;
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .flashcard-term-display {
+      font-size: 24px;
+      font-weight: 900;
+      color: #0f172a;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .flashcard-en-display {
+      font-size: 14px;
+      color: #64748b;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .flashcard-answer-box {
+      background: #f8fafc;
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      animation: fadeIn 0.2s;
+    }
+
+    .flashcard-answer-box.revealed {
+      display: flex;
+    }
+
+    .flashcard-foot {
+      background: #f8fafc;
+      border-top: 1.5px solid #e2e8f0;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .search-highlight {
+      background-color: #fef08a;
+      color: #854d0e;
+      padding: 0 2px;
+      border-radius: 3px;
+      font-weight: 900;
+    }
+
   </style>
 </head>
 <body>
@@ -1019,7 +1614,7 @@
         <span>⏱️</span> CBT模擬考場
       </button>
       <button class="nav-tab" id="tabCodex" onclick="switchTab('codex')">
-        <span>📖</span> 公式・知識図鑑
+        <span>📖</span> 知識辞書・公式一覧
       </button>
     </nav>
 
@@ -1120,6 +1715,9 @@
             </button>
             <button class="btn-skill" id="skillHint" onclick="useSkill('hint')" title="消費 15 SP: ヒントを表示">
               <span>💡</span> 思考ヒント (-15 SP)
+            </button>
+            <button class="btn-skill" onclick="openCodexModal()" title="基礎知識・公式辞書を即時参照">
+              <span>📖</span> 知識辞書
             </button>
           </div>
         </div>
@@ -1297,9 +1895,14 @@
             <span class="arena-index" id="examIndex">Question 1 / 10</span>
           </div>
 
-          <div class="stat-pill" style="background:#fee2e2; border-color:#fca5a5; color:#dc2626;">
-            <span>⏳ 残り時間:</span>
-            <strong id="examTimer">10:00</strong>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button class="btn-skill" onclick="openCodexModal()" title="公式集・統計辞書を参照">
+              <span>📖</span> 公式集・辞書
+            </button>
+            <div class="stat-pill" style="background:#fee2e2; border-color:#fca5a5; color:#dc2626;">
+              <span>⏳ 残り時間:</span>
+              <strong id="examTimer">10:00</strong>
+            </div>
           </div>
         </div>
 
@@ -1340,106 +1943,146 @@
       </div>
     </div>
 
-    <!-- ==================== 4. 公式・知識図鑑 (CODEX) ==================== -->
+    <!-- ==================== 4. 公式・知識図鑑＆辞書 (CODEX) ==================== -->
+    
+    <!-- ==================== 4. 統計検定＆DS 総合知識事典 (CODEX / DICTIONARY) ==================== -->
     <div class="codex-panel" id="panelCodex">
-      <div class="codex-grid">
-        <!-- 4級・3級 -->
-        <div class="codex-card">
-          <div class="codex-title">
-            <span>🌱</span> 4級・3級 記述統計の基礎
+      
+      <!-- 英雄横幅与总体说明 -->
+      <div class="codex-hero-card">
+        <div class="codex-hero-badge">📚 統計検定 (4級〜準1級) ＆ データサイエンス</div>
+        <h2 class="codex-hero-title">統計学・データ分析 基礎知識＆公式事典</h2>
+        <p class="codex-hero-desc">
+          データの尺度や基本代表値から、確率分布、区間推定、仮説検定、多変量解析、機械学習指標、因果推論まで——
+          試験合格と実務に直結する核心用語・数式・出題トラップを網羅したインタラクティブ辞典です。
+        </p>
+      </div>
+
+      <!-- 控制台：搜索、过滤与视图模式 -->
+      <div class="codex-controls">
+        <div class="codex-search-row">
+          <div class="codex-search-box">
+            <span class="codex-search-icon">🔍</span>
+            <input 
+              type="text" 
+              id="codexSearchInput" 
+              class="codex-search-input" 
+              placeholder="用語名・英名・公式・タグを即時検索（例: 信頼区間, ROC, p値, IQR, 正規分布...）"
+              oninput="handleCodexSearch()"
+            >
+            <button id="codexClearBtn" class="codex-clear-btn" onclick="clearCodexSearch()">✕</button>
           </div>
-          <ul class="codex-list">
-            <li class="codex-item">
-              <span class="codex-term">代表値 (Mean / Median / Mode)</span>
-              <span class="codex-def">平均値は外れ値の影響を受けやすく、中央値はロバスト（頑健）。左右非対称な分布では最頻値・中央値・平均値の順に並ぶ。</span>
-            </li>
-            <li class="codex-item">
-              <span class="codex-term">分散と標準偏差</span>
-              <span class="codex-def">平均からの偏差平方和をデータ数で割ったもの。</span>
-              <span class="codex-math">s = √[ (1/n) Σ(xi - x̄)² ]</span>
-            </li>
-            <li class="codex-item">
-              <span class="codex-term">四分位範囲 (IQR) と箱ひげ図</span>
-              <span class="codex-def">第3四分位数 (Q3) - 第1四分位数 (Q1)。</span>
-              <span class="codex-math">外れ値判定境界: Q1 - 1.5×IQR 以下, Q3 + 1.5×IQR 以上</span>
-            </li>
-            <li class="codex-item">
-              <span class="codex-term">ピアソンの相関係数 (r)</span>
-              <span class="codex-def">-1 以上 +1 以下の値を取り、直線的な相関の強さを表す。外れ値に敏感。</span>
-            </li>
-          </ul>
+          <div class="codex-actions">
+            <button class="codex-btn codex-btn-accent" onclick="openFlashcardModal()">
+              <span>🎴</span> 暗記単語カードで自習
+            </button>
+            <button id="btnFavFilter" class="codex-btn" onclick="toggleCodexFavOnly()">
+              <span>⭐</span> 苦手・お気に入り
+            </button>
+          </div>
         </div>
 
-        <!-- 2級 -->
-        <div class="codex-card">
-          <div class="codex-title">
-            <span>🏛️</span> 2級 推測統計と仮説検定の要点
+        <!-- 多维分类过滤 -->
+        <div class="codex-filter-section">
+          <!-- 考级筛选 -->
+          <div class="codex-filter-row">
+            <span class="codex-filter-label">🎯 難易度:</span>
+            <button class="codex-pill active" data-tier="all" onclick="setCodexTierFilter('all')">すべて</button>
+            <button class="codex-pill" data-tier="4級" onclick="setCodexTierFilter('4級')">🌱 4級</button>
+            <button class="codex-pill" data-tier="3級" onclick="setCodexTierFilter('3級')">🌿 3級</button>
+            <button class="codex-pill" data-tier="2級" onclick="setCodexTierFilter('2級')">🏛️ 2級</button>
+            <button class="codex-pill" data-tier="DS基礎" onclick="setCodexTierFilter('DS基礎')">⚙️ DS基礎</button>
+            <button class="codex-pill" data-tier="DS発展" onclick="setCodexTierFilter('DS発展')">🚀 DS発展</button>
+            <button class="codex-pill" data-tier="準1級" onclick="setCodexTierFilter('準1級')">👑 準1級</button>
           </div>
-          <ul class="codex-list">
-            <li class="codex-item">
-              <span class="codex-term">中心極限定理 (CLT)</span>
-              <span class="codex-def">標本サイズ n が十分大きければ、母集団の分布に関わらず標本平均は正規分布に従う。</span>
-              <span class="codex-math">X̄ ~ N(μ, σ²/n)</span>
-            </li>
-            <li class="codex-item">
-              <span class="codex-term">95% 信頼区間 (母分散既知)</span>
-              <span class="codex-def">母平均 μ に対する標準的な区間推定。</span>
-              <span class="codex-math">[ x̄ - 1.96(σ/√n), x̄ + 1.96(σ/√n) ]</span>
-            </li>
-            <li class="codex-item">
-              <span class="codex-term">第1種の過誤 (α) と第2種の過誤 (β)</span>
-              <span class="codex-def">第1種の過誤: 真の帰無仮説を誤って棄却（偽陽性）。検出力は 1 - β。</span>
-            </li>
-            <li class="codex-item">
-              <span class="codex-term">カイ二乗 独立性の検定</span>
-              <span class="codex-def">分割表における期待度数 E と観測度数 O の乖離度合い。</span>
-              <span class="codex-math">χ² = Σ [ (O - E)² / E ]</span>
-            </li>
-          </ul>
-        </div>
 
-        <!-- DS基礎・発展 -->
-        <div class="codex-card">
-          <div class="codex-title">
-            <span>⚙️</span> データサイエンス (DS) と機械学習
+          <!-- 学科分野筛选 -->
+          <div class="codex-filter-row">
+            <span class="codex-filter-label">📑 分野:</span>
+            <button class="codex-pill active" data-cat="all" onclick="setCodexCatFilter('all')">全分野</button>
+            <button class="codex-pill" data-cat="記述統計" onclick="setCodexCatFilter('記述統計')">📊 記述統計</button>
+            <button class="codex-pill" data-cat="確率・分布" onclick="setCodexCatFilter('確率・分布')">🎲 確率・分布</button>
+            <button class="codex-pill" data-cat="推測統計" onclick="setCodexCatFilter('推測統計')">🎯 推測統計</button>
+            <button class="codex-pill" data-cat="仮説検定" onclick="setCodexCatFilter('仮説検定')">⚖️ 仮説検定</button>
+            <button class="codex-pill" data-cat="回帰・多変量" onclick="setCodexCatFilter('回帰・多変量')">📈 回帰・多変量</button>
+            <button class="codex-pill" data-cat="機械学習・DS" onclick="setCodexCatFilter('機械学習・DS')">🤖 機械学習・DS</button>
+            <button class="codex-pill" data-cat="時系列・因果" onclick="setCodexCatFilter('時系列・因果')">⏳ 時系列・因果</button>
           </div>
-          <ul class="codex-list">
-            <li class="codex-item">
-              <span class="codex-term">混同行列の評価指標</span>
-              <span class="codex-def">適合率 = TP / (TP + FP), 再現率 = TP / (TP + FN)</span>
-              <span class="codex-math">F1-Score = 2 × (Prec × Recall) / (Prec + Recall)</span>
-            </li>
-            <li class="codex-item">
-              <span class="codex-term">正則化 (L1 Lasso / L2 Ridge)</span>
-              <span class="codex-def">L1正則化は不要な特徴量の係数をゼロにし疎化（特徴量選択）。L2正則化は極端な係数を縮小。</span>
-            </li>
-            <li class="codex-item">
-              <span class="codex-term">ROC曲線とAUC</span>
-              <span class="codex-def">縦軸: TPR (再現率), 横軸: FPR (1-特異度)。ランダム予測は AUC=0.5、理想は AUC=1.0。</span>
-            </li>
-          </ul>
         </div>
+      </div>
 
-        <!-- 準1級・エキスパート -->
-        <div class="codex-card">
-          <div class="codex-title">
-            <span>👑</span> 準1級 / DSエキスパート 高度解析
+      <!-- 统计栏与视图切换 -->
+      <div class="codex-meta-bar">
+        <div id="codexStatsText">全 68 項目中、68 件を表示中</div>
+        <div class="codex-view-toggle">
+          <button id="viewBtnCards" class="codex-view-btn active" onclick="setCodexViewMode('cards')">🃏 詳細カード</button>
+          <button id="viewBtnTable" class="codex-view-btn" onclick="setCodexViewMode('table')">📋 体系一覧表</button>
+        </div>
+      </div>
+
+      <!-- 详细卡片网格容器 -->
+      <div id="codexCardsContainer" class="codex-grid-v2"></div>
+
+      <!-- 知识一览表格容器 -->
+      <div id="codexTableContainer" class="codex-table-card" style="display: none;">
+        <table class="codex-table">
+          <thead>
+            <tr>
+              <th style="width: 70px;">級</th>
+              <th style="width: 100px;">分野</th>
+              <th style="width: 200px;">用語名 (英語)</th>
+              <th>要約・定義</th>
+              <th style="width: 240px;">主要公式・指標</th>
+              <th style="width: 70px; text-align: center;">操作</th>
+            </tr>
+          </thead>
+          <tbody id="codexTableBody"></tbody>
+        </table>
+      </div>
+
+      <!-- 无结果提示 -->
+      <div id="codexEmptyState" class="codex-empty-state" style="display: none;">
+        <div class="codex-empty-icon">🔍</div>
+        <div style="font-size: 16px; font-weight: 900; margin-bottom: 6px;">該当する用語が見つかりませんでした</div>
+        <div style="font-size: 13px; color: #94a3b8;">検索キーワードを変更するか、フィルター条件を解除してください。</div>
+        <button class="codex-btn" style="margin-top: 14px;" onclick="resetCodexFilters()">フィルターをリセット</button>
+      </div>
+
+    </div>
+
+    <!-- 暗记单语自测卡模态弹窗 -->
+    <div id="flashcardModal" class="flashcard-modal-backdrop" onclick="handleFlashcardBackdrop(event)">
+      <div class="flashcard-container" onclick="event.stopPropagation()">
+        <div class="flashcard-head">
+          <div class="flashcard-title">
+            <span>🎴</span> 暗記単語カード · ランダム特訓
           </div>
-          <ul class="codex-list">
-            <li class="codex-item">
-              <span class="codex-term">主成分分析 (PCA)</span>
-              <span class="codex-def">共分散行列の固有値分解により、分散が最大となる直交軸を合成する次元削減法。</span>
-            </li>
-            <li class="codex-item">
-              <span class="codex-term">ベイズの定理と事後分布</span>
-              <span class="codex-def">データ D を得た後のパラメータ θ の確率分布。</span>
-              <span class="codex-math">P(θ | D) ∝ P(D | θ) × P(θ) (尤度 × 事前分布)</span>
-            </li>
-            <li class="codex-item">
-              <span class="codex-term">因果推論 (傾向スコアマッチング)</span>
-              <span class="codex-def">共変量による選択バイアス（交絡）を調整し、真の処置効果 (ATE) を推定。</span>
-            </li>
-          </ul>
+          <button class="flashcard-close-btn" onclick="closeFlashcardModal()">✕</button>
+        </div>
+        <div class="flashcard-body">
+          <div id="fcBadges" class="codex-badges" style="justify-content: center; margin-bottom: 12px;"></div>
+          <div id="fcTerm" class="flashcard-term-display">--</div>
+          <div id="fcEn" class="flashcard-en-display">--</div>
+
+          <!-- 解答・解説部分 (初期は隠す) -->
+          <div id="fcAnswerBox" class="flashcard-answer-box">
+            <div style="font-size: 13px; line-height: 1.5; color: #1e293b;" id="fcSummary"></div>
+            <div id="fcFormulaBox" class="codex-formula-box" style="display: none;"></div>
+            <div id="fcExamTip" class="codex-exam-tip" style="display: none;"></div>
+          </div>
+        </div>
+        <div class="flashcard-foot">
+          <button id="fcFavToggleBtn" class="codex-btn" onclick="toggleFlashcardFav()">
+            <span>⭐</span> 苦手に追加
+          </button>
+          <div style="display: flex; gap: 8px;">
+            <button id="fcRevealBtn" class="codex-btn" onclick="revealFlashcardAnswer()">
+              答えを見る 👁️
+            </button>
+            <button class="codex-btn codex-btn-accent" onclick="nextRandomFlashcard()">
+              次のカード 🎲
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -1971,7 +2614,8 @@
       currentQIndex: 0,
       tierProgress: [0, 0, 0, 0, 0],
       answeredHistory: {},
-      selectedExamGrades: ["4", "3", "2", "ds", "adv"]
+      selectedExamGrades: ["4", "3", "2", "ds", "adv"],
+      masteredTerms: []
     };
 
     function loadSavedState() {
@@ -1981,11 +2625,15 @@
           const parsed = JSON.parse(raw);
           state = { ...state, ...parsed };
         }
+        if (!Array.isArray(state.masteredTerms)) {
+          state.masteredTerms = [];
+        }
       } catch (e) {
         console.warn("Storage load error", e);
       }
       updateHeaderUI();
       updateTierSelectorUI();
+      updateCodexHeroUI();
     }
 
     function saveState() {
@@ -2058,6 +2706,8 @@
       state.currentQIndex = 0;
       updateTierSelectorUI();
       loadTierQuestions();
+      loadCodexFavorites();
+      renderCodex();
     }
 
     function loadTierQuestions() {
@@ -2665,6 +3315,10 @@
         }
       });
 
+      if (tabName === 'codex') {
+        renderCodex();
+      }
+
       if (tabName === 'lab') {
         setTimeout(() => {
           updateDistLab();
@@ -2680,6 +3334,1774 @@
       loadSavedState();
       loadTierQuestions();
     });
+  
+    /* ==========================================================================
+       9. 統計検定＆DS 総合知識事典 (STAT DICTIONARY ENGINE)
+       ========================================================================== */
+    const STAT_DICTIONARY = [
+      {
+            "id": "scales-of-measurement",
+            "term": "データの尺度 (4つの尺度水準)",
+            "en": "Scales of Measurement",
+            "tier": "4級",
+            "category": "記述統計",
+            "tags": [
+                  "名義尺度",
+                  "順序尺度",
+                  "間隔尺度",
+                  "比率尺度"
+            ],
+            "summary": "データを数学的演算の許容範囲によって4段階（名義・順序・間隔・比率）に分類した体系。",
+            "formula": "名義(=,≠) < 順序(<,>) < 間隔(+,-) < 比率(×,÷,絶対0あり)",
+            "details": "・名義尺度：男女、血液型、郵便番号（分類や区別のみ）\n・順序尺度：満足度(5段階)、順位、成績(A/B/C)（大小関係はあるが差は等間隔ではない）\n・間隔尺度：摂氏温度(℃)、西暦年（数値の差に意味があるが、絶対的なゼロ点はない）\n・比率尺度：身長、体重、売上、絶対温度(K)（絶対零点が存在し、比率計算・倍数比較が可能）",
+            "examTips": "【検定頻出】「摂氏20度は摂氏10度の2倍温かい」は間隔尺度のため誤り！絶対零度(-273.15℃)を原点とするケルビン(K)であれば比率尺度となります。",
+            "example": "アンケートの「大変満足〜大変不満」は順序尺度。厳密には平均値ではなく中央値（メディアン）を用いるのが適切。"
+      },
+      {
+            "id": "measures-of-central-tendency",
+            "term": "代表値 (平均値・中央値・最頻値)",
+            "en": "Measures of Central Tendency",
+            "tier": "4級",
+            "category": "記述統計",
+            "tags": [
+                  "算術平均",
+                  "中央値",
+                  "メディアン",
+                  "最頻値",
+                  "モード",
+                  "外れ値"
+            ],
+            "summary": "データセット全体の中心的な傾向を1つの数値で要約する指標。",
+            "formula": "平均値: x̄ = (1/n) Σ xi | 中央値: 昇順中央 | 最頻値: 最多度数",
+            "details": "・算術平均 (Mean)：全データの総和をデータ数で除算。極端な外れ値に強く引きずられる。\n・中央値 (Median)：データを昇順ソートした際の中央の値。外れ値の影響を受けにくい（頑健・ロバスト）。\n・最頻値 (Mode)：最も出現度数が高い階級・値。質的データにも適用可能。\n※右に裾が長い分布（年収など）では、一般に「最頻値 < 中央値 < 平均値」の順となる。",
+            "examTips": "【検定頻出】国民の所得分布のように右裾が長い分布では、一部の超富裕層によって平均値が押し上げられるため、「中央値」を実感的な代表値として用いる。",
+            "example": "年収データ: 300万, 350万, 400万, 450万, 1億円。平均値は約2300万円だが、中央値は400万円。"
+      },
+      {
+            "id": "dispersion-and-std",
+            "term": "分散と標準偏差 (Variance & Standard Deviation)",
+            "en": "Variance & Standard Deviation",
+            "tier": "4級",
+            "category": "記述統計",
+            "tags": [
+                  "分散",
+                  "標準偏差",
+                  "偏差平方和",
+                  "ばらつき"
+            ],
+            "summary": "データの散らばり具合（ばらつき）を数値化した最も基本的かつ重要な指標。",
+            "formula": "標本分散: s² = (1/n) Σ(xi - x̄)² | 標準偏差: s = √s²",
+            "details": "・偏差 (xi - x̄) の和は常に 0 になるため、2乗した値（偏差平方和）の平均をとるのが分散。\n・分散は単位が元の2乗（例: 円²、cm²）になるため、平方根をとった標準偏差 s を用いることで元のデータと同じ単位に戻す。\n・独立な確率変数の和の分散は、それぞれの分散の和と等しい（分散の加法性: V(X+Y) = V(X) + V(Y) ※独立時）。",
+            "examTips": "【公式変形】分散 = (2乗の平均) - (平均の2乗) [s² = (1/n)Σxi² - (x̄)²]。手計算問題で絶大な威力を発揮する必修公式。",
+            "example": "A工場とB工場のネジの平均直径が同じ10mmでも、標準偏差がA:0.01mm、B:0.5mmなら、A工場の方が品質が安定している。"
+      },
+      {
+            "id": "coefficient-of-variation",
+            "term": "変動係数 (CV: Coefficient of Variation)",
+            "en": "Coefficient of Variation",
+            "tier": "3級",
+            "category": "記述統計",
+            "tags": [
+                  "変動係数",
+                  "CV",
+                  "相対的分散",
+                  "単位無次元化"
+            ],
+            "summary": "標準偏差を平均値で割った無次元の相対的ばらつき指標。単位やスケールが異なるデータ間の比較に利用。",
+            "formula": "CV = s / x̄  (または × 100 %)",
+            "details": "・標準偏差単体では、平均値の大きさが異なる集団（例: ゾウの体重とアリの体重、株価100円と10000円）のばらつきを直接比較できない。\n・CVにより平均値の影響を正規化（無次元化）し、純粋な相対的安定度・リスクを比較可能にする。\n・比率尺度でのみ意味を持つ（絶対零点が存在しない間隔尺度では計算不能）。",
+            "examTips": "【検定頻出】「成人男性の身長のばらつき」と「体重のばらつき」のどちらが大きいかを比較する問題では、単位が異なるため必ずCVで評価する。",
+            "example": "株価500円で標準偏差50円(CV=0.10)の銘柄と、株価5000円で標準偏差200円(CV=0.04)の銘柄では、前者の方がボラティリティ（価格変動リスク）が高い。"
+      },
+      {
+            "id": "z-score-standardization",
+            "term": "標準化 (Z得点) と偏差値",
+            "en": "Z-score Standardization",
+            "tier": "3級",
+            "category": "記述統計",
+            "tags": [
+                  "Zスコア",
+                  "標準化",
+                  "偏差値",
+                  "平均0分散1"
+            ],
+            "summary": "平均を0、標準偏差を1に変換する線形変換処理。試験の「偏差値」の数学的基礎。",
+            "formula": "Z = (X - μ) / σ  |  偏差値 = 50 + 10 × Z",
+            "details": "・元のデータの分布形状（歪みなど）は維持されたまま、原点とスケールのみが統一される。\n・正規分布に従う場合、Zが ±1 の範囲に約68.3%、±1.96 の範囲に約95.0%、±2.58 の範囲に約99.0% のデータが含まれる。\n・機械学習では特徴量間のスケール差を解消するための前処理として標準化（Standardization）が標準的に行われる。",
+            "examTips": "【検定頻出】偏差値60は Z = +1.0（上位約16%）、偏差値70は Z = +2.0（上位約2.3%）に相当することを即座に換算できるようにしておくこと。",
+            "example": "数学の得点70点(平均50, σ=10 → Z=2.0, 偏差値70)は、英語の得点80点(平均75, σ=5 → Z=1.0, 偏差値60)よりも相対的に優秀。"
+      },
+      {
+            "id": "quartiles-and-iqr",
+            "term": "四分位数と四分位範囲 (IQR)",
+            "en": "Quartiles & Interquartile Range",
+            "tier": "4級",
+            "category": "記述統計",
+            "tags": [
+                  "第1四分位数",
+                  "第3四分位数",
+                  "IQR",
+                  "四分位偏差"
+            ],
+            "summary": "データを昇順に並べたときに4等分する境界値と、中央50%の幅を表すばらつきの指標。",
+            "formula": "IQR = Q3 - Q1 | 四分位偏差 = (Q3 - Q1) / 2",
+            "details": "・Q1 (第1四分位数 / 25パーセンタイル)\n・Q2 (第2四分位数 / 50パーセンタイル = 中央値)\n・Q3 (第3四分位数 / 75パーセンタイル)\n・四分位範囲 (IQR) はデータの両端25%（極端な外れ値）をカットした中央50%の幅であるため、外れ値に極めて頑健（ロバスト）。",
+            "examTips": "【検定の罠】「四分位範囲 (Q3 - Q1)」と「四分位偏差 ((Q3 - Q1)/2)」の混同に注意！設問で問われているのがどちらかを必ず確認。",
+            "example": "100人のテスト結果で Q1=50点, Q3=80点 の場合、IQR=30点。受験者の半数がこの30点幅に収まっている。"
+      },
+      {
+            "id": "boxplot-and-outliers",
+            "term": "箱ひげ図と外れ値判定 (Tukeyの1.5×IQR境界)",
+            "en": "Boxplot & Outlier Detection",
+            "tier": "3級",
+            "category": "記述統計",
+            "tags": [
+                  "箱ひげ図",
+                  "外れ値",
+                  "ヒゲの長さ",
+                  "Tukey境界"
+            ],
+            "summary": "五数要約（最小値、Q1、中央値、Q3、最大値）を視覚化し、外れ値を客観的に判定するグラフ技法。",
+            "formula": "下限境界 = Q1 - 1.5 × IQR  |  上限境界 = Q3 + 1.5 × IQR",
+            "details": "・箱の長さは IQR（Q3 - Q1）を表す。\n・箱の中の線は中央値（メディアン）を示す（平均値ではない点に注意）。\n・ヒゲ（Whisker）は外れ値境界の内側にある最小値・最大値まで伸ばし、その境界を超えたデータは外れ値として「●」や「*」でプロットする。",
+            "examTips": "【検定頻出】ヒゲの先端が必ずしも「Q3 + 1.5×IQR」そのものになるわけではなく、「境界の内側にある実際のデータ点の最大値」まで伸びる点が出題ポイント。",
+            "example": "Q1=40, Q3=60 のとき IQR=20。上限境界は 60 + 1.5×20 = 90。データに 95 があれば外れ値として個別に打点される。"
+      },
+      {
+            "id": "skewness-and-kurtosis",
+            "term": "歪度 (Skewness) と尖度 (Kurtosis)",
+            "en": "Skewness & Kurtosis",
+            "tier": "3級",
+            "category": "記述統計",
+            "tags": [
+                  "歪度",
+                  "尖度",
+                  "正規性",
+                  "左右非対称性",
+                  "3次・4次モーメント"
+            ],
+            "summary": "分布の「左右の非対称性の度合い（歪度）」と「山の尖り・裾の厚さの度合い（尖度）」を数値化した高次モーメント。",
+            "formula": "歪度 = E[(X-μ)³]/σ³ | 尖度(超過尖度) = E[(X-μ)⁴]/σ⁴ - 3",
+            "details": "・歪度 (Skewness)：左右対称な正規分布では 0。右に長い裾を持つ場合は 正 (>0)、左に長い裾を持つ場合は 負 (<0)。\n・尖度 (Kurtosis)：正規分布を基準 (3または超過尖度0) とする。尖度が正（>0）なら正規分布より中心が尖り裾が厚い（ファットテール）。負（<0）なら平坦で裾が薄い。",
+            "examTips": "【検定頻出】右裾が長い（歪度>0）とき：最頻値 < 中央値 < 平均値。左裾が長い（歪度<0）とき：平均値 < 中央値 < 最頻値。定義式のべき乗数（歪度は3乗、尖度は4乗）も頻出。",
+            "example": "金融資産のリターン分布は一般に正規分布よりも裾が厚く（尖度>0）、大暴落などの極端現象が正規分布の予測より高頻度で発生する。"
+      },
+      {
+            "id": "pearson-correlation",
+            "term": "ピアソンの積率相関係数 (r)",
+            "en": "Pearson's Correlation Coefficient",
+            "tier": "4級",
+            "category": "記述統計",
+            "tags": [
+                  "相関係数",
+                  "共分散",
+                  "直線的関係",
+                  "-1から1"
+            ],
+            "summary": "2つの量的変数間の「直線的な関連の強さと向き」を -1 から +1 の範囲で表す指標。",
+            "formula": "r = s_xy / (s_x × s_y) = Σ(x-x̄)(y-ȳ) / √[Σ(x-x̄)² Σ(y-ȳ)²]",
+            "details": "・+1 に近い：強い正の相関（xが増えるとyも増える）\n・-1 に近い：強い負の相関（xが増えるとyは減る）\n・0 付近：直線的な相関がない（無相関）\n※積率相関係数は「外れ値に非常に敏感」であり、非線形な関係（二次関数など）は検出できない（r≒0となる）。",
+            "examTips": "【検定の罠】「相関係数が0 ＝ 独立・無関係」は誤り！Y = X² のように完全な決定論的関係があっても、対称性により直線的相関係数 r は 0 になる。",
+            "example": "気温とアイスクリームの売上（強い正の相関 r=+0.85）。ただし気温と暖房費は負の相関。"
+      },
+      {
+            "id": "spearman-rank-correlation",
+            "term": "スピアマンの順位相関係数 (ρ)",
+            "en": "Spearman's Rank Correlation",
+            "tier": "3級",
+            "category": "記述統計",
+            "tags": [
+                  "順位相関",
+                  "ノンパラメトリック",
+                  "単調増加",
+                  "外れ値に頑健"
+            ],
+            "summary": "データそのものの値ではなく「順位（ランク）」に基づいて算出する相関係数。外れ値や非線形の単調増加関係に強い。",
+            "formula": "ρ = 1 - [ 6 Σ d_i² / (n (n² - 1)) ]  (d_i は各対の順位の差)",
+            "details": "・順序尺度データ（アンケートの段階評価など）に対しても適用可能。\n・2変数間に「直線関係」ではなく「単調増加・単調減少関係（曲線を含む）」がある場合でも適切に評価できる。\n・外れ値の影響を受けにくいノンパラメトリック指標。",
+            "examTips": "【検定頻出】公式中の「6Σd² / (n(n²-1))」の手計算問題が3級・2級で定番出題される。順位差 d_i を求めて2乗和する計算手順を反復すること。",
+            "example": "2人の審査員によるフィギュアスケート選手5名の順位付けの一致度を検証する。"
+      },
+      {
+            "id": "spurious-correlation",
+            "term": "擬似相関 (見かけ上の相関) と交絡",
+            "en": "Spurious Correlation & Confounding",
+            "tier": "4級",
+            "category": "記述統計",
+            "tags": [
+                  "擬似相関",
+                  "第三の変数",
+                  "交絡因子",
+                  "因果関係"
+            ],
+            "summary": "2変数間に相関関係が見られるものの、共通の原因（潜伏変数・交絡因子）によって生じている見かけ上の相関。",
+            "formula": "偏相関係数: r_xy.z = (r_xy - r_xz·r_yz) / √[(1 - r_xz²)(1 - r_yz²)]",
+            "details": "・「相関関係は因果関係を意味しない（Correlation does not imply causation）」。\n・交絡因子 Z の影響を統計的に除去した相関関係を「偏相関係数（Partial Correlation）」と呼ぶ。\n・擬似相関を排除するためには、ランダム化比較実験 (RCT) や層別解析、共分散分析・因果推論モデルを用いる。",
+            "examTips": "【頻出典型例】「子どもの足のサイズ」と「算数のテスト得点」の正の相関。背後に「学年・年齢」という交絡因子が存在する。",
+            "example": "アイスクリームの売上と水難事故件数には強い正の相関があるが、原因は「夏の気温上昇」。"
+      },
+      {
+            "id": "lorenz-curve-gini",
+            "term": "ローレンツ曲線とジニ係数",
+            "en": "Lorenz Curve & Gini Coefficient",
+            "tier": "3級",
+            "category": "記述統計",
+            "tags": [
+                  "ジニ係数",
+                  "ローレンツ曲線",
+                  "不平等度",
+                  "格差指標"
+            ],
+            "summary": "所得や富の分配の不平等度（格差）を視覚的・定量的に評価する指標。",
+            "formula": "ジニ係数 G = (均等線とローレンツ曲線間の面積) / (完全均等線下の三角形面積)  [0 ≦ G ≦ 1]",
+            "details": "・完全均等線（45度線）：全員が同額の所得を持つ理想状態（G = 0）。\n・ローレンツ曲線が均等線から下方に離れるほど、一部への集中（不平等）が大きい。\n・完全不平等（1人が全富を独占）：G = 1。\n・一般にジニ係数が 0.4 を超えると社会的不平等への警戒ラインとされる。",
+            "examTips": "【検定頻出】三角形の面積が 0.5 であるため、均等線と曲線の間の面積を S とすると「G = S / 0.5 = 2S」となる幾何学的計算が出題される。",
+            "example": "国の税引き前所得ジニ係数が0.5でも、再分配（社会保障・累進課税）後のジニ係数が0.35に低下していれば再分配政策が機能していると解釈できる。"
+      },
+      {
+            "id": "laspeyres-paasche",
+            "term": "ラスパイレス指数とパーシェ指数",
+            "en": "Laspeyres & Paasche Price Indices",
+            "tier": "3級",
+            "category": "記述統計",
+            "tags": [
+                  "物価指数",
+                  "ラスパイレス",
+                  "パーシェ",
+                  "基準時",
+                  "比較時"
+            ],
+            "summary": "複数品目の価格変動を総合的に捉える加重平均物価指数。数量加重を基準時とするか比較時とするかの違い。",
+            "formula": "ラスパイレス: I_L = Σ(Pt·Q0) / Σ(P0·Q0) | パーシェ: I_P = Σ(Pt·Qt) / Σ(P0·Qt)",
+            "details": "・ラスパイレス指数 (Laspeyres)：基準時点の購入数量 Q0 をウェイトとする。基準時の数量データさえあれば速報性が高いが、価格上昇に伴う代替効果を無視するため「インフレを過大評価」しやすい（日本の消費者物価指数CPIに採用）。\n・パーシェ指数 (Paasche)：比較時点の購入数量 Qt をウェイトとする。毎期の数量調査が必要だが最新の購買行動を反映、「インフレを過小評価」しやすい（GDPデフレーターに採用）。",
+            "examTips": "【検定必勝記憶法】「基準時はラ（ラスパイレス）」、「比較時はパー（パーシェ）」。公式の分母分子の数量 Q が 0 か t かの識別問題が頻出。",
+            "example": "肉の価格が急騰して消費者が豚肉から鶏肉へ買い替えた場合、ラスパイレス指数は購入構成比の変化を捉えられないため物価高を大きく見積もる。"
+      },
+      {
+            "id": "frequency-histogram",
+            "term": "度数分布表とヒストグラム (スタージェスの公式)",
+            "en": "Frequency Table & Histogram",
+            "tier": "4級",
+            "category": "記述統計",
+            "tags": [
+                  "階級",
+                  "階級値",
+                  "度数",
+                  "スタージェスの公式",
+                  "ヒストグラム"
+            ],
+            "summary": "連続型データを区間（階級）に分割し、各階級に属する度数を柱状グラフとして表す基本手法。",
+            "formula": "スタージェスの公式 (階級数 k): k ≒ 1 + log2(n) = 1 + 3.32 log10(n)",
+            "details": "・階級値：各区間の中央の値 (下限 + 上限)/2。\n・相対度数：各階級の度数 / 全度数。\n・累積相対度数：その階級以下の度数の総和比率。\n・階級幅が不揃いな場合、縦軸を度数ではなく「度数密度 (度数/階級幅)」にしなければ面積が確率に比例しない。",
+            "examTips": "【検定頻出】データ数 n=100 のときスタージェスによる推奨階級数は k ≒ 1 + 3.32×2 = 7.64 → 約8階級。また棒グラフとヒストグラムの違い（横軸が名義か連続量か）も問われる。",
+            "example": "社員1000人の年収分布を50万円刻みで集計し、最頻階級や歪みを直感的に把握する。"
+      },
+      {
+            "id": "cross-tabulation",
+            "term": "クロス集計表と分割表",
+            "en": "Contingency Table (Cross Tabulation)",
+            "tier": "4級",
+            "category": "記述統計",
+            "tags": [
+                  "分割表",
+                  "クロス集計",
+                  "周辺度数",
+                  "条件付き度数"
+            ],
+            "summary": "2つの質的データ（カテゴリ変数）の交差度数を整理したマトリクス。カイ二乗検定の基礎構造。",
+            "formula": "期待度数 E_ij = (第i行の合計 × 第j列の合計) / 全データ数 N",
+            "details": "・各セルの観測度数を O_ij とする。\n・周辺度数 (Marginal frequency)：行の合計および列の合計値。\n・2変数間に連関（関連）がないと仮定したときの各セルの予測度数が「期待度数」。\n・分割表の自由度は (行数 - 1) × (列数 - 1)。",
+            "examTips": "【検定頻出】2×2分割表の自由度は (2-1)×(2-1) = 1。期待度数を計算させる小問は2級・3級の定番サービス問題。",
+            "example": "「喫煙の有無(2行)」×「肺疾患の有無(2列)」のアンケート結果から、関連性の有無を検証する。"
+      },
+      {
+            "id": "conditional-probability",
+            "term": "条件付き確率と乗法定理",
+            "en": "Conditional Probability",
+            "tier": "3級",
+            "category": "確率・分布",
+            "tags": [
+                  "条件付き確率",
+                  "乗法定理",
+                  "事象の独立性"
+            ],
+            "summary": "事象Bが起こったという条件下で事象Aが起こる確率。",
+            "formula": "P(A|B) = P(A ∩ B) / P(B)  |  乗法定理: P(A ∩ B) = P(B) × P(A|B)",
+            "details": "・独立事象の定義：事象AとBが互いに影響を与えない場合、P(A|B) = P(A) かつ P(A ∩ B) = P(A) × P(B) が成立。\n・排反事象との違い：排反（A ∩ B = ∅）と独立（P(A ∩ B) = P(A)P(B)）は全く異なる概念であるため混同厳禁。",
+            "examTips": "【検定の罠】「独立ならば排反である」は誤り！確率が0でない事象同士の場合、独立であれば積事象の確率は正になるため、排反にはなり得ない。",
+            "example": "トランプから1枚引いて「絵札であった」とき、それが「ハートである」確率: P(絵札)=12/52, P(ハート∩絵札)=3/52 → 3/12 = 1/4。"
+      },
+      {
+            "id": "bayes-theorem",
+            "term": "ベイズの定理 (Bayes' Theorem)",
+            "en": "Bayes' Theorem",
+            "tier": "2級",
+            "category": "確率・分布",
+            "tags": [
+                  "ベイズの定理",
+                  "事前確率",
+                  "事後確率",
+                  "尤度",
+                  "検査陽性"
+            ],
+            "summary": "新たな証拠・データが得られた際に、事前確率を事後確率へと更新するための確率論の根本定理。",
+            "formula": "P(A|B) = [ P(B|A) × P(A) ] / P(B) = [ P(B|A)P(A) ] / Σ P(B|Ai)P(Ai)",
+            "details": "・P(A)：事前確率 (Prior)\n・P(B|A)：尤度 (Likelihood, 原因Aのもとで結果Bが生じる確率)\n・P(A|B)：事後確率 (Posterior, 結果Bを観測した後の原因Aの確率)\n・分母 P(B) は全確率の定理により正規化定数となる。",
+            "examTips": "【検定超頻出】「罹患率1%の病気で、陽性適中率95%の検査で陽性が出たとき、本当に病気である確率は？」。答えは直感に反して約16%程度と低くなる計算問題が2級で極めて高頻度に出題。",
+            "example": "スパムフィルター：メール本文に「無料」という単語が含まれていた場合に、そのメールがスパムである確率を過去の統計から更新。"
+      },
+      {
+            "id": "binomial-distribution",
+            "term": "二項分布 B(n, p)",
+            "en": "Binomial Distribution",
+            "tier": "3級",
+            "category": "確率・分布",
+            "tags": [
+                  "二項分布",
+                  "ベルヌーイ試行",
+                  "期待値np",
+                  "分散np(1-p)"
+            ],
+            "summary": "成功確率 p の独立な試行（ベルヌーイ試行）を n 回反復したときの成功回数 X が従う離散確率分布。",
+            "formula": "P(X=k) = nCk · p^k · (1-p)^(n-k) | E(X) = np | V(X) = np(1-p)",
+            "details": "・n が大きく p が極端に小さくない場合、中心極限定理により正規分布 N(np, np(1-p)) で良好に近似できる（ド・モアブル=ラプラスの定理）。\n・n が大きく p が極めて小さい（np = λ が一定）場合、ポアソン分布 Po(λ) に収束する。",
+            "examTips": "【検定頻出】期待値 E(X)=np と分散 V(X)=np(1-p) は証明なしで暗記必須。コインを100回投げて表が出る回数の期待値は50、分散は25、標準偏差は5。",
+            "example": "新薬の治験で治癒率70%のとき、10人の患者に投与して8人以上が完治する確率。"
+      },
+      {
+            "id": "poisson-distribution",
+            "term": "ポアソン分布 Po(λ)",
+            "en": "Poisson Distribution",
+            "tier": "2級",
+            "category": "確率・分布",
+            "tags": [
+                  "ポアソン分布",
+                  "滅多に起きない事象",
+                  "期待値分散等値",
+                  "ポアソン小数の法則"
+            ],
+            "summary": "単位時間または単位空間あたりに「稀に発生する事象」の生起回数が従う確率分布。",
+            "formula": "P(X=k) = (e^(-λ) · λ^k) / k!  |  E(X) = λ  |  V(X) = λ",
+            "details": "・最大の特徴は「期待値と分散が等しい（E(X) = V(X) = λ）」こと。\n・二項分布において n → ∞, p → 0, np = λ（一定）とした極限分布。\n・事象の発生間隔（待ち時間）は指数分布 Exp(λ) に従う。",
+            "examTips": "【検定頻出】「平均値と分散が共に同じ値をとる離散確率分布は何か？」という問いに対して即座に「ポアソン分布」と答えられるようにしておくこと。",
+            "example": "1時間あたりにコールセンターにかかってくる電話の件数、1年間に発生する大地震の回数、ウェブサーバーへの毎秒アクセス数。"
+      },
+      {
+            "id": "geometric-distribution",
+            "term": "幾何分布 (Geometric Distribution)",
+            "en": "Geometric Distribution",
+            "tier": "2級",
+            "category": "確率・分布",
+            "tags": [
+                  "幾何分布",
+                  "最初の成功",
+                  "無記憶性"
+            ],
+            "summary": "成功確率 p の試行において、「初めて成功するまでに要する試行回数 X」が従う離散確率分布。",
+            "formula": "P(X=k) = (1-p)^(k-1) · p  |  E(X) = 1/p  |  V(X) = (1-p)/p²",
+            "details": "・無記憶性（Memoryless property）：過去に何回失敗したとしても、次回成功する確率は過去の履歴に影響されない。\n・ガチャや宝くじのシミュレーションにおける基本モデル。",
+            "examTips": "【検定頻出】サイコロで「1」が初めて出るまでの回数の期待値は E = 1/(1/6) = 6回。期待値 1/p の即答が求められる。",
+            "example": "成功率5%のレアガチャを引くとき、初めて当たるまでに引く回数の期待値は 1/0.05 = 20回。"
+      },
+      {
+            "id": "normal-distribution",
+            "term": "正規分布 N(μ, σ²) と標準正規分布",
+            "en": "Normal & Standard Normal Distribution",
+            "tier": "3級",
+            "category": "確率・分布",
+            "tags": [
+                  "ガウス分布",
+                  "釣鐘型",
+                  "標準正規分布",
+                  "68-95-99.7ルール"
+            ],
+            "summary": "自然界・人間社会の多様な現象に現れる、左右対称な釣鐘型の連続確率分布。統計学の絶対的中心。",
+            "formula": "f(x) = (1/√(2πσ²)) exp(-(x-μ)²/(2σ²)) | 標準正規: Z ~ N(0, 1)",
+            "details": "・平均 μ に関して左右対称、平均 = 中央値 = 最頻値。\n・標準正規分布 N(0, 1) における重要確率点：\n  P(|Z| ≦ 1.00) ≒ 68.27%\n  P(|Z| ≦ 1.96) ≒ 95.00% (両側5%点: z_0.025 = 1.96)\n  P(|Z| ≦ 2.58) ≒ 99.00% (両側1%点: z_0.005 = 2.58)",
+            "examTips": "【絶対暗記数値】1.96 (両側95%信頼区間の臨界値) と 2.58 (両側99%臨界値)、1.645 (片側5%点) は統計検定の全階級で必須。",
+            "example": "成人の身長分布、製品の加工公差、テスト得点（正規性を仮定した評価）。"
+      },
+      {
+            "id": "chi-square-distribution",
+            "term": "カイ二乗分布 (χ²分布) と自由度",
+            "en": "Chi-square Distribution",
+            "tier": "2級",
+            "category": "確率・分布",
+            "tags": [
+                  "カイ二乗分布",
+                  "自由度k",
+                  "分散の検定",
+                  "独立性の検定"
+            ],
+            "summary": "互いに独立な k 個の標準正規確率変数の2乗和が従う分布。分散の検定や適合度・独立性の検定で活躍。",
+            "formula": "χ² = Σ(Zi²) ~ χ²(k)  |  E(χ²) = k  |  V(χ²) = 2k",
+            "details": "・定義域は 0 以上（2乗和のため負の値はとらない）。右に裾を引く非対称な形状。\n・自由度 k が大きくなるにつれて右に裾を引いた形から徐々に正規分布に近づく。\n・カイ二乗分布の再生性：独立な χ²(k1) と χ²(k2) の和は χ²(k1 + k2) に従う。",
+            "examTips": "【検定頻出】期待値が「自由度 k」、分散が「2k」であること。手計算問題や選択肢の判定で即戦力知識となる。",
+            "example": "サイコロを600回振ったとき、各目が出た度数が理論値(100回ずつ)から有意に偏っているかを適合度検定する。"
+      },
+      {
+            "id": "t-distribution",
+            "term": "t分布 (スチューデントのt分布)",
+            "en": "Student's t-Distribution",
+            "tier": "2級",
+            "category": "確率・分布",
+            "tags": [
+                  "t分布",
+                  "小標本",
+                  "母分散未知",
+                  "Gosset"
+            ],
+            "summary": "母分散が未知の正規母集団から抽出した小標本において、標本平均の信頼区間や検定で用いる分布。",
+            "formula": "t = (X̄ - μ) / (s / √n) ~ t(n-1)",
+            "details": "・平均 0 を中心に左右対称な釣鐘型だが、標準正規分布よりも裾が厚い（ばらつきが大きい）。\n・自由度 df = n - 1 が大きくなる（標本サイズが増加する）と、標準正規分布 N(0, 1) に漸近する。\n・ギネスビールの研究者ゴセット（Gosset）がペンネーム「Student」で発表した。",
+            "examTips": "【検定頻出】「母分散 σ² が既知なら Z検定（正規分布）」、「母分散 σ² が未知なら 不偏分散 s² を代用して t検定（自由度n-1のt分布）」の峻別。",
+            "example": "新開発タイヤ10本の摩耗テスト結果から、従来品より有意に寿命が伸びたかを小標本検定。"
+      },
+      {
+            "id": "f-distribution",
+            "term": "F分布 (Fisher-Snedecor F-distribution)",
+            "en": "F-Distribution",
+            "tier": "2級",
+            "category": "確率・分布",
+            "tags": [
+                  "F分布",
+                  "分散比",
+                  "等分散の検定",
+                  "分散分析",
+                  "ANOVA"
+            ],
+            "summary": "2つの独立なカイ二乗変数をそれぞれの自由度で除算した「分散比」が従う連続確率分布。",
+            "formula": "F = (χ1² / k1) / (χ2² / k2) = s1² / s2² ~ F(k1, k2)",
+            "details": "・2群の母分散が等しいかどうかの検定（F検定）や、一元配置・二元配置の「分散分析 (ANOVA)」で群間要因の有意性を判定するために用いる。\n・自由度は分子の自由度 k1 と分母の自由度 k2 の2つを持つ。\n・値は常に 0 以上。非対称で右に裾を引く。",
+            "examTips": "【F分布の逆数関係】F分布表の上側棄却限界値から下側棄却限界値を求める関係式：F(1-α; k1, k2) = 1 / F(α; k2, k1)。自由度の順序が入れ替わる点が出題急所。",
+            "example": "3種類の肥料を与えた作物の収穫量に有意な差があるかを分散分析で評価する際の検定統計量。"
+      },
+      {
+            "id": "exponential-distribution",
+            "term": "指数分布 (Exponential Distribution)",
+            "en": "Exponential Distribution",
+            "tier": "2級",
+            "category": "確率・分布",
+            "tags": [
+                  "指数分布",
+                  "待ち時間",
+                  "無記憶性",
+                  "ポアソン過程"
+            ],
+            "summary": "ポアソン過程において「次に事象が起こるまでの待ち時間や間隔」を表す連続確率分布。",
+            "formula": "f(x) = λ e^(-λx) (x ≧ 0)  |  E(X) = 1/λ  |  V(X) = 1/λ²",
+            "details": "・幾何分布の連続版であり、「無記憶性: P(X > s + t | X > s) = P(X > t)」を持つ唯一の連続確率分布。\n・機械の故障間隔（MTBF）、客の来店間隔、放射性物質の崩壊間隔などに用いられる。",
+            "examTips": "【検定頻出】平均発生率が単位時間あたり λ 回のとき、平均待ち時間 E(X) はその逆数 1/λ。また生存関数 S(t) = P(X > t) = e^(-λt) も頻出。",
+            "example": "1時間に平均6件(λ=6)の注文が入るECサイトで、次の注文が入るまでの平均待ち時間は 1/6時間（10分）。"
+      },
+      {
+            "id": "central-limit-theorem",
+            "term": "中心極限定理 (CLT: Central Limit Theorem)",
+            "en": "Central Limit Theorem",
+            "tier": "2級",
+            "category": "確率・分布",
+            "tags": [
+                  "中心極限定理",
+                  "CLT",
+                  "標本平均",
+                  "正規分布への収束"
+            ],
+            "summary": "母集団がどのような分布であっても、標本サイズ n が十分大きければ、標本平均の分布は正規分布に近似的に従う定理。",
+            "formula": "標本平均 X̄ ~ N(μ, σ²/n)  |  Z = (X̄ - μ) / (σ/√n) → N(0, 1)",
+            "details": "・統計的推測（区間推定や仮説検定）をあらゆるデータに適用できる理論的根拠。\n・標本平均の標準偏差（標準誤差 SE: Standard Error）は √n に反比例して縮小する（サンプルサイズを4倍にすると誤差は1/2になる）。\n・一般的な目安として n ≧ 30 程度あれば良好に近似できる。",
+            "examTips": "【検定の罠】「元の母集団の分布が正規分布に近づく」のではなく、「標本平均 X̄ の分布が正規分布に近づく」点。引っかけ選択肢の超定番。",
+            "example": "サイコロの目自体は {1,2,3,4,5,6} の一様分布だが、100回振った平均値は 3.5 を中心とする極めて綺麗な正規分布を描く。"
+      },
+      {
+            "id": "law-of-large-numbers",
+            "term": "大数の法則 (LLN: Law of Large Numbers)",
+            "en": "Law of Large Numbers",
+            "tier": "3級",
+            "category": "確率・分布",
+            "tags": [
+                  "大数の弱法則",
+                  "大数の強法則",
+                  "標本平均の収束",
+                  "真の平均"
+            ],
+            "summary": "試行回数（標本サイズ n）を増やすと、標本平均は母平均（理論的期待値）に限りなく近づく法則。",
+            "formula": "n → ∞ のとき P(|X̄ - μ| > ε) → 0  (大数の弱法則: 確率収束)",
+            "details": "・コイン投げを数回行っただけでは表の割合が70%など偏ることもあるが、1万回、100万回と繰り返せば理論確率の50%に限りなく収束する。\n・中心極限定理（分布の形状が正規分布になる）と対比され、大数の法則は「値が一点に収束する」ことを示す。",
+            "examTips": "【検定頻出】カジノの胴元や保険会社が長期的に安定した利益を得られるのは大数の法則により大数のリスクが平均化されるため。",
+            "example": "保険契約者が少数だと大事故で倒産リスクがあるが、数万人集まれば1人あたりの事故発生率は理論値に安定収束する。"
+      },
+      {
+            "id": "expectation-variance-linearity",
+            "term": "期待値と分散の線形性・性質",
+            "en": "Properties of Expectation & Variance",
+            "tier": "2級",
+            "category": "確率・分布",
+            "tags": [
+                  "期待値の線形性",
+                  "分散の加法性",
+                  "独立性",
+                  "共分散"
+            ],
+            "summary": "確率変数の定数倍や和に関する期待値・分散の計算代数則。",
+            "formula": "E(aX + b) = aE(X) + b | V(aX + b) = a²V(X) | V(X+Y) = V(X)+V(Y)+2Cov(X,Y)",
+            "details": "・期待値の線形性は X と Y が「独立でなくても常に成立」する: E(X + Y) = E(X) + E(Y)。\n・分散の加法性: X と Y が「互いに独立（Cov=0）」のときのみ V(X + Y) = V(X) + V(Y) が成立。\n・定数 b は分散に影響しない（V(X + b) = V(X)）が、係数 a は 2乗されて外に出る（V(aX) = a² V(X)）。",
+            "examTips": "【検定頻出計算】「V(2X - 3Y) を求めよ（X, Yは独立）」。正解は 2²V(X) + (-3)²V(Y) = 4V(X) + 9V(Y)。マイナス符号も2乗でプラスになる点に注意。",
+            "example": "ポートフォリオのリターン期待値とリスク（分散）の計算。"
+      },
+      {
+            "id": "sampling-methods",
+            "term": "標本抽出法 (Sampling Methods)",
+            "en": "Sampling Methods",
+            "tier": "3級",
+            "category": "推測統計",
+            "tags": [
+                  "単純無作為抽出",
+                  "層化抽出法",
+                  "集落抽出法",
+                  "多段抽出法"
+            ],
+            "summary": "母集団から偏りなく代表的な標本を効率的に取り出すための統計的サンプリング技法。",
+            "formula": "層化抽出: 層内分散小・層間分散大 | 集落抽出: 集落内分散大・集落間分散小",
+            "details": "・単純無作為抽出 (Simple Random)：母集団の全要素が等確率で抽出される基本。\n・層化抽出法 (Stratified)：母集団を属性（年代・性別など）で層（ストラタ）に分け、各層から比例配分抽出。推定精度が高まる。\n・集落抽出法 (Cluster)：母集団をいくつかの小集落（クラスター）に分け、ランダムに選んだ特定の集落を全数調査。調査コストを抑制できるが精度は低下しやすい。\n・多段抽出法 (Multi-stage)：市区町村を選定→町丁目を選定→個人を抽出、のように段階的に抽出。",
+            "examTips": "【検定頻出】「層化抽出」と「集落（クラスター）抽出」の性質の対比！層化は「層内が均質、層間が不均質」、集落は「集落内が多様、集落間が均質」。逆にして惑わす問題が多数出題。",
+            "example": "全国世論調査において、コスト削減のため都道府県単位→自治体単位→有権者の順に絞り込む多段抽出法が多用される。"
+      },
+      {
+            "id": "unbiased-variance",
+            "term": "不偏分散と自由度 (n-1で割る理由)",
+            "en": "Unbiased Variance",
+            "tier": "2級",
+            "category": "推測統計",
+            "tags": [
+                  "不偏推定量",
+                  "自由度n-1",
+                  "ベッセルの補正",
+                  "標本分散との違い"
+            ],
+            "summary": "標本データから母集団の真の分散 σ² を偏りなく推定するため、データ数 n ではなく (n - 1) で割った分散。",
+            "formula": "s² = (1 / (n - 1)) Σ(xi - X̄)²  |  E(s²) = σ²",
+            "details": "・通常の標本分散（nで割る）は、未知の母平均 μ の代わりに標本平均 X̄ を基準として偏差を計算するため、散らばりを小さめに見積もってしまう（期待値が (n-1)/n · σ² となる）。\n・この系統的な過小評価の偏り（バイアス）を補正するために n/(n-1) を掛けたものが不偏分散。\n・自由度 df = n - 1 は、標本平均 X̄ が固定されることで自由に動けるデータが n-1 個になることに由来する。",
+            "examTips": "【検定頻出】電卓計算や手計算において、分母を n で割るか n-1 で割るかの指定に注意。推測統計・検定では常に「n-1」で割る不偏分散を使用する。",
+            "example": "標本5つのデータから母集団の分散を推定するとき、分母は 5 ではなく 4 で割る。"
+      },
+      {
+            "id": "estimator-properties",
+            "term": "推定量の4大性質 (不偏性・一致性・有効性・十分性)",
+            "en": "Properties of Estimators",
+            "tier": "2級",
+            "category": "推測統計",
+            "tags": [
+                  "不偏性",
+                  "一致性",
+                  "有効性",
+                  "クラメール・ラオの下限",
+                  "十分性"
+            ],
+            "summary": "未知の母数を推定する推定量が満たすべき望ましい統計的基準。",
+            "formula": "不偏性: E(θ̂) = θ | 一致性: n→∞で θ̂ → θ | 有効性: 不偏推定量の中で分散最小",
+            "details": "・不偏性 (Unbiasedness)：推定量の期待値が真の母数 θ に等しい。\n・一致性 (Consistency)：サンプルサイズ n を無限大にすると推定量が真の母数に確率収束する。\n・有効性 (Efficiency)：不偏推定量の中で最も分散が小さい（最小分散不偏推定量 MVUE）。\n・十分性 (Sufficiency)：その推定量だけで母数に関する標本の全情報を含んでいる（十分統計量）。",
+            "examTips": "【検定頻出】「標本平均 X̄ は母平均 μ の不偏かつ一致推定量である」。一方、「通常の標本分散は一致性を持つが不偏性を持たない（不偏分散にする必要がある）」という正誤問題。",
+            "example": "クラメール・ラオの不等式により達成可能な最小分散限界が存在し、正規分布の標本平均はその限界を達成する最良推定量。"
+      },
+      {
+            "id": "confidence-interval-mean",
+            "term": "母平均の信頼区間 (正規母集団)",
+            "en": "Confidence Interval for Population Mean",
+            "tier": "2級",
+            "category": "推測統計",
+            "tags": [
+                  "95%信頼区間",
+                  "母分散既知Z",
+                  "母分散未知t",
+                  "標準誤差SE"
+            ],
+            "summary": "標本平均を中心に、真の母平均 μ が所定の信頼度（例: 95%）で含まれる区間を推定する手法。",
+            "formula": "母分散既知: X̄ ± 1.96(σ/√n)  |  母分散未知: X̄ ± t_0.025(n-1) × (s/√n)",
+            "details": "・信頼区間の正しい解釈：「同じ抽出と区間計算を100回繰り返したとき、約95回の割合で真の母平均 μ を含む」という意味。\n・「真の母平均がこの区間に入る確率が95%」という解釈は頻度論では誤り（母数 μ は固定された定数であり、動くのは区間の方）。",
+            "examTips": "【検定の罠】「95%の確率で母平均がこの区間に存在する」は典型的な誤り選択肢！正しくは「95%の信頼度で区間が母平均を被覆する」。",
+            "example": "世論調査で内閣支持率の標本平均が45%のとき、誤差幅 ±3% (42%〜48%) の95%信頼区間を公表。"
+      },
+      {
+            "id": "confidence-interval-prop",
+            "term": "母比率の信頼区間 (二項分布の正規近似)",
+            "en": "Confidence Interval for Population Proportion",
+            "tier": "2級",
+            "category": "推測統計",
+            "tags": [
+                  "母比率",
+                  "標本比率p̂",
+                  "正規近似",
+                  "95%信頼区間"
+            ],
+            "summary": "選挙の支持率や不良品率など、質的データの比率 p に関する区間推定手法。",
+            "formula": "95% CI: p̂ ± 1.96 × √[ (p̂ (1 - p̂)) / n ]",
+            "details": "・標本比率を p̂ とするとき、標本サイズ n が十分大きければ（np ≧ 5 かつ n(1-p) ≧ 5）、標本比率の標準誤差は SE = √[p̂(1-p̂)/n] となる。\n・最大誤差幅は p̂ = 0.5 のときに最大値をとる。",
+            "examTips": "【検定頻出】p̂ = 0.5 のとき分子が 0.5×0.5 = 0.25 と最大になり、誤差幅が 1.96 × 0.5 / √n ≒ 1 / √n となる関係は標本サイズ設計で頻出。",
+            "example": "400人に調査して支持率が50%(0.5)だった場合、SE = √(0.25/400) = 0.025 (2.5%)。95%信頼区間は 50% ± 4.9%。"
+      },
+      {
+            "id": "confidence-interval-var",
+            "term": "母分散の信頼区間 (カイ二乗統計量)",
+            "en": "Confidence Interval for Population Variance",
+            "tier": "2級",
+            "category": "推測統計",
+            "tags": [
+                  "母分散の推定",
+                  "カイ二乗分布",
+                  "非対称信頼区間"
+            ],
+            "summary": "正規母集団の分散 σ² を不偏分散 s² とカイ二乗分布を用いて区間推定する手法。",
+            "formula": "[ (n-1)s² / χ²_上側(n-1),  (n-1)s² / χ²_下側(n-1) ]",
+            "details": "・カイ二乗統計量 W = (n-1)s² / σ² が自由度 n-1 のカイ二乗分布に従うことを利用。\n・カイ二乗分布は左右非対称であるため、信頼区間も標本推定量を中心に左右非対称な幅となる（分母が大きい方が下限、小さい方が上限）。",
+            "examTips": "【検定頻出】不等式を σ² について解く際、逆数をとるため「上側確率 α/2 のカイ二乗値が分母に来る方が区間の下限」になるという逆転に注意。",
+            "example": "精密機械部品の直径のばらつき（分散）が規格許容範囲内にあるかを検証。"
+      },
+      {
+            "id": "sample-size-calc",
+            "term": "標本サイズの設計公式",
+            "en": "Sample Size Determination",
+            "tier": "2級",
+            "category": "推測統計",
+            "tags": [
+                  "標本サイズn",
+                  "許容誤差d",
+                  "信頼度95%",
+                  "母比率の抽出"
+            ],
+            "summary": "所望の信頼度と許容誤差（マージンオブエラー d）を満たすために必要な最小サンプル数 n を算出する式。",
+            "formula": "母比率: n ≧ (1.96 / d)² · p(1-p) ≦ (1.96 / 2d)² ≒ 1 / d²",
+            "details": "・誤差幅を半分（1/2）に狭めるためには、標本サイズは 4倍（2²）必要になる。\n・母比率 p が事前予測できない場合は、分散が最大となる最悪シナリオ p = 0.5 を仮定して設計する。\n・許容誤差 d = 0.03 (±3%) の場合、n ≒ 1 / (0.03)² = 1111サンプル必要。",
+            "examTips": "【検定の定番】「許容誤差を ±5% から ±2.5% に半減させたい。必要なサンプル数は何倍になるか？」→ 答え「4倍」。",
+            "example": "全国世論調査で「誤差 ±3% 以内」を担保するために約1,000〜1,200名の有効回答を目標とする理由。"
+      },
+      {
+            "id": "null-and-alt-hypothesis",
+            "term": "帰無仮説 (H0) と対立仮説 (H1)",
+            "en": "Null & Alternative Hypothesis",
+            "tier": "3級",
+            "category": "仮説検定",
+            "tags": [
+                  "帰無仮説",
+                  "対立仮説",
+                  "背理法",
+                  "差がない",
+                  "棄却"
+            ],
+            "summary": "統計的仮説検定の土台。否定（棄却）することを前提に立てる「無に帰したい仮説」と、本当に主張したい「対立仮説」。",
+            "formula": "帰無仮説 H0: 差がない (μ1 = μ2)  vs  対立仮説 H1: 差がある (μ1 ≠ μ2)",
+            "details": "・数学の背理法に似た構造。「効果がない（H0）」と仮定したもとで、得られたデータが極めて珍しい現象であるならば H0 を棄却し、「効果がある（H1）」と採択する。\n・H0 が棄却されなかった場合、「差がないことが証明された」のではなく「現在のデータからは差があるとは言えなかった（保留）」に過ぎない。",
+            "examTips": "【検定の罠】「帰無仮説が採択されたので、新薬に効果がないことが証明された」は誤り！「効果がないとは言い切れない（証拠不十分）」が正しい結論。",
+            "example": "新薬の効果検定：H0「新薬と偽薬の治癒率は同じ」 vs H1「新薬の方が治癒率が高い（片側検定）」。"
+      },
+      {
+            "id": "significance-p-value",
+            "term": "有意水準 (α) と P値 (p-value)",
+            "en": "Significance Level (α) & P-value",
+            "tier": "2級",
+            "category": "仮説検定",
+            "tags": [
+                  "有意水準",
+                  "p値",
+                  "帰無仮説棄却",
+                  "統計的有意"
+            ],
+            "summary": "稀であると判断する基準値（α: 通常5%や1%）と、帰無仮説のもとで観測データ以上に極端な結果が生じる確率（P値）。",
+            "formula": "P値 ≦ α ならば帰無仮説 H0 を棄却 (有意差あり)",
+            "details": "・有意水準 α (Significance level)：実験前にあらかじめ決めておく誤棄却の許容リスク（慣例的に 5% = 0.05）。\n・P値 (p-value)：帰無仮説が真であるという前提において、観測された統計量以上の極端な値が得られる確率。\n・P値が小さいほど「偶然とは考えにくい」ことを意味する。",
+            "examTips": "【検定頻出】「P値とは帰無仮説が正しい確率である」は誤謬（ASA声明でも強く警告）。正しくは「帰無仮説が正しいと仮定したもとで、このデータ以上に極端な結果が得られる確率」。",
+            "example": "P値 = 0.012 (1.2%) の場合、有意水準 5% では H0 を棄却して「統計的に有意である」と結論づける。"
+      },
+      {
+            "id": "type1-type2-errors",
+            "term": "第1種の過誤 (α)・第2種の過誤 (β) と検出力",
+            "en": "Type I & Type II Errors, Power",
+            "tier": "2級",
+            "category": "仮説検定",
+            "tags": [
+                  "第1種の過誤",
+                  "第2種の過誤",
+                  "検出力",
+                  "偽陽性",
+                  "偽陰性"
+            ],
+            "summary": "仮説検定において不可避的に生じる2つの誤りと、本当の効果を見逃さない能力（検出力）。",
+            "formula": "第1種の過誤 = P(H0棄却 | H0真) = α | 第2種の過誤 = P(H0採択 | H1真) = β | 検出力 = 1 - β",
+            "details": "・第1種の過誤 (α / 偽陽性)：実際には差がないのに「差がある」と誤って判断してしまう誤り（冤罪に相当）。\n・第2種の過誤 (β / 伪阴性)：実際には差があるのに「差がない」と見逃してしまう誤り（真犯人の無罪放免に相当）。\n・トレードオフ関係：サンプルサイズが一定のとき、αを小さくするとβは大きくなる。両方を同時に小さくするには「標本サイズ n を増やす」しかない。",
+            "examTips": "【検定頻出】検出力 (Power) の定義式「1 - β」。対立仮説が真のときに正しくH0を棄却できる確率。",
+            "example": "火災報知器：火事でないのに鳴る（第1種の過誤・偽陽性）、本物の火事なのに鳴らない（第2種の過誤・偽陰性）。"
+      },
+      {
+            "id": "one-sample-t-test",
+            "term": "1標本t検定 (One-sample t-test)",
+            "en": "One-sample t-test",
+            "tier": "2級",
+            "category": "仮説検定",
+            "tags": [
+                  "1標本t検定",
+                  "母平均の検定",
+                  "未知の母分散",
+                  "自由度n-1"
+            ],
+            "summary": "母分散が未知の正規母集団から得られた標本平均が、特定の基準値 μ0 と有意に異なるかを検証する検定。",
+            "formula": "t = (X̄ - μ0) / (s / √n) ~ t(n-1)  (s は不偏標準偏差)",
+            "details": "・分母の s/√n は標本平均の標準誤差（SE）。\n・自由度 df = n - 1 の t 分布を用い、両側検定なら棄却限界値 ±t_α/2(n-1) と t 値の大きさを比較する。\n・母分散既知であれば正規分布 Z = (X̄ - μ0)/(σ/√n) を用いる。",
+            "examTips": "【検定計算】与えられたデータから標本平均 X̄ と不偏分散 s² を手計算し、t統計量を算出してt分布表の臨界値と比較する手順。",
+            "example": "缶コーヒーの公称内容量 185g に対し、ランダム抽出した10本の平均が 182g (s=3.2g) だった場合に内容量不足と言えるか検証。"
+      },
+      {
+            "id": "two-sample-t-test",
+            "term": "2標本t検定 (対応あり・等分散・Welch)",
+            "en": "Two-sample t-test (Paired & Unpaired)",
+            "tier": "2級",
+            "category": "仮説検定",
+            "tags": [
+                  "対応のあるt検定",
+                  "対応のないt検定",
+                  "プールされた分散",
+                  "ウェルチの検定"
+            ],
+            "summary": "2つの独立または対応するグループの母平均に有意な差があるかを比較する最頻出検定。",
+            "formula": "対応あり: 差 d = x - y の1標本t検定 | 等分散仮定: プールされた分散 s_p² を使用",
+            "details": "・対応あり（Paired）：同一被験者の「投薬前・投薬後」の比較。差のデータ d_i = x_i - y_i を作れば自由度 n-1 の1標本t検定に帰着。\n・対応なし・等分散仮定（Student's t）：プールされた共通分散 s_p² = [(n1-1)s1² + (n2-1)s2²] / (n1+n2-2) を用いる（自由度 n1+n2-2）。\n・対応なし・等分散を仮定しない（Welch's t）：分散が異なると想定される場合の安全な検定法（自由度はSatterthwaite近似）。",
+            "examTips": "【検定頻出】「同一人物の前後比較は対応のある検定（自由度 n-1）」。「異なる2グループの比較は対応のない検定（自由度 n1+n2-2）」。この判別が出題の急所。",
+            "example": "ダイエットサプリを飲んだ20人の「体重変化量」を検証（対応のあるt検定）。A社とB社の電球の寿命比較（対応のないt検定）。"
+      },
+      {
+            "id": "f-test-variance",
+            "term": "等分散性の検定 (F検定)",
+            "en": "F-test for Equality of Variances",
+            "tier": "2級",
+            "category": "仮説検定",
+            "tags": [
+                  "等分散性",
+                  "F検定",
+                  "不偏分散比",
+                  "2標本検定の前提"
+            ],
+            "summary": "2つの独立な正規母集団の分散が等しい（σ1² = σ2²）かどうかを検証する検定。",
+            "formula": "F = s1² / s2² ~ F(n1-1, n2-1)  (慣例的に s1² ≧ s2² となるように置く)",
+            "details": "・帰無仮説 H0: σ1² = σ2²  vs  対立仮説 H1: σ1² ≠ σ2²。\n・2群のt検定（スチューデント）の前提条件チェックとして従来広く用いられてきた。\n・正規性の仮定から外れると結果が歪みやすい（正規性への頑健性が低い）点に注意が必要。",
+            "examTips": "【検定頻出】F値が常に 1 以上になるように「不偏分散の大きい方を分子 s1²」に配置する流儀が多く、その場合の両側検定の棄却域は片側 α/2 点と比較する。",
+            "example": "2台の測定機器の計測精度のばらつき（分散）が同等であるかを確かめる。"
+      },
+      {
+            "id": "chi-square-independence",
+            "term": "カイ二乗 独立性の検定",
+            "en": "Chi-square Test of Independence",
+            "tier": "2級",
+            "category": "仮説検定",
+            "tags": [
+                  "独立性の検定",
+                  "分割表",
+                  "期待度数E",
+                  "観測度数O",
+                  "自由度(r-1)(c-1)"
+            ],
+            "summary": "クロス集計表（分割表）において、2つの属性・カテゴリ変数が互いに独立か（関連があるか）を判定する検定。",
+            "formula": "χ² = Σ [ (O_ij - E_ij)² / E_ij ] ~ χ²( (r-1)(c-1) )",
+            "details": "・O_ij：観測度数（実際のデータ）\n・E_ij：期待度数（独立と仮定した際の期待値: 行合計 × 列合計 / 全体数）\n・自由度は (行数 r - 1) × (列数 c - 1)。\n・カイ二乗値が大きいほど「観測値が独立な仮定から大きく乖離している」ため帰無仮説が棄却され、2変数に関連があると結論づけられる。",
+            "examTips": "【検定頻出】期待度数が極端に小さいセル（E < 5）が多い場合はカイ二乗近似が不正確になるため、フィッシャーの正確確率検定を用いる。",
+            "example": "年代（20代/30代/40代）と好みのSNS（X/Instagram/TikTok）の間に嗜好の偏りがあるかを分析。"
+      },
+      {
+            "id": "chi-square-goodness",
+            "term": "カイ二乗 適合度検定",
+            "en": "Chi-square Goodness-of-Fit Test",
+            "tier": "2級",
+            "category": "仮説検定",
+            "tags": [
+                  "適合度検定",
+                  "理論分布への適合",
+                  "サイコロの公平性"
+            ],
+            "summary": "観測された度数分布が、理論的な確率分布（メンデルの法則、一様分布、ポアソン分布など）に従っているかを検証する検定。",
+            "formula": "χ² = Σ [ (O_k - E_k)² / E_k ] ~ χ²(k - 1 - m)  (m は推定した母数数)",
+            "details": "・帰無仮説 H0: 観測データは理論分布に従う。\n・自由度は 通常 (カテゴリ数 k - 1)。ただしデータから母数を m 個推定した場合は (k - 1 - m) となる。",
+            "examTips": "【検定頻出】サイコロの目の一様性検定ではカテゴリ数 k=6 なので自由度は 6 - 1 = 5。メンデルの遺伝の法則（9:3:3:1）では自由度 4 - 1 = 3。",
+            "example": "ある交配実験で得られたエンドウ豆の表現型比率（丸・黄など）が 9:3:3:1 の理論比と合致するかを検定。"
+      },
+      {
+            "id": "anova-one-way",
+            "term": "一元配置分散分析 (ANOVA: Analysis of Variance)",
+            "en": "One-way ANOVA",
+            "tier": "2級",
+            "category": "仮説検定",
+            "tags": [
+                  "分散分析",
+                  "ANOVA",
+                  "F比",
+                  "群間変動",
+                  "群内変動",
+                  "多群比較"
+            ],
+            "summary": "3つ以上のグループの母平均がすべて等しいかどうかを、「群間分散」と「群内分散」の比（F比）によって一括検証する手法。",
+            "formula": "F = (群間平方和 / 自由度a-1) / (群内平方和 / 自由度N-a) = MS_between / MS_within",
+            "details": "・全変動（全平方和） = 要因変動（群間平方和） + 残差変動（群内平方和）。\n・「群ごとの平均値の違いによる散らばり」が「各群内部の誤差による散らばり」に対して統計的に有意に大きいかを F 分布で判定。\n・t検定を3群以上で総当たり反復すると第1種の過誤（偽陽性）が跳ね上がる（検定の多重性問題）ため、まずANOVAで全体有意性を検定する。",
+            "examTips": "【検定頻出】分散分析表（平方和、自由度、平均平方MS、F値）の空欄補充問題！各平方和と自由度の足し算関係（行の分解）を完全に把握しておくこと。",
+            "example": "新薬A、新薬B、既存薬C、偽薬Dの4群における血圧降下作用の平均値に差があるかを比較。"
+      },
+      {
+            "id": "multiple-comparisons",
+            "term": "多重比較検定 (Bonferroni / Tukey)",
+            "en": "Multiple Comparison Tests",
+            "tier": "2級",
+            "category": "仮説検定",
+            "tags": [
+                  "多重比較",
+                  "ボンフェローニ補正",
+                  "テューキー法",
+                  "FWER",
+                  "検定の多重性"
+            ],
+            "summary": "3群以上のペアごとの差を検定する際、全体の第1種の過誤率（FWER）が爆発するのを防ぐ補正手法。",
+            "formula": "ボンフェローニ法: 各ペアの有意水準を α' = α / m に補正 (m は検定回数)",
+            "details": "・検定の多重性：有意水準 5% の検定を 10回 独立に繰り返すと、少なくとも1つ誤棄却する確率は 1 - (0.95)^10 ≒ 40% に達してしまう。\n・ボンフェローニ法 (Bonferroni)：最も簡便だが保守的（検出力が落ちやすい）。\n・テューキー・クレーマー法 (Tukey-Kramer)：全ペアの対比に適した標準的手法（スチューデント化された範囲統計量 q を使用）。",
+            "examTips": "【検定頻出】4群の全ペア数 m = 4C2 = 6回。全体を有意水準 5% に抑えるためのボンフェローニ有意水準は 0.05 / 6 ≒ 0.0083。",
+            "example": "ゲノムワイド関連解析 (GWAS) で数十万個の遺伝子変異を同時に検定する際の多重検定補正。"
+      },
+      {
+            "id": "simple-linear-regression",
+            "term": "単回帰分析と最小二乗法 (OLS)",
+            "en": "Simple Linear Regression & OLS",
+            "tier": "2級",
+            "category": "回帰・多変量",
+            "tags": [
+                  "単回帰",
+                  "最小二乗法",
+                  "回帰係数",
+                  "残差平方和",
+                  "傾きと切片"
+            ],
+            "summary": "1つの説明変数 X から目的変数 Y を線形モデル y = β0 + β1 x で予測し、残差平方和を最小化する手法。",
+            "formula": "傾き: β1 = Cov(X,Y)/Var(X) = r · (s_y / s_x)  |  切片: β0 = ȳ - β1 x̄",
+            "details": "・残差（観測値と回帰直線の予測値のズレ e_i = y_i - ŷ_i）の2乗和 Σ e_i² を最小化する推定法が「通常最小二乗法 (OLS)」\n・回帰直線は必ずデータ全体の重心点 (x̄, ȳ) を通過する。\n・残差の和 Σ e_i は常に 0 となる。",
+            "examTips": "【検定頻出公式】傾き β1 = r × (s_y / s_x)。相関係数 r と標準偏差の比から即座に回帰係数を求める計算問題が頻出。",
+            "example": "広告費 X（万円）から売上高 Y（万円）を予測する回帰式を求める。"
+      },
+      {
+            "id": "rsquared-and-adjusted",
+            "term": "決定係数 (R²) と自由度調整済みR²",
+            "en": "R-squared & Adjusted R-squared",
+            "tier": "2級",
+            "category": "回帰・多変量",
+            "tags": [
+                  "決定係数",
+                  "寄与率",
+                  "自由度調整済み決定係数",
+                  "当てはまりの良さ"
+            ],
+            "summary": "回帰モデルが目的変数の全ばらつきをどれだけ説明できているかを示す当てはまり指標（0〜1）。",
+            "formula": "R² = 1 - (残差平方和 SS_res / 全平方和 SS_tot)  |  単回帰では R² = r²",
+            "details": "・単回帰分析の場合、決定係数 R² はピアソンの相関係数 r のちょうど2乗に等しくなる。\n・説明変数を増やすと、無意味な変数であっても通常の R² は単調増加してしまう欠点がある。\n・自由度調整済み決定係数 R̄² は変数の個数に対するペナルティを含めることで、過剰適合を防ぎ真のモデル選択を可能にする。",
+            "examTips": "【検定頻出】相関係数 r = -0.8 のとき、単回帰の決定係数は R² = (-0.8)² = 0.64 (64%)。符号が正になる点に注意。",
+            "example": "住宅価格予測モデルにおいて R² = 0.82 なら、「住宅価格のばらつきの82%を変数で説明できている」と解釈。"
+      },
+      {
+            "id": "multiple-regression",
+            "term": "重回帰分析と偏回帰係数",
+            "en": "Multiple Linear Regression",
+            "tier": "2級",
+            "category": "回帰・多変量",
+            "tags": [
+                  "重回帰",
+                  "偏回帰係数",
+                  "他の変数を一定としたとき",
+                  "t検定",
+                  "F検定"
+            ],
+            "summary": "複数の説明変数 X1, X2, ... を用いて目的変数 Y をモデル化する回帰手法。",
+            "formula": "Y = β0 + β1 X1 + β2 X2 + ... + βk Xk + ε",
+            "details": "・偏回帰係数 β_j の解釈：「他のすべての説明変数の値を一定に保ったまま、X_j が1単位増加したときの Y の平均変化量（ceteris paribus）」。\n・各偏回帰係数の有意性は t 検定で判定。\n・モデル全体の有意性（すべての傾きが同時に0であるという帰無仮説）は F 検定で判定。",
+            "examTips": "【検定頻出解釈】「単回帰の係数」と「重回帰の偏回帰係数」は他変数の交絡調整により符号が逆転することもある（シンプソンのパラドックス）。解釈の定義文が問われる。",
+            "example": "中古マンション価格を「専有面積」「築年数」「駅徒歩分数」の3変数から同時に予測。"
+      },
+      {
+            "id": "multicollinearity-vif",
+            "term": "多重共線性 (Multicollinearity) とVIF",
+            "en": "Multicollinearity & VIF",
+            "tier": "DS基礎",
+            "category": "回帰・多変量",
+            "tags": [
+                  "多重共線性",
+                  "マルチコ",
+                  "VIF",
+                  "分散拡大係数",
+                  "不安定な係数"
+            ],
+            "summary": "説明変数間に強い相関が存在する場合に、回帰係数の推定値が不安定になり分散が肥大化する現象。",
+            "formula": "VIF_j = 1 / (1 - R_j²)  (R_j² は X_j を他の全説明変数で回帰した決定係数)",
+            "details": "・多重共線性が起きると：\n  ① 決定係数 R² が高くモデル全体は有意（F検定）なのに、個々の偏回帰係数の p値 が大きく有意にならない。\n  ② 係数の符号が常識と逆になる。\n  ③ サンプルが少し変わるだけで係数が激変する。\n・判定基準：一般に VIF > 10 (厳しめには 5) を超えると強い多重共線性の疑いあり。",
+            "examTips": "【検定頻出】「身長(cm)」と「身長(m)」を同時に説明変数に入れた場合、完全な共線性が生じ逆行列が計算不能（解が不定）になる。",
+            "example": "売上予測で「店舗の延床面積」と「売場面積」の両方を投入するとVIFが高騰するため、片方を削除するか主成分合成する。"
+      },
+      {
+            "id": "logistic-regression",
+            "term": "ロジスティック回帰分析とオッズ比",
+            "en": "Logistic Regression & Odds Ratio",
+            "tier": "DS基礎",
+            "category": "回帰・多変量",
+            "tags": [
+                  "ロジスティック回帰",
+                  "シグモイド関数",
+                  "オッズ比",
+                  "ロジット変換",
+                  "二値分類"
+            ],
+            "summary": "目的変数が「合格/不合格」「購入/非購入」のような二値（0または1）の確率をモデル化する手法。",
+            "formula": "ロジット変換: ln( p / (1 - p) ) = β0 + β1 x  |  p = 1 / (1 + e^(-(β0+β1 x)))",
+            "details": "・確率 p (0〜1) を直接線形回帰すると予測値が 0 未満や 1 超になってしまうため、オッズ比の対数（ロジット）を線形モデル化。\n・オッズ (Odds) = p / (1 - p)。\n・回帰係数 β1 の指数をとった exp(β1) は、説明変数が1単位増加したときの「オッズ比 (Odds Ratio)」を表す。\n・パラメータ推定には最小二乗法ではなく「最尤法 (Maximum Likelihood Estimation)」を用いる。",
+            "examTips": "【検定頻出】偏回帰係数 β1 = 0.693 のときオッズ比は e^0.693 ≒ 2.0 となり、「リスクが2倍になる」と解釈する計算問題。",
+            "example": "顧客属性（年齢、利用頻度、割引利用）から、翌月に有料プランへ課金するか否かの確率を予測。"
+      },
+      {
+            "id": "pca-principal-component",
+            "term": "主成分分析 (PCA) と寄与率",
+            "en": "Principal Component Analysis (PCA)",
+            "tier": "DS発展",
+            "category": "回帰・多変量",
+            "tags": [
+                  "PCA",
+                  "主成分分析",
+                  "次元削減",
+                  "固有値",
+                  "寄与率",
+                  "累積寄与率"
+            ],
+            "summary": "多数の相関のある変数から、情報の損失を最小限に抑えつつ互いに無相関な少数の合成変数を抽出する次元削減法。",
+            "formula": "第k主成分の寄与率 = λ_k / (λ1 + λ2 + ... + λp) = λ_k / p (相関行列時)",
+            "details": "・分散共分散行列（または相関行列）の「固有値分解」を行い、固有値が大きい順に直交する第1主成分、第2主成分...を構成する。\n・第1主成分：データの分散が最大となる方向。\n・固有値 λ_k はその主成分の分散そのものに相当。\n・主成分負荷量：元の変数と主成分との相関係数。",
+            "examTips": "【検定頻出】相関行列を用いた場合、全固有値の和は変数数 p に等しい。固有値 λ1 = 2.4、変数数 4 のとき、第1主成分の寄与率は 2.4 / 4 = 0.60 (60%)。",
+            "example": "国語・数学・理科・社会・英語の5教科の成績から、第1主成分「総合学力」と第2主成分「文系・理系適性バランス」を合成して可視化。"
+      },
+      {
+            "id": "factor-analysis",
+            "term": "因子分析 (Factor Analysis)",
+            "en": "Factor Analysis",
+            "tier": "準1級",
+            "category": "回帰・多変量",
+            "tags": [
+                  "因子分析",
+                  "潜在変数",
+                  "共通因子",
+                  "独自因子",
+                  "バリマックス回転"
+            ],
+            "summary": "観測された多数の変数間の相関の背後に潜む「共通の潜在的原因（因子）」を逆推定する手法。",
+            "formula": "観測変数 X = (因子負荷量 × 共通因子 F) + 独自因子 e",
+            "details": "・PCAとの違い：PCAは観測変数を要約・圧縮して合成変数を作る（外向き）。因子分析は観測変数を生み出している潜在因子を探る（内向き）。\n・因子回転（バリマックス回転などの直交回転、プロマックス回転などの斜交回転）を行うことで、解釈しやすい「単純構造」を得る。",
+            "examTips": "【検定頻出】因子分析の目的は「潜在概念の発見」、主成分分析の目的は「情報の要約・次元削減」。両者の発想の違いに関する記述問題。",
+            "example": "アンケート回答（礼儀正しさ、誠実さ、時間厳守）から、背後にある潜在因子「勤勉性」を抽出。"
+      },
+      {
+            "id": "cluster-analysis",
+            "term": "クラスター分析 (k-means法・階層型ウォード法)",
+            "en": "Cluster Analysis",
+            "tier": "DS基礎",
+            "category": "回帰・多変量",
+            "tags": [
+                  "クラスター分析",
+                  "k-means",
+                  "階層型",
+                  "ウォード法",
+                  "デンドログラム"
+            ],
+            "summary": "教師なし学習の代表格。似た特徴を持つ個体（データ）同士をグループ化（クラスター化）する手法。",
+            "formula": "ユークリッド距離: d = √[ Σ(x_i - y_i)² ] | ウォード法: クラスター内平方和の増加を最小化",
+            "details": "・階層型クラスタリング (Hierarchical)：最も近いペアから順次統合し、樹形図（デンドログラム）を作成。ウォード法が最も歪みが少なく分類感度が高い。\n・非階層型 (k-means)：あらかじめクラスター数 k を決め、重心の更新と割り当てを反復。大規模データにも高速動作するが初期値依存性がある。",
+            "examTips": "【検定頻出】「ウォード法は平方和の増加分を最小にする基準をとる」、「k-means法は外れ値や非球状のクラスターに弱い」といったアルゴリズム特性の理解。",
+            "example": "購買行動データに基づき、顧客層を「富裕層節約派」「トレンド先行派」「価格重視派」などのペルソナにクラスタリング。"
+      },
+      {
+            "id": "discriminant-analysis",
+            "term": "判別分析 (Fisherの線形判別分析)",
+            "en": "Linear Discriminant Analysis (LDA)",
+            "tier": "準1級",
+            "category": "回帰・多変量",
+            "tags": [
+                  "判別分析",
+                  "LDA",
+                  "フィッシャーの判別",
+                  "群間分散/群内分散",
+                  "マハラノビス距離"
+            ],
+            "summary": "既存のグループ所属が判明しているデータに基づき、新たな観測値がどのグループに属するかを境界線で分類する教師あり学習。",
+            "formula": "最大化基準: J(w) = (群間分散 S_B) / (群内分散 S_W)",
+            "details": "・各グループ内のばらつき（群内分散）を最小にしつつ、グループ同士の離れ度合い（群間分散）を最大化する射影軸を求める。\n・等分散性を仮定する場合は線形判別関数、群ごとに共分散行列が異なる場合は2次判別関数となる。\n・マハラノビス汎距離を用いて最も距離の近い群に分類。",
+            "examTips": "【検定頻出】判別得点 Z = a1 x1 + a2 x2 + ... + b の正負でグループを2分する境界線の決定基準。",
+            "example": "企業の財務諸表データ（自己資本比率、売上高利益率など）から「健全企業」か「倒産危険企業」かを判定。"
+      },
+      {
+            "id": "confusion-matrix-metrics",
+            "term": "混同行列 (Confusion Matrix) と4大指標",
+            "en": "Confusion Matrix & Evaluation Metrics",
+            "tier": "DS基礎",
+            "category": "機械学習・DS",
+            "tags": [
+                  "混同行列",
+                  "正解率",
+                  "適合率",
+                  "再現率",
+                  "F値",
+                  "Precision",
+                  "Recall"
+            ],
+            "summary": "二値分類モデルの予測結果を「真陽性(TP)・偽陽性(FP)・偽陰性(FN)・真陰性(TN)」の4区分で集計した性能評価マトリクス。",
+            "formula": "適合率(Precision)=TP/(TP+FP) | 再現率(Recall)=TP/(TP+FN) | F1=2·(Prec·Rec)/(Prec+Rec)",
+            "details": "・正解率 (Accuracy) = (TP + TN) / 全体。不均衡データ（陽性が極小）では高正解率でも無意味なモデルになり得る。\n・適合率 (Precision / 精度)：モデルが陽性と判定したもののうち、真に陽性であった割合（誤報を避けたい場面で重視）。\n・再現率 (Recall / 感度)：実際に陽性であるもののうち、モデルが正しく陽性と拾えた割合（見逃しを避けたい医療・不正検知で重視）。\n・F1スコア：適合率と再現率の調和平均。",
+            "examTips": "【検定超頻出】「がん検診で見逃しを減らしたいときは何を重視すべきか？」→ 再現率 (Recall)。「スパム判定で重要メールを誤判定したくないときは？」→ 適合率 (Precision)。",
+            "example": "クレジットカード不正利用検知システムにおいて、不正の見逃し（FN）を防ぐため再現率を最優先に閾値を調整する。"
+      },
+      {
+            "id": "roc-curve-auc",
+            "term": "ROC曲線とAUC (Area Under the Curve)",
+            "en": "ROC Curve & AUC",
+            "tier": "DS基礎",
+            "category": "機械学習・DS",
+            "tags": [
+                  "ROC曲線",
+                  "AUC",
+                  "TPR",
+                  "FPR",
+                  "分類閾値",
+                  "感度と特異度"
+            ],
+            "summary": "分類の判定閾値を 0 から 1 まで連続的に変化させたときの「真陽性率(縦軸)」と「偽陽性率(横軸)」の軌跡を描いた評価グラフ。",
+            "formula": "縦軸: TPR(再現率)=TP/(TP+FN) | 横軸: FPR(1-特異度)=FP/(FP+TN) | 完全予測: AUC=1.0",
+            "details": "・ランダム予測（コイン投げ）の場合、対角線となり AUC = 0.5。\n・理想的な完全分類器では左上隅 (0, 1) を通過し、AUC = 1.0 となる。\n・AUCは「ランダムに選んだ正例の予測確率が、負例の予測確率よりも高くなる確率」と等価。\n・クラス不均衡に対して正解率よりも頑健なモデル比較が可能。",
+            "examTips": "【検定頻出】ROC曲線の横軸が「FPR (偽陽性率 = 1 - 特異度)」、縦軸が「TPR (真陽性率 = 感度)」であること。軸の定義の取り違えに注意。",
+            "example": "異なる機械学習アルゴリズム（ロジスティック回帰、LightGBM、ランダムフォレスト）の総合性能を AUC 値で横並び比較。"
+      },
+      {
+            "id": "overfitting-regularization",
+            "term": "過学習と正則化 (L1 Lasso回帰 / L2 Ridge回帰)",
+            "en": "Overfitting & Regularization (Lasso & Ridge)",
+            "tier": "DS発展",
+            "category": "機械学習・DS",
+            "tags": [
+                  "過学習",
+                  "正則化",
+                  "Lasso",
+                  "Ridge",
+                  "スパース性",
+                  "ElasticNet"
+            ],
+            "summary": "訓練データに過剰適合して未知データへの汎化性能が落ちるのを防ぐため、損失関数にペナルティ項を加える手法。",
+            "formula": "Ridge(L2): 損失 + λ Σ w_j²  |  Lasso(L1): 損失 + λ Σ |w_j|",
+            "details": "・過学習 (Overfitting)：モデルが訓練データのノイズまで学習してしまい、テストデータに対する誤差が大きくなる現象。\n・Ridge回帰 (L2正則化)：係数の2乗和を抑え、極端に大きな重みを抑制する（係数は0にはならない）。多重共線性の緩和に有効。\n・Lasso回帰 (L1正則化)：係数の絶対値和を抑える。不要な特徴量の係数を完全に「0」に縮小するため、自動的な特徴量選択（スパース推定）が可能。\n・ElasticNet：L1とL2のペナルティをブレンドした正則化。",
+            "examTips": "【検定頻出】「不要な変数の係数を 0 にして特徴量選択ができる正則化はどれか？」→ 正解は「L1 正則化 (Lasso)」。菱形の制約領域による角（スパース性）の発生。",
+            "example": "数千個の遺伝子発現データから疾患リスクを予測する際、Lassoにより重要な数十個の遺伝子だけを抽出。"
+      },
+      {
+            "id": "cross-validation",
+            "term": "k分割交差検証 (k-Fold Cross Validation)",
+            "en": "k-Fold Cross Validation",
+            "tier": "DS基礎",
+            "category": "機械学習・DS",
+            "tags": [
+                  "交差検証",
+                  "CV",
+                  "ホールドアウト検証",
+                  "汎化性能",
+                  "ハイパーパラメータチューニング"
+            ],
+            "summary": "限られたデータセットで過学習を防ぎつつ、モデルの真の汎化性能を客観的に評価するリサンプリング手法。",
+            "formula": "データをk等分 → (k-1)個で訓練、残る1個で検証をk回反復してスコアを平均",
+            "details": "・単一のホールドアウト検証（訓練7:テスト3など）は分割の偶然性にスコアが左右されやすい。\n・k-Fold (通常 k=5 または 10) により、すべてのデータ点がちょうど1回ずつテストデータとして使われるため偏りが平滑化される。\n・層化k分割 (Stratified k-Fold)：分類問題において各フォールド内のクラス比率が全体と同じになるよう分割する手法。",
+            "examTips": "【検定頻出】データ漏洩（Data Leakage）の防止！標準化のスケーラーや特徴量選択は「各フォールドの訓練データのみ」でfitさせなければならない。",
+            "example": "5分割交差検証により、グリッドサーチで最適な正則化パラメータ λ を選定。"
+      },
+      {
+            "id": "decision-tree-gini",
+            "term": "決定木 (Decision Tree) とジニ不純度",
+            "en": "Decision Tree & Gini Impurity",
+            "tier": "DS基礎",
+            "category": "機械学習・DS",
+            "tags": [
+                  "決定木",
+                  "ジニ不純度",
+                  "エントロピー",
+                  "情報利得",
+                  "剪定"
+            ],
+            "summary": "条件分岐のルールを木構造で学習する直感的なアルゴリズム。各ノードで不純度が最も下がる分岐条件を探索。",
+            "formula": "ジニ不純度: I_G = 1 - Σ p_i²  |  交差エントロピー: H = - Σ p_i log2(p_i)",
+            "details": "・完全な均一（1クラスのみ）のとき不純度は 0（最小）。均等に混ざり合っているとき不純度は最大。\n・情報利得 (Information Gain)：親ノードの不純度から子ノードの不純度の加重平均を引いた減少量。これを最大化するように分割。\n・長所：人間が「なぜその判定になったか」のルール（if-then）を解釈しやすい。\n・短所：単体では過学習しやすく、データが少し変わると木の構造が激変する不安定性を持つ（剪定やアンサンブルで解決）。",
+            "examTips": "【検定頻出】2クラスで p1=0.5, p2=0.5 のとき、ジニ不純度は 1 - (0.25 + 0.25) = 0.5。p1=1, p2=0 のとき 1 - (1+0) = 0。",
+            "example": "銀行融資審査：「年収 ≧ 400万円」かつ「勤続年数 ≧ 3年」ならば承認、それ以外なら詳細審査へ分岐。"
+      },
+      {
+            "id": "random-forest",
+            "term": "ランダムフォレスト (Random Forest)",
+            "en": "Random Forest",
+            "tier": "DS発展",
+            "category": "機械学習・DS",
+            "tags": [
+                  "ランダムフォレスト",
+                  "アンサンブル学習",
+                  "バギング",
+                  "ブートストラップサンプリング",
+                  "特徴量重要度"
+            ],
+            "summary": "多数の決定木を並列に学習させ、多数決（分類）や平均（回帰）で統合する強力なアンサンブル手法（バギング）。",
+            "formula": "ブートストラップ抽出(復元抽出) + 特徴量のランダム選択 → 多様化させた木の統合",
+            "details": "・バギング (Bootstrap Aggregating) の進化版。\n・2つのランダム性：\n  ① データのランダムサンプリング（ブートストラップ）\n  ② 分岐候補とする特徴量のランダム選択（m ≒ √p 個）\n・この2重のランダム性により決定木同士の相関を下げ、モデル全体のバリアンス（分散）を大幅に低減し過学習を防ぐ。\n・特徴量重要度 (Feature Importance) を副産物として算出可能。",
+            "examTips": "【検定頻出】「バギングはバリアンス（分散）を低減する」「ブースティングはバイアスを低減する」というアンサンブルの対比。",
+            "example": "ECサイトの顧客離脱予測で、単一の決定木より高精度かつ安定した予測を実現。"
+      },
+      {
+            "id": "gradient-boosting",
+            "term": "勾配ブースティング (GBDT / LightGBM / XGBoost)",
+            "en": "Gradient Boosted Decision Trees (GBDT)",
+            "tier": "DS発展",
+            "category": "機械学習・DS",
+            "tags": [
+                  "GBDT",
+                  "勾配ブースティング",
+                  "LightGBM",
+                  "XGBoost",
+                  "残差の逐次学習"
+            ],
+            "summary": "前の弱学習器（決定木）の「予測残差（損失関数の勾配）」を次の木が逐次学習し、精度を段階的に引き上げるブースティング手法。",
+            "formula": "F_m(x) = F_{m-1}(x) + η · h_m(x)  (η は学習率)",
+            "details": "・ランダムフォレスト（並列）とは異なり、「直列・逐次」にモデルを繋いで改善していく。\n・テーブルデータ（表形式データ）のコンペティション（Kaggle等）や実務において世界最強クラスの精度を誇る。\n・XGBoost、LightGBM（ヒストグラムベース高速化）、CatBoost などが有名。\n・学習率 η（Shrinkage）を小さくして木の数を増やすと汎化性能が高まるが、過学習リスクも併せ持つ。",
+            "examTips": "【検定頻出】ブースティングは「逐次学習（Sequential）」、バギングは「並列学習（Parallel）」。直列構造のため前の木の誤差を修正していく性質。",
+            "example": "不動産価格査定AIや金融の信用スコアリングにおいて最高精度の予測モデルを構築。"
+      },
+      {
+            "id": "bias-variance-tradeoff",
+            "term": "バイアスとバリアンスのトレードオフ",
+            "en": "Bias-Variance Tradeoff",
+            "tier": "DS発展",
+            "category": "機械学習・DS",
+            "tags": [
+                  "バイアス",
+                  "バリアンス",
+                  "トレードオフ",
+                  "汎化誤差",
+                  "未学習",
+                  "過学習"
+            ],
+            "summary": "予測モデルの期待汎化誤差を「バイアス²」「バリアンス」「ノイズ（不可避誤差）」の3要素に分解した本質的定理。",
+            "formula": "期待汎化誤差 = (Bias)² + Variance + σ² (既約誤差)",
+            "details": "・バイアス (Bias / 偏り)：モデルが単純すぎてデータの真の構造を捉えきれない誤差（未学習・Underfitting）。\n・バリアンス (Variance / 分散)：モデルが複雑すぎて訓練データの些細な変動に振り回される誤差（過学習・Overfitting）。\n・モデルの自由度（複雑さ）を上げると、バイアスは下がるがバリアンスは上昇する。\n・最適なモデルとは、両者の和（総誤差）が最小になるスイートスポット。",
+            "examTips": "【検定頻出グラフ】横軸にモデルの複雑さ、縦軸に誤差をとったU字カーブのグラフ。過学習ゾーンと未学習ゾーンの境界判別。",
+            "example": "100個のデータに対して1次回帰線（高バイアス・低バリアンス） vs 20次多項式回帰（低バイアス・高バリアンス）。"
+      },
+      {
+            "id": "time-series-autocorr",
+            "term": "時系列の定常性と自己相関 (ACF / PACF)",
+            "en": "Stationarity & Autocorrelation (ACF/PACF)",
+            "tier": "準1級",
+            "category": "時系列・因果",
+            "tags": [
+                  "定常性",
+                  "自己相関係数",
+                  "偏自己相関",
+                  "コレログラム",
+                  "ホワイトノイズ"
+            ],
+            "summary": "時間変化するデータの確率的性質（平均・分散・自己共分散）が時間に依存しない「定常性」と、過去のラグとの相関。",
+            "formula": "弱定常性: E(Yt) = μ (一定)  かつ  Cov(Yt, Yt-k) = γk (ラグkのみに依存)",
+            "details": "・弱定常時系列（Weak Stationarity）：平均が一定で、2時点間の共分散が時間差（ラグ k）のみに依存する。\n・コレログラム (Correlogram)：ラグ k ごとの自己相関係数 r_k をプロットした図。\n・自己相関関数 (ACF)：ラグ k 離れたデータ同士の単純な相関。\n・偏自己相関関数 (PACF)：中間のラグの影響を統計的に除去した純粋な直接相関（ARモデルの次数決定に使用）。",
+            "examTips": "【検定頻出】AR(p) モデルは「PACFがラグ p で急激に切断（カットオフ）される」。MA(q) モデルは「ACFがラグ q で切断される」。この次数同定ルールは準1級の超頻出問。",
+            "example": "毎日の電力需要予測で、24時間前（前日同時刻）や168時間前（前週同曜日）との強い自己相関を検知。"
+      },
+      {
+            "id": "arima-sarima",
+            "term": "ARIMAモデルと季節調整 (SARIMA)",
+            "en": "ARIMA & SARIMA Models",
+            "tier": "準1級",
+            "category": "時系列・因果",
+            "tags": [
+                  "ARIMA",
+                  "自己回帰",
+                  "移動平均",
+                  "差分",
+                  "単位根",
+                  "季節調整"
+            ],
+            "summary": "非定常な時系列データを差分（階差）によって定常化し、自己回帰(AR)と移動平均(MA)を統合した予測モデル。",
+            "formula": "ARIMA(p, d, q): p=AR次数, d=差分階数, q=MA次数",
+            "details": "・単位根（ランダムウォークなど）を持つトレンド時系列は、1階差分 ΔYt = Yt - Yt-1 をとることで定常化できる。\n・AR(p)：自身の過去 p 期の値による回帰。\n・MA(q)：過去 q 期のホワイトノイズ（ショック）の重み付け和。\n・SARIMA(p, d, q)(P, D, Q)_s：季節周期 s（12ヶ月や7日など）の季節差分と季節ラグを組み込んだ拡張モデル。",
+            "examTips": "【検定頻出】単位根検定（ADF検定: Augmented Dickey-Fuller検定）で帰無仮説「単位根が存在する（非定常）」が棄却されて初めて定常モデルを適用できる。",
+            "example": "月ごとの航空旅客数予測（年次トレンドと夏季ピークの季節変動をSARIMAで捕捉）。"
+      },
+      {
+            "id": "causality-and-dag",
+            "term": "有向非巡回グラフ (DAG) と交絡バイアス",
+            "en": "Directed Acyclic Graphs (DAG) & Confounding",
+            "tier": "準1級",
+            "category": "時系列・因果",
+            "tags": [
+                  "因果推論",
+                  "DAG",
+                  "交絡因子",
+                  "バックドア基準",
+                  "Pearl"
+            ],
+            "summary": "変数間の因果関係を矢印（有向辺）で視覚化したグラフィカルモデル。真の因果効果を特定するためのバックドア基準。",
+            "formula": "X (処置) ← Z (交絡) → Y (結果)  [Zを制御/調整することで交絡バイアスを解消]",
+            "details": "・ジューディア・パール（Judea Pearl）らが確立した現代因果推論の枠組み。\n・交絡（Confounder）：処置 X と結果 Y の両方に影響を与える共通の原因 Z。Zを調整しないと見かけ上の因果効果が生じる。\n・合流点（Collider）：X → C ← Y のように2つの矢印が衝突する変数。コライダー C を不用意に条件付けると、かえって擬似相関が誘発される（バークソンのパラドックス）。",
+            "examTips": "【検定頻出】バックドア基準の直感：「合流点でない交絡因子は調整しなければならないが、合流点（コライダー）を調整してはならない（バイアスが開く）」。",
+            "example": "投薬 X が治癒 Y に与える効果を分析する際、重症度 Z が処置と治癒の両方に影響するため、重症度 Z をコントロールする。"
+      },
+      {
+            "id": "propensity-score",
+            "term": "傾向スコアマッチング (PSM) とIPW",
+            "en": "Propensity Score Matching (PSM) & IPW",
+            "tier": "準1級",
+            "category": "時系列・因果",
+            "tags": [
+                  "傾向スコア",
+                  "マッチング",
+                  "IPW",
+                  "観察研究",
+                  "選択バイアス",
+                  "ATE"
+            ],
+            "summary": "ランダム化比較実験 (RCT) ができない観察データにおいて、処置を受ける確率（傾向スコア）を用いて共変量の偏りを疑似的に均等化する因果推論手法。",
+            "formula": "傾向スコア e(X) = P(Z = 1 | X)  |  逆確率重み付け IPW推定量",
+            "details": "・共変量 X（年齢、年収、既往歴等）が多数あっても、処置を受ける条件付き確率 e(X) という「1次元のスコア」に縮約できる（バランシングスコアの性質）。\n・傾向スコアマッチング (PSM)：スコアが近い処置群と対照群のペアを作って比較。\n・逆確率重み付け法 (IPW: Inverse Probability Weighting)：処置を受けた確率の逆数を重みとして仮想的な母集団を再構成（平均処置効果 ATE を推定）。",
+            "examTips": "【検定頻出】傾向スコアにより調整できるのは「測定された共変量（観察された交絡因子）」のみであり、未知の未観測交絡因子は調整できない限界を持つ。",
+            "example": "広告を見た人（自発的）と見なかった人の購買率比較において、もともとブランド好意度が高かった影響を傾向スコアで調整。"
+      },
+      {
+            "id": "diff-in-diff",
+            "term": "差の差分析 (DID: Difference-in-Differences)",
+            "en": "Difference-in-Differences (DID)",
+            "tier": "準1級",
+            "category": "時系列・因果",
+            "tags": [
+                  "DID",
+                  "差の差法",
+                  "自然実験",
+                  "平行トレンド仮定",
+                  "ノーベル経済学賞"
+            ],
+            "summary": "政策介入や新機能導入の効果を、処置群と対照群の「事前と事後の変化量の差」を比較することで推定する準実験手法。",
+            "formula": "DID効果 = (処置群_事後 - 処置群_事前) - (対照群_事後 - 対照群_事前)",
+            "details": "・カード・クルーガー（Card & Krueger）の最低賃金研究（ノーベル経済学賞受賞）で著名。\n・時間を通じた自然な景気変動などの共通マクロトレンドを、対照群の変化分を差し引くことで相殺・除去できる。\n・必須の前提：「平行トレンド仮定（Parallel Trends Assumption）」＝もし介入がなかった場合、両群は同じ時間的トレンドを辿っていたはずであるという仮定。",
+            "examTips": "【検定頻出】回帰モデルでの表現：Y = β0 + β1 Treat + β2 Post + β3 (Treat × Post) + ε において、交互作用項の係数 β3 が DID 推定量となる。",
+            "example": "ある県だけでレジ袋有料化を実施した際、未実施の隣接県との差の差をとることで真のゴミ削減効果を推定。"
+      },
+      {
+            "id": "survival-analysis",
+            "term": "生存時間解析 (カプラン・マイヤー法とCox回帰)",
+            "en": "Survival Analysis (Kaplan-Meier & Cox)",
+            "tier": "準1級",
+            "category": "時系列・因果",
+            "tags": [
+                  "生存時間解析",
+                  "打ち切り",
+                  "カプランマイヤー",
+                  "Cox比例ハザード",
+                  "ログランク検定"
+            ],
+            "summary": "イベント（死亡、機械の故障、顧客の解約）が発生するまでの「時間」を分析する手法。途中で追跡不能となった「打ち切りデータ」を適切に扱う。",
+            "formula": "カプラン・マイヤー推定量: S(t) = Π [ 1 - (d_i / n_i) ] | ハザード比: h(t|X) = h0(t) exp(βX)",
+            "details": "・打ち切り (Censoring)：観察終了時点でイベントが未発生だったり、途中で脱落したデータ。打ち切りを無視して除外すると過大・過小推定が生じる。\n・カプラン・マイヤー生存曲線：イベント発生ごとの条件付き生存確率の累積積を階段状グラフで表現。\n・ログランク検定 (Log-rank test)：2群以上の生存曲線の有意差を検定。\n・Cox比例ハザードモデル：ベースラインハザードを特定せずに共変量の影響（ハザード比）を推定できる半パラメトリックモデル。",
+            "examTips": "【検定頻出】「途中で解約しなかったユーザーのデータをそのまま全データ期間生存として平均をとってよいか？」→ 打ち切りを無視した誤り。カプラン・マイヤー法を用いるべき。",
+            "example": "SaaSサービスの会員が加入してから解約（チャーン）するまでの月数を分析し、有料サポート加入の有無による解約率の差を検証。"
+      }
+];
+
+    const dictState = {
+      searchTerm: '',
+      selectedTier: 'all',
+      selectedCat: 'all',
+      favOnly: false,
+      viewMode: 'cards', // 'cards' | 'table'
+      favorites: new Set(),
+      expandedCards: new Set(),
+      currentFlashcard: null,
+      flashcardRevealed: false
+    };
+
+    function loadCodexFavorites() {
+      try {
+        const raw = localStorage.getItem('statquest_fav_terms');
+        if (raw) {
+          const arr = JSON.parse(raw);
+          dictState.favorites = new Set(arr);
+        }
+      } catch (e) {
+        console.warn('Failed to load codex favorites:', e);
+      }
+    }
+
+    function saveCodexFavorites() {
+      try {
+        localStorage.setItem('statquest_fav_terms', JSON.stringify(Array.from(dictState.favorites)));
+      } catch (e) {
+        console.warn('Failed to save codex favorites:', e);
+      }
+    }
+
+    function getTierBadgeClass(tier) {
+      switch(tier) {
+        case '4級': return 'badge-tier badge-tier-4';
+        case '3級': return 'badge-tier badge-tier-3';
+        case '2級': return 'badge-tier badge-tier-2';
+        case 'DS基礎': return 'badge-tier badge-tier-ds-base';
+        case 'DS発展': return 'badge-tier badge-tier-ds-adv';
+        case '準1級': return 'badge-tier badge-tier-semi1';
+        default: return 'badge-tier badge-tier-2';
+      }
+    }
+
+    function highlightText(text, keyword) {
+      if (!text || !keyword) return text;
+      const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`(${escaped})`, 'gi');
+      return text.replace(regex, '<span class="search-highlight">$1</span>');
+    }
+
+    function filterDictionaryEntries() {
+      const query = dictState.searchTerm.trim().toLowerCase();
+      return STAT_DICTIONARY.filter(item => {
+        // Tier 过滤
+        if (dictState.selectedTier !== 'all' && item.tier !== dictState.selectedTier) {
+          return false;
+        }
+        // 分野过滤
+        if (dictState.selectedCat !== 'all' && item.category !== dictState.selectedCat) {
+          return false;
+        }
+        // 仅看收藏
+        if (dictState.favOnly && !dictState.favorites.has(item.id)) {
+          return false;
+        }
+        // 搜索关键词
+        if (query) {
+          const matchTerm = item.term.toLowerCase().includes(query);
+          const matchEn = item.en.toLowerCase().includes(query);
+          const matchSummary = item.summary.toLowerCase().includes(query);
+          const matchFormula = (item.formula || '').toLowerCase().includes(query);
+          const matchTags = item.tags.some(t => t.toLowerCase().includes(query));
+          const matchDetails = item.details.toLowerCase().includes(query);
+          if (!matchTerm && !matchEn && !matchSummary && !matchFormula && !matchTags && !matchDetails) {
+            return false;
+          }
+        }
+        return true;
+      });
+    }
+
+    function renderCodex() {
+      const list = filterDictionaryEntries();
+      const statsText = document.getElementById('codexStatsText');
+      const emptyState = document.getElementById('codexEmptyState');
+      const cardsContainer = document.getElementById('codexCardsContainer');
+      const tableContainer = document.getElementById('codexTableContainer');
+      const tableBody = document.getElementById('codexTableBody');
+
+      // 更新统计文本
+      const favCount = dictState.favorites.size;
+      statsText.innerHTML = `全 <strong>${STAT_DICTIONARY.length}</strong> 項目中、<strong>${list.length}</strong> 件を表示中 (⭐ 苦手・お気に入り: <strong>${favCount}</strong> 件)`;
+
+      if (list.length === 0) {
+        cardsContainer.style.display = 'none';
+        tableContainer.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+
+      if (dictState.viewMode === 'cards') {
+        cardsContainer.style.display = 'grid';
+        tableContainer.style.display = 'none';
+        renderCodexCards(list);
+      } else {
+        cardsContainer.style.display = 'none';
+        tableContainer.style.display = 'block';
+        renderCodexTable(list);
+      }
+    }
+
+    function renderCodexCards(list) {
+      const container = document.getElementById('codexCardsContainer');
+      const query = dictState.searchTerm.trim();
+
+      container.innerHTML = list.map(item => {
+        const isFav = dictState.favorites.has(item.id);
+        const isExpanded = dictState.expandedCards.has(item.id);
+
+        const highlightedTerm = highlightText(item.term, query);
+        const highlightedEn = highlightText(item.en, query);
+        const highlightedSummary = highlightText(item.summary, query);
+        const highlightedFormula = highlightText(item.formula || '', query);
+
+        return `
+          <div class="codex-item-card" id="codex_card_${item.id}">
+            <div class="codex-card-head">
+              <div class="codex-badges">
+                <span class="${getTierBadgeClass(item.tier)}">${item.tier}</span>
+                <span class="badge-cat">${item.category}</span>
+              </div>
+              <button 
+                class="codex-fav-btn ${isFav ? 'active' : ''}" 
+                title="${isFav ? 'お気に入り・苦手から解除' : 'お気に入り・苦手に追加'}"
+                onclick="toggleCodexFav('${item.id}', event)"
+              >
+                ${isFav ? '★' : '☆'}
+              </button>
+            </div>
+
+            <div class="codex-card-title-group">
+              <div class="codex-card-title">${highlightedTerm}</div>
+              <div class="codex-card-en">${highlightedEn}</div>
+            </div>
+
+            <div class="codex-card-summary">
+              ${highlightedSummary}
+            </div>
+
+            ${item.formula ? `
+              <div class="codex-formula-box">
+                ${highlightedFormula}
+              </div>
+            ` : ''}
+
+            <!-- 展开详情抽屉 -->
+            <button class="codex-details-toggle" onclick="toggleCodexDetails('${item.id}')">
+              <span>${isExpanded ? '詳細・注意点を閉じる ▲' : '💡 詳細解説・出題トラップを見る ▼'}</span>
+            </button>
+
+            <div class="codex-details-content ${isExpanded ? 'open' : ''}" id="codex_details_${item.id}">
+              <div>
+                <div class="codex-section-label">📌 本質的理解・ポイント</div>
+                <div style="white-space: pre-line; color: #334155;">${item.details}</div>
+              </div>
+
+              ${item.examTips ? `
+                <div class="codex-exam-tip">
+                  <div class="codex-section-label" style="color: #92400e;">⚠️ 統計検定の出題急所＆ひっかけ</div>
+                  <div>${item.examTips}</div>
+                </div>
+              ` : ''}
+
+              ${item.example ? `
+                <div class="codex-example-box">
+                  <div class="codex-section-label" style="color: #166534;">💼 直感・実務活用イメージ</div>
+                  <div>${item.example}</div>
+                </div>
+              ` : ''}
+
+              <div>
+                <div class="codex-section-label" style="margin-top: 4px;">🏷️ 関連タグ</div>
+                <div class="codex-tags-list">
+                  ${item.tags.map(t => `<span class="codex-tag-item" onclick="searchByCodexTag('${t}')">#${t}</span>`).join('')}
+                </div>
+              </div>
+            </div>
+
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderCodexTable(list) {
+      const tbody = document.getElementById('codexTableBody');
+      const query = dictState.searchTerm.trim();
+
+      tbody.innerHTML = list.map(item => {
+        const isFav = dictState.favorites.has(item.id);
+        const highlightedTerm = highlightText(item.term, query);
+        const highlightedEn = highlightText(item.en, query);
+        const highlightedSummary = highlightText(item.summary, query);
+        const highlightedFormula = highlightText(item.formula || '-', query);
+
+        return `
+          <tr id="codex_row_${item.id}">
+            <td><span class="${getTierBadgeClass(item.tier)}">${item.tier}</span></td>
+            <td><span class="badge-cat">${item.category}</span></td>
+            <td>
+              <div style="font-weight: 800; color: #0f172a;">${highlightedTerm}</div>
+              <div style="font-size: 11px; color: #64748b;">${highlightedEn}</div>
+            </td>
+            <td style="color: #334155; line-height: 1.4;">${highlightedSummary}</td>
+            <td><code style="font-family: 'Fira Code', monospace; font-size: 11px; color: #0369a1; background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">${highlightedFormula}</code></td>
+            <td style="text-align: center;">
+              <button 
+                class="codex-fav-btn ${isFav ? 'active' : ''}" 
+                onclick="toggleCodexFav('${item.id}', event)"
+                title="${isFav ? 'お気に入り解除' : 'お気に入り追加'}"
+              >
+                ${isFav ? '★' : '☆'}
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function handleCodexSearch() {
+      const val = document.getElementById('codexSearchInput').value;
+      dictState.searchTerm = val;
+      const clearBtn = document.getElementById('codexClearBtn');
+      clearBtn.style.display = val ? 'flex' : 'none';
+      renderCodex();
+    }
+
+    function clearCodexSearch() {
+      document.getElementById('codexSearchInput').value = '';
+      dictState.searchTerm = '';
+      document.getElementById('codexClearBtn').style.display = 'none';
+      renderCodex();
+    }
+
+    function searchByCodexTag(tag) {
+      document.getElementById('codexSearchInput').value = tag;
+      dictState.searchTerm = tag;
+      document.getElementById('codexClearBtn').style.display = 'flex';
+      renderCodex();
+      window.scrollTo({ top: document.getElementById('panelCodex').offsetTop - 20, behavior: 'smooth' });
+    }
+
+    function setCodexTierFilter(tier) {
+      sound.click();
+      dictState.selectedTier = tier;
+      document.querySelectorAll('.codex-filter-row button[data-tier]').forEach(btn => {
+        if (btn.dataset.tier === tier) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      renderCodex();
+    }
+
+    function setCodexCatFilter(cat) {
+      sound.click();
+      dictState.selectedCat = cat;
+      document.querySelectorAll('.codex-filter-row button[data-cat]').forEach(btn => {
+        if (btn.dataset.cat === cat) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      renderCodex();
+    }
+
+    function toggleCodexFavOnly() {
+      sound.click();
+      dictState.favOnly = !dictState.favOnly;
+      const btn = document.getElementById('btnFavFilter');
+      if (dictState.favOnly) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+      renderCodex();
+    }
+
+    function setCodexViewMode(mode) {
+      sound.click();
+      dictState.viewMode = mode;
+      document.getElementById('viewBtnCards').classList.toggle('active', mode === 'cards');
+      document.getElementById('viewBtnTable').classList.toggle('active', mode === 'table');
+      renderCodex();
+    }
+
+    function resetCodexFilters() {
+      sound.click();
+      dictState.searchTerm = '';
+      dictState.selectedTier = 'all';
+      dictState.selectedCat = 'all';
+      dictState.favOnly = false;
+      document.getElementById('codexSearchInput').value = '';
+      document.getElementById('codexClearBtn').style.display = 'none';
+      document.getElementById('btnFavFilter').classList.remove('active');
+      document.querySelectorAll('.codex-filter-row button').forEach(btn => {
+        if (btn.dataset.tier === 'all' || btn.dataset.cat === 'all') {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      renderCodex();
+    }
+
+    function toggleCodexFav(termId, event) {
+      if (event) event.stopPropagation();
+      sound.click();
+      if (dictState.favorites.has(termId)) {
+        dictState.favorites.delete(termId);
+      } else {
+        dictState.favorites.add(termId);
+      }
+      saveCodexFavorites();
+      renderCodex();
+    }
+
+    function toggleCodexDetails(termId) {
+      sound.click();
+      if (dictState.expandedCards.has(termId)) {
+        dictState.expandedCards.delete(termId);
+      } else {
+        dictState.expandedCards.add(termId);
+      }
+      const content = document.getElementById(`codex_details_${termId}`);
+      if (content) {
+        content.classList.toggle('open');
+      }
+    }
+
+    /* ==========================================================================
+       10. 暗記単語カード機能 (FLASHCARD MODAL)
+       ========================================================================== */
+    function openFlashcardModal() {
+      sound.click();
+      const modal = document.getElementById('flashcardModal');
+      modal.classList.add('open');
+      nextRandomFlashcard();
+    }
+
+    function closeFlashcardModal() {
+      sound.click();
+      const modal = document.getElementById('flashcardModal');
+      modal.classList.remove('open');
+    }
+
+    function handleFlashcardBackdrop(event) {
+      if (event.target.id === 'flashcardModal') {
+        closeFlashcardModal();
+      }
+    }
+
+    function nextRandomFlashcard() {
+      sound.click();
+      // 如果处于收藏过滤模式且有收藏，则优先从收藏中抽
+      let pool = STAT_DICTIONARY;
+      if (dictState.favOnly && dictState.favorites.size > 0) {
+        pool = STAT_DICTIONARY.filter(i => dictState.favorites.has(i.id));
+      } else if (dictState.selectedTier !== 'all') {
+        pool = STAT_DICTIONARY.filter(i => i.tier === dictState.selectedTier);
+      }
+
+      if (pool.length === 0) pool = STAT_DICTIONARY;
+
+      const randomIdx = Math.floor(Math.random() * pool.length);
+      dictState.currentFlashcard = pool[randomIdx];
+      dictState.flashcardRevealed = false;
+
+      renderCurrentFlashcard();
+    }
+
+    function renderCurrentFlashcard() {
+      const item = dictState.currentFlashcard;
+      if (!item) return;
+
+      const badges = document.getElementById('fcBadges');
+      badges.innerHTML = `
+        <span class="${getTierBadgeClass(item.tier)}">${item.tier}</span>
+        <span class="badge-cat">${item.category}</span>
+      `;
+
+      document.getElementById('fcTerm').innerText = item.term;
+      document.getElementById('fcEn').innerText = item.en;
+
+      const ansBox = document.getElementById('fcAnswerBox');
+      ansBox.classList.remove('revealed');
+      document.getElementById('fcRevealBtn').style.display = 'inline-flex';
+
+      document.getElementById('fcSummary').innerText = item.summary;
+
+      const formulaBox = document.getElementById('fcFormulaBox');
+      if (item.formula) {
+        formulaBox.innerText = `公式: ${item.formula}`;
+        formulaBox.style.display = 'block';
+      } else {
+        formulaBox.style.display = 'none';
+      }
+
+      const examTip = document.getElementById('fcExamTip');
+      if (item.examTips) {
+        examTip.innerText = item.examTips;
+        examTip.style.display = 'block';
+      } else {
+        examTip.style.display = 'none';
+      }
+
+      // 收藏状态
+      const isFav = dictState.favorites.has(item.id);
+      const favBtn = document.getElementById('fcFavToggleBtn');
+      favBtn.innerHTML = isFav ? '<span>★</span> 苦手から削除' : '<span>☆</span> 苦手に追加';
+      favBtn.classList.toggle('active', isFav);
+    }
+
+    function revealFlashcardAnswer() {
+      sound.power();
+      dictState.flashcardRevealed = true;
+      document.getElementById('fcAnswerBox').classList.add('revealed');
+      document.getElementById('fcRevealBtn').style.display = 'none';
+    }
+
+    function toggleFlashcardFav() {
+      if (!dictState.currentFlashcard) return;
+      sound.click();
+      const id = dictState.currentFlashcard.id;
+      if (dictState.favorites.has(id)) {
+        dictState.favorites.delete(id);
+      } else {
+        dictState.favorites.add(id);
+      }
+      saveCodexFavorites();
+      renderCurrentFlashcard();
+      renderCodex();
+    }
+
+    /* ==========================================================================
+       11. 题目与词典深度联动 (CROSS-MODULE INTEGRATION)
+       ========================================================================== */
+    function lookupCurrentQuestionInCodex() {
+      if (!currentQ) return;
+      sound.click();
+
+      // 根据当前题目的关键词在词典中精准寻找
+      let match = null;
+      // 遍历词典，寻找匹配的条目
+      const qText = (currentQ.question + ' ' + (currentQ.solution || '') + ' ' + (currentQ.formula || '')).toLowerCase();
+
+      for (let item of STAT_DICTIONARY) {
+        if (qText.includes(item.term.toLowerCase()) || 
+            item.tags.some(t => qText.includes(t.toLowerCase()))) {
+          match = item;
+          break;
+        }
+      }
+
+      // 切换到词典 Tab
+      switchTab('codex');
+
+      if (match) {
+        // 清理筛选条件，精准显示该词条
+        resetCodexFilters();
+        dictState.searchTerm = match.term;
+        document.getElementById('codexSearchInput').value = match.term;
+        document.getElementById('codexClearBtn').style.display = 'flex';
+        dictState.expandedCards.add(match.id);
+        renderCodex();
+
+        // 平滑滚动并高亮
+        setTimeout(() => {
+          const cardEl = document.getElementById(`codex_card_${match.id}`);
+          if (cardEl) {
+            cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            cardEl.classList.add('highlighted');
+            setTimeout(() => cardEl.classList.remove('highlighted'), 3000);
+          }
+        }, 150);
+      } else {
+        // 若无精确匹配，则将当前题目的 tier 过滤打开
+        const tierNameMap = ['4級', '3級', '2級', 'DS基礎', '準1級'];
+        const targetTier = tierNameMap[state.currentTier] || 'all';
+        setCodexTierFilter(targetTier);
+      }
+    }
+
   </script>
 </body>
 </html>
