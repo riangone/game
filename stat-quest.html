@@ -1741,6 +1741,9 @@
           <div class="sol-formula" id="solFormula">公式・ポイント</div>
 
           <div class="arena-footer">
+            <button class="btn-skill" onclick="lookupCurrentQuestionInCodex()" title="この問題の関連用語・公式を知識事典で即座に確認">
+              <span>📖</span> 関連知識を事典で引く
+            </button>
             <button class="btn-next" onclick="nextQuestion()">
               <span>次へ進む</span> ➔
             </button>
@@ -5057,31 +5060,37 @@
        11. 题目与词典深度联动 (CROSS-MODULE INTEGRATION)
        ========================================================================== */
     function lookupCurrentQuestionInCodex() {
-      if (!currentQ) return;
+      let targetQ = typeof currentQ !== 'undefined' && currentQ ? currentQ : null;
+      if (!targetQ && typeof examState !== 'undefined' && examState.questions && examState.questions[examState.currentIndex]) {
+        targetQ = examState.questions[examState.currentIndex];
+      }
       sound.click();
+      switchTab('codex');
+
+      if (!targetQ) {
+        return;
+      }
 
       // 根据当前题目的关键词在词典中精准寻找
       let match = null;
-      // 遍历词典，寻找匹配的条目
-      const qText = (currentQ.question + ' ' + (currentQ.solution || '') + ' ' + (currentQ.formula || '')).toLowerCase();
+      const qText = ((targetQ.question || '') + ' ' + (targetQ.solution || '') + ' ' + (targetQ.formula || '')).toLowerCase();
 
       for (let item of STAT_DICTIONARY) {
         if (qText.includes(item.term.toLowerCase()) || 
-            item.tags.some(t => qText.includes(t.toLowerCase()))) {
+            (item.tags && item.tags.some(t => qText.includes(t.toLowerCase())))) {
           match = item;
           break;
         }
       }
 
-      // 切换到词典 Tab
-      switchTab('codex');
-
       if (match) {
         // 清理筛选条件，精准显示该词条
         resetCodexFilters();
         dictState.searchTerm = match.term;
-        document.getElementById('codexSearchInput').value = match.term;
-        document.getElementById('codexClearBtn').style.display = 'flex';
+        const searchInput = document.getElementById('codexSearchInput');
+        if (searchInput) searchInput.value = match.term;
+        const clearBtn = document.getElementById('codexClearBtn');
+        if (clearBtn) clearBtn.style.display = 'flex';
         dictState.expandedCards.add(match.id);
         renderCodex();
 
@@ -5097,9 +5106,13 @@
       } else {
         // 若无精确匹配，则将当前题目的 tier 过滤打开
         const tierNameMap = ['4級', '3級', '2級', 'DS基礎', '準1級'];
-        const targetTier = tierNameMap[state.currentTier] || 'all';
-        setCodexTierFilter(targetTier);
+        const targetTier = targetQ.tier !== undefined ? tierNameMap[targetQ.tier] : 'all';
+        setCodexTierFilter(targetTier || 'all');
       }
+    }
+
+    function openCodexModal() {
+      lookupCurrentQuestionInCodex();
     }
 
   </script>
