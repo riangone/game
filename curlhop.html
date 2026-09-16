@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>弹珠冰壶 - Curl Hop</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap');
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    overflow: hidden; background: #071426;
+    font-family: 'Outfit', "PingFang SC", "Microsoft YaHei", sans-serif;
+    touch-action: none;
+    -webkit-user-select: none; user-select: none;
+  }
+  #game { display: block; width: 100%; height: 100%; }
+
+  #hud {
+    position: fixed; top: 0; left: 0; width: 100%;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 20px 24px; box-sizing: border-box; pointer-events: none;
+    z-index: 5;
+  }
+  .hud-card {
+    background: rgba(8, 30, 58, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 12px 20px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+  }
+  #score-container { display: flex; gap: 14px; }
+  .hud-value-highlight { font-size: 28px; font-weight: 800; color: #67e8f9; line-height: 1.1; margin-top: 2px;}
+  .hud-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.75; margin-bottom: 2px; }
+  .hud-value { font-size: 14px; opacity: 0.95; }
+  #comboEl.hot { color: #facc15; }
+
+  #hint {
+    position: fixed; top: 90px; left: 50%; transform: translateX(-50%);
+    text-align: center; color: #fff; opacity: 0.9; font-size: 13px;
+    pointer-events: none; z-index: 5;
+    background: rgba(8, 30, 58, 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 7px 20px;
+    border-radius: 20px;
+    max-width: 90vw; box-sizing: border-box;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    transition: opacity 0.3s ease;
+    white-space: normal;
+  }
+
+  #banner {
+    position: fixed; top: 38%; left: 50%; transform: translate(-50%, -50%);
+    color: #fff; font-size: 20px; font-weight: 800;
+    background: rgba(34, 211, 238, 0.22);
+    border: 1px solid rgba(34, 211, 238, 0.6);
+    padding: 10px 28px; border-radius: 16px;
+    display: none; z-index: 6; pointer-events: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    text-align: center;
+  }
+
+  #overlay {
+    position: fixed; inset: 0; background: rgba(7, 20, 38, 0.6);
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    color: #fff; backdrop-filter: blur(8px); z-index: 9;
+  }
+  #overlay.show { display: flex; }
+
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 24px;
+    padding: 36px 30px;
+    width: 85%;
+    max-width: 380px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    color: #1e293b;
+  }
+
+  .glass-panel h1 { font-size: 26px; font-weight: 800; margin: 0 0 10px; }
+  .glass-panel .sub { opacity: 0.75; font-size: 14px; margin-bottom: 24px; font-weight: 600; }
+
+  #startScreen {
+    position: fixed; inset: 0;
+    background: linear-gradient(180deg, #071426 0%, #0e3a63 55%, #1e3a5f 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: #1e293b; text-align: center; z-index: 10;
+    padding: 20px;
+  }
+  #startScreen .glass-panel { color: #fff; }
+
+  #startBtn, #restartBtn {
+    padding: 14px 44px; font-size: 16px; border: none; border-radius: 50px;
+    background: linear-gradient(135deg, #22d3ee, #38bdf8); color: #072a3d;
+    box-shadow: 0 8px 24px rgba(34, 211, 238, 0.4); cursor: pointer;
+    font-weight: 800; letter-spacing: 2px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    outline: none;
+  }
+  #startBtn:hover, #restartBtn:hover { transform: translateY(-2px); }
+  #startBtn:active, #restartBtn:active { transform: translateY(1px); }
+
+  .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(30, 41, 59, 0.2);
+    transition: .3s; border: 1px solid rgba(30, 41, 59, 0.15);
+  }
+  .slider:before {
+    position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
+    background-color: white; transition: .3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  input:checked + .slider { background: linear-gradient(135deg, #22d3ee, #38bdf8); border-color: rgba(34, 211, 238, 0.3); }
+  input:checked + .slider:before { transform: translateX(20px); }
+  .slider.round { border-radius: 24px; }
+  .slider.round:before { border-radius: 50%; }
+
+  #throwZone {
+    position: fixed; inset: 0; z-index: 4; touch-action: none;
+  }
+
+  #chargeRing {
+    position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%);
+    width: 96px; height: 96px; pointer-events: none; display: none; z-index: 5;
+  }
+</style>
+</head>
+<body>
+
+<div id="startScreen">
+  <div class="glass-panel">
+    <h1 style="background: linear-gradient(135deg, #67e8f9, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">弹珠冰壶 <span style="font-size: 18px; font-weight: 400; color: #67e8f9; display: block; margin-top: 4px;">Curl Hop</span></h1>
+    <p style="font-size: 13px; line-height: 1.6; opacity: 0.9; margin: 15px 0 20px;">
+      <b>单指按住蓄力，左右拖动瞄准，松手掷出冰壶石</b>（键盘：按住空格蓄力，方向键调整角度，松开发射）<br>
+      石头会在冰面上滑行减速，撞到边墙反弹、撞到别的石头会互相弹开——同心圆越靠近中心分越高<br>
+      太轻过不了远线、太重会滑出台面，都是 0 分；连续 3 次 0 分即结束游戏
+    </p>
+    <div style="background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 16px; padding: 15px; margin-bottom: 25px; text-align: left;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <span style="font-size: 14px; font-weight: 600;">弹道辅助线</span>
+        <label class="switch"><input type="checkbox" id="startGuideToggle" checked><span class="slider round"></span></label>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 14px; font-weight: 600;">游戏音效</span>
+        <label class="switch"><input type="checkbox" id="startSoundToggle" checked><span class="slider round"></span></label>
+      </div>
+    </div>
+    <button id="startBtn">开始比赛</button>
+  </div>
+</div>
+
+<canvas id="game"></canvas>
+<div id="throwZone"></div>
+
+<div id="hud">
+  <div id="score-container">
+    <div class="hud-card">
+      <span class="hud-label">SCORE</span>
+      <span id="scoreEl" class="hud-value-highlight">0</span>
+    </div>
+    <div class="hud-card">
+      <span class="hud-label">COMBO</span>
+      <span id="comboEl" class="hud-value-highlight" style="font-size: 22px;">x1.0</span>
+    </div>
+  </div>
+
+  <div class="hud-card" id="settingsBtnCard" style="pointer-events: auto; cursor: pointer; align-items: center; justify-content: center; padding: 12px; height: 42px; width: 42px; box-sizing: border-box; border-radius: 50%;">
+    <svg id="settingsBtn" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #fff; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+  </div>
+
+  <div class="hud-card" style="align-items: flex-end;">
+    <span id="endEl" class="hud-value">END 1</span>
+    <span id="bestEl" class="hud-value" style="margin-top:4px;">BEST: 0</span>
+  </div>
+</div>
+
+<div id="banner"></div>
+<div id="hint">单指按住蓄力，左右拖动瞄准，松手发射</div>
+
+<canvas id="chargeRing" width="96" height="96"></canvas>
+
+<div id="overlay">
+  <div class="glass-panel">
+    <h1 id="resultTitle" style="color: #67e8f9;">比赛结束</h1>
+    <div class="sub" id="resultSub">总分 0</div>
+    <button id="restartBtn">重新开始</button>
+  </div>
+</div>
+
+<!-- 设置面板 -->
+<div id="settingsScreen" style="position: fixed; inset: 0; background: rgba(7,20,38,0.55); display: none; flex-direction: column; align-items: center; justify-content: center; color: #1e293b; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 15;">
+  <div class="glass-panel" style="max-width: 320px; color:#fff;">
+    <h2 style="font-size: 22px; font-weight: 800; margin: 0 0 25px; color:#67e8f9;">设定选项</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; text-align: left;">
+      <div>
+        <div style="font-size: 15px; font-weight: 600;">弹道辅助线</div>
+        <div style="font-size: 11px; opacity: 0.65; margin-top: 2px;">蓄力时实时预测滑行路径</div>
+      </div>
+      <label class="switch"><input type="checkbox" id="guideToggle" checked><span class="slider round"></span></label>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; text-align: left;">
+      <div>
+        <div style="font-size: 15px; font-weight: 600;">游戏音效</div>
+        <div style="font-size: 11px; opacity: 0.65; margin-top: 2px;">启用或禁用合成音效</div>
+      </div>
+      <label class="switch"><input type="checkbox" id="soundToggle" checked><span class="slider round"></span></label>
+    </div>
+    <button id="closeSettingsBtn" style="padding: 12px 36px; font-size: 15px; border: none; border-radius: 50px; background: linear-gradient(135deg, #22d3ee, #38bdf8); color: #072a3d; font-weight: 800; cursor: pointer;">返回游戏</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+  const scoreEl = document.getElementById("scoreEl");
+  const comboEl = document.getElementById("comboEl");
+  const endEl = document.getElementById("endEl");
+  const bestEl = document.getElementById("bestEl");
+  const hint = document.getElementById("hint");
+  const banner = document.getElementById("banner");
+  const overlay = document.getElementById("overlay");
+  const resultTitle = document.getElementById("resultTitle");
+  const resultSub = document.getElementById("resultSub");
+  const restartBtn = document.getElementById("restartBtn");
+  const startScreen = document.getElementById("startScreen");
+  const startBtn = document.getElementById("startBtn");
+  const throwZone = document.getElementById("throwZone");
+  const chargeRing = document.getElementById("chargeRing");
+  const chargeCtx = chargeRing.getContext("2d");
+
+  const settingsBtnCard = document.getElementById("settingsBtnCard");
+  const settingsScreen = document.getElementById("settingsScreen");
+  const closeSettingsBtn = document.getElementById("closeSettingsBtn");
+  const settingsSvg = document.getElementById("settingsBtn");
+  const guideToggle = document.getElementById("guideToggle");
+  const soundToggle = document.getElementById("soundToggle");
+  const startGuideToggle = document.getElementById("startGuideToggle");
+  const startSoundToggle = document.getElementById("startSoundToggle");
+
+  let guideEnabled = localStorage.getItem("curlHopGuide") !== "false";
+  let soundEnabled = localStorage.getItem("curlHopSound") !== "false";
+  guideToggle.checked = guideEnabled; startGuideToggle.checked = guideEnabled;
+  soundToggle.checked = soundEnabled; startSoundToggle.checked = soundEnabled;
+
+  function updateGuideSetting(v) { guideEnabled = v; localStorage.setItem("curlHopGuide", String(v)); guideToggle.checked = v; startGuideToggle.checked = v; }
+  function updateSoundSetting(v) { soundEnabled = v; localStorage.setItem("curlHopSound", String(v)); soundToggle.checked = v; startSoundToggle.checked = v; }
+  guideToggle.addEventListener("change", e => updateGuideSetting(e.target.checked));
+  startGuideToggle.addEventListener("change", e => updateGuideSetting(e.target.checked));
+  soundToggle.addEventListener("change", e => updateSoundSetting(e.target.checked));
+  startSoundToggle.addEventListener("change", e => updateSoundSetting(e.target.checked));
+
+  settingsBtnCard.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (state === "idle" || state === "gameover") return;
+    settingsSvg.style.transform = "rotate(90deg)";
+    settingsScreen.style.display = "flex";
+    paused = true;
+  });
+  closeSettingsBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    settingsScreen.style.display = "none";
+    settingsSvg.style.transform = "rotate(0deg)";
+    paused = false;
+  });
+
+  // ---------- Canvas sizing: fixed virtual world, letterboxed & scaled to fit screen ----------
+  let DPR = Math.min(window.devicePixelRatio || 1, 2);
+  let W = 0, H = 0;
+  const WORLD_W = 360, WORLD_H = 640;
+  let vscale = 1, offX = 0, offY = 0;
+  function resize() {
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W * DPR; canvas.height = H * DPR;
+    canvas.style.width = W + "px"; canvas.style.height = H + "px";
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    vscale = Math.min(W / WORLD_W, H / WORLD_H);
+    offX = (W - WORLD_W * vscale) / 2;
+    offY = (H - WORLD_H * vscale) / 2;
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  function toWorld(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    return { x: (clientX - rect.left - offX) / vscale, y: (clientY - rect.top - offY) / vscale };
+  }
+
+  // ---------- Audio ----------
+  let audioCtx = null;
+  function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+  function tone(type, freq, freqEnd, dur, gainAmt, now, delay) {
+    delay = delay || 0;
+    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now + delay);
+    if (freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, now + delay + dur);
+    gain.gain.setValueAtTime(gainAmt, now + delay);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + dur);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(now + delay); osc.stop(now + delay + dur + 0.02);
+  }
+  function playSound(type) {
+    if (!soundEnabled) return;
+    if (!audioCtx) initAudio();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    const now = audioCtx.currentTime;
+    if (type === "chargeStart") tone("sine", 220, null, 0.1, 0.07, now);
+    else if (type === "launch") tone("sawtooth", 180, 420, 0.14, 0.15, now);
+    else if (type === "wall") tone("triangle", 340, 220, 0.08, 0.1, now);
+    else if (type === "collide") tone("square", 520, 300, 0.07, 0.12, now);
+    else if (type === "settle") tone("sine", 260, 140, 0.12, 0.09, now);
+    else if (type === "score") { tone("sine", 440, 660, 0.15, 0.12, now); }
+    else if (type === "bullseye") { [660, 880, 1100].forEach((f, i) => tone("sine", f, null, 0.2, 0.11, now, i * 0.05)); }
+    else if (type === "miss") tone("triangle", 200, 90, 0.22, 0.11, now);
+    else if (type === "endComplete") { [523, 659, 784, 1047].forEach((f, i) => tone("sine", f, null, 0.18, 0.1, now, i * 0.08)); }
+    else if (type === "gameover") tone("triangle", 300, 60, 0.5, 0.15, now);
+  }
+
+  // ---------- Physics constants (validated: /tmp/pw-test/curlhop_sim.js Monte-Carlo, 20000 trials/case) ----------
+  // Straight-line (angle=0) frac scan: bullseye window frac in [0.74,0.78], scoring window [0.60,0.90].
+  // Aiming at frac=0.76 w/ human noise (stdev 3.5% charge, 3deg angle): end0 missRate 0.0%, end9 missRate 32.6%
+  // -- smooth escalating difficulty, not a cliff. 3-consecutive-miss game over: "decent" player ~0% early risk,
+  // "bad" player ~9-14% risk -- reachable but not a trap. Collision KE strictly decreases (restitution 0.85), no runaway energy.
+  const V_MIN = 140, V_MAX = 351;
+  const FRICTION_ACCEL = 110;
+  const ORIGIN_X = 180, ORIGIN_Y = 560;
+  const HOUSE_X = 180, HOUSE_Y = 150;
+  const R_BULL = 16, R1 = 38, R2 = 64, R3 = 96;
+  const HOG_Y = 420;
+  const WALL_RESTITUTION = 0.7;
+  const COLLIDE_RESTITUTION = 0.85;
+  const SETTLE_SPEED = 2;
+  const STONE_R = 14;
+  const CHARGE_MS = 900;
+  const MAX_ANGLE = 22; // degrees
+  const DRAG_RANGE = 130; // world px of drag for full angle swing
+  const THROWS_PER_END = 6;
+  const KEY_ANGLE_RATE = 55; // deg/sec while adjusting with arrow keys during charge
+
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function lerp(a, b, d) { return a + (b - a) * d; }
+  function rand(a, b) { return a + Math.random() * (b - a); }
+
+  function wallsForEnd(e) {
+    const shrink = Math.min(e * 4, 60);
+    return { min: 40 + shrink, max: 320 - shrink };
+  }
+  function frictionVarianceForEnd(e) { return Math.min(0.05 + e * 0.035, 0.35); }
+  function ringScore(dist) {
+    if (dist <= R_BULL) return 20;
+    if (dist <= R1) return 10;
+    if (dist <= R2) return 5;
+    if (dist <= R3) return 2;
+    return 0;
+  }
+  function ringColorAt(dist) {
+    if (dist <= R_BULL) return "#fca5a5";
+    if (dist <= R1) return "#e2e8f0";
+    if (dist <= R2) return "#38bdf8";
+    if (dist <= R3) return "#0369a1";
+    return null;
+  }
+
+  // ---------- Game state ----------
+  let state = "idle"; // idle | playing | gameover
+  let paused = false;
+  let stones = []; // {x,y,vx,vy,r,color,isPlayer,settled,crossedHog,offtable,scored,ringVal,id,pop}
+  let particles = [];
+  let floatingTexts = [];
+  let nextStoneId = 1;
+  let endIndex = 0;
+  let throwsThisEnd = 0;
+  let totalScore = 0;
+  let comboStreak = 0;
+  let missStreak = 0;
+  let lastT = 0;
+  let currentThrow = null; // reference to the stone from the most recent player throw, awaiting settle
+  let awaitingSettle = false;
+  let throwReady = true;
+
+  let charging = false, chargeStart = 0, chargeAmount = 0, aimAngle = 0, dragStartX = 0, dragActive = false;
+
+  function comboMult() { return 1 + 0.2 * Math.min(comboStreak, 5); }
+
+  function anyStoneMoving() {
+    for (const s of stones) if (!s.settled) return true;
+    return false;
+  }
+
+  function placeGuardStones() {
+    const count = endIndex >= 2 ? Math.min(Math.floor(endIndex / 2), 3) : 0;
+    for (let i = 0; i < count; i++) {
+      const ang = rand(0, Math.PI * 2);
+      const rad = rand(30, 85);
+      stones.push({
+        id: nextStoneId++, x: HOUSE_X + Math.cos(ang) * rad, y: HOUSE_Y + Math.sin(ang) * rad,
+        vx: 0, vy: 0, r: STONE_R, color: "#f97316", isPlayer: false, settled: true,
+        crossedHog: true, offtable: false, scored: true, ringVal: null, pop: 0
+      });
+    }
+  }
+
+  function resetGame() {
+    stones = [];
+    particles = []; floatingTexts = [];
+    endIndex = 0; throwsThisEnd = 0; totalScore = 0; comboStreak = 0; missStreak = 0;
+    currentThrow = null; awaitingSettle = false; throwReady = true;
+    charging = false; chargeAmount = 0; aimAngle = 0;
+    placeGuardStones();
+    scoreEl.textContent = "0";
+    comboEl.textContent = "x1.0"; comboEl.classList.remove("hot");
+    endEl.textContent = "END " + (endIndex + 1);
+    banner.style.display = "none";
+  }
+
+  let best = parseInt(localStorage.getItem("curlHopBest") || "0", 10);
+  bestEl.textContent = "BEST: " + best;
+
+  function beginGame() {
+    resetGame();
+    state = "playing";
+  }
+
+  // ---------- Input ----------
+  let pressPointerId = null;
+
+  throwZone.addEventListener("pointerdown", (e) => {
+    if (state !== "playing" || paused || !throwReady) return;
+    e.preventDefault();
+    pressPointerId = e.pointerId;
+    try { throwZone.setPointerCapture(e.pointerId); } catch (err) { /* some UAs throw if no matching active native pointer; capture is a nice-to-have, not required */ }
+    dragStartX = e.clientX;
+    dragActive = true;
+    startCharge();
+  });
+  throwZone.addEventListener("pointermove", (e) => {
+    if (pressPointerId === null || e.pointerId !== pressPointerId || !dragActive) return;
+    const dx = (e.clientX - dragStartX) / vscale;
+    aimAngle = clamp(dx / DRAG_RANGE, -1, 1) * MAX_ANGLE;
+  });
+  function endPress(e) {
+    if (pressPointerId === null || e.pointerId !== pressPointerId) return;
+    pressPointerId = null;
+    dragActive = false;
+    releaseCharge();
+  }
+  throwZone.addEventListener("pointerup", endPress);
+  throwZone.addEventListener("pointercancel", endPress);
+
+  window.addEventListener("keydown", (e) => {
+    if ((e.code === "Space") && !e.repeat) { e.preventDefault(); startCharge(); }
+    if (e.code === "ArrowLeft" || e.code === "ArrowRight") e.preventDefault();
+  });
+  window.addEventListener("keyup", (e) => {
+    if (e.code === "Space") releaseCharge();
+  });
+
+  function startCharge() {
+    if (state !== "playing" || paused || !throwReady) return;
+    charging = true;
+    chargeStart = performance.now();
+    chargeAmount = 0;
+    aimAngle = 0;
+    chargeRing.style.display = "block";
+    initAudio();
+    playSound("chargeStart");
+  }
+
+  function releaseCharge() {
+    if (!charging) return;
+    charging = false;
+    chargeRing.style.display = "none";
+    if (state !== "playing" || paused) return;
+    launchStone(chargeAmount, aimAngle);
+  }
+
+  function launchStone(frac, angleDeg) {
+    throwReady = false;
+    const v0 = V_MIN + (V_MAX - V_MIN) * clamp(frac, 0, 1);
+    const rad = angleDeg * Math.PI / 180;
+    const stone = {
+      id: nextStoneId++, x: ORIGIN_X, y: ORIGIN_Y,
+      vx: v0 * Math.sin(rad), vy: -v0 * Math.cos(rad),
+      r: STONE_R, color: "#5eead4", isPlayer: true, settled: false,
+      crossedHog: false, offtable: false, scored: false, ringVal: null,
+      aMult: 1 + (Math.random() * 2 - 1) * frictionVarianceForEnd(endIndex),
+      pop: 0
+    };
+    stones.push(stone);
+    currentThrow = stone;
+    awaitingSettle = true;
+    playSound("launch");
+    addParticle(worldToScreenApprox(ORIGIN_X, ORIGIN_Y), "#5eead4", 6);
+  }
+
+  function worldToScreenApprox(x, y) { return { x: offX + x * vscale, y: offY + y * vscale }; }
+
+  // ---------- Physics update ----------
+  function updateStones(dt) {
+    const walls = wallsForEnd(endIndex);
+    for (const s of stones) {
+      if (s.settled) continue;
+      const a = FRICTION_ACCEL * (s.aMult || 1);
+      const speed = Math.hypot(s.vx, s.vy);
+      if (speed <= SETTLE_SPEED) {
+        s.vx = 0; s.vy = 0; s.settled = true;
+        playSound("settle");
+        continue;
+      }
+      const dvx = -(s.vx / speed) * a * dt;
+      const dvy = -(s.vy / speed) * a * dt;
+      s.vx += dvx; s.vy += dvy;
+      s.x += s.vx * dt; s.y += s.vy * dt;
+      if (s.y <= HOG_Y) s.crossedHog = true;
+      if (s.x - s.r < walls.min) { s.x = walls.min + s.r; s.vx = -s.vx * WALL_RESTITUTION; if (Math.abs(s.vx) > 15) playSound("wall"); }
+      if (s.x + s.r > walls.max) { s.x = walls.max - s.r; s.vx = -s.vx * WALL_RESTITUTION; if (Math.abs(s.vx) > 15) playSound("wall"); }
+      if (s.y < -30) { s.offtable = true; s.settled = true; s.vx = 0; s.vy = 0; }
+    }
+    // pairwise collisions
+    for (let i = 0; i < stones.length; i++) {
+      for (let j = i + 1; j < stones.length; j++) {
+        const a = stones[i], b = stones[j];
+        if (a.offtable || b.offtable) continue;
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const dist = Math.hypot(dx, dy);
+        const minDist = a.r + b.r;
+        if (dist > 0 && dist < minDist) {
+          const nx = dx / dist, ny = dy / dist;
+          // separate overlap
+          const pen = (minDist - dist) / 2;
+          a.x -= nx * pen; a.y -= ny * pen;
+          b.x += nx * pen; b.y += ny * pen;
+          const relVx = a.vx - b.vx, relVy = a.vy - b.vy;
+          const relVn = relVx * nx + relVy * ny;
+          if (relVn > 0) {
+            const impulse = relVn * COLLIDE_RESTITUTION;
+            a.vx -= impulse * nx; a.vy -= impulse * ny;
+            b.vx += impulse * nx; b.vy += impulse * ny;
+            a.settled = false; b.settled = false;
+            playSound("collide");
+            addParticle(worldToScreenApprox((a.x + b.x) / 2, (a.y + b.y) / 2), "#e0f2fe", 5);
+          }
+        }
+      }
+    }
+  }
+
+  function finalizeIfSettled() {
+    if (!awaitingSettle) return;
+    if (anyStoneMoving()) return;
+    awaitingSettle = false;
+    const s = currentThrow;
+    currentThrow = null;
+    if (!s) { throwReady = true; return; }
+    s.scored = true;
+    let ring = 0, reason = null;
+    if (s.offtable) reason = "offtable";
+    else if (!s.crossedHog) reason = "weak";
+    else {
+      const dist = Math.hypot(s.x - HOUSE_X, s.y - HOUSE_Y);
+      ring = ringScore(dist);
+      if (ring === 0) reason = "outside";
+    }
+    s.ringVal = ring;
+    s.pop = 1;
+    registerResult(ring, reason, s);
+  }
+
+  function registerResult(ring, reason, s) {
+    if (ring > 0) {
+      comboStreak++;
+      missStreak = 0;
+      const mult = comboMult();
+      const gained = Math.round(ring * mult);
+      totalScore += gained;
+      scoreEl.textContent = String(totalScore);
+      comboEl.textContent = "x" + mult.toFixed(1);
+      if (comboStreak >= 2) comboEl.classList.add("hot"); else comboEl.classList.remove("hot");
+      addFloatingText("+" + gained, worldToScreenApprox(s.x, s.y - 20), ring === 20 ? "#facc15" : "#67e8f9");
+      if (ring === 20) {
+        playSound("bullseye");
+        showBanner("巨石神抛！靶心 +" + gained, "#facc15");
+      } else {
+        playSound("score");
+      }
+    } else {
+      comboStreak = 0;
+      comboEl.textContent = "x1.0"; comboEl.classList.remove("hot");
+      missStreak++;
+      playSound("miss");
+      const label = reason === "weak" ? "太轻·未过线" : reason === "offtable" ? "太重·滑出台面" : "偏出靶区";
+      addFloatingText(label, worldToScreenApprox(s.x, Math.max(20, s.y - 20)), "#fca5a5");
+    }
+    throwsThisEnd++;
+    if (missStreak >= 3) {
+      finishGame();
+      return;
+    }
+    if (throwsThisEnd >= THROWS_PER_END) {
+      endTransition();
+    } else {
+      throwReady = true;
+    }
+  }
+
+  function endTransition() {
+    throwReady = false;
+    showBanner("第 " + (endIndex + 1) + " 局结束", "#67e8f9");
+    playSound("endComplete");
+    setTimeout(() => {
+      if (state !== "playing") return;
+      endIndex++;
+      throwsThisEnd = 0;
+      stones = stones.filter(s => false); // sweep the house
+      placeGuardStones();
+      endEl.textContent = "END " + (endIndex + 1);
+      throwReady = true;
+    }, 1100);
+  }
+
+  function showBanner(text, color) {
+    banner.textContent = text;
+    banner.style.color = color || "#fff";
+    banner.style.display = "block";
+    clearTimeout(showBanner._t);
+    showBanner._t = setTimeout(() => { banner.style.display = "none"; }, 1000);
+  }
+
+  function finishGame() {
+    if (state !== "playing") return;
+    state = "gameover";
+    playSound("gameover");
+    if (totalScore > best) { best = totalScore; localStorage.setItem("curlHopBest", String(best)); bestEl.textContent = "BEST: " + best; }
+    resultTitle.textContent = "连续 3 次脱靶";
+    resultSub.textContent = "总分 " + totalScore + "　（第 " + (endIndex + 1) + " 局）";
+    overlay.classList.add("show");
+  }
+
+  function update(dt) {
+    if (state !== "playing" || paused) return;
+    if (charging) chargeAmount = clamp((performance.now() - chargeStart) / CHARGE_MS, 0, 1);
+    updateStones(dt);
+    finalizeIfSettled();
+    for (let i = stones.length - 1; i >= 0; i--) {
+      const s = stones[i];
+      if (s.pop > 0) s.pop = Math.max(0, s.pop - dt * 3);
+      if (s.offtable && s.opacity === undefined) s.opacity = 1;
+      if (s.offtable) { s.opacity -= dt * 2; if (s.opacity <= 0) stones.splice(i, 1); }
+    }
+    updateParticles(dt);
+    updateFloatingTexts(dt);
+  }
+
+  // ---------- Particles / floating text ----------
+  function addParticle(pos, color, count) {
+    for (let i = 0; i < count; i++) {
+      particles.push({ x: pos.x, y: pos.y, vx: rand(-70, 70), vy: rand(-90, -5), color, size: rand(2, 4), life: 1, decay: rand(1.4, 2.4) });
+    }
+  }
+  function updateParticles(dt) {
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.life -= p.decay * dt;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+      p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 220 * dt;
+    }
+  }
+  function drawParticles() {
+    for (const p of particles) {
+      ctx.save(); ctx.globalAlpha = Math.max(0, p.life); ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    }
+  }
+  function addFloatingText(text, pos, color) { floatingTexts.push({ text, color, x: pos.x, y: pos.y, vy: -45, alpha: 1 }); }
+  function updateFloatingTexts(dt) {
+    for (let i = floatingTexts.length - 1; i >= 0; i--) {
+      const ft = floatingTexts[i];
+      ft.y += ft.vy * dt; ft.alpha -= 1.1 * dt;
+      if (ft.alpha <= 0) floatingTexts.splice(i, 1);
+    }
+  }
+  function drawFloatingTexts() {
+    for (const ft of floatingTexts) {
+      ctx.save(); ctx.globalAlpha = Math.max(0, ft.alpha); ctx.fillStyle = ft.color;
+      ctx.font = "bold 15px 'Outfit', sans-serif"; ctx.textAlign = "center";
+      ctx.fillText(ft.text, ft.x, ft.y); ctx.restore();
+    }
+  }
+
+  // ---------- Drawing (all in world coords 0..360 x 0..640, transformed once) ----------
+  function drawBackground() {
+    ctx.fillStyle = "#071426";
+    ctx.fillRect(0, 0, W, H);
+    ctx.save();
+    ctx.translate(offX, offY);
+    ctx.scale(vscale, vscale);
+
+    const g = ctx.createLinearGradient(0, 0, 0, WORLD_H);
+    g.addColorStop(0, "#0b3a63"); g.addColorStop(0.5, "#0e4a7a"); g.addColorStop(1, "#0b3a63");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, WORLD_W, WORLD_H);
+
+    const walls = wallsForEnd(endIndex);
+    // ice sheen streaks
+    ctx.strokeStyle = "rgba(255,255,255,0.05)";
+    ctx.lineWidth = 3;
+    for (let i = 0; i < 10; i++) {
+      ctx.beginPath();
+      ctx.moveTo(walls.min + 6, i * 64 + 10);
+      ctx.lineTo(walls.max - 6, i * 64 + 10);
+      ctx.stroke();
+    }
+    // rails
+    ctx.fillStyle = "rgba(2,10,22,0.55)";
+    ctx.fillRect(0, 0, walls.min, WORLD_H);
+    ctx.fillRect(walls.max, 0, WORLD_W - walls.max, WORLD_H);
+    ctx.strokeStyle = "rgba(103,232,249,0.35)"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(walls.min, 0); ctx.lineTo(walls.min, WORLD_H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(walls.max, 0); ctx.lineTo(walls.max, WORLD_H); ctx.stroke();
+
+    // hog line
+    ctx.setLineDash([8, 6]);
+    ctx.strokeStyle = "rgba(250,204,21,0.55)"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(walls.min, HOG_Y); ctx.lineTo(walls.max, HOG_Y); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // house rings
+    const ringsDef = [[R3, "#0369a1"], [R2, "#38bdf8"], [R1, "#e2e8f0"], [R_BULL, "#fca5a5"]];
+    for (const [r, color] of ringsDef) {
+      ctx.beginPath(); ctx.arc(HOUSE_X, HOUSE_Y, r, 0, Math.PI * 2);
+      ctx.fillStyle = color; ctx.fill();
+    }
+    ctx.beginPath(); ctx.arc(HOUSE_X, HOUSE_Y, 3, 0, Math.PI * 2);
+    ctx.fillStyle = "#7f1d1d"; ctx.fill();
+
+    ctx.restore();
+  }
+
+  function drawStone(s) {
+    ctx.save();
+    ctx.translate(s.x, s.y);
+    const scaleUp = 1 + s.pop * 0.35;
+    ctx.scale(scaleUp, scaleUp);
+    if (s.offtable && s.opacity !== undefined) ctx.globalAlpha = Math.max(0, s.opacity);
+    // shadow
+    ctx.beginPath(); ctx.ellipse(0, 3, s.r * 0.9, s.r * 0.5, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(0,0,0,0.25)"; ctx.fill();
+    // body
+    const grad = ctx.createRadialGradient(-s.r * 0.3, -s.r * 0.3, s.r * 0.2, 0, 0, s.r);
+    grad.addColorStop(0, "#ffffff");
+    grad.addColorStop(0.35, s.color);
+    grad.addColorStop(1, s.isPlayer ? "#0f766e" : "#7c2d12");
+    ctx.beginPath(); ctx.arc(0, 0, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = grad; ctx.fill();
+    ctx.strokeStyle = "rgba(0,0,0,0.25)"; ctx.lineWidth = 1; ctx.stroke();
+    // handle
+    ctx.beginPath(); ctx.arc(0, 0, s.r * 0.35, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(0,0,0,0.3)"; ctx.fill();
+    ctx.restore();
+  }
+
+  function drawStones() {
+    ctx.save();
+    ctx.translate(offX, offY);
+    ctx.scale(vscale, vscale);
+    for (const s of stones) drawStone(s);
+    ctx.restore();
+  }
+
+  function simulateGuidePath(frac, angleDeg) {
+    const walls = wallsForEnd(endIndex);
+    let x = ORIGIN_X, y = ORIGIN_Y;
+    const v0 = V_MIN + (V_MAX - V_MIN) * clamp(frac, 0, 1);
+    const rad = angleDeg * Math.PI / 180;
+    let vx = v0 * Math.sin(rad), vy = -v0 * Math.cos(rad);
+    const a = FRICTION_ACCEL;
+    const dt = 1 / 60;
+    const pts = [{ x, y }];
+    for (let i = 0; i < 300; i++) {
+      const speed = Math.hypot(vx, vy);
+      if (speed <= SETTLE_SPEED) break;
+      const dvx = -(vx / speed) * a * dt, dvy = -(vy / speed) * a * dt;
+      vx += dvx; vy += dvy;
+      x += vx * dt; y += vy * dt;
+      if (x < walls.min) { x = walls.min; vx = -vx * WALL_RESTITUTION; }
+      if (x > walls.max) { x = walls.max; vx = -vx * WALL_RESTITUTION; }
+      if (y < -30) break;
+      pts.push({ x, y });
+    }
+    return pts;
+  }
+
+  function drawGuideAndAim() {
+    ctx.save();
+    ctx.translate(offX, offY);
+    ctx.scale(vscale, vscale);
+    if (charging) {
+      if (guideEnabled) {
+        const pts = simulateGuidePath(chargeAmount, aimAngle);
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = "rgba(255,255,255,0.75)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        pts.forEach((p, i) => { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      // aim arrow at origin
+      const rad = aimAngle * Math.PI / 180;
+      const len = 30 + chargeAmount * 30;
+      ctx.strokeStyle = "#67e8f9"; ctx.lineWidth = 3; ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(ORIGIN_X, ORIGIN_Y);
+      ctx.lineTo(ORIGIN_X + Math.sin(rad) * len, ORIGIN_Y - Math.cos(rad) * len);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function draw() {
+    drawBackground();
+    drawStones();
+    drawGuideAndAim();
+    ctx.save();
+    ctx.translate(offX, offY); ctx.scale(vscale, vscale);
+    drawParticles();
+    drawFloatingTexts();
+    ctx.restore();
+    drawChargeRing();
+  }
+
+  function drawChargeRing() {
+    chargeCtx.clearRect(0, 0, 96, 96);
+    if (!charging) return;
+    chargeCtx.strokeStyle = "rgba(255,255,255,0.25)";
+    chargeCtx.lineWidth = 6;
+    chargeCtx.beginPath(); chargeCtx.arc(48, 48, 40, 0, Math.PI * 2); chargeCtx.stroke();
+    chargeCtx.strokeStyle = "#38bdf8";
+    chargeCtx.lineWidth = 6; chargeCtx.lineCap = "round";
+    chargeCtx.beginPath();
+    chargeCtx.arc(48, 48, 40, -Math.PI / 2, -Math.PI / 2 + chargeAmount * Math.PI * 2);
+    chargeCtx.stroke();
+  }
+
+  function loop(t) {
+    if (!lastT) lastT = t;
+    const dt = Math.min((t - lastT) / 1000, 0.033);
+    lastT = t;
+    update(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  startBtn.addEventListener("click", () => {
+    initAudio();
+    startScreen.style.display = "none";
+    beginGame();
+  });
+  restartBtn.addEventListener("click", () => {
+    overlay.classList.remove("show");
+    beginGame();
+  });
+
+  state = "idle";
+  requestAnimationFrame(loop);
+
+  // ---------- Debug hook for automated testing ----------
+  window.__curlDebug = {
+    getState: () => state,
+    getStones: () => stones,
+    getScore: () => totalScore,
+    getCombo: () => comboStreak,
+    getMissStreak: () => missStreak,
+    getEndIndex: () => endIndex,
+    getThrowReady: () => throwReady,
+    getAimAngle: () => aimAngle,
+    getChargeAmount: () => chargeAmount,
+    startCharge, releaseCharge,
+    setChargeAmount: (v) => { chargeAmount = v; },
+    setAimAngle: (v) => { aimAngle = v; },
+    launchStone,
+    forceBegin: () => { initAudio(); startScreen.style.display = "none"; beginGame(); },
+    worldToScreenApprox,
+    toWorld,
+    getWorldConsts: () => ({ ORIGIN_X, ORIGIN_Y, HOUSE_X, HOUSE_Y, R_BULL, R1, R2, R3, HOG_Y, WORLD_W, WORLD_H }),
+  };
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2516 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>わくわく算独アドベンチャー - 萌趣算独小天才 · Calcudoku</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #FFFDF7;
+    --bg-card: #FFFFFF;
+    --primary: #4F46E5;
+    --primary-hover: #4338CA;
+    --primary-light: #EEF2FF;
+    --secondary: #06B6D4;
+    --secondary-light: #ECFEFF;
+    --accent: #F59E0B;
+    --accent-light: #FFFBEB;
+    --success: #10B981;
+    --success-light: #ECFDF5;
+    --error: #EF4444;
+    --error-light: #FEE2E2;
+    --text-main: #1E293B;
+    --text-sub: #64748B;
+    --border-soft: #E2E8F0;
+    --border-cage: #334155;
+    --cell-bg: #FFFFFF;
+    --cell-selected: #FEF08A;
+    --cell-highlight: #F1F5F9;
+    --cell-same: #E0E7FF;
+    --cell-error: #FEE2E2;
+    --shadow-sm: 0 3px 10px rgba(100, 110, 140, 0.07);
+    --shadow-md: 0 8px 20px rgba(100, 110, 140, 0.12);
+    --radius-xl: 24px;
+    --radius-lg: 18px;
+    --radius-md: 14px;
+    --radius-sm: 8px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-family: "M PLUS Rounded 1c", "Outfit", system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 10% 20%, #FFFBEB 0%, #FFFDF7 45%, #F0FDF4 100%);
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    min-height: 100vh;
+  }
+
+  .bg-decor {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+  }
+  .bg-blob-1 { top: -60px; right: -50px; width: 280px; height: 280px; background: radial-gradient(circle, #E0E7FF 0%, transparent 70%); }
+  .bg-blob-2 { bottom: -80px; left: -60px; width: 320px; height: 320px; background: radial-gradient(circle, #ECFDF5 0%, transparent 70%); }
+
+  #app {
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+    padding: 10px 14px 16px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 0 6px;
+    flex-shrink: 0;
+  }
+  .logo-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .logo-icon {
+    font-size: 26px;
+    animation: bounce 2.2s infinite ease-in-out;
+  }
+  .logo-title {
+    font-size: 17px;
+    font-weight: 900;
+    color: var(--text-main);
+    letter-spacing: -0.5px;
+    display: flex;
+    flex-direction: column;
+  }
+  .logo-title span.sub {
+    font-size: 9px;
+    color: var(--primary);
+    font-weight: 800;
+    letter-spacing: 0.5px;
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .round-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    color: var(--text-main);
+  }
+  .round-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .round-btn:active {
+    transform: translateY(1px);
+  }
+
+  /* Mode Switch Tabs */
+  .mode-tabs {
+    display: flex;
+    background: #EFEFE9;
+    padding: 4px;
+    border-radius: 16px;
+    margin: 4px 0 10px;
+    flex-shrink: 0;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+  }
+  .tab-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 7px 10px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-sub);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .tab-btn.active {
+    background: #FFFFFF;
+    color: var(--primary);
+    box-shadow: 0 3px 10px rgba(79, 70, 229, 0.2);
+    transform: scale(1.02);
+  }
+
+  /* Screen Views */
+  .view {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    animation: fadeIn 0.22s ease-out;
+  }
+  .view.active {
+    display: flex;
+  }
+
+  /* ================== MAP VIEW ================== */
+  .section-banner {
+    background: linear-gradient(135deg, #EEF2FF 0%, #FEF3C7 100%);
+    border: 2px solid #C7D2FE;
+    border-radius: var(--radius-lg);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
+  }
+  .banner-left h2 {
+    font-size: 16px;
+    font-weight: 900;
+    color: #3730A3;
+  }
+  .banner-left p {
+    font-size: 11px;
+    color: #4338CA;
+    margin-top: 2px;
+  }
+  .banner-stars {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #FFFFFF;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #D97706;
+    box-shadow: 0 2px 6px rgba(217, 119, 6, 0.15);
+  }
+
+  .tier-selector {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+  }
+  .tier-pill {
+    flex: 1;
+    border: 2px solid var(--border-soft);
+    background: #FFFFFF;
+    border-radius: 14px;
+    padding: 8px 4px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .tier-pill.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(79, 70, 229, 0.2);
+  }
+  .tier-pill .pill-title {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--text-main);
+    white-space: nowrap;
+  }
+  .tier-pill.active .pill-title {
+    color: var(--primary);
+  }
+  .tier-pill .pill-sub {
+    font-size: 10px;
+    color: var(--text-sub);
+    margin-top: 1px;
+    white-space: nowrap;
+  }
+
+  .stage-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .stage-card {
+    background: #FFFFFF;
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 12px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: var(--shadow-sm);
+  }
+  .stage-card:hover:not(.locked) {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: var(--shadow-md);
+    border-color: var(--secondary);
+  }
+  .stage-card:active:not(.locked) {
+    transform: translateY(1px);
+  }
+  .stage-card.locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #F8FAFC;
+  }
+  .stage-card .badge-icon {
+    font-size: 26px;
+    margin-bottom: 3px;
+  }
+  .stage-card .stage-num {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .stage-card .stage-name {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--text-sub);
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+  }
+  .stage-stars {
+    display: flex;
+    gap: 2px;
+    margin-top: 5px;
+    font-size: 13px;
+    color: #E2E8F0;
+  }
+  .stage-stars .star-earned {
+    color: #F59E0B;
+  }
+
+  /* ================== FREE PLAY CONFIG VIEW ================== */
+  .free-play-card {
+    background: #FFFFFF;
+    border-radius: var(--radius-xl);
+    padding: 20px 18px;
+    border: 2px solid var(--border-soft);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 16px;
+  }
+  .free-title {
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--text-main);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .option-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .opt-btn {
+    flex: 1;
+    border: 2px solid var(--border-soft);
+    background: #FAF8F5;
+    border-radius: 14px;
+    padding: 10px 4px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+  .opt-btn.active {
+    border-color: var(--secondary);
+    background: var(--secondary-light);
+    color: #0E7490;
+    box-shadow: 0 4px 10px rgba(6, 182, 212, 0.25);
+  }
+  .start-free-btn {
+    width: 100%;
+    border: none;
+    background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
+    color: #FFFFFF;
+    border-radius: 16px;
+    padding: 13px;
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: 0 5px 16px rgba(79, 70, 229, 0.35);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .start-free-btn:hover {
+    transform: translateY(-2px);
+  }
+  .start-free-btn:active {
+    transform: translateY(1px);
+  }
+
+  /* ================== GAMEPLAY VIEW ================== */
+  .game-header {
+    background: #FFFFFF;
+    border-radius: var(--radius-md);
+    border: 2px solid var(--border-soft);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
+  }
+  .game-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-right: 8px;
+  }
+  .game-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--primary);
+    white-space: nowrap;
+  }
+  .game-subinfo {
+    font-size: 10px;
+    color: var(--text-sub);
+    font-weight: 700;
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .game-stats {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #F8FAFC;
+    border-radius: 10px;
+    padding: 3px 8px;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-main);
+  }
+  .stat-pill.mistakes {
+    color: #EF4444;
+    background: #FEE2E2;
+  }
+
+  /* Theme Switcher Bar */
+  .theme-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #FAF8F5;
+    border-radius: 12px;
+    padding: 4px 8px;
+    margin-bottom: 6px;
+    flex-shrink: 0;
+  }
+  .theme-label {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-sub);
+  }
+  .theme-options {
+    display: flex;
+    gap: 3px;
+  }
+  .theme-opt-btn {
+    border: none;
+    background: transparent;
+    padding: 3px 7px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .theme-opt-btn.active {
+    background: #FFFFFF;
+    color: var(--text-main);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+  }
+
+  /* Mascot speech bubble */
+  .mascot-hint-box {
+    background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+    border: 2px solid #FCD34D;
+    border-radius: 14px;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
+    transition: all 0.25s ease;
+  }
+  .mascot-avatar {
+    font-size: 22px;
+    animation: wiggle 2.2s infinite ease-in-out;
+  }
+  .mascot-text {
+    font-size: 11px;
+    font-weight: 700;
+    color: #78350F;
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  /* The Board Container */
+  .board-container {
+    width: 100%;
+    max-width: min(84vw, 420px, 45vh);
+    aspect-ratio: 1 / 1;
+    background: #FFFFFF;
+    border-radius: var(--radius-xl);
+    border: 3px solid var(--border-cage);
+    box-shadow: 0 8px 25px rgba(51, 65, 85, 0.15);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    margin: 0 auto 6px;
+    flex-shrink: 0;
+  }
+
+  #calcudoku-grid {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    background: #FFFFFF;
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+  }
+  .grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+  }
+  .grid-5 {
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+  }
+  .grid-6 {
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+  }
+
+  .cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    font-weight: 900;
+    transition: background 0.1s ease, transform 0.08s ease;
+    box-sizing: border-box;
+  }
+  .cell:active {
+    transform: scale(0.96);
+  }
+
+  /* Font scales based on grid */
+  .grid-3 .cell { font-size: clamp(32px, 7.5vw, 48px); }
+  .grid-4 .cell { font-size: clamp(25px, 5.8vw, 36px); }
+  .grid-5 .cell { font-size: clamp(20px, 4.6vw, 28px); }
+  .grid-6 .cell { font-size: clamp(16px, 3.8vw, 24px); }
+
+  /* Cage Label Badge */
+  .cage-badge {
+    position: absolute;
+    top: 2px;
+    left: 3px;
+    font-size: 10px;
+    font-weight: 900;
+    color: #1E293B;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(2px);
+    padding: 0 4px;
+    border-radius: 4px;
+    pointer-events: none;
+    line-height: 1.3;
+    z-index: 2;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+    transition: all 0.2s ease;
+    border: 1px solid rgba(0,0,0,0.06);
+  }
+  .grid-5 .cage-badge { font-size: 9px; padding: 0 3px; }
+  .grid-6 .cage-badge { font-size: 8px; padding: 0 2px; top: 1px; left: 2px; }
+
+  .cage-badge.satisfied {
+    color: #065F46;
+    background: #D1FAE5;
+    border-color: #34D399;
+  }
+  .cage-badge.satisfied::after {
+    content: " ✓";
+    font-size: 8px;
+  }
+
+  .cage-badge.error {
+    color: #991B1B;
+    background: #FEE2E2;
+    border-color: #F87171;
+  }
+
+  /* Sub-number in Pet/Fruit themes */
+  .sub-num-tag {
+    position: absolute;
+    bottom: 2px;
+    right: 3px;
+    font-size: 9px;
+    font-weight: 800;
+    color: #475569;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 0 3px;
+    border-radius: 4px;
+    line-height: 1.2;
+    pointer-events: none;
+  }
+  .grid-6 .sub-num-tag { font-size: 7.5px; bottom: 1px; right: 1px; }
+
+  /* Highlights */
+  .cell.highlight-line {
+    background: #F8FAFC !important;
+  }
+  .cell.highlight-same {
+    background: #E0E7FF !important;
+  }
+  .cell.selected {
+    background: var(--cell-selected) !important;
+    box-shadow: inset 0 0 0 3px #FACC15;
+  }
+  .cell.user-filled {
+    color: #4F46E5;
+    animation: popIn 0.16s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .cell.duplicate-error {
+    background: #FEE2E2 !important;
+    color: var(--error) !important;
+    animation: shake 0.35s ease;
+  }
+  .cell.hint-glow {
+    background: #FEF08A !important;
+    animation: pulse 0.8s infinite alternate;
+  }
+
+  /* Pencil Notes Grid */
+  .notes-grid {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    padding: 12px 2px 2px;
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+  }
+  .grid-3 .notes-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr;
+    font-size: 10px;
+  }
+  .grid-4 .notes-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    font-size: 9px;
+  }
+  .grid-5 .notes-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    font-size: 8px;
+  }
+  .grid-6 .notes-grid {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    font-size: 7.5px;
+  }
+  .note-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748B;
+    font-weight: 700;
+  }
+
+  /* Theme 1 Numbers Colors */
+  [data-theme="numbers"] .cell[data-val="1"] { color: #EF4444; }
+  [data-theme="numbers"] .cell[data-val="2"] { color: #2563EB; }
+  [data-theme="numbers"] .cell[data-val="3"] { color: #059669; }
+  [data-theme="numbers"] .cell[data-val="4"] { color: #D97706; }
+  [data-theme="numbers"] .cell[data-val="5"] { color: #7C3AED; }
+  [data-theme="numbers"] .cell[data-val="6"] { color: #DB2777; }
+
+  /* Control Tools Bar */
+  .controls-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 4px 0 6px;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .action-tool-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #FFFFFF;
+    border: 2px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 6px 2px;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.15s ease;
+    gap: 1px;
+    position: relative;
+  }
+  .action-tool-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--secondary);
+  }
+  .action-tool-btn:active {
+    transform: translateY(1px);
+  }
+  .action-tool-btn.active {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  .tool-icon {
+    font-size: 17px;
+  }
+  .tool-label {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-main);
+  }
+  .action-tool-btn.active .tool-label {
+    color: var(--primary);
+  }
+  .hint-count-tag {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--accent);
+    color: #FFFFFF;
+    font-size: 9px;
+    font-weight: 900;
+    width: 17px;
+    height: 17px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  }
+
+  /* Number Pad */
+  .numpad-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .num-btn {
+    flex: 1;
+    aspect-ratio: 1 / 1.1;
+    background: #FFFFFF;
+    border: 2px solid var(--border-soft);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 3px 0 var(--border-soft), var(--shadow-sm);
+    transition: all 0.12s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+  }
+  .num-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--secondary);
+    box-shadow: 0 5px 0 var(--border-soft), var(--shadow-md);
+  }
+  .num-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 var(--border-soft);
+  }
+  .num-btn .btn-val {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .num-btn .btn-sub {
+    font-size: 9px;
+    color: var(--text-sub);
+    font-weight: 800;
+    margin-top: -1px;
+  }
+  .num-btn.completed {
+    opacity: 0.35;
+    cursor: default;
+    background: #F1F5F9;
+  }
+
+  /* Modals */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 41, 59, 0.55);
+    backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 99;
+    padding: 16px;
+    animation: fadeIn 0.2s ease;
+  }
+  .modal-overlay.show {
+    display: flex;
+  }
+  .modal-card {
+    background: #FFFFFF;
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 420px;
+    padding: 22px 18px;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .modal-title {
+    font-size: 19px;
+    font-weight: 900;
+    color: var(--text-main);
+    margin-bottom: 6px;
+  }
+  .modal-desc {
+    font-size: 12px;
+    color: var(--text-sub);
+    margin-bottom: 14px;
+    line-height: 1.45;
+  }
+
+  .rule-slide {
+    background: #F8FAFC;
+    border: 2px solid #E2E8F0;
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 12px;
+    text-align: left;
+  }
+  .rule-slide h3 {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--primary);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .rule-slide p {
+    font-size: 11px;
+    color: #475569;
+    line-height: 1.4;
+  }
+  .rule-demo {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .demo-chip {
+    padding: 4px 10px;
+    border-radius: 8px;
+    background: #FFFFFF;
+    border: 2px solid #CBD5E1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 800;
+  }
+  .demo-chip.ok { border-color: var(--success); background: var(--success-light); color: var(--success); }
+
+  .win-stars {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    font-size: 38px;
+    color: #E2E8F0;
+    margin: 10px 0 14px;
+  }
+  .win-stars .active {
+    color: #F59E0B;
+    animation: bounce 0.6s ease;
+  }
+  .win-stats-box {
+    background: #F8FAFC;
+    border-radius: 14px;
+    padding: 12px;
+    margin-bottom: 16px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .win-stat-item .val {
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .win-stat-item .lbl {
+    font-size: 10px;
+    color: var(--text-sub);
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .btn-primary {
+    flex: 1;
+    border: none;
+    background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
+    color: #FFFFFF;
+    border-radius: 14px;
+    padding: 11px;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  }
+  .btn-secondary {
+    flex: 1;
+    border: 2px solid var(--border-soft);
+    background: #FFFFFF;
+    color: var(--text-main);
+    border-radius: 14px;
+    padding: 11px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  #confetti-canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  @keyframes popIn {
+    0% { transform: scale(0.65); opacity: 0; }
+    80% { transform: scale(1.08); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(3px); }
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.04); }
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-7deg); }
+    75% { transform: rotate(7deg); }
+  }
+</style>
+</head>
+<body data-theme="numbers">
+  <div class="bg-decor bg-blob-1"></div>
+  <div class="bg-decor bg-blob-2"></div>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <div id="app">
+    <!-- Top Header -->
+    <header class="header">
+      <div class="logo-group" id="logoBtn">
+        <div class="logo-icon">🧮</div>
+        <div class="logo-title">
+          <span>わくわく算独アドベンチャー</span>
+          <span class="sub">CALCUDOKU · 萌趣算独小天才</span>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button class="round-btn" id="tutorialBtn" title="ルール教室">📖</button>
+        <button class="round-btn" id="soundBtn" title="音のオン/オフ">🔊</button>
+        <button class="round-btn" id="mapBackBtn" title="マップへ戻る" style="display:none;">🗺️</button>
+      </div>
+    </header>
+
+    <!-- Top Mode Tabs -->
+    <div class="mode-tabs" id="modeTabs">
+      <button class="tab-btn active" data-view="adventureView">
+        <span>🏝️</span> ステージ冒険
+      </button>
+      <button class="tab-btn" data-view="freePlayView">
+        <span>🎯</span> 自由トレーニング
+      </button>
+    </div>
+
+    <!-- ================= 1. ADVENTURE MAP VIEW ================= -->
+    <main id="adventureView" class="view active">
+      <div class="section-banner">
+        <div class="banner-left">
+          <h2>⭐ 算数アドベンチャーマップ</h2>
+          <p>たし算・ひき算・かけ算・わり算で島を進もう！</p>
+        </div>
+        <div class="banner-stars">
+          <span>⭐</span>
+          <span id="totalStarsCount">0 / 54</span>
+        </div>
+      </div>
+
+      <!-- Tier selector -->
+      <div class="tier-selector">
+        <div class="tier-pill active" data-tier="1">
+          <div class="pill-title">🐣 3×3 はじめて</div>
+          <div class="pill-sub">低学年・超キホン</div>
+        </div>
+        <div class="tier-pill" data-tier="2">
+          <div class="pill-title">🦊 4×4 チャレンジ</div>
+          <div class="pill-sub">加減と×÷・発展</div>
+        </div>
+        <div class="tier-pill" data-tier="3">
+          <div class="pill-title">👑 5×5 & 6×6 マスター</div>
+          <div class="pill-sub">本格四則演算マスター</div>
+        </div>
+      </div>
+
+      <div class="stage-grid" id="stageGrid">
+        <!-- Injected via JS -->
+      </div>
+    </main>
+
+    <!-- ================= 2. FREE PLAY CONFIG VIEW ================= -->
+    <main id="freePlayView" class="view">
+      <div class="free-play-card">
+        <div class="free-title">
+          <span>📏</span> マスの大きさをえらぶ
+        </div>
+        <div class="option-row" id="freeSizeOptions">
+          <div class="opt-btn" data-size="3">
+            <div>3 × 3</div>
+            <small style="font-size:10px; color:#888;">入門ミニ</small>
+          </div>
+          <div class="opt-btn active" data-size="4">
+            <div>4 × 4</div>
+            <small style="font-size:10px; color:#888;">スタンダード</small>
+          </div>
+          <div class="opt-btn" data-size="5">
+            <div>5 × 5</div>
+            <small style="font-size:10px; color:#888;">ひらめき</small>
+          </div>
+          <div class="opt-btn" data-size="6">
+            <div>6 × 6</div>
+            <small style="font-size:10px; color:#888;">本格マスター</small>
+          </div>
+        </div>
+
+        <div class="free-title">
+          <span>⭐</span> 難易度（計算の種類）
+        </div>
+        <div class="option-row" id="freeDiffOptions">
+          <div class="opt-btn active" data-diff="easy">
+            <div>🌱 やさしい</div>
+            <small style="font-size:10px; color:#888;">＋・− (加減)</small>
+          </div>
+          <div class="opt-btn" data-diff="medium">
+            <div>🌿 ふつう</div>
+            <small style="font-size:10px; color:#888;">＋・−・×</small>
+          </div>
+          <div class="opt-btn" data-diff="hard">
+            <div>🔥 むずかしい</div>
+            <small style="font-size:10px; color:#888;">＋・−・×・÷</small>
+          </div>
+        </div>
+
+        <button class="start-free-btn" id="startFreeBtn">
+          <span>🚀</span> 新しいパズルを生成してスタート！
+        </button>
+      </div>
+    </main>
+
+    <!-- ================= 3. GAMEPLAY VIEW ================= -->
+    <main id="gameplayView" class="view">
+      <div class="game-header">
+        <div class="game-info">
+          <div class="game-badge" id="gameStageBadge">⭐ ステージ 1</div>
+          <div class="game-subinfo" id="gameStageSubinfo">3×3 はじめての加法</div>
+        </div>
+        <div class="game-stats">
+          <div class="stat-pill" title="経過時間">
+            <span>⏱️</span> <span id="timerDisplay">00:00</span>
+          </div>
+          <div class="stat-pill mistakes" title="ミス回数">
+            <span>❌</span> <span id="mistakesDisplay">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme Switch Bar -->
+      <div class="theme-bar">
+        <span class="theme-label">🎨 スタイル切替</span>
+        <div class="theme-options">
+          <button class="theme-opt-btn active" data-theme="numbers">🔢 すうじ</button>
+          <button class="theme-opt-btn" data-theme="animals">🐾 どうぶつ</button>
+          <button class="theme-opt-btn" data-theme="fruits">🍓 フルーツ</button>
+        </div>
+      </div>
+
+      <!-- Mascot Tip Bubble -->
+      <div class="mascot-hint-box" id="mascotBubble">
+        <div class="mascot-avatar" id="mascotIcon">🐱</div>
+        <div class="mascot-text" id="mascotMsg">マスをタップして、計算に合う数字を入れてね！</div>
+      </div>
+
+      <!-- The Calcudoku Board -->
+      <div class="board-container">
+        <div id="calcudoku-grid" class="grid-3">
+          <!-- Cells injected by JS -->
+        </div>
+      </div>
+
+      <!-- Action Tools Bar -->
+      <div class="controls-bar">
+        <button class="action-tool-btn" id="undoBtn" title="一手戻す">
+          <span class="tool-icon">↩️</span>
+          <span class="tool-label">もどす</span>
+        </button>
+        <button class="action-tool-btn" id="noteModeBtn" title="仮置きメモモード">
+          <span class="tool-icon">✏️</span>
+          <span class="tool-label">メモ</span>
+        </button>
+        <button class="action-tool-btn" id="eraseBtn" title="消去">
+          <span class="tool-icon">🧹</span>
+          <span class="tool-label">けす</span>
+        </button>
+        <button class="action-tool-btn" id="hintBtn" title="スマートヒント">
+          <span class="tool-icon">💡</span>
+          <span class="tool-label">ヒント</span>
+          <span class="hint-count-tag" id="hintCountBadge">3</span>
+        </button>
+        <button class="action-tool-btn" id="restartBtn" title="最初からやり直す">
+          <span class="tool-icon">🔄</span>
+          <span class="tool-label">リセット</span>
+        </button>
+      </div>
+
+      <!-- Number Pad -->
+      <div class="numpad-grid" id="numpadGrid">
+        <!-- Injected via JS based on grid size -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Tutorial Modal -->
+  <div class="modal-overlay" id="tutorialModal">
+    <div class="modal-card">
+      <div class="modal-title">📖 算独（KenKen）のルール</div>
+      <div class="modal-desc">たし算・ひき算・かけ算・わり算を使った最高に楽しい数字パズル！</div>
+
+      <div class="rule-slide">
+        <h3>1. タテ・ヨコに数字を1回ずつ！</h3>
+        <p>同じ行・同じ列には、1〜Nの数字が1回ずつだけ入ります（同じ列に同じ数字は入れません）。</p>
+        <div class="rule-demo">
+          <div class="demo-chip ok">1</div>
+          <div class="demo-chip ok">2</div>
+          <div class="demo-chip ok">3</div>
+        </div>
+      </div>
+
+      <div class="rule-slide">
+        <h3>2. 太線で囲まれた「部屋（算区）」の計算！</h3>
+        <p>左上の数字と記号（＋、−、×、÷）に合うように数字を入れよう！</p>
+        <p style="margin-top:4px;">
+          • <b>単独マス（例: 3）</b>: そのまま「3」を入れるボーナスマス！<br>
+          • <b>たし算（例: 5+）</b>: 部屋の数字をぜんぶ足すと 5！<br>
+          • <b>ひき算（例: 1-）</b>: 2つの数字の差が 1（大きい数 - 小さい数）！<br>
+          • <b>かけ算（例: 6×）</b>: 部屋の数字をかけると 6！<br>
+          • <b>わり算（例: 2÷）</b>: 2つの数字を割ると 2（割り切れるペア）！
+        </p>
+      </div>
+
+      <div class="rule-slide">
+        <h3>3. 攻略のコツ</h3>
+        <p>① まずは数字が1つだけの「送分マス」を探して埋めよう！<br>
+           ② ひき算・わり算は必ず2マス！組み合わせが少ないよ。<br>
+           ③ メモ機能（✏️）を使って候補数字を小さくメモしておこう！</p>
+      </div>
+
+      <button class="btn-primary" id="closeTutorialBtn" style="width:100%;">わかった！あそぶ！</button>
+    </div>
+  </div>
+
+  <!-- Victory Modal -->
+  <div class="modal-overlay" id="victoryModal">
+    <div class="modal-card">
+      <div style="font-size:42px; margin-bottom:4px;" id="winEmoji">🎉</div>
+      <div class="modal-title" id="winTitle">ステージクリア！</div>
+      <div class="modal-desc" id="winSubtitle">素晴らしいひらめきと計算力です！</div>
+
+      <div class="win-stars" id="winStarsBox">
+        <span class="star-item">⭐</span>
+        <span class="star-item">⭐</span>
+        <span class="star-item">⭐</span>
+      </div>
+
+      <div class="win-stats-box">
+        <div class="win-stat-item">
+          <div class="val" id="winTimeVal">01:23</div>
+          <div class="lbl">クリア時間</div>
+        </div>
+        <div class="win-stat-item">
+          <div class="val" id="winMistakesVal">0</div>
+          <div class="lbl">ミス回数</div>
+        </div>
+        <div class="win-stat-item">
+          <div class="val" id="winHintsVal">0</div>
+          <div class="lbl">ヒント使用</div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" id="winMapBtn">🗺️ マップ</button>
+        <button class="btn-secondary" id="winRetryBtn">🔄 もう一度</button>
+        <button class="btn-primary" id="winNextBtn">次へ進む 🚀</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ================== AUDIO SYNTHESIZER ================== */
+class SoundFX {
+  constructor() {
+    this.ctx = null;
+    this.enabled = true;
+  }
+
+  init() {
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) this.ctx = new AudioCtx();
+    }
+    if (this.ctx && this.ctx.state === "suspended") {
+      this.ctx.resume();
+    }
+  }
+
+  playTone(freq, type = "sine", duration = 0.15, gainVal = 0.15) {
+    if (!this.enabled) return;
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+      gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + duration);
+    } catch (e) {}
+  }
+
+  tap() { this.playTone(620, "sine", 0.07, 0.08); }
+  pop() { this.playTone(880, "triangle", 0.09, 0.12); }
+  numberInput(val) {
+    const freqs = [261.6, 293.7, 329.6, 392.0, 440.0, 523.3, 587.3];
+    const f = freqs[(val - 1) % freqs.length] || 440;
+    this.playTone(f, "sine", 0.16, 0.16);
+  }
+  cageSatisfied() {
+    [523.25, 659.25, 783.99].forEach((f, idx) => {
+      setTimeout(() => this.playTone(f, "sine", 0.15, 0.12), idx * 60);
+    });
+  }
+  error() {
+    if (!this.enabled) return;
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(180, this.ctx.currentTime);
+      osc.frequency.linearRampToValueAtTime(110, this.ctx.currentTime + 0.22);
+      gain.gain.setValueAtTime(0.14, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.22);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.22);
+    } catch(e) {}
+  }
+  victory() {
+    const fanfare = [
+      { f: 523.25, d: 0.12 },
+      { f: 659.25, d: 0.12 },
+      { f: 783.99, d: 0.12 },
+      { f: 1046.50, d: 0.35 },
+      { f: 880.00, d: 0.15 },
+      { f: 1046.50, d: 0.6 }
+    ];
+    let time = 0;
+    fanfare.forEach(item => {
+      setTimeout(() => this.playTone(item.f, "triangle", item.d, 0.2), time * 1000);
+      time += item.d + 0.04;
+    });
+  }
+}
+
+const SFX = new SoundFX();
+
+/* ================== THEMES & ASSETS ================== */
+const THEME_SYMBOLS = {
+  numbers: { 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6" },
+  animals: { 1: "🐱", 2: "🐶", 3: "🐰", 4: "🐼", 5: "🐻", 6: "🦊" },
+  fruits: { 1: "🍓", 2: "🍌", 3: "🍎", 4: "🍇", 5: "🍊", 6: "🍉" }
+};
+
+const PASTEL_PALETTES = [
+  "#FFFBEB", "#F0F9FF", "#FDF2F8", "#F0FDF4", 
+  "#FAF5FF", "#FFF1F2", "#ECFEFF", "#FEFCE8", 
+  "#F5F3FF", "#F0FDFA", "#FFF7ED", "#F1F5F9"
+];
+
+/* ================== STAGES REPOSITORY ================== */
+const STAGES_DATA = [{"id": 1, "tier": 1, "size": 3, "title": "はじめての加法", "subtitle": "1マスのヒントとたし算", "badge": "🌱", "mascot": "数字が1つのマスはそのまま入れるだけ！たし算を合わせてみてね！", "parSeconds": 45, "solution": [[1, 3, 2], [3, 2, 1], [2, 1, 3]], "cages": [{"cells": [[1, 0], [1, 1]], "op": "+", "target": 5}, {"cells": [[0, 0]], "op": "", "target": 1}, {"cells": [[2, 2], [2, 1]], "op": "+", "target": 4}, {"cells": [[0, 2], [1, 2]], "op": "+", "target": 3}, {"cells": [[0, 1]], "op": "", "target": 3}, {"cells": [[2, 0]], "op": "", "target": 2}]}, {"id": 2, "tier": 1, "size": 3, "title": "たし算パズル", "subtitle": "数字の分解にチャレンジ", "badge": "🍀", "mascot": "3マスのたし算も落ち着いて合計を計算してみよう！", "parSeconds": 60, "solution": [[3, 1, 2], [1, 2, 3], [2, 3, 1]], "cages": [{"cells": [[0, 1], [0, 0]], "op": "+", "target": 4}, {"cells": [[2, 0]], "op": "", "target": 2}, {"cells": [[2, 2], [1, 2]], "op": "+", "target": 4}, {"cells": [[2, 1]], "op": "", "target": 3}, {"cells": [[0, 2]], "op": "", "target": 2}, {"cells": [[1, 1], [1, 0]], "op": "+", "target": 3}]}, {"id": 3, "tier": 1, "size": 3, "title": "ひき算登場！", "subtitle": "大きい数から小さい数をひく", "badge": "⭐", "mascot": "「1-」は、3-2 や 2-1 の組み合わせが考えられるよ！", "parSeconds": 60, "solution": [[3, 1, 2], [2, 3, 1], [1, 2, 3]], "cages": [{"cells": [[0, 1]], "op": "", "target": 1}, {"cells": [[2, 2]], "op": "", "target": 3}, {"cells": [[1, 1], [2, 1]], "op": "-", "target": 1}, {"cells": [[2, 0], [1, 0]], "op": "+", "target": 3}, {"cells": [[0, 0]], "op": "", "target": 3}, {"cells": [[1, 2], [0, 2]], "op": "+", "target": 3}]}, {"id": 4, "tier": 1, "size": 3, "title": "加減のステップ", "subtitle": "行・列の重複にも注意", "badge": "✨", "mascot": "同じ行・列に同じ数字は入れないルールを忘れずに！", "parSeconds": 75, "solution": [[1, 3, 2], [3, 2, 1], [2, 1, 3]], "cages": [{"cells": [[0, 0], [1, 0]], "op": "-", "target": 2}, {"cells": [[0, 2], [0, 1]], "op": "-", "target": 1}, {"cells": [[1, 2]], "op": "", "target": 1}, {"cells": [[2, 1], [1, 1]], "op": "-", "target": 1}, {"cells": [[2, 0]], "op": "", "target": 2}, {"cells": [[2, 2]], "op": "", "target": 3}]}, {"id": 5, "tier": 1, "size": 3, "title": "かけ算ワンダー", "subtitle": "九九のきほんをためそう", "badge": "🎪", "mascot": "「6×」は 2×3 で作れるね！かけ算の部屋を見つけよう！", "parSeconds": 75, "solution": [[2, 1, 3], [1, 3, 2], [3, 2, 1]], "cages": [{"cells": [[0, 2], [1, 2]], "op": "*", "target": 6}, {"cells": [[1, 1]], "op": "", "target": 3}, {"cells": [[1, 0], [2, 0]], "op": "*", "target": 3}, {"cells": [[2, 2]], "op": "", "target": 1}, {"cells": [[0, 0], [0, 1]], "op": "*", "target": 2}, {"cells": [[2, 1]], "op": "", "target": 2}]}, {"id": 6, "tier": 1, "size": 3, "title": "3×3マス卒業検定", "subtitle": "ぜんぶの記号大集合！", "badge": "🏆", "mascot": "「2÷」は 2÷1 や 6÷3 など割り切れるペアを探そう！", "parSeconds": 90, "solution": [[1, 3, 2], [2, 1, 3], [3, 2, 1]], "cages": [{"cells": [[2, 2], [1, 2]], "op": "-", "target": 2}, {"cells": [[0, 2]], "op": "", "target": 2}, {"cells": [[2, 1]], "op": "", "target": 2}, {"cells": [[1, 0], [1, 1]], "op": "*", "target": 2}, {"cells": [[0, 1]], "op": "", "target": 3}, {"cells": [[2, 0]], "op": "", "target": 3}, {"cells": [[0, 0]], "op": "", "target": 1}]}, {"id": 7, "tier": 2, "size": 4, "title": "4×4 広がる世界", "subtitle": "1〜4の数字を使おう", "badge": "🚀", "mascot": "マスが増えても基本は同じ！1つのマスから解き進めよう！", "parSeconds": 90, "solution": [[4, 3, 2, 1], [1, 4, 3, 2], [3, 2, 1, 4], [2, 1, 4, 3]], "cages": [{"cells": [[2, 0], [3, 0], [3, 1]], "op": "+", "target": 6}, {"cells": [[2, 2], [2, 1], [1, 2]], "op": "+", "target": 6}, {"cells": [[2, 3]], "op": "", "target": 4}, {"cells": [[1, 0], [0, 0], [0, 1]], "op": "+", "target": 8}, {"cells": [[3, 3], [3, 2]], "op": "+", "target": 7}, {"cells": [[0, 3], [1, 3]], "op": "+", "target": 3}, {"cells": [[1, 1]], "op": "", "target": 4}, {"cells": [[0, 2]], "op": "", "target": 2}]}, {"id": 8, "tier": 2, "size": 4, "title": "加減の迷宮", "subtitle": "候補数字をしぼりこむ", "badge": "🔍", "mascot": "メモ機能を使って、マスに入る候補を小さく書いておくと便利だよ！", "parSeconds": 110, "solution": [[2, 4, 1, 3], [4, 2, 3, 1], [3, 1, 2, 4], [1, 3, 4, 2]], "cages": [{"cells": [[1, 0]], "op": "", "target": 4}, {"cells": [[2, 3]], "op": "", "target": 4}, {"cells": [[3, 1]], "op": "", "target": 3}, {"cells": [[0, 1]], "op": "", "target": 4}, {"cells": [[0, 3], [0, 2]], "op": "-", "target": 2}, {"cells": [[0, 0]], "op": "", "target": 2}, {"cells": [[3, 3]], "op": "", "target": 2}, {"cells": [[2, 2]], "op": "", "target": 2}, {"cells": [[3, 0], [2, 0]], "op": "-", "target": 2}, {"cells": [[1, 3]], "op": "", "target": 1}, {"cells": [[3, 2]], "op": "", "target": 4}, {"cells": [[1, 2]], "op": "", "target": 3}, {"cells": [[1, 1], [2, 1]], "op": "-", "target": 1}]}, {"id": 9, "tier": 2, "size": 4, "title": "かけ算アドベンチャー", "subtitle": "12×や24×の分解", "badge": "⚡", "mascot": "「12×」は 3×4 か 1×3×4 かな？周囲の数字と相談しよう！", "parSeconds": 120, "solution": [[1, 2, 4, 3], [4, 1, 3, 2], [2, 3, 1, 4], [3, 4, 2, 1]], "cages": [{"cells": [[2, 1], [2, 0], [3, 1]], "op": "+", "target": 9}, {"cells": [[3, 2], [3, 3], [2, 3]], "op": "+", "target": 7}, {"cells": [[1, 0], [1, 1]], "op": "*", "target": 4}, {"cells": [[1, 3], [1, 2]], "op": "*", "target": 6}, {"cells": [[0, 3]], "op": "", "target": 3}, {"cells": [[0, 1], [0, 0]], "op": "+", "target": 3}, {"cells": [[3, 0]], "op": "", "target": 3}, {"cells": [[2, 2]], "op": "", "target": 1}, {"cells": [[0, 2]], "op": "", "target": 4}]}, {"id": 10, "tier": 2, "size": 4, "title": "三刀流マスター", "subtitle": "＋・−・×のコンビネーション", "badge": "🔥", "mascot": "行と列の残り1マスを見逃さないのがスピードクリアのコツ！", "parSeconds": 130, "solution": [[2, 1, 3, 4], [3, 4, 1, 2], [4, 3, 2, 1], [1, 2, 4, 3]], "cages": [{"cells": [[3, 2], [3, 3], [2, 3]], "op": "+", "target": 8}, {"cells": [[1, 2], [1, 1], [2, 2]], "op": "+", "target": 7}, {"cells": [[1, 0], [0, 0], [2, 0]], "op": "*", "target": 24}, {"cells": [[2, 1], [3, 1]], "op": "+", "target": 5}, {"cells": [[0, 3], [1, 3]], "op": "*", "target": 8}, {"cells": [[0, 1], [0, 2]], "op": "+", "target": 4}, {"cells": [[3, 0]], "op": "", "target": 1}]}, {"id": 11, "tier": 2, "size": 4, "title": "わり算ブレイク", "subtitle": "四則演算のパズル", "badge": "💎", "mascot": "「4÷」なら 4 と 1 のペアしかありえないね！大チャンス！", "parSeconds": 140, "solution": [[2, 1, 4, 3], [3, 2, 1, 4], [1, 4, 3, 2], [4, 3, 2, 1]], "cages": [{"cells": [[2, 0], [2, 1]], "op": "-", "target": 3}, {"cells": [[1, 3]], "op": "", "target": 4}, {"cells": [[0, 3], [0, 2]], "op": "*", "target": 12}, {"cells": [[2, 2]], "op": "", "target": 3}, {"cells": [[1, 0], [1, 1]], "op": "*", "target": 6}, {"cells": [[3, 1]], "op": "", "target": 3}, {"cells": [[3, 3]], "op": "", "target": 1}, {"cells": [[3, 2]], "op": "", "target": 2}, {"cells": [[0, 1]], "op": "", "target": 1}, {"cells": [[2, 3]], "op": "", "target": 2}, {"cells": [[3, 0]], "op": "", "target": 4}, {"cells": [[0, 0]], "op": "", "target": 2}, {"cells": [[1, 2]], "op": "", "target": 1}]}, {"id": 12, "tier": 2, "size": 4, "title": "4×4 算独マスター", "subtitle": "論理のひらめき", "badge": "👑", "mascot": "素晴らしい！これで4×4は完璧！次はさらに広い世界へ！", "parSeconds": 160, "solution": [[3, 2, 4, 1], [2, 4, 1, 3], [4, 1, 3, 2], [1, 3, 2, 4]], "cages": [{"cells": [[3, 0], [3, 1], [3, 2]], "op": "+", "target": 6}, {"cells": [[3, 3], [2, 3]], "op": "-", "target": 2}, {"cells": [[1, 0], [0, 0]], "op": "+", "target": 5}, {"cells": [[0, 1]], "op": "", "target": 2}, {"cells": [[1, 2]], "op": "", "target": 1}, {"cells": [[2, 1]], "op": "", "target": 1}, {"cells": [[0, 3]], "op": "", "target": 1}, {"cells": [[1, 1]], "op": "", "target": 4}, {"cells": [[2, 0]], "op": "", "target": 4}, {"cells": [[0, 2]], "op": "", "target": 4}, {"cells": [[2, 2]], "op": "", "target": 3}, {"cells": [[1, 3]], "op": "", "target": 3}]}, {"id": 13, "tier": 3, "size": 5, "title": "5×5 ひらめき街道", "subtitle": "数字は1〜5まで拡大", "badge": "🌟", "mascot": "5×5になると数字の選択肢が増えるよ。確実なマスから埋めよう！", "parSeconds": 180, "solution": [[3, 1, 2, 5, 4], [4, 2, 5, 3, 1], [5, 3, 1, 4, 2], [1, 4, 3, 2, 5], [2, 5, 4, 1, 3]], "cages": [{"cells": [[1, 0]], "op": "", "target": 4}, {"cells": [[1, 2]], "op": "", "target": 5}, {"cells": [[2, 4], [3, 4]], "op": "-", "target": 3}, {"cells": [[0, 4]], "op": "", "target": 4}, {"cells": [[1, 3], [1, 4]], "op": "+", "target": 4}, {"cells": [[4, 1], [4, 2]], "op": "+", "target": 9}, {"cells": [[2, 3], [2, 2], [3, 2]], "op": "+", "target": 8}, {"cells": [[0, 2], [0, 1]], "op": "-", "target": 1}, {"cells": [[2, 0], [3, 0]], "op": "+", "target": 6}, {"cells": [[4, 0]], "op": "", "target": 2}, {"cells": [[2, 1], [1, 1], [3, 1]], "op": "+", "target": 9}, {"cells": [[0, 0]], "op": "", "target": 3}, {"cells": [[3, 3], [4, 3]], "op": "+", "target": 3}, {"cells": [[0, 3]], "op": "", "target": 5}, {"cells": [[4, 4]], "op": "", "target": 3}]}, {"id": 14, "tier": 3, "size": 5, "title": "かけ算の要塞", "subtitle": "積の組み合わせ推理", "badge": "🛡️", "mascot": "大きな掛け算の部屋は、素因数分解のように数を分解してみよう！", "parSeconds": 210, "solution": [[5, 3, 4, 2, 1], [2, 5, 1, 3, 4], [4, 1, 3, 5, 2], [1, 2, 5, 4, 3], [3, 4, 2, 1, 5]], "cages": [{"cells": [[4, 3], [3, 3]], "op": "+", "target": 5}, {"cells": [[2, 2]], "op": "", "target": 3}, {"cells": [[3, 1], [3, 2], [2, 1]], "op": "+", "target": 8}, {"cells": [[1, 0]], "op": "", "target": 2}, {"cells": [[0, 2], [0, 3], [1, 3]], "op": "+", "target": 9}, {"cells": [[4, 4]], "op": "", "target": 5}, {"cells": [[1, 1], [0, 1]], "op": "*", "target": 15}, {"cells": [[1, 4], [0, 4], [2, 4]], "op": "+", "target": 7}, {"cells": [[2, 3]], "op": "", "target": 5}, {"cells": [[2, 0], [3, 0]], "op": "-", "target": 3}, {"cells": [[4, 1], [4, 0]], "op": "*", "target": 12}, {"cells": [[0, 0]], "op": "", "target": 5}, {"cells": [[1, 2]], "op": "", "target": 1}, {"cells": [[3, 4]], "op": "", "target": 3}, {"cells": [[4, 2]], "op": "", "target": 2}]}, {"id": 15, "tier": 3, "size": 5, "title": "5×5 フルコンプリート", "subtitle": "四則演算オールスター", "badge": "🎯", "mascot": "割り算と引き算の部屋は2マス限定！ここが最大の突破口だよ！", "parSeconds": 240, "solution": [[1, 3, 5, 2, 4], [3, 2, 1, 4, 5], [2, 1, 4, 5, 3], [5, 4, 2, 3, 1], [4, 5, 3, 1, 2]], "cages": [{"cells": [[1, 4], [0, 4], [0, 3]], "op": "*", "target": 40}, {"cells": [[1, 3], [2, 3], [1, 2]], "op": "+", "target": 10}, {"cells": [[2, 1]], "op": "", "target": 1}, {"cells": [[4, 2], [4, 3]], "op": "/", "target": 3}, {"cells": [[3, 2]], "op": "", "target": 2}, {"cells": [[0, 2]], "op": "", "target": 5}, {"cells": [[4, 4]], "op": "", "target": 2}, {"cells": [[3, 1]], "op": "", "target": 4}, {"cells": [[2, 2]], "op": "", "target": 4}, {"cells": [[4, 0], [3, 0]], "op": "+", "target": 9}, {"cells": [[1, 1], [0, 1]], "op": "*", "target": 6}, {"cells": [[3, 3], [3, 4]], "op": "-", "target": 2}, {"cells": [[4, 1]], "op": "", "target": 5}, {"cells": [[1, 0]], "op": "", "target": 3}, {"cells": [[2, 0]], "op": "", "target": 2}, {"cells": [[0, 0]], "op": "", "target": 1}, {"cells": [[2, 4]], "op": "", "target": 3}]}, {"id": 16, "tier": 3, "size": 6, "title": "6×6 大樹の試練", "subtitle": "1〜6のフルグリッド", "badge": "🌲", "mascot": "いよいよ6×6！1行の合計は 1+2+3+4+5+6 = 21 になる性質も使ってみて！", "parSeconds": 280, "solution": [[2, 5, 3, 1, 4, 6], [3, 6, 2, 4, 5, 1], [1, 4, 6, 2, 3, 5], [4, 2, 1, 5, 6, 3], [5, 3, 4, 6, 1, 2], [6, 1, 5, 3, 2, 4]], "cages": [{"cells": [[0, 3], [0, 4], [0, 2]], "op": "+", "target": 8}, {"cells": [[1, 5], [0, 5]], "op": "+", "target": 7}, {"cells": [[1, 3], [1, 2]], "op": "+", "target": 6}, {"cells": [[4, 0], [4, 1], [4, 2]], "op": "*", "target": 60}, {"cells": [[3, 3]], "op": "", "target": 5}, {"cells": [[4, 5], [3, 5]], "op": "-", "target": 1}, {"cells": [[1, 1], [1, 0], [2, 1]], "op": "+", "target": 13}, {"cells": [[1, 4]], "op": "", "target": 5}, {"cells": [[3, 0]], "op": "", "target": 4}, {"cells": [[2, 2], [2, 3]], "op": "-", "target": 4}, {"cells": [[2, 5], [2, 4]], "op": "-", "target": 2}, {"cells": [[5, 1], [5, 2], [5, 3]], "op": "*", "target": 15}, {"cells": [[0, 0], [0, 1]], "op": "*", "target": 10}, {"cells": [[2, 0]], "op": "", "target": 1}, {"cells": [[4, 3]], "op": "", "target": 6}, {"cells": [[3, 1]], "op": "", "target": 2}, {"cells": [[5, 5], [5, 4]], "op": "-", "target": 2}, {"cells": [[4, 4]], "op": "", "target": 1}, {"cells": [[3, 4]], "op": "", "target": 6}, {"cells": [[5, 0]], "op": "", "target": 6}, {"cells": [[3, 2]], "op": "", "target": 1}]}, {"id": 17, "tier": 3, "size": 6, "title": "四則の迷宮", "subtitle": "高度な消去法の活用", "badge": "🌀", "mascot": "あるマスに入らない数字を消去法で削っていくと、答えが浮かび上がるよ！", "parSeconds": 320, "solution": [[3, 1, 2, 6, 5, 4], [5, 2, 1, 3, 4, 6], [6, 5, 3, 4, 1, 2], [2, 3, 4, 5, 6, 1], [1, 4, 6, 2, 3, 5], [4, 6, 5, 1, 2, 3]], "cages": [{"cells": [[4, 2], [5, 2], [5, 3]], "op": "+", "target": 12}, {"cells": [[3, 3], [3, 2]], "op": "-", "target": 1}, {"cells": [[5, 0], [5, 1]], "op": "*", "target": 24}, {"cells": [[4, 0], [3, 0], [2, 0]], "op": "+", "target": 9}, {"cells": [[3, 5], [2, 5], [4, 5]], "op": "*", "target": 10}, {"cells": [[2, 2], [2, 3], [2, 4]], "op": "*", "target": 12}, {"cells": [[1, 1], [1, 2], [1, 0]], "op": "*", "target": 10}, {"cells": [[2, 1], [3, 1], [4, 1]], "op": "+", "target": 12}, {"cells": [[0, 2], [0, 3], [0, 4]], "op": "*", "target": 60}, {"cells": [[1, 3], [1, 4], [1, 5]], "op": "+", "target": 13}, {"cells": [[5, 5], [5, 4]], "op": "+", "target": 5}, {"cells": [[4, 4]], "op": "", "target": 3}, {"cells": [[3, 4]], "op": "", "target": 6}, {"cells": [[4, 3]], "op": "", "target": 2}, {"cells": [[0, 5]], "op": "", "target": 4}, {"cells": [[0, 1]], "op": "", "target": 1}, {"cells": [[0, 0]], "op": "", "target": 3}]}, {"id": 18, "tier": 3, "size": 6, "title": "算独レジェンド", "subtitle": "すべての論理を解き放て", "badge": "🌈", "mascot": "最終ステージ！持てるすべての計算力と論理的直感をぶつけよう！", "parSeconds": 360, "solution": [[2, 3, 6, 5, 1, 4], [5, 1, 4, 6, 3, 2], [3, 5, 1, 2, 4, 6], [1, 4, 2, 3, 6, 5], [6, 2, 3, 4, 5, 1], [4, 6, 5, 1, 2, 3]], "cages": [{"cells": [[0, 5]], "op": "", "target": 4}, {"cells": [[5, 1], [5, 2]], "op": "*", "target": 30}, {"cells": [[4, 4], [5, 4], [3, 4]], "op": "*", "target": 60}, {"cells": [[4, 5], [3, 5]], "op": "/", "target": 5}, {"cells": [[1, 1], [0, 1]], "op": "/", "target": 3}, {"cells": [[1, 4]], "op": "", "target": 3}, {"cells": [[5, 5]], "op": "", "target": 3}, {"cells": [[4, 1]], "op": "", "target": 2}, {"cells": [[2, 5], [2, 4], [1, 5]], "op": "+", "target": 12}, {"cells": [[0, 3], [1, 3]], "op": "+", "target": 11}, {"cells": [[2, 2], [2, 1]], "op": "+", "target": 6}, {"cells": [[4, 2], [4, 3]], "op": "*", "target": 12}, {"cells": [[3, 1], [3, 0]], "op": "+", "target": 5}, {"cells": [[1, 2]], "op": "", "target": 4}, {"cells": [[3, 2]], "op": "", "target": 2}, {"cells": [[1, 0], [0, 0], [2, 0]], "op": "+", "target": 10}, {"cells": [[2, 3], [3, 3]], "op": "+", "target": 5}, {"cells": [[0, 2]], "op": "", "target": 6}, {"cells": [[5, 3]], "op": "", "target": 1}, {"cells": [[4, 0], [5, 0]], "op": "+", "target": 10}, {"cells": [[0, 4]], "op": "", "target": 1}]}];
+
+/* ================== PROCEDURAL SOLVER & GENERATOR ================== */
+class CalcudokuEngine {
+  static solve(size, cages, maxSolutions = 2) {
+    const N = size;
+    const cellCage = {};
+    cages.forEach((cage, idx) => {
+      cage.cells.forEach(([r, c]) => {
+        cellCage[`${r},${c}`] = idx;
+      });
+    });
+
+    const board = Array.from({ length: N }, () => Array(N).fill(0));
+    const rowUsed = Array.from({ length: N }, () => new Set());
+    const colUsed = Array.from({ length: N }, () => new Set());
+
+    const isCageValid = (idx, isComplete) => {
+      const cage = cages[idx];
+      const vals = cage.cells.map(([r, c]) => board[r][c]).filter(v => v !== 0);
+      const op = cage.op || "";
+      const target = cage.target;
+
+      if (!isComplete) {
+        if (op === "+") {
+          if (vals.reduce((a, b) => a + b, 0) >= target && vals.length < cage.cells.length) return false;
+        } else if (op === "*") {
+          if (vals.length > 0 && vals.reduce((a, b) => a * b, 1) > target) return false;
+        }
+        return true;
+      }
+
+      if (cage.cells.length === 1) return vals[0] === target;
+      if (op === "+") return vals.reduce((a, b) => a + b, 0) === target;
+      if (op === "*") return vals.reduce((a, b) => a * b, 1) === target;
+      if (op === "-") return Math.abs(vals[0] - vals[1]) === target;
+      if (op === "/") {
+        const mx = Math.max(vals[0], vals[1]);
+        const mn = Math.min(vals[0], vals[1]);
+        return mn > 0 && mx % mn === 0 && Math.floor(mx / mn) === target;
+      }
+      return false;
+    };
+
+    const solutions = [];
+
+    const backtrack = (pos) => {
+      if (pos === N * N) {
+        solutions.push(board.map(row => [...row]));
+        return solutions.length >= maxSolutions;
+      }
+
+      const r = Math.floor(pos / N);
+      const c = pos % N;
+      const cageIdx = cellCage[`${r},${c}`];
+      const cage = cages[cageIdx];
+
+      for (let v = 1; v <= N; v++) {
+        if (rowUsed[r].has(v) || colUsed[c].has(v)) continue;
+
+        board[r][c] = v;
+        rowUsed[r].add(v);
+        colUsed[c].add(v);
+
+        let unfilledInCage = 0;
+        for (const [cr, cc] of cage.cells) {
+          if (board[cr][cc] === 0) unfilledInCage++;
+        }
+
+        if (unfilledInCage === 0) {
+          if (isCageValid(cageIdx, true)) {
+            if (backtrack(pos + 1)) return true;
+          }
+        } else {
+          if (isCageValid(cageIdx, false)) {
+            if (backtrack(pos + 1)) return true;
+          }
+        }
+
+        board[r][c] = 0;
+        rowUsed[r].delete(v);
+        colUsed[c].delete(v);
+      }
+      return false;
+    };
+
+    backtrack(0);
+    return solutions;
+  }
+
+  static generateRandomLatin(N) {
+    const board = Array.from({ length: N }, () => Array(N).fill(0));
+    const fill = (r, c) => {
+      if (r === N) return true;
+      const nr = c + 1 < N ? r : r + 1;
+      const nc = c + 1 < N ? c + 1 : 0;
+      const nums = Array.from({ length: N }, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+      
+      const rowVals = new Set(board[r]);
+      const colVals = new Set(board.map(row => row[c]));
+
+      for (const v of nums) {
+        if (!rowVals.has(v) && !colVals.has(v)) {
+          board[r][c] = v;
+          if (fill(nr, nc)) return true;
+          board[r][c] = 0;
+        }
+      }
+      return false;
+    };
+    fill(0, 0);
+    return board;
+  }
+
+  static generatePuzzle(N, opsAllowed) {
+    for (let attempt = 0; attempt < 80; attempt++) {
+      const sol = this.generateRandomLatin(N);
+      const assigned = Array.from({ length: N }, () => Array(N).fill(-1));
+      const cages = [];
+      let cageId = 0;
+
+      const coords = [];
+      for (let r = 0; r < N; r++) {
+        for (let c = 0; c < N; c++) coords.push([r, c]);
+      }
+      coords.sort(() => Math.random() - 0.5);
+
+      for (const [r, c] of coords) {
+        if (assigned[r][c] !== -1) continue;
+        const targetSize = Math.random() < 0.2 ? 1 : Math.random() < 0.7 ? 2 : 3;
+        const currCage = [[r, c]];
+        assigned[r][c] = cageId;
+
+        while (currCage.length < targetSize) {
+          const neighbors = [];
+          for (const [cr, cc] of currCage) {
+            for (const [dr, dc] of [[-1,0],[1,0],[0,-1],[0,1]]) {
+              const nr = cr + dr, nc = cc + dc;
+              if (nr >= 0 && nr < N && nc >= 0 && nc < N && assigned[nr][nc] === -1) {
+                if (!neighbors.some(([er, ec]) => er === nr && ec === nc)) {
+                  neighbors.push([nr, nc]);
+                }
+              }
+            }
+          }
+          if (neighbors.length === 0) break;
+          const pick = neighbors[Math.floor(Math.random() * neighbors.length)];
+          currCage.push(pick);
+          assigned[pick[0]][pick[1]] = cageId;
+        }
+        cages.push(currCage);
+        cageId++;
+      }
+
+      // assign ops
+      const finalCages = [];
+      let valid = true;
+
+      for (const cCells of cages) {
+        const vals = cCells.map(([r, c]) => sol[r][c]);
+        if (new Set(vals).size !== vals.length) {
+          valid = false;
+          break;
+        }
+
+        if (cCells.length === 1) {
+          finalCages.push({ cells: cCells, op: "", target: vals[0] });
+        } else if (cCells.length === 2) {
+          const [v1, v2] = vals;
+          const opChoices = [];
+          if (opsAllowed.includes("+")) opChoices.push(["+", v1 + v2]);
+          if (opsAllowed.includes("-")) opChoices.push(["-", Math.abs(v1 - v2)]);
+          if (opsAllowed.includes("*")) opChoices.push(["*", v1 * v2]);
+          if (opsAllowed.includes("/")) {
+            const mx = Math.max(v1, v2), mn = Math.min(v1, v2);
+            if (mx % mn === 0) opChoices.push(["/", Math.floor(mx / mn)]);
+          }
+          if (opChoices.length === 0) opChoices.push(["+", v1 + v2]);
+          const [chosenOp, chosenTgt] = opChoices[Math.floor(Math.random() * opChoices.length)];
+          finalCages.push({ cells: cCells, op: chosenOp, target: chosenTgt });
+        } else {
+          const opChoices = [];
+          if (opsAllowed.includes("+")) opChoices.push(["+", vals.reduce((a, b) => a + b, 0)]);
+          if (opsAllowed.includes("*")) {
+            const prod = vals.reduce((a, b) => a * b, 1);
+            if (prod <= 60) opChoices.push(["*", prod]);
+          }
+          if (opChoices.length === 0) opChoices.push(["+", vals.reduce((a, b) => a + b, 0)]);
+          const [chosenOp, chosenTgt] = opChoices[Math.floor(Math.random() * opChoices.length)];
+          finalCages.push({ cells: cCells, op: chosenOp, target: chosenTgt });
+        }
+      }
+
+      if (!valid) continue;
+
+      const sols = this.solve(N, finalCages, 2);
+      if (sols.length === 1) {
+        return { size: N, solution: sol, cages: finalCages };
+      }
+    }
+
+    // Fallback if random attempts timed out: pick a predefined stage of matching size
+    const matching = STAGES_DATA.filter(s => s.size === N);
+    return matching[Math.floor(Math.random() * matching.length)];
+  }
+}
+
+/* ================== GAME CONTROLLER ================== */
+class CalcudokuGame {
+  constructor() {
+    this.currentMode = "adventure"; // 'adventure' | 'freeplay'
+    this.currentStage = null;
+    this.gridSize = 3;
+    this.board = [];
+    this.notes = [];
+    this.solution = [];
+    this.cages = [];
+    this.cellCageMap = {};
+    this.cageColorMap = {};
+    this.selectedCell = null;
+    this.noteMode = false;
+    this.mistakes = 0;
+    this.hintsRemaining = 3;
+    this.hintsUsed = 0;
+    this.timer = 0;
+    this.timerInterval = null;
+    this.isCompleted = false;
+    this.history = [];
+    this.theme = "numbers";
+    this.activeTier = 1;
+
+    this.progress = this.loadProgress();
+    this.initDOM();
+    this.renderStageGrid();
+    this.bindEvents();
+  }
+
+  loadProgress() {
+    try {
+      const saved = localStorage.getItem("calcudoku_progress");
+      if (saved) return JSON.parse(saved);
+    } catch(e) {}
+    return {
+      unlockedStages: 1,
+      stars: {},
+      bestTimes: {}
+    };
+  }
+
+  saveProgress() {
+    try {
+      localStorage.setItem("calcudoku_progress", JSON.stringify(this.progress));
+    } catch(e) {}
+    this.updateHeaderStars();
+  }
+
+  initDOM() {
+    this.dom = {
+      modeTabs: document.getElementById("modeTabs"),
+      adventureView: document.getElementById("adventureView"),
+      freePlayView: document.getElementById("freePlayView"),
+      gameplayView: document.getElementById("gameplayView"),
+      stageGrid: document.getElementById("stageGrid"),
+      totalStarsCount: document.getElementById("totalStarsCount"),
+      mapBackBtn: document.getElementById("mapBackBtn"),
+      soundBtn: document.getElementById("soundBtn"),
+      tutorialBtn: document.getElementById("tutorialBtn"),
+      tutorialModal: document.getElementById("tutorialModal"),
+      closeTutorialBtn: document.getElementById("closeTutorialBtn"),
+      victoryModal: document.getElementById("victoryModal"),
+      calcudokuGrid: document.getElementById("calcudoku-grid"),
+      numpadGrid: document.getElementById("numpadGrid"),
+      timerDisplay: document.getElementById("timerDisplay"),
+      mistakesDisplay: document.getElementById("mistakesDisplay"),
+      gameStageBadge: document.getElementById("gameStageBadge"),
+      gameStageSubinfo: document.getElementById("gameStageSubinfo"),
+      mascotIcon: document.getElementById("mascotIcon"),
+      mascotMsg: document.getElementById("mascotMsg"),
+      undoBtn: document.getElementById("undoBtn"),
+      noteModeBtn: document.getElementById("noteModeBtn"),
+      eraseBtn: document.getElementById("eraseBtn"),
+      hintBtn: document.getElementById("hintBtn"),
+      hintCountBadge: document.getElementById("hintCountBadge"),
+      restartBtn: document.getElementById("restartBtn"),
+      startFreeBtn: document.getElementById("startFreeBtn")
+    };
+    this.updateHeaderStars();
+  }
+
+  updateHeaderStars() {
+    let total = 0;
+    for (let i = 1; i <= 18; i++) {
+      total += this.progress.stars[i] || 0;
+    }
+    this.dom.totalStarsCount.textContent = `${total} / 54`;
+  }
+
+  switchView(viewName) {
+    document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+
+    if (viewName === "adventureView") {
+      this.dom.adventureView.classList.add("active");
+      this.dom.modeTabs.style.display = "flex";
+      this.dom.mapBackBtn.style.display = "none";
+      document.querySelector('[data-view="adventureView"]').classList.add("active");
+      this.renderStageGrid();
+    } else if (viewName === "freePlayView") {
+      this.dom.freePlayView.classList.add("active");
+      this.dom.modeTabs.style.display = "flex";
+      this.dom.mapBackBtn.style.display = "none";
+      document.querySelector('[data-view="freePlayView"]').classList.add("active");
+    } else if (viewName === "gameplayView") {
+      this.dom.gameplayView.classList.add("active");
+      this.dom.modeTabs.style.display = "none";
+      this.dom.mapBackBtn.style.display = "flex";
+    }
+  }
+
+  renderStageGrid() {
+    this.dom.stageGrid.innerHTML = "";
+    const tierStages = STAGES_DATA.filter(s => s.tier === this.activeTier);
+
+    tierStages.forEach(stg => {
+      const isUnlocked = stg.id <= this.progress.unlockedStages;
+      const starsEarned = this.progress.stars[stg.id] || 0;
+
+      const card = document.createElement("div");
+      card.className = `stage-card ${isUnlocked ? "" : "locked"}`;
+      card.innerHTML = `
+        <div class="badge-icon">${isUnlocked ? stg.badge : "🔒"}</div>
+        <div class="stage-num">第 ${stg.id} 関</div>
+        <div class="stage-name">${stg.title}</div>
+        <div class="stage-stars">
+          <span class="${starsEarned >= 1 ? "star-earned" : ""}">⭐</span>
+          <span class="${starsEarned >= 2 ? "star-earned" : ""}">⭐</span>
+          <span class="${starsEarned >= 3 ? "star-earned" : ""}">⭐</span>
+        </div>
+      `;
+
+      if (isUnlocked) {
+        card.addEventListener("click", () => {
+          SFX.tap();
+          this.startAdventureStage(stg);
+        });
+      }
+
+      this.dom.stageGrid.appendChild(card);
+    });
+  }
+
+  startAdventureStage(stg) {
+    this.currentMode = "adventure";
+    this.currentStage = stg;
+    this.gridSize = stg.size;
+    this.solution = stg.solution;
+    this.cages = stg.cages;
+
+    this.dom.gameStageBadge.textContent = `⭐ ステージ ${stg.id} (${stg.size}×${stg.size})`;
+    this.dom.gameStageSubinfo.textContent = `${stg.title} · 目安時間: ${Math.floor(stg.parSeconds / 60)}分${stg.parSeconds % 60}秒`;
+    this.dom.mascotMsg.textContent = stg.mascot;
+
+    this.initGameSession();
+  }
+
+  startFreePlay(size, diff) {
+    this.currentMode = "freeplay";
+    this.gridSize = size;
+
+    let ops = ["+", "-"];
+    if (diff === "medium") ops = ["+", "-", "*"];
+    if (diff === "hard") ops = ["+", "-", "*", "/"];
+
+    const puzzle = CalcudokuEngine.generatePuzzle(size, ops);
+    this.currentStage = {
+      id: 0,
+      size: size,
+      title: `自由トレ (${size}×${size})`,
+      parSeconds: size * 45,
+      mascot: "ランダム生成のパズルだよ！計算の部屋をヒントに解いてみよう！"
+    };
+    this.solution = puzzle.solution;
+    this.cages = puzzle.cages;
+
+    this.dom.gameStageBadge.textContent = `🎯 自由トレーニング (${size}×${size})`;
+    this.dom.gameStageSubinfo.textContent = `難易度: ${diff === 'easy' ? '🌱 やさしい' : diff === 'medium' ? '🌿 ふつう' : '🔥 むずかしい'}`;
+    this.dom.mascotMsg.textContent = this.currentStage.mascot;
+
+    this.initGameSession();
+  }
+
+  initGameSession() {
+    this.switchView("gameplayView");
+    this.isCompleted = false;
+    this.mistakes = 0;
+    this.hintsRemaining = 3;
+    this.hintsUsed = 0;
+    this.dom.mistakesDisplay.textContent = "0";
+    this.dom.hintCountBadge.textContent = "3";
+    this.history = [];
+    this.selectedCell = null;
+
+    // init boards
+    this.board = Array.from({ length: this.gridSize }, () => Array(this.gridSize).fill(0));
+    this.notes = Array.from({ length: this.gridSize }, () => Array.from({ length: this.gridSize }, () => new Set()));
+
+    // pre-fill single cell freebies? kenken typically leaves them for the player to fill as easy points!
+    // But let's verify cage map
+    this.cellCageMap = {};
+    this.cages.forEach((cage, idx) => {
+      cage.cells.forEach(([r, c]) => {
+        this.cellCageMap[`${r},${c}`] = idx;
+      });
+      this.cageColorMap[idx] = PASTEL_PALETTES[idx % PASTEL_PALETTES.length];
+    });
+
+    this.renderBoard();
+    this.renderNumpad();
+    this.startTimer();
+  }
+
+  startTimer() {
+    if (this.timerInterval) clearInterval(this.timerInterval);
+    this.timer = 0;
+    this.dom.timerDisplay.textContent = "00:00";
+    this.timerInterval = setInterval(() => {
+      this.timer++;
+      const mins = String(Math.floor(this.timer / 60)).padStart(2, "0");
+      const secs = String(this.timer % 60).padStart(2, "0");
+      this.dom.timerDisplay.textContent = `${mins}:${secs}`;
+    }, 1000);
+  }
+
+  stopTimer() {
+    if (this.timerInterval) clearInterval(this.timerInterval);
+  }
+
+  renderBoard() {
+    const gridEl = this.dom.calcudokuGrid;
+    gridEl.className = `grid-${this.gridSize}`;
+    gridEl.innerHTML = "";
+
+    // Find anchor cell for each cage to place the badge
+    const cageAnchors = {};
+    this.cages.forEach((cage, idx) => {
+      // sort cells by row, then col
+      const sorted = [...cage.cells].sort((a, b) => a[0] !== b[0] ? a[0] - b[0] : a[1] - b[1]);
+      cageAnchors[idx] = `${sorted[0][0]},${sorted[0][1]}`;
+    });
+
+    for (let r = 0; r < this.gridSize; r++) {
+      for (let c = 0; c < this.gridSize; c++) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.dataset.row = r;
+        cell.dataset.col = c;
+
+        const cageIdx = this.cellCageMap[`${r},${c}`];
+        const cage = this.cages[cageIdx];
+
+        // Background tint for cage
+        cell.style.backgroundColor = this.cageColorMap[cageIdx];
+
+        // Set cage borders: thick if border with outside or different cage; dashed if same cage
+        const isBorderTop = r === 0 || this.cellCageMap[`${r-1},${c}`] !== cageIdx;
+        const isBorderBottom = r === this.gridSize - 1 || this.cellCageMap[`${r+1},${c}`] !== cageIdx;
+        const isBorderLeft = c === 0 || this.cellCageMap[`${r},${c-1}`] !== cageIdx;
+        const isBorderRight = c === this.gridSize - 1 || this.cellCageMap[`${r},${c+1}`] !== cageIdx;
+
+        cell.style.borderTop = isBorderTop ? "3px solid var(--border-cage)" : "1px dashed rgba(100, 116, 139, 0.35)";
+        cell.style.borderBottom = isBorderBottom ? "3px solid var(--border-cage)" : "1px dashed rgba(100, 116, 139, 0.35)";
+        cell.style.borderLeft = isBorderLeft ? "3px solid var(--border-cage)" : "1px dashed rgba(100, 116, 139, 0.35)";
+        cell.style.borderRight = isBorderRight ? "3px solid var(--border-cage)" : "1px dashed rgba(100, 116, 139, 0.35)";
+
+        // Cage badge if anchor cell
+        if (cageAnchors[cageIdx] === `${r},${c}`) {
+          const badge = document.createElement("div");
+          badge.className = "cage-badge";
+          badge.id = `cage-badge-${cageIdx}`;
+          const opSymbol = cage.op === "*" ? "×" : cage.op === "/" ? "÷" : cage.op;
+          badge.textContent = `${cage.target}${opSymbol}`;
+          cell.appendChild(badge);
+        }
+
+        // Main value container
+        const valSpan = document.createElement("span");
+        valSpan.className = "cell-val";
+        cell.appendChild(valSpan);
+
+        // Sub tag for Pet/Fruit themes
+        const subTag = document.createElement("span");
+        subTag.className = "sub-num-tag";
+        subTag.style.display = "none";
+        cell.appendChild(subTag);
+
+        // Notes grid container
+        const notesGrid = document.createElement("div");
+        notesGrid.className = "notes-grid";
+        for (let i = 1; i <= this.gridSize; i++) {
+          const nSpan = document.createElement("div");
+          nSpan.className = "note-num";
+          nSpan.dataset.note = i;
+          notesGrid.appendChild(nSpan);
+        }
+        cell.appendChild(notesGrid);
+
+        cell.addEventListener("click", () => this.selectCell(r, c));
+        gridEl.appendChild(cell);
+      }
+    }
+
+    this.updateBoardUI();
+  }
+
+  selectCell(r, c) {
+    this.selectedCell = { r, c };
+    SFX.pop();
+    this.updateHighlights();
+    this.provideContextualTip(r, c);
+  }
+
+  provideContextualTip(r, c) {
+    const cageIdx = this.cellCageMap[`${r},${c}`];
+    const cage = this.cages[cageIdx];
+    const op = cage.op;
+    const tgt = cage.target;
+
+    if (cage.cells.length === 1) {
+      this.dom.mascotMsg.textContent = `この部屋は1マスだけ！目標の「${tgt}」をそのまま入れよう！`;
+    } else if (op === "+") {
+      this.dom.mascotMsg.textContent = `たし算の部屋：${cage.cells.length}マスの合計が「${tgt}」になるよ！`;
+    } else if (op === "-") {
+      this.dom.mascotMsg.textContent = `ひき算の部屋：2つの数字の差が「${tgt}」になる組み合わせを探そう！`;
+    } else if (op === "*") {
+      this.dom.mascotMsg.textContent = `かけ算の部屋：掛け算の答えが「${tgt}」になるよ！`;
+    } else if (op === "/") {
+      this.dom.mascotMsg.textContent = `わり算の部屋：割ると「${tgt}」になるペアを考えよう！`;
+    }
+  }
+
+  updateHighlights() {
+    const cells = document.querySelectorAll("#calcudoku-grid .cell");
+    const sel = this.selectedCell;
+    const selVal = sel ? this.board[sel.r][sel.c] : 0;
+
+    cells.forEach(c => {
+      const r = parseInt(c.dataset.row);
+      const col = parseInt(c.dataset.col);
+
+      c.classList.remove("selected", "highlight-line", "highlight-same");
+
+      if (sel) {
+        if (r === sel.r && col === sel.c) {
+          c.classList.add("selected");
+        } else if (r === sel.r || col === sel.col) {
+          c.classList.add("highlight-line");
+        } else if (selVal && this.board[r][col] === selVal) {
+          c.classList.add("highlight-same");
+        }
+      }
+    });
+  }
+
+  renderNumpad() {
+    const pad = this.dom.numpadGrid;
+    pad.innerHTML = "";
+
+    for (let i = 1; i <= this.gridSize; i++) {
+      const btn = document.createElement("button");
+      btn.className = "num-btn";
+      btn.dataset.val = i;
+
+      const valSpan = document.createElement("span");
+      valSpan.className = "btn-val";
+      valSpan.textContent = THEME_SYMBOLS[this.theme][i];
+
+      const subSpan = document.createElement("span");
+      subSpan.className = "btn-sub";
+      subSpan.textContent = this.theme === "numbers" ? "" : `${i}`;
+
+      btn.appendChild(valSpan);
+      btn.appendChild(subSpan);
+
+      btn.addEventListener("click", () => this.handleNumberInput(i));
+      pad.appendChild(btn);
+    }
+    this.updateNumpadCounts();
+  }
+
+  updateNumpadCounts() {
+    const counts = {};
+    for (let i = 1; i <= this.gridSize; i++) counts[i] = 0;
+
+    for (let r = 0; r < this.gridSize; r++) {
+      for (let c = 0; c < this.gridSize; c++) {
+        const v = this.board[r][c];
+        if (v) counts[v] = (counts[v] || 0) + 1;
+      }
+    }
+
+    document.querySelectorAll(".num-btn").forEach(btn => {
+      const v = parseInt(btn.dataset.val);
+      const remaining = this.gridSize - (counts[v] || 0);
+      if (remaining <= 0) {
+        btn.classList.add("completed");
+      } else {
+        btn.classList.remove("completed");
+      }
+    });
+  }
+
+  handleNumberInput(val) {
+    if (!this.selectedCell || this.isCompleted) return;
+    const { r, c } = this.selectedCell;
+
+    if (this.noteMode) {
+      SFX.tap();
+      const set = this.notes[r][c];
+      if (set.has(val)) set.delete(val);
+      else set.add(val);
+      this.updateCellUI(r, c);
+      return;
+    }
+
+    // Normal fill
+    const prevVal = this.board[r][c];
+    if (prevVal === val) return;
+
+    this.history.push({
+      r, c,
+      prevVal: prevVal,
+      newVal: val,
+      prevNotes: new Set(this.notes[r][c])
+    });
+
+    this.board[r][c] = val;
+    this.notes[r][c].clear();
+
+    // Sound
+    SFX.numberInput(val);
+
+    // Auto-erase notes in same row/col
+    for (let i = 0; i < this.gridSize; i++) {
+      this.notes[r][i].delete(val);
+      this.notes[i][c].delete(val);
+      this.updateCellUI(r, i);
+      this.updateCellUI(i, c);
+    }
+
+    this.updateBoardUI();
+    this.checkDuplicatesAndCages();
+    this.checkVictory();
+  }
+
+  eraseSelected() {
+    if (!this.selectedCell || this.isCompleted) return;
+    const { r, c } = this.selectedCell;
+    if (this.board[r][c] === 0 && this.notes[r][c].size === 0) return;
+
+    SFX.pop();
+    this.history.push({
+      r, c,
+      prevVal: this.board[r][c],
+      newVal: 0,
+      prevNotes: new Set(this.notes[r][c])
+    });
+
+    this.board[r][c] = 0;
+    this.notes[r][c].clear();
+    this.updateBoardUI();
+    this.checkDuplicatesAndCages();
+  }
+
+  undo() {
+    if (this.history.length === 0 || this.isCompleted) return;
+    SFX.tap();
+    const last = this.history.pop();
+    this.board[last.r][last.c] = last.prevVal;
+    this.notes[last.r][last.c] = new Set(last.prevNotes);
+    this.selectedCell = { r: last.r, c: last.c };
+    this.updateBoardUI();
+    this.checkDuplicatesAndCages();
+  }
+
+  useSmartHint() {
+    if (this.hintsRemaining <= 0 || this.isCompleted) return;
+
+    // Find best hint:
+    // 1. Single cell cage not filled
+    // 2. Or empty cell with least remaining candidates
+    let hintCell = null;
+    let hintVal = 0;
+
+    for (const cage of this.cages) {
+      if (cage.cells.length === 1) {
+        const [cr, cc] = cage.cells[0];
+        if (this.board[cr][cc] !== cage.target) {
+          hintCell = { r: cr, c: cc };
+          hintVal = cage.target;
+          break;
+        }
+      }
+    }
+
+    if (!hintCell) {
+      // Pick first incorrect or empty cell
+      for (let r = 0; r < this.gridSize; r++) {
+        for (let c = 0; c < this.gridSize; c++) {
+          if (this.board[r][c] !== this.solution[r][c]) {
+            hintCell = { r, c };
+            hintVal = this.solution[r][c];
+            break;
+          }
+        }
+        if (hintCell) break;
+      }
+    }
+
+    if (hintCell) {
+      this.hintsRemaining--;
+      this.hintsUsed++;
+      this.dom.hintCountBadge.textContent = this.hintsRemaining;
+
+      this.selectedCell = hintCell;
+      this.board[hintCell.r][hintCell.c] = hintVal;
+      this.notes[hintCell.r][hintCell.c].clear();
+
+      SFX.numberInput(hintVal);
+      this.dom.mascotMsg.textContent = `ヒント！ここに「${THEME_SYMBOLS[this.theme][hintVal]}」が入るよ！`;
+
+      const cellEl = document.querySelector(`.cell[data-row="${hintCell.r}"][data-col="${hintCell.c}"]`);
+      if (cellEl) {
+        cellEl.classList.add("hint-glow");
+        setTimeout(() => cellEl.classList.remove("hint-glow"), 1500);
+      }
+
+      this.updateBoardUI();
+      this.checkDuplicatesAndCages();
+      this.checkVictory();
+    }
+  }
+
+  updateBoardUI() {
+    for (let r = 0; r < this.gridSize; r++) {
+      for (let c = 0; c < this.gridSize; c++) {
+        this.updateCellUI(r, c);
+      }
+    }
+    this.updateHighlights();
+    this.updateNumpadCounts();
+  }
+
+  updateCellUI(r, c) {
+    const cell = document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
+    if (!cell) return;
+
+    const val = this.board[r][c];
+    const valSpan = cell.querySelector(".cell-val");
+    const subTag = cell.querySelector(".sub-num-tag");
+    const notesGrid = cell.querySelector(".notes-grid");
+
+    cell.dataset.val = val || "";
+
+    if (val) {
+      valSpan.textContent = THEME_SYMBOLS[this.theme][val];
+      cell.classList.add("user-filled");
+      notesGrid.style.display = "none";
+
+      if (this.theme !== "numbers") {
+        subTag.textContent = `${val}`;
+        subTag.style.display = "block";
+      } else {
+        subTag.style.display = "none";
+      }
+    } else {
+      valSpan.textContent = "";
+      cell.classList.remove("user-filled");
+      subTag.style.display = "none";
+      notesGrid.style.display = "grid";
+
+      const noteSpans = notesGrid.querySelectorAll(".note-num");
+      noteSpans.forEach(ns => {
+        const n = parseInt(ns.dataset.note);
+        if (this.notes[r][c].has(n)) {
+          ns.textContent = this.theme === "numbers" ? n : THEME_SYMBOLS[this.theme][n];
+        } else {
+          ns.textContent = "";
+        }
+      });
+    }
+  }
+
+  checkDuplicatesAndCages() {
+    const cells = document.querySelectorAll("#calcudoku-grid .cell");
+    cells.forEach(c => c.classList.remove("duplicate-error"));
+
+    let hasDup = false;
+
+    // 1. Check Row Duplicates
+    for (let r = 0; r < this.gridSize; r++) {
+      const seen = {};
+      for (let c = 0; c < this.gridSize; c++) {
+        const v = this.board[r][c];
+        if (v) {
+          if (seen[v] !== undefined) {
+            document.querySelector(`.cell[data-row="${r}"][data-col="${seen[v]}"]`).classList.add("duplicate-error");
+            document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`).classList.add("duplicate-error");
+            hasDup = true;
+          } else {
+            seen[v] = c;
+          }
+        }
+      }
+    }
+
+    // 2. Check Col Duplicates
+    for (let c = 0; c < this.gridSize; c++) {
+      const seen = {};
+      for (let r = 0; r < this.gridSize; r++) {
+        const v = this.board[r][c];
+        if (v) {
+          if (seen[v] !== undefined) {
+            document.querySelector(`.cell[data-row="${seen[v]}"][data-col="${c}"]`).classList.add("duplicate-error");
+            document.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`).classList.add("duplicate-error");
+            hasDup = true;
+          } else {
+            seen[v] = r;
+          }
+        }
+      }
+    }
+
+    // 3. Check Cages Satisfaction
+    this.cages.forEach((cage, idx) => {
+      const badge = document.getElementById(`cage-badge-${idx}`);
+      const vals = cage.cells.map(([r, c]) => this.board[r][c]);
+      const isAllFilled = vals.every(v => v !== 0);
+
+      if (!badge) return;
+      badge.classList.remove("satisfied", "error");
+
+      if (isAllFilled) {
+        const op = cage.op;
+        const tgt = cage.target;
+        let isOk = false;
+
+        if (cage.cells.length === 1) isOk = vals[0] === tgt;
+        else if (op === "+") isOk = vals.reduce((a, b) => a + b, 0) === tgt;
+        else if (op === "*") isOk = vals.reduce((a, b) => a * b, 1) === tgt;
+        else if (op === "-") isOk = Math.abs(vals[0] - vals[1]) === tgt;
+        else if (op === "/") {
+          const mx = Math.max(vals[0], vals[1]);
+          const mn = Math.min(vals[0], vals[1]);
+          isOk = mn > 0 && mx % mn === 0 && Math.floor(mx / mn) === tgt;
+        }
+
+        if (isOk) {
+          badge.classList.add("satisfied");
+        } else {
+          badge.classList.add("error");
+          hasDup = true;
+        }
+      }
+    });
+
+    if (hasDup && !this.lastHadError) {
+      this.mistakes++;
+      this.dom.mistakesDisplay.textContent = this.mistakes;
+      SFX.error();
+    }
+    this.lastHadError = hasDup;
+  }
+
+  checkVictory() {
+    // Check if every cell is filled correctly
+    for (let r = 0; r < this.gridSize; r++) {
+      for (let c = 0; c < this.gridSize; c++) {
+        if (this.board[r][c] !== this.solution[r][c]) return;
+      }
+    }
+
+    // Victory achieved!
+    this.isCompleted = true;
+    this.stopTimer();
+    SFX.victory();
+    this.triggerConfetti();
+
+    // Calculate stars
+    let starsEarned = 1;
+    const par = this.currentStage.parSeconds || 60;
+    if (this.timer <= par) starsEarned++;
+    if (this.mistakes === 0 && this.hintsUsed === 0) starsEarned++;
+
+    if (this.currentMode === "adventure") {
+      const stgId = this.currentStage.id;
+      const prevStars = this.progress.stars[stgId] || 0;
+      if (starsEarned > prevStars) {
+        this.progress.stars[stgId] = starsEarned;
+      }
+      if (stgId === this.progress.unlockedStages && stgId < 18) {
+        this.progress.unlockedStages = stgId + 1;
+      }
+      this.saveProgress();
+    }
+
+    // Show victory modal
+    const starSpans = document.querySelectorAll("#winStarsBox .star-item");
+    starSpans.forEach((sp, idx) => {
+      if (idx < starsEarned) sp.classList.add("active");
+      else sp.classList.remove("active");
+    });
+
+    const mins = String(Math.floor(this.timer / 60)).padStart(2, "0");
+    const secs = String(this.timer % 60).padStart(2, "0");
+    document.getElementById("winTimeVal").textContent = `${mins}:${secs}`;
+    document.getElementById("winMistakesVal").textContent = this.mistakes;
+    document.getElementById("winHintsVal").textContent = this.hintsUsed;
+
+    if (this.currentMode === "adventure" && this.currentStage.id < 18) {
+      document.getElementById("winNextBtn").style.display = "block";
+    } else {
+      document.getElementById("winNextBtn").style.display = "none";
+    }
+
+    this.dom.victoryModal.classList.add("show");
+  }
+
+  triggerConfetti() {
+    const canvas = document.getElementById("confetti-canvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    const colors = ["#4F46E5", "#06B6D4", "#F59E0B", "#10B981", "#EC4899", "#8B5CF6"];
+
+    for (let i = 0; i < 90; i++) {
+      particles.push({
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        vx: (Math.random() - 0.5) * 16,
+        vy: (Math.random() - 0.7) * 18,
+        size: Math.random() * 8 + 5,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rotation: Math.random() * 360,
+        vr: (Math.random() - 0.5) * 12,
+        gravity: 0.35,
+        opacity: 1
+      });
+    }
+
+    let animId;
+    const render = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let alive = false;
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += p.gravity;
+        p.rotation += p.vr;
+        p.opacity -= 0.012;
+
+        if (p.opacity > 0) {
+          alive = true;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rotation * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = Math.max(0, p.opacity);
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+          ctx.restore();
+        }
+      });
+
+      if (alive) animId = requestAnimationFrame(render);
+      else ctx.clearRect(0, 0, canvas.width, canvas.height);
+    };
+    render();
+  }
+
+  bindEvents() {
+    // Top Tabs
+    this.dom.modeTabs.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        SFX.tap();
+        this.switchView(btn.dataset.view);
+      });
+    });
+
+    // Tier pills
+    document.querySelectorAll(".tier-pill").forEach(pill => {
+      pill.addEventListener("click", () => {
+        SFX.tap();
+        document.querySelectorAll(".tier-pill").forEach(p => p.classList.remove("active"));
+        pill.classList.add("active");
+        this.activeTier = parseInt(pill.dataset.tier);
+        this.renderStageGrid();
+      });
+    });
+
+    // Free Play Option Selectors
+    document.querySelectorAll("#freeSizeOptions .opt-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        SFX.tap();
+        document.querySelectorAll("#freeSizeOptions .opt-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+      });
+    });
+
+    document.querySelectorAll("#freeDiffOptions .opt-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        SFX.tap();
+        document.querySelectorAll("#freeDiffOptions .opt-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+      });
+    });
+
+    this.dom.startFreeBtn.addEventListener("click", () => {
+      SFX.tap();
+      const sizeBtn = document.querySelector("#freeSizeOptions .opt-btn.active");
+      const diffBtn = document.querySelector("#freeDiffOptions .opt-btn.active");
+      const size = parseInt(sizeBtn.dataset.size);
+      const diff = diffBtn.dataset.diff;
+      this.startFreePlay(size, diff);
+    });
+
+    // Nav back to map
+    this.dom.mapBackBtn.addEventListener("click", () => {
+      SFX.tap();
+      this.stopTimer();
+      this.switchView(this.currentMode === "adventure" ? "adventureView" : "freePlayView");
+    });
+
+    document.getElementById("logoBtn").addEventListener("click", () => {
+      SFX.tap();
+      this.stopTimer();
+      this.switchView("adventureView");
+    });
+
+    // Sound toggle
+    this.dom.soundBtn.addEventListener("click", () => {
+      SFX.enabled = !SFX.enabled;
+      this.dom.soundBtn.textContent = SFX.enabled ? "🔊" : "🔇";
+      if (SFX.enabled) SFX.tap();
+    });
+
+    // Tutorial modal
+    this.dom.tutorialBtn.addEventListener("click", () => {
+      SFX.tap();
+      this.dom.tutorialModal.classList.add("show");
+    });
+    this.dom.closeTutorialBtn.addEventListener("click", () => {
+      SFX.tap();
+      this.dom.tutorialModal.classList.remove("show");
+    });
+
+    // Victory modal actions
+    document.getElementById("winMapBtn").addEventListener("click", () => {
+      SFX.tap();
+      this.dom.victoryModal.classList.remove("show");
+      this.switchView("adventureView");
+    });
+    document.getElementById("winRetryBtn").addEventListener("click", () => {
+      SFX.tap();
+      this.dom.victoryModal.classList.remove("show");
+      if (this.currentMode === "adventure") this.startAdventureStage(this.currentStage);
+      else {
+        const sizeBtn = document.querySelector("#freeSizeOptions .opt-btn.active");
+        const diffBtn = document.querySelector("#freeDiffOptions .opt-btn.active");
+        this.startFreePlay(parseInt(sizeBtn.dataset.size), diffBtn.dataset.diff);
+      }
+    });
+    document.getElementById("winNextBtn").addEventListener("click", () => {
+      SFX.tap();
+      this.dom.victoryModal.classList.remove("show");
+      const nextId = this.currentStage.id + 1;
+      const nextStage = STAGES_DATA.find(s => s.id === nextId);
+      if (nextStage) {
+        this.activeTier = nextStage.tier;
+        document.querySelectorAll(".tier-pill").forEach(p => {
+          if (parseInt(p.dataset.tier) === this.activeTier) p.classList.add("active");
+          else p.classList.remove("active");
+        });
+        this.startAdventureStage(nextStage);
+      }
+    });
+
+    // Tool buttons
+    this.dom.undoBtn.addEventListener("click", () => this.undo());
+    this.dom.eraseBtn.addEventListener("click", () => this.eraseSelected());
+    this.dom.noteModeBtn.addEventListener("click", () => {
+      SFX.tap();
+      this.noteMode = !this.noteMode;
+      this.dom.noteModeBtn.classList.toggle("active", this.noteMode);
+    });
+    this.dom.hintBtn.addEventListener("click", () => this.useSmartHint());
+    this.dom.restartBtn.addEventListener("click", () => {
+      SFX.tap();
+      if (confirm("ステージを最初からやり直しますか？")) {
+        if (this.currentMode === "adventure") this.startAdventureStage(this.currentStage);
+        else this.initGameSession();
+      }
+    });
+
+    // Theme buttons
+    document.querySelectorAll(".theme-opt-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        SFX.tap();
+        document.querySelectorAll(".theme-opt-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        this.theme = btn.dataset.theme;
+        document.body.dataset.theme = this.theme;
+        this.renderNumpad();
+        this.updateBoardUI();
+      });
+    });
+
+    // Keyboard support
+    window.addEventListener("keydown", (e) => {
+      if (this.dom.gameplayView.classList.contains("active") && !this.isCompleted) {
+        if (e.key >= "1" && e.key <= String(this.gridSize)) {
+          this.handleNumberInput(parseInt(e.key));
+        } else if (e.key === "Backspace" || e.key === "Delete") {
+          this.eraseSelected();
+        } else if (e.key === "z" && (e.ctrlKey || e.metaKey)) {
+          this.undo();
+        } else if (e.key === "n" || e.key === "N") {
+          this.dom.noteModeBtn.click();
+        } else if (e.key === "h" || e.key === "H") {
+          this.useSmartHint();
+        } else if (this.selectedCell) {
+          let { r, c } = this.selectedCell;
+          if (e.key === "ArrowUp") r = (r - 1 + this.gridSize) % this.gridSize;
+          else if (e.key === "ArrowDown") r = (r + 1) % this.gridSize;
+          else if (e.key === "ArrowLeft") c = (c - 1 + this.gridSize) % this.gridSize;
+          else if (e.key === "ArrowRight") c = (c + 1) % this.gridSize;
+          this.selectCell(r, c);
+        }
+      }
+    });
+  }
+}
+
+// Bootstrap
+window.addEventListener("DOMContentLoaded", () => {
+  window.calcudokuApp = new CalcudokuGame();
+});
+</script>
+</body>
+</html>

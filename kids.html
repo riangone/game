@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>奇趣益智乐园 · 语言与逻辑游戏大冒险 (Kids Brain Wonderland)</title>
+  <meta name="description" content="专为儿童设计的语言知育与逻辑益智游戏乐园。包含汉语拼音启蒙、四声调小剧场、日语五十音、韩文字母、和风数独、算独、像素数织等，为不同母语的儿童提供智能专属向导。">
+  <meta name="theme-color" content="#38bdf8">
+
+  <!-- 预加载儿童友好圆角字体 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800;900&family=Outfit:wght@600;700;800;900&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-sky: #f0f9ff;
+      --bg-surface: #ffffff;
+      --text-main: #0f172a;
+      --text-sub: #334155;
+      --text-muted: #64748b;
+      
+      /* 明亮活泼的儿童主题色 */
+      --primary-cyan: #0284c7;
+      --primary-sky: #38bdf8;
+      --primary-light: #e0f2fe;
+      
+      --accent-coral: #f43f5e;
+      --accent-coral-soft: #ffe4e6;
+      --accent-amber: #f59e0b;
+      --accent-amber-soft: #fef3c7;
+      --accent-emerald: #10b981;
+      --accent-emerald-soft: #d1fae5;
+      --accent-indigo: #6366f1;
+      --accent-indigo-soft: #e0e7ff;
+      --accent-purple: #a855f7;
+      --accent-purple-soft: #f3e8ff;
+
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-pill: 9999px;
+
+      --shadow-sm: 0 2px 8px rgba(2, 132, 199, 0.06);
+      --shadow-card: 0 8px 24px -4px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+      --shadow-hover: 0 16px 36px -6px rgba(2, 132, 199, 0.2), 0 4px 12px rgba(2, 132, 199, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'M PLUS Rounded 1c', 'ZCOOL KuaiLe', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Noto Sans KR", sans-serif;
+      background-color: var(--bg-sky);
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 10% 12%, rgba(56, 189, 248, 0.15) 0%, transparent 35%),
+        radial-gradient(circle at 90% 18%, rgba(244, 63, 94, 0.12) 0%, transparent 35%),
+        radial-gradient(circle at 50% 80%, rgba(245, 158, 11, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(16, 185, 129, 0.12) 0%, transparent 35%);
+      background-attachment: fixed;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* 顶部彩虹导航栏 */
+    header.site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 2px solid #e2e8f0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .brand-icon {
+      font-size: 36px;
+      display: inline-block;
+      animation: gentleBounce 2.4s ease-in-out infinite;
+      filter: drop-shadow(0 4px 10px rgba(56, 189, 248, 0.4));
+    }
+
+    @keyframes gentleBounce {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-5px) rotate(-4deg); }
+    }
+
+    .brand-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--primary-cyan);
+      letter-spacing: -0.5px;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+
+    .brand-sub {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-sound {
+      background: #f1f5f9;
+      border: 2px solid #cbd5e1;
+      border-radius: var(--radius-pill);
+      padding: 6px 12px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-sub);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .btn-sound:hover {
+      background: #e2e8f0;
+      transform: scale(1.05);
+    }
+
+    .btn-sound:active {
+      transform: scale(0.95);
+    }
+
+    .lang-switcher {
+      display: flex;
+      background: #e0f2fe;
+      border-radius: var(--radius-pill);
+      padding: 4px;
+      gap: 2px;
+      border: 2px solid #bae6fd;
+    }
+
+    .lang-btn {
+      border: none;
+      background: transparent;
+      padding: 5px 12px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #0369a1;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .lang-btn.active {
+      background: #ffffff;
+      color: #0284c7;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.15);
+      transform: scale(1.04);
+    }
+
+    /* 主内容区 */
+    main.main-content {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 18px 48px;
+      flex: 1;
+    }
+
+    /* 英雄区：母语向导卡片 */
+    .wizard-hero {
+      background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 50%, #eff6ff 100%);
+      border-radius: var(--radius-xl);
+      border: 3px solid #e0f2fe;
+      box-shadow: 0 12px 32px -6px rgba(2, 132, 199, 0.12);
+      padding: 28px 24px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .wizard-hero::before {
+      content: "🌈";
+      position: absolute;
+      top: -15px;
+      right: -10px;
+      font-size: 96px;
+      opacity: 0.15;
+      pointer-events: none;
+      transform: rotate(15deg);
+    }
+
+    .wizard-header {
+      text-align: center;
+      margin-bottom: 22px;
+    }
+
+    .wizard-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fef08a;
+      color: #854d0e;
+      font-weight: 900;
+      font-size: 13px;
+      padding: 4px 14px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 8px;
+      border: 1px solid #fde047;
+      box-shadow: 0 2px 6px rgba(234, 179, 8, 0.2);
+      animation: pulseBadge 2s infinite;
+    }
+
+    @keyframes pulseBadge {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+
+    .wizard-title {
+      font-size: 28px;
+      font-weight: 900;
+      color: #0f172a;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    .wizard-desc {
+      font-size: 15px;
+      color: var(--text-sub);
+      font-weight: 600;
+    }
+
+    /* 四个大母语卡片按钮 */
+    .mother-tongue-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .lang-card {
+      background: #ffffff;
+      border: 3px solid #e2e8f0;
+      border-radius: var(--radius-lg);
+      padding: 16px 12px;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .lang-card:hover {
+      transform: translateY(-4px) scale(1.02);
+      border-color: #38bdf8;
+      box-shadow: var(--shadow-hover);
+    }
+
+    .lang-card:active {
+      transform: scale(0.96);
+    }
+
+    .lang-card.selected {
+      border-color: #0284c7;
+      background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
+      box-shadow: 0 8px 24px rgba(2, 132, 199, 0.25);
+      transform: translateY(-3px) scale(1.03);
+    }
+
+    .lang-card.selected::after {
+      content: "✓ 选中";
+      position: absolute;
+      top: -10px;
+      right: -8px;
+      background: #0284c7;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.4);
+    }
+
+    .card-mascot {
+      font-size: 38px;
+      line-height: 1.1;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+    }
+
+    .card-name {
+      font-size: 17px;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    .card-subtext {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    /* 动态向导建议气泡 */
+    .guide-bubble {
+      background: #ffffff;
+      border: 2px solid #bae6fd;
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .guide-avatar {
+      font-size: 40px;
+      line-height: 1;
+      flex-shrink: 0;
+      animation: bounceSmall 2s infinite ease-in-out;
+    }
+
+    @keyframes bounceSmall {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .guide-text-box {
+      flex: 1;
+    }
+
+    .guide-heading {
+      font-size: 16px;
+      font-weight: 900;
+      color: #0369a1;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .guide-body {
+      font-size: 14px;
+      font-weight: 600;
+      color: #334155;
+      line-height: 1.5;
+    }
+
+    .guide-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .g-tag {
+      font-size: 12px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .g-tag.highlight {
+      background: #ffedd5;
+      color: #c2410c;
+      border: 1px solid #fed7aa;
+    }
+
+    /* 筛选与操作区 */
+    .filter-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .filter-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      border-radius: var(--radius-pill);
+      padding: 8px 18px;
+      font-size: 14px;
+      font-weight: 800;
+      color: #475569;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .tab-btn:hover {
+      border-color: #0284c7;
+      color: #0284c7;
+      transform: translateY(-2px);
+    }
+
+    .tab-btn.active {
+      background: #0284c7;
+      border-color: #0284c7;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.28);
+      transform: scale(1.04);
+    }
+
+    .tab-count {
+      font-size: 12px;
+      background: rgba(0, 0, 0, 0.08);
+      padding: 1px 7px;
+      border-radius: var(--radius-pill);
+    }
+
+    .tab-btn.active .tab-count {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* 搜索栏 */
+    .search-box {
+      position: relative;
+      min-width: 240px;
+    }
+
+    .search-input {
+      width: 100%;
+      background: #ffffff;
+      border: 2px solid #cbd5e1;
+      border-radius: var(--radius-pill);
+      padding: 8px 16px 8px 36px;
+      font-size: 14px;
+      font-weight: 700;
+      font-family: inherit;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: #0284c7;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 15px;
+      color: #94a3b8;
+      pointer-events: none;
+    }
+
+    /* 游戏网格列表 */
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 20px;
+    }
+
+    /* 单个游戏卡片 */
+    .game-card {
+      background: #ffffff;
+      border-radius: var(--radius-lg);
+      border: 3px solid #e2e8f0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: var(--shadow-card);
+      user-select: none;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .game-card:hover {
+      transform: translateY(-8px) scale(1.015);
+      border-color: var(--card-border-hover, #0284c7);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .game-card:active {
+      transform: scale(0.98);
+    }
+
+    /* 推荐高光标记 */
+    .game-card.recommended {
+      border-color: #f59e0b;
+      background: linear-gradient(180deg, #fffbeb 0%, #ffffff 25%);
+    }
+
+    .rec-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: #f59e0b;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      z-index: 2;
+      animation: pulseBadge 2.4s infinite;
+    }
+
+    /* 卡片头部 */
+    .card-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .game-icon-bubble {
+      width: 58px;
+      height: 58px;
+      border-radius: var(--radius-md);
+      background: var(--icon-bg, #f0f9ff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      flex-shrink: 0;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .game-card:hover .game-icon-bubble {
+      transform: scale(1.15) rotate(5deg);
+    }
+
+    .game-title-group {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .game-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--text-main);
+      line-height: 1.25;
+      margin-bottom: 3px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .game-subtitle {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* 卡片描述 */
+    .game-desc {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-sub);
+      line-height: 1.5;
+      margin-bottom: 14px;
+      flex: 1;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* 标签胶囊 */
+    .game-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .badge-pill {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .badge-pill.age {
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+    }
+
+    .badge-pill.category {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+    }
+
+    /* 游玩大按钮 */
+    .btn-play {
+      background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 10px 18px;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.28);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      width: 100%;
+    }
+
+    .game-card:hover .btn-play {
+      background: linear-gradient(135deg, #0369a1 0%, #0284c7 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(2, 132, 199, 0.36);
+    }
+
+    .game-card:active .btn-play {
+      transform: scale(0.96);
+    }
+
+    /* 空状态 */
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      background: #ffffff;
+      border-radius: var(--radius-xl);
+      border: 2px dashed #cbd5e1;
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .empty-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: #475569;
+      margin-bottom: 6px;
+    }
+
+    /* 底部信息 */
+    footer.site-footer {
+      background: #ffffff;
+      border-top: 2px solid #e2e8f0;
+      padding: 24px 20px;
+      text-align: center;
+      margin-top: auto;
+    }
+
+    .footer-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 16px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #64748b;
+    }
+
+    .footer-links a:hover {
+      color: #0284c7;
+      text-decoration: underline;
+    }
+
+    .footer-copyright {
+      font-size: 12px;
+      font-weight: 600;
+      color: #94a3b8;
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 900px) {
+      .mother-tongue-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .header-inner {
+        padding: 10px 14px;
+      }
+      .brand-title {
+        font-size: 18px;
+      }
+      .brand-icon {
+        font-size: 28px;
+      }
+      .wizard-hero {
+        padding: 20px 16px;
+        margin-bottom: 20px;
+      }
+      .wizard-title {
+        font-size: 22px;
+      }
+      .mother-tongue-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .lang-card {
+        padding: 12px 8px;
+      }
+      .card-mascot {
+        font-size: 30px;
+      }
+      .card-name {
+        font-size: 15px;
+      }
+      .filter-section {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .filter-tabs {
+        overflow-x: auto;
+        padding-bottom: 6px;
+        flex-wrap: nowrap;
+      }
+      .tab-btn {
+        white-space: nowrap;
+      }
+      .search-box {
+        width: 100%;
+      }
+      .games-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部导航 -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand-logo" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        <span class="brand-icon">🎈</span>
+        <div class="brand-title">
+          <span id="txtBrandTitle">奇趣益智乐园</span>
+          <span class="brand-sub">l.0101.click · Kids Brain Wonderland</span>
+        </div>
+      </div>
+      <div class="header-controls">
+        <button class="btn-sound" id="btnSoundToggle" title="音效开关">
+          <span id="soundIcon">🔊</span>
+          <span id="soundLabel">音效开</span>
+        </button>
+        <div class="lang-switcher">
+          <button class="lang-btn active" data-lang="zh" onclick="setAppLanguage('zh')">🇨🇳 中文</button>
+          <button class="lang-btn" data-lang="ja" onclick="setAppLanguage('ja')">🇯🇵 日本語</button>
+          <button class="lang-btn" data-lang="ko" onclick="setAppLanguage('ko')">🇰🇷 한국어</button>
+          <button class="lang-btn" data-lang="en" onclick="setAppLanguage('en')">🇬🇧 EN</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主体内容 -->
+  <main class="main-content">
+
+    <!-- 母语智能向导 -->
+    <section class="wizard-hero">
+      <div class="wizard-header">
+        <div class="wizard-tag">✨ <span id="txtWizardBadge">智能儿童向导</span></div>
+        <h1 class="wizard-title" id="txtWizardTitle">小朋友，你的母语是哪个呢？</h1>
+        <p class="wizard-desc" id="txtWizardDesc">点击选择你的母语，马上为你推荐最棒最好玩的游戏！</p>
+      </div>
+
+      <!-- 四大母语选择卡片 -->
+      <div class="mother-tongue-grid">
+        <div class="lang-card selected" id="cardZh" onclick="selectMotherTongue('zh')">
+          <span class="card-mascot">🐼</span>
+          <div class="card-name">我是中文小朋友</div>
+          <div class="card-subtext">拼音启蒙 · 逻辑数理 · 外语探索</div>
+        </div>
+        <div class="lang-card" id="cardJa" onclick="selectMotherTongue('ja')">
+          <span class="card-mascot">🐕</span>
+          <div class="card-name">にほんごのお友達</div>
+          <div class="card-subtext">ピンイン声調 · ハングル · 和風パズル</div>
+        </div>
+        <div class="lang-card" id="cardKo" onclick="selectMotherTongue('ko')">
+          <span class="card-mascot">🐯</span>
+          <div class="card-name">한국어 어린이</div>
+          <div class="card-subtext">한국어린이 핀인/가나 · 두뇌 퍼즐</div>
+        </div>
+        <div class="lang-card" id="cardEn" onclick="selectMotherTongue('en')">
+          <span class="card-mascot">🦉</span>
+          <div class="card-name">Global Kids</div>
+          <div class="card-subtext">Math & Logic · Phonics Starters</div>
+        </div>
+      </div>
+
+      <!-- 智能建议气泡框 -->
+      <div class="guide-bubble" id="guideBubble">
+        <div class="guide-avatar" id="guideAvatar">🐼</div>
+        <div class="guide-text-box">
+          <div class="guide-heading">
+            <span id="guideHeadingText">欢迎中文小朋友！为你精选的成长路径：</span>
+          </div>
+          <div class="guide-body" id="guideBodyText">
+            🌟 <strong>语言启蒙</strong>：推荐先玩《拼音单音王国》看口型听标准音，再到《声调小剧场》感受四声调升降！<br>
+            🚀 <strong>第二外语</strong>：借助汉字同源词探索《假名数独》与《韩语小天才》！<br>
+            🧠 <strong>数理思维</strong>：挑战《萌趣数独》4×4入门与《像素数织》点亮逻辑大脑！
+          </div>
+          <div class="guide-tags" id="guideTags">
+            <span class="g-tag highlight">🔥 拼音单音王国</span>
+            <span class="g-tag highlight">🔥 声调小剧场</span>
+            <span class="g-tag">拼读小镇</span>
+            <span class="g-tag">萌趣数独</span>
+            <span class="g-tag">像素数织</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 筛选控制与分类 -->
+    <div class="filter-section">
+      <div class="filter-tabs">
+        <button class="tab-btn active" data-filter="all" onclick="filterGames('all')">
+          <span>🌈 全部好玩的</span>
+          <span class="tab-count" id="countAll">18</span>
+        </button>
+        <button class="tab-btn" data-filter="language" onclick="filterGames('language')">
+          <span>🗣️ 语言益智乐园</span>
+          <span class="tab-count" id="countLang">11</span>
+        </button>
+        <button class="tab-btn" data-filter="logic" onclick="filterGames('logic')">
+          <span>🧩 逻辑数理挑战</span>
+          <span class="tab-count" id="countLogic">7</span>
+        </button>
+        <button class="tab-btn" data-filter="starter" onclick="filterGames('starter')">
+          <span>🍼 3~6岁萌新</span>
+          <span class="tab-count" id="countStarter">6</span>
+        </button>
+        <button class="tab-btn" data-filter="advanced" onclick="filterGames('advanced')">
+          <span>🎒 7岁+进阶</span>
+          <span class="tab-count" id="countAdvanced">12</span>
+        </button>
+      </div>
+
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="searchInput" placeholder="搜索好玩的游戏..." oninput="handleSearch()">
+      </div>
+    </div>
+
+    <!-- 游戏卡片容器 -->
+    <div class="games-grid" id="gamesContainer">
+      <!-- 动态渲染游戏卡片 -->
+    </div>
+
+  </main>
+
+  <!-- 底部说明 -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="index.html">🎮 返回全年龄游戏大厅 (game.0101.click)</a>
+        <span>·</span>
+        <a href="javascript:void(0)" onclick="selectMotherTongue('zh')">🇨🇳 中文向导</a>
+        <span>·</span>
+        <a href="javascript:void(0)" onclick="selectMotherTongue('ja')">🇯🇵 日本語ガイド</a>
+        <span>·</span>
+        <a href="javascript:void(0)" onclick="selectMotherTongue('ko')">🇰🇷 한국어 가이드</a>
+      </div>
+      <div class="footer-copyright">
+        © 2026 奇趣益智乐园 (l.0101.click) · 寓教于乐 · 纯净无广告 · 免下载即开即玩
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ==========================================================================
+       1. 游戏完整数据库 (语言益智 + 逻辑益智)
+       ========================================================================== */
+    const games = [
+      {
+        id: "pinyin-sound",
+        file: "pinyin-sound.html",
+        icon: "🏰",
+        iconBg: "#e0f2fe",
+        borderHover: "#0284c7",
+        category: "language",
+        ageGroup: "starter", // starter: 3-6岁, advanced: 7+岁
+        ageLabel: "3~6岁 启蒙",
+        targets: ["zh", "ja", "ko", "en"], // 对哪些母语高度推荐
+        titles: {
+          zh: { title: "拼音单音王国", sub: "零基础单音发音启蒙", desc: "专为3~6岁打造。29个基础单音发音口型动画、听音戳气泡与喂饱小动物，听辨纯正原声！" },
+          ja: { title: "はじめてのピンイン単音王国", sub: "ゼロからの単音知育", desc: "3〜6歳幼児向け。29の単音発音、口の形アニメ、バルーン割りゲームで楽しくリスニング！" },
+          ko: { title: "핀인 단음 왕국", sub: "기초 단음 발음 첫걸음", desc: "3~6세 맞춤. 29개 기초 단음 입모양 애니메이션, 풍선 터뜨리기, 동물 먹이주기로 즐겁게 배워요!" },
+          en: { title: "Pinyin Sound Kingdom", sub: "Phonics Starter for Kids", desc: "Designed for ages 3-6. 29 basic phonics sounds, animated mouth shapes, and bubble popping fun!" }
+        },
+        tags: ["口型动画", "听音戳泡泡", "零基础"]
+      },
+      {
+        id: "tone-theater",
+        file: "tone-theater.html",
+        icon: "🎭",
+        iconBg: "#ffe4e6",
+        borderHover: "#f43f5e",
+        category: "language",
+        ageGroup: "starter",
+        ageLabel: "3~7岁 趣味",
+        targets: ["zh", "ja", "ko", "en"],
+        titles: {
+          zh: { title: "声调小剧场", sub: "四声调情景动画与变调", desc: "四声调滑滑梯大冒险！视觉化一声平、二声扬、三声拐弯、四声降，听音辨调超简单！" },
+          ja: { title: "神奇声調小劇場", sub: "4つの声調アドベンチャー", desc: "シーソーや滑り台のアニメで4つの声調（平・扬・拐弯・降）を直感的にマスター！" },
+          ko: { title: "성조 소극장", sub: "4가지 성조 모험", desc: "미끄럼틀 애니메이션으로 배우는 4가지 중국어 성조! 듣고 맞추는 흥미진진 미니게임." },
+          en: { title: "Tone Theater", sub: "Chinese 4 Tones Adventure", desc: "Slide along the 4 tonal contours with vivid animations and ear-training challenges!" }
+        },
+        tags: ["四声调", "滑梯动画", "听音辨调"]
+      },
+      {
+        id: "pinyin-town",
+        file: "pinyin-town.html",
+        icon: "🚂",
+        iconBg: "#fef3c7",
+        borderHover: "#f59e0b",
+        category: "language",
+        ageGroup: "advanced",
+        ageLabel: "5~9岁 拼读",
+        targets: ["zh", "ja", "ko"],
+        titles: {
+          zh: { title: "拼音小镇大冒险", sub: "声母韵母拼读装配车间", desc: "开动拼音小火车！声母与韵母相遇拼装成完整音节，听音拼词环游小镇收集星星！" },
+          ja: { title: "ピンインタウン大冒険", sub: "子音・母音の連結トレイン", desc: "子音と母音を組み合わせて音節トレインを走らせよう！聞き取りパズルで単語完成。" },
+          ko: { title: "핀인 마을 어드벤처", sub: "자음·모음 조립 기차", desc: "성모와 운모를 결합하여 기차를 완성하고, 발음을 듣고 퍼즐을 맞추는 모험!" },
+          en: { title: "Pinyin Town", sub: "Syllable Train & Phonics Workshop", desc: "Combine initials and finals to build words, driving your phonics train around town!" }
+        },
+        tags: ["声母韵母", "小火车", "拼音组词"]
+      },
+      {
+        id: "pinyin-bistro",
+        file: "pinyin-bistro.html",
+        icon: "🍳",
+        iconBg: "#ffedd5",
+        borderHover: "#ea580c",
+        category: "language",
+        ageGroup: "advanced",
+        ageLabel: "5~10岁 互动",
+        targets: ["zh", "ja", "ko"],
+        titles: {
+          zh: { title: "拼音美味小餐厅", sub: "听音识字做料理大厨", desc: "根据小动物顾客的拼音语音点单，挑选正确食材烹饪香喷喷的美味佳肴，获得五星好评！" },
+          ja: { title: "ピンインレストラン", sub: "聞いて料理を作るシェフ体験", desc: "動物のお客さんのピンイン注文をよく聴いて、正しい食材を調理してお届け！" },
+          ko: { title: "핀인 맛있는 식당", sub: "발음 듣고 요리하는 꼬마 셰프", desc: "동물 손님들의 중국어 발음 주문을 듣고 신선한 재료로 요리를 완성해보세요!" },
+          en: { title: "Pinyin Bistro", sub: "Listen & Cook Chef Game", desc: "Listen to customers' audio orders in Pinyin and serve delicious dishes!" }
+        },
+        tags: ["沉浸做菜", "听音点单", "生活词汇"]
+      },
+      {
+        id: "pinyin-runner",
+        file: "pinyin-runner.html",
+        icon: "🏃",
+        iconBg: "#dcfce7",
+        borderHover: "#16a34a",
+        category: "language",
+        ageGroup: "advanced",
+        ageLabel: "6~12岁 敏捷",
+        targets: ["zh", "ja", "ko"],
+        titles: {
+          zh: { title: "拼音酷跑小飞侠", sub: "听音选字吃金币跑酷", desc: "在动感彩虹跑道上冲刺！听到广播发音迅速跳向正确的拼音方块，反应力与辨音双重升级！" },
+          ja: { title: "ピンインランナー", sub: "聞き取り障害物ダッシュ", desc: "音声を聞いて正しいピンインの足場へジャンプ！瞬発力とリスニングを鍛えるランアクション。" },
+          ko: { title: "핀인 러너", sub: "발음 듣고 점프하는 러닝 게임", desc: "소리를 듣고 올바른 핀인 블록으로 점프! 반사신경과 듣기 능력을 동시에 길러요." },
+          en: { title: "Pinyin Runner", sub: "Audio Phonics Parkour", desc: "Listen to the phonics voice and jump onto the matching letter tracks!" }
+        },
+        tags: ["敏捷跑酷", "听力反应", "动感音效"]
+      },
+      {
+        id: "pinyin",
+        file: "pinyin.html",
+        icon: "🐼",
+        iconBg: "#e0e7ff",
+        borderHover: "#4f46e5",
+        category: "language",
+        ageGroup: "advanced",
+        ageLabel: "6~12岁 益智",
+        targets: ["zh", "ja"],
+        titles: {
+          zh: { title: "萌趣拼音小天才", sub: "拼音数独与发音大百科", desc: "拼音字母与九宫格数独神奇融合！支持4×4到9×9难度，点击随时聆听标准真人发音。" },
+          ja: { title: "わくわくピンインアドベンチャー", sub: "中国語ピンイン数独＆発音マップ", desc: "ピンインと数独が合体！タップでいつでもネイティブ音声を聴いて学べます。" },
+          ko: { title: "신나는 핀인 스도쿠", sub: "핀인과 스도쿠의 만남", desc: "기초부터 차근차근 즐기는 핀인 스도쿠 퍼즐. 원어민 발음 지원!" },
+          en: { title: "Pinyin Sudoku", sub: "Chinese Phonics Grid Logic", desc: "Solve Sudoku grids with Pinyin letters and listen to native audio for every tile!" }
+        },
+        tags: ["拼音数独", "发音图谱", "4x4到9x9"]
+      },
+      {
+        id: "kana",
+        file: "kana.html",
+        icon: "🐕",
+        iconBg: "#fce7f3",
+        borderHover: "#db2777",
+        category: "language",
+        ageGroup: "advanced",
+        ageLabel: "6~12岁 外语",
+        targets: ["zh"], // 中文小朋友学日语
+        titles: {
+          zh: { title: "萌趣假名小天才", sub: "中文儿童学日语五十音", desc: "专为中文小朋友打造！结合汉字字源演变（あ源于安）秒记假名，东京原声朗读数独！" },
+          ja: { title: "萌趣仮名小天才", sub: "漢字の字源で覚える仮名数独", desc: "「あ←安」など漢字のルーツとリンクして五十音を楽しく学べる知育ナンプレ。" },
+          ko: { title: "신나는 가나 스도쿠", sub: "히라가나/가타카나 퍼즐", desc: "일본어 50음도와 발음을 스도쿠로 재미있게 마스터!" },
+          en: { title: "Japanese Kana Sudoku", sub: "Hiragana & Katakana for Kids", desc: "Learn Japanese Kana via Hanzi origins and Tokyo native audio pronunciation." }
+        },
+        tags: ["日语五十音", "汉字字源", "东京原声"]
+      },
+      {
+        id: "pinyin-ko",
+        file: "pinyin-ko.html",
+        icon: "🐼",
+        iconBg: "#ffe4e6",
+        borderHover: "#e11d48",
+        category: "language",
+        ageGroup: "advanced",
+        ageLabel: "6~12岁 特化",
+        targets: ["ko"], // 韩国儿童专属学中文
+        titles: {
+          zh: { title: "萌趣拼音小天才 · 韩国儿童版", sub: "韩国儿童汉语拼音定制数独", desc: "专为韩语母语者定制！重点攻克声调与卷舌音等难点，中韩汉字同源词发音对照。" },
+          ja: { title: "ピンイン数独 (韓国キッズ版)", sub: "声調とそり舌音の重点攻略", desc: "韓国の学習者向けピンイン数独。似ている漢字語を活用して効率学習。" },
+          ko: { title: "한국어린이 핀인 스도쿠", sub: "한국 어린이를 위한 중국어", desc: "성조와 권설음을 집중 공략! 한중 공통 한자어를 활용해 중국어 핀인을 쉽게 마스터해요." },
+          en: { title: "Pinyin for Korean Kids", sub: "Tailored Tone & Retroflex Focus", desc: "Designed for Korean speakers, overcoming tones and retroflex sounds through Sudoku." }
+        },
+        tags: ["韩语定制", "声调重点", "汉字对照"]
+      },
+      {
+        id: "kana-ko",
+        file: "kana-ko.html",
+        icon: "🐕",
+        iconBg: "#f3e8ff",
+        borderHover: "#9333ea",
+        category: "language",
+        ageGroup: "advanced",
+        ageLabel: "6~12岁 特化",
+        targets: ["ko"], // 韩国儿童专属学日语
+        titles: {
+          zh: { title: "萌趣假名小天才 · 韩国儿童版", sub: "韩国儿童日语五十音数独", desc: "韩日发音对比与五十音数独，辨析清浊音与促音，配套东京原声朗读。" },
+          ja: { title: "仮名数独 (韓国キッズ版)", sub: "韓日対比発音＆五十音", desc: "韓国語と日本語の発音共通点に着目し、清濁音や促音を楽しくクリア。" },
+          ko: { title: "한국어린이 가나 스도쿠", sub: "한국 어린이를 위한 일본어", desc: "가방(かばん) 등 비슷한 한일 동원어를 비교하며 히라가나와 가타카나를 술술 익혀요!" },
+          en: { title: "Kana for Korean Kids", sub: "Korean-Japanese Cognates", desc: "Learn Japanese syllabary by comparing cognate vocabulary and clear pronunciations." }
+        },
+        tags: ["韩语对照", "清浊音辨析", "五十音"]
+      },
+      {
+        id: "korean",
+        file: "korean.html",
+        icon: "🐻",
+        iconBg: "#fef3c7",
+        borderHover: "#d97706",
+        category: "language",
+        ageGroup: "advanced",
+        ageLabel: "6~12岁 外语",
+        targets: ["zh"], // 中文小朋友学韩语
+        titles: {
+          zh: { title: "萌趣韩语小天才 (汉字词版)", sub: "汉字同源词与韩语数独", desc: "超60%韩语词与中文同源（如图书馆 도서관）！借助拼音迁移快速掌握韩语发音。" },
+          ja: { title: "韓国語ナンプレ (漢字語版)", sub: "漢字同源語とピンイン比較", desc: "中国語と韓国語の共通漢字語を手がかりに、楽しくハングル文字を身につける！" },
+          ko: { title: "신나는 한중 한자어 스도쿠", sub: "한자 어휘로 익히는 퍼즐", desc: "한중 공통 한자 단어를 배우며 즐기는 색다른 두뇌 스도쿠 게임!" },
+          en: { title: "Korean Sudoku (Hanja Words)", sub: "Cognate Vocabulary Puzzles", desc: "Learn Korean vocabulary through Chinese cognates and native audio recordings." }
+        },
+        tags: ["汉字同源词", "韩语发音", "拼音迁移"]
+      },
+      {
+        id: "hangul",
+        file: "hangul.html",
+        icon: "🐯",
+        iconBg: "#ffedd5",
+        borderHover: "#ea580c",
+        category: "language",
+        ageGroup: "advanced",
+        ageLabel: "6~12岁 外语",
+        targets: ["zh", "ja", "en"],
+        titles: {
+          zh: { title: "萌趣韩语小天才 (字母版)", sub: "韩语字母矩阵与拼音数独", desc: "韩语字母就像积木（子音+母音）！掌握拼合规律轻松上手，首尔真人原声朗读。" },
+          ja: { title: "わくわくハングルアドベンチャー", sub: "ハングル字母数独＆発音マップ", desc: "ハングルは積み木構造！子音と母音を組み合わせて楽しく解くパズル。" },
+          ko: { title: "신나는 한글 자모 스도쿠", sub: "자음·모음 조합 퍼즐", desc: "한글 자음과 모음의 조합 원리를 배우며 신나게 완성하는 스도쿠!" },
+          en: { title: "Hangul Sudoku", sub: "Korean Alphabet Building Blocks", desc: "Discover Hangul's block structure (consonant + vowel) with full native audio." }
+        },
+        tags: ["韩语字母", "积木拼字", "首尔原声"]
+      },
+
+      /* 逻辑与思维益智 */
+      {
+        id: "sudoku",
+        file: "sudoku.html",
+        icon: "🧩",
+        iconBg: "#e0f2fe",
+        borderHover: "#0284c7",
+        category: "logic",
+        ageGroup: "starter", // 4x4新手适合3-6岁，也有进阶
+        ageLabel: "4~12岁 全年龄",
+        targets: ["zh", "ja", "ko", "en"],
+        titles: {
+          zh: { title: "萌趣数独小天才", sub: "わくわく数独アドベンチャー", desc: "和风日式数独，涵盖4×4萌新入门到9×9脑力进阶，锻炼观察力与排除法逻辑思维！" },
+          ja: { title: "わくわく数独アドベンチャー", sub: "キッズ＆マスター数独パズル", desc: "4×4初心者から9×9本格推理まで網羅。メモ・ヒント機能で楽しく数字推理！" },
+          ko: { title: "와쿠와쿠 스도쿠 어드벤처", sub: "어린이 두뇌 스도쿠", desc: "4x4 초보자부터 9x9 두뇌 챌린지까지! 논리적 사고력을 쑥쑥 키워줘요." },
+          en: { title: "Kids Sudoku Adventure", sub: "Fun 4x4 to 9x9 Logic Puzzles", desc: "Kid-friendly Sudoku from gentle 4x4 boards to 9x9 challenges with smart hints!" }
+        },
+        tags: ["经典数独", "4x4入门", "观察推理"]
+      },
+      {
+        id: "calcudoku",
+        file: "calcudoku.html",
+        icon: "🧮",
+        iconBg: "#dcfce7",
+        borderHover: "#16a34a",
+        category: "logic",
+        ageGroup: "advanced",
+        ageLabel: "6~12岁 速算",
+        targets: ["zh", "ja", "ko", "en"],
+        titles: {
+          zh: { title: "萌趣算独小天才", sub: "四则运算与数独方阵", desc: "加减乘除四则运算与数独拉丁方阵的完美融合！速算口算与逻辑排查双重升级！" },
+          ja: { title: "わくわく算独アドベンチャー", sub: "四則演算賢賢パズル", desc: "四則演算と方陣が合体！計算力と思考力を同時に伸ばす大人気パズル。" },
+          ko: { title: "와쿠와쿠 사칙연산 스도쿠", sub: "계산과 논리의 결합", desc: "덧셈, 뺄셈, 곱셈, 나눗셈을 풀며 스도쿠를 완성하는 똑똑한 수학 퍼즐!" },
+          en: { title: "Calcudoku / KenKen", sub: "Math Operations & Logic", desc: "Combines arithmetic (+, -, ×, ÷) with Latin square logic for sharp mental math!" }
+        },
+        tags: ["加减乘除", "口算速算", "方阵推理"]
+      },
+      {
+        id: "nonogram",
+        file: "nonogram.html",
+        icon: "🎨",
+        iconBg: "#fce7f3",
+        borderHover: "#db2777",
+        category: "logic",
+        ageGroup: "starter",
+        ageLabel: "5~12岁 绘图",
+        targets: ["zh", "ja", "ko", "en"],
+        titles: {
+          zh: { title: "萌趣数织小天才", sub: "像素绘图方块大揭秘", desc: "根据行列线索数字推导涂色与打叉，逐步揭开色彩斑斓的小动物像素艺术画！" },
+          ja: { title: "わくわく数織アドベンチャー", sub: "イラストロジック・ドット絵", desc: "数字の手がかりからマスを塗って可愛いドット絵を完成させよう！" },
+          ko: { title: "와쿠와쿠 노노그램", sub: "도트 그림 완성 네모네모 로직", desc: "숫자 힌트를 따라 칸을 채우면 깜찍한 픽셀 아트 그림이 나타나요!" },
+          en: { title: "Nonogram Picross", sub: "Paint by Numbers Pixel Art", desc: "Reveal lovely pixel animals by deducing row and column number clues!" }
+        },
+        tags: ["数织涂画", "像素艺术", "成就感满满"]
+      },
+      {
+        id: "futoshiki",
+        file: "futoshiki.html",
+        icon: "⚖️",
+        iconBg: "#e0f2fe",
+        borderHover: "#0284c7",
+        category: "logic",
+        ageGroup: "advanced",
+        ageLabel: "6~12岁 大小",
+        targets: ["zh", "ja", "ko", "en"],
+        titles: {
+          zh: { title: "萌趣不等号小天才", sub: "大于小于号严密推理", desc: "结合方阵与相邻大小约束（＜、＞）严密推导，顺着不等号单调链快速定数！" },
+          ja: { title: "わくわく不等号アドベンチャー", sub: "大小条件を満たす不等号パズル", desc: "不等号（＜＞）のルールを守って数字を埋めよう。ロジカルシンキングに最適！" },
+          ko: { title: "와쿠와쿠 부등호 퍼즐", sub: "크기 비교 논리 퍼즐", desc: "부등호(＜, ＞) 힌트를 보고 숫자의 크기 관계를 추리하는 논리 퍼즐!" },
+          en: { title: "Futoshiki", sub: "Inequality Logic Grid", desc: "Place numbers respecting inequality signs (<, >) along the grid lines!" }
+        },
+        tags: ["不等号", "大小比较", "严密推理"]
+      },
+      {
+        id: "kakuro",
+        file: "kakuro.html",
+        icon: "➕",
+        iconBg: "#ffedd5",
+        borderHover: "#ea580c",
+        category: "logic",
+        ageGroup: "advanced",
+        ageLabel: "7~12岁 加法",
+        targets: ["zh", "ja", "ko", "en"],
+        titles: {
+          zh: { title: "萌趣数和小天才", sub: "数学交叉填字和值拆分", desc: "经典交叉填字数学谜题！根据斜角和值在白格填入1~9且不重复，培养敏锐数感。" },
+          ja: { title: "わくわく数和アドベンチャー", sub: "数字の足し算クロスワード", desc: "指定された合計値になるよう数字を配置。数字の分解・合成力を鍛えます。" },
+          ko: { title: "와쿠와쿠 카쿠로", sub: "덧셈 크로스워드 퍼즐", desc: "대각선 힌트 숫자에 맞춰 칸을 채우는 신개념 덧셈 퍼즐 게임!" },
+          en: { title: "Kakuro Cross Sums", sub: "Addition Crossword Puzzle", desc: "A numerical crossword where digits in each group add up to the clue total." }
+        },
+        tags: ["加法填字", "数字拆分", "数感培养"]
+      },
+      {
+        id: "skyscrapers",
+        file: "skyscrapers.html",
+        icon: "🏙️",
+        iconBg: "#e0e7ff",
+        borderHover: "#4f46e5",
+        category: "logic",
+        ageGroup: "advanced",
+        ageLabel: "7~12岁 空间",
+        targets: ["zh", "ja", "ko", "en"],
+        titles: {
+          zh: { title: "萌趣摩天楼小天才", sub: "立体空间视角遮挡推理", desc: "空间视角推理游戏！在棋盘填入楼高数字，满足四周视野看到的建筑栋数。" },
+          ja: { title: "わくわく摩天楼アドベンチャー", sub: "ビルの高さを推理する空間パズル", desc: "外側から見えるビルの数をヒントに高さを推理。3D空間認識能力を育む！" },
+          ko: { title: "와쿠와쿠 마천루 퍼즐", sub: "공간 지각 빌딩 높이 추리", desc: "각 방향에서 보이는 빌딩 개수 힌트를 바탕으로 높이를 맞추는 3D 퍼즐!" },
+          en: { title: "Skyscrapers", sub: "3D Perspective & Height Puzzle", desc: "Deduce building heights based on how many towers are visible from each viewpoint." }
+        },
+        tags: ["3D空间视角", "遮挡推理", "立体思维"]
+      },
+      {
+        id: "masyu",
+        file: "masyu.html",
+        icon: "⚪",
+        iconBg: "#f3e8ff",
+        borderHover: "#9333ea",
+        category: "logic",
+        ageGroup: "advanced",
+        ageLabel: "6~12岁 回路",
+        targets: ["zh", "ja", "ko", "en"],
+        titles: {
+          zh: { title: "萌趣珍珠数回", sub: "白黑珍珠闭合回路解谜", desc: "白珍珠直行转弯、黑珍珠直角转弯两臂直伸！将散落的珍珠穿成唯一的魔法项链！" },
+          ja: { title: "わくわくましゅアドベンチャー", sub: "白黒真珠のループ結線パズル", desc: "白真珠・黒真珠のシンプルルールに従って1つの美しい輪っかを作ろう！" },
+          ko: { title: "와쿠와쿠 마슈 진주 퍼즐", sub: "흑백 진주 루프 잇기", desc: "흑백 진주의 꺾임 규칙을 따라 단 하나의 닫힌 목걸이를 만드는 퍼즐!" },
+          en: { title: "Masyu Pearl Loop", sub: "Black & White Pearl Circuit", desc: "Connect scattered pearls into a single closed loop following simple turning rules." }
+        },
+        tags: ["珍珠环线", "回路解谜", "简单好玩"]
+      }
+    ];
+
+    /* ==========================================================================
+       2. 语言与向导文本国际化字典
+       ========================================================================== */
+    let currentAppLang = 'zh'; // 界面语言
+    let currentMotherTongue = 'zh'; // 选择的母语向导
+    let currentFilter = 'all'; // 当前分类
+    let soundEnabled = true;
+
+    const i18n = {
+      zh: {
+        brandTitle: "奇趣益智乐园",
+        soundOn: "音效开",
+        soundOff: "音效关",
+        wizardBadge: "智能儿童向导",
+        wizardTitle: "小朋友，你的母语是哪个呢？",
+        wizardDesc: "点击选择你的母语，马上为你推荐最棒最好玩的游戏！",
+        tabAll: "🌈 全部好玩的",
+        tabLang: "🗣️ 语言益智乐园",
+        tabLogic: "🧩 逻辑数理挑战",
+        tabStarter: "🍼 3~6岁萌新",
+        tabAdvanced: "🎒 7岁+进阶",
+        searchPlaceholder: "搜索好玩的游戏...",
+        playBtn: "马上开始玩 🚀",
+        recommendedBadge: "🌟 为你精选",
+        emptyTitle: "没有找到符合条件的游戏呢",
+        emptySub: "换个关键词或点击上面的母语按钮试试看吧！",
+        guide: {
+          zh: {
+            avatar: "🐼",
+            heading: "欢迎中文小朋友！为你精选的成长路径：",
+            body: "🌟 <strong>语言启蒙</strong>：推荐先玩《拼音单音王国》看口型听标准音，再到《声调小剧场》感受四声调升降！<br>🚀 <strong>第二外语</strong>：借助汉字同源词轻松探索《假名数独》与《韩语小天才》！<br>🧠 <strong>数理思维</strong>：挑战《萌趣数独》4×4入门与《像素数织》点亮逻辑大脑！",
+            tags: ["🔥 拼音单音王国", "🔥 声调小剧场", "拼读小镇", "萌趣数独", "像素数织"]
+          },
+          ja: {
+            avatar: "🐕",
+            heading: "にほんごのお友達、ようこそ！おすすめ知育ゲーム：",
+            body: "🌟 <strong>中国語ピンイン入門</strong>：まずは《はじめてのピンイン単音王国》と《声調小劇場》で、4つの声調や発音を楽しく体験しよう！<br>🚀 <strong>ハングルに挑戦</strong>：積み木のように文字を組み立てる《ハングル数独》もおすすめ！<br>🧠 <strong>和風ロジック</strong>：4×4の《わくわく数独》やドット絵を描く《数織パズル》に挑戦！",
+            tags: ["🔥 ピンイン単音王国", "🔥 声調小劇場", "ハングル数独", "わくわく数独", "数織パズル"]
+          },
+          ko: {
+            avatar: "🐯",
+            heading: "한국어 친구들 환영해요! 맞춤 추천 게임：",
+            body: "🌟 <strong>중국어 집중 공략</strong>：한국 어린이를 위해 성조와 발음을 집중 안내하는 《한국어린이 핀인 스도쿠》를 추천해요!<br>🚀 <strong>일본어 첫걸음</strong>：비슷한 단어가 많은 《한국어린이 가나 스도쿠》로 신나게 배워봐요!<br>🧠 <strong>두뇌 퍼즐</strong>：《와쿠와쿠 스도쿠》와 깜찍한 도트 그림의 《노노그램》에 도전해보세요!",
+            tags: ["🔥 한국어린이 핀인", "🔥 한국어린이 가나", "와쿠와쿠 스도쿠", "노노그램", "핀인 단음 왕국"]
+          },
+          en: {
+            avatar: "🦉",
+            heading: "Welcome young explorer! Your tailored adventure:",
+            body: "🌟 <strong>Logic & Math</strong>: Try our colorful <em>Kids Sudoku (4x4)</em>, <em>Calcudoku</em>, and <em>Pixel Nonogram</em>!<br>🗣️ <strong>Asian Phonics</strong>: Explore Chinese Pinyin, Japanese Kana, and Korean Hangul through engaging audio puzzles!<br>🎉 <strong>Early Phonics</strong>: Start with <em>Pinyin Sound Kingdom</em> for lovely mouth animations and bubble games!",
+            tags: ["🔥 Kids Sudoku", "🔥 Pinyin Sound Kingdom", "Pixel Nonogram", "Tone Theater", "Masyu Pearl"]
+          }
+        }
+      },
+      ja: {
+        brandTitle: "わくわく知育パーク",
+        soundOn: "効果音 ON",
+        soundOff: "効果音 OFF",
+        wizardBadge: "おともだちガイド",
+        wizardTitle: "きみの母国語はどれかな？",
+        wizardDesc: "母国語をえらぶと、きみにぴったりのおすすめゲームが見つかるよ！",
+        tabAll: "🌈 ぜんぶあそぶ",
+        tabLang: "🗣️ ことば・外国語",
+        tabLogic: "🧩 すうじ・ロジック",
+        tabStarter: "🍼 3〜6才 はじめて",
+        tabAdvanced: "🎒 7才〜 チャレンジ",
+        searchPlaceholder: "ゲームをさがす...",
+        playBtn: "いますぐあそぶ 🚀",
+        recommendedBadge: "🌟 おすすめ",
+        emptyTitle: "ゲームが見つかりませんでした",
+        emptySub: "別のキーワードを試すか、上の母国語ボタンを押してみてね！"
+      },
+      ko: {
+        brandTitle: "키즈 두뇌 원더랜드",
+        soundOn: "효과음 켜짐",
+        soundOff: "효과음 꺼짐",
+        wizardBadge: "스마트 어린이 가이드",
+        wizardTitle: "우리 친구의 모국어는 무엇인가요?",
+        wizardDesc: "모국어를 선택하면 가장 재미있고 딱 맞는 게임을 추천해드려요!",
+        tabAll: "🌈 전체 게임",
+        tabLang: "🗣️ 언어 지능 놀이터",
+        tabLogic: "🧩 두뇌 수리 퍼즐",
+        tabStarter: "🍼 3~6세 첫걸음",
+        tabAdvanced: "🎒 7세 이상 도전",
+        searchPlaceholder: "재미있는 게임 검색...",
+        playBtn: "지금 시작하기 🚀",
+        recommendedBadge: "🌟 추천 게임",
+        emptyTitle: "검색 결과가 없어요",
+        emptySub: "다른 단어로 검색하거나 상단 모국어 버튼을 눌러보세요!"
+      },
+      en: {
+        brandTitle: "Kids Brain Wonderland",
+        soundOn: "Sound On",
+        soundOff: "Sound Off",
+        wizardBadge: "Smart Kids Guide",
+        wizardTitle: "Which language do you speak best?",
+        wizardDesc: "Choose your native language to discover recommended games tailored for you!",
+        tabAll: "🌈 All Fun Games",
+        tabLang: "🗣️ Language Wonderland",
+        tabLogic: "🧩 Logic & Brain Puzzles",
+        tabStarter: "🍼 Ages 3-6 Junior",
+        tabAdvanced: "🎒 Ages 7+ Explorer",
+        searchPlaceholder: "Search fun games...",
+        playBtn: "Play Now 🚀",
+        recommendedBadge: "🌟 Picked For You",
+        emptyTitle: "No games found",
+        emptySub: "Try searching another keyword or click a native language card above!"
+      }
+    };
+
+    /* ==========================================================================
+       3. 极简轻量级儿童音效引擎 (Web Audio API)
+       ========================================================================== */
+    let audioCtx = null;
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (AudioContext) {
+          audioCtx = new AudioContext();
+        }
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playPopSound(pitchMultiplier = 1) {
+      if (!soundEnabled) return;
+      try {
+        initAudioContext();
+        if (!audioCtx) return;
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = 'sine';
+        const now = audioCtx.currentTime;
+        osc.frequency.setValueAtTime(320 * pitchMultiplier, now);
+        osc.frequency.exponentialRampToValueAtTime(640 * pitchMultiplier, now + 0.12);
+
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(now);
+        osc.stop(now + 0.14);
+      } catch (e) {}
+    }
+
+    function playSparkleSound() {
+      if (!soundEnabled) return;
+      try {
+        initAudioContext();
+        if (!audioCtx) return;
+
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C E G C
+        notes.forEach((freq, index) => {
+          const now = audioCtx.currentTime + index * 0.05;
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now);
+
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          osc.start(now);
+          osc.stop(now + 0.12);
+        });
+      } catch (e) {}
+    }
+
+    /* ==========================================================================
+       4. 交互逻辑与向导驱动
+       ========================================================================== */
+    function setAppLanguage(lang) {
+      currentAppLang = lang;
+      playPopSound(1.2);
+
+      // 更新语言切换按钮状态
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+
+      // 更新主文案
+      const texts = i18n[lang] || i18n.zh;
+      document.getElementById('txtBrandTitle').textContent = texts.brandTitle;
+      document.getElementById('txtWizardBadge').textContent = texts.wizardBadge;
+      document.getElementById('txtWizardTitle').textContent = texts.wizardTitle;
+      document.getElementById('txtWizardDesc').textContent = texts.wizardDesc;
+
+      const tabs = document.querySelectorAll('.tab-btn');
+      tabs[0].querySelector('span:first-child').textContent = texts.tabAll;
+      tabs[1].querySelector('span:first-child').textContent = texts.tabLang;
+      tabs[2].querySelector('span:first-child').textContent = texts.tabLogic;
+      tabs[3].querySelector('span:first-child').textContent = texts.tabStarter;
+      tabs[4].querySelector('span:first-child').textContent = texts.tabAdvanced;
+
+      document.getElementById('searchInput').placeholder = texts.searchPlaceholder;
+
+      updateSoundLabel();
+      updateGuideBubble();
+      renderGames();
+    }
+
+    function selectMotherTongue(lang) {
+      currentMotherTongue = lang;
+      playSparkleSound();
+
+      // 卡片高亮状态
+      document.getElementById('cardZh').classList.toggle('selected', lang === 'zh');
+      document.getElementById('cardJa').classList.toggle('selected', lang === 'ja');
+      document.getElementById('cardKo').classList.toggle('selected', lang === 'ko');
+      document.getElementById('cardEn').classList.toggle('selected', lang === 'en');
+
+      // 自动顺应切换应用语言（如果是相应语言用户，同步体验）
+      if (currentAppLang !== lang) {
+        setAppLanguage(lang);
+      } else {
+        updateGuideBubble();
+        renderGames();
+      }
+    }
+
+    function updateGuideBubble() {
+      const guideData = (i18n.zh.guide[currentMotherTongue]) || i18n.zh.guide.zh;
+      const avatarEl = document.getElementById('guideAvatar');
+      const headingEl = document.getElementById('guideHeadingText');
+      const bodyEl = document.getElementById('guideBodyText');
+      const tagsEl = document.getElementById('guideTags');
+
+      avatarEl.textContent = guideData.avatar;
+      headingEl.textContent = guideData.heading;
+      bodyEl.innerHTML = guideData.body;
+
+      tagsEl.innerHTML = guideData.tags.map((t, idx) => 
+        `<span class="g-tag ${idx < 2 ? 'highlight' : ''}">${t}</span>`
+      ).join('');
+    }
+
+    function filterGames(category) {
+      currentFilter = category;
+      playPopSound(1.1);
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === category);
+      });
+
+      renderGames();
+    }
+
+    function handleSearch() {
+      renderGames();
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      playPopSound(1.5);
+      updateSoundLabel();
+    }
+
+    function updateSoundLabel() {
+      const texts = i18n[currentAppLang] || i18n.zh;
+      document.getElementById('soundIcon').textContent = soundEnabled ? "🔊" : "🔈";
+      document.getElementById('soundLabel').textContent = soundEnabled ? texts.soundOn : texts.soundOff;
+    }
+
+    /* ==========================================================================
+       5. 游戏列表动态渲染 (带母语优先排序与推荐徽章)
+       ========================================================================== */
+    function renderGames() {
+      const container = document.getElementById('gamesContainer');
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      const texts = i18n[currentAppLang] || i18n.zh;
+
+      // 1. 分类筛选
+      let filtered = games.filter(g => {
+        if (currentFilter === 'all') return true;
+        if (currentFilter === 'language') return g.category === 'language';
+        if (currentFilter === 'logic') return g.category === 'logic';
+        if (currentFilter === 'starter') return g.ageGroup === 'starter';
+        if (currentFilter === 'advanced') return g.ageGroup === 'advanced';
+        return true;
+      });
+
+      // 2. 关键词检索
+      if (query) {
+        filtered = filtered.filter(g => {
+          const t = g.titles[currentAppLang] || g.titles.zh;
+          const searchTargets = [
+            t.title,
+            t.sub,
+            t.desc,
+            ...g.tags,
+            g.id
+          ].join(' ').toLowerCase();
+          return searchTargets.includes(query);
+        });
+      }
+
+      // 3. 智能权重排序：母语匹配度高、为推荐的排在最前
+      filtered.sort((a, b) => {
+        const aTarget = a.targets.includes(currentMotherTongue) ? 1 : 0;
+        const bTarget = b.targets.includes(currentMotherTongue) ? 1 : 0;
+        if (aTarget !== bTarget) {
+          return bTarget - aTarget;
+        }
+        return 0;
+      });
+
+      // 4. 更新各分类角标计数
+      updateCounts();
+
+      // 5. 渲染页面
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">🎈</div>
+            <div class="empty-title">${texts.emptyTitle}</div>
+            <div style="font-size: 14px; color: #64748b;">${texts.emptySub}</div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(game => {
+        const t = game.titles[currentAppLang] || game.titles.zh;
+        const isRecommended = game.targets.includes(currentMotherTongue);
+
+        return `
+          <div class="game-card ${isRecommended ? 'recommended' : ''}" 
+               style="--card-border-hover: ${game.borderHover}; --icon-bg: ${game.iconBg};"
+               onclick="launchGame('${game.file}')">
+            
+            ${isRecommended ? `<div class="rec-badge">${texts.recommendedBadge}</div>` : ''}
+
+            <div class="card-top">
+              <div class="game-icon-bubble">${game.icon}</div>
+              <div class="game-title-group">
+                <div class="game-title">${t.title}</div>
+                <div class="game-subtitle">${t.sub}</div>
+              </div>
+            </div>
+
+            <div class="game-desc">${t.desc}</div>
+
+            <div class="game-badges">
+              <span class="badge-pill age">${game.ageLabel}</span>
+              <span class="badge-pill category">${game.category === 'language' ? '🗣️ 语言益智' : '🧩 逻辑数理'}</span>
+              ${game.tags.slice(0, 2).map(tag => `<span class="badge-pill">${tag}</span>`).join('')}
+            </div>
+
+            <button class="btn-play" onclick="event.stopPropagation(); launchGame('${game.file}')">
+              <span>${texts.playBtn}</span>
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateCounts() {
+      document.getElementById('countAll').textContent = games.length;
+      document.getElementById('countLang').textContent = games.filter(g => g.category === 'language').length;
+      document.getElementById('countLogic').textContent = games.filter(g => g.category === 'logic').length;
+      document.getElementById('countStarter').textContent = games.filter(g => g.ageGroup === 'starter').length;
+      document.getElementById('countAdvanced').textContent = games.filter(g => g.ageGroup === 'advanced').length;
+    }
+
+    function launchGame(file) {
+      playSparkleSound();
+      // 平滑短延迟让音效和弹性按压动画播放完毕
+      setTimeout(() => {
+        window.location.href = file;
+      }, 140);
+    }
+
+    /* ==========================================================================
+       6. 页面初始化
+       ========================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('btnSoundToggle').addEventListener('click', toggleSound);
+
+      // 根据浏览器默认语言自动设置一次
+      const navLang = (navigator.language || '').toLowerCase();
+      if (navLang.startsWith('ja')) {
+        selectMotherTongue('ja');
+      } else if (navLang.startsWith('ko')) {
+        selectMotherTongue('ko');
+      } else if (navLang.startsWith('en')) {
+        selectMotherTongue('en');
+      } else {
+        selectMotherTongue('zh');
+      }
+    });
+  </script>
+</body>
+</html>

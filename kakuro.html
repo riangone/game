@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>わくわく数和アドベンチャー - 萌趣数和小天才 · Kakuro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #FFFDF7;
+    --bg-card: #FFFFFF;
+    --primary: #EA580C;
+    --primary-hover: #C2410C;
+    --primary-light: #FFF7ED;
+    --secondary: #0EA5E9;
+    --secondary-light: #F0F9FF;
+    --accent: #F59E0B;
+    --accent-light: #FFFBEB;
+    --success: #10B981;
+    --success-light: #ECFDF5;
+    --error: #EF4444;
+    --error-light: #FEE2E2;
+    --text-main: #1E293B;
+    --text-sub: #64748B;
+    --border-soft: #E2E8F0;
+    --border-bold: #94A3B8;
+    --block-bg: #334155;
+    --block-text: #F1F5F9;
+    --cell-bg: #FFFFFF;
+    --cell-border: #CBD5E1;
+    --cell-selected: #FFEDD5;
+    --cell-selected-border: #EA580C;
+    --shadow-sm: 0 3px 10px rgba(100, 110, 140, 0.07);
+    --shadow-md: 0 8px 20px rgba(100, 110, 140, 0.12);
+    --shadow-lg: 0 14px 30px rgba(100, 110, 140, 0.18);
+    --radius-xl: 24px;
+    --radius-lg: 18px;
+    --radius-md: 14px;
+    --radius-sm: 8px;
+  }
+  body[data-theme="classic"] {
+    --bg-main: #0F172A;
+    --bg-card: #1E293B;
+    --text-main: #F8FAFC;
+    --text-sub: #94A3B8;
+    --border-soft: #334155;
+    --border-bold: #64748B;
+    --block-bg: #0F172A;
+    --block-text: #E2E8F0;
+    --cell-bg: #1E293B;
+    --cell-border: #475569;
+    --cell-selected: #422006;
+    --cell-selected-border: #FB923C;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+  html, body { width: 100%; height: 100%; overflow-x: hidden; }
+  body {
+    font-family: "M PLUS Rounded 1c", "Outfit", system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 15% 15%, #FFEDD5 0%, var(--bg-main) 55%, #E0F2FE 100%);
+    color: var(--text-main);
+    display: flex; flex-direction: column; align-items: center;
+    position: relative; min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  body[data-theme="classic"] {
+    background: radial-gradient(circle at 20% 20%, #1E293B 0%, #0F172A 70%, #020617 100%);
+  }
+  #app { width: 100%; max-width: 480px; min-height: 100vh; display: flex; flex-direction: column; position: relative; z-index: 1; padding: 8px 12px 16px; }
+
+  .header { display: flex; align-items: center; justify-content: space-between; padding: 2px 0 8px; flex-shrink: 0; }
+  .logo-group { display: flex; align-items: center; gap: 8px; cursor: pointer; text-decoration: none; }
+  .logo-icon { font-size: 26px; animation: floatBounce 2.4s infinite ease-in-out; }
+  @keyframes floatBounce { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-4px);} }
+  .logo-title { font-size: 16px; font-weight: 900; color: var(--text-main); display: flex; flex-direction: column; }
+  .logo-title span.sub { font-size: 9px; color: var(--primary); font-weight: 800; letter-spacing: 0.5px; }
+  .nav-actions { display: flex; align-items: center; gap: 6px; }
+  .round-btn {
+    width: 36px; height: 36px; border-radius: 50%; background: var(--bg-card);
+    border: 2px solid var(--border-soft); box-shadow: var(--shadow-sm);
+    display: flex; align-items: center; justify-content: center; font-size: 16px;
+    cursor: pointer; transition: all 0.15s ease; color: var(--text-main);
+  }
+  .round-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .round-btn:active { transform: translateY(1px); }
+
+  .mode-tabs { display: flex; background: #EFEFE9; padding: 4px; border-radius: 16px; margin: 4px 0 10px; flex-shrink: 0; }
+  body[data-theme="classic"] .mode-tabs { background: #1E293B; }
+  .tab-btn {
+    flex: 1; border: none; background: transparent; padding: 7px 10px; font-size: 13px; font-weight: 800;
+    color: var(--text-sub); border-radius: 12px; cursor: pointer; transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .tab-btn.active { background: var(--bg-card); color: var(--primary); box-shadow: 0 3px 10px rgba(234,88,12,0.2); transform: scale(1.02); }
+
+  .view { display: none; width: 100%; flex-direction: column; animation: fadeIn 0.22s ease-out; }
+  .view.active { display: flex; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(6px);} to { opacity:1; transform: translateY(0);} }
+
+  .section-banner {
+    background: linear-gradient(135deg, #FFF7ED 0%, #FEF3C7 100%);
+    border: 2px solid #FED7AA; border-radius: var(--radius-lg); padding: 12px 16px;
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; box-shadow: var(--shadow-sm);
+  }
+  body[data-theme="classic"] .section-banner { background: linear-gradient(135deg, #1E293B 0%, #78350F 100%); border-color: #EA580C; }
+  .banner-left h2 { font-size: 15px; font-weight: 900; color: #9A3412; }
+  body[data-theme="classic"] .banner-left h2 { color: #FED7AA; }
+  .banner-left p { font-size: 11px; color: #C2410C; margin-top: 2px; }
+  body[data-theme="classic"] .banner-left p { color: #FDBA74; }
+  .banner-stars { display: flex; align-items: center; gap: 4px; background: #fff; padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: 800; color: #D97706; box-shadow: 0 2px 6px rgba(217,119,6,0.15); }
+  body[data-theme="classic"] .banner-stars { background: #0F172A; color: #FBBF24; }
+
+  .tier-block { margin-bottom: 14px; }
+  .tier-title { font-size: 13px; font-weight: 900; color: var(--text-sub); margin: 6px 2px; display:flex; align-items:center; gap:6px; }
+  .stage-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stage-card {
+    background: var(--bg-card); border: 2px solid var(--border-soft); border-radius: var(--radius-md);
+    padding: 10px 6px; text-align: center; cursor: pointer; box-shadow: var(--shadow-sm); transition: all .15s ease; position: relative;
+  }
+  .stage-card:active { transform: scale(0.95); }
+  .stage-card.locked { opacity: 0.5; filter: grayscale(0.6); cursor: not-allowed; }
+  .stage-card .num { font-size: 18px; font-weight: 900; color: var(--primary); }
+  .stage-card .sz { font-size: 10px; color: var(--text-sub); font-weight: 700; margin-top: 2px; }
+  .stage-card .stars { font-size: 10px; margin-top: 3px; letter-spacing: 1px; }
+  .stage-card .lock-icon { font-size: 16px; }
+
+  .free-panel { background: var(--bg-card); border-radius: var(--radius-lg); padding: 14px; box-shadow: var(--shadow-sm); border: 2px solid var(--border-soft); }
+  .free-panel h3 { font-size: 14px; font-weight: 900; margin-bottom: 10px; }
+  .opt-row { display:flex; gap:8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .opt-btn {
+    flex: 1; min-width: 70px; border: 2px solid var(--border-soft); background: var(--bg-card); border-radius: 12px;
+    padding: 9px 6px; font-size: 12px; font-weight: 800; color: var(--text-sub); cursor: pointer; transition: all .15s;
+  }
+  .opt-btn.active { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+  .big-btn {
+    width: 100%; padding: 13px; border: none; border-radius: 16px; background: linear-gradient(135deg, #FB923C, #EA580C);
+    color: white; font-size: 15px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 16px rgba(234,88,12,0.35); margin-top: 4px;
+  }
+  .big-btn:active { transform: scale(0.97); }
+
+  /* ============ GAME VIEW ============ */
+  .game-topbar { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+  .stat-pill { display:flex; align-items:center; gap:5px; background: var(--bg-card); border:2px solid var(--border-soft); padding:5px 10px; border-radius:14px; font-size:12px; font-weight:800; box-shadow: var(--shadow-sm); }
+  .stat-pill .ico { font-size:14px; }
+
+  .board-wrap { display:flex; justify-content:center; align-items:center; margin: 6px 0 12px; }
+  #board {
+    display: grid;
+    background: var(--border-bold);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    gap: 1px;
+  }
+  .cell { position: relative; width: 100%; height: 100%; display:flex; align-items:center; justify-content:center; }
+  .cell.white {
+    background: var(--cell-bg); font-weight: 900; cursor: pointer; transition: background .15s;
+    font-size: calc(var(--csz, 40px) * 0.42);
+    color: var(--primary);
+  }
+  .cell.white.selected { background: var(--cell-selected); box-shadow: inset 0 0 0 2px var(--cell-selected-border); z-index: 2; }
+  .cell.white.error { color: var(--error) !important; background: var(--error-light); }
+  .cell.white.satisfied { color: var(--success) !important; }
+  .cell.block {
+    background: var(--block-bg);
+  }
+  .cell.block.border { background: var(--block-bg); }
+  .clue-diag { position:absolute; inset:0; }
+  .clue-diag::before {
+    content:''; position:absolute; top:0; left:0; width: 141.5%; height: 1px; background: rgba(255,255,255,0.25);
+    transform-origin: top left; transform: rotate(45deg);
+  }
+  .clue-num { position:absolute; font-weight: 800; color: var(--block-text); line-height:1; font-size: calc(var(--csz, 40px) * 0.24); }
+  .clue-num.right { top: 2px; right: 4px; }
+  .clue-num.down { bottom: 2px; left: 4px; }
+
+  .keypad { display:grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 4px; }
+  .key-btn {
+    padding: 12px 0; border-radius: 12px; border: 2px solid var(--border-soft); background: var(--bg-card);
+    font-size: 17px; font-weight: 900; color: var(--text-main); cursor: pointer; box-shadow: var(--shadow-sm);
+  }
+  .key-btn:active { transform: scale(0.92); background: var(--primary-light); }
+  .key-btn.erase { color: var(--error); grid-column: span 1; font-size: 15px; }
+
+  .toolbar { display:flex; gap:8px; margin-top: 10px; }
+  .tool-btn {
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; padding: 8px 4px; border-radius: 12px;
+    border: 2px solid var(--border-soft); background: var(--bg-card); font-size: 10px; font-weight: 800; color: var(--text-sub); cursor:pointer;
+  }
+  .tool-btn .ico { font-size: 16px; }
+  .tool-btn:active { transform: scale(0.94); }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset:0; background: rgba(15,23,42,0.55); display:none; align-items:center; justify-content:center; z-index: 100; padding: 20px;
+  }
+  .modal-overlay.active { display:flex; }
+  .modal-box {
+    background: var(--bg-card); border-radius: 24px; padding: 24px 20px; max-width: 340px; width:100%; text-align:center;
+    box-shadow: var(--shadow-lg); animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes popIn { from { transform: scale(0.8); opacity:0;} to { transform: scale(1); opacity:1;} }
+  .modal-box h2 { font-size: 20px; font-weight: 900; margin-bottom: 6px; }
+  .modal-stars { font-size: 34px; margin: 10px 0; letter-spacing: 6px; }
+  .modal-stats { font-size: 12px; color: var(--text-sub); margin-bottom: 14px; display:flex; justify-content:center; gap:14px; }
+  .modal-btns { display:flex; gap:8px; }
+  .modal-btns button {
+    flex:1; padding: 12px 0; border-radius: 14px; border:none; font-size: 13px; font-weight: 800; cursor:pointer;
+  }
+  .btn-primary { background: linear-gradient(135deg, #FB923C, #EA580C); color:white; }
+  .btn-secondary { background: var(--border-soft); color: var(--text-main); }
+
+  .howto-body { text-align:left; font-size: 12.5px; line-height:1.7; color: var(--text-sub); max-height: 50vh; overflow-y:auto; margin: 10px 0; }
+  .howto-body b { color: var(--primary); }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: rgba(30,41,59,0.92); color:white;
+    padding: 9px 18px; border-radius: 20px; font-size: 12px; font-weight: 700; z-index: 200; opacity:0; transition: opacity .25s, transform .25s; pointer-events:none;
+  }
+  .toast.show { opacity:1; transform: translateX(-50%) translateY(-6px); }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="header">
+    <a class="logo-group" href="index.html">
+      <div class="logo-icon">➕</div>
+      <div class="logo-title">数和アドベンチャー<span class="sub">KAKURO ADVENTURE</span></div>
+    </a>
+    <div class="nav-actions">
+      <button class="round-btn" id="themeBtn" title="テーマ切替">🌓</button>
+      <button class="round-btn" id="helpBtn" title="遊び方">❓</button>
+      <a class="round-btn" href="index.html" title="ホームへ">🏠</a>
+    </div>
+  </div>
+
+  <div class="mode-tabs">
+    <button class="tab-btn active" data-mode="stage">🗺️ ステージ</button>
+    <button class="tab-btn" data-mode="free">🎲 フリー練習</button>
+  </div>
+
+  <!-- STAGE MAP VIEW -->
+  <div class="view active" id="view-map">
+    <div class="section-banner">
+      <div class="banner-left"><h2>ステージ冒険</h2><p>18ステージでマスターを目指そう！</p></div>
+      <div class="banner-stars">⭐ <span id="totalStars">0</span> / 54</div>
+    </div>
+    <div id="tierContainer"></div>
+  </div>
+
+  <!-- FREE PLAY VIEW -->
+  <div class="view" id="view-free">
+    <div class="free-panel">
+      <h3>🎲 サイズを選んでね</h3>
+      <div class="opt-row" id="sizeOpts">
+        <button class="opt-btn active" data-size="small">やさしい 6×6</button>
+        <button class="opt-btn" data-size="medium">ふつう 8×8</button>
+        <button class="opt-btn" data-size="large">むずかしい 10×10</button>
+      </div>
+      <button class="big-btn" id="freeStartBtn">✨ 新しいパズルを作る</button>
+    </div>
+  </div>
+
+  <!-- GAME VIEW -->
+  <div class="view" id="view-game">
+    <div class="game-topbar">
+      <div class="stat-pill"><span class="ico">⏱️</span><span id="timerLabel">00:00</span></div>
+      <div class="stat-pill"><span class="ico">💡</span><span id="hintLabel">0</span></div>
+      <button class="round-btn" id="backToMapBtn" title="戻る">↩️</button>
+    </div>
+    <div class="board-wrap"><div id="board"></div></div>
+    <div class="keypad" id="keypad"></div>
+    <div class="toolbar">
+      <button class="tool-btn" id="eraseBtn"><span class="ico">🧹</span>けす</button>
+      <button class="tool-btn" id="checkBtn"><span class="ico">✅</span>チェック</button>
+      <button class="tool-btn" id="hintBtn"><span class="ico">💡</span>ヒント</button>
+      <button class="tool-btn" id="restartBtn"><span class="ico">🔄</span>やり直し</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="winModal">
+  <div class="modal-box">
+    <h2>🎉 クリア！</h2>
+    <div class="modal-stars" id="winStars">⭐⭐⭐</div>
+    <div class="modal-stats"><span id="winTime">⏱️ 00:00</span><span id="winHints">💡 0</span></div>
+    <div class="modal-btns">
+      <button class="btn-secondary" id="winMapBtn">🗺️ マップへ</button>
+      <button class="btn-primary" id="winNextBtn">➡️ つぎへ</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="helpModal">
+  <div class="modal-box">
+    <h2>❓ 遊び方</h2>
+    <div class="howto-body">
+      <p><b>① ルール：</b>白いマスに 1〜9 の数字を入れよう。<b>同じ列（ヨコ）・同じ列（タテ）</b>の連続する白マスの中で、数字は重複できません。</p>
+      <p><b>② 黒マスの数字：</b>右上の数字は「右方向に続く白マスの合計」、左下の数字は「下方向に続く白マスの合計」を表します。</p>
+      <p><b>③ 進め方：</b>白いマスをタップして選び、下のキーパッドで数字を入力しよう。マスが正しく埋まると緑色に光るよ！</p>
+      <p><b>④ ヒント：</b>わからないときは💡ヒントボタンで1マス教えてもらえる（使いすぎると⭐が減るよ）。</p>
+      <p><b>⑤ クリア：</b>すべての白マスが正しい数字で埋まったらクリア！タイムとヒント回数で⭐が決まるよ。</p>
+    </div>
+    <div class="modal-btns"><button class="btn-primary" id="closeHelpBtn">わかった！</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ============================ AUDIO ============================ */
+let actx = null;
+function ac(){ if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } return actx; }
+function beep(freq, dur, type, vol){
+  const a = ac(); if(!a) return;
+  const t0 = a.currentTime;
+  const osc = a.createOscillator(); const gain = a.createGain();
+  osc.type = type || 'sine'; osc.frequency.value = freq;
+  gain.gain.setValueAtTime(0, t0);
+  gain.gain.linearRampToValueAtTime(vol||0.18, t0+0.01);
+  gain.gain.exponentialRampToValueAtTime(0.001, t0+dur);
+  osc.connect(gain); gain.connect(a.destination);
+  osc.start(t0); osc.stop(t0+dur+0.02);
+}
+function sfxTap(){ beep(520,0.08,'sine',0.12); }
+function sfxSatisfy(){ beep(660,0.12,'triangle',0.16); setTimeout(()=>beep(880,0.14,'triangle',0.14),80); }
+function sfxError(){ beep(180,0.15,'square',0.12); }
+function sfxWin(){ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,0.25,'triangle',0.18), i*110)); }
+
+/* ============================ TOPOLOGY ============================ */
+// Builds an N x N grid (0-index). Row0 & Col0 are always black border cells.
+// blocks: array of [r,c] interior positions (1-indexed within interior) to mark black.
+function buildTopo(n, blocks){
+  const grid = [];
+  for(let r=0;r<n;r++){
+    const row = [];
+    for(let c=0;c<n;c++){
+      row.push(r===0 || c===0);
+    }
+    grid.push(row);
+  }
+  blocks.forEach(([r,c])=>{ grid[r][c] = true; });
+  return { n, grid };
+}
+
+const TOPOS = {
+  small:  [ buildTopo(6, [[3,3]]) ],
+  medium: [ buildTopo(8, [[3,3],[5,5]]), buildTopo(8, [[5,3],[3,5]]) ],
+  large:  [ buildTopo(10, [[3,3],[4,7],[6,4],[7,6]]), buildTopo(10, [[3,7],[4,3],[6,6],[7,4]]) ]
+};
+
+const TIER_INFO = {
+  small:  { label:'やさしい', n:6, icon:'🌱', star1: 999, star2: 90, star3: 50 },
+  medium: { label:'ふつう',   n:8, icon:'🌟', star1: 999, star2: 150, star3: 90 },
+  large:  { label:'むずかしい', n:10, icon:'🔥', star1: 999, star2: 240, star3: 150 }
+};
+
+/* Compute runs from a topology grid. Returns { runsH, runsV, cellRun, blackClueMap } */
+function computeRuns(topo){
+  const n = topo.n, grid = topo.grid;
+  const runsH = [], runsV = [];
+  const cellRun = {}; // "r,c" -> {h:idx, v:idx}
+  for(let r=0;r<n;r++){
+    let c=0;
+    while(c<n){
+      if(!grid[r][c]){
+        const start=c; const cells=[];
+        while(c<n && !grid[r][c]){ cells.push([r,c]); c++; }
+        if(cells.length>=2){
+          const idx = runsH.length;
+          runsH.push({cells, sum:0});
+          cells.forEach(([rr,cc])=>{ cellRun[rr+','+cc]=cellRun[rr+','+cc]||{}; cellRun[rr+','+cc].h=idx; });
+        }
+      } else c++;
+    }
+  }
+  for(let c=0;c<n;c++){
+    let r=0;
+    while(r<n){
+      if(!grid[r][c]){
+        const cells=[];
+        while(r<n && !grid[r][c]){ cells.push([r,c]); r++; }
+        if(cells.length>=2){
+          const idx = runsV.length;
+          runsV.push({cells, sum:0});
+          cells.forEach(([rr,cc])=>{ cellRun[rr+','+cc]=cellRun[rr+','+cc]||{}; cellRun[rr+','+cc].v=idx; });
+        }
+      } else r++;
+    }
+  }
+  // black clue cells: for each black cell, check right neighbor white run-start & down neighbor white run-start
+  const blackClue = {}; // "r,c" -> {right:runIdx|null, down:runIdx|null}
+  for(let r=0;r<n;r++){
+    for(let c=0;c<n;c++){
+      if(!grid[r][c]) continue;
+      let right=null, down=null;
+      if(c+1<n && !grid[r][c+1]){
+        const info = cellRun[r+','+(c+1)];
+        if(info && info.h!==undefined) right = info.h;
+      }
+      if(r+1<n && !grid[r+1][c]){
+        const info = cellRun[(r+1)+','+c];
+        if(info && info.v!==undefined) down = info.v;
+      }
+      if(right!==null || down!==null) blackClue[r+','+c] = {right, down};
+    }
+  }
+  return { n, grid, runsH, runsV, cellRun, blackClue };
+}
+
+/* Fill white cells with digits 1-9 so no run has a duplicate.
+   Uses MRV (minimum-remaining-values) backtracking + forward-checking so it
+   resolves in well under a millisecond even on the 10x10 board, with no risk
+   of the naive fixed-order backtracker's occasional exponential blowup. */
+function fillPuzzle(struct){
+  const cells = [];
+  for(let r=0;r<struct.n;r++) for(let c=0;c<struct.n;c++) if(!struct.grid[r][c]) cells.push(r+','+c);
+  const domains = {};
+  cells.forEach(k=>{ domains[k] = new Set([1,2,3,4,5,6,7,8,9]); });
+  const solution = {};
+  const neighborCache = {};
+  cells.forEach(key=>{
+    const info = struct.cellRun[key] || {};
+    const res = [];
+    if(info.h!==undefined) struct.runsH[info.h].cells.forEach(([r,c])=>{ const k=r+','+c; if(k!==key) res.push(k); });
+    if(info.v!==undefined) struct.runsV[info.v].cells.forEach(([r,c])=>{ const k=r+','+c; if(k!==key) res.push(k); });
+    neighborCache[key] = res;
+  });
+  function pickCell(){
+    let best=null, bestSize=Infinity;
+    for(const k of cells){
+      if(solution[k]!==undefined) continue;
+      const sz = domains[k].size;
+      if(sz<bestSize){ bestSize=sz; best=k; if(sz<=1) break; }
+    }
+    return best;
+  }
+  function backtrack(){
+    const key = pickCell();
+    if(key===null) return true;
+    const domainArr = Array.from(domains[key]);
+    for(let i=domainArr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [domainArr[i],domainArr[j]]=[domainArr[j],domainArr[i]]; }
+    const neighbors = neighborCache[key];
+    for(const d of domainArr){
+      solution[key]=d;
+      const removed = []; let ok=true;
+      for(const nb of neighbors){
+        if(solution[nb]===undefined && domains[nb].has(d)){
+          domains[nb].delete(d); removed.push(nb);
+          if(domains[nb].size===0) ok=false;
+        }
+      }
+      if(ok && backtrack()) return true;
+      removed.forEach(nb=>domains[nb].add(d));
+      delete solution[key];
+    }
+    return false;
+  }
+  backtrack();
+  struct.runsH.forEach(run=>{ run.sum = run.cells.reduce((s,[r,c])=>s+solution[r+','+c],0); });
+  struct.runsV.forEach(run=>{ run.sum = run.cells.reduce((s,[r,c])=>s+solution[r+','+c],0); });
+  return solution;
+}
+
+function generatePuzzle(tier, variantIdx){
+  const topoList = TOPOS[tier];
+  const topo = topoList[variantIdx % topoList.length];
+  const struct = computeRuns(topo);
+  const solution = fillPuzzle(struct);
+  return { tier, struct, solution };
+}
+
+/* ============================ STAGE DEFINITIONS ============================ */
+const TIERS_ORDER = ['small','medium','large'];
+const STAGES_PER_TIER = 6;
+const STAGES = [];
+TIERS_ORDER.forEach((tier, ti)=>{
+  for(let i=0;i<STAGES_PER_TIER;i++){
+    STAGES.push({ id: ti*STAGES_PER_TIER+i+1, tier, variant: i % TOPOS[tier].length, indexInTier: i+1 });
+  }
+});
+
+/* ============================ STATE ============================ */
+const state = {
+  mode: 'stage', // 'stage' | 'free'
+  currentStageId: null,
+  freeTier: 'small',
+  puzzle: null,
+  player: {}, // "r,c" -> value
+  selected: null,
+  hints: 0,
+  mistakesFlag: false,
+  startTime: 0,
+  timerHandle: null,
+  elapsed: 0
+};
+
+const PROGRESS_KEY = 'kakuro_progress_v1';
+function loadProgress(){ try{ return JSON.parse(localStorage.getItem(PROGRESS_KEY))||{}; }catch(e){ return {}; } }
+function saveProgress(p){ try{ localStorage.setItem(PROGRESS_KEY, JSON.stringify(p)); }catch(e){} }
+let progress = loadProgress();
+
+/* ============================ DOM REFS ============================ */
+const $ = sel => document.querySelector(sel);
+const views = { map: $('#view-map'), free: $('#view-free'), game: $('#view-game') };
+const boardEl = $('#board');
+const keypadEl = $('#keypad');
+const toastEl = $('#toast');
+
+function toast(msg){
+  toastEl.textContent = msg; toastEl.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(()=>toastEl.classList.remove('show'), 1600);
+}
+
+function showView(name){
+  Object.values(views).forEach(v=>v.classList.remove('active'));
+  if(name==='map') views.map.classList.add('active');
+  else if(name==='free') views.free.classList.add('active');
+  else if(name==='game') views.game.classList.add('active');
+}
+
+/* ============================ MAP RENDER ============================ */
+function isStageUnlocked(stage){
+  if(stage.id===1) return true;
+  const prog = progress[stage.id-1];
+  return !!(prog && prog.stars>=1);
+}
+function renderMap(){
+  const container = $('#tierContainer');
+  container.innerHTML = '';
+  let totalStars=0;
+  TIERS_ORDER.forEach(tier=>{
+    const info = TIER_INFO[tier];
+    const block = document.createElement('div');
+    block.className = 'tier-block';
+    const title = document.createElement('div');
+    title.className = 'tier-title';
+    title.innerHTML = `${info.icon} ${info.label}（${info.n}×${info.n}）`;
+    block.appendChild(title);
+    const grid = document.createElement('div');
+    grid.className = 'stage-grid';
+    STAGES.filter(s=>s.tier===tier).forEach(stage=>{
+      const unlocked = isStageUnlocked(stage);
+      const prog = progress[stage.id] || {stars:0};
+      totalStars += prog.stars||0;
+      const card = document.createElement('div');
+      card.className = 'stage-card' + (unlocked?'':' locked');
+      if(unlocked){
+        card.innerHTML = `<div class="num">${stage.indexInTier}</div><div class="sz">${info.n}×${info.n}</div><div class="stars">${starStr(prog.stars||0)}</div>`;
+        card.addEventListener('click', ()=>startStage(stage.id));
+      } else {
+        card.innerHTML = `<div class="lock-icon">🔒</div><div class="sz">${info.n}×${info.n}</div>`;
+      }
+      grid.appendChild(card);
+    });
+    block.appendChild(grid);
+    container.appendChild(block);
+  });
+  $('#totalStars').textContent = totalStars;
+}
+function starStr(n){
+  let s=''; for(let i=0;i<3;i++) s += i<n ? '⭐' : '☆'; return s;
+}
+
+/* ============================ GAME SETUP ============================ */
+function startStage(id){
+  const stage = STAGES.find(s=>s.id===id);
+  if(!stage) return;
+  state.mode = 'stage';
+  state.currentStageId = id;
+  const puzzle = generatePuzzle(stage.tier, stage.variant);
+  beginGame(puzzle);
+}
+function startFree(tier){
+  state.mode = 'free';
+  state.freeTier = tier;
+  const variant = Math.floor(Math.random()*TOPOS[tier].length);
+  const puzzle = generatePuzzle(tier, variant);
+  beginGame(puzzle);
+}
+function beginGame(puzzle){
+  state.puzzle = puzzle;
+  state.player = {};
+  state.selected = null;
+  state.hints = 0;
+  state.mistakesFlag = false;
+  state.elapsed = 0;
+  renderBoard();
+  renderKeypad();
+  startTimer();
+  showView('game');
+}
+
+function startTimer(){
+  clearInterval(state.timerHandle);
+  state.startTime = Date.now() - state.elapsed*1000;
+  state.timerHandle = setInterval(()=>{
+    state.elapsed = Math.floor((Date.now()-state.startTime)/1000);
+    const m = String(Math.floor(state.elapsed/60)).padStart(2,'0');
+    const s = String(state.elapsed%60).padStart(2,'0');
+    $('#timerLabel').textContent = `${m}:${s}`;
+  }, 500);
+}
+function stopTimer(){ clearInterval(state.timerHandle); }
+
+/* ============================ BOARD RENDER ============================ */
+function cellSizePx(n){
+  const maxWidth = Math.min(window.innerWidth*0.86, 440);
+  return Math.floor(maxWidth / n);
+}
+
+function renderBoard(){
+  const { struct } = state.puzzle;
+  const n = struct.n;
+  const csz = cellSizePx(n);
+  boardEl.style.gridTemplateColumns = `repeat(${n}, ${csz}px)`;
+  boardEl.style.gridTemplateRows = `repeat(${n}, ${csz}px)`;
+  boardEl.style.setProperty('--csz', csz+'px');
+  boardEl.innerHTML = '';
+  for(let r=0;r<n;r++){
+    for(let c=0;c<n;c++){
+      const key = r+','+c;
+      const div = document.createElement('div');
+      div.className = 'cell';
+      div.style.setProperty('--csz', csz+'px');
+      if(struct.grid[r][c]){
+        div.classList.add('block');
+        const clue = struct.blackClue[key];
+        if(clue){
+          const diag = document.createElement('div'); diag.className='clue-diag'; div.appendChild(diag);
+          if(clue.right!==null){
+            const span = document.createElement('span'); span.className='clue-num right';
+            span.textContent = struct.runsH[clue.right].sum; div.appendChild(span);
+          }
+          if(clue.down!==null){
+            const span = document.createElement('span'); span.className='clue-num down';
+            span.textContent = struct.runsV[clue.down].sum; div.appendChild(span);
+          }
+        }
+      } else {
+        div.classList.add('white');
+        div.dataset.key = key;
+        div.textContent = state.player[key] || '';
+        div.addEventListener('click', ()=>selectCell(key));
+      }
+      boardEl.appendChild(div);
+    }
+  }
+  refreshCellStates();
+}
+
+function renderKeypad(){
+  keypadEl.innerHTML='';
+  for(let d=1; d<=9; d++){
+    const btn = document.createElement('button');
+    btn.className='key-btn'; btn.textContent = d;
+    btn.addEventListener('click', ()=>inputDigit(d));
+    keypadEl.appendChild(btn);
+  }
+  const erase = document.createElement('button');
+  erase.className='key-btn erase'; erase.textContent='✕';
+  erase.addEventListener('click', ()=>inputDigit(null));
+  keypadEl.appendChild(erase);
+}
+
+function selectCell(key){
+  state.selected = key;
+  sfxTap();
+  document.querySelectorAll('.cell.white.selected').forEach(el=>el.classList.remove('selected'));
+  const el = boardEl.querySelector(`[data-key="${key}"]`);
+  if(el) el.classList.add('selected');
+}
+
+function inputDigit(d){
+  if(!state.selected) { toast('先にマスを選んでね'); return; }
+  const key = state.selected;
+  if(d===null){ delete state.player[key]; }
+  else { state.player[key] = d; }
+  const el = boardEl.querySelector(`[data-key="${key}"]`);
+  if(el) el.textContent = d || '';
+  sfxTap();
+  refreshCellStates();
+  checkWin();
+}
+
+function runDuplicates(run){
+  const counts = {};
+  run.cells.forEach(([r,c])=>{
+    const v = state.player[r+','+c];
+    if(v){ counts[v]=(counts[v]||0)+1; }
+  });
+  const dupVals = new Set(Object.keys(counts).filter(k=>counts[k]>1).map(Number));
+  return dupVals;
+}
+function runFilled(run){ return run.cells.every(([r,c])=>state.player[r+','+c]); }
+function runSum(run){ return run.cells.reduce((s,[r,c])=>s+(state.player[r+','+c]||0),0); }
+
+function refreshCellStates(){
+  const { struct } = state.puzzle;
+  // reset
+  boardEl.querySelectorAll('.cell.white').forEach(el=>{ el.classList.remove('error','satisfied'); });
+  struct.runsH.concat(struct.runsV).forEach(()=>{});
+  const errorCells = new Set();
+  const satisfiedCells = new Set();
+  [struct.runsH, struct.runsV].forEach(runs=>{
+    runs.forEach(run=>{
+      const dups = runDuplicates(run);
+      const filled = runFilled(run);
+      const sumOk = filled && runSum(run)===run.sum && dups.size===0;
+      run.cells.forEach(([r,c])=>{
+        const key=r+','+c; const v = state.player[key];
+        if(v && dups.has(v)) errorCells.add(key);
+        if(sumOk) satisfiedCells.add(key);
+      });
+    });
+  });
+  errorCells.forEach(key=>{
+    const el = boardEl.querySelector(`[data-key="${key}"]`); if(el) el.classList.add('error');
+  });
+  satisfiedCells.forEach(key=>{
+    if(errorCells.has(key)) return;
+    const el = boardEl.querySelector(`[data-key="${key}"]`); if(el) el.classList.add('satisfied');
+  });
+}
+
+function allRunsSatisfied(){
+  const { struct } = state.puzzle;
+  return struct.runsH.concat(struct.runsV).every(run=>{
+    if(!runFilled(run)) return false;
+    if(runDuplicates(run).size>0) return false;
+    return runSum(run)===run.sum;
+  });
+}
+
+function checkWin(){
+  const { struct } = state.puzzle;
+  const filledCount = Object.keys(state.player).length;
+  // count white cells
+  let whiteCount = 0;
+  for(let r=0;r<struct.n;r++) for(let c=0;c<struct.n;c++) if(!struct.grid[r][c]) whiteCount++;
+  if(filledCount < whiteCount) return;
+  if(allRunsSatisfied()){
+    onWin();
+  }
+}
+
+function onWin(){
+  stopTimer();
+  sfxWin();
+  const tier = state.puzzle.tier;
+  const info = TIER_INFO[tier];
+  let stars = 1;
+  if(state.elapsed <= info.star2 && state.hints<=2) stars = 2;
+  if(state.elapsed <= info.star3 && state.hints===0) stars = 3;
+  if(state.mode==='stage'){
+    const prev = progress[state.currentStageId] || {stars:0};
+    if(stars > prev.stars){ progress[state.currentStageId] = { stars, time: state.elapsed }; saveProgress(progress); }
+  }
+  $('#winStars').textContent = starStr(stars);
+  const m = String(Math.floor(state.elapsed/60)).padStart(2,'0');
+  const s = String(state.elapsed%60).padStart(2,'0');
+  $('#winTime').textContent = `⏱️ ${m}:${s}`;
+  $('#winHints').textContent = `💡 ${state.hints}`;
+  $('#winModal').classList.add('active');
+  $('#winNextBtn').style.display = state.mode==='stage' ? '' : 'none';
+}
+
+/* ============================ TOOLBAR ACTIONS ============================ */
+function doHint(){
+  const { struct, solution } = state.puzzle;
+  const empties = [];
+  for(let r=0;r<struct.n;r++) for(let c=0;c<struct.n;c++){
+    if(!struct.grid[r][c]){
+      const key=r+','+c;
+      if(!state.player[key] || state.player[key]!==solution[key]) empties.push(key);
+    }
+  }
+  if(empties.length===0){ toast('もう全部埋まっているよ！'); return; }
+  const key = empties[Math.floor(Math.random()*empties.length)];
+  state.player[key] = solution[key];
+  state.hints++;
+  $('#hintLabel').textContent = state.hints;
+  const el = boardEl.querySelector(`[data-key="${key}"]`);
+  if(el) el.textContent = solution[key];
+  sfxSatisfy();
+  refreshCellStates();
+  checkWin();
+}
+function doCheck(){
+  const { struct } = state.puzzle;
+  let hasError=false;
+  [struct.runsH, struct.runsV].forEach(runs=>{
+    runs.forEach(run=>{ if(runDuplicates(run).size>0) hasError=true; });
+  });
+  refreshCellStates();
+  if(hasError){ sfxError(); toast('赤いマスを見直してみよう！'); }
+  else toast('今のところ大丈夫そう！このまま頑張ろう✨');
+}
+function doRestart(){
+  state.player = {};
+  state.selected = null;
+  state.elapsed = 0;
+  startTimer();
+  renderBoard();
+  toast('最初からやり直そう！');
+}
+
+/* ============================ EVENTS ============================ */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const mode = btn.dataset.mode;
+    if(mode==='stage'){ renderMap(); showView('map'); }
+    else showView('free');
+  });
+});
+document.querySelectorAll('#sizeOpts .opt-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#sizeOpts .opt-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    state.freeTier = btn.dataset.size;
+  });
+});
+$('#freeStartBtn').addEventListener('click', ()=>startFree(state.freeTier));
+$('#backToMapBtn').addEventListener('click', ()=>{
+  stopTimer();
+  if(state.mode==='stage'){ renderMap(); showView('map'); document.querySelector('.tab-btn[data-mode="stage"]').click(); }
+  else { showView('free'); document.querySelector('.tab-btn[data-mode="free"]').click(); }
+});
+$('#eraseBtn').addEventListener('click', ()=>inputDigit(null));
+$('#checkBtn').addEventListener('click', doCheck);
+$('#hintBtn').addEventListener('click', doHint);
+$('#restartBtn').addEventListener('click', doRestart);
+$('#winMapBtn').addEventListener('click', ()=>{
+  $('#winModal').classList.remove('active');
+  renderMap(); showView('map');
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.tab-btn[data-mode="stage"]').classList.add('active');
+});
+$('#winNextBtn').addEventListener('click', ()=>{
+  $('#winModal').classList.remove('active');
+  const nextId = state.currentStageId+1;
+  if(STAGES.find(s=>s.id===nextId)) startStage(nextId);
+  else { renderMap(); showView('map'); }
+});
+$('#helpBtn').addEventListener('click', ()=>$('#helpModal').classList.add('active'));
+$('#closeHelpBtn').addEventListener('click', ()=>$('#helpModal').classList.remove('active'));
+$('#themeBtn').addEventListener('click', ()=>{
+  const cur = document.body.dataset.theme;
+  const next = cur==='classic' ? '' : 'classic';
+  if(next) document.body.dataset.theme = next; else document.body.removeAttribute('data-theme');
+  try{ localStorage.setItem('kakuro_theme', next); }catch(e){}
+});
+(function initTheme(){
+  try{
+    const t = localStorage.getItem('kakuro_theme');
+    if(t) document.body.dataset.theme = t;
+  }catch(e){}
+})();
+
+document.addEventListener('keydown', (e)=>{
+  if(views.game.classList.contains('active')){
+    if(e.key>='1' && e.key<='9') inputDigit(Number(e.key));
+    else if(e.key==='Backspace' || e.key==='Delete' || e.key==='0') inputDigit(null);
+  }
+});
+
+window.addEventListener('resize', ()=>{ if(state.puzzle && views.game.classList.contains('active')) renderBoard(); });
+
+/* ============================ INIT ============================ */
+renderMap();
+})();
+</script>
+</body>
+</html>

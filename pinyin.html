@@ -1,0 +1,3098 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>わくわくピンインアドベンチャー - 萌趣拼音小天才</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #FCFBF7;
+    --bg-card: #FFFFFF;
+    --primary: #10B981;
+    --primary-hover: #059669;
+    --primary-light: #ECFDF5;
+    --primary-dark: #065F46;
+    --secondary: #F59E0B;
+    --secondary-light: #FEF3C7;
+    --accent-pink: #FF6B8B;
+    --accent-pink-light: #FFF0F3;
+    --accent-blue: #0EA5E9;
+    --accent-blue-light: #E0F2FE;
+    --accent-purple: #8B5CF6;
+    --accent-purple-light: #F3E8FF;
+    --success: #10B981;
+    --error: #EF4444;
+    --error-light: #FEE2E2;
+    --text-main: #1F2937;
+    --text-sub: #6B7280;
+    --text-muted: #9CA3AF;
+    --border-soft: #E5E7EB;
+    --border-strong: #374151;
+    --shadow-sm: 0 4px 12px rgba(16, 185, 129, 0.08);
+    --shadow-md: 0 8px 24px rgba(31, 41, 55, 0.08);
+    --shadow-pop: 0 6px 0 rgba(0, 0, 0, 0.08);
+    --radius-xl: 24px;
+    --radius-lg: 18px;
+    --radius-md: 14px;
+    --radius-sm: 8px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-family: "M PLUS Rounded 1c", "Outfit", system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 10% 15%, #FDF4E6 0%, #FCFBF7 45%, #EBFBF5 100%);
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    min-height: 100vh;
+  }
+
+  /* Decorative Background */
+  .bg-decor {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.55;
+  }
+  .bg-blob-1 { top: -60px; right: -40px; width: 260px; height: 260px; background: radial-gradient(circle, #D1FAE5 0%, transparent 70%); }
+  .bg-blob-2 { bottom: -60px; left: -50px; width: 280px; height: 280px; background: radial-gradient(circle, #FEF3C7 0%, transparent 70%); }
+
+  #app {
+    width: 100%;
+    max-width: 520px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+    padding: 8px 14px 20px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0 8px;
+    flex-shrink: 0;
+  }
+  .logo-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .panda-avatar {
+    font-size: 32px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+    animation: pandaBounce 2.5s infinite ease-in-out;
+  }
+  @keyframes pandaBounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-4px) rotate(3deg); }
+  }
+  .logo-title {
+    display: flex;
+    flex-direction: column;
+  }
+  .logo-title .main-title {
+    font-size: 17px;
+    font-weight: 900;
+    color: var(--text-main);
+    letter-spacing: -0.3px;
+    line-height: 1.15;
+  }
+  .logo-title .sub-title {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: 0.5px;
+  }
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    color: var(--text-main);
+    text-decoration: none;
+  }
+  .icon-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+  .icon-btn:active { transform: translateY(1px); }
+
+  /* Navigation Tabs */
+  .nav-tabs {
+    display: flex;
+    background: #EDEAE2;
+    padding: 4px;
+    border-radius: 16px;
+    margin: 2px 0 10px;
+    flex-shrink: 0;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
+  }
+  .tab-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 8px 4px;
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--text-sub);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .tab-btn.active {
+    background: #FFFFFF;
+    color: var(--primary);
+    box-shadow: 0 3px 10px rgba(16, 185, 129, 0.2);
+    transform: scale(1.02);
+  }
+
+  /* Views */
+  .view {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    animation: fadeIn 0.2s ease-out;
+  }
+  .view.active {
+    display: flex;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Panda Speech Bubble (Tutor) */
+  .tutor-bubble {
+    background: #FFFFFF;
+    border: 2px solid #A7F3D0;
+    border-radius: var(--radius-lg);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+  .tutor-bubble:hover { transform: translateY(-1px); }
+  .tutor-avatar {
+    font-size: 34px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .tutor-sound-wave {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    font-size: 12px;
+    background: var(--accent-pink);
+    color: white;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.8; }
+  }
+  .tutor-content {
+    flex: 1;
+    overflow: hidden;
+  }
+  .tutor-name {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .tutor-text {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.35;
+    margin-top: 1px;
+  }
+
+  /* Stage Banner */
+  .stage-banner {
+    background: linear-gradient(135deg, #ECFDF5 0%, #FEF3C7 100%);
+    border: 2px solid #D1FAE5;
+    border-radius: var(--radius-lg);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .stage-banner-info h2 {
+    font-size: 15px;
+    font-weight: 900;
+    color: #065F46;
+  }
+  .stage-banner-info p {
+    font-size: 11px;
+    color: #047857;
+    margin-top: 2px;
+  }
+  .total-stars-pill {
+    background: #FFFFFF;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 900;
+    color: #D97706;
+    box-shadow: 0 2px 6px rgba(217, 119, 6, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Difficulty Selector (Tiers) */
+  .tier-selector {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .tier-card {
+    flex: 1;
+    background: #FFFFFF;
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 9px 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .tier-card.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+  }
+  .tier-badge {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--primary);
+  }
+  .tier-sub {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-sub);
+    margin-top: 2px;
+  }
+
+  /* Stage Grid List */
+  .stage-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .stage-item {
+    background: #FFFFFF;
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    box-shadow: var(--shadow-sm);
+  }
+  .stage-item:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-md);
+  }
+  .stage-item.locked {
+    opacity: 0.55;
+    cursor: not-allowed;
+    background: #F9FAFB;
+    border-color: #E5E7EB;
+  }
+  .stage-item.locked:hover {
+    transform: none;
+    box-shadow: var(--shadow-sm);
+  }
+  .stage-num-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .stage-name {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--text-main);
+    text-align: center;
+    line-height: 1.25;
+  }
+  .stage-symbols {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--secondary);
+    background: #FFFBEB;
+    padding: 2px 6px;
+    border-radius: 6px;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .stage-stars {
+    font-size: 12px;
+    color: #F59E0B;
+    display: flex;
+    gap: 1px;
+  }
+
+  /* ================== GAMEPLAY VIEW ================== */
+  .gameplay-hud {
+    background: #FFFFFF;
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    box-shadow: var(--shadow-sm);
+  }
+  .gameplay-title-group {
+    display: flex;
+    flex-direction: column;
+  }
+  .gameplay-title {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--primary);
+  }
+  .gameplay-desc {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-sub);
+  }
+  .gameplay-stats {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .stat-badge {
+    background: #F3F4F6;
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Board Area */
+  .board-container {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    max-width: 440px;
+    margin: 0 auto 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sudoku-grid {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    background: #FFFFFF;
+    border: 3px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+  }
+
+  .grid-cell {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid var(--border-soft);
+    border-bottom: 1px solid var(--border-soft);
+    background: #FFFFFF;
+    cursor: pointer;
+    transition: background-color 0.12s ease;
+  }
+  .grid-cell:active {
+    filter: brightness(0.95);
+  }
+  .grid-cell.selected {
+    background: #FEF3C7 !important;
+  }
+  .grid-cell.highlight-same {
+    background: #E0F2FE !important;
+  }
+  .grid-cell.highlight-peer {
+    background: #F8FAFC;
+  }
+  .grid-cell.has-conflict {
+    background: var(--error-light) !important;
+    animation: cellShake 0.3s ease;
+  }
+  @keyframes cellShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+  }
+
+  /* Block Borders */
+  .border-box-right {
+    border-right: 3px solid var(--border-strong) !important;
+  }
+  .border-box-bottom {
+    border-bottom: 3px solid var(--border-strong) !important;
+  }
+
+  /* Cell Content */
+  .cell-val {
+    font-family: "Outfit", "M PLUS Rounded 1c", sans-serif;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cell-val.clue {
+    color: #1F2937;
+    font-weight: 900;
+  }
+  .cell-val.user-filled {
+    color: #059669;
+  }
+  .cell-sub {
+    font-size: 8px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-top: 2px;
+    line-height: 1;
+  }
+  /* Pencil Notes */
+  .cell-notes-grid {
+    position: absolute;
+    inset: 2px;
+    display: grid;
+    pointer-events: none;
+  }
+  .note-item {
+    font-size: 8px;
+    font-weight: 800;
+    color: #6B7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Board Action Toolbar */
+  .action-bar {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .action-btn {
+    flex: 1;
+    background: #FFFFFF;
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 7px 4px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .action-btn span.icon { font-size: 15px; }
+  .action-btn:hover { background: #F9FAFB; border-color: var(--primary); }
+  .action-btn.active {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary-dark);
+  }
+
+  /* Keypad (Pinyin Input Tiles) */
+  .keypad-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+  .key-tile {
+    flex: 1;
+    min-width: calc(25% - 8px);
+    max-width: 100px;
+    height: 52px;
+    background: #FFFFFF;
+    border: 2px solid var(--border-soft);
+    border-bottom: 4px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.1s ease;
+    position: relative;
+  }
+  .key-tile:hover {
+    border-color: var(--primary);
+    background: #F0FDF4;
+  }
+  .key-tile:active {
+    transform: translateY(2px);
+    border-bottom-width: 2px;
+  }
+  .key-tile.active-symbol {
+    border-color: var(--primary);
+    border-bottom-color: var(--primary-dark);
+    background: var(--primary-light);
+  }
+  .key-pinyin {
+    font-family: "Outfit", "M PLUS Rounded 1c", sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--text-main);
+    line-height: 1;
+  }
+  .key-kana {
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--text-sub);
+    margin-top: 2px;
+  }
+  .key-speaker {
+    position: absolute;
+    top: 3px;
+    right: 4px;
+    font-size: 9px;
+    color: var(--primary);
+  }
+
+  /* Audio Hint / Listen Banner */
+  .audio-hint-box {
+    background: linear-gradient(135deg, #FEF3C7 0%, #FFFBEB 100%);
+    border: 2px dashed #F59E0B;
+    border-radius: var(--radius-md);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+  .audio-hint-box:hover { background: #FEF3C7; }
+  .audio-hint-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .audio-hint-left span.icon { font-size: 20px; }
+  .audio-hint-text {
+    font-size: 12px;
+    font-weight: 800;
+    color: #B45309;
+  }
+  .audio-hint-sub {
+    font-size: 10px;
+    color: #92400E;
+  }
+  .play-badge {
+    background: #F59E0B;
+    color: white;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 4px 10px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* ================== COMPLETE PINYIN CHART VIEW ================== */
+  .chart-filter-tabs {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+    scrollbar-width: none;
+  }
+  .chart-filter-tabs::-webkit-scrollbar { display: none; }
+  .filter-pill {
+    flex-shrink: 0;
+    background: #FFFFFF;
+    border: 2px solid var(--border-soft);
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .filter-pill.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary-dark);
+  }
+
+  .chart-section {
+    background: #FFFFFF;
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 12px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow-sm);
+  }
+  .chart-sec-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #F3F4F6;
+  }
+  .chart-sec-title {
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .chart-sec-badge {
+    font-size: 10px;
+    font-weight: 800;
+    background: var(--primary-light);
+    color: var(--primary);
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+
+  .pinyin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+    gap: 8px;
+  }
+  .pinyin-card {
+    background: #FAFAFA;
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 8px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+  }
+  .pinyin-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    background: #FFFFFF;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.15);
+  }
+  .pinyin-card:active {
+    transform: translateY(1px);
+  }
+  .card-glyph {
+    font-family: "Outfit", "M PLUS Rounded 1c", sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--text-main);
+    line-height: 1;
+  }
+  .card-kana {
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--text-sub);
+  }
+  .card-chinese {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--primary);
+    background: #ECFDF5;
+    padding: 1px 4px;
+    border-radius: 4px;
+  }
+  .card-horn {
+    position: absolute;
+    top: 3px;
+    right: 4px;
+    font-size: 8px;
+    color: var(--text-muted);
+  }
+
+  /* ================== FOUR TONES MASTER VIEW ================== */
+  .tone-playground {
+    background: #FFFFFF;
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 14px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow-sm);
+  }
+  .tone-intro-title {
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--text-main);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tone-intro-sub {
+    font-size: 11px;
+    color: var(--text-sub);
+    margin-bottom: 12px;
+  }
+
+  /* Tone Pitch Curve Visualizer */
+  .pitch-canvas-wrapper {
+    width: 100%;
+    height: 140px;
+    background: #F9FAFB;
+    border: 2px solid #E5E7EB;
+    border-radius: var(--radius-md);
+    position: relative;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  #pitchCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .tone-buttons-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .tone-btn {
+    background: #FAFAFA;
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 10px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .tone-btn:hover {
+    border-color: var(--secondary);
+    background: #FFFBEB;
+    transform: translateY(-2px);
+  }
+  .tone-btn.active {
+    border-color: var(--secondary);
+    background: #FEF3C7;
+    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.25);
+  }
+  .tone-btn-mark {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--text-main);
+    line-height: 1;
+  }
+  .tone-btn-name {
+    font-size: 11px;
+    font-weight: 900;
+    color: #B45309;
+  }
+  .tone-btn-tip {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text-sub);
+  }
+
+  /* Sample Syllable Tone Selector */
+  .syllable-picker {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+  .syl-chip {
+    flex: 1;
+    background: #F3F4F6;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    padding: 6px 0;
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--text-main);
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s ease;
+  }
+  .syl-chip.active {
+    background: #FFFFFF;
+    border-color: var(--primary);
+    color: var(--primary);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Four Tone Nursery Rhyme */
+  .tone-rhyme-card {
+    background: linear-gradient(135deg, #FFF0F3 0%, #FEF3C7 100%);
+    border: 2px solid #FED7AA;
+    border-radius: var(--radius-md);
+    padding: 12px;
+  }
+  .rhyme-title {
+    font-size: 13px;
+    font-weight: 900;
+    color: #9A3412;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .rhyme-line {
+    font-size: 11px;
+    font-weight: 700;
+    color: #7C2D12;
+    line-height: 1.6;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ================== LISTENING QUIZ VIEW ================== */
+  .quiz-container {
+    background: #FFFFFF;
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .quiz-hud {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .quiz-score-badge {
+    background: #FEF3C7;
+    color: #B45309;
+    font-size: 12px;
+    font-weight: 900;
+    padding: 4px 10px;
+    border-radius: 12px;
+  }
+  .quiz-speaker-btn {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: #FFFFFF;
+    border: none;
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+    font-size: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: all 0.2s ease;
+    animation: quizPulse 2s infinite ease-in-out;
+  }
+  .quiz-speaker-btn:hover { transform: scale(1.06); }
+  .quiz-speaker-btn:active { transform: scale(0.96); }
+  @keyframes quizPulse {
+    0%, 100% { box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35); }
+    50% { box-shadow: 0 12px 28px rgba(16, 185, 129, 0.55); }
+  }
+  .quiz-prompt {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-sub);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .quiz-options-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .quiz-opt-btn {
+    background: #FAFAFA;
+    border: 2px solid var(--border-soft);
+    border-bottom: 4px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 16px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.12s ease;
+  }
+  .quiz-opt-btn:hover { border-color: var(--primary); background: #F0FDF4; }
+  .quiz-opt-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
+  .quiz-opt-pinyin {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .quiz-opt-kana {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-sub);
+  }
+
+  /* ================== FREE GENERATOR VIEW ================== */
+  .free-panel {
+    background: #FFFFFF;
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .free-section-title {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--text-main);
+    margin: 10px 0 6px;
+  }
+  .free-opts-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .free-opt-pill {
+    flex: 1;
+    background: #FAFAFA;
+    border: 2px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 8px 4px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .free-opt-pill.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary-dark);
+  }
+  .btn-start-free {
+    width: 100%;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: #FFFFFF;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 12px;
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    margin-top: 10px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .btn-start-free:hover { transform: translateY(-2px); }
+
+  /* ================== MODALS ================== */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: fadeIn 0.2s ease;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-card {
+    background: #FFFFFF;
+    width: 100%;
+    max-width: 400px;
+    border-radius: var(--radius-xl);
+    padding: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes popIn {
+    from { transform: scale(0.85); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .modal-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: #F3F4F6;
+    color: var(--text-main);
+    font-size: 16px;
+    font-weight: 900;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-mascot {
+    font-size: 48px;
+    margin-bottom: 6px;
+    animation: bounce 1.2s infinite;
+  }
+  .modal-title {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--text-main);
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  .modal-subtitle {
+    font-size: 12px;
+    color: var(--text-sub);
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .modal-stars-row {
+    display: flex;
+    gap: 8px;
+    font-size: 32px;
+    color: #F59E0B;
+    margin-bottom: 16px;
+  }
+  .modal-btn-row {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+  }
+  .modal-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.15s ease;
+  }
+  .modal-btn.primary {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  }
+  .modal-btn.secondary {
+    background: #F3F4F6;
+    color: var(--text-main);
+  }
+
+  /* Pinyin Detail Modal */
+  .detail-big-glyph {
+    font-family: "Outfit", sans-serif;
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--primary);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .detail-audio-play-btn {
+    background: #ECFDF5;
+    border: 2px solid #A7F3D0;
+    color: var(--primary);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    margin-bottom: 14px;
+  }
+  .detail-tip-box {
+    width: 100%;
+    background: #FFFBEB;
+    border: 1px solid #FDE68A;
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #92400E;
+  }
+  .detail-vocab-box {
+    width: 100%;
+    background: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    font-size: 12px;
+    margin-bottom: 14px;
+  }
+  .vocab-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px dashed #E2E8F0;
+  }
+  .vocab-item:last-child { border-bottom: none; }
+
+  /* Canvas Confetti */
+  #confettiCanvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-decor bg-blob-1"></div>
+<div class="bg-decor bg-blob-2"></div>
+<canvas id="confettiCanvas"></canvas>
+
+<div id="app">
+  <!-- Header -->
+  <header class="header">
+    <div class="logo-group" onclick="switchView('adventure')">
+      <span class="panda-avatar">🐼</span>
+      <div class="logo-title">
+        <span class="main-title">わくわくピンインアドベンチャー</span>
+        <span class="sub-title">萌趣拼音小天才 · Pinyin Sudoku</span>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <button class="icon-btn" id="soundToggleBtn" onclick="toggleMute()" title="音声切替">🔊</button>
+      <a class="icon-btn" href="index.html" title="ゲームセンターに戻る">🏠</a>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="nav-tabs">
+    <button class="tab-btn active" id="tab-adventure" onclick="switchView('adventure')">
+      <span>🐼</span> 冒険パズル
+    </button>
+    <button class="tab-btn" id="tab-chart" onclick="switchView('chart')">
+      <span>📖</span> ピンイン図鑑
+    </button>
+    <button class="tab-btn" id="tab-tones" onclick="switchView('tones')">
+      <span>🎵</span> 四声調マスター
+    </button>
+    <button class="tab-btn" id="tab-quiz" onclick="switchView('quiz')">
+      <span>👂</span> ききとり
+    </button>
+    <button class="tab-btn" id="tab-free" onclick="switchView('free')">
+      <span>⚙️</span> じゆう
+    </button>
+  </nav>
+
+  <!-- Mascot Bubble (Tutor Pinpin) -->
+  <div class="tutor-bubble" id="tutorBubble" onclick="tutorSpeakCurrentAdvice()">
+    <div class="tutor-avatar">
+      🐼
+      <span class="tutor-sound-wave" id="tutorWaveIcon">🔊</span>
+    </div>
+    <div class="tutor-content">
+      <div class="tutor-name">ピンピン先生 (Panda Sensei) · タップで発音！</div>
+      <div class="tutor-text" id="tutorText">こんにちは！わたしはピンピン先生だよ。いっしょに中国語のピンイン数独で遊ぼう！</div>
+    </div>
+  </div>
+
+  <!-- VIEW 1: ADVENTURE (Stages Map) -->
+  <main class="view active" id="view-adventure">
+    <div class="stage-banner">
+      <div class="stage-banner-info">
+        <h2>ステージをえらぼう！</h2>
+        <p>かんたんな 4×4 から 9×9 まで楽しくステップアップ！</p>
+      </div>
+      <div class="total-stars-pill">
+        ⭐ <span id="totalStarsDisplay">0</span> / 54
+      </div>
+    </div>
+
+    <!-- Tiers Selector -->
+    <div class="tier-selector">
+      <div class="tier-card active" id="tier-btn-1" onclick="selectTier(1)">
+        <div class="tier-badge">4×4 入門</div>
+        <div class="tier-sub">ステージ 1〜6</div>
+      </div>
+      <div class="tier-card" id="tier-btn-2" onclick="selectTier(2)">
+        <div class="tier-badge">6×6 探検</div>
+        <div class="tier-sub">ステージ 7〜12</div>
+      </div>
+      <div class="tier-card" id="tier-btn-3" onclick="selectTier(3)">
+        <div class="tier-badge">9×9 達人</div>
+        <div class="tier-sub">ステージ 13〜18</div>
+      </div>
+    </div>
+
+    <!-- Stage Grid Container -->
+    <div class="stage-grid" id="stageGrid">
+      <!-- Injected by JavaScript -->
+    </div>
+  </main>
+
+  <!-- VIEW 2: GAMEPLAY (Sudoku Board) -->
+  <main class="view" id="view-gameplay">
+    <!-- Gameplay HUD -->
+    <div class="gameplay-hud">
+      <div class="gameplay-title-group">
+        <div class="gameplay-title" id="gpStageTitle">Stage 1: 声母の第一歩 (4×4)</div>
+        <div class="gameplay-desc" id="gpStageDesc">唇を使う音: b, p, m, f</div>
+      </div>
+      <div class="gameplay-stats">
+        <div class="stat-badge" id="gpTimer">⏱️ 00:00</div>
+        <div class="stat-badge" id="gpMistakes">❌ 0/3</div>
+      </div>
+    </div>
+
+    <!-- Audio Hint Box -->
+    <div class="audio-hint-box" onclick="playAudioHint()">
+      <div class="audio-hint-left">
+        <span class="icon">🎧</span>
+        <div>
+          <div class="audio-hint-text">耳で聴くヒント！</div>
+          <div class="audio-hint-sub">先生が発音する文字を盤面から探そう</div>
+        </div>
+      </div>
+      <div class="play-badge">▶ 聴く</div>
+    </div>
+
+    <!-- Board Area -->
+    <div class="board-container">
+      <div class="sudoku-grid" id="sudokuGrid">
+        <!-- Cells generated by JS -->
+      </div>
+    </div>
+
+    <!-- Action Bar -->
+    <div class="action-bar">
+      <button class="action-btn" onclick="undoMove()">
+        <span class="icon">↩️</span>
+        <span>もどす</span>
+      </button>
+      <button class="action-btn" onclick="eraseSelectedCell()">
+        <span class="icon">🧹</span>
+        <span>けす</span>
+      </button>
+      <button class="action-btn" id="btnPencilMode" onclick="togglePencilMode()">
+        <span class="icon">✏️</span>
+        <span>メモ</span>
+      </button>
+      <button class="action-btn" onclick="getSmartHint()">
+        <span class="icon">💡</span>
+        <span>ヒント</span>
+      </button>
+      <button class="action-btn" onclick="openPinyinQuickCard()">
+        <span class="icon">📖</span>
+        <span>発音表</span>
+      </button>
+    </div>
+
+    <!-- Keypad (Candidate Tiles) -->
+    <div class="keypad-container" id="keypadContainer">
+      <!-- Key tiles injected by JS -->
+    </div>
+  </main>
+
+  <!-- VIEW 3: COMPLETE PINYIN CHART -->
+  <main class="view" id="view-chart">
+    <div class="chart-filter-tabs">
+      <button class="filter-pill active" onclick="filterChart('all', this)">全部</button>
+      <button class="filter-pill" onclick="filterChart('initials', this)">声母 (23)</button>
+      <button class="filter-pill" onclick="filterChart('finals-single', this)">単母音 (6)</button>
+      <button class="filter-pill" onclick="filterChart('finals-compound', this)">複母音 (9)</button>
+      <button class="filter-pill" onclick="filterChart('finals-nasal', this)">鼻母音 (9)</button>
+      <button class="filter-pill" onclick="filterChart('whole', this)">一息音節 (16)</button>
+    </div>
+
+    <div id="chartSectionsContainer">
+      <!-- Sections injected by JS -->
+    </div>
+  </main>
+
+  <!-- VIEW 4: FOUR TONES MASTER -->
+  <main class="view" id="view-tones">
+    <div class="tone-playground">
+      <div class="tone-intro-title">
+        <span>🐼</span> 中国語の魔法「四声調」をマスター！
+      </div>
+      <div class="tone-intro-sub">
+        同じピンインでも声調（音の上げ下げ）が違うと、意味がまったく変わるよ！
+      </div>
+
+      <!-- Tone Pitch Visualizer Canvas -->
+      <div class="pitch-canvas-wrapper">
+        <canvas id="pitchCanvas"></canvas>
+      </div>
+
+      <!-- Tone Select Buttons -->
+      <div class="tone-buttons-row">
+        <button class="tone-btn" onclick="playToneInteractive(1)">
+          <span class="tone-btn-mark">―</span>
+          <span class="tone-btn-name">第一声</span>
+          <span class="tone-btn-tip">まっすぐ高平</span>
+        </button>
+        <button class="tone-btn" onclick="playToneInteractive(2)">
+          <span class="tone-btn-mark">／</span>
+          <span class="tone-btn-name">第二声</span>
+          <span class="tone-btn-tip">びっくり上昇</span>
+        </button>
+        <button class="tone-btn" onclick="playToneInteractive(3)">
+          <span class="tone-btn-mark">∨</span>
+          <span class="tone-btn-name">第三声</span>
+          <span class="tone-btn-tip">下げてから上げ</span>
+        </button>
+        <button class="tone-btn" onclick="playToneInteractive(4)">
+          <span class="tone-btn-mark">＼</span>
+          <span class="tone-btn-name">第四声</span>
+          <span class="tone-btn-tip">一気に落とす</span>
+        </button>
+      </div>
+
+      <!-- Sample Syllable Tone Selector -->
+      <div class="tone-intro-sub" style="margin-top: 10px; margin-bottom: 6px;">発音する音節を選んでね：</div>
+      <div class="syllable-picker">
+        <button class="syl-chip active" onclick="setToneBaseSyllable('ma', this)">ma (マ)</button>
+        <button class="syl-chip" onclick="setToneBaseSyllable('ba', this)">ba (バ)</button>
+        <button class="syl-chip" onclick="setToneBaseSyllable('da', this)">da (ダ)</button>
+        <button class="syl-chip" onclick="setToneBaseSyllable('yi', this)">yi (イ)</button>
+        <button class="syl-chip" onclick="setToneBaseSyllable('shu', this)">shu (シュ)</button>
+      </div>
+
+      <!-- Tone Rhyme Card -->
+      <div class="tone-rhyme-card">
+        <div class="rhyme-title">🎵 ピンイン声調おぼえ歌</div>
+        <div class="rhyme-line"><span>1️⃣ 一声平平高又高</span>（高くて平ら・まっすぐ伸ばす）</div>
+        <div class="rhyme-line"><span>2️⃣ 二声就像上山坡</span>（「えっ？」と聞き返すように坂を登る）</div>
+        <div class="rhyme-line"><span>3️⃣ 三声下坡又上坡</span>（底までぐんと落としてから跳ね上げる）</div>
+        <div class="rhyme-line"><span>4️⃣ 四声就像下山坡</span>（上からスパッと一気に落とす）</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- VIEW 5: LISTENING QUIZ -->
+  <main class="view" id="view-quiz">
+    <div class="quiz-container">
+      <div class="quiz-hud">
+        <div class="quiz-score-badge" id="quizStreak">🔥 コンボ: 0</div>
+        <div class="quiz-score-badge" id="quizScore">⭐ スコア: 0</div>
+      </div>
+
+      <button class="quiz-speaker-btn" onclick="repeatQuizSound()" title="もう一度聴く">
+        🔊
+      </button>
+      <div class="quiz-prompt">ピンピン先生はなんて言ったかな？<br>正しいピンインをタップしてね！</div>
+
+      <div class="quiz-options-grid" id="quizOptionsGrid">
+        <!-- 4 Options injected by JS -->
+      </div>
+    </div>
+  </main>
+
+  <!-- VIEW 6: FREE PLAY (CUSTOM GENERATOR) -->
+  <main class="view" id="view-free">
+    <div class="free-panel">
+      <div class="stage-banner-info">
+        <h2>じゆうに問題をつくろう！</h2>
+        <p>大きさやピンインの種類を選んで、無限にパズルを楽しめるよ！</p>
+      </div>
+
+      <div class="free-section-title">マス目の大きさ</div>
+      <div class="free-opts-row" id="freeSizeOpts">
+        <div class="free-opt-pill active" onclick="setFreeSize(4, this)">4×4 (かんたん)</div>
+        <div class="free-opt-pill" onclick="setFreeSize(6, this)">6×6 (ふつう)</div>
+        <div class="free-opt-pill" onclick="setFreeSize(9, this)">9×9 (本格)</div>
+      </div>
+
+      <div class="free-section-title">ピンインのテーマ</div>
+      <div class="free-opts-row" id="freeTypeOpts">
+        <div class="free-opt-pill active" onclick="setFreeCategory('initials', this)">声母 (子音)</div>
+        <div class="free-opt-pill" onclick="setFreeCategory('finals', this)">母音</div>
+        <div class="free-opt-pill" onclick="setFreeCategory('tones', this)">四声調</div>
+      </div>
+
+      <div class="free-section-title">難易度</div>
+      <div class="free-opts-row" id="freeDiffOpts">
+        <div class="free-opt-pill active" onclick="setFreeDiff('easy', this)">ヒント多め</div>
+        <div class="free-opt-pill" onclick="setFreeDiff('medium', this)">ふつう</div>
+        <div class="free-opt-pill" onclick="setFreeDiff('hard', this)">挑戦！</div>
+      </div>
+
+      <button class="btn-start-free" onclick="startFreeGame()">
+        <span>🚀</span> パズルを生成してスタート！
+      </button>
+    </div>
+  </main>
+</div>
+
+<!-- STAGE CLEAR MODAL -->
+<div class="modal-overlay" id="clearModal">
+  <div class="modal-card">
+    <div class="modal-mascot">🎉🐼🎉</div>
+    <div class="modal-title" id="clearTitle">ステージクリア！</div>
+    <div class="modal-subtitle" id="clearSub">ピンインの名人への道を歩んでいるよ！</div>
+    <div class="modal-stars-row" id="clearStars">⭐⭐⭐</div>
+    <div class="modal-btn-row">
+      <button class="modal-btn secondary" onclick="closeClearModal(); switchView('adventure');">
+        ステージ一覧
+      </button>
+      <button class="modal-btn primary" onclick="nextStageFromModal()">
+        次のステージへ ➔
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- PINYIN DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal-card">
+    <button class="modal-close-btn" onclick="closeDetailModal()">✕</button>
+    <div class="detail-big-glyph" id="modalGlyph">b</div>
+    <button class="detail-audio-play-btn" onclick="playModalSound()">
+      🔊 <span id="modalSpokenText">発音を聴く (bō)</span>
+    </button>
+    <div class="detail-tip-box" id="modalTip">
+      <strong>口の形とコツ：</strong><br>
+      両唇をしっかり閉じてから、パッと息を破裂させるよ！
+    </div>
+    <div class="detail-vocab-box" id="modalVocab">
+      <!-- Injected by JS -->
+    </div>
+  </div>
+</div>
+
+<script>
+/* ==========================================================
+   1. PINYIN KNOWLEDGE BASE & PHONETICS DATA
+   ========================================================== */
+const PINYIN_DATABASE = {
+  initials: [
+    { glyph: 'b', speak: '玻', pinyin: 'bō', kana: 'ボー', category: '双唇音', tip: '唇をぴったり閉じてからポンと息を破裂させます。日本語の「バ」より無気音です。', words: [{ ch: '爸爸', py: 'bàba', ja: 'お父さん' }, { ch: '八', py: 'bā', ja: '8' }] },
+    { glyph: 'p', speak: '坡', pinyin: 'pō', kana: 'ポー', category: '双唇音', tip: '唇を閉じてから、強い息を一気に吹き出します（有気音）。ティッシュが揺れるくらい！', words: [{ ch: '苹果', py: 'píngguǒ', ja: 'りんご' }, { ch: '朋友', py: 'péngyou', ja: '友だち' }] },
+    { glyph: 'm', speak: '摸', pinyin: 'mō', kana: 'モー', category: '双唇音', tip: '両唇を閉じて鼻から音を響かせます。日本語の「マ行」とほぼ同じです。', words: [{ ch: '妈妈', py: 'māma', ja: 'お母さん' }, { ch: '猫', py: 'māo', ja: 'ねこ' }] },
+    { glyph: 'f', speak: '佛', pinyin: 'fó', kana: 'フォー', category: '唇歯音', tip: '上の前歯を下唇の内側に軽く当て、その隙間から息を擦り出します。', words: [{ ch: '飞机', py: 'fēijī', ja: 'ひこうき' }, { ch: '风', py: 'fēng', ja: 'かぜ' }] },
+    
+    { glyph: 'd', speak: '得', pinyin: 'dé', kana: 'ドゥオ', category: '舌尖中音', tip: '舌先を上の歯ぐきにしっかりつけて、息をこらえてからパッと離します。', words: [{ ch: '大', py: 'dà', ja: 'おおきい' }, { ch: '弟弟', py: 'dìdi', ja: 'おとうと' }] },
+    { glyph: 't', speak: '特', pinyin: 'tè', kana: 'トゥオ', category: '舌尖中音', tip: '舌の位置はdと同じですが、強い息を勢いよく吹き出します（有気音）。', words: [{ ch: '天', py: 'tiān', ja: 'そら/日' }, { ch: '太阳', py: 'tàiyáng', ja: 'たいよう' }] },
+    { glyph: 'n', speak: '讷', pinyin: 'nè', kana: 'ヌオ', category: '舌尖中音', tip: '舌先を上の歯ぐきにつけ、鼻から声を通します。日本語の「ナ行」です。', words: [{ ch: '你', py: 'nǐ', ja: 'あなた' }, { ch: '鸟', py: 'niǎo', ja: 'とり' }] },
+    { glyph: 'l', speak: '勒', pinyin: 'lè', kana: 'ルオ', category: '舌尖中音', tip: '舌先を上の歯ぐきにつけ、舌の両脇から声を出します。日本語の「ラ行」に似ています。', words: [{ ch: '老师', py: 'lǎoshī', ja: 'せんせい' }, { ch: '来', py: 'lái', ja: 'くる' }] },
+
+    { glyph: 'g', speak: '哥', pinyin: 'gē', kana: 'グー', category: '舌根音', tip: '舌の奥を持ち上げて上あごの奥（軟口蓋）をふさぎ、パッと離します。', words: [{ ch: '哥哥', py: 'gēge', ja: 'お兄さん' }, { ch: '狗', py: 'gǒu', ja: 'いぬ' }] },
+    { glyph: 'k', speak: '科', pinyin: 'kē', kana: 'クー', category: '舌根音', tip: '舌の位置はgと同じで、強い息を一気に吐き出します（有気音）。', words: [{ ch: '看', py: 'kàn', ja: 'みる' }, { ch: '渴', py: 'kě', ja: 'のどが渇いた' }] },
+    { glyph: 'h', speak: '喝', pinyin: 'hē', kana: 'フー', category: '舌根音', tip: 'のどの奥を狭めて、摩擦させながら息を出します。冬に手に息を吹きかける感じ！', words: [{ ch: '好', py: 'hǎo', ja: 'よい' }, { ch: '红', py: 'hóng', ja: 'あかい' }] },
+
+    { glyph: 'j', speak: '鸡', pinyin: 'jī', kana: 'ジー', category: '舌面音', tip: '舌の前半分を平らにして上のあごに密着させ、少し隙間をあけて息を出します。', words: [{ ch: '家', py: 'jiā', ja: 'いえ' }, { ch: '九', py: 'jiǔ', ja: '9' }] },
+    { glyph: 'q', speak: '七', pinyin: 'qī', kana: 'チー', category: '舌面音', tip: '舌の位置はjと同じで、強い息を強く吹き出します（有気音）。', words: [{ ch: '七', py: 'qī', ja: '7' }, { ch: '汽车', py: 'qìchē', ja: 'くるま' }] },
+    { glyph: 'x', speak: '西', pinyin: 'xī', kana: 'シー', category: '舌面音', tip: '舌を上あごに近づけ、摩擦音を出します。日本語の「シ」より少し口を横に引きます。', words: [{ ch: '西瓜', py: 'xīguā', ja: 'すいか' }, { ch: '小', py: 'xiǎo', ja: 'ちいさい' }] },
+
+    { glyph: 'zh', speak: '知', pinyin: 'zhī', kana: 'ヂー', category: 'そり舌音', tip: '【巻き舌】舌先をスプーンのように少し上へ巻き上げ、上のあごに当てて発音！', words: [{ ch: '中国', py: 'zhōngguó', ja: 'ちゅうごく' }, { ch: '桌子', py: 'zhuōzi', ja: 'つくえ' }] },
+    { glyph: 'ch', speak: '吃', pinyin: 'chī', kana: 'チー', category: 'そり舌音', tip: '【巻き舌有気音】舌を上に巻き上げ、強い息を一気に吹き出します。', words: [{ ch: '吃饭', py: 'chīfàn', ja: 'ごはんを食べる' }, { ch: '春', py: 'chūn', ja: 'はる' }] },
+    { glyph: 'sh', speak: '狮', pinyin: 'shī', kana: 'シー', category: 'そり舌音', tip: '【巻き舌摩擦音】舌を巻き上げたまま隙間を作り、息を擦り出します。', words: [{ ch: '书', py: 'shū', ja: 'ほん' }, { ch: '水', py: 'shuǐ', ja: 'みず' }] },
+    { glyph: 'r', speak: '日', pinyin: 'rì', kana: 'リー', category: 'そり舌音', tip: 'shの口の形のまま、声帯を震わせて声を出します。英語のRに似ています。', words: [{ ch: '热', py: 'rè', ja: 'あつい' }, { ch: '日', py: 'rì', ja: 'ひ/太陽' }] },
+
+    { glyph: 'z', speak: '资', pinyin: 'zī', kana: 'ズー', category: '平舌音', tip: '舌先をまっすぐ平らに伸ばし、上の前歯の裏につけて「ズ」と発音します。', words: [{ ch: '早', py: 'zǎo', ja: 'おはよう' }, { ch: '字', py: 'zì', ja: '文字' }] },
+    { glyph: 'c', speak: '刺', pinyin: 'cì', kana: 'ツー', category: '平舌音', tip: '舌先を平らにしたまま、息を強くプッと吹き出します（有気音）。', words: [{ ch: '草', py: 'cǎo', ja: 'くさ' }, { ch: '菜', py: 'cài', ja: '野菜/おかず' }] },
+    { glyph: 's', speak: '丝', pinyin: 'sī', kana: 'スー', category: '平舌音', tip: '舌先を前歯の裏に近づけ、隙間から「スッ」と息を通します。', words: [{ ch: '三', py: 'sān', ja: '3' }, { ch: '四', py: 'sì', ja: '4' }] },
+
+    { glyph: 'y', speak: '衣', pinyin: 'yī', kana: 'イー', category: '零声母', tip: '母音iが先頭に来るときに使う表記です。日本語の「ヤ行/イ」に近い音です。', words: [{ ch: '月亮', py: 'yuèliang', ja: 'つき' }, { ch: '雨', py: 'yǔ', ja: 'あめ' }] },
+    { glyph: 'w', speak: '乌', pinyin: 'wū', kana: 'ウー', category: '零声母', tip: '母音uが先頭に来るときに使う表記です。唇を丸めて発音します。', words: [{ ch: '我', py: 'wǒ', ja: 'わたし' }, { ch: '五', py: 'wǔ', ja: '5' }] }
+  ],
+  finalsSingle: [
+    { glyph: 'a', speak: '啊', pinyin: 'ā', kana: 'アー', category: '単母音', tip: '口を大きく丸く開けて、のどの奥から「あー」と声を出します。', words: [{ ch: '阿姨', py: 'āyí', ja: 'おばさん' }] },
+    { glyph: 'o', speak: '喔', pinyin: 'ō', kana: 'オー', category: '単母音', tip: '唇を丸く前に突き出して「おー」と発音します。', words: [{ ch: '公鸡', py: 'gōngjī', ja: 'おんどり' }] },
+    { glyph: 'e', speak: '鹅', pinyin: 'é', kana: 'エ(奥)', category: '単母音', tip: '口を半開きにして喉の奥から発音します。「エ」と「オ」の中間のような音！', words: [{ ch: '白鹅', py: 'bái’é', ja: 'ガチョウ' }] },
+    { glyph: 'i', speak: '衣', pinyin: 'yī', kana: 'イー', category: '単母音', tip: '唇を左右にしっかり引いて、にっこり笑顔で「イー」と発音！', words: [{ ch: '衣服', py: 'yīfu', ja: 'ふく' }, { ch: '一', py: 'yī', ja: '1' }] },
+    { glyph: 'u', speak: '乌', pinyin: 'wū', kana: 'ウー', category: '単母音', tip: '唇をタコのようにすぼめて前に突き出し、「ウー」と発音します。', words: [{ ch: '乌龟', py: 'wūguī', ja: 'かめ' }] },
+    { glyph: 'ü', speak: '迂', pinyin: 'yū', kana: 'ユィ', category: '単母音', tip: '【超重要】「イー」と言いながら唇を口笛のように丸めます。唇を動かさないのがコツ！', words: [{ ch: '金鱼', py: 'jīnyú', ja: 'きんぎょ' }, { ch: '下雨', py: 'xiàyǔ', ja: 'あめが降る' }] }
+  ],
+  finalsCompound: [
+    { glyph: 'ai', speak: '哀', pinyin: 'āi', kana: 'アイ', category: '複母音', tip: 'aからiへ滑らかに音を移動させます。', words: [{ ch: '爱', py: 'ài', ja: 'あい' }] },
+    { glyph: 'ei', speak: '诶', pinyin: 'ēi', kana: 'エイ', category: '複母音', tip: 'eからiへ繋げます。日本語の「えい」に近いです。', words: [{ ch: '北', py: 'běi', ja: 'きた' }] },
+    { glyph: 'ui', speak: '微', pinyin: 'wēi', kana: 'ウェイ', category: '複母音', tip: 'uからeiへ移動します。「ウェイ」という響きです。', words: [{ ch: '水', py: 'shuǐ', ja: 'みず' }] },
+    { glyph: 'ao', speak: '熬', pinyin: 'áo', kana: 'アオ', category: '複母音', tip: 'aからoへ滑らかに移ります。', words: [{ ch: '包子', py: 'bāozi', ja: 'にくまん' }] },
+    { glyph: 'ou', speak: '欧', pinyin: 'ōu', kana: 'オウ', category: '複母音', tip: 'oからuへ移行します。', words: [{ ch: '猴子', py: 'hóuzi', ja: 'さる' }] },
+    { glyph: 'iu', speak: '优', pinyin: 'yōu', kana: 'ヨウ', category: '複母音', tip: '実際はi+ouの組み合わせ。「イオウ」のように発音します。', words: [{ ch: '六', py: 'liù', ja: '6' }] },
+    { glyph: 'ie', speak: '椰', pinyin: 'yē', kana: 'イエ', category: '複母音', tip: 'iからeへ。日本語の「家」の発音に近いです。', words: [{ ch: '树叶', py: 'shùyè', ja: 'はっぱ' }] },
+    { glyph: 'üe', speak: '约', pinyin: 'yuē', kana: 'ユエ', category: '複母音', tip: 'üからeへ移行します。唇を丸めたまま開始！', words: [{ ch: '月亮', py: 'yuèliang', ja: 'お月さま' }] },
+    { glyph: 'er', speak: '儿', pinyin: 'ér', kana: 'アル', category: '特殊母音', tip: 'eを発音しながら舌先を上へ巻き上げます。', words: [{ ch: '耳朵', py: 'ěrduo', ja: 'みみ' }] }
+  ],
+  finalsNasal: [
+    { glyph: 'an', speak: '安', pinyin: 'ān', kana: 'アン', category: '前鼻音', tip: '「案内」の「アン」。舌先を上の前歯の裏にぴったり密着させて終わります。', words: [{ ch: '天安门', py: 'tiān’ānmén', ja: '天安門' }] },
+    { glyph: 'en', speak: '恩', pinyin: 'ēn', kana: 'エン', category: '前鼻音', tip: '舌先を上の歯ぐきにつけて、鼻から抜ける音です。', words: [{ ch: '门', py: 'mén', ja: 'ドア' }] },
+    { glyph: 'in', speak: '因', pinyin: 'yīn', kana: 'イン', category: '前鼻音', tip: '「イー」と言ってから舌先を歯ぐきにつけます。', words: [{ ch: '银', py: 'yín', ja: 'ぎん' }] },
+    { glyph: 'un', speak: '温', pinyin: 'wēn', kana: 'ウェン', category: '前鼻音', tip: 'u+enの音です。「ウェン」と発音します。', words: [{ ch: '春', py: 'chūn', ja: 'はる' }] },
+    { glyph: 'ün', speak: '晕', pinyin: 'yūn', kana: 'ユン', category: '前鼻音', tip: 'ü+nの音。唇を丸めて「ユン」。', words: [{ ch: '白云', py: 'báiyún', ja: 'しろい雲' }] },
+    { glyph: 'ang', speak: '昂', pinyin: 'áng', kana: 'アン(奥)', category: '後鼻音', tip: '「案外」の「アン」。舌の奥を持ち上げ、のどと鼻の奥を共鳴させます。', words: [{ ch: '羊', py: 'yáng', ja: 'ひつじ' }] },
+    { glyph: 'eng', speak: '亨', pinyin: 'hēng', kana: 'エン(奥)', category: '後鼻音', tip: 'eの口から舌の奥を持ち上げて響かせます。', words: [{ ch: '风', py: 'fēng', ja: 'かぜ' }] },
+    { glyph: 'ing', speak: '英', pinyin: 'yīng', kana: 'イン(奥)', category: '後鼻音', tip: 'iの口から鼻腔の奥へ響かせます。', words: [{ ch: '星星', py: 'xīngxing', ja: 'ほし' }] },
+    { glyph: 'ong', speak: '轰', pinyin: 'hōng', kana: 'オン', category: '後鼻音', tip: '唇を丸めて、喉の奥から「オン」と響かせます。', words: [{ ch: '红', py: 'hóng', ja: 'あか' }] }
+  ],
+  wholeSyllables: [
+    { glyph: 'zhi', speak: '知', pinyin: 'zhī', kana: 'ヂー', category: '一息音節', tip: '綴らずにこのまま一息で発音します（巻き舌）。', words: [{ ch: '蜘蛛', py: 'zhīzhū', ja: 'くも' }] },
+    { glyph: 'chi', speak: '吃', pinyin: 'chī', kana: 'チー', category: '一息音節', tip: '巻き舌で一息に発音します。', words: [{ ch: '吃', py: 'chī', ja: '食べる' }] },
+    { glyph: 'shi', speak: '狮', pinyin: 'shī', kana: 'シー', category: '一息音節', tip: '巻き舌で「シー」。', words: [{ ch: '狮子', py: 'shīzi', ja: 'ライオン' }] },
+    { glyph: 'ri', speak: '日', pinyin: 'rì', kana: 'リー', category: '一息音節', tip: '巻き舌で「日（リー）」。', words: [{ ch: '日子', py: 'rìzi', ja: 'ひび' }] },
+    { glyph: 'zi', speak: '资', pinyin: 'zī', kana: 'ズー', category: '一息音節', tip: '舌を平らにして「ズー」。', words: [{ ch: '字', py: 'zì', ja: 'もじ' }] },
+    { glyph: 'ci', speak: '刺', pinyin: 'cì', kana: 'ツー', category: '一息音節', tip: '平らな舌で息を強く「ツー」。', words: [{ ch: '刺猬', py: 'cìwei', ja: 'ハリネズミ' }] },
+    { glyph: 'si', speak: '丝', pinyin: 'sī', kana: 'スー', category: '一息音節', tip: '平らな舌で「スー」。', words: [{ ch: '司机', py: 'sījī', ja: 'うんてんしゅ' }] },
+    { glyph: 'yi', speak: '衣', pinyin: 'yī', kana: 'イー', category: '一息音節', tip: '「イー」の音節です。', words: [{ ch: '衣服', py: 'yīfu', ja: 'ふく' }] },
+    { glyph: 'wu', speak: '乌', pinyin: 'wū', kana: 'ウー', category: '一息音節', tip: '「ウー」の音節です。', words: [{ ch: '乌鸦', py: 'wūyā', ja: 'カラス' }] },
+    { glyph: 'yu', speak: '迂', pinyin: 'yū', kana: 'ユィ', category: '一息音節', tip: 'üの音節です。口笛の形で！', words: [{ ch: '鱼', py: 'yú', ja: 'さかな' }] },
+    { glyph: 'ye', speak: '椰', pinyin: 'yē', kana: 'イエ', category: '一息音節', tip: '「イエ」とそのまま発音します。', words: [{ ch: '爷爷', py: 'yéye', ja: 'おじいさん' }] },
+    { glyph: 'yue', speak: '约', pinyin: 'yuē', kana: 'ユエ', category: '一息音節', tip: '「ユエ」とそのまま発音します。', words: [{ ch: '月亮', py: 'yuèliang', ja: 'お月さま' }] },
+    { glyph: 'yuan', speak: '冤', pinyin: 'yuān', kana: 'ユエン', category: '一息音節', tip: '「ユエン」と一息で発音！', words: [{ ch: '公园', py: 'gōngyuán', ja: 'こうえん' }] },
+    { glyph: 'yin', speak: '因', pinyin: 'yīn', kana: 'イン', category: '前鼻音', tip: '前鼻音の「イン」。', words: [{ ch: '音乐', py: 'yīnyuè', ja: 'おんがく' }] },
+    { glyph: 'yun', speak: '晕', pinyin: 'yūn', kana: 'ユン', category: '一息音節', tip: '「ユン」と一息で発音！', words: [{ ch: '白云', py: 'báiyún', ja: 'しろい雲' }] },
+    { glyph: 'ying', speak: '英', pinyin: 'yīng', kana: 'イン(奥)', category: '後鼻音', tip: '後鼻音の「イン」。', words: [{ ch: '老鹰', py: 'lǎoyīng', ja: 'ワシ' }] }
+  ]
+};
+
+// Flatten map for quick lookup
+const ALL_PINYIN_MAP = {};
+Object.values(PINYIN_DATABASE).forEach(list => {
+  list.forEach(item => {
+    ALL_PINYIN_MAP[item.glyph] = item;
+  });
+});
+
+/* ==========================================================
+   2. CURATED ADVENTURE STAGES (18 STAGES ACROSS 3 TIERS)
+   ========================================================== */
+const ADVENTURE_STAGES = [
+  // TIER 1: 4x4 (Stages 1-6)
+  {
+    id: 1, tier: 1, size: 4, boxR: 2, boxC: 2,
+    name: '声母の第一歩', subtitle: '唇を使う音 (b, p, m, f)',
+    symbols: ['b', 'p', 'm', 'f'],
+    clues: 8,
+    advice: '【b・p・m・f】は全部唇を使って出す音だよ！音を聴きながら埋めてみてね。'
+  },
+  {
+    id: 2, tier: 1, size: 4, boxR: 2, boxC: 2,
+    name: '舌でポン！', subtitle: '舌先ではじく音 (d, t, n, l)',
+    symbols: ['d', 't', 'n', 'l'],
+    clues: 8,
+    advice: '【d・t・n・l】は舌先を上の歯ぐきにポンと当てるよ！tは息を強く吐こう。'
+  },
+  {
+    id: 3, tier: 1, size: 4, boxR: 2, boxC: 2,
+    name: 'のどの奥からスッキリ', subtitle: '舌根音 (g, k, h, j)',
+    symbols: ['g', 'k', 'h', 'j'],
+    clues: 8,
+    advice: '【g・k・h】は喉の奥を意識して！jは口を横に引いて「ジー」と笑顔で！'
+  },
+  {
+    id: 4, tier: 1, size: 4, boxR: 2, boxC: 2,
+    name: '基本の母音', subtitle: '単母音 (a, o, e, i)',
+    symbols: ['a', 'o', 'e', 'i'],
+    clues: 8,
+    advice: '【a・o・e・i】は基本の母音！「e」は日本語のエと違って喉の奥から出すよ。'
+  },
+  {
+    id: 5, tier: 1, size: 4, boxR: 2, boxC: 2,
+    name: '四声調チャレンジ！', subtitle: '4つのトーン (ā, á, ǎ, à)',
+    symbols: ['ā', 'á', 'ǎ', 'à'],
+    clues: 7,
+    advice: '大人気！【ā・á・ǎ・à】の4つの声調数独！トーンの違いを目と耳で体感しよう！'
+  },
+  {
+    id: 6, tier: 1, size: 4, boxR: 2, boxC: 2,
+    name: '4×4 卒業テスト！', subtitle: '舌面音と母音 (j, q, x, y)',
+    symbols: ['j', 'q', 'x', 'y'],
+    clues: 7,
+    advice: '【j・q・x・y】！qは「チー」と息を強く！クリアできたら次の6×6へ進めるよ！'
+  },
+
+  // TIER 2: 6x6 (Stages 7-12)
+  {
+    id: 7, tier: 2, size: 6, boxR: 2, boxC: 3,
+    name: '6つの単母音コンプリート', subtitle: '単母音全部！ (a, o, e, i, u, ü)',
+    symbols: ['a', 'o', 'e', 'i', 'u', 'ü'],
+    clues: 18,
+    advice: '6つの母音が勢ぞろい！【ü】は口笛の形のまま「イー」と言うのが最大のコツだよ！'
+  },
+  {
+    id: 8, tier: 2, size: 6, boxR: 2, boxC: 3,
+    name: 'なかよし声母6人組', subtitle: '唇と舌の音 (b, p, m, f, d, t)',
+    symbols: ['b', 'p', 'm', 'f', 'd', 't'],
+    clues: 18,
+    advice: '2×3のブロックにも注目してね！各行・各列・各ブロックに6文字が重複しないように！'
+  },
+  {
+    id: 9, tier: 2, size: 6, boxR: 2, boxC: 3,
+    name: '二重母音ワールド', subtitle: '複母音 (ai, ei, ui, ao, ou, iu)',
+    symbols: ['ai', 'ei', 'ui', 'ao', 'ou', 'iu'],
+    clues: 17,
+    advice: '二重母音は2つの母音が滑らかにつながるよ！【ui】はウェイ、【iu】はヨウ！'
+  },
+  {
+    id: 10, tier: 2, size: 6, boxR: 2, boxC: 3,
+    name: 'そり舌音と平舌音の対決', subtitle: '巻き舌vs平らな舌 (zh, ch, sh, z, c, s)',
+    symbols: ['zh', 'ch', 'sh', 'z', 'c', 's'],
+    clues: 16,
+    advice: '日本人が一番苦手な巻き舌音【zh・ch・sh】と平舌音【z・c・s】の対決パズル！'
+  },
+  {
+    id: 11, tier: 2, size: 6, boxR: 2, boxC: 3,
+    name: '鼻から抜ける音', subtitle: '前鼻音・後鼻音 (an, en, in, ang, eng, ing)',
+    symbols: ['an', 'en', 'in', 'ang', 'eng', 'ing'],
+    clues: 17,
+    advice: '【an】と【ang】の違いは「案内」と「案外」！鼻の奥に響かせてみよう！'
+  },
+  {
+    id: 12, tier: 2, size: 6, boxR: 2, boxC: 3,
+    name: '6×6 探検マスター', subtitle: '音節大集合 (ba, ma, da, ta, ga, ha)',
+    symbols: ['ba', 'ma', 'da', 'ta', 'ga', 'ha'],
+    clues: 16,
+    advice: '声母＋母音の組み合わせ音節！6×6マスターになったら、いよいよ本格9×9へ！'
+  },
+
+  // TIER 3: 9x9 (Stages 13-18)
+  {
+    id: 13, tier: 3, size: 9, boxR: 3, boxC: 3,
+    name: '声母オールスター9', subtitle: '代表的な声母9文字 (b, p, m, f, d, t, n, l, g)',
+    symbols: ['b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g'],
+    clues: 36,
+    advice: 'ついに9×9！3×3のブロックも意識して、メモ機能（鉛筆）をうまく活用しよう！'
+  },
+  {
+    id: 14, tier: 3, size: 9, boxR: 3, boxC: 3,
+    name: '母音オールスター9', subtitle: '単母音＆複母音 (a, o, e, i, u, ü, ai, ei, ao)',
+    symbols: ['a', 'o', 'e', 'i', 'u', 'ü', 'ai', 'ei', 'ao'],
+    clues: 35,
+    advice: '9つの母音たちが大集合！盤面上の文字をタップするとピンピン先生が読み上げるよ！'
+  },
+  {
+    id: 15, tier: 3, size: 9, boxR: 3, boxC: 3,
+    name: '有気音・無気音バトル', subtitle: '息の強さをマスター (b, p, d, t, g, k, z, c, s)',
+    symbols: ['b', 'p', 'd', 't', 'g', 'k', 'z', 'c', 's'],
+    clues: 34,
+    advice: 'b/p, d/t, g/k, z/c！息を強く吐き出すペアをしっかり聞き分けてね！'
+  },
+  {
+    id: 16, tier: 3, size: 9, boxR: 3, boxC: 3,
+    name: '一息音節マスター', subtitle: '全体認読音節 (zhi, chi, shi, ri, zi, ci, si, yi, wu)',
+    symbols: ['zhi', 'chi', 'shi', 'ri', 'zi', 'ci', 'si', 'yi', 'wu'],
+    clues: 34,
+    advice: '中国の小学生も必ず覚える「全体認読音節（綴らずにそのまま一息で読む音）」だよ！'
+  },
+  {
+    id: 17, tier: 3, size: 9, boxR: 3, boxC: 3,
+    name: 'そり舌＆舌面マスター', subtitle: '難関ピンイン (zh, ch, sh, r, j, q, x, y, w)',
+    symbols: ['zh', 'ch', 'sh', 'r', 'j', 'q', 'x', 'y', 'w'],
+    clues: 33,
+    advice: '高難度！そり舌音と舌面音のコンビネーション。落ち着いて消去法で絞り込もう！'
+  },
+  {
+    id: 18, tier: 3, size: 9, boxR: 3, boxC: 3,
+    name: 'ピンイングランドチャンピオン', subtitle: '中国語の達人へ (ā, á, ǎ, à, b, d, g, m, l)',
+    symbols: ['ā', 'á', 'ǎ', 'à', 'b', 'd', 'g', 'm', 'l'],
+    clues: 32,
+    advice: '最終ステージ！声調と声母が入り混じった最高峰のパズル。クリアして殿堂入りしよう！'
+  }
+];
+
+/* ==========================================================
+   3. SOUND & SPEECH SYNTHESIS ENGINE
+   ========================================================== */
+class AudioEngine {
+  constructor() {
+    this.ctx = null;
+    this.muted = false;
+    this.zhVoice = null;
+    this.initSpeech();
+  }
+
+  initSpeech() {
+    if ('speechSynthesis' in window) {
+      const loadVoices = () => {
+        const voices = window.speechSynthesis.getVoices();
+        if (voices && voices.length > 0) {
+          this.zhVoice = voices.find(v => v.lang === 'zh-CN' || v.lang === 'zh_CN') ||
+                         voices.find(v => v.lang.startsWith('zh')) || null;
+        }
+      };
+      loadVoices();
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+  }
+
+  ensureContext() {
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) this.ctx = new AudioCtx();
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  }
+
+  speak(pinyin, spokenWord) {
+    if (this.muted) return;
+    this.ensureContext();
+
+    const key = String(pinyin || spokenWord || '').trim();
+    const altKey = String(spokenWord || pinyin || '').trim();
+    if (!key && !altKey) return;
+
+    const cleanKey = key.replace(/[\/\\:*?"<>|]/g, '').trim();
+    const cleanAlt = altKey.replace(/[\/\\:*?"<>|]/g, '').trim();
+
+    // 1. Tier 1: Try playing server-side studio-quality neural human audio (MP3)
+    if (this.currentAudio) {
+      try {
+        this.currentAudio.pause();
+        this.currentAudio.currentTime = 0;
+      } catch(e) {}
+    }
+
+    const tryPlayAudio = (targetKey, onFail) => {
+      if (!targetKey) { onFail(); return; }
+      const audioUrl = 'audio/zh/' + encodeURIComponent(targetKey) + '.mp3';
+      const sound = new Audio(audioUrl);
+      this.currentAudio = sound;
+      let played = false;
+      sound.onplay = () => { played = true; };
+      sound.play().then(() => {
+        // High-fidelity natural human voice played successfully
+      }).catch(() => {
+        if (!played) onFail();
+      });
+      sound.onerror = () => {
+        if (!played) onFail();
+      };
+    };
+
+    tryPlayAudio(cleanKey, () => {
+      if (cleanAlt && cleanAlt !== cleanKey) {
+        tryPlayAudio(cleanAlt, () => {
+          this.fallbackSpeak(pinyin, spokenWord);
+        });
+      } else {
+        this.fallbackSpeak(pinyin, spokenWord);
+      }
+    });
+  }
+
+  fallbackSpeak(pinyin, spokenWord) {
+    if ('speechSynthesis' in window) {
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+      window.speechSynthesis.cancel();
+
+      // Map single pinyin or tones to accurate spoken pedagogical sound
+      let textToSay = spokenWord;
+      if (!textToSay) {
+        const found = ALL_PINYIN_MAP[pinyin];
+        textToSay = (found && found.speak) ? found.speak : pinyin;
+      }
+
+      // Four tone specials
+      if (pinyin === 'ā') textToSay = '啊';
+      if (pinyin === 'á') textToSay = '阿';
+      if (pinyin === 'ǎ') textToSay = '啊';
+      if (pinyin === 'à') textToSay = '啊';
+
+      const utter = new SpeechSynthesisUtterance(textToSay);
+      utter.lang = 'zh-CN';
+      utter.rate = 0.85;
+      utter.pitch = 1.1;
+      if (!this.zhVoice) {
+        const voices = window.speechSynthesis.getVoices();
+        if (voices && voices.length > 0) {
+          this.zhVoice = voices.find(v => v.lang === 'zh-CN' || v.lang === 'zh_CN') ||
+                         voices.find(v => v.lang.startsWith('zh')) || null;
+        }
+      }
+      if (this.zhVoice) utter.voice = this.zhVoice;
+
+      window.speechSynthesis.speak(utter);
+    }
+  }
+
+  // Synthesize musical pitch contours for 4 Tones using Web Audio API
+  playToneContour(toneNumber) {
+    if (this.muted) return;
+    this.ensureContext();
+    if (!this.ctx) return;
+
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    const now = this.ctx.currentTime;
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.linearRampToValueAtTime(0.18, now + 0.04);
+
+    if (toneNumber === 1) {
+      // 55: High flat
+      osc.frequency.setValueAtTime(440, now);
+      gain.gain.setValueAtTime(0.18, now + 0.35);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.45);
+      osc.start(now);
+      osc.stop(now + 0.45);
+    } else if (toneNumber === 2) {
+      // 35: Mid to high rising
+      osc.frequency.setValueAtTime(320, now);
+      osc.frequency.exponentialRampToValueAtTime(460, now + 0.38);
+      gain.gain.setValueAtTime(0.18, now + 0.3);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.42);
+      osc.start(now);
+      osc.stop(now + 0.42);
+    } else if (toneNumber === 3) {
+      // 214: Dip then rise
+      osc.frequency.setValueAtTime(330, now);
+      osc.frequency.exponentialRampToValueAtTime(240, now + 0.22);
+      osc.frequency.exponentialRampToValueAtTime(390, now + 0.5);
+      gain.gain.setValueAtTime(0.18, now + 0.4);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.55);
+      osc.start(now);
+      osc.stop(now + 0.55);
+    } else if (toneNumber === 4) {
+      // 51: High falling to low
+      osc.frequency.setValueAtTime(480, now);
+      osc.frequency.exponentialRampToValueAtTime(210, now + 0.32);
+      gain.gain.setValueAtTime(0.18, now + 0.24);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.36);
+      osc.start(now);
+      osc.stop(now + 0.36);
+    }
+  }
+
+  // Cheerful UI sound effects
+  playSfx(type) {
+    if (this.muted) return;
+    this.ensureContext();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    if (type === 'pop') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(520, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.08);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.08);
+      osc.start(now);
+      osc.stop(now + 0.08);
+    } else if (type === 'success') {
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.setValueAtTime(554.37, now + 0.08);
+      osc.frequency.setValueAtTime(659.25, now + 0.16);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.35);
+      osc.start(now);
+      osc.stop(now + 0.35);
+    } else if (type === 'error') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(180, now);
+      osc.frequency.exponentialRampToValueAtTime(110, now + 0.2);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.2);
+      osc.start(now);
+      osc.stop(now + 0.2);
+    } else if (type === 'fanfare') {
+      const notes = [523.25, 659.25, 783.99, 1046.50];
+      notes.forEach((freq, idx) => {
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.type = 'triangle';
+        o.frequency.value = freq;
+        o.connect(g);
+        g.connect(this.ctx.destination);
+        const t = now + idx * 0.11;
+        g.gain.setValueAtTime(0.15, t);
+        g.gain.linearRampToValueAtTime(0.001, t + 0.22);
+        o.start(t);
+        o.stop(t + 0.22);
+      });
+    }
+  }
+}
+
+const audio = new AudioEngine();
+
+function toggleMute() {
+  audio.muted = !audio.muted;
+  const btn = document.getElementById('soundToggleBtn');
+  btn.textContent = audio.muted ? '🔇' : '🔊';
+}
+
+/* ==========================================================
+   4. SUDOKU GENERATOR & SOLVER ENGINE
+   ========================================================== */
+class SudokuGenerator {
+  // Count solutions with limit
+  static countSolutions(grid, n, br, bc, limit = 2) {
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        if (grid[r][c] === 0) {
+          let count = 0;
+          for (let num = 1; num <= n; num++) {
+            if (this.isValid(grid, n, br, bc, r, c, num)) {
+              grid[r][c] = num;
+              count += this.countSolutions(grid, n, br, bc, limit - count);
+              grid[r][c] = 0;
+              if (count >= limit) return count;
+            }
+          }
+          return count;
+        }
+      }
+    }
+    return 1;
+  }
+
+  static isValid(grid, n, br, bc, r, c, num) {
+    for (let i = 0; i < n; i++) {
+      if (grid[r][i] === num || grid[i][c] === num) return false;
+    }
+    const startR = Math.floor(r / br) * br;
+    const startC = Math.floor(c / bc) * bc;
+    for (let i = 0; i < br; i++) {
+      for (let j = 0; j < bc; j++) {
+        if (grid[startR + i][startC + j] === num) return false;
+      }
+    }
+    return true;
+  }
+
+  static fillBoard(grid, n, br, bc) {
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        if (grid[r][c] === 0) {
+          const nums = [];
+          for (let i = 1; i <= n; i++) nums.push(i);
+          nums.sort(() => Math.random() - 0.5);
+
+          for (const num of nums) {
+            if (this.isValid(grid, n, br, bc, r, c, num)) {
+              grid[r][c] = num;
+              if (this.fillBoard(grid, n, br, bc)) return true;
+              grid[r][c] = 0;
+            }
+          }
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  static generate(n, br, bc, targetClues) {
+    const grid = Array.from({ length: n }, () => Array(n).fill(0));
+    this.fillBoard(grid, n, br, bc);
+    const solution = grid.map(row => [...row]);
+
+    const cells = [];
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        cells.push({ r, c });
+      }
+    }
+    cells.sort(() => Math.random() - 0.5);
+
+    let clues = n * n;
+    for (const cell of cells) {
+      if (clues <= targetClues) break;
+      const backup = grid[cell.r][cell.c];
+      grid[cell.r][cell.c] = 0;
+
+      if (this.countSolutions(grid, n, br, bc, 2) !== 1) {
+        grid[cell.r][cell.c] = backup;
+      } else {
+        clues--;
+      }
+    }
+
+    return { solution, puzzle: grid, clues };
+  }
+}
+
+/* ==========================================================
+   5. GAME STATE & APPLICATION CONTROLLER
+   ========================================================== */
+const AppState = {
+  activeView: 'adventure',
+  activeTier: 1,
+  currentStage: null,
+  isFreeMode: false,
+  freeConfig: { size: 4, category: 'initials', diff: 'easy' },
+
+  // Sudoku Board State
+  size: 4,
+  boxR: 2,
+  boxC: 2,
+  symbols: [], // Array of pinyin glyphs
+  solutionGrid: [],
+  initialGrid: [],
+  userGrid: [],
+  notesGrid: [], // notes per cell: Set
+  selectedCell: null, // { r, c }
+  pencilMode: false,
+  moveHistory: [],
+  mistakes: 0,
+  maxMistakes: 3,
+  timerSeconds: 0,
+  timerInterval: null,
+  isGameFinished: false,
+
+  // Stars & Progress Persistence
+  starsData: {}, // { stageId: stars (1..3) }
+  unlockedStage: 1,
+
+  // Tone Pitch Playground State
+  toneBaseSyl: 'ma',
+  activeTone: 1,
+
+  // Quiz State
+  quizScore: 0,
+  quizStreak: 0,
+  quizCurrentTarget: null
+};
+
+// Load saved progression
+function loadSavedProgress() {
+  try {
+    const saved = localStorage.getItem('pinyin_sudoku_progress');
+    if (saved) {
+      const data = JSON.parse(saved);
+      AppState.starsData = data.stars || {};
+      AppState.unlockedStage = data.unlocked || 1;
+    }
+  } catch (e) {}
+  updateTotalStarsDisplay();
+}
+
+function saveProgress() {
+  try {
+    localStorage.setItem('pinyin_sudoku_progress', JSON.stringify({
+      stars: AppState.starsData,
+      unlocked: AppState.unlockedStage
+    }));
+  } catch (e) {}
+  updateTotalStarsDisplay();
+}
+
+function updateTotalStarsDisplay() {
+  let count = 0;
+  Object.values(AppState.starsData).forEach(s => count += s);
+  const el = document.getElementById('totalStarsDisplay');
+  if (el) el.textContent = count;
+}
+
+/* ==========================================================
+   6. VIEW ROUTING & INITIALIZATION
+   ========================================================== */
+function switchView(viewName) {
+  AppState.activeView = viewName;
+
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+  const targetView = document.getElementById(`view-${viewName}`);
+  const targetTab = document.getElementById(`tab-${viewName}`);
+
+  if (targetView) targetView.classList.add('active');
+  if (targetTab) targetTab.classList.add('active');
+
+  // View specific setups
+  if (viewName === 'adventure') {
+    renderStageGrid();
+    setTutorMessage('好きなステージを選んでね！かんたんな 4×4 から順番に挑戦しよう！');
+  } else if (viewName === 'chart') {
+    renderChartSections('all');
+    setTutorMessage('ピンインの完全マップだよ！カードをタップすると先生の発音が聴けるよ！');
+  } else if (viewName === 'tones') {
+    drawTonePitchCurve(AppState.activeTone);
+    setTutorMessage('中国語の音の上がり下がり（声調）を学ぼう！アニメーションに合わせて発音してみてね！');
+  } else if (viewName === 'quiz') {
+    startNextQuizQuestion();
+    setTutorMessage('耳をすまして聴いてね！ピンピン先生が言うピンインはどれかな？');
+  } else if (viewName === 'free') {
+    setTutorMessage('大きさやテーマを組み合わせて、自分だけのパズルを作れるよ！');
+  }
+}
+
+function setTutorMessage(text, soundText = null) {
+  const tutorTextEl = document.getElementById('tutorText');
+  if (tutorTextEl) tutorTextEl.textContent = text;
+  if (soundText) {
+    audio.speak(soundText);
+  }
+}
+
+function tutorSpeakCurrentAdvice() {
+  if (AppState.activeView === 'gameplay' && AppState.currentStage) {
+    audio.speak(AppState.currentStage.symbols[0]);
+    setTutorMessage(AppState.currentStage.advice);
+  } else {
+    audio.speak('你好', '你好');
+  }
+}
+
+/* ==========================================================
+   7. ADVENTURE MODE & TIERS
+   ========================================================== */
+function selectTier(tierNum) {
+  AppState.activeTier = tierNum;
+  document.querySelectorAll('.tier-card').forEach((el, idx) => {
+    el.classList.toggle('active', idx + 1 === tierNum);
+  });
+  renderStageGrid();
+}
+
+function renderStageGrid() {
+  const container = document.getElementById('stageGrid');
+  container.innerHTML = '';
+
+  const stagesInTier = ADVENTURE_STAGES.filter(s => s.tier === AppState.activeTier);
+
+  stagesInTier.forEach(st => {
+    const item = document.createElement('div');
+    const isUnlocked = st.id <= AppState.unlockedStage;
+    const stars = AppState.starsData[st.id] || 0;
+
+    item.className = `stage-item ${isUnlocked ? '' : 'locked'}`;
+    
+    let starStr = '';
+    for (let i = 1; i <= 3; i++) {
+      starStr += (i <= stars) ? '⭐' : '☆';
+    }
+
+    item.innerHTML = `
+      <div class="stage-num-badge">${isUnlocked ? st.id : '🔒'}</div>
+      <div class="stage-name">${st.name}</div>
+      <div class="stage-symbols">${st.symbols.slice(0, 4).join(' ')}${st.symbols.length > 4 ? '...' : ''}</div>
+      <div class="stage-stars">${starStr}</div>
+    `;
+
+    if (isUnlocked) {
+      item.onclick = () => startAdventureStage(st);
+    }
+
+    container.appendChild(item);
+  });
+}
+
+function startAdventureStage(stage) {
+  AppState.currentStage = stage;
+  AppState.isFreeMode = false;
+  AppState.size = stage.size;
+  AppState.boxR = stage.boxR;
+  AppState.boxC = stage.boxC;
+  AppState.symbols = [...stage.symbols];
+
+  document.getElementById('gpStageTitle').textContent = `Stage ${stage.id}: ${stage.name} (${stage.size}×${stage.size})`;
+  document.getElementById('gpStageDesc').textContent = stage.subtitle;
+
+  // Generate Sudoku
+  const generated = SudokuGenerator.generate(stage.size, stage.boxR, stage.boxC, stage.clues);
+  initSudokuGame(generated.puzzle, generated.solution);
+
+  switchView('gameplay');
+  setTutorMessage(stage.advice, stage.symbols[0]);
+}
+
+/* ==========================================================
+   8. FREE GENERATOR MODE
+   ========================================================== */
+function setFreeSize(sz, el) {
+  AppState.freeConfig.size = sz;
+  document.querySelectorAll('#freeSizeOpts .free-opt-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function setFreeCategory(cat, el) {
+  AppState.freeConfig.category = cat;
+  document.querySelectorAll('#freeTypeOpts .free-opt-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function setFreeDiff(diff, el) {
+  AppState.freeConfig.diff = diff;
+  document.querySelectorAll('#freeDiffOpts .free-opt-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function startFreeGame() {
+  const sz = AppState.freeConfig.size;
+  AppState.size = sz;
+  AppState.boxR = (sz === 4) ? 2 : (sz === 6 ? 2 : 3);
+  AppState.boxC = (sz === 4) ? 2 : (sz === 6 ? 3 : 3);
+  AppState.isFreeMode = true;
+  AppState.currentStage = null;
+
+  // Select symbols based on category
+  let pool = [];
+  if (AppState.freeConfig.category === 'initials') {
+    pool = PINYIN_DATABASE.initials.map(x => x.glyph);
+  } else if (AppState.freeConfig.category === 'finals') {
+    pool = [...PINYIN_DATABASE.finalsSingle, ...PINYIN_DATABASE.finalsCompound].map(x => x.glyph);
+  } else {
+    // Tones
+    pool = ['ā', 'á', 'ǎ', 'à', 'ō', 'ó', 'ǒ', 'ò', 'ē'];
+  }
+
+  // Pick unique N symbols
+  pool.sort(() => Math.random() - 0.5);
+  AppState.symbols = pool.slice(0, sz);
+
+  // Clues count
+  let targetClues = Math.floor(sz * sz * 0.45);
+  if (AppState.freeConfig.diff === 'easy') targetClues = Math.floor(sz * sz * 0.55);
+  if (AppState.freeConfig.diff === 'hard') targetClues = Math.floor(sz * sz * 0.38);
+
+  const generated = SudokuGenerator.generate(sz, AppState.boxR, AppState.boxC, targetClues);
+
+  document.getElementById('gpStageTitle').textContent = `じゆうパズル (${sz}×${sz})`;
+  document.getElementById('gpStageDesc').textContent = `テーマ: ${AppState.symbols.join(', ')}`;
+
+  initSudokuGame(generated.puzzle, generated.solution);
+  switchView('gameplay');
+  setTutorMessage('カスタムパズルができたよ！がんばって全マスを埋めてみよう！', AppState.symbols[0]);
+}
+
+/* ==========================================================
+   9. SUDOKU GAMEPLAY ENGINE
+   ========================================================== */
+function initSudokuGame(puzzleGrid, solutionGrid) {
+  AppState.initialGrid = puzzleGrid.map(row => [...row]);
+  AppState.userGrid = puzzleGrid.map(row => [...row]);
+  AppState.solutionGrid = solutionGrid.map(row => [...row]);
+  AppState.notesGrid = Array.from({ length: AppState.size }, () => 
+    Array.from({ length: AppState.size }, () => new Set())
+  );
+  AppState.moveHistory = [];
+  AppState.mistakes = 0;
+  AppState.isGameFinished = false;
+  AppState.selectedCell = null;
+  AppState.pencilMode = false;
+  document.getElementById('btnPencilMode').classList.remove('active');
+
+  // Reset timer
+  clearInterval(AppState.timerInterval);
+  AppState.timerSeconds = 0;
+  updateTimerDisplay();
+  AppState.timerInterval = setInterval(() => {
+    if (!AppState.isGameFinished) {
+      AppState.timerSeconds++;
+      updateTimerDisplay();
+    }
+  }, 1000);
+
+  updateMistakesDisplay();
+  renderSudokuBoard();
+  renderKeypad();
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(AppState.timerSeconds / 60).toString().padStart(2, '0');
+  const s = (AppState.timerSeconds % 60).toString().padStart(2, '0');
+  document.getElementById('gpTimer').textContent = `⏱️ ${m}:${s}`;
+}
+
+function updateMistakesDisplay() {
+  document.getElementById('gpMistakes').textContent = `❌ ${AppState.mistakes}/${AppState.maxMistakes}`;
+}
+
+function renderSudokuBoard() {
+  const container = document.getElementById('sudokuGrid');
+  container.innerHTML = '';
+  container.style.gridTemplateColumns = `repeat(${AppState.size}, 1fr)`;
+  container.style.gridTemplateRows = `repeat(${AppState.size}, 1fr)`;
+
+  for (let r = 0; r < AppState.size; r++) {
+    for (let c = 0; c < AppState.size; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'grid-cell';
+      cell.dataset.r = r;
+      cell.dataset.c = c;
+
+      // Box borders
+      if ((c + 1) % AppState.boxC === 0 && c !== AppState.size - 1) {
+        cell.classList.add('border-box-right');
+      }
+      if ((r + 1) % AppState.boxR === 0 && r !== AppState.size - 1) {
+        cell.classList.add('border-box-bottom');
+      }
+
+      cell.onclick = () => onCellClicked(r, c);
+      container.appendChild(cell);
+    }
+  }
+
+  updateBoardCells();
+}
+
+function updateBoardCells() {
+  const container = document.getElementById('sudokuGrid');
+  const cells = container.querySelectorAll('.grid-cell');
+
+  const sel = AppState.selectedCell;
+  const selVal = sel ? AppState.userGrid[sel.r][sel.c] : 0;
+
+  cells.forEach(cell => {
+    const r = parseInt(cell.dataset.r, 10);
+    const c = parseInt(cell.dataset.c, 10);
+    const val = AppState.userGrid[r][c];
+    const isClue = AppState.initialGrid[r][c] !== 0;
+
+    // Selection & Highlighting
+    cell.classList.remove('selected', 'highlight-same', 'highlight-peer');
+
+    if (sel) {
+      if (sel.r === r && sel.c === c) {
+        cell.classList.add('selected');
+      } else if (selVal !== 0 && val === selVal) {
+        cell.classList.add('highlight-same');
+      } else if (sel.r === r || sel.c === c || isSameBox(r, c, sel.r, sel.c)) {
+        cell.classList.add('highlight-peer');
+      }
+    }
+
+    // Render Content
+    if (val !== 0) {
+      const symbol = AppState.symbols[val - 1];
+      const foundInfo = ALL_PINYIN_MAP[symbol];
+      const kana = foundInfo ? foundInfo.kana : '';
+
+      // Font size dynamically based on board size
+      const fontSize = AppState.size === 4 ? '26px' : (AppState.size === 6 ? '20px' : '15px');
+      const kanaSize = AppState.size === 4 ? '10px' : '8px';
+
+      cell.innerHTML = `
+        <div class="cell-val ${isClue ? 'clue' : 'user-filled'}" style="font-size: ${fontSize}">
+          ${symbol}
+        </div>
+        ${kana ? `<div class="cell-sub" style="font-size: ${kanaSize}">${kana}</div>` : ''}
+      `;
+    } else {
+      // Notes mode
+      const notes = AppState.notesGrid[r][c];
+      if (notes.size > 0) {
+        let notesHtml = `<div class="cell-notes-grid" style="grid-template-columns: repeat(${AppState.boxC}, 1fr)">`;
+        for (let i = 1; i <= AppState.size; i++) {
+          notesHtml += `<div class="note-item">${notes.has(i) ? AppState.symbols[i - 1] : ''}</div>`;
+        }
+        notesHtml += `</div>`;
+        cell.innerHTML = notesHtml;
+      } else {
+        cell.innerHTML = '';
+      }
+    }
+  });
+}
+
+function isSameBox(r1, c1, r2, c2) {
+  const br1 = Math.floor(r1 / AppState.boxR);
+  const bc1 = Math.floor(c1 / AppState.boxC);
+  const br2 = Math.floor(r2 / AppState.boxR);
+  const bc2 = Math.floor(c2 / AppState.boxC);
+  return br1 === br2 && bc1 === bc2;
+}
+
+function onCellClicked(r, c) {
+  AppState.selectedCell = { r, c };
+  updateBoardCells();
+
+  const val = AppState.userGrid[r][c];
+  if (val !== 0) {
+    const symbol = AppState.symbols[val - 1];
+    audio.speak(symbol);
+    audio.playSfx('pop');
+  } else {
+    audio.playSfx('pop');
+  }
+}
+
+/* Keypad Setup */
+function renderKeypad() {
+  const container = document.getElementById('keypadContainer');
+  container.innerHTML = '';
+
+  AppState.symbols.forEach((symbol, idx) => {
+    const num = idx + 1;
+    const tile = document.createElement('div');
+    tile.className = 'key-tile';
+
+    const info = ALL_PINYIN_MAP[symbol];
+    const kana = info ? info.kana : '';
+
+    tile.innerHTML = `
+      <span class="key-speaker">🔊</span>
+      <div class="key-pinyin">${symbol}</div>
+      <div class="key-kana">${kana}</div>
+    `;
+
+    tile.onclick = () => onKeypadPressed(num);
+    container.appendChild(tile);
+  });
+}
+
+function onKeypadPressed(num) {
+  if (!AppState.selectedCell || AppState.isGameFinished) return;
+  const { r, c } = AppState.selectedCell;
+
+  // Cannot modify clue
+  if (AppState.initialGrid[r][c] !== 0) {
+    const symbol = AppState.symbols[AppState.initialGrid[r][c] - 1];
+    audio.speak(symbol);
+    return;
+  }
+
+  const symbol = AppState.symbols[num - 1];
+  audio.speak(symbol);
+
+  // Pencil mode handling
+  if (AppState.pencilMode) {
+    const set = AppState.notesGrid[r][c];
+    if (set.has(num)) set.delete(num);
+    else set.add(num);
+    updateBoardCells();
+    return;
+  }
+
+  // Normal Input
+  const prevVal = AppState.userGrid[r][c];
+  if (prevVal === num) return; // Same value
+
+  // Check Conflict or Validity
+  const correctVal = AppState.solutionGrid[r][c];
+  const isConflict = !SudokuGenerator.isValid(AppState.userGrid, AppState.size, AppState.boxR, AppState.boxC, r, c, num);
+
+  AppState.moveHistory.push({
+    r, c, prevVal, newVal: num, prevNotes: new Set(AppState.notesGrid[r][c])
+  });
+
+  AppState.userGrid[r][c] = num;
+  AppState.notesGrid[r][c].clear();
+
+  if (num !== correctVal || isConflict) {
+    // Mistake
+    AppState.mistakes++;
+    updateMistakesDisplay();
+    audio.playSfx('error');
+    highlightConflict(r, c);
+
+    if (AppState.mistakes >= AppState.maxMistakes) {
+      setTutorMessage('おっと！ミスが3回になっちゃったよ。もう一度落ち着いてやってみよう！');
+    }
+  } else {
+    audio.playSfx('success');
+    checkWinCondition();
+  }
+
+  updateBoardCells();
+}
+
+function highlightConflict(r, c) {
+  const container = document.getElementById('sudokuGrid');
+  const cells = container.querySelectorAll('.grid-cell');
+  cells.forEach(cell => {
+    if (parseInt(cell.dataset.r, 10) === r && parseInt(cell.dataset.c, 10) === c) {
+      cell.classList.add('has-conflict');
+      setTimeout(() => cell.classList.remove('has-conflict'), 500);
+    }
+  });
+}
+
+function eraseSelectedCell() {
+  if (!AppState.selectedCell || AppState.isGameFinished) return;
+  const { r, c } = AppState.selectedCell;
+  if (AppState.initialGrid[r][c] !== 0) return;
+
+  AppState.moveHistory.push({
+    r, c, prevVal: AppState.userGrid[r][c], newVal: 0, prevNotes: new Set(AppState.notesGrid[r][c])
+  });
+
+  AppState.userGrid[r][c] = 0;
+  AppState.notesGrid[r][c].clear();
+  audio.playSfx('pop');
+  updateBoardCells();
+}
+
+function undoMove() {
+  if (AppState.moveHistory.length === 0 || AppState.isGameFinished) return;
+  const last = AppState.moveHistory.pop();
+  AppState.userGrid[last.r][last.c] = last.prevVal;
+  AppState.notesGrid[last.r][last.c] = last.prevNotes;
+  AppState.selectedCell = { r: last.r, c: last.c };
+  audio.playSfx('pop');
+  updateBoardCells();
+}
+
+function togglePencilMode() {
+  AppState.pencilMode = !AppState.pencilMode;
+  document.getElementById('btnPencilMode').classList.toggle('active', AppState.pencilMode);
+  audio.playSfx('pop');
+}
+
+function getSmartHint() {
+  if (AppState.isGameFinished) return;
+
+  // Find an empty or incorrect cell
+  for (let r = 0; r < AppState.size; r++) {
+    for (let c = 0; c < AppState.size; c++) {
+      if (AppState.userGrid[r][c] === 0 || AppState.userGrid[r][c] !== AppState.solutionGrid[r][c]) {
+        const correctVal = AppState.solutionGrid[r][c];
+        const correctSymbol = AppState.symbols[correctVal - 1];
+
+        AppState.userGrid[r][c] = correctVal;
+        AppState.notesGrid[r][c].clear();
+        AppState.selectedCell = { r, c };
+
+        audio.speak(correctSymbol);
+        audio.playSfx('success');
+        updateBoardCells();
+
+        setTutorMessage(`ヒントだよ！ここには 【${correctSymbol}】 が入るよ！よく聴いてみてね。`);
+        checkWinCondition();
+        return;
+      }
+    }
+  }
+}
+
+function playAudioHint() {
+  // Pick an empty cell and pronounce its correct pinyin
+  const emptyCells = [];
+  for (let r = 0; r < AppState.size; r++) {
+    for (let c = 0; c < AppState.size; c++) {
+      if (AppState.userGrid[r][c] === 0) {
+        emptyCells.push({ r, c, val: AppState.solutionGrid[r][c] });
+      }
+    }
+  }
+
+  if (emptyCells.length === 0) {
+    audio.speak('太棒了', '太棒了');
+    return;
+  }
+
+  const chosen = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+  const symbol = AppState.symbols[chosen.val - 1];
+  audio.speak(symbol);
+  setTutorMessage(`耳をすませて！先生はいま【${symbol}】と発音したよ！どこに入るかな？`);
+}
+
+function checkWinCondition() {
+  for (let r = 0; r < AppState.size; r++) {
+    for (let c = 0; c < AppState.size; c++) {
+      if (AppState.userGrid[r][c] !== AppState.solutionGrid[r][c]) {
+        return false;
+      }
+    }
+  }
+
+  // All filled correctly!
+  AppState.isGameFinished = true;
+  clearInterval(AppState.timerInterval);
+  audio.playSfx('fanfare');
+  launchConfetti();
+
+  // Evaluate stars
+  let stars = 3;
+  if (AppState.mistakes === 1) stars = 2;
+  if (AppState.mistakes >= 2) stars = 1;
+
+  if (AppState.currentStage) {
+    const stId = AppState.currentStage.id;
+    if (!AppState.starsData[stId] || AppState.starsData[stId] < stars) {
+      AppState.starsData[stId] = stars;
+    }
+    if (stId === AppState.unlockedStage && stId < ADVENTURE_STAGES.length) {
+      AppState.unlockedStage = stId + 1;
+    }
+    saveProgress();
+  }
+
+  // Show clear modal
+  setTimeout(() => {
+    document.getElementById('clearStars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+    document.getElementById('clearModal').classList.add('active');
+  }, 400);
+
+  return true;
+}
+
+function closeClearModal() {
+  document.getElementById('clearModal').classList.remove('active');
+}
+
+function nextStageFromModal() {
+  closeClearModal();
+  if (AppState.currentStage && AppState.currentStage.id < ADVENTURE_STAGES.length) {
+    const nextSt = ADVENTURE_STAGES.find(s => s.id === AppState.currentStage.id + 1);
+    if (nextSt) {
+      startAdventureStage(nextSt);
+      return;
+    }
+  }
+  switchView('adventure');
+}
+
+/* ==========================================================
+   10. PINYIN CHART VIEW
+   ========================================================== */
+function filterChart(filterKey, buttonEl) {
+  document.querySelectorAll('.chart-filter-tabs .filter-pill').forEach(el => el.classList.remove('active'));
+  if (buttonEl) buttonEl.classList.add('active');
+  renderChartSections(filterKey);
+}
+
+function renderChartSections(filter) {
+  const container = document.getElementById('chartSectionsContainer');
+  container.innerHTML = '';
+
+  const sections = [
+    { key: 'initials', title: '声母 (Initials · 子音 23個)', desc: '音節の頭につく子音だよ！', list: PINYIN_DATABASE.initials },
+    { key: 'finals-single', title: '単母音 (Simple Finals 6個)', desc: 'すべての基本となる6つの母音！', list: PINYIN_DATABASE.finalsSingle },
+    { key: 'finals-compound', title: '複母音 (Compound Finals 9個)', desc: '母音が組み合わさった音！', list: PINYIN_DATABASE.finalsCompound },
+    { key: 'finals-nasal', title: '鼻母音 (Nasal Finals 9個)', desc: '鼻から美しく抜ける音！', list: PINYIN_DATABASE.finalsNasal },
+    { key: 'whole', title: '全体認読音節 (Whole Syllables 16個)', desc: '綴らずにそのまま一息で読む音節！', list: PINYIN_DATABASE.wholeSyllables }
+  ];
+
+  sections.forEach(sec => {
+    if (filter !== 'all' && filter !== sec.key) return;
+
+    const secCard = document.createElement('div');
+    secCard.className = 'chart-section';
+    secCard.innerHTML = `
+      <div class="chart-sec-header">
+        <div class="chart-sec-title"><span>📌</span> ${sec.title}</div>
+        <span class="chart-sec-badge">${sec.list.length}音</span>
+      </div>
+      <div class="pinyin-grid" id="grid-${sec.key}"></div>
+    `;
+    container.appendChild(secCard);
+
+    const grid = secCard.querySelector(`#grid-${sec.key}`);
+    sec.list.forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'pinyin-card';
+      card.innerHTML = `
+        <span class="card-horn">🔊</span>
+        <div class="card-glyph">${item.glyph}</div>
+        <div class="card-kana">${item.kana}</div>
+        <div class="card-chinese">${item.pinyin || item.speak}</div>
+      `;
+      card.onclick = () => openPinyinDetail(item);
+      grid.appendChild(card);
+    });
+  });
+}
+
+function openPinyinDetail(item) {
+  document.getElementById('modalGlyph').textContent = item.glyph;
+  document.getElementById('modalSpokenText').textContent = `発音を聴く (${item.pinyin || item.speak})`;
+  document.getElementById('modalTip').innerHTML = `<strong>【発音のコツ】</strong><br>${item.tip || 'リラックスして息を出そう！'}`;
+
+  const vocabBox = document.getElementById('modalVocab');
+  vocabBox.innerHTML = '<strong>【よく使う言葉】</strong>';
+  if (item.words && item.words.length > 0) {
+    item.words.forEach(w => {
+      vocabBox.innerHTML += `
+        <div class="vocab-item">
+          <span>🇨🇳 <strong>${w.ch}</strong> (${w.py})</span>
+          <span>🇯🇵 ${w.ja}</span>
+        </div>
+      `;
+    });
+  } else {
+    vocabBox.innerHTML += '<div style="color:#6B7280; margin-top:4px;">発音練習をしてみよう！</div>';
+  }
+
+  document.getElementById('detailModal').classList.add('active');
+  audio.speak(item.glyph, item.speak);
+}
+
+function playModalSound() {
+  const glyph = document.getElementById('modalGlyph').textContent;
+  const item = ALL_PINYIN_MAP[glyph];
+  audio.speak(glyph, item ? item.speak : glyph);
+}
+
+function closeDetailModal() {
+  document.getElementById('detailModal').classList.remove('active');
+}
+
+function openPinyinQuickCard() {
+  if (AppState.symbols.length > 0) {
+    const first = ALL_PINYIN_MAP[AppState.symbols[0]];
+    if (first) openPinyinDetail(first);
+    else switchView('chart');
+  } else {
+    switchView('chart');
+  }
+}
+
+/* ==========================================================
+   11. FOUR TONES PLAYGROUND & PITCH VISUALIZER
+   ========================================================== */
+function setToneBaseSyllable(syl, el) {
+  AppState.toneBaseSyl = syl;
+  document.querySelectorAll('.syllable-picker .syl-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  playToneInteractive(AppState.activeTone);
+}
+
+function playToneInteractive(toneNum) {
+  AppState.activeTone = toneNum;
+  document.querySelectorAll('.tone-buttons-row .tone-btn').forEach((btn, idx) => {
+    btn.classList.toggle('active', idx + 1 === toneNum);
+  });
+
+  // Synthesize musical pitch curve
+  audio.playToneContour(toneNum);
+
+  // Pronounce syllable with tone
+  const toneMap = {
+    ma: ['mā', 'má', 'mǎ', 'mà'],
+    ba: ['bā', 'bá', 'bǎ', 'bà'],
+    da: ['dā', 'dá', 'dǎ', 'dà'],
+    yi: ['yī', 'yí', 'yǐ', 'yì'],
+    shu: ['shū', 'shú', 'shǔ', 'shù']
+  };
+
+  const sylList = toneMap[AppState.toneBaseSyl] || toneMap.ma;
+  const targetWord = sylList[toneNum - 1];
+
+  setTimeout(() => {
+    audio.speak(targetWord, targetWord);
+  }, 100);
+
+  drawTonePitchCurve(toneNum);
+}
+
+function drawTonePitchCurve(toneNum) {
+  const canvas = document.getElementById('pitchCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+
+  canvas.width = canvas.parentElement.clientWidth * dpr;
+  canvas.height = canvas.parentElement.clientHeight * dpr;
+  ctx.scale(dpr, dpr);
+
+  const w = canvas.parentElement.clientWidth;
+  const h = canvas.parentElement.clientHeight;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Draw 5-degree pitch scale horizontal guidelines (5, 4, 3, 2, 1)
+  const pitchLevels = [
+    { label: '5 (高)', y: h * 0.2 },
+    { label: '4 (半高)', y: h * 0.38 },
+    { label: '3 (中)', y: h * 0.55 },
+    { label: '2 (半低)', y: h * 0.72 },
+    { label: '1 (低)', y: h * 0.88 }
+  ];
+
+  ctx.strokeStyle = '#E5E7EB';
+  ctx.lineWidth = 1;
+  ctx.font = '10px "M PLUS Rounded 1c", sans-serif';
+  ctx.fillStyle = '#9CA3AF';
+
+  pitchLevels.forEach(lvl => {
+    ctx.beginPath();
+    ctx.moveTo(40, lvl.y);
+    ctx.lineTo(w - 20, lvl.y);
+    ctx.stroke();
+    ctx.fillText(lvl.label, 6, lvl.y + 3);
+  });
+
+  // Curve definition
+  ctx.beginPath();
+  ctx.lineWidth = 6;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  const startX = 60;
+  const endX = w - 40;
+
+  if (toneNum === 1) {
+    // 55 Flat
+    ctx.strokeStyle = '#10B981';
+    ctx.moveTo(startX, h * 0.2);
+    ctx.lineTo(endX, h * 0.2);
+  } else if (toneNum === 2) {
+    // 35 Rising
+    ctx.strokeStyle = '#F59E0B';
+    ctx.moveTo(startX, h * 0.55);
+    ctx.lineTo(endX, h * 0.2);
+  } else if (toneNum === 3) {
+    // 214 Dipping
+    ctx.strokeStyle = '#8B5CF6';
+    ctx.moveTo(startX, h * 0.72);
+    ctx.quadraticCurveTo(startX + (endX - startX) * 0.45, h * 0.92, endX, h * 0.38);
+  } else if (toneNum === 4) {
+    // 51 Falling
+    ctx.strokeStyle = '#EF4444';
+    ctx.moveTo(startX, h * 0.2);
+    ctx.lineTo(endX, h * 0.88);
+  }
+  ctx.stroke();
+
+  // Draw Cute Panda Head tracking the curve
+  let headX = endX;
+  let headY = h * 0.2;
+  if (toneNum === 2) { headX = endX; headY = h * 0.2; }
+  if (toneNum === 3) { headX = endX; headY = h * 0.38; }
+  if (toneNum === 4) { headX = endX; headY = h * 0.88; }
+
+  ctx.font = '24px sans-serif';
+  ctx.fillText('🐼', headX - 12, headY + 8);
+}
+
+/* ==========================================================
+   12. LISTENING CHALLENGE QUIZ MINI-GAME
+   ========================================================== */
+function startNextQuizQuestion() {
+  // Pool of distinctive pinyins
+  const testPool = [
+    { p: 'bā', s: '八', ja: 'ba' }, { p: 'pō', s: '坡', ja: 'po' },
+    { p: 'mǎ', s: '马', ja: 'ma' }, { p: 'fó', s: '佛', ja: 'fo' },
+    { p: 'dà', s: '大', ja: 'da' }, { p: 'tè', s: '特', ja: 'te' },
+    { p: 'gē', s: '哥', ja: 'ge' }, { p: 'kē', s: '科', ja: 'ke' },
+    { p: 'hǎo', s: '好', ja: 'hao' }, { p: 'jī', s: '鸡', ja: 'ji' },
+    { p: 'qī', s: '七', ja: 'qi' }, { p: 'xī', s: '西', ja: 'xi' },
+    { p: 'shū', s: '书', ja: 'shu' }, { p: 'zhī', s: '知', ja: 'zhi' }
+  ];
+
+  testPool.sort(() => Math.random() - 0.5);
+  const target = testPool[0];
+  AppState.quizCurrentTarget = target;
+
+  const options = [target, testPool[1], testPool[2], testPool[3]];
+  options.sort(() => Math.random() - 0.5);
+
+  const container = document.getElementById('quizOptionsGrid');
+  container.innerHTML = '';
+
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt-btn';
+    btn.innerHTML = `
+      <div class="quiz-opt-pinyin">${opt.p}</div>
+      <div class="quiz-opt-kana">${opt.s} (${opt.ja})</div>
+    `;
+    btn.onclick = () => evaluateQuizAnswer(opt, btn);
+    container.appendChild(btn);
+  });
+
+  // Auto pronounce
+  setTimeout(() => {
+    audio.speak(target.p, target.s);
+  }, 200);
+}
+
+function repeatQuizSound() {
+  if (AppState.quizCurrentTarget) {
+    audio.speak(AppState.quizCurrentTarget.p, AppState.quizCurrentTarget.s);
+  }
+}
+
+function evaluateQuizAnswer(selected, buttonEl) {
+  if (!AppState.quizCurrentTarget) return;
+
+  if (selected.p === AppState.quizCurrentTarget.p) {
+    // Correct
+    AppState.quizScore += 10;
+    AppState.quizStreak++;
+    audio.playSfx('success');
+    buttonEl.style.borderColor = '#10B981';
+    buttonEl.style.background = '#ECFDF5';
+
+    setTutorMessage(`すごい！大正解！【${selected.p}】だよ！`, selected.p);
+    launchConfetti();
+
+    setTimeout(() => {
+      startNextQuizQuestion();
+    }, 1000);
+  } else {
+    // Incorrect
+    AppState.quizStreak = 0;
+    audio.playSfx('error');
+    buttonEl.style.borderColor = '#EF4444';
+    buttonEl.style.background = '#FEE2E2';
+    setTutorMessage('おしい！もう一度よく聴いてみてね！');
+  }
+
+  document.getElementById('quizScore').textContent = `⭐ スコア: ${AppState.quizScore}`;
+  document.getElementById('quizStreak').textContent = `🔥 コンボ: ${AppState.quizStreak}`;
+}
+
+/* ==========================================================
+   13. CELEBRATION CONFETTI ENGINE
+   ========================================================== */
+function launchConfetti() {
+  const canvas = document.getElementById('confettiCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const pieces = [];
+  const colors = ['#10B981', '#F59E0B', '#FF6B8B', '#0EA5E9', '#8B5CF6'];
+
+  for (let i = 0; i < 40; i++) {
+    pieces.push({
+      x: canvas.width * 0.5,
+      y: canvas.height * 0.5,
+      vx: (Math.random() - 0.5) * 12,
+      vy: (Math.random() - 0.8) * 14,
+      size: Math.random() * 8 + 6,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rotation: Math.random() * 360,
+      vRot: (Math.random() - 0.5) * 10
+    });
+  }
+
+  let frames = 0;
+  function update() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.35; // Gravity
+      p.rotation += p.vRot;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rotation * Math.PI) / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+      ctx.restore();
+    });
+
+    frames++;
+    if (frames < 70) {
+      requestAnimationFrame(update);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+  requestAnimationFrame(update);
+}
+
+/* Window Resize */
+window.addEventListener('resize', () => {
+  if (AppState.activeView === 'tones') {
+    drawTonePitchCurve(AppState.activeTone);
+  }
+});
+
+/* App Boot */
+document.addEventListener('DOMContentLoaded', () => {
+  loadSavedProgress();
+  renderStageGrid();
+  renderChartSections('all');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,3542 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>わくわくハングルアドベンチャー - キッズ韓国語数独＆発音マップ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Noto+Sans+KR:wght@500;700;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #FCFBF7;
+    --bg-card: #FFFFFF;
+    --primary: #FF5E7E;
+    --primary-hover: #E04867;
+    --primary-light: #FFF0F3;
+    --primary-dark: #A81B38;
+    --secondary: #FFB300;
+    --secondary-light: #FFF8E1;
+    --accent-blue: #3B82F6;
+    --accent-blue-light: #EFF6FF;
+    --accent-green: #10B981;
+    --accent-green-light: #ECFDF5;
+    --accent-purple: #8B5CF6;
+    --accent-purple-light: #F5F3FF;
+    --accent-teal: #14B8A6;
+    --accent-teal-light: #F0FDFA;
+    --success: #10B981;
+    --error: #EF4444;
+    --error-light: #FEE2E2;
+    --text-main: #1F2937;
+    --text-sub: #4B5563;
+    --text-muted: #9CA3AF;
+    --border-soft: #E5E7EB;
+    --border-strong: #374151;
+    --shadow-sm: 0 4px 12px rgba(255, 94, 126, 0.1);
+    --shadow-md: 0 8px 24px rgba(31, 41, 55, 0.08);
+    --shadow-pop: 0 6px 0 rgba(0, 0, 0, 0.08);
+    --radius-xl: 24px;
+    --radius-lg: 18px;
+    --radius-md: 14px;
+    --radius-sm: 8px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-family: "M PLUS Rounded 1c", "Noto Sans KR", system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 10% 15%, #FFF0F5 0%, #FCFBF7 45%, #EFF6FF 100%);
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    min-height: 100vh;
+  }
+
+  /* Decorative Background Elements */
+  .bg-decor {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.55;
+  }
+  .bg-blob-1 { top: -60px; right: -40px; width: 260px; height: 260px; background: radial-gradient(circle, #FFE4E8 0%, transparent 70%); }
+  .bg-blob-2 { bottom: -60px; left: -50px; width: 280px; height: 280px; background: radial-gradient(circle, #E0F2FE 0%, transparent 70%); }
+
+  #app {
+    width: 100%;
+    max-width: 540px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+    padding: 8px 14px 24px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0 8px;
+    flex-shrink: 0;
+  }
+  .logo-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+  }
+  .mascot-avatar {
+    font-size: 34px;
+    filter: drop-shadow(0 4px 8px rgba(255, 94, 126, 0.25));
+    animation: mascotBounce 2.6s infinite ease-in-out;
+  }
+  @keyframes mascotBounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-4px) rotate(3deg); }
+  }
+  .logo-title {
+    display: flex;
+    flex-direction: column;
+  }
+  .logo-title .main-title {
+    font-size: 17px;
+    font-weight: 900;
+    color: var(--text-main);
+    letter-spacing: -0.3px;
+    line-height: 1.15;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .logo-title .sub-title {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: 0.5px;
+  }
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-decoration: none;
+    color: var(--text-main);
+  }
+  .icon-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+  }
+  .icon-btn:active {
+    transform: translateY(1px);
+  }
+
+  /* Main Navigation Tabs */
+  .tab-bar {
+    display: flex;
+    background: #F3F4F6;
+    padding: 4px;
+    border-radius: 16px;
+    margin: 8px 0 14px;
+    gap: 4px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
+  }
+  .tab-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px 4px;
+    border-radius: 12px;
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .tab-btn.active {
+    background: var(--bg-card);
+    color: var(--primary);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  }
+  .tab-btn .tab-icon {
+    font-size: 14px;
+  }
+
+  /* Views Container */
+  .view {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+  }
+  .view.active {
+    display: flex;
+    animation: fadeIn 0.25s ease-out;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Common Card */
+  .card {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    padding: 16px;
+    border: 2px solid var(--border-soft);
+    box-shadow: var(--shadow-md);
+    margin-bottom: 14px;
+  }
+
+  /* Mascot Tutor Speech Bubble */
+  .tutor-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #FFF0F3 0%, #FFF8E1 100%);
+    border: 2px solid #FED7AA;
+    border-radius: var(--radius-lg);
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(251, 146, 60, 0.1);
+  }
+  .tutor-avatar {
+    font-size: 32px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+  }
+  .tutor-bubble {
+    font-size: 12px;
+    font-weight: 700;
+    color: #854D0E;
+    line-height: 1.45;
+  }
+  .tutor-bubble strong {
+    color: #C2410C;
+  }
+
+  /* Tier Selector */
+  .tier-selector {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .tier-btn {
+    flex: 1;
+    padding: 10px 4px;
+    border-radius: var(--radius-md);
+    border: 2px solid var(--border-soft);
+    background: var(--bg-card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .tier-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+  }
+  .tier-btn.active {
+    background: var(--primary);
+    border-color: var(--primary-dark);
+    box-shadow: 0 4px 12px rgba(255, 94, 126, 0.3);
+  }
+  .tier-btn.active .tier-title,
+  .tier-btn.active .tier-desc {
+    color: #FFFFFF;
+  }
+  .tier-title {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .tier-desc {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-sub);
+  }
+
+  /* Stages Grid */
+  .stages-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .stage-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--border-soft);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  .stage-card:hover {
+    transform: translateY(-3px) scale(1.01);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-sm);
+  }
+  .stage-card:active {
+    transform: translateY(1px);
+  }
+  .stage-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .stage-num-badge {
+    font-size: 10px;
+    font-weight: 900;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: var(--primary-light);
+    color: var(--primary-dark);
+  }
+  .stage-stars {
+    color: #F59E0B;
+    font-size: 12px;
+    letter-spacing: -2px;
+  }
+  .stage-name {
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .stage-symbols-row {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .symbol-tag {
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    background: #F3F4F6;
+    padding: 3px 6px;
+    border-radius: 6px;
+    color: #1F2937;
+  }
+
+  /* Free Mode Box */
+  .free-mode-banner {
+    margin-top: 14px;
+    background: linear-gradient(135deg, #EFF6FF 0%, #F5F3FF 100%);
+    border: 2px dashed #93C5FD;
+    border-radius: var(--radius-lg);
+    padding: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .free-mode-banner:hover {
+    border-color: var(--accent-blue);
+    transform: translateY(-2px);
+  }
+  .free-mode-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .free-mode-title {
+    font-size: 13px;
+    font-weight: 900;
+    color: #1E40AF;
+  }
+  .free-mode-desc {
+    font-size: 11px;
+    font-weight: 700;
+    color: #4B5563;
+  }
+  .free-play-btn {
+    background: var(--accent-blue);
+    color: white;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+  }
+
+  /* SUDOKU GAMEPLAY SCREEN */
+  .game-hud {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    background: var(--bg-card);
+    padding: 8px 12px;
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--border-soft);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .game-hud-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-back-stages {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-sub);
+    background: #F3F4F6;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .game-title-hud {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .game-hud-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .timer-pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--primary-dark);
+    font-variant-numeric: tabular-nums;
+  }
+  .errors-pill {
+    font-size: 11px;
+    font-weight: 800;
+    color: #DC2626;
+    background: #FEE2E2;
+    padding: 3px 8px;
+    border-radius: 12px;
+  }
+
+  /* Sudoku Board Wrapper */
+  .board-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 12px;
+    width: 100%;
+  }
+  .sudoku-grid {
+    background: #374151;
+    border: 3px solid #1F2937;
+    border-radius: var(--radius-lg);
+    padding: 3px;
+    display: grid;
+    gap: 2px;
+    width: 100%;
+    max-width: 440px;
+    aspect-ratio: 1 / 1;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    overflow: hidden;
+  }
+
+  /* Grid Sizes */
+  .grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+  }
+  .grid-6 {
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+  }
+  .grid-9 {
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: repeat(9, 1fr);
+  }
+
+  /* Cells */
+  .cell {
+    background: #FFFFFF;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.12s ease;
+    user-select: none;
+    box-shadow: inset 0 0 0 1px #F3F4F6;
+  }
+  .cell .cell-val {
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 900;
+    line-height: 1;
+    color: #111827;
+    transition: transform 0.1s ease;
+  }
+  .cell .cell-ruby {
+    font-size: 8px;
+    font-weight: 700;
+    color: #6B7280;
+    margin-top: 1px;
+    line-height: 1;
+  }
+
+  /* Font scaling based on grid */
+  .grid-4 .cell .cell-val { font-size: 34px; }
+  .grid-4 .cell .cell-ruby { font-size: 10px; }
+  .grid-6 .cell .cell-val { font-size: 24px; }
+  .grid-6 .cell .cell-ruby { font-size: 8px; }
+  .grid-9 .cell .cell-val { font-size: 16px; }
+  .grid-9 .cell .cell-ruby { display: none; }
+
+  /* Cell States */
+  .cell.initial {
+    background: #F9FAFB;
+  }
+  .cell.initial .cell-val {
+    color: #1F2937;
+  }
+  .cell.user-filled .cell-val {
+    color: #2563EB;
+  }
+  .cell.selected {
+    background: #FEF3C7 !important;
+    box-shadow: inset 0 0 0 2px #F59E0B !important;
+  }
+  .cell.related {
+    background: #FFFBEB;
+  }
+  .cell.same-symbol {
+    background: #FDE68A;
+  }
+  .cell.same-symbol .cell-val {
+    transform: scale(1.1);
+  }
+  .cell.conflict {
+    background: #FEE2E2 !important;
+  }
+  .cell.conflict .cell-val {
+    color: #DC2626 !important;
+    animation: shake 0.3s ease;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-4px); }
+    75% { transform: translateX(4px); }
+  }
+
+  /* Draft notes inside cell */
+  .cell-notes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    width: 90%;
+    height: 90%;
+    position: absolute;
+    pointer-events: none;
+  }
+  .note-item {
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 8px;
+    font-weight: 700;
+    color: #9CA3AF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  .grid-9 .note-item { font-size: 6px; }
+
+  /* Subgrid Boundary Visuals */
+  /* 4x4 (2x2 blocks) */
+  .grid-4 .cell:nth-child(2),
+  .grid-4 .cell:nth-child(6),
+  .grid-4 .cell:nth-child(10),
+  .grid-4 .cell:nth-child(14) {
+    border-right: 2px solid #374151;
+  }
+  .grid-4 .cell:nth-child(5),
+  .grid-4 .cell:nth-child(6),
+  .grid-4 .cell:nth-child(7),
+  .grid-4 .cell:nth-child(8) {
+    border-bottom: 2px solid #374151;
+  }
+
+  /* 6x6 (2x3 blocks) */
+  .grid-6 .cell:nth-child(3n) {
+    border-right: 2px solid #374151;
+  }
+  .grid-6 .cell:nth-child(n+7):nth-child(-n+12),
+  .grid-6 .cell:nth-child(n+19):nth-child(-n+24) {
+    border-bottom: 2px solid #374151;
+  }
+
+  /* 9x9 (3x3 blocks) */
+  .grid-9 .cell:nth-child(3n) {
+    border-right: 2px solid #374151;
+  }
+  .grid-9 .cell:nth-child(n+19):nth-child(-n+27),
+  .grid-9 .cell:nth-child(n+46):nth-child(-n+54) {
+    border-bottom: 2px solid #374151;
+  }
+
+  /* Game Controls Toolbar */
+  .game-toolbar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .tool-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 8px 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .tool-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+  }
+  .tool-btn.active {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary-dark);
+  }
+  .tool-icon {
+    font-size: 16px;
+  }
+  .tool-label {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-sub);
+  }
+
+  /* Hangul Keypad */
+  .hangul-keypad {
+    display: grid;
+    gap: 6px;
+    width: 100%;
+    margin-top: 2px;
+  }
+  .keypad-4 { grid-template-columns: repeat(4, 1fr); }
+  .keypad-6 { grid-template-columns: repeat(6, 1fr); }
+  .keypad-9 { grid-template-columns: repeat(5, 1fr); }
+
+  .key-btn {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 8px 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #E5E7EB;
+    transition: all 0.1s ease;
+    min-height: 52px;
+  }
+  .key-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #E5E7EB;
+    border-color: var(--primary);
+  }
+  .key-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #E5E7EB;
+  }
+  .key-char {
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: #1F2937;
+    line-height: 1.1;
+  }
+  .key-ruby {
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1;
+    margin-top: 2px;
+  }
+  .key-romaji {
+    font-size: 7px;
+    font-weight: 700;
+    color: var(--text-muted);
+  }
+
+  /* =========================================
+     MODE 2: HANGUL ENCYCLOPEDIA (ハングル完全図鑑)
+     ========================================= */
+  .chart-filter-bar {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+    scrollbar-width: none;
+  }
+  .chart-filter-bar::-webkit-scrollbar { display: none; }
+  .filter-pill {
+    white-space: nowrap;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .filter-pill:hover {
+    border-color: var(--primary);
+  }
+  .filter-pill.active {
+    background: var(--primary);
+    border-color: var(--primary-dark);
+    color: #FFFFFF;
+    box-shadow: 0 3px 8px rgba(255, 94, 126, 0.25);
+  }
+
+  .chart-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(115px, 1fr));
+    gap: 10px;
+  }
+  .hangul-card {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    position: relative;
+  }
+  .hangul-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary);
+    box-shadow: 0 6px 16px rgba(255, 94, 126, 0.15);
+  }
+  .card-letter {
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--text-main);
+    line-height: 1;
+  }
+  .card-ruby {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1;
+  }
+  .card-name {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text-sub);
+  }
+  .card-vocab {
+    font-size: 10px;
+    font-weight: 700;
+    color: #059669;
+    background: #ECFDF5;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .speaker-tag {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-size: 10px;
+    opacity: 0.5;
+  }
+
+  /* Matrix / Bancheolpyo View */
+  .matrix-container {
+    overflow-x: auto;
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--border-soft);
+    padding: 8px;
+    box-shadow: var(--shadow-sm);
+  }
+  .matrix-table {
+    border-collapse: separate;
+    border-spacing: 4px;
+    width: 100%;
+    min-width: 480px;
+  }
+  .matrix-table th {
+    background: #F3F4F6;
+    color: var(--text-main);
+    font-weight: 900;
+    font-size: 13px;
+    padding: 6px 4px;
+    border-radius: 6px;
+    text-align: center;
+  }
+  .matrix-table td {
+    background: #FFFFFF;
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    text-align: center;
+    padding: 6px 2px;
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.12s ease;
+  }
+  .matrix-table td:hover {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary-dark);
+    transform: scale(1.1);
+  }
+
+  /* Cognate Words Grid (日韓そっくり単語) */
+  .cognates-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .cognate-item {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .cognate-item:hover {
+    border-color: var(--secondary);
+    background: var(--secondary-light);
+  }
+  .cognate-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .cognate-icon {
+    font-size: 24px;
+  }
+  .cognate-kr {
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .cognate-ruby {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--primary);
+  }
+  .cognate-jp {
+    font-size: 13px;
+    font-weight: 800;
+    color: #4B5563;
+  }
+  .cognate-btn {
+    background: var(--primary-light);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--primary);
+  }
+
+  /* =========================================
+     MODE 3: SYLLABLE BUILDER LAB (合体ラボ)
+     ========================================= */
+  .builder-screen {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .assembly-stage {
+    background: linear-gradient(135deg, #FFF0F3 0%, #EFF6FF 100%);
+    border: 2px solid #E0E7FF;
+    border-radius: var(--radius-xl);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    box-shadow: var(--shadow-sm);
+  }
+  .equation-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--text-sub);
+  }
+  .part-badge {
+    padding: 6px 12px;
+    border-radius: var(--radius-md);
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 54px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.06);
+  }
+  .part-c { background: #FEF3C7; color: #B45309; border: 2px solid #FCD34D; }
+  .part-v { background: #E0F2FE; color: #0369A1; border: 2px solid #7DD3FC; }
+  .part-b { background: #ECFDF5; color: #047857; border: 2px solid #6EE7B7; }
+
+  .part-badge .part-tag {
+    font-size: 8px;
+    font-weight: 800;
+    color: inherit;
+    opacity: 0.8;
+  }
+
+  .result-box {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #FFFFFF;
+    border: 3px solid var(--primary);
+    border-radius: var(--radius-xl);
+    padding: 12px 24px;
+    box-shadow: 0 8px 20px rgba(255, 94, 126, 0.2);
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+  .result-box:active {
+    transform: scale(0.96);
+  }
+  .big-char {
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 54px;
+    font-weight: 900;
+    color: var(--primary-dark);
+    line-height: 1;
+    animation: popBounce 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes popBounce {
+    0% { transform: scale(0.6); }
+    100% { transform: scale(1); }
+  }
+  .result-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .meta-ruby {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--primary);
+  }
+  .meta-romaji {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-muted);
+  }
+  .btn-listen-builder {
+    background: var(--primary);
+    color: white;
+    border: none;
+    font-size: 13px;
+    font-weight: 900;
+    padding: 6px 14px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(255, 94, 126, 0.3);
+  }
+
+  /* Preset Words for Builder */
+  .presets-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .presets-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-sub);
+  }
+  .presets-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+  .presets-scroll::-webkit-scrollbar { display: none; }
+  .preset-pill {
+    flex-shrink: 0;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .preset-pill:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+
+  /* Palette Selector Tabs */
+  .palette-box {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--border-soft);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .palette-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+  .palette-item {
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 16px;
+    font-weight: 900;
+    background: #F9FAFB;
+    border: 2px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 6px 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.1s ease;
+  }
+  .palette-item:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+  .palette-item.active {
+    background: var(--primary);
+    border-color: var(--primary-dark);
+    color: #FFFFFF;
+  }
+  .palette-item .item-ruby {
+    font-size: 7px;
+    font-weight: 700;
+    color: inherit;
+    opacity: 0.8;
+  }
+
+  /* =========================================
+     MODE 4: LISTENING QUIZ (ききとりクイズ)
+     ========================================= */
+  .quiz-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 0;
+  }
+  .quiz-hud {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .streak-badge {
+    background: #FEF3C7;
+    color: #B45309;
+    font-size: 12px;
+    font-weight: 900;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 2px solid #FCD34D;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .quiz-play-btn {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary) 0%, #FF8FA3 100%);
+    border: 4px solid #FFFFFF;
+    box-shadow: 0 10px 25px rgba(255, 94, 126, 0.4);
+    color: white;
+    font-size: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .quiz-play-btn:hover {
+    transform: scale(1.08);
+  }
+  .quiz-play-btn:active {
+    transform: scale(0.92);
+  }
+  .quiz-prompt {
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--text-main);
+    text-align: center;
+  }
+  .quiz-choices-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    width: 100%;
+  }
+  .choice-btn {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 16px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #E5E7EB;
+    transition: all 0.12s ease;
+  }
+  .choice-btn:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 #E5E7EB;
+  }
+  .choice-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #E5E7EB;
+  }
+  .choice-char {
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    color: #1F2937;
+  }
+  .choice-ruby {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--primary);
+  }
+  .choice-btn.correct {
+    background: #D1FAE5 !important;
+    border-color: #059669 !important;
+    box-shadow: 0 4px 0 #059669 !important;
+  }
+  .choice-btn.wrong {
+    background: #FEE2E2 !important;
+    border-color: #DC2626 !important;
+    box-shadow: 0 4px 0 #DC2626 !important;
+  }
+
+  /* MODAL STYLES */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(17, 24, 39, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .modal-overlay.active {
+    display: flex;
+    animation: modalFadeIn 0.2s ease-out;
+  }
+  @keyframes modalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .modal-box {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    animation: modalPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes modalPop {
+    from { transform: scale(0.85); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .modal-icon {
+    font-size: 52px;
+    margin-bottom: 8px;
+  }
+  .modal-title {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--text-main);
+    margin-bottom: 4px;
+  }
+  .modal-desc {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-sub);
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+  .modal-btns {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+  }
+  .btn-primary {
+    flex: 1;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 94, 126, 0.3);
+  }
+  .btn-secondary {
+    flex: 1;
+    background: #F3F4F6;
+    color: var(--text-sub);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  /* Confetti Canvas */
+  #confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<div class="bg-decor bg-blob-1"></div>
+<div class="bg-decor bg-blob-2"></div>
+
+<div id="app">
+  <!-- Top Header -->
+  <header class="header">
+    <a href="index.html" class="logo-group">
+      <div class="mascot-avatar">🐯</div>
+      <div class="logo-title">
+        <div class="main-title">わくわくハングル</div>
+        <div class="sub-title">KIDS HANGUL SUDOKU & MAP</div>
+      </div>
+    </a>
+    <div class="nav-actions">
+      <button class="icon-btn" id="btn-sound" title="おと ON/OFF" onclick="toggleSound()">🔊</button>
+      <a href="index.html" class="icon-btn" title="ゲームいちらんへもどる">🏠</a>
+    </div>
+  </header>
+
+  <!-- Main Navigation Tabs -->
+  <nav class="tab-bar">
+    <button class="tab-btn active" id="tab-adventure" onclick="switchView('adventure')">
+      <span class="tab-icon">🧩</span>
+      <span>ハングル数独</span>
+    </button>
+    <button class="tab-btn" id="tab-chart" onclick="switchView('chart')">
+      <span class="tab-icon">📖</span>
+      <span>完全図鑑</span>
+    </button>
+    <button class="tab-btn" id="tab-builder" onclick="switchView('builder')">
+      <span class="tab-icon">🧪</span>
+      <span>合体ラボ</span>
+    </button>
+    <button class="tab-btn" id="tab-quiz" onclick="switchView('quiz')">
+      <span class="tab-icon">👂</span>
+      <span>ききとり</span>
+    </button>
+  </nav>
+
+  <!-- =========================================
+       VIEW 1: ADVENTURE (ハングル数独ステージ)
+       ========================================= -->
+  <section class="view active" id="view-adventure">
+    <div class="tutor-banner">
+      <div class="tutor-avatar">🐯</div>
+      <div class="tutor-bubble">
+        アンニョン！ぼくはトラの<strong>ホランイくん</strong>だよ！<br>
+        ハングルはパズルのように組み合わせる文字なんだ！マスをうめて楽しくおぼえよう！
+      </div>
+    </div>
+
+    <!-- Tier Filter -->
+    <div class="tier-selector">
+      <button class="tier-btn active" onclick="selectTier(1)">
+        <span class="tier-title">4×4 入門</span>
+        <span class="tier-desc">全8ステージ</span>
+      </button>
+      <button class="tier-btn" onclick="selectTier(2)">
+        <span class="tier-title">6×6 探検</span>
+        <span class="tier-desc">全8ステージ</span>
+      </button>
+      <button class="tier-btn" onclick="selectTier(3)">
+        <span class="tier-title">9×9 挑戦</span>
+        <span class="tier-desc">全6ステージ</span>
+      </button>
+    </div>
+
+    <!-- Stages Grid -->
+    <div class="stages-grid" id="stages-grid"></div>
+
+    <!-- Free Mode Entry Banner -->
+    <div class="free-mode-banner" onclick="startFreeMode()">
+      <div class="free-mode-info">
+        <div class="free-mode-title">🎲 フリー生成モード</div>
+        <div class="free-mode-desc">なんども遊べる！ランダム生成パズル</div>
+      </div>
+      <button class="free-play-btn">あそぶ ▶</button>
+    </div>
+  </section>
+
+  <!-- =========================================
+       VIEW 2: GAMEPLAY (数独プレイ画面)
+       ========================================= -->
+  <section class="view" id="view-game">
+    <!-- Game HUD -->
+    <div class="game-hud">
+      <div class="game-hud-left">
+        <button class="btn-back-stages" onclick="exitGame()">◀ もどる</button>
+        <div class="game-title-hud" id="game-stage-title">ステージ 1</div>
+      </div>
+      <div class="game-hud-right">
+        <div class="timer-pill">⏱️ <span id="game-timer">00:00</span></div>
+        <div class="errors-pill" id="errors-badge">ミス: 0</div>
+      </div>
+    </div>
+
+    <!-- Mascot Speech -->
+    <div class="tutor-banner" style="margin-bottom: 8px;">
+      <div class="tutor-avatar">🐯</div>
+      <div class="tutor-bubble" id="tutor-text">
+        マスをタップして、下のハングルを入れてね！文字をタップすると声が出るよ！
+      </div>
+    </div>
+
+    <!-- Sudoku Board -->
+    <div class="board-wrapper">
+      <div class="sudoku-grid grid-4" id="sudoku-grid"></div>
+    </div>
+
+    <!-- Game Toolbar -->
+    <div class="game-toolbar">
+      <button class="tool-btn" id="btn-draft" onclick="toggleDraftMode()">
+        <span class="tool-icon">✏️</span>
+        <span class="tool-label">メモ</span>
+      </button>
+      <button class="tool-btn" onclick="handleUndo()">
+        <span class="tool-icon">↩️</span>
+        <span class="tool-label">もどす</span>
+      </button>
+      <button class="tool-btn" onclick="handleErase()">
+        <span class="tool-icon">🧹</span>
+        <span class="tool-label">けす</span>
+      </button>
+      <button class="tool-btn" onclick="handleHint()">
+        <span class="tool-icon">💡</span>
+        <span class="tool-label">ヒント</span>
+      </button>
+      <button class="tool-btn" onclick="speakCurrentCell()">
+        <span class="tool-icon">🔊</span>
+        <span class="tool-label">はつおん</span>
+      </button>
+    </div>
+
+    <!-- Hangul Keypad -->
+    <div class="hangul-keypad keypad-4" id="hangul-keypad"></div>
+  </section>
+
+  <!-- =========================================
+       VIEW 3: COMPLETE ENCYCLOPEDIA (完全図鑑)
+       ========================================= -->
+  <section class="view" id="view-chart">
+    <div class="tutor-banner">
+      <div class="tutor-avatar">🐯</div>
+      <div class="tutor-bubble">
+        ハングルのすべての文字をあつめたよ！<br>
+        タップすると<strong>本場のネイティブ音声</strong>がきけるよ！
+      </div>
+    </div>
+
+    <!-- Chart Filter Pills -->
+    <div class="chart-filter-bar">
+      <button class="filter-pill active" onclick="setChartCategory('basic_consonants')">基本子音 (14)</button>
+      <button class="filter-pill" onclick="setChartCategory('tense_consonants')">濃音 (5)</button>
+      <button class="filter-pill" onclick="setChartCategory('basic_vowels')">基本母音 (10)</button>
+      <button class="filter-pill" onclick="setChartCategory('compound_vowels')">複合母音 (11)</button>
+      <button class="filter-pill" onclick="setChartCategory('matrix')">反切表マトリックス</button>
+      <button class="filter-pill" onclick="setChartCategory('batchim')">パッチムのひみつ</button>
+      <button class="filter-pill" onclick="setChartCategory('cognates')">日韓そっくり単語</button>
+    </div>
+
+    <!-- Dynamic Container for Chart -->
+    <div id="chart-content"></div>
+  </section>
+
+  <!-- =========================================
+       VIEW 4: SYLLABLE BUILDER LAB (合体ラボ)
+       ========================================= -->
+  <section class="view" id="view-builder">
+    <div class="tutor-banner">
+      <div class="tutor-avatar">🐯</div>
+      <div class="tutor-bubble">
+        <strong>ハングル合体ラボへようこそ！</strong><br>
+        子音と母音（＋パッチム）をえらぶと、レゴのように文字がガッチャンコ合体するよ！
+      </div>
+    </div>
+
+    <div class="builder-screen">
+      <!-- Big Result & Equation Stage -->
+      <div class="assembly-stage">
+        <div class="equation-row">
+          <div class="part-badge part-c">
+            <span class="part-tag">子音 (初声)</span>
+            <span id="eq-c">ㄱ</span>
+          </div>
+          <span>＋</span>
+          <div class="part-badge part-v">
+            <span class="part-tag">母音 (中声)</span>
+            <span id="eq-v">ㅏ</span>
+          </div>
+          <span>＋</span>
+          <div class="part-badge part-b">
+            <span class="part-tag">パッチム</span>
+            <span id="eq-b">なし</span>
+          </div>
+        </div>
+
+        <div class="result-box" onclick="speakBuilderChar()">
+          <div class="big-char" id="builder-char">가</div>
+          <div class="result-meta">
+            <div class="meta-ruby" id="builder-ruby">カ</div>
+            <div class="meta-romaji" id="builder-romaji">ga / ka</div>
+          </div>
+          <button class="btn-listen-builder">🔊 きく</button>
+        </div>
+      </div>
+
+      <!-- Quick Preset Words -->
+      <div class="presets-section">
+        <div class="presets-title">🌟 おなじみの単語を作ってみよう:</div>
+        <div class="presets-scroll" id="presets-scroll"></div>
+      </div>
+
+      <!-- Consonant Picker -->
+      <div class="palette-box">
+        <div class="palette-header">
+          <span>1. 子音 (しおん) をえらぶ:</span>
+          <span style="color: #B45309;">初声 (チョソン)</span>
+        </div>
+        <div class="palette-grid" id="palette-consonants"></div>
+      </div>
+
+      <!-- Vowel Picker -->
+      <div class="palette-box">
+        <div class="palette-header">
+          <span>2. 母音 (ぼいん) をえらぶ:</span>
+          <span style="color: #0369A1;">中声 (チュンソン)</span>
+        </div>
+        <div class="palette-grid" id="palette-vowels"></div>
+      </div>
+
+      <!-- Batchim Picker -->
+      <div class="palette-box">
+        <div class="palette-header">
+          <span>3. パッチムをえらぶ (おしりの音):</span>
+          <span style="color: #047857;">終声 (チョンソン)</span>
+        </div>
+        <div class="palette-grid" id="palette-batchim"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       VIEW 5: LISTENING QUIZ (ききとり)
+       ========================================= -->
+  <section class="view" id="view-quiz">
+    <div class="tutor-banner">
+      <div class="tutor-avatar">🐯</div>
+      <div class="tutor-bubble">
+        <strong>ハングル耳力クイズ！</strong><br>
+        スピーカーを押してネイティブの発音をよく聴いて、正しい文字を当てよう！
+      </div>
+    </div>
+
+    <div class="quiz-screen">
+      <div class="quiz-hud">
+        <div class="streak-badge">
+          <span>🔥 れんぞくせいかい:</span>
+          <strong id="quiz-streak">0</strong>
+        </div>
+        <div style="font-size: 11px; font-weight: 800; color: var(--text-sub);">
+          ハングルマスターをめざそう！
+        </div>
+      </div>
+
+      <button class="quiz-play-btn" onclick="replayQuizAudio()" title="もう一度きく">
+        🔊
+      </button>
+
+      <div class="quiz-prompt" id="quiz-prompt">「この発音の文字はどれかな？」</div>
+
+      <div class="quiz-choices-grid" id="quiz-choices"></div>
+    </div>
+  </section>
+</div>
+
+<!-- VICTORY MODAL -->
+<div class="modal-overlay" id="victory-modal">
+  <div class="modal-box">
+    <div class="modal-icon">🎉</div>
+    <div class="modal-title">ステージクリア！</div>
+    <div class="modal-desc" id="victory-desc">
+      すばらしい！かんぺきに解けました！<br>
+      ハングルの文字がどんどん身についているよ！
+    </div>
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeVictoryModal()">ステージ一覧</button>
+      <button class="btn-primary" onclick="nextStage()">つぎのステージ ▶</button>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL FOR HANGUL CARDS -->
+<div class="modal-overlay" id="detail-modal">
+  <div class="modal-box" style="text-align: left; align-items: stretch;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+      <div style="font-size: 40px; font-weight: 900; font-family: 'Noto Sans KR', sans-serif; color: var(--primary-dark);" id="modal-char">ㄱ</div>
+      <button class="icon-btn" onclick="speakDetailChar()">🔊</button>
+    </div>
+    <div style="font-size: 16px; font-weight: 900; color: var(--text-main); margin-bottom: 4px;" id="modal-title">名前: キヨク (k / g)</div>
+    <div style="font-size: 12px; font-weight: 700; color: var(--text-sub); line-height: 1.6; margin-bottom: 14px;" id="modal-body">
+      舌の根元が喉をふさぐ形から作られた文字だよ！
+    </div>
+    <div style="background: #F3F4F6; padding: 10px; border-radius: 12px; margin-bottom: 16px;">
+      <div style="font-size: 11px; font-weight: 800; color: #4B5563;">代表たんご:</div>
+      <div style="font-size: 14px; font-weight: 900; color: #10B981; margin-top: 2px;" id="modal-vocab">고양이 🐱 (ネコ)</div>
+    </div>
+    <button class="btn-primary" onclick="closeDetailModal()">とじる</button>
+  </div>
+</div>
+
+<script>
+/* ==========================================================
+   1. HANGUL DATABASE: CONSONANTS, VOWELS, COGNATES & SYLLABLES
+   ========================================================== */
+
+// 14 Basic Consonants (基本子音)
+const BASIC_CONSONANTS = [
+  { char: 'ㄱ', name: '기역 (キヨク)', romaji: 'k / g', katakana: 'カ行・ガ行', shapeOrigin: '舌の根元が喉をふさぐ形から作られたよ！', vocab: { kr: '고양이', jp: 'ねこ', icon: '🐱' } },
+  { char: 'ㄴ', name: '니은 (ニウン)', romaji: 'n', katakana: 'ナ行', shapeOrigin: '舌先が上の前歯の裏（上あご）につく形だよ！', vocab: { kr: '나비', jp: 'ちょうちょ', icon: '🦋' } },
+  { char: 'ㄷ', name: '디귿 (ティグッ)', romaji: 't / d', katakana: 'タ行・ダ行', shapeOrigin: '「ㄴ」に棒を足した形！舌が前歯にあたるよ！', vocab: { kr: '다람쥐', jp: 'リス', icon: '🐿️' } },
+  { char: 'ㄹ', name: '리을 (リウル)', romaji: 'r / l', katakana: 'ラ行', shapeOrigin: '舌先をくるんと丸めて波打たせる形だよ！', vocab: { kr: '라면', jp: 'ラーメン', icon: '🍜' } },
+  { char: 'ㅁ', name: '미음 (ミウム)', romaji: 'm', katakana: 'マ行', shapeOrigin: '口を閉じたときの「四角い唇」の形だよ！', vocab: { kr: '모자', jp: 'ぼうし', icon: '🧢' } },
+  { char: 'ㅂ', name: '비읍 (ピウプ)', romaji: 'p / b', katakana: 'パ行・バ行', shapeOrigin: '唇「ㅁ」から音が吹き出す形だよ！', vocab: { kr: '바나나', jp: 'バナナ', icon: '🍌' } },
+  { char: 'ㅅ', name: '시옷 (シオッ)', romaji: 's', katakana: 'サ行', shapeOrigin: 'とがった「前歯」の形から作られたよ！', vocab: { kr: '사과', jp: 'りんご', icon: '🍎' } },
+  { char: 'ㅇ', name: '이응 (イウン)', romaji: 'ng / ゼロ音', katakana: 'ア行 (母音そのまま)', shapeOrigin: '丸い喉の形！文字の頭に来るときは音がないよ！', vocab: { kr: '오이', jp: 'きゅうり', icon: '🥒' } },
+  { char: 'ㅈ', name: '지읒 (チウッ)', romaji: 'ch / j', katakana: 'チャ行・ジャ行', shapeOrigin: '歯「ㅅ」の上に棒を一本のせた形だよ！', vocab: { kr: '자동차', jp: 'じどうしゃ', icon: '🚗' } },
+  { char: 'ㅊ', name: '치읓 (チウッ激音)', romaji: "ch'", katakana: '息を強く出すチャ行', shapeOrigin: '「ㅈ」に息の棒がついた激音！ティッシュが揺れるほど強く息を出すよ！', vocab: { kr: '치마', jp: 'スカート', icon: '👗' } },
+  { char: 'ㅋ', name: '키읗 (キウッ激音)', romaji: "k'", katakana: '息を強く出すカ行', shapeOrigin: '「ㄱ」に息の棒がついた激音！パッと息を吹き出して発音！', vocab: { kr: '코끼리', jp: 'ぞう', icon: '🐘' } },
+  { char: 'ㅌ', name: '티읕 (ティウッ激音)', romaji: "t'", katakana: '息を強く出すタ行', shapeOrigin: '「ㄷ」に息の棒がついた激音！息を勢いよく吐くよ！', vocab: { kr: '토끼', jp: 'うさぎ', icon: '🐰' } },
+  { char: 'ㅍ', name: '피읖 (ピウプ激音)', romaji: "p'", katakana: '息を強く出すパ行', shapeOrigin: '「ㅂ」から息が飛び出る形！力強いパッの音！', vocab: { kr: '포도', jp: 'ぶどう', icon: '🍇' } },
+  { char: 'ㅎ', name: '히읗 (ヒウッ)', romaji: 'h', katakana: 'ハ行', shapeOrigin: '喉からふうっと息が抜ける形だよ！', vocab: { kr: '호랑이', jp: 'トラ', icon: '🐯' } }
+];
+
+// 5 Tense Consonants (濃音 - 双子の子音)
+const TENSE_CONSONANTS = [
+  { char: 'ㄲ', name: '쌍기역 (サンギヨク)', romaji: 'kk', katakana: '詰まるカッ', shapeOrigin: '「ㄱ」がふたつ！喉をキュッと締めて発音するよ！', vocab: { kr: '꼬리', jp: 'しっぽ', icon: '🐕' } },
+  { char: 'ㄸ', name: '쌍디귿 (サンディグッ)', romaji: 'tt', katakana: '詰まるタッ', shapeOrigin: '「ㄷ」がふたつ！「肩（カタ）」のタのように息を出さず発音！', vocab: { kr: '딸기', jp: 'いちご', icon: '🍓' } },
+  { char: 'ㅃ', name: '쌍비읍 (サンビウプ)', romaji: 'pp', katakana: '詰まるパッ', shapeOrigin: '「ㅂ」がふたつ！唇をしっかり閉じて破裂させるよ！', vocab: { kr: '빵', jp: 'パン', icon: '🍞' } },
+  { char: 'ㅆ', name: '쌍시옷 (サンシオッ)', romaji: 'ss', katakana: '詰まるサッ', shapeOrigin: '「ㅅ」がふたつ！「あっさり」のサのように発音！', vocab: { kr: '쌀', jp: 'お米', icon: '🌾' } },
+  { char: 'ㅉ', name: '쌍지읒 (サンジウッ)', romaji: 'jj', katakana: '詰まるチャッ', shapeOrigin: '「ㅈ」がふたつ！息を出さずにキュッと強く言うよ！', vocab: { kr: '찌개', jp: 'チゲなべ', icon: '🍲' } }
+];
+
+// 10 Basic Vowels (基本母音)
+const BASIC_VOWELS = [
+  { char: 'ㅏ', name: '아 (ア)', romaji: 'a', katakana: '口を大きく開けるア', shapeOrigin: '人（ㅣ）の右にお日様（・）！明るく元気に「ア」！', vocab: { kr: '아이', jp: 'こども', icon: '👶' } },
+  { char: 'ㅑ', name: '야 (ヤ)', romaji: 'ya', katakana: 'ヤ', shapeOrigin: '棒が2本！「ヤ」と明るく飛び跳ねる音！', vocab: { kr: '야구', jp: 'やきゅう', icon: '⚾' } },
+  { char: 'ㅓ', name: '어 (オ-大口)', romaji: 'eo', katakana: 'あくびのオ', shapeOrigin: '口を縦に大きくあけて発音する「オ」！日本語のオより口を縦に開くよ！', vocab: { kr: '어머니', jp: 'おかあさん', icon: '👩' } },
+  { char: 'ㅕ', name: '여 (ヨ-大口)', romaji: 'yeo', katakana: '大口のヨ', shapeOrigin: '口を縦に大きく開けて「ヨ」！きつね（ヨウ）のヨ！', vocab: { kr: '여우', jp: 'きつね', icon: '🦊' } },
+  { char: 'ㅗ', name: '오 (オ-すぼめ)', romaji: 'o', katakana: 'すぼめたオ', shapeOrigin: '地（ㅡ）の上に太陽！口を丸くすぼめて「オ」！', vocab: { kr: '오리', jp: 'あひる', icon: '🦆' } },
+  { char: 'ㅛ', name: '요 (ヨ-すぼめ)', romaji: 'yo', katakana: 'すぼめたヨ', shapeOrigin: '口をとがらせて丸く言う「ヨ」！', vocab: { kr: '요리', jp: 'りょうり', icon: '🍳' } },
+  { char: 'ㅜ', name: '우 (ウ-とがらせ)', romaji: 'u', katakana: '突き出すウ', shapeOrigin: '口をタコのように前に突き出して「ウ」！', vocab: { kr: '우유', jp: 'ミルク', icon: '🥛' } },
+  { char: 'ㅠ', name: '유 (ユ-とがらせ)', romaji: 'yu', katakana: '突き出すユ', shapeOrigin: '唇を前に突き出して言う「ユ」！', vocab: { kr: '유리', jp: 'ガラス', icon: '🪟' } },
+  { char: 'ㅡ', name: '으 (ウ-横引き)', romaji: 'eu', katakana: '横引きのウ', shapeOrigin: '口を横に「イー」と引いたまま「ウ」と言うよ！日本語のウと全然ちがうよ！', vocab: { kr: '으뜸', jp: 'いちばん', icon: '🥇' } },
+  { char: 'ㅣ', name: '이 (イ)', romaji: 'i', katakana: 'イ', shapeOrigin: 'まっすぐ立つ人（人）の形！口を横に引いて「イ」！', vocab: { kr: '이빨', jp: 'は', icon: '🦷' } }
+];
+
+// 11 Compound Vowels (複合母音)
+const COMPOUND_VOWELS = [
+  { char: 'ㅐ', name: '애 (エ)', romaji: 'ae', katakana: 'エ (口広め)', shapeOrigin: 'ㅏ + ㅣ の合体！明るい「エ」', vocab: { kr: '개미', jp: 'あり', icon: '🐜' } },
+  { char: 'ㅒ', name: '얘 (イェ)', romaji: 'yae', katakana: 'イェ', shapeOrigin: 'ㅑ + ㅣ の合体！', vocab: { kr: '얘기', jp: 'おはなし', icon: '💬' } },
+  { char: 'ㅔ', name: '에 (エ)', romaji: 'e', katakana: 'エ', shapeOrigin: 'ㅓ + ㅣ の合体！日本語のエに近い音', vocab: { kr: '베개', jp: 'まくら', icon: '🛏️' } },
+  { char: 'ㅖ', name: '예 (イェ)', romaji: 'ye', katakana: 'イェ', shapeOrigin: 'ㅕ + ㅣ の合体！「はい」の返事', vocab: { kr: '예절', jp: 'マナー', icon: '🙇' } },
+  { char: 'ㅘ', name: '와 (ワ)', romaji: 'wa', katakana: 'ワ', shapeOrigin: 'ㅗ + ㅏ の合体！感動の「ワァ！」', vocab: { kr: '과자', jp: 'おかし', icon: '🍪' } },
+  { char: 'ㅙ', name: '왜 (ウェ)', romaji: 'wae', katakana: 'ウェ', shapeOrigin: 'ㅗ + ㅐ の合体！「なぜ？」という意味', vocab: { kr: '왜', jp: 'どうして', icon: '❓' } },
+  { char: 'ㅚ', name: '외 (ウェ)', romaji: 'oe', katakana: 'ウェ', shapeOrigin: 'ㅗ + ㅣ の合体！', vocab: { kr: '외국', jp: 'がいこく', icon: '🌍' } },
+  { char: 'ㅝ', name: '워 (ウォ)', romaji: 'wo', katakana: 'ウォ', shapeOrigin: 'ㅜ + ㅓ の合体！', vocab: { kr: '원숭이', jp: 'さる', icon: '🐵' } },
+  { char: 'ㅞ', name: '웨 (ウェ)', romaji: 'we', katakana: 'ウェ', shapeOrigin: 'ㅜ + ㅔ の合体！', vocab: { kr: '웨딩', jp: 'ウェディング', icon: '💒' } },
+  { char: 'ㅟ', name: '위 (ウィ)', romaji: 'wi', katakana: 'ウィ', shapeOrigin: 'ㅜ + ㅣ の合体！「上」という意味', vocab: { kr: '위', jp: 'うえ', icon: '⬆️' } },
+  { char: 'ㅢ', name: '의 (ウイ)', romaji: 'ui', katakana: 'ウイ', shapeOrigin: 'ㅡ + ㅣ の合体！', vocab: { kr: '의사', jp: 'おいしゃさん', icon: '👨‍⚕️' } }
+];
+
+// Sino-Korean Cognates (日韓そっくり単語 - 漢字語)
+const COGNATE_WORDS = [
+  { kr: '가족', jp: '家族 (かぞく)', ruby: 'カジョク', icon: '👨‍👩‍👧‍👦', desc: '発音も意味もほぼそのまま！' },
+  { kr: '약속', jp: '約束 (やくそく)', ruby: 'ヤクソク', icon: '🤝', desc: 'ゆびきりげんまん！音がそっくり！' },
+  { kr: '기분', jp: '気分 (きぶん)', ruby: 'キブン', icon: '😊', desc: '今日の気分は？キブンが良い！' },
+  { kr: '기억', jp: '記憶 (きおく)', ruby: 'キオク', icon: '🧠', desc: 'おぼえていること、記憶！' },
+  { kr: '안내', jp: '案内 (あんない)', ruby: 'アンネ', icon: '💁', desc: '駅や空港の案内所！' },
+  { kr: '운동', jp: '運動 (うんどう)', ruby: 'ウンドン', icon: '🏃', desc: '元気に走るウンドン！' },
+  { kr: '가수', jp: '歌手 (かしゅ)', ruby: 'カス', icon: '🎤', desc: '歌をうたう大人気歌手！' },
+  { kr: '신문', jp: '新聞 (しんぶん)', ruby: 'シンムン', icon: '📰', desc: '毎日とどく新聞！' },
+  { kr: '간단', jp: '簡単 (かんたん)', ruby: 'カンダン', icon: '✨', desc: 'とっても簡単なこと！' },
+  { kr: '삼각형', jp: '三角形 (さんかくけい)', ruby: 'サムカッキョン', icon: '📐', desc: '算数の三角形！' },
+  { kr: '여유', jp: '余裕 (よゆう)', ruby: 'ヨユ', icon: '☕', desc: '心にゆとりがあること！' },
+  { kr: '고속도로', jp: '高速道路 (こうそくどうろ)', ruby: 'コソクドロ', icon: '🛣️', desc: '車がびゅんびゅん走る高速道路！' }
+];
+
+// Batchim Guide (パッチムのひみつ - 7つの代表音)
+const BATCHIM_GUIDE = [
+  { sound: 'ㄱ (ク/ッ)', chars: 'ㄱ, ㄲ, ㅋ, ㄳ, ㄺ', desc: '喉の奥を舌で塞いで「クッ」と息を止める音！', example: '책 (チェク / 本 📖)' },
+  { sound: 'ㄴ (ン)', chars: 'ㄴ, ㄵ, ㄶ', desc: '舌先を前歯の裏につけて鼻から「ン」と出す音！', example: '눈 (ヌン / 雪・目 ❄️)' },
+  { sound: 'ㄷ (ット)', chars: 'ㄷ, ㅅ, ㅆ, ㅈ, ㅊ, ㅌ, ㅎ', desc: '舌先で息をぴたっと止める「ッ」の音！', example: '옷 (オッ / 服 👕)' },
+  { sound: 'ㄹ (ル/エル)', chars: 'ㄹ, ㄼ, ㄽ, ㄾ, ㅀ', desc: '舌先を丸めて上あごにつける「ル」の音！', example: '달 (タル / お月様 🌙)' },
+  { sound: 'ㅁ (ム)', chars: 'ㅁ, ㄻ', desc: '唇をぴったり閉じて鼻から「ム」と抜く音！', example: '엄마 (オンマ / ママ 👩)' },
+  { sound: 'ㅂ (プ/ップ)', chars: 'ㅂ, ㅍ, ㄼ, ㄿ, ㅄ', desc: '唇を閉じて息を止める「プッ」の音！', example: '밥 (パプ / ごはん 🍚)' },
+  { sound: 'ㅇ (ン-鼻音)', chars: 'ㅇ', desc: '喉の奥から抜ける「ング」の「ン」！', example: '강 (カン / 川 🌊)' }
+];
+
+// Preset words for builder
+const BUILDER_PRESETS = [
+  { word: '사과', desc: 'りんご 🍎', c: 6, v: 0, b: 0 },
+  { word: '우유', desc: 'みるく 🥛', c: 7, v: 13, b: 0 },
+  { word: '나비', desc: 'ちょうちょ 🦋', c: 1, v: 0, b: 0 },
+  { word: '모자', desc: 'ぼうし 🧢', c: 4, v: 8, b: 0 },
+  { word: '김치', desc: 'キムチ 🥬', c: 0, v: 20, b: 5 },
+  { word: '친구', desc: 'ともだち 👫', c: 9, v: 20, b: 2 }
+];
+
+/* ==========================================================
+   2. CURATED ADVENTURE STAGES
+   ========================================================== */
+const STAGES = [
+  // TIER 1: 4×4 入門 (8ステージ)
+  {
+    id: 1, tier: 1, size: 4, boxR: 2, boxC: 2, clues: 7,
+    title: '🌸 基本子音カルテット',
+    symbols: [
+      { char: 'ㄱ', ruby: 'キヨク (k)', romaji: 'k/g' },
+      { char: 'ㄴ', ruby: 'ニウン (n)', romaji: 'n' },
+      { char: 'ㄷ', ruby: 'ティグッ (t)', romaji: 't/d' },
+      { char: 'ㄹ', ruby: 'リウル (r)', romaji: 'r/l' }
+    ],
+    tip: '最初のステージだよ！基本子音「ㄱ・ㄴ・ㄷ・ㄹ」をおぼえよう！行・列・2×2のブロックに同じ文字が重ならないようにね！'
+  },
+  {
+    id: 2, tier: 1, size: 4, boxR: 2, boxC: 2, clues: 6,
+    title: '🍎 基本母音カルテット',
+    symbols: [
+      { char: 'ㅏ', ruby: 'ア (a)', romaji: 'a' },
+      { char: 'ㅑ', ruby: 'ヤ (ya)', romaji: 'ya' },
+      { char: 'ㅓ', ruby: 'オ (eo)', romaji: 'eo' },
+      { char: 'ㅕ', ruby: 'ヨ (yeo)', romaji: 'yeo' }
+    ],
+    tip: 'ハングルの基本母音「ㅏ・ㅑ・ㅓ・ㅕ」！「ㅓ」は口を縦に大きく開けて「オ」と発音するよ！'
+  },
+  {
+    id: 3, tier: 1, size: 4, boxR: 2, boxC: 2, clues: 6,
+    title: '🧢 なかよし子音',
+    symbols: [
+      { char: 'ㅁ', ruby: 'ミウム (m)', romaji: 'm' },
+      { char: 'ㅂ', ruby: 'ピウプ (p)', romaji: 'p/b' },
+      { char: 'ㅅ', ruby: 'シオッ (s)', romaji: 's' },
+      { char: 'ㅇ', ruby: 'イウン (ng)', romaji: 'ng/zero' }
+    ],
+    tip: '口の形「ㅁ」、唇から音が出る「ㅂ」、歯の形「ㅅ」、喉の丸「ㅇ」の4文字だよ！'
+  },
+  {
+    id: 4, tier: 1, size: 4, boxR: 2, boxC: 2, clues: 6,
+    title: '🥛 とがらせ母音',
+    symbols: [
+      { char: 'ㅗ', ruby: 'オ (o)', romaji: 'o' },
+      { char: 'ㅛ', ruby: 'ヨ (yo)', romaji: 'yo' },
+      { char: 'ㅜ', ruby: 'ウ (u)', romaji: 'u' },
+      { char: 'ㅠ', ruby: 'ユ (yu)', romaji: 'yu' }
+    ],
+    tip: '口をとがらせて丸くすぼめる母音グループ！「ㅗ」と「ㅜ」の向きに注目しよう！'
+  },
+  {
+    id: 5, tier: 1, size: 4, boxR: 2, boxC: 2, clues: 6,
+    title: '🐥 カナダラ文字 1',
+    symbols: [
+      { char: '가', ruby: 'カ (ga)', romaji: 'ga' },
+      { char: '나', ruby: 'ナ (na)', romaji: 'na' },
+      { char: '다', ruby: 'タ (da)', romaji: 'da' },
+      { char: '라', ruby: 'ラ (ra)', romaji: 'ra' }
+    ],
+    tip: '子音に母音「ㅏ」が合体した音節ブロック！「カナダラ」は日本語の「あいうえお」と同じ基本の並び順だよ！'
+  },
+  {
+    id: 6, tier: 1, size: 4, boxR: 2, boxC: 2, clues: 6,
+    title: '🍓 濃音フレンズ',
+    symbols: [
+      { char: 'ㄲ', ruby: 'ッカ (kk)', romaji: 'kk' },
+      { char: 'ㄸ', ruby: 'ッタ (tt)', romaji: 'tt' },
+      { char: 'ㅃ', ruby: 'ッパ (pp)', romaji: 'pp' },
+      { char: 'ㅆ', ruby: 'ッサ (ss)', romaji: 'ss' }
+    ],
+    tip: '双子の子音「濃音」だよ！喉をキュッと詰まらせて、力強く発音するのがコツ！'
+  },
+  {
+    id: 7, tier: 1, size: 4, boxR: 2, boxC: 2, clues: 6,
+    title: '🐘 激音フレンズ',
+    symbols: [
+      { char: 'ㅋ', ruby: 'カッ (k\')', romaji: "k'" },
+      { char: 'ㅌ', ruby: 'タッ (t\')', romaji: "t'" },
+      { char: 'ㅍ', ruby: 'パッ (p\')', romaji: "p'" },
+      { char: 'ㅊ', ruby: 'チャッ (ch\')', romaji: "ch'" }
+    ],
+    tip: '息がパッと飛び出る「激音」チーム！手のひらを口に当てると温かい息を感じるよ！'
+  },
+  {
+    id: 8, tier: 1, size: 4, boxR: 2, boxC: 2, clues: 5,
+    title: '🍰 おいしい単語文字',
+    symbols: [
+      { char: '우', ruby: 'ウ (u)', romaji: 'u' },
+      { char: '유', ruby: 'ユ (yu)', romaji: 'yu' },
+      { char: '고', ruby: 'コ (go)', romaji: 'go' },
+      { char: '기', ruby: 'ギ (gi)', romaji: 'gi' }
+    ],
+    tip: '「우유 (牛乳)」と「고기 (お肉)」の文字をあつめたよ！4×4マスターを目指そう！'
+  },
+
+  // TIER 2: 6×6 探検 (8ステージ)
+  {
+    id: 9, tier: 2, size: 6, boxR: 2, boxC: 3, clues: 18,
+    title: '⭐ 代表子音 6星陣',
+    symbols: [
+      { char: 'ㄱ', ruby: 'キヨク', romaji: 'k' },
+      { char: 'ㄴ', ruby: 'ニウン', romaji: 'n' },
+      { char: 'ㄷ', ruby: 'ティグッ', romaji: 't' },
+      { char: 'ㄹ', ruby: 'リウル', romaji: 'r' },
+      { char: 'ㅁ', ruby: 'ミウム', romaji: 'm' },
+      { char: 'ㅂ', ruby: 'ピウプ', romaji: 'p' }
+    ],
+    tip: '6×6の探検スタート！ブロックはタテ2マス×ヨコ3マスだよ！基本子音前半の6文字！'
+  },
+  {
+    id: 10, tier: 2, size: 6, boxR: 2, boxC: 3, clues: 17,
+    title: '🌈 代表母音 6文字',
+    symbols: [
+      { char: 'ㅏ', ruby: 'ア', romaji: 'a' },
+      { char: 'ㅓ', ruby: 'オ(大口)', romaji: 'eo' },
+      { char: 'ㅗ', ruby: 'オ(丸め)', romaji: 'o' },
+      { char: 'ㅜ', ruby: 'ウ(尖らせ)', romaji: 'u' },
+      { char: 'ㅡ', ruby: 'ウ(平口)', romaji: 'eu' },
+      { char: 'ㅣ', ruby: 'イ', romaji: 'i' }
+    ],
+    tip: 'ハングルの根幹をなす6つの基本母音！特に「ㅓ」と「ㅗ」、「ㅜ」と「ㅡ」の違いに注目！'
+  },
+  {
+    id: 11, tier: 2, size: 6, boxR: 2, boxC: 3, clues: 17,
+    title: '🚀 子音アドバンス',
+    symbols: [
+      { char: 'ㅅ', ruby: 'シオッ', romaji: 's' },
+      { char: 'ㅇ', ruby: 'イウン', romaji: 'ng' },
+      { char: 'ㅈ', ruby: 'チウッ', romaji: 'ch' },
+      { char: 'ㅊ', ruby: '激音チ', romaji: "ch'" },
+      { char: 'ㅋ', ruby: '激音キ', romaji: "k'" },
+      { char: 'ㅎ', ruby: 'ヒウッ', romaji: 'h' }
+    ],
+    tip: '子音の後半グループ！激音の「ㅊ」や「ㅋ」も仲間入り！'
+  },
+  {
+    id: 12, tier: 2, size: 6, boxR: 2, boxC: 3, clues: 16,
+    title: '🐻 「あ」段シラブル',
+    symbols: [
+      { char: '가', ruby: 'カ', romaji: 'ga' },
+      { char: '나', ruby: 'ナ', romaji: 'na' },
+      { char: '다', ruby: 'タ', romaji: 'da' },
+      { char: '라', ruby: 'ラ', romaji: 'ra' },
+      { char: '마', ruby: 'マ', romaji: 'ma' },
+      { char: '바', ruby: 'パ/バ', romaji: 'ba' }
+    ],
+    tip: '「カナダラマバ」！母音「ㅏ」と合体した6文字のリズミカルな数独パズル！'
+  },
+  {
+    id: 13, tier: 2, size: 6, boxR: 2, boxC: 3, clues: 16,
+    title: '🐰 「お」段シラブル',
+    symbols: [
+      { char: '고', ruby: 'コ', romaji: 'go' },
+      { char: '노', ruby: 'ノ', romaji: 'no' },
+      { char: '도', ruby: 'ト/ド', romaji: 'do' },
+      { char: '로', ruby: 'ロ', romaji: 'ro' },
+      { char: '모', ruby: 'モ', romaji: 'mo' },
+      { char: '보', ruby: 'ポ/ボ', romaji: 'bo' }
+    ],
+    tip: '母音「ㅗ」と合体した「コノドロモボ」！口を丸くすぼめて発音してみてね！'
+  },
+  {
+    id: 14, tier: 2, size: 6, boxR: 2, boxC: 3, clues: 16,
+    title: '⚡ 激音・濃音ミックス',
+    symbols: [
+      { char: 'ㅋ', ruby: '激音キ', romaji: "k'" },
+      { char: 'ㅌ', ruby: '激音ティ', romaji: "t'" },
+      { char: 'ㅍ', ruby: '激音ピ', romaji: "p'" },
+      { char: 'ㅊ', ruby: '激音チ', romaji: "ch'" },
+      { char: 'ㄲ', ruby: '濃音ッカ', romaji: 'kk' },
+      { char: 'ㅆ', ruby: '濃音ッサ', romaji: 'ss' }
+    ],
+    tip: '激しい息の「激音」と、喉をつめる「濃音」の最強ミックス！'
+  },
+  {
+    id: 15, tier: 2, size: 6, boxR: 2, boxC: 3, clues: 15,
+    title: '💖 日韓そっくり単語文字',
+    symbols: [
+      { char: '가', ruby: 'カ (家)', romaji: 'ga' },
+      { char: '족', ruby: 'ジョク (族)', romaji: 'jok' },
+      { char: '약', ruby: 'ヤク (約)', romaji: 'yak' },
+      { char: '속', ruby: 'ソク (束)', romaji: 'sok' },
+      { char: '기', ruby: 'キ (気)', romaji: 'gi' },
+      { char: '분', ruby: 'ブン (分)', romaji: 'bun' }
+    ],
+    tip: '「家族 (가족)」「約束 (약속)」「気分 (기분)」！日本語と発音がそっくりの漢字語パーツだよ！'
+  },
+  {
+    id: 16, tier: 2, size: 6, boxR: 2, boxC: 3, clues: 15,
+    title: '🌊 自然のパッチム文字',
+    symbols: [
+      { char: '산', ruby: 'サン (山)', romaji: 'san' },
+      { char: '강', ruby: 'カン (川)', romaji: 'gang' },
+      { char: '달', ruby: 'タル (月)', romaji: 'dal' },
+      { char: '별', ruby: 'ピョル (星)', romaji: 'byeol' },
+      { char: '물', ruby: 'ムル (水)', romaji: 'mul' },
+      { char: '불', ruby: 'プル (火)', romaji: 'bul' }
+    ],
+    tip: '下におしりの音（パッチム）がついた文字たち！山、川、月、星、水、火の自然のことば！'
+  },
+
+  // TIER 3: 9×9 挑戦 (6ステージ)
+  {
+    id: 17, tier: 3, size: 9, boxR: 3, boxC: 3, clues: 38,
+    title: '👑 基本子音マスター9',
+    symbols: [
+      { char: 'ㄱ', ruby: 'キ', romaji: 'k' },
+      { char: 'ㄴ', ruby: 'ニ', romaji: 'n' },
+      { char: 'ㄷ', ruby: 'ティ', romaji: 't' },
+      { char: 'ㄹ', ruby: 'リ', romaji: 'r' },
+      { char: 'ㅁ', ruby: 'ミ', romaji: 'm' },
+      { char: 'ㅂ', ruby: 'ピ', romaji: 'p' },
+      { char: 'ㅅ', ruby: 'シ', romaji: 's' },
+      { char: 'ㅇ', ruby: 'イ', romaji: 'ng' },
+      { char: 'ㅈ', ruby: 'チ', romaji: 'ch' }
+    ],
+    tip: '本格9×9数独に挑戦！3×3の太線ブロックとタテ・ヨコ列に9文字を重複なく配置しよう！'
+  },
+  {
+    id: 18, tier: 3, size: 9, boxR: 3, boxC: 3, clues: 37,
+    title: '🌟 主要母音マスター9',
+    symbols: [
+      { char: 'ㅏ', ruby: 'ア', romaji: 'a' },
+      { char: 'ㅑ', ruby: 'ヤ', romaji: 'ya' },
+      { char: 'ㅓ', ruby: 'オ', romaji: 'eo' },
+      { char: 'ㅕ', ruby: 'ヨ', romaji: 'yeo' },
+      { char: 'ㅗ', ruby: 'オ', romaji: 'o' },
+      { char: 'ㅛ', ruby: 'ヨ', romaji: 'yo' },
+      { char: 'ㅜ', ruby: 'ウ', romaji: 'u' },
+      { char: 'ㅠ', ruby: 'ユ', romaji: 'yu' },
+      { char: 'ㅣ', ruby: 'イ', romaji: 'i' }
+    ],
+    tip: '主要母音9文字を並べる美しい数独！メモ機能を活用して候補を絞り込もう！'
+  },
+  {
+    id: 19, tier: 3, size: 9, boxR: 3, boxC: 3, clues: 36,
+    title: '🎌 カナダラ行マスター',
+    symbols: [
+      { char: '가', ruby: 'カ', romaji: 'ga' },
+      { char: '나', ruby: 'ナ', romaji: 'na' },
+      { char: '다', ruby: 'タ', romaji: 'da' },
+      { char: '라', ruby: 'ラ', romaji: 'ra' },
+      { char: '마', ruby: 'マ', romaji: 'ma' },
+      { char: '바', ruby: 'パ', romaji: 'ba' },
+      { char: '사', ruby: 'サ', romaji: 'sa' },
+      { char: '아', ruby: 'ア', romaji: 'a' },
+      { char: '자', ruby: 'チャ', romaji: 'ja' }
+    ],
+    tip: '「カナダラマバサアジャ」！韓国のあいうえお行が一堂に集結！'
+  },
+  {
+    id: 20, tier: 3, size: 9, boxR: 3, boxC: 3, clues: 36,
+    title: '🎨 コノドロ行マスター',
+    symbols: [
+      { char: '고', ruby: 'コ', romaji: 'go' },
+      { char: '노', ruby: 'ノ', romaji: 'no' },
+      { char: '도', ruby: 'ト', romaji: 'do' },
+      { char: '로', ruby: 'ロ', romaji: 'ro' },
+      { char: '모', ruby: 'モ', romaji: 'mo' },
+      { char: '보', ruby: 'ポ', romaji: 'bo' },
+      { char: '소', ruby: 'ソ', romaji: 'so' },
+      { char: '오', ruby: 'オ', romaji: 'o' },
+      { char: '조', ruby: 'チョ', romaji: 'jo' }
+    ],
+    tip: '母音「ㅗ」の行の9文字！口を丸めて「コノドロモボソオジョ」！'
+  },
+  {
+    id: 21, tier: 3, size: 9, boxR: 3, boxC: 3, clues: 35,
+    title: '🏆 クヌドゥ行マスター',
+    symbols: [
+      { char: '구', ruby: 'ク', romaji: 'gu' },
+      { char: '누', ruby: 'ヌ', romaji: 'nu' },
+      { char: '두', ruby: 'トゥ', romaji: 'du' },
+      { char: '루', ruby: 'ル', romaji: 'ru' },
+      { char: '무', ruby: 'ム', romaji: 'mu' },
+      { char: '부', ruby: 'プ', romaji: 'bu' },
+      { char: '수', ruby: 'ス', romaji: 'su' },
+      { char: '우', ruby: 'ウ', romaji: 'u' },
+      { char: '주', ruby: 'チュ', romaji: 'ju' }
+    ],
+    tip: '母音「ㅜ」の行の9文字！突き出し口で「クヌドゥルムブスウジュ」！'
+  },
+  {
+    id: 22, tier: 3, size: 9, boxR: 3, boxC: 3, clues: 35,
+    title: '💎 キニディ行マスター',
+    symbols: [
+      { char: '기', ruby: 'キ', romaji: 'gi' },
+      { char: '니', ruby: 'ニ', romaji: 'ni' },
+      { char: '디', ruby: 'ティ', romaji: 'di' },
+      { char: '리', ruby: 'リ', romaji: 'ri' },
+      { char: '미', ruby: 'ミ', romaji: 'mi' },
+      { char: '비', ruby: 'ピ', romaji: 'bi' },
+      { char: '시', ruby: 'シ', romaji: 'si' },
+      { char: '이', ruby: 'イ', romaji: 'i' },
+      { char: '지', ruby: 'チ', romaji: 'ji' }
+    ],
+    tip: '母音「ㅣ」の行の9文字！口を横に引いて「キニディリミビシイジ」！これができたら真のハングルマスター！'
+  }
+];
+
+/* ==========================================================
+   3. RESILIENT DUAL-MODE ACOUSTIC ENGINE (Web Speech + Web Audio Formant)
+   ========================================================== */
+
+// 1. Korean Syllable Normalizer for TTS & Acoustic Synthesis
+const HANGUL_TEACHING_MAP = {
+  // Single vowels -> Valid Hangul syllable block with null initial 'ㅇ'
+  'ㅏ': '아', 'ㅑ': '야', 'ㅓ': '어', 'ㅕ': '여', 'ㅗ': '오', 'ㅛ': '요',
+  'ㅜ': '우', 'ㅠ': '유', 'ㅡ': '으', 'ㅣ': '이',
+  'ㅐ': '애', 'ㅒ': '얘', 'ㅔ': '에', 'ㅖ': '예',
+  'ㅘ': '와', 'ㅙ': '왜', 'ㅚ': '외', 'ㅝ': '워', 'ㅞ': '웨', 'ㅟ': '위', 'ㅢ': '의',
+  // Single consonants -> Standard pedagogical syllable (with base vowel 'ㅏ')
+  'ㄱ': '가', 'ㄴ': '나', 'ㄷ': '다', 'ㄹ': '라', 'ㅁ': '마',
+  'ㅂ': '바', 'ㅅ': '사', 'ㅇ': '응', 'ㅈ': '자', 'ㅊ': '차',
+  'ㅋ': '카', 'ㅌ': '타', 'ㅍ': '파', 'ㅎ': '하',
+  'ㄲ': '까', 'ㄸ': '따', 'ㅃ': '빠', 'ㅆ': '싸', 'ㅉ': '짜'
+};
+
+const HANGUL_INITIAL_LIST = ["k","kk","n","t","tt","r","m","p","pp","s","ss","","j","jj","ch","k","t","p","h"];
+const HANGUL_MEDIAL_LIST = ["a","ae","ya","yae","eo","e","yeo","ye","o","wa","wae","oe","yo","u","wo","we","wi","yu","eu","ui","i"];
+
+function getHangulAcousticPhoneme(char) {
+  if (!char) return { c: '', v: 'a' };
+  const ch = char.trim()[0];
+  // Check direct consonants
+  const cMap = {
+    'ㄱ':'k', 'ㄲ':'kk', 'ㄴ':'n', 'ㄷ':'t', 'ㄸ':'tt', 'ㄹ':'r', 'ㅁ':'m',
+    'ㅂ':'p', 'ㅃ':'pp', 'ㅅ':'s', 'ㅆ':'ss', 'ㅇ':'', 'ㅈ':'j', 'ㅉ':'jj',
+    'ㅊ':'ch', 'ㅋ':'k', 'ㅌ':'t', 'ㅍ':'p', 'ㅎ':'h'
+  };
+  if (cMap[ch] !== undefined) {
+    return { c: cMap[ch], v: 'a' };
+  }
+  // Check direct vowels
+  const vMap = {
+    'ㅏ':'a', 'ㅐ':'ae', 'ㅑ':'ya', 'ㅒ':'yae', 'ㅓ':'eo', 'ㅔ':'e', 'ㅕ':'yeo', 'ㅖ':'ye',
+    'ㅗ':'o', 'ㅘ':'wa', 'ㅙ':'wae', 'ㅚ':'oe', 'ㅛ':'yo', 'ㅜ':'u', 'ㅝ':'wo', 'ㅞ':'we',
+    'ㅟ':'wi', 'ㅠ':'yu', 'ㅡ':'eu', 'ㅢ':'ui', 'ㅣ':'i'
+  };
+  if (vMap[ch]) {
+    return { c: '', v: vMap[ch] };
+  }
+  // Check full syllable block (0xAC00 ~ 0xD7A3)
+  const code = ch.charCodeAt(0);
+  if (code >= 0xAC00 && code <= 0xD7A3) {
+    const sIndex = code - 0xAC00;
+    const initialIdx = Math.floor(sIndex / 588);
+    const medialIdx = Math.floor((sIndex / 28) % 21);
+    return {
+      c: HANGUL_INITIAL_LIST[initialIdx] || '',
+      v: HANGUL_MEDIAL_LIST[medialIdx] || 'a'
+    };
+  }
+  return { c: '', v: 'a' };
+}
+
+class AudioEngine {
+  constructor() {
+    this.ctx = null;
+    this.muted = false;
+    this.koVoice = null;
+    this.noiseBuffer = null;
+    this.voiceAvailable = false;
+    this.initSpeech();
+  }
+
+  initSpeech() {
+    if ('speechSynthesis' in window) {
+      const loadVoices = () => {
+        const voices = window.speechSynthesis.getVoices() || [];
+        this.koVoice = voices.find(v => v.lang === 'ko-KR' || v.lang === 'ko_KR') ||
+                       voices.find(v => v.lang && v.lang.toLowerCase().startsWith('ko')) || null;
+        this.voiceAvailable = !!this.koVoice;
+      };
+      loadVoices();
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+  }
+
+  ensureContext() {
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) this.ctx = new AudioCtx();
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  }
+
+  getNoiseBuffer() {
+    if (this.noiseBuffer) return this.noiseBuffer;
+    if (!this.ctx) return null;
+    const bufferSize = Math.floor(this.ctx.sampleRate * 0.4);
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+    this.noiseBuffer = buffer;
+    return buffer;
+  }
+
+  speak(text) {
+    if (this.muted || !text) return;
+    this.ensureContext();
+
+    const str = String(text).trim();
+    if (!str) return;
+
+    const cleanKey = str.replace(/[\/\\:*?"<>|]/g, '').trim();
+
+    // Map standalone consonants/vowels to pedagogical syllable
+    let ttsText = str;
+    if (str.length === 1 && HANGUL_TEACHING_MAP[str]) {
+      ttsText = HANGUL_TEACHING_MAP[str];
+    }
+    const cleanAlt = ttsText.replace(/[\/\\:*?"<>|]/g, '').trim();
+
+    // 1. Tier 1: Try playing server-side studio-quality neural human audio (MP3)
+    if (this.currentAudio) {
+      try {
+        this.currentAudio.pause();
+        this.currentAudio.currentTime = 0;
+      } catch(e) {}
+    }
+
+    const tryPlayAudio = (targetKey, onFail) => {
+      if (!targetKey) { onFail(); return; }
+      const audioUrl = 'audio/ko/' + encodeURIComponent(targetKey) + '.mp3';
+      const sound = new Audio(audioUrl);
+      this.currentAudio = sound;
+      let played = false;
+      sound.onplay = () => { played = true; };
+      sound.play().then(() => {
+        // High-fidelity natural human voice played successfully
+      }).catch(() => {
+        if (!played) onFail();
+      });
+      sound.onerror = () => {
+        if (!played) onFail();
+      };
+    };
+
+    tryPlayAudio(cleanKey, () => {
+      if (cleanAlt && cleanAlt !== cleanKey) {
+        tryPlayAudio(cleanAlt, () => {
+          this.fallbackSpeak(str, ttsText);
+        });
+      } else {
+        this.fallbackSpeak(str, ttsText);
+      }
+    });
+  }
+
+  fallbackSpeak(str, ttsText) {
+    if (!this.koVoice && 'speechSynthesis' in window) {
+      const voices = window.speechSynthesis.getVoices() || [];
+      this.koVoice = voices.find(v => v.lang === 'ko-KR' || v.lang === 'ko_KR') ||
+                     voices.find(v => v.lang && v.lang.toLowerCase().startsWith('ko')) || null;
+      this.voiceAvailable = !!this.koVoice;
+    }
+
+    // 2. Tier 2: Web Speech API
+    if (this.koVoice && 'speechSynthesis' in window) {
+      try {
+        if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+        window.speechSynthesis.cancel();
+
+        const utter = new SpeechSynthesisUtterance(ttsText);
+        utter.lang = 'ko-KR';
+        utter.rate = 0.88;
+        utter.pitch = 1.1;
+        utter.voice = this.koVoice;
+        utter.onerror = () => { this.synthesizeHangulFormant(str); };
+        window.speechSynthesis.speak(utter);
+        return;
+      } catch (e) {}
+    }
+
+    // 3. Tier 3: Pure Web Audio Acoustic Formant Synthesizer
+    this.synthesizeHangulFormant(str);
+  }
+
+  // Pure Web Audio Acoustic Formant Speech Synthesizer for Korean
+  synthesizeHangulFormant(text) {
+    this.ensureContext();
+    if (!this.ctx) return;
+
+    const chars = Array.from(text);
+    if (chars.length === 0) return;
+
+    if (chars.length === 1) {
+      const p = getHangulAcousticPhoneme(chars[0]);
+      this.playAcousticPhoneme(p.c, p.v);
+    } else {
+      chars.forEach((ch, idx) => {
+        setTimeout(() => {
+          const p = getHangulAcousticPhoneme(ch);
+          this.playAcousticPhoneme(p.c, p.v);
+        }, idx * 170);
+      });
+    }
+  }
+
+  playAcousticPhoneme(consonant, vowel) {
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    const baseFreq = 220;
+    const dur = 0.28;
+
+    const VOWELS = {
+      a:   { f1: 820, f2: 1350, f3: 2600 },
+      ae:  { f1: 580, f2: 1850, f3: 2600 },
+      ya:  { f1: 820, f2: 1450, f3: 2600, glide: true },
+      yae: { f1: 580, f2: 1950, f3: 2600, glide: true },
+      eo:  { f1: 620, f2: 1050, f3: 2500 },
+      e:   { f1: 520, f2: 1850, f3: 2650 },
+      yeo: { f1: 620, f2: 1200, f3: 2500, glide: true },
+      ye:  { f1: 520, f2: 1900, f3: 2650, glide: true },
+      o:   { f1: 480, f2: 850,  f3: 2450 },
+      wa:  { f1: 820, f2: 1200, f3: 2550, glide: true },
+      wae: { f1: 580, f2: 1750, f3: 2550, glide: true },
+      oe:  { f1: 500, f2: 1600, f3: 2500 },
+      yo:  { f1: 480, f2: 950,  f3: 2450, glide: true },
+      u:   { f1: 350, f2: 950,  f3: 2350 },
+      wo:  { f1: 620, f2: 1000, f3: 2450, glide: true },
+      we:  { f1: 520, f2: 1750, f3: 2600, glide: true },
+      wi:  { f1: 320, f2: 2100, f3: 2800, glide: true },
+      yu:  { f1: 350, f2: 1050, f3: 2350, glide: true },
+      eu:  { f1: 360, f2: 1400, f3: 2450 },
+      ui:  { f1: 360, f2: 2100, f3: 2800, glide: true },
+      i:   { f1: 300, f2: 2300, f3: 3000 }
+    };
+    const v = VOWELS[vowel] || VOWELS.a;
+
+    let leadTime = 0;
+    if (consonant === 's' || consonant === 'ss') {
+      leadTime = 0.08;
+      this.playBandNoise(now, 0.08, 5600, 1.8, consonant === 'ss' ? 0.16 : 0.12);
+    } else if (consonant === 'ch') {
+      leadTime = 0.07;
+      this.playBandNoise(now + 0.015, 0.055, 3600, 2.0, 0.14);
+    } else if (consonant === 'h') {
+      leadTime = 0.06;
+      this.playBandNoise(now, 0.06, 1800, 1.2, 0.08);
+    } else if (consonant === 'k' || consonant === 'kk') {
+      leadTime = 0.03;
+      this.playBandNoise(now + 0.008, 0.022, 2600, 3.5, consonant === 'kk' ? 0.18 : 0.14);
+    } else if (consonant === 't' || consonant === 'tt') {
+      leadTime = 0.025;
+      this.playBandNoise(now + 0.008, 0.02, 3800, 3.5, consonant === 'tt' ? 0.18 : 0.14);
+    } else if (consonant === 'p' || consonant === 'pp') {
+      leadTime = 0.025;
+      this.playBandNoise(now + 0.008, 0.02, 1100, 2.5, consonant === 'pp' ? 0.18 : 0.14);
+    } else if (consonant === 'n' || consonant === 'm') {
+      leadTime = 0.065;
+      this.playHum(now, 0.065, consonant === 'm' ? 220 : 260);
+    } else if (consonant === 'j' || consonant === 'jj') {
+      leadTime = 0.04;
+      this.playHum(now, 0.04, 120);
+      this.playBandNoise(now + 0.01, 0.03, 3000, 2.0, consonant === 'jj' ? 0.12 : 0.08);
+    }
+
+    const vStart = now + leadTime;
+
+    const osc = this.ctx.createOscillator();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(baseFreq, vStart);
+    osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.93, vStart + dur);
+
+    const f1 = this.ctx.createBiquadFilter();
+    f1.type = 'bandpass';
+    f1.frequency.setValueAtTime(v.f1, vStart);
+    f1.Q.value = 5.5;
+
+    const f2 = this.ctx.createBiquadFilter();
+    f2.type = 'bandpass';
+    f2.frequency.setValueAtTime(v.glide ? 2300 : v.f2, vStart);
+    if (v.glide) {
+      f2.frequency.exponentialRampToValueAtTime(v.f2, vStart + 0.08);
+    }
+    f2.Q.value = 6.5;
+
+    const f3 = this.ctx.createBiquadFilter();
+    f3.type = 'bandpass';
+    f3.frequency.setValueAtTime(v.f3, vStart);
+    f3.Q.value = 7.0;
+
+    const g1 = this.ctx.createGain(); g1.gain.value = 1.0;
+    const g2 = this.ctx.createGain(); g2.gain.value = 0.68;
+    const g3 = this.ctx.createGain(); g3.gain.value = 0.30;
+
+    const master = this.ctx.createGain();
+    master.gain.setValueAtTime(0.001, vStart);
+    master.gain.linearRampToValueAtTime(0.20, vStart + 0.025);
+    if (consonant === 'r') {
+      master.gain.setValueAtTime(0.20, vStart + 0.035);
+      master.gain.linearRampToValueAtTime(0.04, vStart + 0.048);
+      master.gain.linearRampToValueAtTime(0.20, vStart + 0.062);
+    }
+    master.gain.setValueAtTime(0.20, vStart + dur - 0.05);
+    master.gain.linearRampToValueAtTime(0.001, vStart + dur);
+
+    osc.connect(f1);
+    osc.connect(f2);
+    osc.connect(f3);
+
+    f1.connect(g1);
+    f2.connect(g2);
+    f3.connect(g3);
+
+    g1.connect(master);
+    g2.connect(master);
+    g3.connect(master);
+
+    master.connect(this.ctx.destination);
+
+    osc.start(vStart);
+    osc.stop(vStart + dur);
+  }
+
+  playBandNoise(startTime, duration, centerFreq, q, volume) {
+    const buf = this.getNoiseBuffer();
+    if (!buf) return;
+    const src = this.ctx.createBufferSource();
+    src.buffer = buf;
+
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(centerFreq, startTime);
+    filter.Q.value = q;
+
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.001, startTime);
+    gain.gain.linearRampToValueAtTime(volume, startTime + 0.008);
+    gain.gain.setValueAtTime(volume, startTime + duration - 0.012);
+    gain.gain.linearRampToValueAtTime(0.001, startTime + duration);
+
+    src.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    src.start(startTime);
+    src.stop(startTime + duration);
+  }
+
+  playHum(startTime, duration, freq) {
+    const osc = this.ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, startTime);
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.001, startTime);
+    gain.gain.linearRampToValueAtTime(0.12, startTime + 0.008);
+    gain.gain.setValueAtTime(0.12, startTime + duration - 0.008);
+    gain.gain.linearRampToValueAtTime(0.001, startTime + duration);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(startTime);
+    osc.stop(startTime + duration);
+  }
+
+  playSfx(type) {
+    if (this.muted) return;
+    this.ensureContext();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    if (type === 'pop') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(540, now);
+      osc.frequency.exponentialRampToValueAtTime(920, now + 0.08);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.08);
+      osc.start(now);
+      osc.stop(now + 0.08);
+    } else if (type === 'success') {
+      const freqs = [523.25, 659.25, 783.99, 1046.50];
+      freqs.forEach((f, idx) => {
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.type = 'triangle';
+        o.frequency.value = f;
+        o.connect(g);
+        g.connect(this.ctx.destination);
+        const t = now + idx * 0.09;
+        g.gain.setValueAtTime(0.15, t);
+        g.gain.linearRampToValueAtTime(0.001, t + 0.25);
+        o.start(t);
+        o.stop(t + 0.25);
+      });
+    } else if (type === 'error') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(200, now);
+      osc.frequency.exponentialRampToValueAtTime(120, now + 0.22);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.22);
+      osc.start(now);
+      osc.stop(now + 0.22);
+    } else if (type === 'hint') {
+      const freqs = [880, 1174.66, 1318.51];
+      freqs.forEach((f, idx) => {
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.type = 'sine';
+        o.frequency.value = f;
+        o.connect(g);
+        g.connect(this.ctx.destination);
+        const t = now + idx * 0.07;
+        g.gain.setValueAtTime(0.12, t);
+        g.gain.linearRampToValueAtTime(0.001, t + 0.3);
+        o.start(t);
+        o.stop(t + 0.3);
+      });
+    } else if (type === 'fanfare') {
+      const melody = [
+        { f: 523.25, d: 0.14 }, { f: 659.25, d: 0.14 },
+        { f: 783.99, d: 0.14 }, { f: 1046.50, d: 0.42 }
+      ];
+      let t = now;
+      melody.forEach(m => {
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.type = 'triangle';
+        o.frequency.value = m.f;
+        o.connect(g);
+        g.connect(this.ctx.destination);
+        g.gain.setValueAtTime(0.18, t);
+        g.gain.linearRampToValueAtTime(0.001, t + m.d);
+        o.start(t);
+        o.stop(t + m.d);
+        t += m.d * 0.85;
+      });
+    }
+  }
+}
+
+const audio = new AudioEngine();
+
+function toggleSound() {
+  audio.muted = !audio.muted;
+  const btn = document.getElementById('btn-sound');
+  if (btn) btn.innerText = audio.muted ? '🔇' : '🔊';
+}
+
+/* ==========================================================
+   4. MATHEMATICALLY RIGOROUS SUDOKU GENERATOR
+   ========================================================== */
+class SudokuGenerator {
+  static countSolutions(grid, n, br, bc, limit = 2) {
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        if (grid[r][c] === 0) {
+          let count = 0;
+          for (let num = 1; num <= n; num++) {
+            if (this.isValid(grid, n, br, bc, r, c, num)) {
+              grid[r][c] = num;
+              count += this.countSolutions(grid, n, br, bc, limit - count);
+              grid[r][c] = 0;
+              if (count >= limit) return count;
+            }
+          }
+          return count;
+        }
+      }
+    }
+    return 1;
+  }
+
+  static isValid(grid, n, br, bc, r, c, num) {
+    for (let i = 0; i < n; i++) {
+      if (grid[r][i] === num || grid[i][c] === num) return false;
+    }
+    const startR = Math.floor(r / br) * br;
+    const startC = Math.floor(c / bc) * bc;
+    for (let i = 0; i < br; i++) {
+      for (let j = 0; j < bc; j++) {
+        if (grid[startR + i][startC + j] === num) return false;
+      }
+    }
+    return true;
+  }
+
+  static fillBoard(grid, n, br, bc) {
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        if (grid[r][c] === 0) {
+          const nums = [];
+          for (let i = 1; i <= n; i++) nums.push(i);
+          nums.sort(() => Math.random() - 0.5);
+
+          for (const num of nums) {
+            if (this.isValid(grid, n, br, bc, r, c, num)) {
+              grid[r][c] = num;
+              if (this.fillBoard(grid, n, br, bc)) return true;
+              grid[r][c] = 0;
+            }
+          }
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  static generate(n, br, bc, targetClues) {
+    const grid = Array.from({ length: n }, () => Array(n).fill(0));
+    this.fillBoard(grid, n, br, bc);
+    const solution = grid.map(row => [...row]);
+
+    const cells = [];
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        cells.push({ r, c });
+      }
+    }
+    cells.sort(() => Math.random() - 0.5);
+
+    let clues = n * n;
+    for (const cell of cells) {
+      if (clues <= targetClues) break;
+      const backup = grid[cell.r][cell.c];
+      grid[cell.r][cell.c] = 0;
+
+      if (this.countSolutions(grid, n, br, bc, 2) !== 1) {
+        grid[cell.r][cell.c] = backup;
+      } else {
+        clues--;
+      }
+    }
+
+    return { solution, puzzle: grid, clues };
+  }
+}
+
+/* ==========================================================
+   5. APPLICATION STATE
+   ========================================================== */
+const AppState = {
+  activeView: 'adventure',
+  activeTier: 1,
+  currentStage: null,
+  isFreeMode: false,
+
+  // Sudoku Board State
+  size: 4,
+  boxR: 2,
+  boxC: 2,
+  solution: null,
+  puzzle: null,
+  currentBoard: null,
+  draftNotes: null,
+  initialMask: null,
+  selectedCell: null,
+  symbolMap: [],
+  isDraftMode: false,
+  undoStack: [],
+  timerInterval: null,
+  elapsedSeconds: 0,
+  errorsCount: 0,
+  stageProgress: {},
+
+  // Chart
+  chartCategory: 'basic_consonants',
+
+  // Syllable Builder State
+  builder: {
+    cIndex: 0,
+    vIndex: 0,
+    bIndex: 0
+  },
+
+  // Quiz State
+  quizStreak: 0,
+  currentQuizTarget: null
+};
+
+/* ==========================================================
+   6. LIFECYCLE & NAVIGATION
+   ========================================================== */
+document.addEventListener('DOMContentLoaded', () => {
+  loadProgress();
+  renderStagesGrid();
+  renderChartContent();
+  initBuilder();
+  initQuiz();
+});
+
+function loadProgress() {
+  try {
+    const saved = localStorage.getItem('hangul_sudoku_progress');
+    if (saved) AppState.stageProgress = JSON.parse(saved);
+  } catch(e) {}
+}
+
+function saveProgress(stageId, stars) {
+  AppState.stageProgress[stageId] = Math.max(AppState.stageProgress[stageId] || 0, stars);
+  try {
+    localStorage.setItem('hangul_sudoku_progress', JSON.stringify(AppState.stageProgress));
+  } catch(e) {}
+}
+
+function switchView(viewName) {
+  audio.ensureContext();
+  audio.playSfx('pop');
+  AppState.activeView = viewName;
+
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+  const targetView = document.getElementById(`view-${viewName}`);
+  const targetTab = document.getElementById(`tab-${viewName}`);
+  if (targetView) targetView.classList.add('active');
+  if (targetTab) targetTab.classList.add('active');
+
+  if (viewName === 'quiz' && !AppState.currentQuizTarget) {
+    nextQuizQuestion();
+  }
+}
+
+function selectTier(tier) {
+  audio.playSfx('pop');
+  AppState.activeTier = tier;
+  document.querySelectorAll('.tier-btn').forEach((btn, idx) => {
+    btn.classList.toggle('active', idx + 1 === tier);
+  });
+  renderStagesGrid();
+}
+
+function renderStagesGrid() {
+  const container = document.getElementById('stages-grid');
+  if (!container) return;
+
+  const filteredStages = STAGES.filter(s => s.tier === AppState.activeTier);
+  container.innerHTML = '';
+
+  filteredStages.forEach(stage => {
+    const card = document.createElement('div');
+    card.className = 'stage-card';
+    card.onclick = () => startStage(stage);
+
+    const stars = AppState.stageProgress[stage.id] || 0;
+    const starsStr = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+
+    card.innerHTML = `
+      <div class="stage-top">
+        <span class="stage-num-badge">STAGE ${stage.id}</span>
+        <span class="stage-stars">${starsStr}</span>
+      </div>
+      <div class="stage-name">${stage.title}</div>
+      <div class="stage-symbols-row">
+        ${stage.symbols.map(s => `<span class="symbol-tag">${s.char}</span>`).join('')}
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+/* ==========================================================
+   7. SUDOKU GAMEPLAY ENGINE
+   ========================================================== */
+function startStage(stage) {
+  audio.playSfx('pop');
+  AppState.isFreeMode = false;
+  AppState.currentStage = stage;
+  AppState.size = stage.size;
+  AppState.boxR = stage.boxR;
+  AppState.boxC = stage.boxC;
+  AppState.symbolMap = stage.symbols;
+  AppState.errorsCount = 0;
+
+  document.getElementById('game-stage-title').innerText = `STAGE ${stage.id} · ${stage.title}`;
+  document.getElementById('tutor-text').innerText = stage.tip;
+  document.getElementById('errors-badge').innerText = `ミス: 0`;
+
+  initBoardWithGenerator(stage.clues);
+
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-game').classList.add('active');
+
+  setTimeout(() => {
+    if (stage.symbols[0]) audio.speak(stage.symbols[0].char);
+  }, 350);
+}
+
+function startFreeMode() {
+  audio.playSfx('pop');
+  AppState.isFreeMode = true;
+  AppState.currentStage = null;
+  AppState.size = 4;
+  AppState.boxR = 2;
+  AppState.boxC = 2;
+  AppState.errorsCount = 0;
+
+  // Pick random 4 basic consonants
+  const pool = [...BASIC_CONSONANTS].sort(() => Math.random() - 0.5).slice(0, 4);
+  AppState.symbolMap = pool.map(p => ({ char: p.char, ruby: p.katakana, romaji: p.romaji }));
+
+  document.getElementById('game-stage-title').innerText = `フリーモード (4×4)`;
+  document.getElementById('tutor-text').innerText = 'ランダム生成パズルだよ！リフレッシュしながらチャレンジ！';
+  document.getElementById('errors-badge').innerText = `ミス: 0`;
+
+  initBoardWithGenerator(7);
+
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-game').classList.add('active');
+}
+
+function initBoardWithGenerator(targetClues) {
+  const { solution, puzzle } = SudokuGenerator.generate(
+    AppState.size,
+    AppState.boxR,
+    AppState.boxC,
+    targetClues
+  );
+
+  AppState.solution = solution;
+  AppState.puzzle = puzzle;
+  AppState.currentBoard = puzzle.map(row => [...row]);
+  AppState.initialMask = puzzle.map(row => row.map(val => val !== 0));
+  AppState.draftNotes = Array.from({ length: AppState.size }, () =>
+    Array.from({ length: AppState.size }, () => new Set())
+  );
+  AppState.undoStack = [];
+  AppState.selectedCell = null;
+
+  startTimer();
+  renderBoard();
+  renderKeypad();
+}
+
+function startTimer() {
+  clearInterval(AppState.timerInterval);
+  AppState.elapsedSeconds = 0;
+  const timerEl = document.getElementById('game-timer');
+  timerEl.innerText = '00:00';
+
+  AppState.timerInterval = setInterval(() => {
+    AppState.elapsedSeconds++;
+    const mins = String(Math.floor(AppState.elapsedSeconds / 60)).padStart(2, '0');
+    const secs = String(AppState.elapsedSeconds % 60).padStart(2, '0');
+    timerEl.innerText = `${mins}:${secs}`;
+  }, 1000);
+}
+
+function renderBoard() {
+  const grid = document.getElementById('sudoku-grid');
+  if (!grid) return;
+
+  grid.className = `sudoku-grid grid-${AppState.size}`;
+  grid.innerHTML = '';
+
+  for (let r = 0; r < AppState.size; r++) {
+    for (let c = 0; c < AppState.size; c++) {
+      const cellEl = document.createElement('div');
+      cellEl.className = 'cell';
+      cellEl.dataset.r = r;
+      cellEl.dataset.c = c;
+
+      const val = AppState.currentBoard[r][c];
+      const isInitial = AppState.initialMask[r][c];
+
+      if (isInitial) cellEl.classList.add('initial');
+      else if (val !== 0) cellEl.classList.add('user-filled');
+
+      if (val !== 0) {
+        const symbolObj = AppState.symbolMap[val - 1];
+        const valSpan = document.createElement('span');
+        valSpan.className = 'cell-val';
+        valSpan.innerText = symbolObj ? symbolObj.char : val;
+
+        const rubySpan = document.createElement('span');
+        rubySpan.className = 'cell-ruby';
+        rubySpan.innerText = symbolObj ? symbolObj.ruby : '';
+
+        cellEl.appendChild(valSpan);
+        cellEl.appendChild(rubySpan);
+      } else {
+        // Render draft notes
+        const notes = AppState.draftNotes[r][c];
+        if (notes && notes.size > 0) {
+          const notesContainer = document.createElement('div');
+          notesContainer.className = 'cell-notes';
+          for (let i = 1; i <= AppState.size; i++) {
+            const noteItem = document.createElement('span');
+            noteItem.className = 'note-item';
+            if (notes.has(i)) {
+              const sym = AppState.symbolMap[i - 1];
+              noteItem.innerText = sym ? sym.char : i;
+            }
+            notesContainer.appendChild(noteItem);
+          }
+          cellEl.appendChild(notesContainer);
+        }
+      }
+
+      cellEl.onclick = () => onCellClick(r, c);
+      grid.appendChild(cellEl);
+    }
+  }
+
+  highlightRelatedCells();
+}
+
+function renderKeypad() {
+  const keypad = document.getElementById('hangul-keypad');
+  if (!keypad) return;
+
+  keypad.className = `hangul-keypad keypad-${AppState.size}`;
+  keypad.innerHTML = '';
+
+  AppState.symbolMap.forEach((sym, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'key-btn';
+    btn.innerHTML = `
+      <span class="key-char">${sym.char}</span>
+      <span class="key-ruby">${sym.ruby}</span>
+      <span class="key-romaji">${sym.romaji}</span>
+    `;
+    btn.onclick = () => onKeypadInput(idx + 1);
+    keypad.appendChild(btn);
+  });
+}
+
+function onCellClick(r, c) {
+  audio.playSfx('pop');
+  AppState.selectedCell = { r, c };
+  highlightRelatedCells();
+
+  const val = AppState.currentBoard[r][c];
+  if (val !== 0) {
+    const sym = AppState.symbolMap[val - 1];
+    if (sym) audio.speak(sym.char);
+  }
+}
+
+function highlightRelatedCells() {
+  const cells = document.querySelectorAll('.cell');
+  cells.forEach(el => {
+    el.classList.remove('selected', 'related', 'same-symbol');
+  });
+
+  if (!AppState.selectedCell) return;
+  const { r, c } = AppState.selectedCell;
+  const selectedVal = AppState.currentBoard[r][c];
+
+  const selStartR = Math.floor(r / AppState.boxR) * AppState.boxR;
+  const selStartC = Math.floor(c / AppState.boxC) * AppState.boxC;
+
+  cells.forEach(el => {
+    const cr = parseInt(el.dataset.r, 10);
+    const cc = parseInt(el.dataset.c, 10);
+    const val = AppState.currentBoard[cr][cc];
+
+    if (cr === r && cc === c) {
+      el.classList.add('selected');
+    } else if (cr === r || cc === c ||
+              (cr >= selStartR && cr < selStartR + AppState.boxR &&
+               cc >= selStartC && cc < selStartC + AppState.boxC)) {
+      el.classList.add('related');
+    }
+
+    if (selectedVal !== 0 && val === selectedVal) {
+      el.classList.add('same-symbol');
+    }
+  });
+}
+
+function onKeypadInput(num) {
+  if (!AppState.selectedCell) return;
+  const { r, c } = AppState.selectedCell;
+  if (AppState.initialMask[r][c]) return; // Cannot edit initial clues
+
+  const sym = AppState.symbolMap[num - 1];
+  if (sym) audio.speak(sym.char);
+
+  if (AppState.isDraftMode) {
+    // Toggle pencil note
+    const notes = AppState.draftNotes[r][c];
+    if (notes.has(num)) notes.delete(num);
+    else notes.add(num);
+    renderBoard();
+  } else {
+    // Normal fill
+    const oldVal = AppState.currentBoard[r][c];
+    if (oldVal === num) return; // Same value
+
+    AppState.undoStack.push({ r, c, prevVal: oldVal, prevNotes: new Set(AppState.draftNotes[r][c]) });
+    AppState.currentBoard[r][c] = num;
+    AppState.draftNotes[r][c].clear();
+
+    // Check conflict
+    const hasConflict = checkConflict(r, c, num);
+    renderBoard();
+
+    if (hasConflict) {
+      audio.playSfx('error');
+      AppState.errorsCount++;
+      document.getElementById('errors-badge').innerText = `ミス: ${AppState.errorsCount}`;
+      const cellEl = document.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
+      if (cellEl) cellEl.classList.add('conflict');
+    } else {
+      audio.playSfx('pop');
+      checkBoardCompletion();
+    }
+  }
+}
+
+function checkConflict(r, c, num) {
+  // Check row & col
+  for (let i = 0; i < AppState.size; i++) {
+    if (i !== c && AppState.currentBoard[r][i] === num) return true;
+    if (i !== r && AppState.currentBoard[i][c] === num) return true;
+  }
+  // Check subgrid
+  const startR = Math.floor(r / AppState.boxR) * AppState.boxR;
+  const startC = Math.floor(c / AppState.boxC) * AppState.boxC;
+  for (let i = 0; i < AppState.boxR; i++) {
+    for (let j = 0; j < AppState.boxC; j++) {
+      const cr = startR + i;
+      const cc = startC + j;
+      if ((cr !== r || cc !== c) && AppState.currentBoard[cr][cc] === num) return true;
+    }
+  }
+  return false;
+}
+
+function toggleDraftMode() {
+  audio.playSfx('pop');
+  AppState.isDraftMode = !AppState.isDraftMode;
+  const btn = document.getElementById('btn-draft');
+  if (btn) btn.classList.toggle('active', AppState.isDraftMode);
+}
+
+function handleUndo() {
+  if (AppState.undoStack.length === 0) return;
+  audio.playSfx('pop');
+  const action = AppState.undoStack.pop();
+  AppState.currentBoard[action.r][action.c] = action.prevVal;
+  AppState.draftNotes[action.r][action.c] = action.prevNotes;
+  AppState.selectedCell = { r: action.r, c: action.c };
+  renderBoard();
+}
+
+function handleErase() {
+  if (!AppState.selectedCell) return;
+  const { r, c } = AppState.selectedCell;
+  if (AppState.initialMask[r][c]) return;
+
+  const oldVal = AppState.currentBoard[r][c];
+  if (oldVal === 0 && AppState.draftNotes[r][c].size === 0) return;
+
+  audio.playSfx('pop');
+  AppState.undoStack.push({ r, c, prevVal: oldVal, prevNotes: new Set(AppState.draftNotes[r][c]) });
+  AppState.currentBoard[r][c] = 0;
+  AppState.draftNotes[r][c].clear();
+  renderBoard();
+}
+
+function handleHint() {
+  if (!AppState.solution) return;
+  audio.playSfx('hint');
+
+  // Find an empty or incorrect cell
+  const candidates = [];
+  for (let r = 0; r < AppState.size; r++) {
+    for (let c = 0; c < AppState.size; c++) {
+      if (!AppState.initialMask[r][c] && AppState.currentBoard[r][c] !== AppState.solution[r][c]) {
+        candidates.push({ r, c });
+      }
+    }
+  }
+
+  if (candidates.length === 0) return;
+  const target = candidates[Math.floor(Math.random() * candidates.length)];
+  const correctNum = AppState.solution[target.r][target.c];
+
+  AppState.currentBoard[target.r][target.c] = correctNum;
+  AppState.draftNotes[target.r][target.c].clear();
+  AppState.selectedCell = { r: target.r, c: target.c };
+
+  const sym = AppState.symbolMap[correctNum - 1];
+  if (sym) audio.speak(sym.char);
+
+  renderBoard();
+  checkBoardCompletion();
+}
+
+function speakCurrentCell() {
+  if (!AppState.selectedCell) return;
+  const { r, c } = AppState.selectedCell;
+  const val = AppState.currentBoard[r][c];
+  if (val !== 0) {
+    const sym = AppState.symbolMap[val - 1];
+    if (sym) audio.speak(sym.char);
+  }
+}
+
+function checkBoardCompletion() {
+  for (let r = 0; r < AppState.size; r++) {
+    for (let c = 0; c < AppState.size; c++) {
+      if (AppState.currentBoard[r][c] !== AppState.solution[r][c]) {
+        return; // Still incomplete or error
+      }
+    }
+  }
+
+  // Completed!
+  clearInterval(AppState.timerInterval);
+  audio.playSfx('fanfare');
+  triggerConfetti();
+
+  let stars = 3;
+  if (AppState.errorsCount >= 3) stars = 1;
+  else if (AppState.errorsCount >= 1) stars = 2;
+
+  if (AppState.currentStage) {
+    saveProgress(AppState.currentStage.id, stars);
+  }
+
+  const mins = Math.floor(AppState.elapsedSeconds / 60);
+  const secs = AppState.elapsedSeconds % 60;
+  const timeStr = `${mins > 0 ? mins + '分' : ''}${secs}秒`;
+
+  document.getElementById('victory-desc').innerHTML = `
+    <strong>タイム: ${timeStr}</strong> · <strong>評価: ${'⭐'.repeat(stars)}</strong><br>
+    ハングルのマスをぜんぶ正しく埋められたね！すごい集中力！
+  `;
+
+  document.getElementById('victory-modal').classList.add('active');
+}
+
+function closeVictoryModal() {
+  document.getElementById('victory-modal').classList.remove('active');
+  exitGame();
+}
+
+function nextStage() {
+  document.getElementById('victory-modal').classList.remove('active');
+  if (AppState.currentStage) {
+    const next = STAGES.find(s => s.id === AppState.currentStage.id + 1);
+    if (next) {
+      startStage(next);
+      return;
+    }
+  }
+  exitGame();
+}
+
+function exitGame() {
+  clearInterval(AppState.timerInterval);
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-adventure').classList.add('active');
+  renderStagesGrid();
+}
+
+/* ==========================================================
+   8. ENCYCLOPEDIA (ハングル完全図鑑)
+   ========================================================== */
+function setChartCategory(cat) {
+  audio.playSfx('pop');
+  AppState.chartCategory = cat;
+  document.querySelectorAll('.filter-pill').forEach(pill => {
+    pill.classList.remove('active');
+  });
+  event.target.classList.add('active');
+  renderChartContent();
+}
+
+function renderChartContent() {
+  const container = document.getElementById('chart-content');
+  if (!container) return;
+  container.innerHTML = '';
+
+  if (AppState.chartCategory === 'basic_consonants') {
+    container.className = 'chart-cards-grid';
+    BASIC_CONSONANTS.forEach(item => {
+      container.appendChild(createHangulCard(item));
+    });
+  } else if (AppState.chartCategory === 'tense_consonants') {
+    container.className = 'chart-cards-grid';
+    TENSE_CONSONANTS.forEach(item => {
+      container.appendChild(createHangulCard(item));
+    });
+  } else if (AppState.chartCategory === 'basic_vowels') {
+    container.className = 'chart-cards-grid';
+    BASIC_VOWELS.forEach(item => {
+      container.appendChild(createHangulCard(item));
+    });
+  } else if (AppState.chartCategory === 'compound_vowels') {
+    container.className = 'chart-cards-grid';
+    COMPOUND_VOWELS.forEach(item => {
+      container.appendChild(createHangulCard(item));
+    });
+  } else if (AppState.chartCategory === 'matrix') {
+    container.className = '';
+    renderBancheolpyoMatrix(container);
+  } else if (AppState.chartCategory === 'batchim') {
+    container.className = '';
+    renderBatchimGuide(container);
+  } else if (AppState.chartCategory === 'cognates') {
+    container.className = 'cognates-grid';
+    renderCognates(container);
+  }
+}
+
+function createHangulCard(item) {
+  const card = document.createElement('div');
+  card.className = 'hangul-card';
+  card.innerHTML = `
+    <span class="speaker-tag">🔊</span>
+    <div class="card-letter">${item.char}</div>
+    <div class="card-ruby">${item.katakana}</div>
+    <div class="card-name">${item.romaji}</div>
+    <div class="card-vocab">${item.vocab.icon} ${item.vocab.kr}</div>
+  `;
+  card.onclick = () => {
+    audio.speak(item.char);
+    openDetailModal(item);
+  };
+  return card;
+}
+
+function renderBancheolpyoMatrix(container) {
+  const wrap = document.createElement('div');
+  wrap.className = 'matrix-container';
+
+  const consonants = ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅅ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+  const vowels = ['ㅏ', 'ㅑ', 'ㅓ', 'ㅕ', 'ㅗ', 'ㅛ', 'ㅜ', 'ㅠ', 'ㅡ', 'ㅣ'];
+
+  let tableHtml = '<table class="matrix-table"><thead><tr><th>子音＼母音</th>';
+  vowels.forEach(v => { tableHtml += `<th>${v}</th>`; });
+  tableHtml += '</tr></thead><tbody>';
+
+  consonants.forEach((c, cIdx) => {
+    tableHtml += `<tr><th>${c}</th>`;
+    vowels.forEach((v, vIdx) => {
+      // Compute Hangul unicode
+      const code = 0xAC00 + (cIdx * 21 + [0, 2, 4, 6, 8, 12, 13, 17, 18, 20][vIdx]) * 28;
+      const syll = String.fromCharCode(code);
+      tableHtml += `<td onclick="speakMatrixCell('${syll}')">${syll}</td>`;
+    });
+    tableHtml += '</tr>';
+  });
+
+  tableHtml += '</tbody></table>';
+  wrap.innerHTML = tableHtml;
+  container.appendChild(wrap);
+}
+
+function speakMatrixCell(char) {
+  audio.playSfx('pop');
+  audio.speak(char);
+}
+
+function renderBatchimGuide(container) {
+  const wrap = document.createElement('div');
+  wrap.style.display = 'flex';
+  wrap.style.flexDirection = 'column';
+  wrap.style.gap = '10px';
+
+  BATCHIM_GUIDE.forEach(b => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.padding = '12px';
+    card.style.marginBottom = '0';
+    card.innerHTML = `
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+        <div style="font-size: 15px; font-weight: 900; color: var(--primary);">代表音: ${b.sound}</div>
+        <div style="font-size: 12px; font-weight: 800; color: #6B7280;">パッチム文字: ${b.chars}</div>
+      </div>
+      <div style="font-size: 12px; font-weight: 700; color: var(--text-main); margin-bottom: 6px;">${b.desc}</div>
+      <div style="font-size: 13px; font-weight: 900; color: #059669; background: #ECFDF5; padding: 6px 10px; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px;">
+        れい: ${b.example}
+      </div>
+    `;
+    wrap.appendChild(card);
+  });
+
+  container.appendChild(wrap);
+}
+
+function renderCognates(container) {
+  COGNATE_WORDS.forEach(item => {
+    const el = document.createElement('div');
+    el.className = 'cognate-item';
+    el.innerHTML = `
+      <div class="cognate-left">
+        <span class="cognate-icon">${item.icon}</span>
+        <div>
+          <div class="cognate-kr">${item.kr} <span class="cognate-ruby">(${item.ruby})</span></div>
+          <div class="cognate-jp">${item.jp} · <span style="font-size: 11px; color: #6B7280;">${item.desc}</span></div>
+        </div>
+      </div>
+      <button class="cognate-btn">🔊</button>
+    `;
+    el.onclick = () => {
+      audio.playSfx('pop');
+      audio.speak(item.kr);
+    };
+    container.appendChild(el);
+  });
+}
+
+function openDetailModal(item) {
+  const modal = document.getElementById('detail-modal');
+  document.getElementById('modal-char').innerText = item.char;
+  document.getElementById('modal-title').innerText = `${item.name} · ${item.katakana}`;
+  document.getElementById('modal-body').innerText = item.shapeOrigin;
+  document.getElementById('modal-vocab').innerText = `${item.vocab.kr} ${item.vocab.icon} (${item.vocab.jp})`;
+  modal.classList.add('active');
+}
+
+function closeDetailModal() {
+  document.getElementById('detail-modal').classList.remove('active');
+}
+
+function speakDetailChar() {
+  const char = document.getElementById('modal-char').innerText;
+  audio.speak(char);
+}
+
+/* ==========================================================
+   9. SYLLABLE BUILDER LAB (合体ラボ)
+   ========================================================== */
+const BUILDER_CONSONANTS = [
+  { char: 'ㄱ', idx: 0, ruby: 'k/g' },
+  { char: 'ㄴ', idx: 2, ruby: 'n' },
+  { char: 'ㄷ', idx: 3, ruby: 't/d' },
+  { char: 'ㄹ', idx: 5, ruby: 'r/l' },
+  { char: 'ㅁ', idx: 6, ruby: 'm' },
+  { char: 'ㅂ', idx: 7, ruby: 'p/b' },
+  { char: 'ㅅ', idx: 9, ruby: 's' },
+  { char: 'ㅇ', idx: 11, ruby: 'ゼロ' },
+  { char: 'ㅈ', idx: 12, ruby: 'ch/j' },
+  { char: 'ㅊ', idx: 14, ruby: "ch'" },
+  { char: 'ㅋ', idx: 15, ruby: "k'" },
+  { char: 'ㅌ', idx: 16, ruby: "t'" },
+  { char: 'ㅍ', idx: 17, ruby: "p'" },
+  { char: 'ㅎ', idx: 18, ruby: 'h' },
+  { char: 'ㄲ', idx: 1, ruby: 'kk' },
+  { char: 'ㄸ', idx: 4, ruby: 'tt' },
+  { char: 'ㅃ', idx: 8, ruby: 'pp' },
+  { char: 'ㅆ', idx: 10, ruby: 'ss' },
+  { char: 'ㅉ', idx: 13, ruby: 'jj' }
+];
+
+const BUILDER_VOWELS = [
+  { char: 'ㅏ', idx: 0, ruby: 'ア' }, { char: 'ㅐ', idx: 1, ruby: 'エ' }, { char: 'ㅑ', idx: 2, ruby: 'ヤ' },
+  { char: 'ㅒ', idx: 3, ruby: 'イェ' }, { char: 'ㅓ', idx: 4, ruby: 'オ(大)' }, { char: 'ㅔ', idx: 5, ruby: 'エ' },
+  { char: 'ㅕ', idx: 6, ruby: 'ヨ(大)' }, { char: 'ㅖ', idx: 7, ruby: 'イェ' }, { char: 'ㅗ', idx: 8, ruby: 'オ(丸)' },
+  { char: 'ㅘ', idx: 9, ruby: 'ワ' }, { char: 'ㅙ', idx: 10, ruby: 'ウェ' }, { char: 'ㅚ', idx: 11, ruby: 'ウェ' },
+  { char: 'ㅛ', idx: 12, ruby: 'ヨ(丸)' }, { char: 'ㅜ', idx: 13, ruby: 'ウ(尖)' }, { char: 'ㅝ', idx: 14, ruby: 'ウォ' },
+  { char: 'ㅞ', idx: 15, ruby: 'ウェ' }, { char: 'ㅟ', idx: 16, ruby: 'ウィ' }, { char: 'ㅠ', idx: 17, ruby: 'ユ' },
+  { char: 'ㅡ', idx: 18, ruby: 'ウ(平)' }, { char: 'ㅢ', idx: 19, ruby: 'ウイ' }, { char: 'ㅣ', idx: 20, ruby: 'イ' }
+];
+
+const BUILDER_BATCHIM = [
+  { char: 'なし', idx: 0, ruby: '-' },
+  { char: 'ㄱ', idx: 1, ruby: 'クッ' },
+  { char: 'ㄴ', idx: 4, ruby: 'ン' },
+  { char: 'ㄷ', idx: 7, ruby: 'ット' },
+  { char: 'ㄹ', idx: 8, ruby: 'ル' },
+  { char: 'ㅁ', idx: 16, ruby: 'ム' },
+  { char: 'ㅂ', idx: 17, ruby: 'ップ' },
+  { char: 'ㅅ', idx: 19, ruby: 'ッ' },
+  { char: 'ㅇ', idx: 21, ruby: 'ング' }
+];
+
+function initBuilder() {
+  renderBuilderPalettes();
+  renderBuilderPresets();
+  updateBuilderResult();
+}
+
+function renderBuilderPalettes() {
+  const cCont = document.getElementById('palette-consonants');
+  const vCont = document.getElementById('palette-vowels');
+  const bCont = document.getElementById('palette-batchim');
+
+  cCont.innerHTML = '';
+  BUILDER_CONSONANTS.forEach((c, idx) => {
+    const el = document.createElement('div');
+    el.className = `palette-item ${idx === AppState.builder.cIndex ? 'active' : ''}`;
+    el.innerHTML = `<span>${c.char}</span><span class="item-ruby">${c.ruby}</span>`;
+    el.onclick = () => {
+      audio.playSfx('pop');
+      AppState.builder.cIndex = idx;
+      renderBuilderPalettes();
+      updateBuilderResult();
+    };
+    cCont.appendChild(el);
+  });
+
+  vCont.innerHTML = '';
+  BUILDER_VOWELS.forEach((v, idx) => {
+    const el = document.createElement('div');
+    el.className = `palette-item ${idx === AppState.builder.vIndex ? 'active' : ''}`;
+    el.innerHTML = `<span>${v.char}</span><span class="item-ruby">${v.ruby}</span>`;
+    el.onclick = () => {
+      audio.playSfx('pop');
+      AppState.builder.vIndex = idx;
+      renderBuilderPalettes();
+      updateBuilderResult();
+    };
+    vCont.appendChild(el);
+  });
+
+  bCont.innerHTML = '';
+  BUILDER_BATCHIM.forEach((b, idx) => {
+    const el = document.createElement('div');
+    el.className = `palette-item ${idx === AppState.builder.bIndex ? 'active' : ''}`;
+    el.innerHTML = `<span>${b.char}</span><span class="item-ruby">${b.ruby}</span>`;
+    el.onclick = () => {
+      audio.playSfx('pop');
+      AppState.builder.bIndex = idx;
+      renderBuilderPalettes();
+      updateBuilderResult();
+    };
+    bCont.appendChild(el);
+  });
+}
+
+function renderBuilderPresets() {
+  const cont = document.getElementById('presets-scroll');
+  cont.innerHTML = '';
+  BUILDER_PRESETS.forEach(p => {
+    const pill = document.createElement('div');
+    pill.className = 'preset-pill';
+    pill.innerHTML = `<span>${p.word}</span> <span style="font-size: 10px; color: #059669;">${p.desc}</span>`;
+    pill.onclick = () => {
+      audio.playSfx('pop');
+      AppState.builder.cIndex = p.c;
+      AppState.builder.vIndex = p.v;
+      AppState.builder.bIndex = p.b;
+      renderBuilderPalettes();
+      updateBuilderResult();
+      audio.speak(p.word);
+    };
+    cont.appendChild(pill);
+  });
+}
+
+function updateBuilderResult() {
+  const cObj = BUILDER_CONSONANTS[AppState.builder.cIndex];
+  const vObj = BUILDER_VOWELS[AppState.builder.vIndex];
+  const bObj = BUILDER_BATCHIM[AppState.builder.bIndex];
+
+  document.getElementById('eq-c').innerText = cObj.char;
+  document.getElementById('eq-v').innerText = vObj.char;
+  document.getElementById('eq-b').innerText = bObj.char;
+
+  const code = 0xAC00 + (cObj.idx * 21 + vObj.idx) * 28 + bObj.idx;
+  const assembledChar = String.fromCharCode(code);
+
+  const charEl = document.getElementById('builder-char');
+  charEl.innerText = assembledChar;
+  charEl.style.animation = 'none';
+  charEl.offsetHeight; // reflow
+  charEl.style.animation = 'popBounce 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+
+  // Katakana & Romaji
+  document.getElementById('builder-ruby').innerText = `${cObj.ruby}＋${vObj.ruby}${bObj.idx > 0 ? '＋' + bObj.ruby : ''}`;
+  document.getElementById('builder-romaji').innerText = `Hangul Block: ${assembledChar}`;
+}
+
+function speakBuilderChar() {
+  const char = document.getElementById('builder-char').innerText;
+  audio.playSfx('pop');
+  audio.speak(char);
+}
+
+/* ==========================================================
+   10. LISTENING QUIZ (ききとりクイズ)
+   ========================================================== */
+function initQuiz() {
+  AppState.quizStreak = 0;
+  document.getElementById('quiz-streak').innerText = '0';
+}
+
+function nextQuizQuestion() {
+  // 50% chance consonants, 50% chance vowels or words
+  const isConsonant = Math.random() < 0.5;
+  const pool = isConsonant ? BASIC_CONSONANTS : BASIC_VOWELS;
+
+  // Pick 4 choices
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  const choices = shuffled.slice(0, 4);
+  const target = choices[Math.floor(Math.random() * choices.length)];
+
+  AppState.currentQuizTarget = target;
+
+  document.getElementById('quiz-prompt').innerText = isConsonant
+    ? '「この音の子音はどれかな？」'
+    : '「この音の母音はどれかな？」';
+
+  const choicesContainer = document.getElementById('quiz-choices');
+  choicesContainer.innerHTML = '';
+
+  choices.forEach(item => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `
+      <span class="choice-char">${item.char}</span>
+      <span class="choice-ruby">${item.katakana}</span>
+    `;
+    btn.onclick = () => onQuizChoice(btn, item);
+    choicesContainer.appendChild(btn);
+  });
+
+  setTimeout(() => {
+    replayQuizAudio();
+  }, 350);
+}
+
+function replayQuizAudio() {
+  if (AppState.currentQuizTarget) {
+    audio.playSfx('pop');
+    audio.speak(AppState.currentQuizTarget.char);
+  }
+}
+
+function onQuizChoice(btn, item) {
+  if (!AppState.currentQuizTarget) return;
+
+  if (item.char === AppState.currentQuizTarget.char) {
+    // Correct!
+    audio.playSfx('success');
+    btn.classList.add('correct');
+    AppState.quizStreak++;
+    document.getElementById('quiz-streak').innerText = AppState.quizStreak;
+
+    if (AppState.quizStreak % 5 === 0) {
+      triggerConfetti();
+    }
+
+    setTimeout(() => {
+      nextQuizQuestion();
+    }, 1200);
+  } else {
+    // Wrong!
+    audio.playSfx('error');
+    btn.classList.add('wrong');
+    AppState.quizStreak = 0;
+    document.getElementById('quiz-streak').innerText = '0';
+  }
+}
+
+/* ==========================================================
+   11. CONFETTI PARTICLE SYSTEM
+   ========================================================== */
+function triggerConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const particles = [];
+  const colors = ['#FF5E7E', '#FFB300', '#3B82F6', '#10B981', '#8B5CF6', '#F43F5E'];
+
+  for (let i = 0; i < 70; i++) {
+    particles.push({
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      vx: (Math.random() - 0.5) * 14,
+      vy: (Math.random() - 0.8) * 16,
+      size: Math.random() * 8 + 4,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rot: Math.random() * 360,
+      vrot: (Math.random() - 0.5) * 10
+    });
+  }
+
+  let frame = 0;
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.35; // gravity
+      p.rot += p.vrot;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rot * Math.PI) / 180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+      ctx.restore();
+    });
+
+    frame++;
+    if (frame < 80) {
+      requestAnimationFrame(animate);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+  animate();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,3585 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>萌趣韩语小天才 - 中国儿童韩语数独与拼音大百科</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500;700;900&family=Outfit:wght@600;700;800;900&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #FCFBF7;
+    --bg-card: #FFFFFF;
+    --primary: #FF6B8B;
+    --primary-hover: #F44B70;
+    --primary-light: #FFF0F3;
+    --primary-dark: #A81B38;
+    --secondary: #FFAA00;
+    --secondary-light: #FFF8E6;
+    --accent-blue: #3B82F6;
+    --accent-blue-light: #EFF6FF;
+    --accent-green: #10B981;
+    --accent-green-light: #ECFDF5;
+    --accent-purple: #8B5CF6;
+    --accent-purple-light: #F5F3FF;
+    --accent-teal: #14B8A6;
+    --accent-teal-light: #F0FDFA;
+    --accent-orange: #F97316;
+    --accent-orange-light: #FFF7ED;
+    --success: #10B981;
+    --error: #EF4444;
+    --error-light: #FEE2E2;
+    --text-main: #1F2937;
+    --text-sub: #4B5563;
+    --text-muted: #9CA3AF;
+    --border-soft: #E5E7EB;
+    --border-strong: #374151;
+    --shadow-sm: 0 4px 12px rgba(255, 107, 139, 0.1);
+    --shadow-md: 0 8px 24px rgba(31, 41, 55, 0.08);
+    --shadow-pop: 0 6px 0 rgba(0, 0, 0, 0.08);
+    --radius-xl: 24px;
+    --radius-lg: 18px;
+    --radius-md: 14px;
+    --radius-sm: 8px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans KR", sans-serif;
+    background: radial-gradient(circle at 10% 15%, #FFF0F5 0%, #FCFBF7 45%, #EFF6FF 100%);
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    min-height: 100vh;
+  }
+
+  /* Decorative Background */
+  .bg-decor {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.55;
+  }
+  .bg-blob-1 { top: -60px; right: -40px; width: 260px; height: 260px; background: radial-gradient(circle, #FFE4E8 0%, transparent 70%); }
+  .bg-blob-2 { bottom: -60px; left: -50px; width: 280px; height: 280px; background: radial-gradient(circle, #E0F2FE 0%, transparent 70%); }
+
+  #app {
+    width: 100%;
+    max-width: 550px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+    padding: 8px 14px 28px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0 10px;
+    flex-shrink: 0;
+  }
+  .logo-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+  }
+  .mascot-avatar {
+    font-size: 34px;
+    filter: drop-shadow(0 4px 8px rgba(255, 107, 139, 0.28));
+    animation: mascotBounce 2.6s infinite ease-in-out;
+  }
+  @keyframes mascotBounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-4px) rotate(3deg); }
+  }
+  .logo-title {
+    display: flex;
+    flex-direction: column;
+  }
+  .logo-title .main-title {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--text-main);
+    letter-spacing: -0.3px;
+    line-height: 1.15;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .logo-title .badge-cn {
+    font-size: 10px;
+    font-weight: 800;
+    background: #FFE4E6;
+    color: #E11D48;
+    padding: 2px 6px;
+    border-radius: 8px;
+  }
+  .logo-title .sub-title {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: 0.4px;
+  }
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-decoration: none;
+    color: inherit;
+  }
+  .icon-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    box-shadow: 0 6px 12px rgba(255, 107, 139, 0.15);
+  }
+
+  /* Navigation Tab Bar */
+  .tab-bar {
+    display: flex;
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    padding: 4px;
+    margin-bottom: 12px;
+    border: 2px solid var(--border-soft);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .tab-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 8px 4px;
+    border-radius: var(--radius-lg);
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .tab-btn.active {
+    background: var(--primary);
+    color: #FFFFFF;
+    box-shadow: 0 4px 10px rgba(255, 107, 139, 0.35);
+  }
+  .tab-icon {
+    font-size: 14px;
+  }
+
+  /* Tutor Banner */
+  .tutor-banner {
+    background: var(--bg-card);
+    border: 2px solid #FED7AA;
+    border-radius: var(--radius-lg);
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 3px 10px rgba(249, 115, 22, 0.08);
+  }
+  .tutor-avatar {
+    font-size: 32px;
+    flex-shrink: 0;
+  }
+  .tutor-bubble {
+    font-size: 12px;
+    font-weight: 700;
+    color: #7C2D12;
+    line-height: 1.45;
+  }
+  .tutor-bubble strong {
+    color: #C2410C;
+    font-weight: 900;
+  }
+
+  /* Views */
+  .view {
+    display: none;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+  }
+  .view.active {
+    display: flex;
+  }
+
+  /* =========================================
+     MODE 1: SUDOKU ADVENTURE
+     ========================================= */
+  .tier-selector {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .tier-btn {
+    flex: 1;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 7px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .tier-btn:hover {
+    border-color: var(--primary);
+  }
+  .tier-btn.active {
+    background: var(--primary-light);
+    border-color: var(--primary);
+  }
+  .tier-title {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .tier-desc {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text-muted);
+  }
+  .tier-btn.active .tier-title {
+    color: var(--primary-dark);
+  }
+
+  .stages-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .stage-card {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    position: relative;
+    overflow: hidden;
+  }
+  .stage-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    box-shadow: 0 6px 14px rgba(255, 107, 139, 0.15);
+  }
+  .stage-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .stage-number {
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--primary);
+    background: var(--primary-light);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  .stage-stars {
+    font-size: 11px;
+  }
+  .stage-name {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .stage-sub {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-sub);
+  }
+  .stage-symbols-row {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .symbol-tag {
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    background: #F3F4F6;
+    padding: 2px 6px;
+    border-radius: 6px;
+    color: #1F2937;
+  }
+
+  /* Free Mode Banner */
+  .free-mode-banner {
+    margin-top: 4px;
+    background: linear-gradient(135deg, #EFF6FF 0%, #F5F3FF 100%);
+    border: 2px dashed #93C5FD;
+    border-radius: var(--radius-lg);
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .free-mode-banner:hover {
+    border-color: var(--accent-blue);
+    transform: translateY(-2px);
+  }
+  .free-mode-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .free-mode-title {
+    font-size: 13px;
+    font-weight: 900;
+    color: #1E40AF;
+  }
+  .free-mode-desc {
+    font-size: 11px;
+    font-weight: 700;
+    color: #4B5563;
+  }
+  .free-play-btn {
+    background: var(--accent-blue);
+    color: white;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+  }
+
+  /* SUDOKU GAMEPLAY SCREEN */
+  .game-hud {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    background: var(--bg-card);
+    padding: 8px 12px;
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--border-soft);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .game-hud-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-back-stages {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-sub);
+    background: #F3F4F6;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .game-title-hud {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .game-hud-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .timer-pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: "Outfit", monospace;
+    font-size: 12px;
+    font-weight: 800;
+    background: #FEF3C7;
+    color: #B45309;
+    padding: 4px 8px;
+    border-radius: 8px;
+  }
+
+  /* Board Area */
+  .board-container {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    max-width: 440px;
+    margin: 0 auto 10px;
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    padding: 8px;
+    border: 3px solid #1F2937;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .sudoku-grid {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    gap: 2px;
+    background: #D1D5DB;
+  }
+  .sudoku-grid.order-4 {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+  }
+  .sudoku-grid.order-6 {
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+  }
+  .sudoku-grid.order-9 {
+    grid-template-columns: repeat(9, 1fr);
+    grid-template-rows: repeat(9, 1fr);
+  }
+
+  .grid-cell {
+    background: #FFFFFF;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.1s ease;
+  }
+  .grid-cell:hover {
+    background: #FDF2F8;
+  }
+  .grid-cell.selected {
+    background: #FCE7F3 !important;
+    outline: 3px solid var(--primary);
+    z-index: 2;
+  }
+  .grid-cell.highlight-peer {
+    background: #FFF1F2;
+  }
+  .grid-cell.highlight-match {
+    background: #FEE2E2;
+  }
+  .grid-cell.fixed {
+    color: #111827;
+  }
+  .grid-cell.user-filled {
+    color: #2563EB;
+  }
+  .grid-cell.conflict {
+    background: #FEE2E2 !important;
+    color: var(--error) !important;
+    animation: shake 0.3s ease-in-out;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+  }
+
+  /* Block Borders */
+  .sudoku-grid.order-4 .grid-cell:nth-child(2n) {
+    border-right: 2px solid #1F2937;
+  }
+  .sudoku-grid.order-4 .grid-cell:nth-child(n+5):nth-child(-n+8) {
+    border-bottom: 2px solid #1F2937;
+  }
+
+  .sudoku-grid.order-6 .grid-cell:nth-child(3n) {
+    border-right: 2px solid #1F2937;
+  }
+  .sudoku-grid.order-6 .grid-cell:nth-child(n+7):nth-child(-n+12),
+  .sudoku-grid.order-6 .grid-cell:nth-child(n+19):nth-child(-n+24) {
+    border-bottom: 2px solid #1F2937;
+  }
+
+  .sudoku-grid.order-9 .grid-cell:nth-child(3n) {
+    border-right: 2px solid #1F2937;
+  }
+  .sudoku-grid.order-9 .grid-cell:nth-child(n+19):nth-child(-n+27),
+  .sudoku-grid.order-9 .grid-cell:nth-child(n+46):nth-child(-n+54) {
+    border-bottom: 2px solid #1F2937;
+  }
+
+  .cell-char {
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 24px;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .order-6 .cell-char {
+    font-size: 19px;
+  }
+  .order-9 .cell-char {
+    font-size: 14px;
+  }
+  .cell-ruby {
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1;
+    margin-top: 1px;
+  }
+  .order-6 .cell-ruby {
+    font-size: 7px;
+  }
+  .order-9 .cell-ruby {
+    display: none;
+  }
+
+  /* Pencil Notes in Cell */
+  .cell-notes-grid {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    right: 2px;
+    bottom: 2px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    pointer-events: none;
+  }
+  .cell-note {
+    font-size: 8px;
+    font-weight: 800;
+    color: #6B7280;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Control Action Bar */
+  .control-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  .action-btn {
+    flex: 1;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 7px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .action-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary-dark);
+  }
+  .action-btn.active {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary-dark);
+  }
+  .action-btn .btn-icon {
+    font-size: 15px;
+  }
+
+  /* Hangul Keyboard Pad */
+  .hangul-keyboard {
+    display: grid;
+    gap: 6px;
+    background: var(--bg-card);
+    padding: 10px;
+    border-radius: var(--radius-xl);
+    border: 2px solid var(--border-soft);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+  }
+  .hangul-keyboard.order-4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .hangul-keyboard.order-6 {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  .hangul-keyboard.order-9 {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .key-btn {
+    background: #F9FAFB;
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 8px 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #E5E7EB;
+    transition: all 0.1s ease;
+  }
+  .key-btn:hover {
+    border-color: var(--primary);
+    background: #FFF0F5;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 0 #FECDD3;
+  }
+  .key-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #E5E7EB;
+  }
+  .key-char {
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 20px;
+    font-weight: 900;
+    color: #1F2937;
+    line-height: 1.1;
+  }
+  .key-ruby {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1;
+    margin-top: 2px;
+  }
+
+  /* =========================================
+     MODE 2: HANGUL ENCYCLOPEDIA (韩语完整图谱)
+     ========================================= */
+  .chart-filter-bar {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+    scrollbar-width: none;
+  }
+  .chart-filter-bar::-webkit-scrollbar { display: none; }
+  .filter-pill {
+    white-space: nowrap;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .filter-pill:hover {
+    border-color: var(--primary);
+  }
+  .filter-pill.active {
+    background: var(--primary);
+    border-color: var(--primary-dark);
+    color: #FFFFFF;
+    box-shadow: 0 3px 8px rgba(255, 107, 139, 0.25);
+  }
+
+  .view-switch-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .view-switch-btn {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 12px;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    color: var(--text-sub);
+    cursor: pointer;
+  }
+  .view-switch-btn.active {
+    background: var(--text-main);
+    color: white;
+    border-color: var(--text-main);
+  }
+
+  .chart-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+  }
+  .hangul-card {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    position: relative;
+  }
+  .hangul-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary);
+    box-shadow: 0 6px 16px rgba(255, 107, 139, 0.16);
+  }
+  .card-letter {
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--text-main);
+    line-height: 1;
+  }
+  .card-pinyin {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1;
+  }
+  .card-name {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text-sub);
+  }
+  .card-vocab {
+    font-size: 10px;
+    font-weight: 700;
+    color: #059669;
+    background: #ECFDF5;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .speaker-tag {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    font-size: 11px;
+    opacity: 0.5;
+  }
+
+  /* Matrix / Syllable Bancheolpyo View */
+  .matrix-container {
+    overflow-x: auto;
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--border-soft);
+    padding: 8px;
+    box-shadow: var(--shadow-sm);
+  }
+  .matrix-table {
+    border-collapse: separate;
+    border-spacing: 4px;
+    width: 100%;
+    min-width: 500px;
+  }
+  .matrix-table th {
+    background: #F3F4F6;
+    color: var(--text-main);
+    font-weight: 900;
+    font-size: 13px;
+    padding: 6px 4px;
+    border-radius: 6px;
+    text-align: center;
+  }
+  .matrix-table td {
+    background: #FFFFFF;
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    text-align: center;
+    padding: 6px 2px;
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: all 0.1s ease;
+  }
+  .matrix-table td:hover {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary-dark);
+    transform: scale(1.1);
+  }
+
+  /* =========================================
+     MODE 3: SYLLABLE BUILDER (积木造字实验室)
+     ========================================= */
+  .builder-screen {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .assembly-stage {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    border: 3px solid #1F2937;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  }
+  .equation-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--text-sub);
+  }
+  .part-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 18px;
+    font-weight: 900;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+  }
+  .part-tag {
+    font-size: 9px;
+    font-weight: 800;
+    opacity: 0.8;
+  }
+  .part-c { background: #FEF3C7; color: #B45309; border: 2px solid #FCD34D; }
+  .part-v { background: #E0F2FE; color: #0369A1; border: 2px solid #7DD3FC; }
+  .part-b { background: #D1FAE5; color: #047857; border: 2px solid #6EE7B7; }
+
+  .result-box {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: radial-gradient(circle at center, #FFF0F5 0%, #FFFFFF 100%);
+    border: 2px dashed var(--primary);
+    border-radius: var(--radius-lg);
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .result-box:hover {
+    transform: scale(1.03);
+  }
+  .big-char {
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 56px;
+    font-weight: 900;
+    color: var(--text-main);
+    line-height: 1;
+  }
+  .result-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .meta-pinyin {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--primary);
+  }
+  .meta-hanzi {
+    font-size: 13px;
+    font-weight: 800;
+    color: #059669;
+  }
+  .btn-listen-builder {
+    background: var(--primary);
+    color: white;
+    border: none;
+    font-size: 13px;
+    font-weight: 900;
+    padding: 6px 14px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(255, 107, 139, 0.3);
+  }
+
+  /* Preset Words for Builder */
+  .presets-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .presets-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-sub);
+  }
+  .presets-scroll {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+  .presets-scroll::-webkit-scrollbar { display: none; }
+  .preset-pill {
+    flex-shrink: 0;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: 12px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .preset-pill:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+
+  /* Palette Selector Tabs */
+  .palette-box {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--border-soft);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .palette-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+  .palette-item {
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 16px;
+    font-weight: 900;
+    background: #F9FAFB;
+    border: 2px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 6px 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.1s ease;
+  }
+  .palette-item:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+  .palette-item.active {
+    background: var(--primary);
+    border-color: var(--primary-dark);
+    color: #FFFFFF;
+  }
+
+  /* =========================================
+     MODE 4: LISTENING QUIZ (耳力大作战)
+     ========================================= */
+  .quiz-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .quiz-hud {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-card);
+    padding: 8px 14px;
+    border-radius: var(--radius-md);
+    border: 2px solid var(--border-soft);
+  }
+  .streak-badge {
+    font-size: 12px;
+    font-weight: 900;
+    color: #DC2626;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .quiz-play-btn {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary) 0%, #F43F5E 100%);
+    color: white;
+    border: 4px solid #FFFFFF;
+    box-shadow: 0 10px 24px rgba(244, 63, 94, 0.4);
+    font-size: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .quiz-play-btn:hover {
+    transform: scale(1.06);
+  }
+  .quiz-prompt {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text-sub);
+  }
+  .quiz-choices-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .quiz-choice-btn {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 14px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    transition: all 0.15s ease;
+  }
+  .quiz-choice-btn:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+  .choice-char {
+    font-family: "Noto Sans KR", sans-serif;
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .choice-pinyin {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--primary);
+  }
+  .choice-meaning {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-sub);
+  }
+
+  /* Modals */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.active {
+    display: flex;
+  }
+  .modal-box {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border: 3px solid #1F2937;
+    box-shadow: 0 16px 36px rgba(0,0,0,0.2);
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  @keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .modal-icon {
+    font-size: 54px;
+    margin-bottom: 8px;
+  }
+  .modal-title {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--text-main);
+    margin-bottom: 6px;
+  }
+  .modal-desc {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-sub);
+    line-height: 1.5;
+    margin-bottom: 18px;
+  }
+  .modal-btns {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+  }
+  .btn-primary {
+    flex: 1;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 107, 139, 0.35);
+  }
+  .btn-secondary {
+    flex: 1;
+    background: #F3F4F6;
+    color: var(--text-sub);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  /* Confetti Canvas */
+  #confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<div class="bg-decor bg-blob-1"></div>
+<div class="bg-decor bg-blob-2"></div>
+
+<div id="app">
+  <!-- Top Header -->
+  <header class="header">
+    <a href="index.html" class="logo-group">
+      <div class="mascot-avatar">🐻</div>
+      <div class="logo-title">
+        <div class="main-title">
+          <span>萌趣韩语小天才</span>
+          <span class="badge-cn">中文少儿版</span>
+        </div>
+        <div class="sub-title">KOREAN SUDOKU & HANGUL LAB</div>
+      </div>
+    </a>
+    <div class="nav-actions">
+      <button class="icon-btn" id="btn-sound" title="声音开关" onclick="toggleSound()">🔊</button>
+      <a href="index.html" class="icon-btn" title="返回游戏大厅">🏠</a>
+    </div>
+  </header>
+
+  <!-- Main Navigation Tabs -->
+  <nav class="tab-bar">
+    <button class="tab-btn active" id="tab-adventure" onclick="switchView('adventure')">
+      <span class="tab-icon">🧩</span>
+      <span>韩语数独</span>
+    </button>
+    <button class="tab-btn" id="tab-chart" onclick="switchView('chart')">
+      <span class="tab-icon">📖</span>
+      <span>字母图谱</span>
+    </button>
+    <button class="tab-btn" id="tab-builder" onclick="switchView('builder')">
+      <span class="tab-icon">🧪</span>
+      <span>造字积木</span>
+    </button>
+    <button class="tab-btn" id="tab-quiz" onclick="switchView('quiz')">
+      <span class="tab-icon">👂</span>
+      <span>耳力挑战</span>
+    </button>
+  </nav>
+
+  <!-- =========================================
+       VIEW 1: ADVENTURE (韩语数独关卡选择)
+       ========================================= -->
+  <section class="view active" id="view-adventure">
+    <div class="tutor-banner">
+      <div class="tutor-avatar">🐻</div>
+      <div class="tutor-bubble">
+        安宁（안녕하세요）！我是萌熊<strong>波波老师</strong>！<br>
+        韩文字母就像搭积木，不仅好玩，而且有超多词汇和我们汉字发音一模一样哦！快来完成数独挑战吧！
+      </div>
+    </div>
+
+    <!-- Tier Filter -->
+    <div class="tier-selector">
+      <button class="tier-btn active" onclick="selectTier(1)">
+        <span class="tier-title">4×4 萌芽</span>
+        <span class="tier-desc">全8关 · 零门槛</span>
+      </button>
+      <button class="tier-btn" onclick="selectTier(2)">
+        <span class="tier-title">6×6 探险</span>
+        <span class="tier-desc">全8关 · 进阶行段</span>
+      </button>
+      <button class="tier-btn" onclick="selectTier(3)">
+        <span class="tier-title">9×9 大师</span>
+        <span class="tier-desc">全6关 · 巅峰挑战</span>
+      </button>
+    </div>
+
+    <!-- Stages Grid -->
+    <div class="stages-grid" id="stages-grid"></div>
+
+    <!-- Free Mode Entry Banner -->
+    <div class="free-mode-banner" onclick="startFreeMode()">
+      <div class="free-mode-info">
+        <div class="free-mode-title">🎲 自由无限生成模式</div>
+        <div class="free-mode-desc">随机生成新题目，支持4×4 / 6×6 / 9×9 无限畅玩！</div>
+      </div>
+      <button class="free-play-btn">立即开始 ▶</button>
+    </div>
+  </section>
+
+  <!-- =========================================
+       VIEW 2: GAMEPLAY (数独对局对战)
+       ========================================= -->
+  <section class="view" id="view-game">
+    <!-- Game HUD -->
+    <div class="game-hud">
+      <div class="game-hud-left">
+        <button class="btn-back-stages" onclick="exitGame()">◀ 选关</button>
+        <div class="game-title-hud" id="game-stage-title">第 1 关</div>
+      </div>
+      <div class="game-hud-right">
+        <div class="timer-pill">⏱️ <span id="game-timer">00:00</span></div>
+      </div>
+    </div>
+
+    <!-- Board Area -->
+    <div class="board-container">
+      <div class="sudoku-grid order-4" id="sudoku-grid"></div>
+    </div>
+
+    <!-- Actions Control Bar -->
+    <div class="control-actions">
+      <button class="action-btn" id="btn-pencil" onclick="togglePencilMode()">
+        <span class="btn-icon">✏️</span>
+        <span>草稿笔记</span>
+      </button>
+      <button class="action-btn" onclick="eraseCell()">
+        <span class="btn-icon">🧹</span>
+        <span>橡皮擦</span>
+      </button>
+      <button class="action-btn" onclick="undoMove()">
+        <span class="btn-icon">↩️</span>
+        <span>撤回</span>
+      </button>
+      <button class="action-btn" onclick="giveHint()">
+        <span class="btn-icon">💡</span>
+        <span>提示</span>
+      </button>
+      <button class="action-btn" onclick="replayCurrentCellSound()">
+        <span class="btn-icon">🔊</span>
+        <span>听发音</span>
+      </button>
+    </div>
+
+    <!-- Virtual Hangul Keyboard -->
+    <div class="hangul-keyboard order-4" id="hangul-keyboard"></div>
+  </section>
+
+  <!-- =========================================
+       VIEW 3: COMPLETE HANGUL CHART & MATRIX
+       ========================================= -->
+  <section class="view" id="view-chart">
+    <div class="tutor-banner">
+      <div class="tutor-avatar">🐻</div>
+      <div class="tutor-bubble">
+        <strong>韩语字母完整图谱大百科！</strong><br>
+        点击任意卡片或矩阵方格，即可听到地道首尔发音，还能查看汉语拼音口型与汉字词同源秘籍哦！
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="chart-filter-bar" id="chart-filters">
+      <button class="filter-pill active" onclick="filterChart('all')">🌟 全部图谱</button>
+      <button class="filter-pill" onclick="filterChart('basic_c')">14个基础辅音</button>
+      <button class="filter-pill" onclick="filterChart('tense_c')">5个紧音辅音</button>
+      <button class="filter-pill" onclick="filterChart('basic_v')">10个基础元音</button>
+      <button class="filter-pill" onclick="filterChart('compound_v')">11个复合元音</button>
+      <button class="filter-pill" onclick="filterChart('batchim')">7类代表收音</button>
+      <button class="filter-pill" onclick="filterChart('sino')">🏮 汉字词同源发现</button>
+    </div>
+
+    <!-- View Mode Switch -->
+    <div class="view-switch-row">
+      <button class="view-switch-btn active" id="btn-view-cards" onclick="setChartViewMode('cards')">📇 卡片模式</button>
+      <button class="view-switch-btn" id="btn-view-matrix" onclick="setChartViewMode('matrix')">🔲 反切拼读矩阵</button>
+    </div>
+
+    <!-- Cards Container -->
+    <div class="chart-cards-grid" id="chart-cards-container"></div>
+
+    <!-- Matrix Container -->
+    <div class="matrix-container" id="matrix-container" style="display: none;">
+      <table class="matrix-table" id="matrix-table"></table>
+    </div>
+  </section>
+
+  <!-- =========================================
+       VIEW 4: SYLLABLE BUILDER (积木造字实验室)
+       ========================================= -->
+  <section class="view" id="view-builder">
+    <div class="tutor-banner">
+      <div class="tutor-avatar">🐻</div>
+      <div class="tutor-bubble">
+        <strong>欢迎来到韩语造字积木实验室！</strong><br>
+        选择初声（辅音）+ 中声（元音）+ 终声（收音），韩文字就像乐高积木一样自动合体拼读出来！
+      </div>
+    </div>
+
+    <div class="builder-screen">
+      <!-- Big Result & Equation Stage -->
+      <div class="assembly-stage">
+        <div class="equation-row">
+          <div class="part-badge part-c">
+            <span class="part-tag">初声 (辅音)</span>
+            <span id="eq-c">ㄱ</span>
+          </div>
+          <span>＋</span>
+          <div class="part-badge part-v">
+            <span class="part-tag">中声 (元音)</span>
+            <span id="eq-v">ㅏ</span>
+          </div>
+          <span>＋</span>
+          <div class="part-badge part-b">
+            <span class="part-tag">终声 (收音)</span>
+            <span id="eq-b">无收音</span>
+          </div>
+        </div>
+
+        <div class="result-box" onclick="speakBuilderChar()">
+          <div class="big-char" id="builder-char">가</div>
+          <div class="result-meta">
+            <div class="meta-pinyin" id="builder-pinyin">ga / ka</div>
+            <div class="meta-hanzi" id="builder-hanzi">常用汉字音: 歌 / 家 / 街</div>
+          </div>
+          <button class="btn-listen-builder">🔊 朗读</button>
+        </div>
+      </div>
+
+      <!-- Quick Preset Words -->
+      <div class="presets-section">
+        <div class="presets-title">🌟 点击一键装配高频汉字词/经典词汇：</div>
+        <div class="presets-scroll" id="presets-scroll"></div>
+      </div>
+
+      <!-- Consonant Picker -->
+      <div class="palette-box">
+        <div class="palette-header">
+          <span>1. 选择初声辅音 (Choseong):</span>
+          <span style="color: #B45309;">声母拼音对应</span>
+        </div>
+        <div class="palette-grid" id="palette-consonants"></div>
+      </div>
+
+      <!-- Vowel Picker -->
+      <div class="palette-box">
+        <div class="palette-header">
+          <span>2. 选择中声元音 (Jungseong):</span>
+          <span style="color: #0369A1;">韵母拼音对应</span>
+        </div>
+        <div class="palette-grid" id="palette-vowels"></div>
+      </div>
+
+      <!-- Batchim Picker -->
+      <div class="palette-box">
+        <div class="palette-header">
+          <span>3. 选择终声收音 (Jongseong):</span>
+          <span style="color: #047857;">尾音垫底</span>
+        </div>
+        <div class="palette-grid" id="palette-batchim"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================
+       VIEW 5: LISTENING QUIZ (耳力大作战)
+       ========================================= -->
+  <section class="view" id="view-quiz">
+    <div class="tutor-banner">
+      <div class="tutor-avatar">🐻</div>
+      <div class="tutor-bubble">
+        <strong>韩语听音耳力大作战！</strong><br>
+        点击中心大喇叭听原声发音，看谁能连续答对，成为韩语听力小达人！
+      </div>
+    </div>
+
+    <div class="quiz-screen">
+      <div class="quiz-hud">
+        <div class="streak-badge">
+          <span>🔥 连续答对:</span>
+          <strong id="quiz-streak">0</strong>
+        </div>
+        <div style="font-size: 11px; font-weight: 800; color: var(--text-sub);">
+          总得分: <span id="quiz-score" style="color: var(--primary); font-weight: 900;">0</span> 分
+        </div>
+      </div>
+
+      <button class="quiz-play-btn" onclick="replayQuizAudio()" title="再听一次发音">
+        🔊
+      </button>
+
+      <div class="quiz-prompt" id="quiz-prompt">请听发音，选出对应的韩文字符：</div>
+
+      <div class="quiz-choices-grid" id="quiz-choices"></div>
+    </div>
+  </section>
+</div>
+
+<!-- VICTORY MODAL -->
+<div class="modal-overlay" id="victory-modal">
+  <div class="modal-box">
+    <div class="modal-icon">🎉</div>
+    <div class="modal-title">太棒啦！通关成功！</div>
+    <div class="modal-desc" id="victory-desc">
+      你太厉害了！完美解开了这道数独！<br>
+      你对这些韩文字母和发音的掌握又更深了一步！
+    </div>
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeVictoryModal()">返回关卡</button>
+      <button class="btn-primary" onclick="nextStage()">下一关 ▶</button>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL FOR HANGUL CARDS -->
+<div class="modal-overlay" id="detail-modal">
+  <div class="modal-box" style="text-align: left; align-items: stretch;">
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+      <div style="font-size: 40px; font-weight: 900; font-family: 'Noto Sans KR', sans-serif; color: var(--primary-dark);" id="modal-char">ㄱ</div>
+      <button class="icon-btn" onclick="speakDetailChar()">🔊</button>
+    </div>
+    <div style="font-size: 16px; font-weight: 900; color: var(--text-main); margin-bottom: 4px;" id="modal-title">名称: 기역 (gi-yeok)</div>
+    <div style="font-size: 13px; font-weight: 800; color: var(--primary); margin-bottom: 10px;" id="modal-pinyin">拼音对应: g / k</div>
+    <div style="font-size: 12px; font-weight: 700; color: var(--text-sub); line-height: 1.6; margin-bottom: 14px;" id="modal-body">
+      口型秘诀：舌根抬起挡住喉咙的形状！像拼音里的 g，在词首轻轻发，像“歌”！
+    </div>
+    <div style="background: #F3F4F6; padding: 10px; border-radius: 12px; margin-bottom: 16px;">
+      <div style="font-size: 11px; font-weight: 800; color: #4B5563;">代表词汇 / 汉字词同源:</div>
+      <div style="font-size: 14px; font-weight: 900; color: #10B981; margin-top: 2px;" id="modal-vocab">고양이 🐱 (小猫)</div>
+    </div>
+    <button class="btn-primary" onclick="closeDetailModal()">关闭</button>
+  </div>
+</div>
+
+<script>
+/* ==========================================================
+   1. HANGUL DATABASE: CONSONANTS, VOWELS, COGNATES & SYLLABLES
+   ========================================================== */
+
+// 14 Basic Consonants (14个基本辅音)
+const BASIC_CONSONANTS = [
+  { char: 'ㄱ', name: '기역 (gi-yeok)', pinyin: 'g / k', tip: '舌根顶住软腭挡住喉咙的象形！词首略微送气像k，词中像拼音g。', vocab: { kr: '고양이', cn: '小猫', pinyin: 'go-yang-i', icon: '🐱' }, hanzi: '歌、家、感' },
+  { char: 'ㄴ', name: '니은 (ni-eun)', pinyin: 'n (呢)', tip: '舌尖抵住上牙龈的象形！发音完全等同于汉语拼音声母 n。', vocab: { kr: '나비', cn: '蝴蝶', pinyin: 'na-bi', icon: '🦋' }, hanzi: '南、男、女' },
+  { char: 'ㄷ', name: '디귿 (di-geut)', pinyin: 'd / t', tip: '在「ㄴ」上方加一横！舌尖轻碰上牙齿，词首像t，词中像拼音d。', vocab: { kr: '다람쥐', cn: '松鼠', pinyin: 'da-ram-jwi', icon: '🐿️' }, hanzi: '多、大、道' },
+  { char: 'ㄹ', name: '리을 (ri-eul)', pinyin: 'r / l', tip: '舌头弯曲轻弹的形状！词首像拼音“啦”的边音，收音时像卷舌音。', vocab: { kr: '라면', cn: '拉面', pinyin: 'ra-myeon', icon: '🍜' }, hanzi: '路、乐、理' },
+  { char: 'ㅁ', name: '미음 (mi-eum)', pinyin: 'm (摸)', tip: '紧闭双唇时的四方形嘴唇象形！完全等同于汉语拼音 m。', vocab: { kr: '모자', cn: '帽子', pinyin: 'mo-ja', icon: '🧢' }, hanzi: '木、美、门' },
+  { char: 'ㅂ', name: '비읍 (bi-eup)', pinyin: 'b / p', tip: '水桶状张开的双唇！词首像微弱送气的p，词中像拼音b（玻）。', vocab: { kr: '바나나', cn: '香蕉', pinyin: 'ba-na-na', icon: '🍌' }, hanzi: '白、步、本' },
+  { char: 'ㅅ', name: '시옷 (si-ot)', pinyin: 's (思)', tip: '上下牙齿轻合的齿音形状！像汉语拼音 s，遇到「ㅣ」发西(xi)。', vocab: { kr: '사과', cn: '苹果', pinyin: 'sa-gwa', icon: '🍎' }, hanzi: '山、水、三' },
+  { char: 'ㅇ', name: '이응 (i-eung)', pinyin: '零声母 / -ng', tip: '圆圆喉咙的形状！位于字首不发音（只读后面的元音），位于收音发拼音后鼻音 ng。', vocab: { kr: '우유', cn: '牛奶', pinyin: 'u-yu', icon: '🥛' }, hanzi: '王、月、永' },
+  { char: 'ㅈ', name: '지읒 (ji-eut)', pinyin: 'j / z', tip: '「ㅅ」上加一横！舌面前部贴住硬腭，词首像汉语“基/知”，词中像拼音z/j。', vocab: { kr: '자전거', cn: '自行车', pinyin: 'ja-jeon-geo', icon: '🚲' }, hanzi: '主、正、子' },
+  { char: 'ㅊ', name: '치읓 (chi-eut)', pinyin: 'ch / q', tip: '激音！比「ㅈ」上方多出一点，气流强烈喷出，等同于拼音 ch / q。', vocab: { kr: '치타', cn: '猎豹', pinyin: 'chi-ta', icon: '🐆' }, hanzi: '青、春、茶' },
+  { char: 'ㅋ', name: '키읔 (ki-euk)', pinyin: 'k (科)', tip: '激音！「ㄱ」的送气强化版，舌根强烈喷出气流，等同于拼音 k。', vocab: { kr: '코끼리', cn: '大象', pinyin: 'ko-kki-ri', icon: '🐘' }, hanzi: '快、苦、强' },
+  { char: 'ㅌ', name: '티읕 (ti-eut)', pinyin: 't (特)', tip: '激音！「ㄷ」的送气强化版，舌尖强烈喷出气流，等同于拼音 t。', vocab: { kr: '토끼', cn: '兔子', pinyin: 'to-kki', icon: '🐰' }, hanzi: '天、土、太' },
+  { char: 'ㅍ', name: '피읖 (pi-eup)', pinyin: 'p (坡)', tip: '激音！「ㅂ」的送气强化版，双唇突然爆破出气，等同于拼音 p。', vocab: { kr: '포도', cn: '葡萄', pinyin: 'po-do', icon: '🍇' }, hanzi: '风、品、波' },
+  { char: 'ㅎ', name: '히읗 (hi-eut)', pinyin: 'h (喝)', tip: '从深喉呼出哈气的象形！等同于汉语拼音喉音 h。', vocab: { kr: '호랑이', cn: '老虎', pinyin: 'ho-rang-i', icon: '🐯' }, hanzi: '海、花、火' }
+];
+
+// 5 Tense Consonants (5个紧音/双辅音)
+const TENSE_CONSONANTS = [
+  { char: 'ㄲ', name: '쌍기역 (ssang-gi-yeok)', pinyin: 'gg', tip: '紧音！喉咙紧绷，不出气流，用力发拼音 g（像许多南方方言里的不送气浊音）。', vocab: { kr: '꿀벌', cn: '蜜蜂', pinyin: 'kkul-beol', icon: '🐝' }, hanzi: '骨、极' },
+  { char: 'ㄸ', name: '쌍디귿 (ssang-di-geut)', pinyin: 'dd', tip: '紧音！舌尖紧顶上齿龈，喉咙紧缩用力爆出 d 音，绝不漏气。', vocab: { kr: '딸기', cn: '草莓', pinyin: 'ttal-gi', icon: '🍓' }, hanzi: '带、道' },
+  { char: 'ㅃ', name: '쌍비읍 (ssang-bi-eup)', pinyin: 'bb', tip: '紧音！双唇紧闭蓄力，突然张开爆发出饱满的 b 音，不带气流。', vocab: { kr: '빵', cn: '面包', pinyin: 'ppang', icon: '🍞' }, hanzi: '百、发' },
+  { char: 'ㅆ', name: '쌍시옷 (ssang-si-ot)', pinyin: 'ss', tip: '紧音！上下牙齿咬紧，短促有力地摩擦发出重音 s。', vocab: { kr: '쓰레기', cn: '垃圾', pinyin: 'sseu-re-gi', icon: '🗑️' }, hanzi: '氏、双' },
+  { char: 'ㅉ', name: '쌍지읒 (ssang-ji-eut)', pinyin: 'jj', tip: '紧音！舌面紧贴硬腭，喉咙用力阻气爆破，发饱满紧绷的 z / j 音。', vocab: { kr: '찌개', cn: '热汤/锅', pinyin: 'jji-gae', icon: '🍲' }, hanzi: '织、蒸' }
+];
+
+// 10 Basic Vowels (10个基础元音)
+const BASIC_VOWELS = [
+  { char: 'ㅏ', name: '아 (a)', pinyin: 'a (啊)', tip: '嘴巴张大，等同于汉语拼音 a！短棍向右，代表初升的朝阳。', vocab: { kr: '아이', cn: '小孩', pinyin: 'a-i', icon: '👶' } },
+  { char: 'ㅑ', name: '야 (ya)', pinyin: 'ya (呀)', tip: '由拼音 i 快速滑向 a，两根短棍代表双重阳光！等同于拼音 ya。', vocab: { kr: '야구', cn: '棒球', pinyin: 'ya-gu', icon: '⚾' } },
+  { char: 'ㅓ', name: '어 (eo)', pinyin: 'eo (类似鹅)', tip: '短棍向内！嘴巴半开，像发拼音“鹅”但下巴稍微下拉，双唇不圆。', vocab: { kr: '어머니', cn: '妈妈', pinyin: 'eo-meo-ni', icon: '👩' } },
+  { char: 'ㅕ', name: '여 (yeo)', pinyin: 'yeo (耶)', tip: '由拼音 i 快速滑向 eo！双短棍向内，像拼音 ye。', vocab: { kr: '여우', cn: '狐狸', pinyin: 'yeo-u', icon: '🦊' } },
+  { char: 'ㅗ', name: '오 (o)', pinyin: 'o (圆唇哦)', tip: '小短棍朝天！双唇拢成非常圆整的小圆圈，等同于拼音 o。', vocab: { kr: '오리', cn: '鸭子', pinyin: 'o-ri', icon: '🦆' } },
+  { char: 'ㅛ', name: '요 (yo)', pinyin: 'yo (哟)', tip: '圆唇滑动元音！由 i 快速滑向 o，嘴唇极圆，等同于拼音 yo。', vocab: { kr: '요리', cn: '料理/做菜', pinyin: 'yo-ri', icon: '🍳' } },
+  { char: 'ㅜ', name: '우 (u)', pinyin: 'u (乌)', tip: '小短棍朝地！双唇聚拢并向前突出，等同于汉语拼音 u。', vocab: { kr: '우산', cn: '雨伞', pinyin: 'u-san', icon: '☂️' } },
+  { char: 'ㅠ', name: '유 (yu)', pinyin: 'yu (迂/幽)', tip: '双短棍朝地！由 i 快速滑向 u，双唇拢圆向前突出，等同于拼音 yu。', vocab: { kr: '유리', cn: '玻璃', pinyin: 'yu-ri', icon: '🥛' } },
+  { char: 'ㅡ', name: '으 (eu)', pinyin: 'eu (扁唇空韵)', tip: '横线代表平坦的大地！嘴角向两边拉开，发汉语拼音“资/次”里的扁唇元音。', vocab: { kr: '으뜸', cn: '第一/魁首', pinyin: 'eu-tteum', icon: '🥇' } },
+  { char: 'ㅣ', name: '이 (i)', pinyin: 'i (衣)', tip: '坚挺的竖线代表直立的人！嘴角咧开微笑，完全等同于汉语拼音 i。', vocab: { kr: '이빨', cn: '牙齿', pinyin: 'i-ppal', icon: '🦷' } }
+];
+
+// 11 Compound Vowels (11个复合元音)
+const COMPOUND_VOWELS = [
+  { char: 'ㅐ', name: '애 (ae)', pinyin: 'ae (哎)', tip: '「ㅏ」与「ㅣ」组合！嘴巴微张像发英语 [e] 或拼音 ai 的前半截。', vocab: { kr: '개미', cn: '蚂蚁', pinyin: 'gae-mi', icon: '🐜' } },
+  { char: 'ㅒ', name: '얘 (yae)', pinyin: 'yae', tip: '「ㅑ」与「ㅣ」组合！由 i 快速滑向 ae，发音等同于拼音 y + ae。', vocab: { kr: '얘기', cn: '故事/谈话', pinyin: 'yae-gi', icon: '💬' } },
+  { char: 'ㅔ', name: '에 (e)', pinyin: 'e (诶)', tip: '「ㅓ」与「ㅣ」组合！现代韩语中发音与「ㅐ」极度接近，嘴巴略微扁平。', vocab: { kr: '베개', cn: '枕头', pinyin: 'be-gae', icon: '🛏️' } },
+  { char: 'ㅖ', name: '예 (ye)', pinyin: 'ye (夜)', tip: '「ㅕ」与「ㅣ」组合！由 i 滑向 e，等同于汉语拼音 ye。', vocab: { kr: '예술', cn: '艺术', pinyin: 'ye-sul', icon: '🎨' } },
+  { char: 'ㅘ', name: '와 (wa)', pinyin: 'wa (哇)', tip: '「ㅗ」加「ㅏ」！由圆唇 o 快速滑向 a，完全等同于汉语拼音 wa。', vocab: { kr: '와플', cn: '华夫饼', pinyin: 'wa-peul', icon: '🧇' } },
+  { char: 'ㅙ', name: '왜 (wae)', pinyin: 'wae (歪)', tip: '「ㅗ」加「ㅐ」！由圆唇快速滑向 ae，像拼音 wai。', vocab: { kr: '돼지', cn: '小猪', pinyin: 'dwae-ji', icon: '🐷' } },
+  { char: 'ㅚ', name: '외 (oe)', pinyin: 'oe (类似we)', tip: '现代韩语中读音基本等同于 [we]，发音嘴唇圆拢向后滑。', vocab: { kr: '외투', cn: '外套', pinyin: 'oe-tu', icon: '🧥' } },
+  { char: 'ㅝ', name: '워 (wo)', pinyin: 'wo (窝)', tip: '「ㅜ」加「ㅓ」！由突出唇形的 u 快速滑向 eo，等同于拼音 wo。', vocab: { kr: '원숭이', cn: '猴子', pinyin: 'won-sung-i', icon: '🐒' } },
+  { char: 'ㅞ', name: '웨 (we)', pinyin: 'we (威)', tip: '「ㅜ」加「ㅔ」！等同于拼音 we。', vocab: { kr: '웨이터', cn: '侍者', pinyin: 'we-i-teo', icon: '🤵' } },
+  { char: 'ㅟ', name: '위 (wi)', pinyin: 'wi ( 위 )', tip: '「ㅜ」加「ㅣ」！从双唇突出的 u 快速滑向 i。', vocab: { kr: '위치', cn: '位置', pinyin: 'wi-chi', icon: '📍' } },
+  { char: 'ㅢ', name: '의 (ui)', pinyin: 'ui ( ㅢ )', tip: '扁唇的「ㅡ」快速滑向「ㅣ」，嘴角始终向两边拉平微笑。', vocab: { kr: '의사', cn: '医生', pinyin: 'ui-sa', icon: '👨‍⚕️' } }
+];
+
+// 7 Representative Batchim (7类代表收音/韵尾)
+const BATCHIM_SOUNDS = [
+  { char: 'ㄱ (받침)', name: 'ㄱ收音 [k 顿挫闭气]', pinyin: '-k (塞音入声)', tip: '舌根顶住喉咙不送气！类似古汉语入声塞音，如‘国’ (국 guk)。', vocab: { kr: '한국', cn: '韩国', pinyin: 'han-guk', icon: '🇰🇷' } },
+  { char: 'ㄴ (받침)', name: 'ㄴ收音 [n 前鼻音]', pinyin: '-n (前鼻音)', tip: '舌尖贴住上齿龈，气流从鼻孔出来，等同于汉语拼音前鼻音 -n！', vocab: { kr: '산', cn: '大山', pinyin: 'san', icon: '⛰️' } },
+  { char: 'ㄷ (받침)', name: 'ㄷ收音 [t 舌尖闭气]', pinyin: '-t (舌尖入声)', tip: '舌尖抵住上牙龈刹车闭气！ㅅ、ㅆ、ㅈ、ㅊ、ㅌ、ㅎ作收音时均归入此类。', vocab: { kr: '숟가락', cn: '勺子', pinyin: 'sut-ga-rak', icon: '🥄' } },
+  { char: 'ㄹ (받침)', name: 'ㄹ收音 [l 舌边音]', pinyin: '-l (微卷舌音)', tip: '舌尖抵在上牙龈两侧漏气，类似英语 [l] 或汉语儿化韵尾。', vocab: { kr: '달', cn: '月亮', pinyin: 'dal', icon: '🌙' } },
+  { char: 'ㅁ (받침)', name: 'ㅁ收音 [m 闭唇鼻音]', pinyin: '-m (闭唇鼻音)', tip: '双唇紧闭，气流经鼻腔振动发出，类似许多南方方言的 -m 尾音。', vocab: { kr: '봄', cn: '春天', pinyin: 'bom', icon: '🌸' } },
+  { char: 'ㅂ (받침)', name: 'ㅂ收音 [p 闭唇闭气]', pinyin: '-p (双唇入声)', tip: '双唇瞬间闭合停止送气，类似古汉语入声 [p]，如‘饭’ (밥 bap)。', vocab: { kr: '밥', cn: '米饭', pinyin: 'bap', icon: '🍚' } },
+  { char: 'ㅇ (받침)', name: 'ㅇ收音 [ng 后鼻音]', pinyin: '-ng (后鼻音)', tip: '舌根抬起抵住软腭，气流由鼻孔出，完全等同于汉语拼音后鼻音 -ng！', vocab: { kr: '중국', cn: '中国', pinyin: 'jung-guk', icon: '🇨🇳' } }
+];
+
+// Sino-Korean Discovery (汉字词同源发现宝藏)
+const SINO_KOREAN_WORDS = [
+  { kr: '중국', cn: '中国', pinyin: 'jung-guk', hanzi: '中国', icon: '🇨🇳', desc: '和中文发音几乎完全一样！중(中) + 국(国)' },
+  { kr: '한국', cn: '韩国', pinyin: 'han-guk', hanzi: '韩国', icon: '🇰🇷', desc: '韩语中“韩国”读作 han-guk！' },
+  { kr: '도서관', cn: '图书馆', pinyin: 'do-seo-gwan', hanzi: '图书馆', icon: '📚', desc: '도(图) + 서(书) + 관(馆)，拼音音感完全相同！' },
+  { kr: '학생', cn: '学生', pinyin: 'hak-saeng', hanzi: '学生', icon: '🧑‍🎓', desc: '학(学) + 생(生)，小朋友听一次就能记住！' },
+  { kr: '학교', cn: '学校', pinyin: 'hak-gyo', hanzi: '学校', icon: '🏫', desc: '학(学) + 교(校)，和汉语南方方言惊人一致！' },
+  { kr: '시간', cn: '时间', pinyin: 'si-gan', hanzi: '时间', icon: '⏰', desc: '시(时) + 간(间)，发音几乎和中文一模一样！' },
+  { kr: '운동', cn: '运动', pinyin: 'un-dong', hanzi: '运动', icon: '⚽', desc: '운(运) + 동(动)，去运动场跑步吧！' },
+  { kr: '음악', cn: '音乐', pinyin: 'eum-ak', hanzi: '音乐', icon: '🎵', desc: '음(音) + 악(乐)，音符律动的美妙旋律！' },
+  { kr: '영화', cn: '电影 (映画)', pinyin: 'yeong-hwa', hanzi: '映画', icon: '🎬', desc: '영(映) + 화(画)，爆米花配电影！' },
+  { kr: '행복', cn: '幸福', pinyin: 'haeng-bok', hanzi: '幸福', icon: '🌈', desc: '행(幸) + 복(福)，给每个人带来微笑！' },
+  { kr: '선생님', cn: '老师 (先生님)', pinyin: 'seon-saeng-nim', hanzi: '先生님', icon: '👩‍🏫', desc: '선생(先生)加上敬语님，指辛勤教导的老师！' },
+  { kr: '가족', cn: '家庭/亲人 (家族)', pinyin: 'ga-jok', hanzi: '家族', icon: '👨‍👩‍👧‍👦', desc: '가(家) + 족(族)，温暖有爱的家人们！' }
+];
+
+/* ==========================================================
+   2. CURATED SUDOKU STAGES (22 PROGRESSIVE STAGES)
+   ========================================================== */
+const STAGES_DATA = [
+  // --- TIER 1: 4x4 ENTRY (8 Stages) ---
+  {
+    id: 1, tier: 1, order: 4, boxR: 2, boxC: 2,
+    title: '第 1 关: 基础元音四重奏',
+    sub: '最常用的4个阳光核心元音',
+    symbols: ['ㅏ', 'ㅓ', 'ㅗ', 'ㅜ'],
+    ruby: ['a', 'eo', 'o', 'u'],
+    fixed: [
+      [1, 0, 0, 4],
+      [0, 4, 2, 0],
+      [0, 2, 4, 0],
+      [4, 0, 0, 1]
+    ]
+  },
+  {
+    id: 2, tier: 1, order: 4, boxR: 2, boxC: 2,
+    title: '第 2 关: 舌尖辅音四兄弟',
+    sub: '汉语拼音中熟悉的 g, n, d, r 字母',
+    symbols: ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ'],
+    ruby: ['g/k', 'n', 'd/t', 'r/l'],
+    fixed: [
+      [0, 2, 3, 0],
+      [3, 0, 0, 2],
+      [2, 0, 0, 3],
+      [0, 3, 2, 0]
+    ]
+  },
+  {
+    id: 3, tier: 1, order: 4, boxR: 2, boxC: 2,
+    title: '第 3 关: 双唇与清脆音',
+    sub: '像四方嘴巴的m，小水桶b与圆圆ㅇ',
+    symbols: ['ㅁ', 'ㅂ', 'ㅅ', 'ㅇ'],
+    ruby: ['m', 'b/p', 's', '零/ng'],
+    fixed: [
+      [1, 0, 0, 2],
+      [0, 0, 1, 0],
+      [0, 1, 0, 0],
+      [4, 0, 0, 3]
+    ]
+  },
+  {
+    id: 4, tier: 1, order: 4, boxR: 2, boxC: 2,
+    title: '第 4 关: 爆破送气激音组',
+    sub: '气流呼呼喷射的送气好朋友',
+    symbols: ['ㅊ', 'ㅋ', 'ㅌ', 'ㅍ'],
+    ruby: ['ch', 'k', 't', 'p'],
+    fixed: [
+      [0, 1, 4, 0],
+      [4, 0, 0, 1],
+      [0, 4, 1, 0],
+      [1, 0, 0, 4]
+    ]
+  },
+  {
+    id: 5, tier: 1, order: 4, boxR: 2, boxC: 2,
+    title: '第 5 关: 紧音有力四兄弟',
+    sub: '喉咙用力紧绷发出饱满响亮音',
+    symbols: ['ㄲ', 'ㄸ', 'ㅃ', 'ㅆ'],
+    ruby: ['gg', 'dd', 'bb', 'ss'],
+    fixed: [
+      [1, 2, 0, 0],
+      [0, 0, 2, 1],
+      [2, 1, 0, 0],
+      [0, 0, 1, 2]
+    ]
+  },
+  {
+    id: 6, tier: 1, order: 4, boxR: 2, boxC: 2,
+    title: '第 6 关: 嘎嘎基础音节组',
+    sub: '初声辅音拼上元音「ㅏ」的声音',
+    symbols: ['가', '나', '다', '라'],
+    ruby: ['ga', 'na', 'da', 'ra'],
+    fixed: [
+      [1, 0, 0, 3],
+      [0, 3, 1, 0],
+      [0, 1, 3, 0],
+      [3, 0, 0, 2]
+    ]
+  },
+  {
+    id: 7, tier: 1, order: 4, boxR: 2, boxC: 2,
+    title: '第 7 关: 咕咕元音音节组',
+    sub: '圆圆嘴巴发出来的「ㅗ」音节',
+    symbols: ['고', '노', '도', '로'],
+    ruby: ['go', 'no', 'do', 'ro'],
+    fixed: [
+      [0, 0, 2, 1],
+      [2, 1, 0, 0],
+      [0, 0, 1, 2],
+      [1, 2, 0, 0]
+    ]
+  },
+  {
+    id: 8, tier: 1, order: 4, boxR: 2, boxC: 2,
+    title: '第 8 关: 萌趣开音节组',
+    sub: '汉语常读的 ma, ba, sa, a',
+    symbols: ['마', '바', '사', '아'],
+    ruby: ['ma', 'ba', 'sa', 'a'],
+    fixed: [
+      [1, 0, 3, 0],
+      [0, 4, 0, 2],
+      [2, 0, 4, 0],
+      [0, 3, 0, 1]
+    ]
+  },
+
+  // --- TIER 2: 6x6 EXPLORER (8 Stages, 2x3 boxes) ---
+  {
+    id: 9, tier: 2, order: 6, boxR: 2, boxC: 3,
+    title: '第 9 关: 核心辅音全家福',
+    sub: '前6个最经典的骨干辅音字母',
+    symbols: ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ'],
+    ruby: ['g', 'n', 'd', 'r', 'm', 'b'],
+    fixed: [
+      [1, 0, 3, 0, 5, 0],
+      [0, 5, 0, 1, 0, 3],
+      [3, 0, 1, 0, 2, 0],
+      [0, 2, 0, 3, 0, 1],
+      [5, 0, 2, 0, 4, 0],
+      [0, 4, 0, 5, 0, 2]
+    ]
+  },
+  {
+    id: 10, tier: 2, order: 6, boxR: 2, boxC: 3,
+    title: '第 10 关: 基础元音六重奏',
+    sub: '天、地、阳光组合的基础单母音',
+    symbols: ['ㅏ', 'ㅑ', 'ㅓ', 'ㅕ', 'ㅗ', 'ㅜ'],
+    ruby: ['a', 'ya', 'eo', 'yeo', 'o', 'u'],
+    fixed: [
+      [0, 2, 0, 4, 0, 6],
+      [4, 0, 6, 0, 2, 0],
+      [0, 4, 0, 6, 0, 2],
+      [6, 0, 2, 0, 4, 0],
+      [0, 6, 0, 2, 0, 4],
+      [2, 0, 4, 0, 6, 0]
+    ]
+  },
+  {
+    id: 11, tier: 2, order: 6, boxR: 2, boxC: 3,
+    title: '第 11 关: 激音与齿擦辅音',
+    sub: '从齿音到爆破音的趣味探索',
+    symbols: ['ㅅ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ'],
+    ruby: ['s', 'ng', 'j', 'ch', 'k', 't'],
+    fixed: [
+      [1, 0, 0, 4, 5, 0],
+      [0, 5, 6, 0, 0, 3],
+      [4, 0, 0, 1, 2, 0],
+      [0, 2, 3, 0, 0, 6],
+      [2, 0, 0, 5, 6, 0],
+      [0, 6, 1, 0, 0, 4]
+    ]
+  },
+  {
+    id: 12, tier: 2, order: 6, boxR: 2, boxC: 3,
+    title: '第 12 关: 复合元音小分队',
+    sub: '双元音滑翔与趣味拼读',
+    symbols: ['ㅐ', 'ㅔ', 'ㅘ', 'ㅝ', 'ㅟ', 'ㅢ'],
+    ruby: ['ae', 'e', 'wa', 'wo', 'wi', 'ui'],
+    fixed: [
+      [0, 1, 0, 0, 4, 0],
+      [4, 0, 6, 1, 0, 3],
+      [0, 3, 0, 0, 6, 0],
+      [0, 6, 0, 0, 1, 0],
+      [1, 0, 4, 6, 0, 2],
+      [0, 4, 0, 0, 3, 0]
+    ]
+  },
+  {
+    id: 13, tier: 2, order: 6, boxR: 2, boxC: 3,
+    title: '第 13 关: 가行经典音节',
+    sub: '「ㄱ」与6大基础元音的自然拼装',
+    symbols: ['가', '거', '고', '구', '그', '기'],
+    ruby: ['ga', 'geo', 'go', 'gu', 'geu', 'gi'],
+    fixed: [
+      [1, 2, 3, 4, 5, 6],
+      [4, 5, 6, 1, 0, 0],
+      [0, 0, 1, 2, 3, 4],
+      [2, 3, 4, 5, 6, 1],
+      [0, 0, 5, 6, 1, 2],
+      [6, 1, 2, 3, 4, 5]
+    ]
+  },
+  {
+    id: 14, tier: 2, order: 6, boxR: 2, boxC: 3,
+    title: '第 14 关: 나行经典音节',
+    sub: '舌尖抵住上牙龈的「ㄴ」自然拼读',
+    symbols: ['나', '너', '노', '누', '느', '니'],
+    ruby: ['na', 'neo', 'no', 'nu', 'neu', 'ni'],
+    fixed: [
+      [0, 0, 3, 4, 5, 6],
+      [4, 5, 6, 0, 0, 3],
+      [3, 4, 5, 6, 1, 2],
+      [6, 1, 2, 3, 4, 5],
+      [2, 3, 4, 5, 6, 1],
+      [5, 6, 1, 2, 3, 4]
+    ]
+  },
+  {
+    id: 15, tier: 2, order: 6, boxR: 2, boxC: 3,
+    title: '第 15 关: 다行经典音节',
+    sub: '轻快舌尖音「ㄷ」的6个音节',
+    symbols: ['다', '더', '도', '두', '드', '디'],
+    ruby: ['da', 'deo', 'do', 'du', 'deu', 'di'],
+    fixed: [
+      [1, 0, 3, 0, 5, 0],
+      [0, 5, 0, 1, 0, 3],
+      [0, 1, 0, 3, 0, 5],
+      [3, 0, 5, 0, 1, 0],
+      [5, 0, 1, 0, 3, 0],
+      [0, 3, 0, 5, 0, 1]
+    ]
+  },
+  {
+    id: 16, tier: 2, order: 6, boxR: 2, boxC: 3,
+    title: '第 16 关: 汉字词同源音节初探',
+    sub: '山(산)、月(달)、星(별)、水(물)、春(봄)、雪(눈)',
+    symbols: ['산', '달', '별', '물', '봄', '눈'],
+    ruby: ['山', '月', '星', '水', '春', '雪'],
+    fixed: [
+      [1, 2, 0, 4, 5, 0],
+      [0, 5, 6, 0, 2, 3],
+      [2, 0, 4, 5, 0, 1],
+      [5, 6, 0, 2, 3, 0],
+      [0, 1, 2, 0, 4, 5],
+      [4, 0, 5, 1, 0, 2]
+    ]
+  },
+
+  // --- TIER 3: 9x9 GRANDMASTER (6 Stages, 3x3 boxes) ---
+  {
+    id: 17, tier: 3, order: 9, boxR: 3, boxC: 3,
+    title: '第 17 关: 核心辅音群英会',
+    sub: '最核心的9大辅音大师级全景数独',
+    symbols: ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅅ', 'ㅇ', 'ㅈ'],
+    ruby: ['g', 'n', 'd', 'r', 'm', 'b', 's', 'ng', 'j'],
+    fixed: [
+      [1, 0, 0, 0, 0, 7, 0, 9, 0],
+      [0, 3, 0, 0, 2, 0, 0, 0, 8],
+      [0, 0, 9, 6, 0, 0, 5, 0, 0],
+      [0, 0, 5, 3, 0, 0, 9, 0, 0],
+      [0, 1, 0, 0, 8, 0, 0, 0, 2],
+      [6, 0, 0, 0, 0, 4, 0, 0, 0],
+      [3, 0, 0, 0, 0, 0, 0, 1, 0],
+      [0, 4, 0, 0, 0, 0, 0, 0, 7],
+      [0, 0, 7, 0, 0, 0, 3, 0, 0]
+    ]
+  },
+  {
+    id: 18, tier: 3, order: 9, boxR: 3, boxC: 3,
+    title: '第 18 关: 经典元音群英会',
+    sub: '涵盖9大核心单母音的大师数独',
+    symbols: ['ㅏ', 'ㅑ', 'ㅓ', 'ㅕ', 'ㅗ', 'ㅛ', 'ㅜ', 'ㅠ', 'ㅣ'],
+    ruby: ['a', 'ya', 'eo', 'yeo', 'o', 'yo', 'u', 'yu', 'i'],
+    fixed: [
+      [0, 2, 0, 0, 0, 0, 0, 8, 0],
+      [5, 0, 0, 0, 0, 3, 0, 0, 9],
+      [0, 8, 0, 0, 4, 0, 0, 0, 0],
+      [0, 0, 0, 5, 0, 0, 1, 0, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 0, 4, 0, 0, 7, 0, 0, 0],
+      [0, 0, 0, 0, 8, 0, 0, 7, 0],
+      [3, 0, 0, 2, 0, 0, 0, 0, 5],
+      [0, 6, 0, 0, 0, 0, 0, 4, 0]
+    ]
+  },
+  {
+    id: 19, tier: 3, order: 9, boxR: 3, boxC: 3,
+    title: '第 19 关: 가行巅峰全音节',
+    sub: '가 갸 거 겨 고 교 구 규 기 全音节推理',
+    symbols: ['가', '갸', '거', '겨', '고', '교', '구', '규', '기'],
+    ruby: ['ga', 'gya', 'geo', 'gyeo', 'go', 'gyo', 'gu', 'gyu', 'gi'],
+    fixed: [
+      [5, 3, 0, 0, 7, 0, 0, 0, 0],
+      [6, 0, 0, 1, 9, 5, 0, 0, 0],
+      [0, 9, 8, 0, 0, 0, 0, 6, 0],
+      [8, 0, 0, 0, 6, 0, 0, 0, 3],
+      [4, 0, 0, 8, 0, 3, 0, 0, 1],
+      [7, 0, 0, 0, 2, 0, 0, 0, 6],
+      [0, 6, 0, 0, 0, 0, 2, 8, 0],
+      [0, 0, 0, 4, 1, 9, 0, 0, 5],
+      [0, 0, 0, 0, 8, 0, 0, 7, 9]
+    ]
+  },
+  {
+    id: 20, tier: 3, order: 9, boxR: 3, boxC: 3,
+    title: '第 20 关: 나行巅峰全音节',
+    sub: '나 냐 너 녀 노 뇨 누 뉴 니 鼻音大家族',
+    symbols: ['나', '냐', '너', '녀', '노', '뇨', '누', '뉴', '니'],
+    ruby: ['na', 'nya', 'neo', 'nyeo', 'no', 'nyo', 'nu', 'nyu', 'ni'],
+    fixed: [
+      [0, 0, 0, 2, 6, 0, 7, 0, 1],
+      [6, 8, 0, 0, 7, 0, 0, 9, 0],
+      [1, 9, 0, 0, 0, 4, 5, 0, 0],
+      [8, 2, 0, 1, 0, 0, 0, 4, 0],
+      [0, 0, 4, 6, 0, 2, 9, 0, 0],
+      [0, 5, 0, 0, 0, 3, 0, 2, 8],
+      [0, 0, 9, 3, 0, 0, 0, 7, 4],
+      [0, 4, 0, 0, 5, 0, 0, 3, 6],
+      [7, 0, 3, 0, 1, 8, 0, 0, 0]
+    ]
+  },
+  {
+    id: 21, tier: 3, order: 9, boxR: 3, boxC: 3,
+    title: '第 21 关: 汉字同源词音节大师',
+    sub: '韩(한), 国(국), 中(중), 学(학), 生(생), 时(시), 间(간), 文(문), 化(화)',
+    symbols: ['한', '국', '중', '학', '생', '시', '간', '문', '화'],
+    ruby: ['韩', '国', '中', '学', '生', '时', '间', '文', '化'],
+    fixed: [
+      [1, 0, 0, 4, 8, 9, 0, 0, 6],
+      [7, 3, 0, 0, 0, 0, 0, 4, 0],
+      [0, 0, 0, 0, 0, 1, 2, 9, 5],
+      [0, 0, 7, 1, 2, 0, 6, 0, 0],
+      [5, 0, 0, 7, 0, 3, 0, 0, 8],
+      [0, 0, 6, 0, 9, 5, 7, 0, 0],
+      [9, 1, 4, 6, 0, 0, 0, 0, 0],
+      [0, 2, 0, 0, 0, 0, 0, 3, 7],
+      [8, 0, 0, 5, 1, 2, 0, 0, 4]
+    ]
+  },
+  {
+    id: 22, tier: 3, order: 9, boxR: 3, boxC: 3,
+    title: '第 22 关: 日常高频百宝箱',
+    sub: '爱(사), 朗(랑), 亲(친), 旧(구), 幸(행), 福(복), 微(微), 笑(소), 梦(꿈)',
+    symbols: ['사', '랑', '친', '구', '행', '복', '미', '소', '꿈'],
+    ruby: ['爱', '朗', '亲', '旧', '幸', '福', '微', '笑', '梦'],
+    fixed: [
+      [0, 0, 0, 6, 0, 0, 4, 0, 0],
+      [7, 0, 0, 0, 0, 3, 6, 0, 0],
+      [0, 0, 0, 0, 9, 1, 0, 8, 0],
+      [0, 0, 0, 0, 0, 0, 0, 0, 0],
+      [0, 5, 0, 1, 8, 0, 0, 0, 3],
+      [0, 0, 0, 3, 0, 6, 0, 4, 5],
+      [0, 4, 0, 2, 0, 0, 0, 6, 0],
+      [9, 0, 3, 0, 0, 0, 0, 0, 0],
+      [0, 2, 0, 0, 0, 0, 1, 0, 0]
+    ]
+  }
+];
+
+/* ==========================================================
+   3. RESILIENT DUAL-MODE ACOUSTIC ENGINE (Web Speech + Web Audio Formant)
+   ========================================================== */
+
+// 1. Korean Syllable Normalizer for TTS & Acoustic Synthesis
+const HANGUL_TEACHING_MAP = {
+  // Single vowels -> Valid Hangul syllable block with null initial 'ㅇ'
+  'ㅏ': '아', 'ㅑ': '야', 'ㅓ': '어', 'ㅕ': '여', 'ㅗ': '오', 'ㅛ': '요',
+  'ㅜ': '우', 'ㅠ': '유', 'ㅡ': '으', 'ㅣ': '이',
+  'ㅐ': '애', 'ㅒ': '얘', 'ㅔ': '에', 'ㅖ': '예',
+  'ㅘ': '와', 'ㅙ': '왜', 'ㅚ': '외', 'ㅝ': '워', 'ㅞ': '웨', 'ㅟ': '위', 'ㅢ': '의',
+  // Single consonants -> Standard pedagogical syllable (with base vowel 'ㅏ')
+  'ㄱ': '가', 'ㄴ': '나', 'ㄷ': '다', 'ㄹ': '라', 'ㅁ': '마',
+  'ㅂ': '바', 'ㅅ': '사', 'ㅇ': '응', 'ㅈ': '자', 'ㅊ': '차',
+  'ㅋ': '카', 'ㅌ': '타', 'ㅍ': '파', 'ㅎ': '하',
+  'ㄲ': '까', 'ㄸ': '따', 'ㅃ': '빠', 'ㅆ': '싸', 'ㅉ': '짜'
+};
+
+const HANGUL_INITIAL_LIST = ["k","kk","n","t","tt","r","m","p","pp","s","ss","","j","jj","ch","k","t","p","h"];
+const HANGUL_MEDIAL_LIST = ["a","ae","ya","yae","eo","e","yeo","ye","o","wa","wae","oe","yo","u","wo","we","wi","yu","eu","ui","i"];
+
+function getHangulAcousticPhoneme(char) {
+  if (!char) return { c: '', v: 'a' };
+  const ch = char.trim()[0];
+  // Check direct consonants
+  const cMap = {
+    'ㄱ':'k', 'ㄲ':'kk', 'ㄴ':'n', 'ㄷ':'t', 'ㄸ':'tt', 'ㄹ':'r', 'ㅁ':'m',
+    'ㅂ':'p', 'ㅃ':'pp', 'ㅅ':'s', 'ㅆ':'ss', 'ㅇ':'', 'ㅈ':'j', 'ㅉ':'jj',
+    'ㅊ':'ch', 'ㅋ':'k', 'ㅌ':'t', 'ㅍ':'p', 'ㅎ':'h'
+  };
+  if (cMap[ch] !== undefined) {
+    return { c: cMap[ch], v: 'a' };
+  }
+  // Check direct vowels
+  const vMap = {
+    'ㅏ':'a', 'ㅐ':'ae', 'ㅑ':'ya', 'ㅒ':'yae', 'ㅓ':'eo', 'ㅔ':'e', 'ㅕ':'yeo', 'ㅖ':'ye',
+    'ㅗ':'o', 'ㅘ':'wa', 'ㅙ':'wae', 'ㅚ':'oe', 'ㅛ':'yo', 'ㅜ':'u', 'ㅝ':'wo', 'ㅞ':'we',
+    'ㅟ':'wi', 'ㅠ':'yu', 'ㅡ':'eu', 'ㅢ':'ui', 'ㅣ':'i'
+  };
+  if (vMap[ch]) {
+    return { c: '', v: vMap[ch] };
+  }
+  // Check full syllable block (0xAC00 ~ 0xD7A3)
+  const code = ch.charCodeAt(0);
+  if (code >= 0xAC00 && code <= 0xD7A3) {
+    const sIndex = code - 0xAC00;
+    const initialIdx = Math.floor(sIndex / 588);
+    const medialIdx = Math.floor((sIndex / 28) % 21);
+    return {
+      c: HANGUL_INITIAL_LIST[initialIdx] || '',
+      v: HANGUL_MEDIAL_LIST[medialIdx] || 'a'
+    };
+  }
+  return { c: '', v: 'a' };
+}
+
+class AudioEngine {
+  constructor() {
+    this.muted = false;
+    this.ctx = null;
+    this.koVoice = null;
+    this.noiseBuffer = null;
+    this.voiceAvailable = false;
+    this.initSpeech();
+  }
+
+  initSpeech() {
+    if ('speechSynthesis' in window) {
+      const loadVoices = () => {
+        const voices = window.speechSynthesis.getVoices() || [];
+        this.koVoice = voices.find(v => v.lang === 'ko-KR' || v.lang === 'ko_KR') ||
+                       voices.find(v => v.lang && v.lang.toLowerCase().startsWith('ko')) || null;
+        this.voiceAvailable = !!this.koVoice;
+      };
+      loadVoices();
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+  }
+
+  ensureContext() {
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) this.ctx = new AudioCtx();
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  }
+
+  getNoiseBuffer() {
+    if (this.noiseBuffer) return this.noiseBuffer;
+    if (!this.ctx) return null;
+    const bufferSize = Math.floor(this.ctx.sampleRate * 0.4);
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+    this.noiseBuffer = buffer;
+    return buffer;
+  }
+
+  speak(text) {
+    if (this.muted || !text) return;
+    this.ensureContext();
+
+    const str = String(text).trim();
+    if (!str) return;
+
+    const cleanKey = str.replace(/[\/\\:*?"<>|]/g, '').trim();
+
+    // Map standalone consonants/vowels to pedagogical syllable
+    let ttsText = str;
+    if (str.length === 1 && HANGUL_TEACHING_MAP[str]) {
+      ttsText = HANGUL_TEACHING_MAP[str];
+    }
+    const cleanAlt = ttsText.replace(/[\/\\:*?"<>|]/g, '').trim();
+
+    // 1. Tier 1: Try playing server-side studio-quality neural human audio (MP3)
+    if (this.currentAudio) {
+      try {
+        this.currentAudio.pause();
+        this.currentAudio.currentTime = 0;
+      } catch(e) {}
+    }
+
+    const tryPlayAudio = (targetKey, onFail) => {
+      if (!targetKey) { onFail(); return; }
+      const audioUrl = 'audio/ko/' + encodeURIComponent(targetKey) + '.mp3';
+      const sound = new Audio(audioUrl);
+      this.currentAudio = sound;
+      let played = false;
+      sound.onplay = () => { played = true; };
+      sound.play().then(() => {
+        // High-fidelity natural human voice played successfully
+      }).catch(() => {
+        if (!played) onFail();
+      });
+      sound.onerror = () => {
+        if (!played) onFail();
+      };
+    };
+
+    tryPlayAudio(cleanKey, () => {
+      if (cleanAlt && cleanAlt !== cleanKey) {
+        tryPlayAudio(cleanAlt, () => {
+          this.fallbackSpeak(str, ttsText);
+        });
+      } else {
+        this.fallbackSpeak(str, ttsText);
+      }
+    });
+  }
+
+  fallbackSpeak(str, ttsText) {
+    if (!this.koVoice && 'speechSynthesis' in window) {
+      const voices = window.speechSynthesis.getVoices() || [];
+      this.koVoice = voices.find(v => v.lang === 'ko-KR' || v.lang === 'ko_KR') ||
+                     voices.find(v => v.lang && v.lang.toLowerCase().startsWith('ko')) || null;
+      this.voiceAvailable = !!this.koVoice;
+    }
+
+    // 2. Tier 2: Web Speech API
+    if (this.koVoice && 'speechSynthesis' in window) {
+      try {
+        if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+        window.speechSynthesis.cancel();
+
+        const utter = new SpeechSynthesisUtterance(ttsText);
+        utter.lang = 'ko-KR';
+        utter.rate = 0.88;
+        utter.pitch = 1.08;
+        utter.voice = this.koVoice;
+        utter.onerror = () => { this.synthesizeHangulFormant(str); };
+        window.speechSynthesis.speak(utter);
+        return;
+      } catch (e) {}
+    }
+
+    // 3. Tier 3: Pure Web Audio Acoustic Formant Synthesizer
+    this.synthesizeHangulFormant(str);
+  }
+
+  // Pure Web Audio Acoustic Formant Speech Synthesizer for Korean
+  synthesizeHangulFormant(text) {
+    this.ensureContext();
+    if (!this.ctx) return;
+
+    const chars = Array.from(text);
+    if (chars.length === 0) return;
+
+    if (chars.length === 1) {
+      const p = getHangulAcousticPhoneme(chars[0]);
+      this.playAcousticPhoneme(p.c, p.v);
+    } else {
+      chars.forEach((ch, idx) => {
+        setTimeout(() => {
+          const p = getHangulAcousticPhoneme(ch);
+          this.playAcousticPhoneme(p.c, p.v);
+        }, idx * 170);
+      });
+    }
+  }
+
+  playAcousticPhoneme(consonant, vowel) {
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    const baseFreq = 220; // Clear friendly tone
+    const dur = 0.28;
+
+    const VOWELS = {
+      a:   { f1: 820, f2: 1350, f3: 2600 },
+      ae:  { f1: 580, f2: 1850, f3: 2600 },
+      ya:  { f1: 820, f2: 1450, f3: 2600, glide: true },
+      yae: { f1: 580, f2: 1950, f3: 2600, glide: true },
+      eo:  { f1: 620, f2: 1050, f3: 2500 },
+      e:   { f1: 520, f2: 1850, f3: 2650 },
+      yeo: { f1: 620, f2: 1200, f3: 2500, glide: true },
+      ye:  { f1: 520, f2: 1900, f3: 2650, glide: true },
+      o:   { f1: 480, f2: 850,  f3: 2450 },
+      wa:  { f1: 820, f2: 1200, f3: 2550, glide: true },
+      wae: { f1: 580, f2: 1750, f3: 2550, glide: true },
+      oe:  { f1: 500, f2: 1600, f3: 2500 },
+      yo:  { f1: 480, f2: 950,  f3: 2450, glide: true },
+      u:   { f1: 350, f2: 950,  f3: 2350 },
+      wo:  { f1: 620, f2: 1000, f3: 2450, glide: true },
+      we:  { f1: 520, f2: 1750, f3: 2600, glide: true },
+      wi:  { f1: 320, f2: 2100, f3: 2800, glide: true },
+      yu:  { f1: 350, f2: 1050, f3: 2350, glide: true },
+      eu:  { f1: 360, f2: 1400, f3: 2450 },
+      ui:  { f1: 360, f2: 2100, f3: 2800, glide: true },
+      i:   { f1: 300, f2: 2300, f3: 3000 }
+    };
+    const v = VOWELS[vowel] || VOWELS.a;
+
+    let leadTime = 0;
+    if (consonant === 's' || consonant === 'ss') {
+      leadTime = 0.08;
+      this.playBandNoise(now, 0.08, 5600, 1.8, consonant === 'ss' ? 0.16 : 0.12);
+    } else if (consonant === 'ch') {
+      leadTime = 0.07;
+      this.playBandNoise(now + 0.015, 0.055, 3600, 2.0, 0.14);
+    } else if (consonant === 'h') {
+      leadTime = 0.06;
+      this.playBandNoise(now, 0.06, 1800, 1.2, 0.08);
+    } else if (consonant === 'k' || consonant === 'kk') {
+      leadTime = 0.03;
+      this.playBandNoise(now + 0.008, 0.022, 2600, 3.5, consonant === 'kk' ? 0.18 : 0.14);
+    } else if (consonant === 't' || consonant === 'tt') {
+      leadTime = 0.025;
+      this.playBandNoise(now + 0.008, 0.02, 3800, 3.5, consonant === 'tt' ? 0.18 : 0.14);
+    } else if (consonant === 'p' || consonant === 'pp') {
+      leadTime = 0.025;
+      this.playBandNoise(now + 0.008, 0.02, 1100, 2.5, consonant === 'pp' ? 0.18 : 0.14);
+    } else if (consonant === 'n' || consonant === 'm') {
+      leadTime = 0.065;
+      this.playHum(now, 0.065, consonant === 'm' ? 220 : 260);
+    } else if (consonant === 'j' || consonant === 'jj') {
+      leadTime = 0.04;
+      this.playHum(now, 0.04, 120);
+      this.playBandNoise(now + 0.01, 0.03, 3000, 2.0, consonant === 'jj' ? 0.12 : 0.08);
+    }
+
+    const vStart = now + leadTime;
+
+    const osc = this.ctx.createOscillator();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(baseFreq, vStart);
+    osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.93, vStart + dur);
+
+    const f1 = this.ctx.createBiquadFilter();
+    f1.type = 'bandpass';
+    f1.frequency.setValueAtTime(v.f1, vStart);
+    f1.Q.value = 5.5;
+
+    const f2 = this.ctx.createBiquadFilter();
+    f2.type = 'bandpass';
+    f2.frequency.setValueAtTime(v.glide ? 2300 : v.f2, vStart);
+    if (v.glide) {
+      f2.frequency.exponentialRampToValueAtTime(v.f2, vStart + 0.08);
+    }
+    f2.Q.value = 6.5;
+
+    const f3 = this.ctx.createBiquadFilter();
+    f3.type = 'bandpass';
+    f3.frequency.setValueAtTime(v.f3, vStart);
+    f3.Q.value = 7.0;
+
+    const g1 = this.ctx.createGain(); g1.gain.value = 1.0;
+    const g2 = this.ctx.createGain(); g2.gain.value = 0.68;
+    const g3 = this.ctx.createGain(); g3.gain.value = 0.30;
+
+    const master = this.ctx.createGain();
+    master.gain.setValueAtTime(0.001, vStart);
+    master.gain.linearRampToValueAtTime(0.20, vStart + 0.025);
+    if (consonant === 'r') {
+      master.gain.setValueAtTime(0.20, vStart + 0.035);
+      master.gain.linearRampToValueAtTime(0.04, vStart + 0.048);
+      master.gain.linearRampToValueAtTime(0.20, vStart + 0.062);
+    }
+    master.gain.setValueAtTime(0.20, vStart + dur - 0.05);
+    master.gain.linearRampToValueAtTime(0.001, vStart + dur);
+
+    osc.connect(f1);
+    osc.connect(f2);
+    osc.connect(f3);
+
+    f1.connect(g1);
+    f2.connect(g2);
+    f3.connect(g3);
+
+    g1.connect(master);
+    g2.connect(master);
+    g3.connect(master);
+
+    master.connect(this.ctx.destination);
+
+    osc.start(vStart);
+    osc.stop(vStart + dur);
+  }
+
+  playBandNoise(startTime, duration, centerFreq, q, volume) {
+    const buf = this.getNoiseBuffer();
+    if (!buf) return;
+    const src = this.ctx.createBufferSource();
+    src.buffer = buf;
+
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(centerFreq, startTime);
+    filter.Q.value = q;
+
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.001, startTime);
+    gain.gain.linearRampToValueAtTime(volume, startTime + 0.008);
+    gain.gain.setValueAtTime(volume, startTime + duration - 0.012);
+    gain.gain.linearRampToValueAtTime(0.001, startTime + duration);
+
+    src.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    src.start(startTime);
+    src.stop(startTime + duration);
+  }
+
+  playHum(startTime, duration, freq) {
+    const osc = this.ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, startTime);
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.001, startTime);
+    gain.gain.linearRampToValueAtTime(0.12, startTime + 0.008);
+    gain.gain.setValueAtTime(0.12, startTime + duration - 0.008);
+    gain.gain.linearRampToValueAtTime(0.001, startTime + duration);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(startTime);
+    osc.stop(startTime + duration);
+  }
+
+  playSfx(type) {
+    if (this.muted) return;
+    this.ensureContext();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    if (type === 'pop') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(540, now);
+      osc.frequency.exponentialRampToValueAtTime(920, now + 0.08);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.08);
+      osc.start(now);
+      osc.stop(now + 0.08);
+    } else if (type === 'success') {
+      const freqs = [523.25, 659.25, 783.99, 1046.50];
+      freqs.forEach((f, idx) => {
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.type = 'triangle';
+        o.frequency.value = f;
+        o.connect(g);
+        g.connect(this.ctx.destination);
+        const t = now + idx * 0.09;
+        g.gain.setValueAtTime(0.15, t);
+        g.gain.linearRampToValueAtTime(0.001, t + 0.25);
+        o.start(t);
+        o.stop(t + 0.25);
+      });
+    } else if (type === 'error') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.exponentialRampToValueAtTime(130, now + 0.2);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.2);
+      osc.start(now);
+      osc.stop(now + 0.2);
+    } else if (type === 'hint') {
+      const freqs = [880, 1174.66, 1318.51];
+      freqs.forEach((f, idx) => {
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.type = 'sine';
+        o.frequency.value = f;
+        o.connect(g);
+        g.connect(this.ctx.destination);
+        const t = now + idx * 0.07;
+        g.gain.setValueAtTime(0.12, t);
+        g.gain.linearRampToValueAtTime(0.001, t + 0.3);
+        o.start(t);
+        o.stop(t + 0.3);
+      });
+    } else if (type === 'fanfare') {
+      const melody = [
+        { f: 523.25, d: 0.14 }, { f: 659.25, d: 0.14 },
+        { f: 783.99, d: 0.14 }, { f: 1046.50, d: 0.42 }
+      ];
+      let t = now;
+      melody.forEach(m => {
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.type = 'triangle';
+        o.frequency.value = m.f;
+        o.connect(g);
+        g.connect(this.ctx.destination);
+        g.gain.setValueAtTime(0.18, t);
+        g.gain.linearRampToValueAtTime(0.001, t + m.d);
+        o.start(t);
+        o.stop(t + m.d);
+        t += m.d * 0.85;
+      });
+    }
+  }
+}
+
+const audio = new AudioEngine();
+
+function toggleSound() {
+  audio.muted = !audio.muted;
+  const btn = document.getElementById('btn-sound');
+  if (btn) btn.innerText = audio.muted ? '🔇' : '🔊';
+}
+
+/* ==========================================================
+   4. RIGOROUS SUDOKU GENERATOR (FOR FREE MODE & VALIDATION)
+   ========================================================== */
+class SudokuGenerator {
+  static countSolutions(grid, n, br, bc, limit = 2) {
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        if (grid[r][c] === 0) {
+          let count = 0;
+          for (let num = 1; num <= n; num++) {
+            if (this.isValid(grid, n, br, bc, r, c, num)) {
+              grid[r][c] = num;
+              count += this.countSolutions(grid, n, br, bc, limit - count);
+              grid[r][c] = 0;
+              if (count >= limit) return count;
+            }
+          }
+          return count;
+        }
+      }
+    }
+    return 1;
+  }
+
+  static isValid(grid, n, br, bc, r, c, num) {
+    for (let i = 0; i < n; i++) {
+      if (grid[r][i] === num || grid[i][c] === num) return false;
+    }
+    const startR = Math.floor(r / br) * br;
+    const startC = Math.floor(c / bc) * bc;
+    for (let i = 0; i < br; i++) {
+      for (let j = 0; j < bc; j++) {
+        if (grid[startR + i][startC + j] === num) return false;
+      }
+    }
+    return true;
+  }
+
+  static solve(grid, n, br, bc) {
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        if (grid[r][c] === 0) {
+          const nums = this.shuffle([...Array(n).keys()].map(i => i + 1));
+          for (const num of nums) {
+            if (this.isValid(grid, n, br, bc, r, c, num)) {
+              grid[r][c] = num;
+              if (this.solve(grid, n, br, bc)) return true;
+              grid[r][c] = 0;
+            }
+          }
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  static shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  static generate(n, br, bc, cluesCount) {
+    const grid = Array.from({ length: n }, () => Array(n).fill(0));
+    this.solve(grid, n, br, bc);
+    const full = grid.map(row => [...row]);
+
+    const positions = [];
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        positions.push({ r, c });
+      }
+    }
+    this.shuffle(positions);
+
+    const puzzle = full.map(row => [...row]);
+    let currentClues = n * n;
+
+    for (const pos of positions) {
+      if (currentClues <= cluesCount) break;
+      const backup = puzzle[pos.r][pos.c];
+      puzzle[pos.r][pos.c] = 0;
+
+      const copy = puzzle.map(row => [...row]);
+      if (this.countSolutions(copy, n, br, bc, 2) === 1) {
+        currentClues--;
+      } else {
+        puzzle[pos.r][pos.c] = backup;
+      }
+    }
+
+    return { puzzle, solution: full };
+  }
+}
+
+/* ==========================================================
+   5. SUDOKU GAME ENGINE
+   ========================================================== */
+class SudokuGame {
+  constructor() {
+    this.currentStage = null;
+    this.order = 4;
+    this.boxR = 2;
+    this.boxC = 2;
+    this.symbols = [];
+    this.ruby = [];
+    this.fixed = [];
+    this.board = [];
+    this.notes = [];
+    this.history = [];
+    this.selectedCell = null;
+    this.pencilMode = false;
+    this.timer = 0;
+    this.timerInterval = null;
+    this.isFreeMode = false;
+  }
+
+  loadStage(stage) {
+    this.currentStage = stage;
+    this.isFreeMode = false;
+    this.order = stage.order;
+    this.boxR = stage.boxR;
+    this.boxC = stage.boxC;
+    this.symbols = [...stage.symbols];
+    this.ruby = [...stage.ruby];
+    this.fixed = stage.fixed.map(row => [...row]);
+    this.board = stage.fixed.map(row => [...row]);
+    this.notes = Array.from({ length: this.order }, () =>
+      Array.from({ length: this.order }, () => new Set())
+    );
+    this.history = [];
+    this.selectedCell = null;
+    this.pencilMode = false;
+
+    this.startTimer();
+    this.renderUI();
+  }
+
+  loadFreeMode(order = 4) {
+    this.isFreeMode = true;
+    this.order = order;
+    this.boxR = order === 4 ? 2 : (order === 6 ? 2 : 3);
+    this.boxC = order === 4 ? 2 : (order === 6 ? 3 : 3);
+
+    // Pick symbol sets based on order
+    if (order === 4) {
+      const candidates = [
+        { sym: ['ㅏ', 'ㅓ', 'ㅗ', 'ㅜ'], rub: ['a', 'eo', 'o', 'u'] },
+        { sym: ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ'], rub: ['g/k', 'n', 'd/t', 'r/l'] },
+        { sym: ['가', '나', '다', '라'], rub: ['ga', 'na', 'da', 'ra'] },
+        { sym: ['ㅁ', 'ㅂ', 'ㅅ', 'ㅇ'], rub: ['m', 'b/p', 's', 'ng'] }
+      ];
+      const pick = candidates[Math.floor(Math.random() * candidates.length)];
+      this.symbols = pick.sym;
+      this.ruby = pick.rub;
+    } else if (order === 6) {
+      const candidates = [
+        { sym: ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ'], rub: ['g', 'n', 'd', 'r', 'm', 'b'] },
+        { sym: ['ㅏ', 'ㅑ', 'ㅓ', 'ㅕ', 'ㅗ', 'ㅜ'], rub: ['a', 'ya', 'eo', 'yeo', 'o', 'u'] },
+        { sym: ['가', '거', '고', '구', '그', '기'], rub: ['ga', 'geo', 'go', 'gu', 'geu', 'gi'] }
+      ];
+      const pick = candidates[Math.floor(Math.random() * candidates.length)];
+      this.symbols = pick.sym;
+      this.ruby = pick.rub;
+    } else {
+      this.symbols = ['한', '국', '중', '학', '생', '시', '간', '문', '化'];
+      this.ruby = ['韩', '国', '中', '学', '生', '时', '间', '文', '化'];
+    }
+
+    const clues = order === 4 ? 6 : (order === 6 ? 14 : 32);
+    const gen = SudokuGenerator.generate(this.order, this.boxR, this.boxC, clues);
+
+    this.currentStage = {
+      id: 999,
+      title: `自由生成模式 (${this.order}×${this.order})`,
+      order: this.order
+    };
+    this.fixed = gen.puzzle.map(row => [...row]);
+    this.board = gen.puzzle.map(row => [...row]);
+    this.notes = Array.from({ length: this.order }, () =>
+      Array.from({ length: this.order }, () => new Set())
+    );
+    this.history = [];
+    this.selectedCell = null;
+    this.pencilMode = false;
+
+    this.startTimer();
+    this.renderUI();
+  }
+
+  startTimer() {
+    clearInterval(this.timerInterval);
+    this.timer = 0;
+    this.updateTimerDisplay();
+    this.timerInterval = setInterval(() => {
+      this.timer++;
+      this.updateTimerDisplay();
+    }, 1000);
+  }
+
+  stopTimer() {
+    clearInterval(this.timerInterval);
+  }
+
+  updateTimerDisplay() {
+    const el = document.getElementById('game-timer');
+    if (!el) return;
+    const m = Math.floor(this.timer / 60).toString().padStart(2, '0');
+    const s = (this.timer % 60).toString().padStart(2, '0');
+    el.innerText = `${m}:${s}`;
+  }
+
+  renderUI() {
+    document.getElementById('game-stage-title').innerText = this.currentStage.title;
+
+    // Grid Container
+    const gridEl = document.getElementById('sudoku-grid');
+    gridEl.className = `sudoku-grid order-${this.order}`;
+    gridEl.innerHTML = '';
+
+    for (let r = 0; r < this.order; r++) {
+      for (let c = 0; c < this.order; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'grid-cell';
+        cell.dataset.row = r;
+        cell.dataset.col = c;
+        cell.onclick = () => this.selectCell(r, c);
+
+        const val = this.board[r][c];
+        if (this.fixed[r][c] !== 0) {
+          cell.classList.add('fixed');
+        } else if (val !== 0) {
+          cell.classList.add('user-filled');
+        }
+
+        if (val !== 0) {
+          const charSpan = document.createElement('div');
+          charSpan.className = 'cell-char';
+          charSpan.innerText = this.symbols[val - 1];
+          cell.appendChild(charSpan);
+
+          if (this.order <= 6) {
+            const rubySpan = document.createElement('div');
+            rubySpan.className = 'cell-ruby';
+            rubySpan.innerText = this.ruby[val - 1];
+            cell.appendChild(rubySpan);
+          }
+        } else {
+          // Render pencil notes
+          const notesSet = this.notes[r][c];
+          if (notesSet.size > 0) {
+            const notesGrid = document.createElement('div');
+            notesGrid.className = 'cell-notes-grid';
+            for (let n = 1; n <= this.order; n++) {
+              const noteItem = document.createElement('div');
+              noteItem.className = 'cell-note';
+              noteItem.innerText = notesSet.has(n) ? this.symbols[n - 1] : '';
+              notesGrid.appendChild(noteItem);
+            }
+            cell.appendChild(notesGrid);
+          }
+        }
+
+        gridEl.appendChild(cell);
+      }
+    }
+
+    // Keyboard
+    const kbEl = document.getElementById('hangul-keyboard');
+    kbEl.className = `hangul-keyboard order-${this.order}`;
+    kbEl.innerHTML = '';
+
+    this.symbols.forEach((sym, idx) => {
+      const num = idx + 1;
+      const key = document.createElement('button');
+      key.className = 'key-btn';
+      key.onclick = () => this.inputNumber(num);
+
+      const charDiv = document.createElement('div');
+      charDiv.className = 'key-char';
+      charDiv.innerText = sym;
+      key.appendChild(charDiv);
+
+      const rubyDiv = document.createElement('div');
+      rubyDiv.className = 'key-ruby';
+      rubyDiv.innerText = this.ruby[idx];
+      key.appendChild(rubyDiv);
+
+      kbEl.appendChild(key);
+    });
+
+    this.updateHighlighting();
+  }
+
+  selectCell(r, c) {
+    this.selectedCell = { r, c };
+    const val = this.board[r][c];
+    if (val !== 0) {
+      audio.speak(this.symbols[val - 1]);
+    } else {
+      audio.playSfx('pop');
+    }
+    this.updateHighlighting();
+  }
+
+  updateHighlighting() {
+    const gridEl = document.getElementById('sudoku-grid');
+    const cells = gridEl.getElementsByClassName('grid-cell');
+
+    const sel = this.selectedCell;
+    const targetVal = sel ? this.board[sel.r][sel.c] : 0;
+
+    for (const cell of cells) {
+      const r = parseInt(cell.dataset.row, 10);
+      const c = parseInt(cell.dataset.col, 10);
+
+      cell.classList.remove('selected', 'highlight-peer', 'highlight-match', 'conflict');
+
+      if (sel) {
+        if (r === sel.r && c === sel.c) {
+          cell.classList.add('selected');
+        } else if (
+          r === sel.r || c === sel.c ||
+          (Math.floor(r / this.boxR) === Math.floor(sel.r / this.boxR) &&
+           Math.floor(c / this.boxC) === Math.floor(sel.c / this.boxC))
+        ) {
+          cell.classList.add('highlight-peer');
+        }
+
+        if (targetVal !== 0 && this.board[r][c] === targetVal) {
+          cell.classList.add('highlight-match');
+        }
+      }
+
+      // Check conflicts
+      const currentVal = this.board[r][c];
+      if (currentVal !== 0 && this.hasConflict(r, c, currentVal)) {
+        cell.classList.add('conflict');
+      }
+    }
+  }
+
+  hasConflict(r, c, val) {
+    for (let i = 0; i < this.order; i++) {
+      if (i !== c && this.board[r][i] === val) return true;
+      if (i !== r && this.board[i][c] === val) return true;
+    }
+    const startR = Math.floor(r / this.boxR) * this.boxR;
+    const startC = Math.floor(c / this.boxC) * this.boxC;
+    for (let i = 0; i < this.boxR; i++) {
+      for (let j = 0; j < this.boxC; j++) {
+        const nr = startR + i;
+        const nc = startC + j;
+        if ((nr !== r || nc !== c) && this.board[nr][nc] === val) return true;
+      }
+    }
+    return false;
+  }
+
+  inputNumber(num) {
+    if (!this.selectedCell) return;
+    const { r, c } = this.selectedCell;
+    if (this.fixed[r][c] !== 0) return;
+
+    if (this.pencilMode) {
+      const set = this.notes[r][c];
+      if (set.has(num)) set.delete(num);
+      else set.add(num);
+      audio.playSfx('pop');
+      this.renderUI();
+      return;
+    }
+
+    const prev = this.board[r][c];
+    if (prev === num) return;
+
+    this.history.push({
+      r, c, prevVal: prev, newVal: num,
+      prevNotes: new Set(this.notes[r][c])
+    });
+
+    this.board[r][c] = num;
+    this.notes[r][c].clear();
+
+    if (this.hasConflict(r, c, num)) {
+      audio.playSfx('error');
+    } else {
+      audio.speak(this.symbols[num - 1]);
+    }
+
+    this.renderUI();
+    this.checkVictory();
+  }
+
+  erase() {
+    if (!this.selectedCell) return;
+    const { r, c } = this.selectedCell;
+    if (this.fixed[r][c] !== 0) return;
+
+    const prev = this.board[r][c];
+    if (prev === 0 && this.notes[r][c].size === 0) return;
+
+    this.history.push({
+      r, c, prevVal: prev, newVal: 0,
+      prevNotes: new Set(this.notes[r][c])
+    });
+
+    this.board[r][c] = 0;
+    this.notes[r][c].clear();
+    audio.playSfx('pop');
+    this.renderUI();
+  }
+
+  undo() {
+    if (this.history.length === 0) return;
+    const last = this.history.pop();
+    this.board[last.r][last.c] = last.prevVal;
+    this.notes[last.r][last.c] = last.prevNotes;
+    this.selectedCell = { r: last.r, c: last.c };
+    audio.playSfx('pop');
+    this.renderUI();
+  }
+
+  hint() {
+    // Find an empty or conflicting cell
+    const emptyCells = [];
+    for (let r = 0; r < this.order; r++) {
+      for (let c = 0; c < this.order; c++) {
+        if (this.fixed[r][c] === 0) {
+          if (this.board[r][c] === 0 || this.hasConflict(r, c, this.board[r][c])) {
+            emptyCells.push({ r, c });
+          }
+        }
+      }
+    }
+    if (emptyCells.length === 0) return;
+
+    const target = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+    const copy = this.board.map(row => [...row]);
+    copy[target.r][target.c] = 0;
+
+    // Use solver to find correct answer
+    const solved = copy.map(row => [...row]);
+    if (SudokuGenerator.solve(solved, this.order, this.boxR, this.boxC)) {
+      const correctNum = solved[target.r][target.c];
+      this.selectedCell = target;
+      this.inputNumber(correctNum);
+      audio.playSfx('hint');
+    }
+  }
+
+  checkVictory() {
+    for (let r = 0; r < this.order; r++) {
+      for (let c = 0; c < this.order; c++) {
+        if (this.board[r][c] === 0) return;
+        if (this.hasConflict(r, c, this.board[r][c])) return;
+      }
+    }
+
+    // Victory!
+    this.stopTimer();
+    audio.playSfx('fanfare');
+    launchConfetti();
+    document.getElementById('victory-modal').classList.add('active');
+  }
+}
+
+const sudoku = new SudokuGame();
+
+function togglePencilMode() {
+  sudoku.pencilMode = !sudoku.pencilMode;
+  const btn = document.getElementById('btn-pencil');
+  if (btn) btn.classList.toggle('active', sudoku.pencilMode);
+}
+
+function eraseCell() { sudoku.erase(); }
+function undoMove() { sudoku.undo(); }
+function giveHint() { sudoku.hint(); }
+
+function replayCurrentCellSound() {
+  if (sudoku.selectedCell) {
+    const { r, c } = sudoku.selectedCell;
+    const val = sudoku.board[r][c];
+    if (val !== 0) {
+      audio.speak(sudoku.symbols[val - 1]);
+    }
+  }
+}
+
+function closeVictoryModal() {
+  document.getElementById('victory-modal').classList.remove('active');
+  switchView('adventure');
+}
+
+function nextStage() {
+  document.getElementById('victory-modal').classList.remove('active');
+  if (sudoku.isFreeMode) {
+    sudoku.loadFreeMode(sudoku.order);
+  } else {
+    const nextId = sudoku.currentStage.id + 1;
+    const nextStg = STAGES_DATA.find(s => s.id === nextId);
+    if (nextStg) {
+      playStage(nextId);
+    } else {
+      switchView('adventure');
+    }
+  }
+}
+
+function exitGame() {
+  sudoku.stopTimer();
+  switchView('adventure');
+}
+
+/* ==========================================================
+   6. STAGE SELECTOR & TIER TABS
+   ========================================================== */
+let currentTier = 1;
+
+function selectTier(tier) {
+  currentTier = tier;
+  const btns = document.querySelectorAll('.tier-btn');
+  btns.forEach((btn, idx) => {
+    btn.classList.toggle('active', idx + 1 === tier);
+  });
+  renderStagesGrid();
+}
+
+function renderStagesGrid() {
+  const container = document.getElementById('stages-grid');
+  container.innerHTML = '';
+
+  const filtered = STAGES_DATA.filter(s => s.tier === currentTier);
+  filtered.forEach(stg => {
+    const card = document.createElement('div');
+    card.className = 'stage-card';
+    card.onclick = () => playStage(stg.id);
+
+    const hdr = document.createElement('div');
+    hdr.className = 'stage-header';
+
+    const numSpan = document.createElement('span');
+    numSpan.className = 'stage-number';
+    numSpan.innerText = `第 ${stg.id} 关`;
+    hdr.appendChild(numSpan);
+
+    const starsSpan = document.createElement('span');
+    starsSpan.className = 'stage-stars';
+    starsSpan.innerText = '⭐'.repeat(stg.tier);
+    hdr.appendChild(starsSpan);
+    card.appendChild(hdr);
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'stage-name';
+    nameDiv.innerText = stg.title.split(': ')[1] || stg.title;
+    card.appendChild(nameDiv);
+
+    const subDiv = document.createElement('div');
+    subDiv.className = 'stage-sub';
+    subDiv.innerText = stg.sub;
+    card.appendChild(subDiv);
+
+    const symRow = document.createElement('div');
+    symRow.className = 'stage-symbols-row';
+    stg.symbols.slice(0, 6).forEach(sym => {
+      const tag = document.createElement('span');
+      tag.className = 'symbol-tag';
+      tag.innerText = sym;
+      symRow.appendChild(tag);
+    });
+    if (stg.symbols.length > 6) {
+      const more = document.createElement('span');
+      more.className = 'symbol-tag';
+      more.innerText = '...';
+      symRow.appendChild(more);
+    }
+    card.appendChild(symRow);
+
+    container.appendChild(card);
+  });
+}
+
+function playStage(stageId) {
+  const stg = STAGES_DATA.find(s => s.id === stageId);
+  if (stg) {
+    switchView('game');
+    sudoku.loadStage(stg);
+  }
+}
+
+function startFreeMode() {
+  switchView('game');
+  sudoku.loadFreeMode(4);
+}
+
+/* ==========================================================
+   7. HANGUL ENCYCLOPEDIA (CARDS & BANCHEOLPYO MATRIX)
+   ========================================================== */
+let currentFilter = 'all';
+let currentChartView = 'cards';
+let detailCharObj = null;
+
+function filterChart(cat) {
+  currentFilter = cat;
+  const pills = document.querySelectorAll('.filter-pill');
+  pills.forEach(p => p.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  renderChartCards();
+}
+
+function setChartViewMode(mode) {
+  currentChartView = mode;
+  document.getElementById('btn-view-cards').classList.toggle('active', mode === 'cards');
+  document.getElementById('btn-view-matrix').classList.toggle('active', mode === 'matrix');
+
+  const cardsCont = document.getElementById('chart-cards-container');
+  const matCont = document.getElementById('matrix-container');
+
+  if (mode === 'cards') {
+    cardsCont.style.display = 'grid';
+    matCont.style.display = 'none';
+  } else {
+    cardsCont.style.display = 'none';
+    matCont.style.display = 'block';
+    renderMatrixTable();
+  }
+}
+
+function renderChartCards() {
+  const container = document.getElementById('chart-cards-container');
+  container.innerHTML = '';
+
+  let list = [];
+  if (currentFilter === 'all') {
+    list = [...BASIC_CONSONANTS, ...TENSE_CONSONANTS, ...BASIC_VOWELS, ...COMPOUND_VOWELS, ...BATCHIM_SOUNDS];
+  } else if (currentFilter === 'basic_c') {
+    list = BASIC_CONSONANTS;
+  } else if (currentFilter === 'tense_c') {
+    list = TENSE_CONSONANTS;
+  } else if (currentFilter === 'basic_v') {
+    list = BASIC_VOWELS;
+  } else if (currentFilter === 'compound_v') {
+    list = COMPOUND_VOWELS;
+  } else if (currentFilter === 'batchim') {
+    list = BATCHIM_SOUNDS;
+  } else if (currentFilter === 'sino') {
+    renderSinoKoreanCards(container);
+    return;
+  }
+
+  list.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'hangul-card';
+    card.onclick = () => openDetailModal(item);
+
+    const spk = document.createElement('span');
+    spk.className = 'speaker-tag';
+    spk.innerText = '🔊';
+    card.appendChild(spk);
+
+    const charDiv = document.createElement('div');
+    charDiv.className = 'card-letter';
+    charDiv.innerText = item.char;
+    card.appendChild(charDiv);
+
+    const rubyDiv = document.createElement('div');
+    rubyDiv.className = 'card-pinyin';
+    rubyDiv.innerText = item.pinyin;
+    card.appendChild(rubyDiv);
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'card-name';
+    nameDiv.innerText = item.name.split(' (')[0];
+    card.appendChild(nameDiv);
+
+    if (item.vocab) {
+      const vDiv = document.createElement('div');
+      vDiv.className = 'card-vocab';
+      vDiv.innerText = `${item.vocab.icon} ${item.vocab.kr}`;
+      card.appendChild(vDiv);
+    }
+
+    container.appendChild(card);
+  });
+}
+
+function renderSinoKoreanCards(container) {
+  SINO_KOREAN_WORDS.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'hangul-card';
+    card.style.background = '#FFFBEB';
+    card.style.borderColor = '#FCD34D';
+    card.onclick = () => {
+      audio.speak(item.kr);
+    };
+
+    const spk = document.createElement('span');
+    spk.className = 'speaker-tag';
+    spk.innerText = '🔊';
+    card.appendChild(spk);
+
+    const charDiv = document.createElement('div');
+    charDiv.className = 'card-letter';
+    charDiv.innerText = item.kr;
+    card.appendChild(charDiv);
+
+    const pinyinDiv = document.createElement('div');
+    pinyinDiv.className = 'card-pinyin';
+    pinyinDiv.innerText = item.pinyin;
+    card.appendChild(pinyinDiv);
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'card-name';
+    nameDiv.style.fontWeight = '900';
+    nameDiv.style.color = '#B45309';
+    nameDiv.innerText = `同源汉字: ${item.hanzi}`;
+    card.appendChild(nameDiv);
+
+    const vDiv = document.createElement('div');
+    vDiv.className = 'card-vocab';
+    vDiv.innerText = `${item.icon} ${item.cn}`;
+    card.appendChild(vDiv);
+
+    container.appendChild(card);
+  });
+}
+
+function renderMatrixTable() {
+  const table = document.getElementById('matrix-table');
+  table.innerHTML = '';
+
+  const cList = ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅅ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+  const vList = ['ㅏ', 'ㅑ', 'ㅓ', 'ㅕ', 'ㅗ', 'ㅛ', 'ㅜ', 'ㅠ', 'ㅡ', 'ㅣ'];
+
+  const thead = document.createElement('thead');
+  const trH = document.createElement('tr');
+  const th0 = document.createElement('th');
+  th0.innerText = '辅\\元';
+  trH.appendChild(th0);
+
+  vList.forEach(v => {
+    const th = document.createElement('th');
+    th.innerText = v;
+    trH.appendChild(th);
+  });
+  thead.appendChild(trH);
+  table.appendChild(thead);
+
+  const tbody = document.createElement('tbody');
+  cList.forEach((c, cIdx) => {
+    const tr = document.createElement('tr');
+    const thRow = document.createElement('th');
+    thRow.innerText = c;
+    tr.appendChild(thRow);
+
+    vList.forEach((v, vIdx) => {
+      const td = document.createElement('td');
+      // Calculate Hangul Syllable Unicode
+      const code = 0xAC00 + (cIdx * 21 * 28) + (vIdx * 28);
+      const syl = String.fromCharCode(code);
+      td.innerText = syl;
+      td.title = `${c} + ${v} = ${syl}`;
+      td.onclick = () => {
+        audio.speak(syl);
+      };
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+}
+
+function openDetailModal(item) {
+  detailCharObj = item;
+  document.getElementById('modal-char').innerText = item.char;
+  document.getElementById('modal-title').innerText = item.name;
+  document.getElementById('modal-pinyin').innerText = `拼音对应: ${item.pinyin}`;
+  document.getElementById('modal-body').innerText = item.tip;
+
+  let vocabText = '暂无示例';
+  if (item.vocab) {
+    vocabText = `${item.vocab.icon} ${item.vocab.kr} [${item.vocab.pinyin}] (${item.vocab.cn})`;
+  }
+  if (item.hanzi) {
+    vocabText += ` · 汉字音: ${item.hanzi}`;
+  }
+  document.getElementById('modal-vocab').innerText = vocabText;
+
+  audio.speak(item.char.length === 1 ? item.char : (item.vocab ? item.vocab.kr : item.char));
+  document.getElementById('detail-modal').classList.add('active');
+}
+
+function speakDetailChar() {
+  if (detailCharObj) {
+    audio.speak(detailCharObj.char.length === 1 ? detailCharObj.char : (detailCharObj.vocab ? detailCharObj.vocab.kr : detailCharObj.char));
+  }
+}
+
+function closeDetailModal() {
+  document.getElementById('detail-modal').classList.remove('active');
+}
+
+/* ==========================================================
+   8. SYLLABLE BUILDER (积木造字实验室)
+   ========================================================== */
+const CHOSEONG_LIST = [
+  'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ',
+  'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'
+];
+
+const JUNGSEONG_LIST = [
+  'ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ',
+  'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ'
+];
+
+const JONGSEONG_LIST = [
+  '', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ',
+  'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ',
+  'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'
+];
+
+const PRESET_WORDS = [
+  { kr: '중국', cn: '中国', pinyin: 'jung-guk', c: 12, v: 13, b: 21 }, // 중
+  { kr: '한국', cn: '韩国', pinyin: 'han-guk', c: 18, v: 0, b: 4 },    // 한
+  { kr: '도서관', cn: '图书馆', pinyin: 'do-seo-gwan', c: 3, v: 8, b: 0 }, // 도
+  { kr: '학생', cn: '学生', pinyin: 'hak-saeng', c: 18, v: 0, b: 1 },  // 학
+  { kr: '시간', cn: '时间', pinyin: 'si-gan', c: 9, v: 20, b: 0 },    // 시
+  { kr: '친구', cn: '朋友', pinyin: 'chin-gu', c: 14, v: 20, b: 4 },   // 친
+  { kr: '사랑', cn: '爱', pinyin: 'sa-rang', c: 9, v: 0, b: 0 },      // 사
+  { kr: '행복', cn: '幸福', pinyin: 'haeng-bok', c: 18, v: 1, b: 21 },// 행
+  { kr: '안녕', cn: '你好', pinyin: 'an-nyeong', c: 11, v: 0, b: 4 },  // 안
+  { kr: '감사', cn: '谢谢', pinyin: 'gam-sa', c: 0, v: 0, b: 16 },    // 감
+  { kr: '우유', cn: '牛奶', pinyin: 'u-yu', c: 11, v: 13, b: 0 },     // 우
+  { kr: '수박', cn: '西瓜', pinyin: 'su-bak', c: 9, v: 13, b: 0 }     // 수
+];
+
+let selectedC = 0; // 'ㄱ'
+let selectedV = 0; // 'ㅏ'
+let selectedB = 0; // '' (None)
+
+function initBuilder() {
+  renderBuilderPalettes();
+  renderPresetWords();
+  updateAssembly();
+}
+
+function renderPresetWords() {
+  const scroll = document.getElementById('presets-scroll');
+  scroll.innerHTML = '';
+
+  PRESET_WORDS.forEach(word => {
+    const pill = document.createElement('div');
+    pill.className = 'preset-pill';
+    pill.innerHTML = `<span>${word.kr}</span><span style="color: #6B7280; font-size: 10px;">${word.cn}</span>`;
+    pill.onclick = () => {
+      selectedC = word.c;
+      selectedV = word.v;
+      selectedB = word.b;
+      renderBuilderPalettes();
+      updateAssembly();
+      audio.speak(word.kr);
+    };
+    scroll.appendChild(pill);
+  });
+}
+
+function renderBuilderPalettes() {
+  // Consonants
+  const cGrid = document.getElementById('palette-consonants');
+  cGrid.innerHTML = '';
+  CHOSEONG_LIST.forEach((c, idx) => {
+    const item = document.createElement('div');
+    item.className = `palette-item ${idx === selectedC ? 'active' : ''}`;
+    item.onclick = () => {
+      selectedC = idx;
+      renderBuilderPalettes();
+      updateAssembly();
+      audio.playSfx('pop');
+    };
+    item.innerHTML = `<div>${c}</div>`;
+    cGrid.appendChild(item);
+  });
+
+  // Vowels
+  const vGrid = document.getElementById('palette-vowels');
+  vGrid.innerHTML = '';
+  JUNGSEONG_LIST.forEach((v, idx) => {
+    const item = document.createElement('div');
+    item.className = `palette-item ${idx === selectedV ? 'active' : ''}`;
+    item.onclick = () => {
+      selectedV = idx;
+      renderBuilderPalettes();
+      updateAssembly();
+      audio.playSfx('pop');
+    };
+    item.innerHTML = `<div>${v}</div>`;
+    vGrid.appendChild(item);
+  });
+
+  // Batchim
+  const bGrid = document.getElementById('palette-batchim');
+  bGrid.innerHTML = '';
+  JONGSEONG_LIST.forEach((b, idx) => {
+    const item = document.createElement('div');
+    item.className = `palette-item ${idx === selectedB ? 'active' : ''}`;
+    item.onclick = () => {
+      selectedB = idx;
+      renderBuilderPalettes();
+      updateAssembly();
+      audio.playSfx('pop');
+    };
+    item.innerHTML = `<div>${b === '' ? '无' : b}</div>`;
+    bGrid.appendChild(item);
+  });
+}
+
+function updateAssembly() {
+  const c = CHOSEONG_LIST[selectedC];
+  const v = JUNGSEONG_LIST[selectedV];
+  const b = JONGSEONG_LIST[selectedB];
+
+  document.getElementById('eq-c').innerText = c;
+  document.getElementById('eq-v').innerText = v;
+  document.getElementById('eq-b').innerText = b === '' ? '无收音' : b;
+
+  // Compute syllable code
+  const code = 0xAC00 + (selectedC * 21 * 28) + (selectedV * 28) + selectedB;
+  const syl = String.fromCharCode(code);
+
+  document.getElementById('builder-char').innerText = syl;
+
+  // Approximate pinyin & hanzi reference
+  const pinyinApprox = getPinyinApproximation(selectedC, selectedV, selectedB);
+  document.getElementById('builder-pinyin').innerText = pinyinApprox;
+
+  const matchedPreset = PRESET_WORDS.find(w => w.kr.startsWith(syl));
+  if (matchedPreset) {
+    document.getElementById('builder-hanzi').innerText = `经典示例: ${matchedPreset.kr} (${matchedPreset.cn})`;
+  } else {
+    document.getElementById('builder-hanzi').innerText = `积木造字公式: 初声(${c}) + 中声(${v}) + 终声(${b || '无'})`;
+  }
+}
+
+function getPinyinApproximation(cIdx, vIdx, bIdx) {
+  const cPinyin = ['g', 'gg', 'n', 'd', 'dd', 'r', 'm', 'b', 'bb', 's', 'ss', '', 'j', 'jj', 'ch', 'k', 't', 'p', 'h'];
+  const vPinyin = ['a', 'ae', 'ya', 'yae', 'eo', 'e', 'yeo', 'ye', 'o', 'wa', 'wae', 'oe', 'yo', 'u', 'wo', 'we', 'wi', 'yu', 'eu', 'ui', 'i'];
+  const bPinyin = ['', 'k', 'k', 'k', 'n', 'n', 'n', 't', 'l', 'k', 'm', 'p', 'l', 'l', 'p', 'l', 'm', 'p', 'p', 't', 't', 'ng', 't', 't', 'k', 't', 'p', 't'];
+
+  let res = (cPinyin[cIdx] || '') + (vPinyin[vIdx] || '') + (bPinyin[bIdx] || '');
+  if (res === '') res = 'a';
+  return res;
+}
+
+function speakBuilderChar() {
+  const char = document.getElementById('builder-char').innerText;
+  audio.speak(char);
+}
+
+/* ==========================================================
+   9. LISTENING QUIZ (耳力大作战)
+   ========================================================== */
+let quizStreak = 0;
+let quizScore = 0;
+let currentQuizQuestion = null;
+
+const QUIZ_BANK = [
+  ...BASIC_CONSONANTS.map(c => ({ char: c.char, pinyin: c.pinyin, name: c.name.split(' (')[0], type: '辅音' })),
+  ...BASIC_VOWELS.map(v => ({ char: v.char, pinyin: v.pinyin, name: v.name.split(' (')[0], type: '元音' })),
+  ...SINO_KOREAN_WORDS.map(w => ({ char: w.kr, pinyin: w.pinyin, name: w.cn, type: '汉字词' })),
+  { char: '가', pinyin: 'ga', name: 'ga音节', type: '音节' },
+  { char: '나', pinyin: 'na', name: 'na音节', type: '音节' },
+  { char: '다', pinyin: 'da', name: 'da音节', type: '音节' },
+  { char: '마', pinyin: 'ma', name: 'ma音节', type: '音节' },
+  { char: '바', pinyin: 'ba', name: 'ba音节', type: '音节' },
+  { char: '사', pinyin: 'sa', name: 'sa音节', type: '音节' },
+  { char: '고', pinyin: 'go', name: 'go音节', type: '音节' },
+  { char: '노', pinyin: 'no', name: 'no音节', type: '音节' }
+];
+
+function initQuiz() {
+  quizStreak = 0;
+  quizScore = 0;
+  updateQuizHUD();
+  nextQuizQuestion();
+}
+
+function updateQuizHUD() {
+  document.getElementById('quiz-streak').innerText = quizStreak;
+  document.getElementById('quiz-score').innerText = quizScore;
+}
+
+function nextQuizQuestion() {
+  // Pick a random question
+  currentQuizQuestion = QUIZ_BANK[Math.floor(Math.random() * QUIZ_BANK.length)];
+
+  // Generate 4 options
+  const choices = [currentQuizQuestion];
+  while (choices.length < 4) {
+    const r = QUIZ_BANK[Math.floor(Math.random() * QUIZ_BANK.length)];
+    if (!choices.find(c => c.char === r.char)) {
+      choices.push(r);
+    }
+  }
+  // Shuffle
+  for (let i = choices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [choices[i], choices[j]] = [choices[j], choices[i]];
+  }
+
+  // Render choices
+  const container = document.getElementById('quiz-choices');
+  container.innerHTML = '';
+  choices.forEach(ch => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-choice-btn';
+    btn.onclick = () => handleQuizChoice(ch, btn);
+
+    const cSpan = document.createElement('div');
+    cSpan.className = 'choice-char';
+    cSpan.innerText = ch.char;
+    btn.appendChild(cSpan);
+
+    const pSpan = document.createElement('div');
+    pSpan.className = 'choice-pinyin';
+    pSpan.innerText = ch.pinyin;
+    btn.appendChild(pSpan);
+
+    const mSpan = document.createElement('div');
+    mSpan.className = 'choice-meaning';
+    mSpan.innerText = ch.name;
+    btn.appendChild(mSpan);
+
+    container.appendChild(btn);
+  });
+
+  // Automatically play voice
+  setTimeout(() => {
+    audio.speak(currentQuizQuestion.char);
+  }, 200);
+}
+
+function replayQuizAudio() {
+  if (currentQuizQuestion) {
+    audio.speak(currentQuizQuestion.char);
+  }
+}
+
+function handleQuizChoice(choice, btnElement) {
+  if (!currentQuizQuestion) return;
+
+  if (choice.char === currentQuizQuestion.char) {
+    // Correct!
+    btnElement.style.background = '#ECFDF5';
+    btnElement.style.borderColor = '#10B981';
+    audio.playSfx('success');
+    quizStreak++;
+    quizScore += 10 + quizStreak * 2;
+    updateQuizHUD();
+
+    setTimeout(() => {
+      nextQuizQuestion();
+    }, 900);
+  } else {
+    // Wrong
+    btnElement.style.background = '#FEE2E2';
+    btnElement.style.borderColor = '#EF4444';
+    audio.playSfx('error');
+    quizStreak = 0;
+    updateQuizHUD();
+  }
+}
+
+/* ==========================================================
+   10. VIEW SWITCHING & CONFETTI
+   ========================================================== */
+function switchView(viewName) {
+  const views = ['adventure', 'game', 'chart', 'builder', 'quiz'];
+  views.forEach(v => {
+    const el = document.getElementById(`view-${v}`);
+    if (el) el.classList.toggle('active', v === viewName);
+
+    const tabBtn = document.getElementById(`tab-${v}`);
+    if (tabBtn) tabBtn.classList.toggle('active', v === viewName);
+  });
+
+  if (viewName === 'chart') {
+    renderChartCards();
+  } else if (viewName === 'builder') {
+    initBuilder();
+  } else if (viewName === 'quiz') {
+    initQuiz();
+  }
+}
+
+/* Canvas Confetti */
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const particles = [];
+  const colors = ['#FF5E7E', '#FFB300', '#3B82F6', '#10B981', '#8B5CF6', '#EC4899'];
+
+  for (let i = 0; i < 80; i++) {
+    particles.push({
+      x: canvas.width * 0.5,
+      y: canvas.height * 0.5,
+      vx: (Math.random() - 0.5) * 14,
+      vy: (Math.random() - 0.7) * 14,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      size: Math.random() * 8 + 4,
+      rot: Math.random() * 360,
+      vRot: (Math.random() - 0.5) * 12,
+      opacity: 1
+    });
+  }
+
+  let frame = 0;
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.35; // gravity
+      p.rot += p.vRot;
+      p.opacity -= 0.012;
+
+      if (p.opacity > 0) {
+        alive = true;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rot * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0, p.opacity);
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        ctx.restore();
+      }
+    });
+
+    frame++;
+    if (alive && frame < 180) {
+      requestAnimationFrame(animate);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+// Initial Boot
+window.addEventListener('DOMContentLoaded', () => {
+  renderStagesGrid();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,5311 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>わくわく不等号アドベンチャー - 萌趣不等号小天才 · Futoshiki</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #FFFDF9;
+    --bg-card: #FFFFFF;
+    --primary: #4F46E5;
+    --primary-hover: #4338CA;
+    --primary-light: #EEF2FF;
+    --secondary: #06B6D4;
+    --secondary-light: #ECFEFF;
+    --accent: #F59E0B;
+    --accent-light: #FFFBEB;
+    --success: #10B981;
+    --success-light: #ECFDF5;
+    --error: #EF4444;
+    --error-light: #FEE2E2;
+    --text-main: #1E293B;
+    --text-sub: #64748B;
+    --border-soft: #E2E8F0;
+    --border-bold: #94A3B8;
+    --cell-bg: #FFFFFF;
+    --cell-selected: #FEF08A;
+    --cell-highlight: #F1F5F9;
+    --cell-same: #E0E7FF;
+    --cell-error: #FEE2E2;
+    --shadow-sm: 0 3px 10px rgba(100, 110, 140, 0.07);
+    --shadow-md: 0 8px 20px rgba(100, 110, 140, 0.12);
+    --radius-xl: 24px;
+    --radius-lg: 18px;
+    --radius-md: 14px;
+    --radius-sm: 8px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-family: "M PLUS Rounded 1c", "Outfit", system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 10% 15%, #FEF9C3 0%, #FFFDF9 50%, #E0F2FE 100%);
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    min-height: 100vh;
+  }
+
+  .bg-decor {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.55;
+  }
+  .bg-blob-1 { top: -60px; right: -50px; width: 300px; height: 300px; background: radial-gradient(circle, #E0E7FF 0%, transparent 70%); }
+  .bg-blob-2 { bottom: -80px; left: -60px; width: 340px; height: 340px; background: radial-gradient(circle, #FEF3C7 0%, transparent 70%); }
+
+  #app {
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+    padding: 10px 14px 16px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 0 6px;
+    flex-shrink: 0;
+  }
+  .logo-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .logo-icon {
+    font-size: 26px;
+    animation: bounce 2.2s infinite ease-in-out;
+  }
+  .logo-title {
+    font-size: 17px;
+    font-weight: 900;
+    color: var(--text-main);
+    letter-spacing: -0.5px;
+    display: flex;
+    flex-direction: column;
+  }
+  .logo-title span.sub {
+    font-size: 9px;
+    color: var(--primary);
+    font-weight: 800;
+    letter-spacing: 0.5px;
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .round-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    color: var(--text-main);
+  }
+  .round-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .round-btn:active {
+    transform: translateY(1px);
+  }
+
+  /* Mode Switch Tabs */
+  .mode-tabs {
+    display: flex;
+    background: #EFEFE9;
+    padding: 4px;
+    border-radius: 16px;
+    margin: 4px 0 10px;
+    flex-shrink: 0;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+  }
+  .tab-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 7px 10px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-sub);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .tab-btn.active {
+    background: #FFFFFF;
+    color: var(--primary);
+    box-shadow: 0 3px 10px rgba(79, 70, 229, 0.2);
+    transform: scale(1.02);
+  }
+
+  /* Screen Views */
+  .view {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    animation: fadeIn 0.22s ease-out;
+  }
+  .view.active {
+    display: flex;
+  }
+
+  /* ================== MAP VIEW ================== */
+  .section-banner {
+    background: linear-gradient(135deg, #EEF2FF 0%, #FEF3C7 100%);
+    border: 2px solid #C7D2FE;
+    border-radius: var(--radius-lg);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
+  }
+  .banner-left h2 {
+    font-size: 16px;
+    font-weight: 900;
+    color: #3730A3;
+  }
+  .banner-left p {
+    font-size: 11px;
+    color: #4338CA;
+    margin-top: 2px;
+  }
+  .banner-stars {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #FFFFFF;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #D97706;
+    box-shadow: 0 2px 6px rgba(217, 119, 6, 0.15);
+  }
+
+  .tier-selector {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+  }
+  .tier-pill {
+    flex: 1;
+    border: 2px solid var(--border-soft);
+    background: #FFFFFF;
+    border-radius: 14px;
+    padding: 8px 4px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .tier-pill.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(79, 70, 229, 0.2);
+  }
+  .pill-title {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-main);
+  }
+  .tier-pill.active .pill-title {
+    color: var(--primary);
+  }
+  .pill-sub {
+    font-size: 9px;
+    color: var(--text-sub);
+    margin-top: 2px;
+  }
+
+  .stage-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    padding-bottom: 20px;
+  }
+  .stage-card {
+    background: #FFFFFF;
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 98px;
+  }
+  .stage-card:hover:not(.locked) {
+    transform: translateY(-3px) scale(1.02);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-md);
+  }
+  .stage-card:active:not(.locked) {
+    transform: translateY(0);
+  }
+  .stage-card.locked {
+    background: #F8FAFC;
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+  .stage-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .stage-num {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .stage-stars {
+    font-size: 11px;
+    color: #CBD5E1;
+  }
+  .stage-stars .lit {
+    color: #F59E0B;
+  }
+  .stage-name {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-top: 4px;
+    line-height: 1.25;
+  }
+  .stage-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 10px;
+    color: var(--text-sub);
+    font-weight: 700;
+  }
+  .stage-tag {
+    background: var(--primary-light);
+    color: var(--primary);
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-weight: 800;
+  }
+
+  /* ================== FREE PLAY VIEW ================== */
+  .free-play-card {
+    background: #FFFFFF;
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 18px 16px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 14px;
+  }
+  .free-title {
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--text-main);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .option-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .opt-btn {
+    flex: 1;
+    border: 2px solid var(--border-soft);
+    background: #FAF8F5;
+    border-radius: 14px;
+    padding: 10px 4px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+  .opt-btn.active {
+    border-color: var(--secondary);
+    background: var(--secondary-light);
+    color: #0E7490;
+    box-shadow: 0 4px 10px rgba(6, 182, 212, 0.25);
+  }
+  .start-free-btn {
+    width: 100%;
+    border: none;
+    background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
+    color: #FFFFFF;
+    border-radius: 16px;
+    padding: 13px;
+    font-size: 15px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    box-shadow: 0 5px 16px rgba(79, 70, 229, 0.35);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .start-free-btn:hover {
+    transform: translateY(-2px);
+  }
+  .start-free-btn:active {
+    transform: translateY(1px);
+  }
+
+  /* ================== GAMEPLAY VIEW ================== */
+  .game-header {
+    background: #FFFFFF;
+    border-radius: var(--radius-md);
+    border: 2px solid var(--border-soft);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
+  }
+  .game-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    padding-right: 8px;
+  }
+  .game-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--primary);
+    white-space: nowrap;
+  }
+  .game-subinfo {
+    font-size: 10px;
+    color: var(--text-sub);
+    font-weight: 700;
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .game-stats {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #F8FAFC;
+    border-radius: 10px;
+    padding: 3px 8px;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-main);
+  }
+  .stat-pill.mistakes {
+    color: #EF4444;
+    background: #FEE2E2;
+  }
+
+  /* Theme Switcher Bar */
+  .theme-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #FAF8F5;
+    border-radius: 12px;
+    padding: 4px 8px;
+    margin-bottom: 6px;
+    flex-shrink: 0;
+  }
+  .theme-label {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-sub);
+  }
+  .theme-options {
+    display: flex;
+    gap: 3px;
+  }
+  .theme-opt-btn {
+    border: none;
+    background: transparent;
+    padding: 3px 7px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .theme-opt-btn.active {
+    background: #FFFFFF;
+    color: var(--text-main);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+  }
+
+  /* Mascot speech bubble */
+  .mascot-hint-box {
+    background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+    border: 2px solid #FCD34D;
+    border-radius: 14px;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
+    transition: all 0.25s ease;
+  }
+  .mascot-avatar {
+    font-size: 22px;
+    animation: wiggle 2.2s infinite ease-in-out;
+  }
+  .mascot-text {
+    font-size: 11px;
+    font-weight: 700;
+    color: #78350F;
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  /* The Board Container */
+  .board-container {
+    width: 100%;
+    max-width: min(88vw, 420px, 46vh);
+    aspect-ratio: 1 / 1;
+    background: #FFFFFF;
+    border-radius: var(--radius-xl);
+    border: 3px solid #334155;
+    box-shadow: 0 8px 25px rgba(51, 65, 85, 0.15);
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    margin: 0 auto 6px;
+    flex-shrink: 0;
+  }
+
+  #futoshiki-grid {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    background: #F8FAFC;
+    border-radius: 16px;
+    padding: 4px;
+    box-sizing: border-box;
+  }
+
+  /* Number Cells */
+  .cell {
+    background: #FFFFFF;
+    border: 2px solid var(--border-soft);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    font-weight: 900;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    transition: background 0.12s ease, transform 0.08s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+  }
+  .cell:active {
+    transform: scale(0.95);
+  }
+
+  /* Given / Clue number styling */
+  .cell.given {
+    background: #F1F5F9;
+    color: #0F172A;
+    font-weight: 900;
+  }
+  .cell.given::after {
+    content: "🔒";
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    font-size: 7px;
+    opacity: 0.35;
+  }
+
+  /* Selection & Highlight states */
+  .cell.selected {
+    background: var(--cell-selected) !important;
+    border-color: #EAB308 !important;
+    box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.4) !important;
+    transform: scale(1.02);
+    z-index: 2;
+  }
+  .cell.highlight-axis {
+    background: var(--cell-highlight);
+  }
+  .cell.highlight-same {
+    background: var(--cell-same);
+    border-color: #A5B4FC;
+  }
+  .cell.duplicate-error {
+    background: var(--cell-error) !important;
+    border-color: var(--error) !important;
+    animation: shake 0.35s ease;
+  }
+  .cell.inequality-error {
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.6) !important;
+    border-color: var(--error) !important;
+  }
+
+  /* Scale font based on grid size */
+  .size-4 .cell { font-size: clamp(26px, 6.5vw, 38px); border-radius: 12px; }
+  .size-5 .cell { font-size: clamp(21px, 5.2vw, 30px); border-radius: 10px; }
+  .size-6 .cell { font-size: clamp(17px, 4.2vw, 24px); border-radius: 8px; }
+  .size-7 .cell { font-size: clamp(14px, 3.4vw, 20px); border-radius: 6px; }
+
+  /* Animal & Fruit Badge within cell */
+  .emoji-val {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+  .emoji-lvl-tag {
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--text-sub);
+    position: absolute;
+    bottom: 2px;
+    right: 4px;
+    line-height: 1;
+  }
+
+  /* Pencil Notes Grid */
+  .notes-grid {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    padding: 2px;
+    box-sizing: border-box;
+    pointer-events: none;
+  }
+  .notes-grid-4 { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr); }
+  .notes-grid-5 { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); }
+  .notes-grid-6 { grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); }
+  .notes-grid-7 { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr); }
+  .note-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(7px, 1.8vw, 10px);
+    font-weight: 800;
+    color: #6366F1;
+    line-height: 1;
+  }
+
+  /* Inequality Slots & Pills */
+  .ineq-slot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    pointer-events: none;
+  }
+  .ineq-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    color: #64748B;
+    font-size: clamp(12px, 3vw, 16px);
+    font-weight: 900;
+    transition: all 0.15s ease;
+  }
+  .ineq-pill svg {
+    width: clamp(12px, 3vw, 16px);
+    height: clamp(12px, 3vw, 16px);
+    fill: currentColor;
+  }
+  .ineq-pill.satisfied {
+    color: var(--success);
+    filter: drop-shadow(0 1px 2px rgba(16, 185, 129, 0.3));
+  }
+  .ineq-pill.violated {
+    color: var(--error);
+    animation: ineqPulse 0.6s infinite alternate ease-in-out;
+    filter: drop-shadow(0 0 4px rgba(239, 68, 68, 0.6));
+  }
+  .corner-spacer {
+    pointer-events: none;
+  }
+
+  /* Action Controls Bar */
+  .controls-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-bottom: 6px;
+    flex-shrink: 0;
+  }
+  .action-tool-btn {
+    flex: 1;
+    background: #FFFFFF;
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 6px 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.15s ease;
+    position: relative;
+  }
+  .action-tool-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .action-tool-btn:active {
+    transform: translateY(1px);
+  }
+  .action-tool-btn.active {
+    background: #EEF2FF;
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  .tool-icon {
+    font-size: 16px;
+    line-height: 1;
+  }
+  .tool-label {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-main);
+  }
+  .action-tool-btn.active .tool-label {
+    color: var(--primary);
+  }
+  .hint-count-tag {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--accent);
+    color: #FFFFFF;
+    font-size: 9px;
+    font-weight: 900;
+    border-radius: 10px;
+    padding: 1px 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  }
+
+  /* Numpad */
+  .numpad-grid {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 4px;
+    flex-shrink: 0;
+  }
+  .num-btn {
+    flex: 1;
+    background: #FFFFFF;
+    border: 2px solid var(--border-soft);
+    border-radius: 14px;
+    height: 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--text-main);
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(100, 110, 140, 0.08);
+    transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+  }
+  .num-btn:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+  }
+  .num-btn:active {
+    transform: translateY(1px) scale(0.97);
+  }
+  .num-btn.completed {
+    opacity: 0.35;
+    background: #F1F5F9;
+    cursor: default;
+    border-color: transparent;
+  }
+  .num-btn .sub-icon {
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  /* Modals */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 16px;
+    animation: fadeIn 0.2s ease-out;
+  }
+  .modal-overlay.active {
+    display: flex;
+  }
+  .modal-card {
+    background: #FFFFFF;
+    border-radius: var(--radius-xl);
+    padding: 22px 20px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    position: relative;
+    max-height: 88vh;
+    overflow-y: auto;
+    animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .modal-title {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--text-main);
+    margin-bottom: 6px;
+  }
+  .modal-desc {
+    font-size: 12px;
+    color: var(--text-sub);
+    font-weight: 700;
+    margin-bottom: 14px;
+    line-height: 1.4;
+  }
+
+  /* Rule Tutorial Slides */
+  .rule-slide {
+    background: #F8FAFC;
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    text-align: left;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--primary);
+  }
+  .rule-slide h3 {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--primary);
+    margin-bottom: 4px;
+  }
+  .rule-slide p {
+    font-size: 11px;
+    color: #475569;
+    line-height: 1.4;
+  }
+  .rule-demo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
+    background: #FFFFFF;
+    padding: 8px;
+    border-radius: 8px;
+    font-weight: 900;
+    font-size: 14px;
+  }
+  .demo-chip {
+    padding: 4px 8px;
+    border-radius: 6px;
+    background: #EEF2FF;
+    color: var(--primary);
+  }
+  .demo-sign {
+    color: #EF4444;
+    font-size: 18px;
+  }
+
+  /* Victory Modal Special */
+  .win-stars {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 14px 0;
+  }
+  .star-item {
+    font-size: 38px;
+    filter: grayscale(1);
+    opacity: 0.3;
+    transform: scale(0.8);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .star-item.lit {
+    filter: grayscale(0);
+    opacity: 1;
+    transform: scale(1.1);
+    animation: starPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .win-stats-box {
+    display: flex;
+    background: #F8FAFC;
+    border-radius: var(--radius-md);
+    padding: 10px;
+    margin-bottom: 18px;
+  }
+  .win-stat-item {
+    flex: 1;
+    text-align: center;
+  }
+  .win-stat-item .val {
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--primary);
+  }
+  .win-stat-item .lbl {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-sub);
+    margin-top: 2px;
+  }
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .btn-primary {
+    flex: 2;
+    background: linear-gradient(135deg, #4F46E5 0%, #06B6D4 100%);
+    color: #FFFFFF;
+    border: none;
+    border-radius: 14px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+    transition: all 0.15s ease;
+  }
+  .btn-secondary {
+    flex: 1;
+    background: #F1F5F9;
+    color: var(--text-main);
+    border: 2px solid var(--border-soft);
+    border-radius: 14px;
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .btn-primary:active, .btn-secondary:active {
+    transform: translateY(1px);
+  }
+
+  #confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 200;
+  }
+
+  /* Animations */
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.92); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-8deg); }
+    75% { transform: rotate(8deg); }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(3px); }
+  }
+  @keyframes ineqPulse {
+    from { transform: scale(0.95); opacity: 0.8; }
+    to { transform: scale(1.2); opacity: 1; }
+  }
+  @keyframes starPop {
+    0% { transform: scale(0.5); }
+    60% { transform: scale(1.25); }
+    100% { transform: scale(1.1); }
+  }
+</style>
+</head>
+<body data-theme="numbers">
+  <div class="bg-decor bg-blob-1"></div>
+  <div class="bg-decor bg-blob-2"></div>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <div id="app">
+    <!-- Top Header -->
+    <header class="header">
+      <div class="logo-group" id="logoBtn">
+        <div class="logo-icon">⚖️</div>
+        <div class="logo-title">
+          <span>わくわく不等号アドベンチャー</span>
+          <span class="sub">FUTOSHIKI · 萌趣不等号小天才</span>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <button class="round-btn" id="tutorialBtn" title="ルール教室">📖</button>
+        <button class="round-btn" id="soundBtn" title="音のオン/オフ">🔊</button>
+        <button class="round-btn" id="mapBackBtn" title="マップへ戻る" style="display:none;">🗺️</button>
+      </div>
+    </header>
+
+    <!-- Top Mode Tabs -->
+    <div class="mode-tabs" id="modeTabs">
+      <button class="tab-btn active" data-view="adventureView">
+        <span>🏝️</span> ステージ冒険
+      </button>
+      <button class="tab-btn" data-view="freePlayView">
+        <span>🎯</span> 自由トレーニング
+      </button>
+    </div>
+
+    <!-- ================= 1. ADVENTURE MAP VIEW ================= -->
+    <main id="adventureView" class="view active">
+      <div class="section-banner">
+        <div class="banner-left">
+          <h2>⭐ 不等号アドベンチャーマップ</h2>
+          <p>大小関係「＜」「＞」を推理して島を進もう！</p>
+        </div>
+        <div class="banner-stars">
+          <span>⭐</span>
+          <span id="totalStarsCount">0 / 54</span>
+        </div>
+      </div>
+
+      <!-- Tier selector -->
+      <div class="tier-selector">
+        <div class="tier-pill active" data-tier="1">
+          <div class="pill-title">🐣 4×4 はじめて</div>
+          <div class="pill-sub">低学年・大小くらべ</div>
+        </div>
+        <div class="tier-pill" data-tier="2">
+          <div class="pill-title">🦊 5×5 チャレンジ</div>
+          <div class="pill-sub">中学年・極値ロック</div>
+        </div>
+        <div class="tier-pill" data-tier="3">
+          <div class="pill-title">👑 6×6 マスター</div>
+          <div class="pill-sub">高学年・本格エキスパート</div>
+        </div>
+      </div>
+
+      <div class="stage-grid" id="stageGrid">
+        <!-- Injected via JS -->
+      </div>
+    </main>
+
+    <!-- ================= 2. FREE PLAY CONFIG VIEW ================= -->
+    <main id="freePlayView" class="view">
+      <div class="free-play-card">
+        <div class="free-title">
+          <span>📏</span> マスの大きさをえらぶ
+        </div>
+        <div class="option-row" id="freeSizeOptions">
+          <div class="opt-btn active" data-size="4">
+            <div>4 × 4</div>
+            <small style="font-size:10px; color:#888;">入門・基礎</small>
+          </div>
+          <div class="opt-btn" data-size="5">
+            <div>5 × 5</div>
+            <small style="font-size:10px; color:#888;">ひらめき</small>
+          </div>
+          <div class="opt-btn" data-size="6">
+            <div>6 × 6</div>
+            <small style="font-size:10px; color:#888;">本格マスター</small>
+          </div>
+          <div class="opt-btn" data-size="7">
+            <div>7 × 7</div>
+            <small style="font-size:10px; color:#888;">超難関</small>
+          </div>
+        </div>
+
+        <div class="free-title">
+          <span>⭐</span> 難易度（ヒントの量）
+        </div>
+        <div class="option-row" id="freeDiffOptions">
+          <div class="opt-btn active" data-diff="easy">
+            <div>🌱 やさしい</div>
+            <small style="font-size:10px; color:#888;">手がかり多め</small>
+          </div>
+          <div class="opt-btn" data-diff="medium">
+            <div>🌿 ふつう</div>
+            <small style="font-size:10px; color:#888;">標準バランス</small>
+          </div>
+          <div class="opt-btn" data-diff="hard">
+            <div>🔥 むずかしい</div>
+            <small style="font-size:10px; color:#888;">極少ヒント</small>
+          </div>
+        </div>
+
+        <button class="start-free-btn" id="startFreeBtn">
+          <span>🚀</span> 新しいパズルを生成してスタート！
+        </button>
+      </div>
+    </main>
+
+    <!-- ================= 3. GAMEPLAY VIEW ================= -->
+    <main id="gameplayView" class="view">
+      <div class="game-header">
+        <div class="game-info">
+          <div class="game-badge" id="gameStageBadge">⭐ ステージ 1</div>
+          <div class="game-subinfo" id="gameStageSubinfo">4×4 大小のくらべっこ</div>
+        </div>
+        <div class="game-stats">
+          <div class="stat-pill" title="経過時間">
+            <span>⏱️</span> <span id="timerDisplay">00:00</span>
+          </div>
+          <div class="stat-pill mistakes" title="ミス回数">
+            <span>❌</span> <span id="mistakesDisplay">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme Switch Bar -->
+      <div class="theme-bar">
+        <span class="theme-label">🎨 スタイル切替</span>
+        <div class="theme-options">
+          <button class="theme-opt-btn active" data-theme="numbers">🔢 すうじ</button>
+          <button class="theme-opt-btn" data-theme="animals">🐾 どうぶつ</button>
+          <button class="theme-opt-btn" data-theme="fruits">🍓 フルーツ</button>
+        </div>
+      </div>
+
+      <!-- Mascot Tip Bubble -->
+      <div class="mascot-hint-box" id="mascotBubble">
+        <div class="mascot-avatar" id="mascotIcon">🦉</div>
+        <div class="mascot-text" id="mascotMsg">不等号（＜、＞）の向きに気をつけて、数字をならべてみよう！</div>
+      </div>
+
+      <!-- The Futoshiki Board -->
+      <div class="board-container">
+        <div id="futoshiki-grid" class="size-4">
+          <!-- Cells & Signs injected by JS -->
+        </div>
+      </div>
+
+      <!-- Action Tools Bar -->
+      <div class="controls-bar">
+        <button class="action-tool-btn" id="undoBtn" title="一手戻す">
+          <span class="tool-icon">↩️</span>
+          <span class="tool-label">もどす</span>
+        </button>
+        <button class="action-tool-btn" id="noteModeBtn" title="仮置きメモモード">
+          <span class="tool-icon">✏️</span>
+          <span class="tool-label">メモ</span>
+        </button>
+        <button class="action-tool-btn" id="eraseBtn" title="消去">
+          <span class="tool-icon">🧹</span>
+          <span class="tool-label">けす</span>
+        </button>
+        <button class="action-tool-btn" id="hintBtn" title="スマートヒント">
+          <span class="tool-icon">💡</span>
+          <span class="tool-label">ヒント</span>
+          <span class="hint-count-tag" id="hintCountBadge">3</span>
+        </button>
+        <button class="action-tool-btn" id="restartBtn" title="最初からやり直す">
+          <span class="tool-icon">🔄</span>
+          <span class="tool-label">リセット</span>
+        </button>
+      </div>
+
+      <!-- Number Pad -->
+      <div class="numpad-grid" id="numpadGrid">
+        <!-- Injected via JS based on grid size -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Tutorial Modal -->
+  <div class="modal-overlay" id="tutorialModal">
+    <div class="modal-card">
+      <div class="modal-title">📖 不等号パズル（Futoshiki）のルール</div>
+      <div class="modal-desc">数の大小関係（不等号）をヒントに解き明かす、爽快ロジックパズル！</div>
+
+      <div class="rule-slide">
+        <h3>1. タテ・ヨコに数字を1回ずつ！</h3>
+        <p>同じ行・同じ列には、1〜Nの数字が1回ずつだけ入ります（同じ列に同じ数字は入れません）。</p>
+        <div class="rule-demo">
+          <div class="demo-chip">1</div>
+          <div class="demo-chip">2</div>
+          <div class="demo-chip">3</div>
+          <div class="demo-chip">4</div>
+        </div>
+      </div>
+
+      <div class="rule-slide">
+        <h3>2. 不等号の向きをチェック！</h3>
+        <p>マスとマスの間にある「＜」「＞」「∧」「∨」の向き通りに大小関係を合わせよう！</p>
+        <div class="rule-demo">
+          <div class="demo-chip">2</div>
+          <div class="demo-sign">＜</div>
+          <div class="demo-chip">4</div>
+        </div>
+        <p style="margin-top:6px; font-size:10px; color:#64748B;">
+          • <b>左＜右</b>：右のマスの方が大きい！<br>
+          • <b>左＞右</b>：左のマスの方が大きい！<br>
+          • <b>上 ∧ 下</b>：下のマスの方が大きい！<br>
+          • <b>上 ∨ 下</b>：上のマスの方が大きい！
+        </p>
+      </div>
+
+      <div class="rule-slide">
+        <h3>3. 名探偵の解き方のコツ！</h3>
+        <p>① <b>最大値・最小値ロック</b>：一番大きい数字（4×4なら「4」）は「＜」の左には絶対に入らないよ！<br>
+           ② <b>不等号チェーン</b>：矢印が「A ＜ B ＜ C」とつながっている場所は、小さい順に数字が一気に決まる大チャンス！<br>
+           ③ <b>仮置きメモ</b>：迷ったらメモ（✏️）を使って候補数字を書き込んでおこう！</p>
+      </div>
+
+      <button class="btn-primary" id="closeTutorialBtn" style="width:100%;">わかった！あそぶ！</button>
+    </div>
+  </div>
+
+  <!-- Victory Modal -->
+  <div class="modal-overlay" id="victoryModal">
+    <div class="modal-card">
+      <div style="font-size:42px; margin-bottom:4px;" id="winEmoji">🎉</div>
+      <div class="modal-title" id="winTitle">ステージクリア！</div>
+      <div class="modal-desc" id="winSubtitle">素晴らしい論理的思考力と観察眼です！</div>
+
+      <div class="win-stars" id="winStarsBox">
+        <span class="star-item">⭐</span>
+        <span class="star-item">⭐</span>
+        <span class="star-item">⭐</span>
+      </div>
+
+      <div class="win-stats-box">
+        <div class="win-stat-item">
+          <div class="val" id="winTimeVal">01:23</div>
+          <div class="lbl">クリア時間</div>
+        </div>
+        <div class="win-stat-item">
+          <div class="val" id="winMistakesVal">0</div>
+          <div class="lbl">ミス回数</div>
+        </div>
+        <div class="win-stat-item">
+          <div class="val" id="winHintsVal">0</div>
+          <div class="lbl">ヒント使用</div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" id="winMapBtn">🗺️ マップ</button>
+        <button class="btn-secondary" id="winRetryBtn">🔄 もう一度</button>
+        <button class="btn-primary" id="winNextBtn">次へ進む 🚀</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ================== AUDIO SYNTHESIZER ================== */
+class SoundFX {
+  constructor() {
+    this.ctx = null;
+    this.enabled = true;
+  }
+
+  init() {
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) this.ctx = new AudioCtx();
+    }
+    if (this.ctx && this.ctx.state === "suspended") {
+      this.ctx.resume();
+    }
+  }
+
+  playTone(freq, type = "sine", duration = 0.15, gainVal = 0.15) {
+    if (!this.enabled) return;
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+      gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + duration);
+    } catch(e) {}
+  }
+
+  playClick() { this.playTone(600, "triangle", 0.05, 0.08); }
+
+  playPlaceNumber(num, maxVal) {
+    const scale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25];
+    const freq = scale[(num - 1) % scale.length] || 440;
+    this.playTone(freq, "sine", 0.18, 0.2);
+  }
+
+  playErase() { this.playTone(180, "sawtooth", 0.08, 0.1); }
+
+  playNoteToggle() { this.playTone(784, "sine", 0.04, 0.05); }
+
+  playError() {
+    this.playTone(130, "sawtooth", 0.25, 0.2);
+    setTimeout(() => this.playTone(115, "sawtooth", 0.25, 0.2), 120);
+  }
+
+  playSatisfied() {
+    this.playTone(523.25, "sine", 0.12, 0.15);
+    setTimeout(() => this.playTone(659.25, "sine", 0.18, 0.15), 80);
+  }
+
+  playVictory() {
+    const notes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99];
+    notes.forEach((freq, idx) => {
+      setTimeout(() => this.playTone(freq, "triangle", 0.35, 0.2), idx * 110);
+    });
+  }
+}
+
+const audio = new SoundFX();
+
+/* ================== THEMES & ASSETS ================== */
+const THEMES = {
+  numbers: {
+    name: "すうじ",
+    getDisplay: (v) => v,
+    colors: {
+      1: "#EC4899", 2: "#F97316", 3: "#EAB308", 4: "#10B981", 5: "#06B6D4", 6: "#6366F1", 7: "#8B5CF6"
+    }
+  },
+  animals: {
+    name: "どうぶつ",
+    icons: { 1: "🐹", 2: "🐰", 3: "🐱", 4: "🐶", 5: "🐼", 6: "🐻", 7: "🦁" },
+    names: { 1: "ハムスター", 2: "うさぎ", 3: "ねこ", 4: "いぬ", 5: "パンダ", 6: "くま", 7: "ライオン" },
+    getDisplay: (v) => THEMES.animals.icons[v] || v
+  },
+  fruits: {
+    name: "フルーツ",
+    icons: { 1: "🍒", 2: "🍓", 3: "🥝", 4: "🍎", 5: "🍊", 6: "🍍", 7: "🍉" },
+    names: { 1: "さくらんぼ", 2: "いちご", 3: "キウイ", 4: "りんご", 5: "オレンジ", 6: "パイン", 7: "すいか" },
+    getDisplay: (v) => THEMES.fruits.icons[v] || v
+  }
+};
+
+/* ================== CURATED STAGES DATA (18 STAGES) ================== */
+const STAGES_DATA = [
+  {
+    "id": 1,
+    "size": 4,
+    "title": "はじめての不等号",
+    "sub": "4×4・大小のくらべっこ",
+    "story": "「＜」や「＞」の向きをよく見て、小さい数と大きい数を並べよう！",
+    "givens": [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        2,
+        0
+      ],
+      [
+        4,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        4
+      ]
+    ],
+    "hSigns": [
+      [
+        "",
+        "<",
+        ">"
+      ],
+      [
+        "",
+        ">",
+        "<"
+      ],
+      [
+        "",
+        "",
+        ">"
+      ],
+      [
+        "<",
+        "",
+        "<"
+      ]
+    ],
+    "vSigns": [
+      [
+        "v",
+        "^",
+        "v",
+        "^"
+      ],
+      [
+        "^",
+        "",
+        "^",
+        "v"
+      ],
+      [
+        "",
+        "",
+        "v",
+        "^"
+      ]
+    ],
+    "solution": [
+      [
+        3,
+        2,
+        4,
+        1
+      ],
+      [
+        1,
+        4,
+        2,
+        3
+      ],
+      [
+        4,
+        1,
+        3,
+        2
+      ],
+      [
+        2,
+        3,
+        1,
+        4
+      ]
+    ],
+    "targetTime": 60
+  },
+  {
+    "id": 2,
+    "size": 4,
+    "title": "ちいさなステップ",
+    "sub": "4×4・ならび順のヒント",
+    "story": "矢印が連続しているところを探すと、数字が順番に決まるよ！",
+    "givens": [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        3,
+        4
+      ],
+      [
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        3,
+        0,
+        0,
+        0
+      ]
+    ],
+    "hSigns": [
+      [
+        "<",
+        "<",
+        ""
+      ],
+      [
+        "",
+        "<",
+        ""
+      ],
+      [
+        ">",
+        "<",
+        "<"
+      ],
+      [
+        "<",
+        ">",
+        "<"
+      ]
+    ],
+    "vSigns": [
+      [
+        "v",
+        "",
+        "v",
+        "^"
+      ],
+      [
+        "^",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "v"
+      ]
+    ],
+    "solution": [
+      [
+        2,
+        3,
+        4,
+        1
+      ],
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        4,
+        1,
+        2,
+        3
+      ],
+      [
+        3,
+        4,
+        1,
+        2
+      ]
+    ],
+    "targetTime": 60
+  },
+  {
+    "id": 3,
+    "size": 4,
+    "title": "タテとヨコの交差点",
+    "sub": "4×4・クロスチェック",
+    "story": "同じ列や行には、同じ数字は入らないルールを忘れずに！",
+    "givens": [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        1,
+        0,
+        2,
+        0
+      ]
+    ],
+    "hSigns": [
+      [
+        "",
+        "",
+        "<"
+      ],
+      [
+        ">",
+        ">",
+        "<"
+      ],
+      [
+        "",
+        "",
+        ">"
+      ],
+      [
+        "<",
+        ">",
+        ""
+      ]
+    ],
+    "vSigns": [
+      [
+        "",
+        "",
+        "v",
+        "v"
+      ],
+      [
+        "",
+        "",
+        "^",
+        "v"
+      ],
+      [
+        "v",
+        "^",
+        "",
+        ""
+      ]
+    ],
+    "solution": [
+      [
+        2,
+        1,
+        3,
+        4
+      ],
+      [
+        4,
+        3,
+        1,
+        2
+      ],
+      [
+        3,
+        2,
+        4,
+        1
+      ],
+      [
+        1,
+        4,
+        2,
+        3
+      ]
+    ],
+    "targetTime": 60
+  },
+  {
+    "id": 4,
+    "size": 4,
+    "title": "最大数と最小数",
+    "sub": "4×4・端っこ推理",
+    "story": "一番大きい「4」は「＜」の左には絶対に入らないよ！",
+    "givens": [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        3,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        3
+      ]
+    ],
+    "hSigns": [
+      [
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        ">",
+        ">"
+      ],
+      [
+        "",
+        "",
+        "<"
+      ],
+      [
+        "<",
+        ">",
+        ""
+      ]
+    ],
+    "vSigns": [
+      [
+        "",
+        "",
+        "v",
+        "v"
+      ],
+      [
+        "",
+        "",
+        "",
+        "^"
+      ],
+      [
+        "^",
+        "^",
+        "v",
+        "v"
+      ]
+    ],
+    "solution": [
+      [
+        3,
+        1,
+        4,
+        2
+      ],
+      [
+        4,
+        3,
+        2,
+        1
+      ],
+      [
+        1,
+        2,
+        3,
+        4
+      ],
+      [
+        2,
+        4,
+        1,
+        3
+      ]
+    ],
+    "targetTime": 60
+  },
+  {
+    "id": 5,
+    "size": 4,
+    "title": "ひらめきチェーン",
+    "sub": "4×4・連続不等号",
+    "story": "長〜い不等号の鎖がつながっている列から解いていこう！",
+    "givens": [
+      [
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        2,
+        0
+      ]
+    ],
+    "hSigns": [
+      [
+        "<",
+        ">",
+        ""
+      ],
+      [
+        "<",
+        "",
+        ">"
+      ],
+      [
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        ">"
+      ]
+    ],
+    "vSigns": [
+      [
+        "v",
+        "",
+        "",
+        "v"
+      ],
+      [
+        "",
+        "v",
+        "",
+        "v"
+      ],
+      [
+        "",
+        "",
+        "v",
+        "v"
+      ]
+    ],
+    "solution": [
+      [
+        2,
+        3,
+        1,
+        4
+      ],
+      [
+        1,
+        2,
+        4,
+        3
+      ],
+      [
+        4,
+        1,
+        3,
+        2
+      ],
+      [
+        3,
+        4,
+        2,
+        1
+      ]
+    ],
+    "targetTime": 60
+  },
+  {
+    "id": 6,
+    "size": 4,
+    "title": "4×4 卒業試験",
+    "sub": "4×4・総合力チャレンジ",
+    "story": "4×4の集大成！きみの推理力でパーフェクトクリアを目指そう！",
+    "givens": [
+      [
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        4
+      ],
+      [
+        0,
+        2,
+        0,
+        0
+      ]
+    ],
+    "hSigns": [
+      [
+        "<",
+        ">",
+        ">"
+      ],
+      [
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "<",
+        ""
+      ],
+      [
+        "",
+        ">",
+        "<"
+      ]
+    ],
+    "vSigns": [
+      [
+        "",
+        "v",
+        "",
+        ""
+      ],
+      [
+        "",
+        "v",
+        "",
+        ""
+      ],
+      [
+        "",
+        "^",
+        "v",
+        ""
+      ]
+    ],
+    "solution": [
+      [
+        2,
+        4,
+        3,
+        1
+      ],
+      [
+        1,
+        3,
+        4,
+        2
+      ],
+      [
+        3,
+        1,
+        2,
+        4
+      ],
+      [
+        4,
+        2,
+        1,
+        3
+      ]
+    ],
+    "targetTime": 60
+  },
+  {
+    "id": 7,
+    "size": 5,
+    "title": "5階建ての冒険",
+    "sub": "5×5・数字の仲間入り",
+    "story": "数字が1〜5にパワーアップ！まずはわかっている数字の周りから！",
+    "givens": [
+      [
+        0,
+        0,
+        2,
+        0,
+        0
+      ],
+      [
+        3,
+        0,
+        0,
+        0,
+        5
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        4
+      ],
+      [
+        2,
+        5,
+        0,
+        0,
+        0
+      ]
+    ],
+    "hSigns": [
+      [
+        "<",
+        ">",
+        "",
+        ">"
+      ],
+      [
+        "",
+        "<",
+        ">",
+        ""
+      ],
+      [
+        ">",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        ">",
+        "<",
+        ""
+      ],
+      [
+        "<",
+        "",
+        "",
+        ""
+      ]
+    ],
+    "vSigns": [
+      [
+        "",
+        "",
+        "^",
+        "",
+        ""
+      ],
+      [
+        "^",
+        "",
+        "",
+        "^",
+        "v"
+      ],
+      [
+        "^",
+        "^",
+        "v",
+        "v",
+        ""
+      ],
+      [
+        "v",
+        "^",
+        "^",
+        "^",
+        "v"
+      ]
+    ],
+    "solution": [
+      [
+        1,
+        4,
+        2,
+        5,
+        3
+      ],
+      [
+        3,
+        2,
+        4,
+        1,
+        5
+      ],
+      [
+        4,
+        1,
+        5,
+        3,
+        2
+      ],
+      [
+        5,
+        3,
+        1,
+        2,
+        4
+      ],
+      [
+        2,
+        5,
+        3,
+        4,
+        1
+      ]
+    ],
+    "targetTime": 120
+  },
+  {
+    "id": 8,
+    "size": 5,
+    "title": "山のてっぺん「5」",
+    "sub": "5×5・最大値ロック",
+    "story": "一番大きな「5」がどこに入るか、不等号の先を探してみよう！",
+    "givens": [
+      [
+        0,
+        0,
+        5,
+        3,
+        0
+      ],
+      [
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        5,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "hSigns": [
+      [
+        ">",
+        "",
+        "",
+        "<"
+      ],
+      [
+        "",
+        ">",
+        "",
+        "<"
+      ],
+      [
+        "<",
+        "",
+        "",
+        ">"
+      ],
+      [
+        "",
+        "<",
+        ">",
+        ""
+      ],
+      [
+        "",
+        ">",
+        "",
+        ">"
+      ]
+    ],
+    "vSigns": [
+      [
+        "",
+        "^",
+        "",
+        "v",
+        ""
+      ],
+      [
+        "v",
+        "",
+        "^",
+        "^",
+        ""
+      ],
+      [
+        "^",
+        "v",
+        "",
+        "v",
+        "^"
+      ],
+      [
+        "",
+        "^",
+        "",
+        "",
+        ""
+      ]
+    ],
+    "solution": [
+      [
+        2,
+        1,
+        5,
+        3,
+        4
+      ],
+      [
+        4,
+        3,
+        1,
+        2,
+        5
+      ],
+      [
+        3,
+        4,
+        2,
+        5,
+        1
+      ],
+      [
+        5,
+        2,
+        4,
+        1,
+        3
+      ],
+      [
+        1,
+        5,
+        3,
+        4,
+        2
+      ]
+    ],
+    "targetTime": 120
+  },
+  {
+    "id": 9,
+    "size": 5,
+    "title": "谷底の「1」を探せ",
+    "sub": "5×5・最小値ロック",
+    "story": "一番小さな「1」は「＞」の左や「∨」の上には入れないよ！",
+    "givens": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        4,
+        0
+      ],
+      [
+        4,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        5,
+        0
+      ]
+    ],
+    "hSigns": [
+      [
+        "",
+        "<",
+        "",
+        ""
+      ],
+      [
+        ">",
+        "",
+        "<",
+        ""
+      ],
+      [
+        "<",
+        "",
+        "<",
+        ""
+      ],
+      [
+        ">",
+        ">",
+        ">",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        ">"
+      ]
+    ],
+    "vSigns": [
+      [
+        "",
+        "^",
+        "v",
+        "",
+        ""
+      ],
+      [
+        "",
+        "^",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "v",
+        "v",
+        ""
+      ],
+      [
+        "v",
+        "v",
+        "",
+        "^",
+        "v"
+      ]
+    ],
+    "solution": [
+      [
+        1,
+        2,
+        5,
+        3,
+        4
+      ],
+      [
+        5,
+        4,
+        1,
+        2,
+        3
+      ],
+      [
+        2,
+        5,
+        3,
+        4,
+        1
+      ],
+      [
+        4,
+        3,
+        2,
+        1,
+        5
+      ],
+      [
+        3,
+        1,
+        4,
+        5,
+        2
+      ]
+    ],
+    "targetTime": 120
+  },
+  {
+    "id": 10,
+    "size": 5,
+    "title": "クロスライン推理",
+    "sub": "5×5・十字路のヒント",
+    "story": "行と列の重なりから候補を絞り込もう！メモ機能が役に立つよ！",
+    "givens": [
+      [
+        0,
+        0,
+        0,
+        0,
+        3
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        5,
+        0,
+        0,
+        0
+      ],
+      [
+        5,
+        0,
+        3,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "hSigns": [
+      [
+        ">",
+        ">",
+        "<",
+        ""
+      ],
+      [
+        "<",
+        "",
+        "<",
+        "<"
+      ],
+      [
+        "",
+        "",
+        ">",
+        ""
+      ],
+      [
+        "",
+        "",
+        ">",
+        ""
+      ],
+      [
+        "",
+        "",
+        ">",
+        ""
+      ]
+    ],
+    "vSigns": [
+      [
+        "",
+        "^",
+        "",
+        "",
+        "^"
+      ],
+      [
+        "^",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "^",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "^",
+        "^",
+        "v",
+        ""
+      ]
+    ],
+    "solution": [
+      [
+        4,
+        2,
+        1,
+        5,
+        3
+      ],
+      [
+        1,
+        3,
+        2,
+        4,
+        5
+      ],
+      [
+        2,
+        5,
+        4,
+        3,
+        1
+      ],
+      [
+        5,
+        1,
+        3,
+        2,
+        4
+      ],
+      [
+        3,
+        4,
+        5,
+        1,
+        2
+      ]
+    ],
+    "targetTime": 120
+  },
+  {
+    "id": 11,
+    "size": 5,
+    "title": "星空のネットワーク",
+    "sub": "5×5・広域不等号網",
+    "story": "不等号の向きをつないでいくと、自然と数字が見えてくる！",
+    "givens": [
+      [
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        0,
+        0
+      ]
+    ],
+    "hSigns": [
+      [
+        ">",
+        "<",
+        "",
+        "<"
+      ],
+      [
+        "",
+        "",
+        "<",
+        ">"
+      ],
+      [
+        "<",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        ">",
+        "",
+        ">"
+      ],
+      [
+        "",
+        "",
+        "<",
+        ""
+      ]
+    ],
+    "vSigns": [
+      [
+        "v",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "v",
+        "",
+        "",
+        "",
+        "^"
+      ],
+      [
+        "",
+        "^",
+        "",
+        "",
+        ""
+      ],
+      [
+        "^",
+        "",
+        "",
+        "",
+        ""
+      ]
+    ],
+    "solution": [
+      [
+        4,
+        3,
+        5,
+        1,
+        2
+      ],
+      [
+        3,
+        1,
+        2,
+        5,
+        4
+      ],
+      [
+        1,
+        4,
+        3,
+        2,
+        5
+      ],
+      [
+        2,
+        5,
+        4,
+        3,
+        1
+      ],
+      [
+        5,
+        2,
+        1,
+        4,
+        3
+      ]
+    ],
+    "targetTime": 120
+  },
+  {
+    "id": 12,
+    "size": 5,
+    "title": "5×5 マスターゲート",
+    "sub": "5×5・中級卒業試練",
+    "story": "5×5の最高峰ステージ！落ち着いて1マスずつ埋めていこう！",
+    "givens": [
+      [
+        0,
+        0,
+        0,
+        0,
+        5
+      ],
+      [
+        4,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        3,
+        0
+      ]
+    ],
+    "hSigns": [
+      [
+        "",
+        "",
+        "",
+        "<"
+      ],
+      [
+        "",
+        "",
+        "",
+        ">"
+      ],
+      [
+        "",
+        ">",
+        "<",
+        ""
+      ],
+      [
+        "<",
+        "",
+        ">",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        ">"
+      ]
+    ],
+    "vSigns": [
+      [
+        "",
+        "v",
+        "^",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        "^"
+      ],
+      [
+        "^",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "^",
+        "",
+        "",
+        "^",
+        ""
+      ]
+    ],
+    "solution": [
+      [
+        3,
+        4,
+        1,
+        2,
+        5
+      ],
+      [
+        4,
+        1,
+        3,
+        5,
+        2
+      ],
+      [
+        1,
+        5,
+        2,
+        4,
+        3
+      ],
+      [
+        2,
+        3,
+        5,
+        1,
+        4
+      ],
+      [
+        5,
+        2,
+        4,
+        3,
+        1
+      ]
+    ],
+    "targetTime": 120
+  },
+  {
+    "id": 13,
+    "size": 6,
+    "title": "6×6 巨人のパズル",
+    "sub": "6×6・広がる新世界",
+    "story": "ついに1〜6の本格パズル！視野を広く持って盤面全体を眺めよう！",
+    "givens": [
+      [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        2,
+        0
+      ],
+      [
+        0,
+        4,
+        3,
+        0,
+        0,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        4
+      ],
+      [
+        0,
+        0,
+        6,
+        0,
+        0,
+        3
+      ]
+    ],
+    "hSigns": [
+      [
+        "<",
+        ">",
+        "",
+        "",
+        "<"
+      ],
+      [
+        "",
+        "<",
+        "<",
+        "",
+        ""
+      ],
+      [
+        "<",
+        "",
+        "<",
+        "",
+        ">"
+      ],
+      [
+        "",
+        "<",
+        ">",
+        "",
+        ""
+      ],
+      [
+        ">",
+        "",
+        "",
+        "<",
+        ">"
+      ],
+      [
+        "",
+        "",
+        ">",
+        "",
+        ""
+      ]
+    ],
+    "vSigns": [
+      [
+        "",
+        "",
+        "^",
+        "^",
+        "",
+        ""
+      ],
+      [
+        "",
+        "^",
+        "",
+        "^",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "v",
+        "v",
+        "v"
+      ],
+      [
+        "",
+        "",
+        "v",
+        "v",
+        "^",
+        "^"
+      ],
+      [
+        "",
+        "^",
+        "",
+        "",
+        "v",
+        ""
+      ]
+    ],
+    "solution": [
+      [
+        4,
+        6,
+        2,
+        3,
+        1,
+        5
+      ],
+      [
+        3,
+        1,
+        4,
+        5,
+        2,
+        6
+      ],
+      [
+        1,
+        4,
+        3,
+        6,
+        5,
+        2
+      ],
+      [
+        6,
+        2,
+        5,
+        4,
+        3,
+        1
+      ],
+      [
+        5,
+        3,
+        1,
+        2,
+        6,
+        4
+      ],
+      [
+        2,
+        5,
+        6,
+        1,
+        4,
+        3
+      ]
+    ],
+    "targetTime": 180
+  },
+  {
+    "id": 14,
+    "size": 6,
+    "title": "極値チェーン連鎖",
+    "sub": "6×6・多段推論",
+    "story": "3段以上の連続不等号が出現！数字の範囲を一気に特定しよう！",
+    "givens": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        6,
+        0,
+        0,
+        3
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        6,
+        0,
+        4,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        3,
+        0,
+        0,
+        0,
+        1
+      ]
+    ],
+    "hSigns": [
+      [
+        ">",
+        "<",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "<",
+        ""
+      ],
+      [
+        "<",
+        "",
+        "",
+        "<",
+        ">"
+      ],
+      [
+        "",
+        "",
+        "<",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        ">",
+        ">",
+        "<"
+      ],
+      [
+        "",
+        "<",
+        "",
+        "<",
+        ""
+      ]
+    ],
+    "vSigns": [
+      [
+        "^",
+        "^",
+        "^",
+        "",
+        "",
+        "^"
+      ],
+      [
+        "",
+        "",
+        "^",
+        "^",
+        "",
+        "v"
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "^"
+      ],
+      [
+        "^",
+        "",
+        "^",
+        "v",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        "^",
+        ""
+      ]
+    ],
+    "solution": [
+      [
+        4,
+        1,
+        2,
+        6,
+        3,
+        5
+      ],
+      [
+        5,
+        2,
+        3,
+        1,
+        4,
+        6
+      ],
+      [
+        1,
+        4,
+        6,
+        2,
+        5,
+        3
+      ],
+      [
+        3,
+        6,
+        1,
+        5,
+        2,
+        4
+      ],
+      [
+        6,
+        5,
+        4,
+        3,
+        1,
+        2
+      ],
+      [
+        2,
+        3,
+        5,
+        4,
+        6,
+        1
+      ]
+    ],
+    "targetTime": 180
+  },
+  {
+    "id": 15,
+    "size": 6,
+    "title": "消去法の魔法",
+    "sub": "6×6・候補数字の整理",
+    "story": "入る数字が2つに絞られたら、メモツール（✏️）を活用しよう！",
+    "givens": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        2,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        5,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        5,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        3,
+        0,
+        0,
+        0,
+        2
+      ]
+    ],
+    "hSigns": [
+      [
+        "<",
+        ">",
+        ">",
+        "",
+        "<"
+      ],
+      [
+        "<",
+        ">",
+        "",
+        "<",
+        ""
+      ],
+      [
+        ">",
+        "",
+        ">",
+        "<",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "<",
+        "",
+        ""
+      ],
+      [
+        ">",
+        "",
+        "",
+        "<",
+        ""
+      ]
+    ],
+    "vSigns": [
+      [
+        "^",
+        "",
+        "",
+        "^",
+        "",
+        "v"
+      ],
+      [
+        "^",
+        "",
+        "^",
+        "",
+        "",
+        ""
+      ],
+      [
+        "^",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "^",
+        "v",
+        "",
+        ""
+      ]
+    ],
+    "solution": [
+      [
+        1,
+        6,
+        5,
+        4,
+        2,
+        3
+      ],
+      [
+        2,
+        4,
+        3,
+        5,
+        6,
+        1
+      ],
+      [
+        5,
+        1,
+        4,
+        2,
+        3,
+        6
+      ],
+      [
+        6,
+        2,
+        1,
+        3,
+        4,
+        5
+      ],
+      [
+        3,
+        5,
+        2,
+        6,
+        1,
+        4
+      ],
+      [
+        4,
+        3,
+        6,
+        1,
+        5,
+        2
+      ]
+    ],
+    "targetTime": 180
+  },
+  {
+    "id": 16,
+    "size": 6,
+    "title": "ロジックの迷宮",
+    "sub": "6×6・高難度アタック",
+    "story": "手がかりが少なくなってきたら、残りの数字の分布をチェック！",
+    "givens": [
+      [
+        0,
+        4,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        5,
+        0,
+        0,
+        0
+      ],
+      [
+        6,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        3,
+        1,
+        0,
+        0,
+        4
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "hSigns": [
+      [
+        "",
+        "",
+        ">",
+        "<",
+        ""
+      ],
+      [
+        "<",
+        "<",
+        "",
+        ">",
+        "<"
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        ">"
+      ],
+      [
+        "",
+        "",
+        ">",
+        ">",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        ">"
+      ],
+      [
+        "",
+        "",
+        "<",
+        ">",
+        ""
+      ]
+    ],
+    "vSigns": [
+      [
+        "",
+        "",
+        "",
+        "",
+        "v",
+        ""
+      ],
+      [
+        "",
+        "",
+        "v",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "v",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        "^",
+        ""
+      ],
+      [
+        "v",
+        "",
+        "",
+        "",
+        "v",
+        ""
+      ]
+    ],
+    "solution": [
+      [
+        3,
+        4,
+        6,
+        1,
+        5,
+        2
+      ],
+      [
+        1,
+        2,
+        5,
+        4,
+        3,
+        6
+      ],
+      [
+        6,
+        1,
+        2,
+        5,
+        4,
+        3
+      ],
+      [
+        2,
+        6,
+        4,
+        3,
+        1,
+        5
+      ],
+      [
+        5,
+        3,
+        1,
+        2,
+        6,
+        4
+      ],
+      [
+        4,
+        5,
+        3,
+        6,
+        2,
+        1
+      ]
+    ],
+    "targetTime": 180
+  },
+  {
+    "id": 17,
+    "size": 6,
+    "title": "名探偵の直感と証明",
+    "sub": "6×6・本格エキスパート",
+    "story": "一見難しそうでも、必ず論理だけで解ける唯一の正解がある！",
+    "givens": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        1,
+        0,
+        0,
+        5,
+        4
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        3,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        6,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "hSigns": [
+      [
+        "",
+        "",
+        "",
+        "",
+        ">"
+      ],
+      [
+        ">",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "<",
+        "",
+        "<",
+        "",
+        ">"
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        ">"
+      ]
+    ],
+    "vSigns": [
+      [
+        "^",
+        "",
+        "",
+        "",
+        "^",
+        ""
+      ],
+      [
+        "",
+        "^",
+        "",
+        "",
+        "^",
+        ""
+      ],
+      [
+        "",
+        "^",
+        "^",
+        "",
+        "",
+        "v"
+      ],
+      [
+        "",
+        "v",
+        "^",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        "v",
+        "v"
+      ]
+    ],
+    "solution": [
+      [
+        1,
+        5,
+        4,
+        6,
+        3,
+        2
+      ],
+      [
+        3,
+        1,
+        6,
+        2,
+        5,
+        4
+      ],
+      [
+        2,
+        3,
+        1,
+        4,
+        6,
+        5
+      ],
+      [
+        6,
+        4,
+        2,
+        5,
+        1,
+        3
+      ],
+      [
+        5,
+        2,
+        3,
+        1,
+        4,
+        6
+      ],
+      [
+        4,
+        6,
+        5,
+        3,
+        2,
+        1
+      ]
+    ],
+    "targetTime": 180
+  },
+  {
+    "id": 18,
+    "size": 6,
+    "title": "不等号の伝説大宗師",
+    "sub": "6×6・至高の挑戦",
+    "story": "全18ステージの頂点！すべての論理と思考力を注ぎ込もう！",
+    "givens": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        4,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        4
+      ],
+      [
+        0,
+        3,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        5,
+        0,
+        0,
+        0,
+        3
+      ],
+      [
+        5,
+        0,
+        0,
+        0,
+        6,
+        0
+      ]
+    ],
+    "hSigns": [
+      [
+        "<",
+        ">",
+        ">",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        ">",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "<",
+        "",
+        "<"
+      ],
+      [
+        "<",
+        "",
+        ">",
+        "<",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "<",
+        ""
+      ]
+    ],
+    "vSigns": [
+      [
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        "^",
+        ""
+      ],
+      [
+        "",
+        "",
+        "",
+        "",
+        "v",
+        ""
+      ],
+      [
+        "",
+        "^",
+        "",
+        "",
+        "",
+        ""
+      ],
+      [
+        "",
+        "v",
+        "v",
+        "",
+        "",
+        ""
+      ]
+    ],
+    "solution": [
+      [
+        3,
+        4,
+        2,
+        1,
+        5,
+        6
+      ],
+      [
+        4,
+        6,
+        5,
+        3,
+        2,
+        1
+      ],
+      [
+        6,
+        2,
+        1,
+        5,
+        3,
+        4
+      ],
+      [
+        2,
+        3,
+        4,
+        6,
+        1,
+        5
+      ],
+      [
+        1,
+        5,
+        6,
+        2,
+        4,
+        3
+      ],
+      [
+        5,
+        1,
+        3,
+        4,
+        6,
+        2
+      ]
+    ],
+    "targetTime": 180
+  }
+];
+
+/* ================== FUTOSHIKI SOLVER & GENERATOR ================== */
+class FutoshikiSolver {
+  static isValid(board, r, c, val, size, hSigns, vSigns) {
+    for (let j = 0; j < size; j++) {
+      if (j !== c && board[r][j] === val) return false;
+    }
+    for (let i = 0; i < size; i++) {
+      if (i !== r && board[i][c] === val) return false;
+    }
+    if (c > 0) {
+      const sign = hSigns[r][c - 1];
+      const leftVal = board[r][c - 1];
+      if (leftVal !== 0 && sign) {
+        if (sign === '<' && !(leftVal < val)) return false;
+        if (sign === '>' && !(leftVal > val)) return false;
+      }
+    }
+    if (c < size - 1) {
+      const sign = hSigns[r][c];
+      const rightVal = board[r][c + 1];
+      if (rightVal !== 0 && sign) {
+        if (sign === '<' && !(val < rightVal)) return false;
+        if (sign === '>' && !(val > rightVal)) return false;
+      }
+    }
+    if (r > 0) {
+      const sign = vSigns[r - 1][c];
+      const topVal = board[r - 1][c];
+      if (topVal !== 0 && sign) {
+        if (sign === '^' && !(topVal < val)) return false;
+        if (sign === 'v' && !(topVal > val)) return false;
+      }
+    }
+    if (r < size - 1) {
+      const sign = vSigns[r][c];
+      const bottomVal = board[r + 1][c];
+      if (bottomVal !== 0 && sign) {
+        if (sign === '^' && !(val < bottomVal)) return false;
+        if (sign === 'v' && !(val > bottomVal)) return false;
+      }
+    }
+    return true;
+  }
+
+  static getCandidates(board, r, c, size, hSigns, vSigns) {
+    const candidates = [];
+    for (let v = 1; v <= size; v++) {
+      if (this.isValid(board, r, c, v, size, hSigns, vSigns)) {
+        candidates.push(v);
+      }
+    }
+    return candidates;
+  }
+
+  static solve(size, givens, hSigns, vSigns, maxSolutions = 2) {
+    const board = givens.map(row => [...row]);
+    const solutions = [];
+    const emptyCells = [];
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        if (board[r][c] === 0) emptyCells.push({ r, c });
+      }
+    }
+
+    const backtrack = () => {
+      if (solutions.length >= maxSolutions) return;
+      let minCount = 999;
+      let bestIdx = -1;
+      let bestCandidates = null;
+
+      for (let i = 0; i < emptyCells.length; i++) {
+        const { r, c } = emptyCells[i];
+        if (board[r][c] !== 0) continue;
+        const cands = this.getCandidates(board, r, c, size, hSigns, vSigns);
+        if (cands.length === 0) return;
+        if (cands.length < minCount) {
+          minCount = cands.length;
+          bestIdx = i;
+          bestCandidates = cands;
+          if (minCount === 1) break;
+        }
+      }
+
+      if (bestIdx === -1) {
+        solutions.push(board.map(row => [...row]));
+        return;
+      }
+
+      const { r, c } = emptyCells[bestIdx];
+      for (const val of bestCandidates) {
+        board[r][c] = val;
+        backtrack();
+        board[r][c] = 0;
+        if (solutions.length >= maxSolutions) break;
+      }
+    };
+
+    backtrack();
+    return solutions;
+  }
+
+  static generateRandomLatin(size) {
+    const board = Array.from({ length: size }, () => Array(size).fill(0));
+    const empty = [];
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) empty.push([r, c]);
+    }
+    const fill = (idx) => {
+      if (idx === empty.length) return true;
+      const [r, c] = empty[idx];
+      const nums = Array.from({ length: size }, (_, i) => i + 1).sort(() => Math.random() - 0.5);
+      const rowUsed = new Set(board[r]);
+      const colUsed = new Set(board.map(row => row[c]));
+      for (const v of nums) {
+        if (!rowUsed.has(v) && !colUsed.has(v)) {
+          board[r][c] = v;
+          if (fill(idx + 1)) return true;
+          board[r][c] = 0;
+        }
+      }
+      return false;
+    };
+    fill(0);
+    return board;
+  }
+
+  static generatePuzzle(size, difficulty = 'medium') {
+    const latin = this.generateRandomLatin(size);
+    const hAll = [];
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size - 1; c++) {
+        hAll.push({ r, c, sign: latin[r][c] < latin[r][c + 1] ? '<' : '>' });
+      }
+    }
+    const vAll = [];
+    for (let r = 0; r < size - 1; r++) {
+      for (let c = 0; c < size; c++) {
+        vAll.push({ r, c, sign: latin[r][c] < latin[r + 1][c] ? '^' : 'v' });
+      }
+    }
+
+    const targetSignCount = Math.round((hAll.length + vAll.length) * (difficulty === 'easy' ? 0.6 : difficulty === 'medium' ? 0.4 : 0.25));
+    const allSigns = [...hAll.map(s => ({ ...s, type: 'h' })), ...vAll.map(s => ({ ...s, type: 'v' }))].sort(() => Math.random() - 0.5);
+
+    const hSigns = Array.from({ length: size }, () => Array(size - 1).fill(''));
+    const vSigns = Array.from({ length: size - 1 }, () => Array(size).fill(''));
+
+    for (let i = 0; i < targetSignCount; i++) {
+      const item = allSigns[i];
+      if (item.type === 'h') hSigns[item.r][item.c] = item.sign;
+      else vSigns[item.r][item.c] = item.sign;
+    }
+
+    const givens = latin.map(row => [...row]);
+    const coords = [];
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) coords.push([r, c]);
+    }
+    coords.sort(() => Math.random() - 0.5);
+
+    let remainingGivens = size * size;
+    const targetGivens = difficulty === 'easy' 
+      ? (size === 4 ? 4 : size === 5 ? 6 : size === 6 ? 9 : 14)
+      : difficulty === 'medium'
+      ? (size === 4 ? 2 : size === 5 ? 4 : size === 6 ? 6 : 10)
+      : (size === 4 ? 1 : size === 5 ? 2 : size === 6 ? 4 : 7);
+
+    for (const [r, c] of coords) {
+      if (remainingGivens <= targetGivens) break;
+      const backup = givens[r][c];
+      givens[r][c] = 0;
+      const sols = this.solve(size, givens, hSigns, vSigns, 2);
+      if (sols.length === 1) {
+        remainingGivens--;
+      } else {
+        givens[r][c] = backup;
+      }
+    }
+
+    return {
+      size,
+      solution: latin,
+      givens,
+      hSigns,
+      vSigns,
+      targetTime: size === 4 ? 90 : size === 5 ? 180 : 300
+    };
+  }
+}
+
+/* ================== GAME CONTROLLER ================== */
+class FutoshikiGame {
+  constructor() {
+    this.currentMode = "adventure"; // 'adventure' | 'freeplay'
+    this.currentStage = null;
+    this.gridSize = 4;
+    this.board = [];
+    this.notes = [];
+    this.givens = [];
+    this.solution = [];
+    this.hSigns = [];
+    this.vSigns = [];
+    this.selectedCell = null;
+    this.noteMode = false;
+    this.mistakes = 0;
+    this.hintsRemaining = 3;
+    this.hintsUsed = 0;
+    this.timer = 0;
+    this.timerInterval = null;
+    this.isCompleted = false;
+    this.history = [];
+    this.theme = "numbers";
+    this.activeTier = 1;
+
+    this.progress = this.loadProgress();
+    this.initDOM();
+    this.renderStageGrid();
+    this.bindEvents();
+  }
+
+  loadProgress() {
+    try {
+      const saved = localStorage.getItem("futoshiki_progress");
+      if (saved) return JSON.parse(saved);
+    } catch(e) {}
+    return {
+      unlockedStages: 1,
+      stars: {},
+      bestTimes: {}
+    };
+  }
+
+  saveProgress() {
+    try {
+      localStorage.setItem("futoshiki_progress", JSON.stringify(this.progress));
+    } catch(e) {}
+    this.updateHeaderStars();
+  }
+
+  initDOM() {
+    this.dom = {
+      modeTabs: document.getElementById("modeTabs"),
+      adventureView: document.getElementById("adventureView"),
+      freePlayView: document.getElementById("freePlayView"),
+      gameplayView: document.getElementById("gameplayView"),
+      stageGrid: document.getElementById("stageGrid"),
+      totalStarsCount: document.getElementById("totalStarsCount"),
+      mapBackBtn: document.getElementById("mapBackBtn"),
+      soundBtn: document.getElementById("soundBtn"),
+      tutorialBtn: document.getElementById("tutorialBtn"),
+      tutorialModal: document.getElementById("tutorialModal"),
+      closeTutorialBtn: document.getElementById("closeTutorialBtn"),
+      victoryModal: document.getElementById("victoryModal"),
+      futoshikiGrid: document.getElementById("futoshiki-grid"),
+      numpadGrid: document.getElementById("numpadGrid"),
+      timerDisplay: document.getElementById("timerDisplay"),
+      mistakesDisplay: document.getElementById("mistakesDisplay"),
+      gameStageBadge: document.getElementById("gameStageBadge"),
+      gameStageSubinfo: document.getElementById("gameStageSubinfo"),
+      mascotIcon: document.getElementById("mascotIcon"),
+      mascotMsg: document.getElementById("mascotMsg"),
+      undoBtn: document.getElementById("undoBtn"),
+      noteModeBtn: document.getElementById("noteModeBtn"),
+      eraseBtn: document.getElementById("eraseBtn"),
+      hintBtn: document.getElementById("hintBtn"),
+      hintCountBadge: document.getElementById("hintCountBadge"),
+      restartBtn: document.getElementById("restartBtn"),
+      freeSizeOptions: document.getElementById("freeSizeOptions"),
+      freeDiffOptions: document.getElementById("freeDiffOptions"),
+      startFreeBtn: document.getElementById("startFreeBtn"),
+      winEmoji: document.getElementById("winEmoji"),
+      winTitle: document.getElementById("winTitle"),
+      winSubtitle: document.getElementById("winSubtitle"),
+      winStarsBox: document.getElementById("winStarsBox"),
+      winTimeVal: document.getElementById("winTimeVal"),
+      winMistakesVal: document.getElementById("winMistakesVal"),
+      winHintsVal: document.getElementById("winHintsVal"),
+      winMapBtn: document.getElementById("winMapBtn"),
+      winRetryBtn: document.getElementById("winRetryBtn"),
+      winNextBtn: document.getElementById("winNextBtn")
+    };
+    this.updateHeaderStars();
+  }
+
+  updateHeaderStars() {
+    let total = 0;
+    for (const key in this.progress.stars) {
+      total += this.progress.stars[key] || 0;
+    }
+    this.dom.totalStarsCount.textContent = total + " / 54";
+  }
+
+  renderStageGrid() {
+    this.dom.stageGrid.innerHTML = "";
+    const tier = this.activeTier;
+    const filteredStages = STAGES_DATA.filter(st => {
+      if (tier === 1) return st.id >= 1 && st.id <= 6;
+      if (tier === 2) return st.id >= 7 && st.id <= 12;
+      return st.id >= 13 && st.id <= 18;
+    });
+
+    filteredStages.forEach(st => {
+      const isUnlocked = st.id <= (this.progress.unlockedStages || 1);
+      const stars = this.progress.stars[st.id] || 0;
+      const bestTime = this.progress.bestTimes[st.id];
+
+      const card = document.createElement("div");
+      card.className = "stage-card" + (isUnlocked ? "" : " locked");
+      card.innerHTML = `
+        <div class="stage-top">
+          <div class="stage-num">
+            ${isUnlocked ? "⭐ ステージ " + st.id : "🔒 ロック中"}
+          </div>
+          <div class="stage-stars">
+            <span class="${stars >= 1 ? "lit" : ""}">★</span>
+            <span class="${stars >= 2 ? "lit" : ""}">★</span>
+            <span class="${stars >= 3 ? "lit" : ""}">★</span>
+          </div>
+        </div>
+        <div class="stage-name">${isUnlocked ? st.title : "???"}</div>
+        <div class="stage-meta">
+          <span class="stage-tag">${st.size}×${st.size}</span>
+          <span>${bestTime ? "⏱️ " + this.formatTime(bestTime) : isUnlocked ? st.sub : "クリアで解放"}</span>
+        </div>
+      `;
+
+      if (isUnlocked) {
+        card.addEventListener("click", () => {
+          audio.playClick();
+          this.startStage(st);
+        });
+      }
+      this.dom.stageGrid.appendChild(card);
+    });
+  }
+
+  switchView(viewName) {
+    document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+    document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+
+    if (viewName === "adventure") {
+      this.dom.adventureView.classList.add("active");
+      this.dom.modeTabs.querySelector('[data-view="adventureView"]').classList.add("active");
+      this.dom.mapBackBtn.style.display = "none";
+      this.stopTimer();
+    } else if (viewName === "freeplay") {
+      this.dom.freePlayView.classList.add("active");
+      this.dom.modeTabs.querySelector('[data-view="freePlayView"]').classList.add("active");
+      this.dom.mapBackBtn.style.display = "none";
+      this.stopTimer();
+    } else if (viewName === "gameplay") {
+      this.dom.gameplayView.classList.add("active");
+      this.dom.mapBackBtn.style.display = "flex";
+    }
+  }
+
+  startStage(stageData) {
+    this.currentMode = "adventure";
+    this.currentStage = stageData;
+    this.gridSize = stageData.size;
+    this.solution = stageData.solution;
+    this.hSigns = stageData.hSigns;
+    this.vSigns = stageData.vSigns;
+    this.givens = stageData.givens.map(r => [...r]);
+
+    this.board = stageData.givens.map(r => [...r]);
+    this.notes = Array.from({ length: this.gridSize }, () =>
+      Array.from({ length: this.gridSize }, () => new Set())
+    );
+
+    this.dom.gameStageBadge.textContent = "⭐ ステージ " + stageData.id;
+    this.dom.gameStageSubinfo.textContent = stageData.size + "×" + stageData.size + " " + stageData.sub;
+    this.setMascot("🦉", stageData.story || "不等号（＜、＞）の向きに気をつけて解こう！");
+
+    this.resetGameplayState();
+    this.switchView("gameplay");
+    this.buildBoard();
+    this.buildNumpad();
+    this.startTimer();
+  }
+
+  startFreePlay(size, diff) {
+    this.currentMode = "freeplay";
+    this.currentStage = null;
+    this.gridSize = size;
+
+    const puzzle = FutoshikiSolver.generatePuzzle(size, diff);
+    this.solution = puzzle.solution;
+    this.hSigns = puzzle.hSigns;
+    this.vSigns = puzzle.vSigns;
+    this.givens = puzzle.givens.map(r => [...r]);
+
+    this.board = puzzle.givens.map(r => [...r]);
+    this.notes = Array.from({ length: this.gridSize }, () =>
+      Array.from({ length: this.gridSize }, () => new Set())
+    );
+
+    const diffText = diff === "easy" ? "やさしい" : diff === "medium" ? "ふつう" : "むずかしい";
+    this.dom.gameStageBadge.textContent = "🎯 自由練習 · " + diffText;
+    this.dom.gameStageSubinfo.textContent = size + "×" + size + " リアルタイム生成パズル";
+    this.setMascot("🦉", "新しい問題ができたよ！集中して解いてみよう！");
+
+    this.resetGameplayState();
+    this.switchView("gameplay");
+    this.buildBoard();
+    this.buildNumpad();
+    this.startTimer();
+  }
+
+  resetGameplayState() {
+    this.selectedCell = null;
+    this.noteMode = false;
+    this.dom.noteModeBtn.classList.remove("active");
+    this.mistakes = 0;
+    this.dom.mistakesDisplay.textContent = "0";
+    this.hintsRemaining = 3;
+    this.hintsUsed = 0;
+    this.dom.hintCountBadge.textContent = "3";
+    this.history = [];
+    this.isCompleted = false;
+    this.timer = 0;
+    this.dom.timerDisplay.textContent = "00:00";
+    document.getElementById("victoryModal").classList.remove("active");
+  }
+
+  buildBoard() {
+    const N = this.gridSize;
+    const gridEl = this.dom.futoshikiGrid;
+    gridEl.innerHTML = "";
+    gridEl.className = "size-" + N;
+
+    // CSS Grid Template: (2N - 1) columns and (2N - 1) rows
+    const colTemplates = [];
+    const rowTemplates = [];
+    const signSize = N === 4 ? "clamp(18px, 4.2vw, 26px)" : N === 5 ? "clamp(15px, 3.6vw, 22px)" : N === 6 ? "clamp(13px, 3vw, 18px)" : "clamp(11px, 2.5vw, 15px)";
+
+    for (let i = 0; i < 2 * N - 1; i++) {
+      if (i % 2 === 0) {
+        colTemplates.push("1fr");
+        rowTemplates.push("1fr");
+      } else {
+        colTemplates.push(signSize);
+        rowTemplates.push(signSize);
+      }
+    }
+
+    gridEl.style.gridTemplateColumns = colTemplates.join(" ");
+    gridEl.style.gridTemplateRows = rowTemplates.join(" ");
+
+    for (let r = 0; r < 2 * N - 1; r++) {
+      for (let c = 0; c < 2 * N - 1; c++) {
+        if (r % 2 === 0 && c % 2 === 0) {
+          // Number Cell
+          const cellR = r / 2;
+          const cellC = c / 2;
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          cell.id = `cell-${cellR}-${cellC}`;
+          cell.dataset.r = cellR;
+          cell.dataset.c = cellC;
+          if (this.givens[cellR][cellC] !== 0) {
+            cell.classList.add("given");
+          }
+          cell.addEventListener("click", () => this.selectCell(cellR, cellC));
+          gridEl.appendChild(cell);
+        } else if (r % 2 === 0 && c % 2 !== 0) {
+          // Horizontal Inequality Sign: between cell (r/2, (c-1)/2) and (r/2, (c+1)/2)
+          const cellR = r / 2;
+          const leftC = Math.floor(c / 2);
+          const sign = this.hSigns[cellR][leftC];
+          const slot = document.createElement("div");
+          slot.className = "ineq-slot";
+          slot.id = `h-sign-${cellR}-${leftC}`;
+
+          if (sign) {
+            const pill = document.createElement("div");
+            pill.className = "ineq-pill";
+            // Render SVG chevron
+            if (sign === "<") {
+              pill.innerHTML = `<svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>`;
+            } else {
+              pill.innerHTML = `<svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>`;
+            }
+            slot.appendChild(pill);
+          }
+          gridEl.appendChild(slot);
+        } else if (r % 2 !== 0 && c % 2 === 0) {
+          // Vertical Inequality Sign: between cell ((r-1)/2, c/2) and ((r+1)/2, c/2)
+          const topR = Math.floor(r / 2);
+          const cellC = c / 2;
+          const sign = this.vSigns[topR][cellC];
+          const slot = document.createElement("div");
+          slot.className = "ineq-slot";
+          slot.id = `v-sign-${topR}-${cellC}`;
+
+          if (sign) {
+            const pill = document.createElement("div");
+            pill.className = "ineq-pill";
+            if (sign === "^") {
+              pill.innerHTML = `<svg viewBox="0 0 24 24"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>`;
+            } else {
+              pill.innerHTML = `<svg viewBox="0 0 24 24"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>`;
+            }
+            slot.appendChild(pill);
+          }
+          gridEl.appendChild(slot);
+        } else {
+          // Corner spacer
+          const spacer = document.createElement("div");
+          spacer.className = "corner-spacer";
+          gridEl.appendChild(spacer);
+        }
+      }
+    }
+
+    this.renderBoardValues();
+    this.updateInequalityStatuses();
+  }
+
+  renderBoardValues() {
+    const N = this.gridSize;
+    const themeObj = THEMES[this.theme];
+
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const cell = document.getElementById(`cell-${r}-${c}`);
+        if (!cell) continue;
+
+        const val = this.board[r][c];
+        cell.innerHTML = "";
+
+        if (val !== 0) {
+          if (this.theme === "numbers") {
+            cell.textContent = val;
+            cell.style.color = themeObj.colors[val] || "var(--text-main)";
+          } else {
+            const icon = themeObj.getDisplay(val);
+            cell.innerHTML = `
+              <div class="emoji-val">
+                <span>${icon}</span>
+                <span class="emoji-lvl-tag">${val}</span>
+              </div>
+            `;
+            cell.style.color = "var(--text-main)";
+          }
+        } else {
+          // Check notes
+          const cellNotes = this.notes[r][c];
+          if (cellNotes && cellNotes.size > 0) {
+            const notesEl = document.createElement("div");
+            notesEl.className = "notes-grid notes-grid-" + N;
+            for (let v = 1; v <= N; v++) {
+              const span = document.createElement("div");
+              span.className = "note-num";
+              span.textContent = cellNotes.has(v) ? (this.theme === "numbers" ? v : themeObj.getDisplay(v)) : "";
+              notesEl.appendChild(span);
+            }
+            cell.appendChild(notesEl);
+          }
+        }
+      }
+    }
+
+    this.highlightActiveCells();
+    this.updateNumpadCompletion();
+  }
+
+  buildNumpad() {
+    const N = this.gridSize;
+    const numpadEl = this.dom.numpadGrid;
+    numpadEl.innerHTML = "";
+
+    const themeObj = THEMES[this.theme];
+
+    for (let i = 1; i <= N; i++) {
+      const btn = document.createElement("button");
+      btn.className = "num-btn";
+      btn.dataset.val = i;
+
+      if (this.theme === "numbers") {
+        btn.innerHTML = `<span>${i}</span>`;
+        btn.style.color = themeObj.colors[i] || "var(--text-main)";
+      } else {
+        const icon = themeObj.getDisplay(i);
+        btn.innerHTML = `<span style="font-size:22px; line-height:1;">${icon}</span><span style="font-size:9px; color:#64748B; font-weight:800;">${i}</span>`;
+      }
+
+      btn.addEventListener("click", () => this.handleNumberInput(i));
+      numpadEl.appendChild(btn);
+    }
+  }
+
+  selectCell(r, c) {
+    if (this.isCompleted) return;
+    audio.playClick();
+    this.selectedCell = { r, c };
+    this.highlightActiveCells();
+    this.explainCellContext(r, c);
+  }
+
+  explainCellContext(r, c) {
+    const N = this.gridSize;
+    const hints = [];
+
+    if (c > 0 && this.hSigns[r][c - 1]) {
+      const sign = this.hSigns[r][c - 1];
+      hints.push(sign === "<" ? "左のマスより大きい" : "左のマスより小さい");
+    }
+    if (c < N - 1 && this.hSigns[r][c]) {
+      const sign = this.hSigns[r][c];
+      hints.push(sign === "<" ? "右のマスより小さい" : "右のマスより大きい");
+    }
+    if (r > 0 && this.vSigns[r - 1][c]) {
+      const sign = this.vSigns[r - 1][c];
+      hints.push(sign === "^" ? "上のマスより大きい" : "上のマスより小さい");
+    }
+    if (r < N - 1 && this.vSigns[r][c]) {
+      const sign = this.vSigns[r][c];
+      hints.push(sign === "^" ? "下のマスより小さい" : "下のマスより大きい");
+    }
+
+    if (hints.length > 0) {
+      this.setMascot("🦉", `このマスは「${hints.join("、かつ ")}」よ！`);
+    } else {
+      this.setMascot("🦉", "行や列の数字と見比べて、まだ使われていない数字を探そう！");
+    }
+  }
+
+  highlightActiveCells() {
+    const N = this.gridSize;
+    document.querySelectorAll(".cell").forEach(c => {
+      c.classList.remove("selected", "highlight-axis", "highlight-same");
+    });
+
+    if (!this.selectedCell) return;
+    const { r, c } = this.selectedCell;
+    const currentVal = this.board[r][c];
+
+    for (let i = 0; i < N; i++) {
+      for (let j = 0; j < N; j++) {
+        const cell = document.getElementById(`cell-${i}-${j}`);
+        if (!cell) continue;
+
+        if (i === r && j === c) {
+          cell.classList.add("selected");
+        } else if (i === r || j === c) {
+          cell.classList.add("highlight-axis");
+        }
+
+        if (currentVal !== 0 && this.board[i][j] === currentVal) {
+          cell.classList.add("highlight-same");
+        }
+      }
+    }
+  }
+
+  handleNumberInput(num) {
+    if (this.isCompleted || !this.selectedCell) return;
+    const { r, c } = this.selectedCell;
+
+    // Check if cell is fixed given
+    if (this.givens[r][c] !== 0) {
+      this.setMascot("🔒", "このマスは最初から決まっているヒント数字だよ！");
+      audio.playTone(200, "sine", 0.08, 0.08);
+      return;
+    }
+
+    if (this.noteMode) {
+      // Toggle note
+      const cellNotes = this.notes[r][c];
+      const prevNotes = new Set(cellNotes);
+      if (cellNotes.has(num)) {
+        cellNotes.delete(num);
+      } else {
+        cellNotes.add(num);
+      }
+      this.history.push({
+        type: "note",
+        r, c,
+        prevNotes,
+        newNotes: new Set(cellNotes)
+      });
+      audio.playNoteToggle();
+      this.renderBoardValues();
+      return;
+    }
+
+    // Direct value placement
+    const prevVal = this.board[r][c];
+    if (prevVal === num) return; // Same value, no-op
+
+    const prevNotes = new Set(this.notes[r][c]);
+    this.board[r][c] = num;
+    this.notes[r][c].clear();
+
+    this.history.push({
+      type: "value",
+      r, c,
+      prevVal,
+      newVal: num,
+      prevNotes
+    });
+
+    audio.playPlaceNumber(num, this.gridSize);
+    this.renderBoardValues();
+    this.checkBoardState(r, c);
+  }
+
+  eraseSelectedCell() {
+    if (this.isCompleted || !this.selectedCell) return;
+    const { r, c } = this.selectedCell;
+
+    if (this.givens[r][c] !== 0) {
+      this.setMascot("🔒", "最初のヒント数字は消せないよ！");
+      return;
+    }
+
+    const prevVal = this.board[r][c];
+    const prevNotes = new Set(this.notes[r][c]);
+
+    if (prevVal === 0 && prevNotes.size === 0) return;
+
+    this.board[r][c] = 0;
+    this.notes[r][c].clear();
+
+    this.history.push({
+      type: "erase",
+      r, c,
+      prevVal,
+      newVal: 0,
+      prevNotes
+    });
+
+    audio.playErase();
+    this.renderBoardValues();
+    this.checkBoardState(r, c);
+  }
+
+  undo() {
+    if (this.isCompleted || this.history.length === 0) return;
+    const action = this.history.pop();
+    const { r, c } = action;
+
+    if (action.type === "value" || action.type === "erase") {
+      this.board[r][c] = action.prevVal;
+      this.notes[r][c] = new Set(action.prevNotes);
+    } else if (action.type === "note") {
+      this.notes[r][c] = new Set(action.prevNotes);
+    }
+
+    audio.playClick();
+    this.selectedCell = { r, c };
+    this.renderBoardValues();
+    this.checkBoardState(r, c);
+  }
+
+  useSmartHint() {
+    if (this.isCompleted) return;
+    if (this.hintsRemaining <= 0) {
+      this.setMascot("💡", "ヒントはすべて使い切ったよ！自力でゴールを目指そう！");
+      return;
+    }
+
+    const N = this.gridSize;
+    // Find candidate cell to reveal:
+    // 1. If currently selected empty cell: fill it
+    let target = null;
+    if (this.selectedCell && this.board[this.selectedCell.r][this.selectedCell.c] === 0) {
+      target = this.selectedCell;
+    } else {
+      // Find empty cell with fewest possibilities or next in order
+      for (let r = 0; r < N; r++) {
+        for (let c = 0; c < N; c++) {
+          if (this.board[r][c] === 0) {
+            target = { r, c };
+            break;
+          }
+        }
+        if (target) break;
+      }
+    }
+
+    if (!target) {
+      this.setMascot("🦉", "盤面はすでに埋まっているよ！ミスがないか確認してみよう！");
+      return;
+    }
+
+    const correctVal = this.solution[target.r][target.c];
+    this.selectedCell = target;
+
+    this.board[target.r][target.c] = correctVal;
+    this.notes[target.r][target.c].clear();
+    this.hintsRemaining--;
+    this.hintsUsed++;
+    this.dom.hintCountBadge.textContent = this.hintsRemaining;
+
+    audio.playSatisfied();
+    this.setMascot("💡", `【ヒント】（${target.r + 1}行${target.c + 1}列）に「${correctVal}」を入れたよ！`);
+    this.renderBoardValues();
+    this.checkBoardState(target.r, target.c);
+  }
+
+  checkBoardState(triggerR, triggerC) {
+    const N = this.gridSize;
+    let hasDuplicateError = false;
+    let hasInequalityError = false;
+
+    // 1. Reset cell error classes
+    document.querySelectorAll(".cell").forEach(el => {
+      el.classList.remove("duplicate-error", "inequality-error");
+    });
+
+    // 2. Check Row Duplicates
+    for (let r = 0; r < N; r++) {
+      const counts = {};
+      for (let c = 0; c < N; c++) {
+        const val = this.board[r][c];
+        if (val !== 0) counts[val] = (counts[val] || 0) + 1;
+      }
+      for (let c = 0; c < N; c++) {
+        const val = this.board[r][c];
+        if (val !== 0 && counts[val] > 1) {
+          const el = document.getElementById(`cell-${r}-${c}`);
+          if (el) el.classList.add("duplicate-error");
+          hasDuplicateError = true;
+        }
+      }
+    }
+
+    // 3. Check Col Duplicates
+    for (let c = 0; c < N; c++) {
+      const counts = {};
+      for (let r = 0; r < N; r++) {
+        const val = this.board[r][c];
+        if (val !== 0) counts[val] = (counts[val] || 0) + 1;
+      }
+      for (let r = 0; r < N; r++) {
+        const val = this.board[r][c];
+        if (val !== 0 && counts[val] > 1) {
+          const el = document.getElementById(`cell-${r}-${c}`);
+          if (el) el.classList.add("duplicate-error");
+          hasDuplicateError = true;
+        }
+      }
+    }
+
+    // 4. Check Horizontal Inequalities
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N - 1; c++) {
+        const sign = this.hSigns[r][c];
+        if (!sign) continue;
+        const slot = document.getElementById(`h-sign-${r}-${c}`);
+        const pill = slot ? slot.querySelector(".ineq-pill") : null;
+        if (!pill) continue;
+
+        pill.classList.remove("satisfied", "violated");
+        const v1 = this.board[r][c];
+        const v2 = this.board[r][c + 1];
+
+        if (v1 !== 0 && v2 !== 0) {
+          const ok = (sign === "<" && v1 < v2) || (sign === ">" && v1 > v2);
+          if (ok) {
+            pill.classList.add("satisfied");
+          } else {
+            pill.classList.add("violated");
+            document.getElementById(`cell-${r}-${c}`)?.classList.add("inequality-error");
+            document.getElementById(`cell-${r}-${c + 1}`)?.classList.add("inequality-error");
+            hasInequalityError = true;
+          }
+        }
+      }
+    }
+
+    // 5. Check Vertical Inequalities
+    for (let r = 0; r < N - 1; r++) {
+      for (let c = 0; c < N; c++) {
+        const sign = this.vSigns[r][c];
+        if (!sign) continue;
+        const slot = document.getElementById(`v-sign-${r}-${c}`);
+        const pill = slot ? slot.querySelector(".ineq-pill") : null;
+        if (!pill) continue;
+
+        pill.classList.remove("satisfied", "violated");
+        const v1 = this.board[r][c];
+        const v2 = this.board[r + 1][c];
+
+        if (v1 !== 0 && v2 !== 0) {
+          const ok = (sign === "^" && v1 < v2) || (sign === "v" && v1 > v2);
+          if (ok) {
+            pill.classList.add("satisfied");
+          } else {
+            pill.classList.add("violated");
+            document.getElementById(`cell-${r}-${c}`)?.classList.add("inequality-error");
+            document.getElementById(`cell-${r + 1}-${c}`)?.classList.add("inequality-error");
+            hasInequalityError = true;
+          }
+        }
+      }
+    }
+
+    if (hasDuplicateError || hasInequalityError) {
+      this.mistakes++;
+      this.dom.mistakesDisplay.textContent = this.mistakes;
+      audio.playError();
+      if (hasInequalityError) {
+        this.setMascot("⚠️", "あれれ？ 不等号（＜、＞）の大小関係が合っていない場所があるよ！");
+      } else {
+        this.setMascot("⚠️", "同じ行や列に同じ数字が重なっているよ！");
+      }
+      return;
+    }
+
+    // 6. Check Completion
+    let filledCount = 0;
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        if (this.board[r][c] !== 0) filledCount++;
+      }
+    }
+
+    if (filledCount === N * N) {
+      this.triggerVictory();
+    }
+  }
+
+  updateInequalityStatuses() {
+    this.checkBoardState(-1, -1);
+  }
+
+  updateNumpadCompletion() {
+    const N = this.gridSize;
+    const counts = {};
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const v = this.board[r][c];
+        if (v) counts[v] = (counts[v] || 0) + 1;
+      }
+    }
+    document.querySelectorAll(".num-btn").forEach(btn => {
+      const val = parseInt(btn.dataset.val);
+      if (counts[val] >= N) {
+        btn.classList.add("completed");
+      } else {
+        btn.classList.remove("completed");
+      }
+    });
+  }
+
+  triggerVictory() {
+    if (this.isCompleted) return;
+    this.isCompleted = true;
+    this.stopTimer();
+
+    audio.playVictory();
+    this.launchConfetti();
+
+    // Calculate Stars
+    let starsEarned = 1;
+    if (this.mistakes <= 2 && this.hintsUsed <= 1) starsEarned = 2;
+    if (this.mistakes === 0 && this.hintsUsed === 0) starsEarned = 3;
+
+    // Save Progress
+    if (this.currentMode === "adventure" && this.currentStage) {
+      const stId = this.currentStage.id;
+      const currentBestStars = this.progress.stars[stId] || 0;
+      if (starsEarned > currentBestStars) {
+        this.progress.stars[stId] = starsEarned;
+      }
+      const prevBestTime = this.progress.bestTimes[stId];
+      if (!prevBestTime || this.timer < prevBestTime) {
+        this.progress.bestTimes[stId] = this.timer;
+      }
+      if (stId === this.progress.unlockedStages && stId < 18) {
+        this.progress.unlockedStages = stId + 1;
+      }
+      this.saveProgress();
+      this.renderStageGrid();
+    }
+
+    // Victory Modal Setup
+    this.dom.winTitle.textContent = this.currentMode === "adventure" 
+      ? `ステージ ${this.currentStage.id} クリア！`
+      : "自由トレーニング クリア！";
+    this.dom.winSubtitle.textContent = starsEarned === 3
+      ? "ノーミスクリア！完璧な論理マスターです！🏆"
+      : "クリアおめでとう！素晴らしいひらめきです！";
+
+    this.dom.winTimeVal.textContent = this.formatTime(this.timer);
+    this.dom.winMistakesVal.textContent = this.mistakes;
+    this.dom.winHintsVal.textContent = this.hintsUsed;
+
+    const starItems = this.dom.winStarsBox.querySelectorAll(".star-item");
+    starItems.forEach((it, idx) => {
+      it.classList.remove("lit");
+      if (idx < starsEarned) {
+        setTimeout(() => it.classList.add("lit"), idx * 220 + 200);
+      }
+    });
+
+    if (this.currentMode === "adventure" && this.currentStage.id < 18) {
+      this.dom.winNextBtn.style.display = "block";
+    } else {
+      this.dom.winNextBtn.style.display = "none";
+    }
+
+    setTimeout(() => {
+      this.dom.victoryModal.classList.add("active");
+    }, 400);
+  }
+
+  setMascot(avatar, msg) {
+    this.dom.mascotIcon.textContent = avatar;
+    this.dom.mascotMsg.textContent = msg;
+  }
+
+  startTimer() {
+    this.stopTimer();
+    this.timer = 0;
+    this.dom.timerDisplay.textContent = "00:00";
+    this.timerInterval = setInterval(() => {
+      this.timer++;
+      this.dom.timerDisplay.textContent = this.formatTime(this.timer);
+    }, 1000);
+  }
+
+  stopTimer() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
+
+  formatTime(sec) {
+    const m = Math.floor(sec / 60);
+    const s = sec % 60;
+    return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+  }
+
+  launchConfetti() {
+    const canvas = document.getElementById("confetti-canvas");
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    const colors = ["#4F46E5", "#06B6D4", "#F59E0B", "#10B981", "#EC4899", "#8B5CF6"];
+
+    for (let i = 0; i < 110; i++) {
+      particles.push({
+        x: canvas.width * 0.5 + (Math.random() - 0.5) * 80,
+        y: canvas.height * 0.45 + (Math.random() - 0.5) * 80,
+        vx: (Math.random() - 0.5) * 16,
+        vy: (Math.random() - 0.9) * 18,
+        size: Math.random() * 8 + 5,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rotation: Math.random() * 360,
+        vrot: (Math.random() - 0.5) * 10,
+        alpha: 1
+      });
+    }
+
+    let frame = 0;
+    const animate = () => {
+      frame++;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.45; // Gravity
+        p.rotation += p.vrot;
+        p.alpha -= 0.008;
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0, p.alpha);
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+        ctx.restore();
+      }
+
+      if (frame < 130) {
+        requestAnimationFrame(animate);
+      } else {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    };
+    animate();
+  }
+
+  bindEvents() {
+    // Mode tabs
+    this.dom.modeTabs.querySelectorAll(".tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        audio.playClick();
+        const targetView = btn.dataset.view;
+        this.switchView(targetView === "adventureView" ? "adventure" : "freeplay");
+      });
+    });
+
+    // Logo click -> back to map
+    document.getElementById("logoBtn").addEventListener("click", () => {
+      audio.playClick();
+      this.switchView("adventure");
+    });
+
+    // Map back btn
+    this.dom.mapBackBtn.addEventListener("click", () => {
+      audio.playClick();
+      this.switchView(this.currentMode === "adventure" ? "adventure" : "freeplay");
+    });
+
+    // Sound toggle
+    this.dom.soundBtn.addEventListener("click", () => {
+      audio.enabled = !audio.enabled;
+      this.dom.soundBtn.textContent = audio.enabled ? "🔊" : "🔇";
+      if (audio.enabled) audio.playClick();
+    });
+
+    // Tier selector
+    document.querySelectorAll(".tier-pill").forEach(pill => {
+      pill.addEventListener("click", () => {
+        audio.playClick();
+        document.querySelectorAll(".tier-pill").forEach(p => p.classList.remove("active"));
+        pill.classList.add("active");
+        this.activeTier = parseInt(pill.dataset.tier);
+        this.renderStageGrid();
+      });
+    });
+
+    // Free Play Option buttons
+    this.dom.freeSizeOptions.querySelectorAll(".opt-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        audio.playClick();
+        this.dom.freeSizeOptions.querySelectorAll(".opt-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+      });
+    });
+
+    this.dom.freeDiffOptions.querySelectorAll(".opt-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        audio.playClick();
+        this.dom.freeDiffOptions.querySelectorAll(".opt-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+      });
+    });
+
+    this.dom.startFreeBtn.addEventListener("click", () => {
+      audio.playClick();
+      const activeSizeBtn = this.dom.freeSizeOptions.querySelector(".opt-btn.active");
+      const activeDiffBtn = this.dom.freeDiffOptions.querySelector(".opt-btn.active");
+      const size = parseInt(activeSizeBtn.dataset.size);
+      const diff = activeDiffBtn.dataset.diff;
+      this.startFreePlay(size, diff);
+    });
+
+    // Toolbar actions
+    this.dom.undoBtn.addEventListener("click", () => this.undo());
+    this.dom.eraseBtn.addEventListener("click", () => this.eraseSelectedCell());
+    this.dom.hintBtn.addEventListener("click", () => this.useSmartHint());
+
+    this.dom.noteModeBtn.addEventListener("click", () => {
+      audio.playClick();
+      this.noteMode = !this.noteMode;
+      this.dom.noteModeBtn.classList.toggle("active", this.noteMode);
+      if (this.noteMode) {
+        this.setMascot("✏️", "メモモードON！マスに候補の数字を小さくメモできるよ。");
+      } else {
+        this.setMascot("🦉", "メモモードOFF！数字を直接入力しよう。");
+      }
+    });
+
+    this.dom.restartBtn.addEventListener("click", () => {
+      audio.playClick();
+      if (confirm("盤面を最初の状態にリセットしますか？")) {
+        if (this.currentMode === "adventure") {
+          this.startStage(this.currentStage);
+        } else {
+          this.board = this.givens.map(r => [...r]);
+          this.notes = Array.from({ length: this.gridSize }, () =>
+            Array.from({ length: this.gridSize }, () => new Set())
+          );
+          this.resetGameplayState();
+          this.renderBoardValues();
+          this.updateInequalityStatuses();
+          this.startTimer();
+        }
+      }
+    });
+
+    // Themes
+    document.querySelectorAll(".theme-opt-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        audio.playClick();
+        document.querySelectorAll(".theme-opt-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        this.theme = btn.dataset.theme;
+        document.body.dataset.theme = this.theme;
+        this.buildNumpad();
+        this.renderBoardValues();
+      });
+    });
+
+    // Tutorial modal
+    this.dom.tutorialBtn.addEventListener("click", () => {
+      audio.playClick();
+      this.dom.tutorialModal.classList.add("active");
+    });
+    this.dom.closeTutorialBtn.addEventListener("click", () => {
+      audio.playClick();
+      this.dom.tutorialModal.classList.remove("active");
+    });
+
+    // Victory modal buttons
+    this.dom.winMapBtn.addEventListener("click", () => {
+      audio.playClick();
+      this.dom.victoryModal.classList.remove("active");
+      this.switchView("adventure");
+    });
+    this.dom.winRetryBtn.addEventListener("click", () => {
+      audio.playClick();
+      this.dom.victoryModal.classList.remove("active");
+      if (this.currentMode === "adventure") {
+        this.startStage(this.currentStage);
+      } else {
+        const activeSizeBtn = this.dom.freeSizeOptions.querySelector(".opt-btn.active");
+        const activeDiffBtn = this.dom.freeDiffOptions.querySelector(".opt-btn.active");
+        this.startFreePlay(parseInt(activeSizeBtn.dataset.size), activeDiffBtn.dataset.diff);
+      }
+    });
+    this.dom.winNextBtn.addEventListener("click", () => {
+      audio.playClick();
+      this.dom.victoryModal.classList.remove("active");
+      if (this.currentMode === "adventure") {
+        const nextId = this.currentStage.id + 1;
+        const nextSt = STAGES_DATA.find(s => s.id === nextId);
+        if (nextSt) {
+          // Switch tier tab if needed
+          if (nextId >= 13) this.activeTier = 3;
+          else if (nextId >= 7) this.activeTier = 2;
+          else this.activeTier = 1;
+          document.querySelectorAll(".tier-pill").forEach(p => {
+            p.classList.toggle("active", parseInt(p.dataset.tier) === this.activeTier);
+          });
+          this.renderStageGrid();
+          this.startStage(nextSt);
+        } else {
+          this.switchView("adventure");
+        }
+      }
+    });
+
+    // Keyboard controls
+    window.addEventListener("keydown", (e) => {
+      if (this.isCompleted) return;
+      const key = e.key;
+
+      if (key >= "1" && key <= String(this.gridSize)) {
+        this.handleNumberInput(parseInt(key));
+      } else if (key === "Backspace" || key === "Delete") {
+        this.eraseSelectedCell();
+      } else if (key.toLowerCase() === "n") {
+        this.dom.noteModeBtn.click();
+      } else if (key.toLowerCase() === "z" || key.toLowerCase() === "u") {
+        this.undo();
+      } else if (key.toLowerCase() === "h") {
+        this.useSmartHint();
+      } else if (this.selectedCell) {
+        let { r, c } = this.selectedCell;
+        const N = this.gridSize;
+        if (key === "ArrowUp") { r = (r - 1 + N) % N; e.preventDefault(); }
+        else if (key === "ArrowDown") { r = (r + 1) % N; e.preventDefault(); }
+        else if (key === "ArrowLeft") { c = (c - 1 + N) % N; e.preventDefault(); }
+        else if (key === "ArrowRight") { c = (c + 1) % N; e.preventDefault(); }
+        if (r !== this.selectedCell.r || c !== this.selectedCell.c) {
+          this.selectCell(r, c);
+        }
+      }
+    });
+  }
+}
+
+// Boot application
+window.addEventListener("DOMContentLoaded", () => {
+  window.game = new FutoshikiGame();
+});
+</script>
+</body>
+</html>

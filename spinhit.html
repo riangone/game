@@ -1,0 +1,1627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>旋刺 3D - Hyperion Premium SpinHit</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap');
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    overflow: hidden; background: #070913;
+    font-family: 'Outfit', "PingFang SC", "Microsoft YaHei", sans-serif;
+    touch-action: none;
+    -webkit-user-select: none; user-select: none;
+  }
+  #game { display: block; width: 100%; height: 100%; }
+  
+  #hud {
+    position: fixed; top: 0; left: 0; width: 100%;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 20px 24px; box-sizing: border-box; pointer-events: none;
+    z-index: 5;
+  }
+  .hud-card {
+    background: rgba(7, 9, 19, 0.45);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    padding: 10px 18px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  }
+  #score { font-size: 38px; font-weight: 800; color: #a78bfa; line-height: 1.1; margin-top: 2px;}
+  .hud-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.6; margin-bottom: 2px; }
+  .hud-value { font-size: 14px; opacity: 0.9; }
+
+  #hint {
+    position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%);
+    text-align: center; color: #fff; opacity: 0.85; font-size: 13px;
+    pointer-events: none; z-index: 5;
+    background: rgba(7, 9, 19, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 6px 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    white-space: normal;
+    max-width: 90vw;
+    line-height: 1.4;
+  }
+
+  /* 针数指示器 */
+  #pin-counter {
+    position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 8px; justify-content: center; align-items: center;
+    background: rgba(7, 9, 19, 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 10px 24px;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    z-index: 5;
+    pointer-events: none;
+  }
+  .pin-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .pin-dot.active {
+    background: linear-gradient(135deg, #a78bfa, #3b82f6);
+    box-shadow: 0 0 10px rgba(167, 139, 250, 0.7);
+    transform: scale(1.2);
+  }
+  .pin-dot.fever {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    box-shadow: 0 0 12px rgba(251, 191, 36, 0.9);
+    transform: scale(1.3);
+  }
+
+  /* Fever 能量条 */
+  #fever-container {
+    position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%);
+    width: 160px; height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px; overflow: hidden;
+    z-index: 5; pointer-events: none;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+  }
+  #fever-bar {
+    width: 0%; height: 100%;
+    background: linear-gradient(90deg, #fbbf24, #ef4444);
+    box-shadow: 0 0 8px rgba(251, 191, 36, 0.6);
+    transition: width 0.3s ease;
+  }
+  #fever-bar.active {
+    animation: fever-pulse 0.4s infinite alternate;
+  }
+  @keyframes fever-pulse {
+    0% { opacity: 0.7; filter: brightness(1); }
+    100% { opacity: 1; filter: brightness(1.3); }
+  }
+
+  #overlay {
+    position: fixed; inset: 0; background: rgba(5, 6, 13, 0.8);
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    color: #fff; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 9;
+  }
+  #overlay.show { display: flex; }
+  
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 28px;
+    padding: 35px 25px;
+    width: 85%;
+    max-width: 360px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+    text-align: center;
+  }
+  
+  .glass-panel h1 {
+    font-size: 30px; font-weight: 800; margin: 0 0 10px;
+  }
+  .glass-panel .final-score {
+    font-size: 64px; font-weight: 800; margin: 10px 0;
+    background: linear-gradient(135deg, #a78bfa, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .glass-panel .sub { opacity: 0.8; font-size: 14px; margin-bottom: 25px; color: #38bdf8; font-weight: 600; }
+
+  #startScreen {
+    position: fixed; inset: 0;
+    background: radial-gradient(circle at center, #101226 0%, #05060d 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: #fff; text-align: center; z-index: 10;
+    padding: 20px;
+  }
+  
+  #startBtn, #restartBtn {
+    padding: 14px 44px; font-size: 16px; border: none; border-radius: 50px;
+    background: linear-gradient(135deg, #a78bfa, #3b82f6); color: #fff;
+    box-shadow: 0 8px 24px rgba(59, 130, 246, 0.35); cursor: pointer;
+    font-weight: 800; letter-spacing: 2.5px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    outline: none;
+  }
+  #startBtn:hover, #restartBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(59, 130, 246, 0.5);
+    background: linear-gradient(135deg, #b89eff, #4f8ff7);
+  }
+  #startBtn:active, #restartBtn:active {
+    transform: translateY(1px);
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+  }
+  #restartBtn {
+    background: linear-gradient(135deg, #ef4444, #ec4899);
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.35);
+  }
+  #restartBtn:hover {
+    background: linear-gradient(135deg, #ff5c5c, #f762ab);
+    box-shadow: 0 12px 32px rgba(239, 68, 68, 0.5);
+  }
+
+  #wind-hud {
+    position: fixed; bottom: 20px; left: 24px;
+    display: none; align-items: center; gap: 8px; z-index: 5;
+    padding: 8px 16px; border-radius: 20px;
+  }
+  #wind-arrow {
+    font-size: 18px; color: #38bdf8; font-weight: 800;
+    display: inline-block;
+  }
+  
+  /* Switch Toggle Switch Styles */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+  }
+  .switch input {
+    opacity: 0; width: 0; height: 0;
+  }
+  .slider {
+    position: absolute; cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 0.12);
+    transition: .3s;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .slider:before {
+    position: absolute; content: "";
+    height: 16px; width: 16px; left: 3px; bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  input:checked + .slider {
+    background: linear-gradient(135deg, #a78bfa, #3b82f6);
+    border-color: rgba(167, 139, 250, 0.3);
+  }
+  input:checked + .slider:before {
+    transform: translateX(20px);
+  }
+  .slider.round { border-radius: 24px; }
+  .slider.round:before { border-radius: 50%; }
+</style>
+</head>
+<body>
+
+<div id="startScreen">
+  <div class="glass-panel">
+    <h1 style="background: linear-gradient(135deg, #a78bfa, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 2px 8px rgba(59,130,246,0.3));">旋刺 3D <span style="font-size: 16px; font-weight: 400; color: #a78bfa; display: block; margin-top: 4px;">Hyperion Premium SpinHit</span></h1>
+    <p style="font-size: 13px; line-height: 1.6; opacity: 0.85; margin: 15px 0 20px;">
+      单指点击发射 · 避开已固定的飞针<br>
+      射中<b>发光宝石</b>触发 <b>PERFECT</b> 充能<br>
+      满能开启 <b>Fever狂热</b> 状态：撞碎一切阻碍！
+    </p>
+
+    <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 15px; margin-bottom: 25px; text-align: left;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <span style="font-size: 14px; font-weight: 600; opacity: 0.9;">弹道辅助线</span>
+        <label class="switch">
+          <input type="checkbox" id="startGuideToggle" checked>
+          <span class="slider round"></span>
+        </label>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 14px; font-weight: 600; opacity: 0.9;">游戏音效</span>
+        <label class="switch">
+          <input type="checkbox" id="startSoundToggle" checked>
+          <span class="slider round"></span>
+        </label>
+      </div>
+    </div>
+
+    <button id="startBtn">开始挑战</button>
+  </div>
+</div>
+
+<canvas id="game"></canvas>
+
+<div id="hud">
+  <div class="hud-card">
+    <span class="hud-label">STAGE <span id="stage-num">1</span></span>
+    <span id="score">0</span>
+  </div>
+
+  <div class="hud-card" id="settingsBtnCard" style="pointer-events: auto; cursor: pointer; align-items: center; justify-content: center; padding: 10px; height: 38px; width: 38px; box-sizing: border-box; border-radius: 50%;">
+    <svg id="settingsBtn" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #fff; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+  </div>
+
+  <div class="hud-card" style="align-items: flex-end;">
+    <span id="best" class="hud-value">BEST 0</span>
+    <span id="combo-hud" class="hud-value" style="color: #fbbf24; font-weight: 800; display: none; margin-top: 4px;">Combo x0</span>
+  </div>
+</div>
+
+<div id="wind-hud" class="hud-card">
+  <span id="wind-arrow">→</span>
+  <span style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">WIND: <span id="wind-percent" style="color: #38bdf8;">0m/s</span></span>
+</div>
+
+<div id="fever-container">
+  <div id="fever-bar"></div>
+</div>
+
+<div id="pin-counter"></div>
+
+<div id="hint">点击屏幕任意位置射击</div>
+
+<div id="overlay">
+  <div class="glass-panel">
+    <h1 id="over-title" style="color: #ef4444;">挑战结束</h1>
+    <div style="font-size: 11px; opacity: 0.5; margin-bottom: 2px;">FINAL SCORE</div>
+    <div class="final-score">0</div>
+    <div class="sub" id="over-sub">再接再厉</div>
+    <button id="restartBtn">重新挑战</button>
+  </div>
+</div>
+
+<div id="settingsScreen" style="position: fixed; inset: 0; background: rgba(5, 6, 13, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; color: #fff; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); z-index: 15;">
+  <div class="glass-panel" style="max-width: 300px;">
+    <h2 style="font-size: 22px; font-weight: 800; margin: 0 0 25px; background: linear-gradient(135deg, #a78bfa, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">游戏设定</h2>
+    
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; text-align: left;">
+      <div>
+        <div style="font-size: 14px; font-weight: 600;">弹道辅助线</div>
+        <div style="font-size: 10px; opacity: 0.6; margin-top: 2px;">显示飞针的预估轨迹</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="guideToggle" checked>
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; text-align: left;">
+      <div>
+        <div style="font-size: 14px; font-weight: 600;">游戏音效</div>
+        <div style="font-size: 10px; opacity: 0.6; margin-top: 2px;">开启或关闭合成音效</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="soundToggle" checked>
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <button id="closeSettingsBtn" style="padding: 10px 36px; font-size: 14px; border: none; border-radius: 50px; background: linear-gradient(135deg, #a78bfa, #3b82f6); color: #fff; font-weight: 800; cursor: pointer; transition: all 0.3s ease;">返回</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+  const scoreEl = document.getElementById("score");
+  const bestEl = document.getElementById("best");
+  const stageNumEl = document.getElementById("stage-num");
+  const overlay = document.getElementById("overlay");
+  const overTitleEl = document.getElementById("over-title");
+  const overSubEl = document.getElementById("over-sub");
+  const finalScoreEl = overlay.querySelector(".final-score");
+  const restartBtn = document.getElementById("restartBtn");
+  const startScreen = document.getElementById("startScreen");
+  const startBtn = document.getElementById("startBtn");
+  const hint = document.getElementById("hint");
+  const pinCounter = document.getElementById("pin-counter");
+  const feverBar = document.getElementById("fever-bar");
+
+  const settingsBtnCard = document.getElementById("settingsBtnCard");
+  const settingsScreen = document.getElementById("settingsScreen");
+  const closeSettingsBtn = document.getElementById("closeSettingsBtn");
+  const settingsSvg = document.getElementById("settingsBtn");
+  const guideToggle = document.getElementById("guideToggle");
+  const soundToggle = document.getElementById("soundToggle");
+  const startGuideToggle = document.getElementById("startGuideToggle");
+  const startSoundToggle = document.getElementById("startSoundToggle");
+
+  const windHud = document.getElementById("wind-hud");
+  const windArrow = document.getElementById("wind-arrow");
+  const windPercent = document.getElementById("wind-percent");
+
+  let guideEnabled = localStorage.getItem("spinHitGuide") !== "false";
+  let soundEnabled = localStorage.getItem("spinHitSound") !== "false";
+
+  guideToggle.checked = guideEnabled;
+  startGuideToggle.checked = guideEnabled;
+  soundToggle.checked = soundEnabled;
+  startSoundToggle.checked = soundEnabled;
+
+  function updateGuideSetting(val) {
+    guideEnabled = val;
+    localStorage.setItem("spinHitGuide", String(val));
+    guideToggle.checked = val;
+    startGuideToggle.checked = val;
+  }
+
+  function updateSoundSetting(val) {
+    soundEnabled = val;
+    localStorage.setItem("spinHitSound", String(val));
+    soundToggle.checked = val;
+    startSoundToggle.checked = val;
+  }
+
+  guideToggle.addEventListener("change", (e) => updateGuideSetting(e.target.checked));
+  startGuideToggle.addEventListener("change", (e) => updateGuideSetting(e.target.checked));
+  soundToggle.addEventListener("change", (e) => updateSoundSetting(e.target.checked));
+  startSoundToggle.addEventListener("change", (e) => updateSoundSetting(e.target.checked));
+
+  settingsBtnCard.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (state === "launching" || state === "shattering" || state === "failed") return;
+    settingsSvg.style.transform = "rotate(90deg)";
+    settingsScreen.style.display = "flex";
+  });
+
+  closeSettingsBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    settingsScreen.style.display = "none";
+    settingsSvg.style.transform = "rotate(0deg)";
+  });
+
+  let DPR = Math.min(window.devicePixelRatio || 1, 2);
+  let W = 0, H = 0;
+
+  function resize() {
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = W * DPR;
+    canvas.height = H * DPR;
+    canvas.style.width = W + "px";
+    canvas.style.height = H + "px";
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  // ---------- Web Audio Synthesizer ----------
+  let audioCtx = null;
+  function initAudio() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+
+  function playSynthSound(type, freqFactor = 1.0) {
+    if (!soundEnabled) return;
+    if (!audioCtx) initAudio();
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    if (!audioCtx) return;
+    
+    const now = audioCtx.currentTime;
+    
+    if (type === 'launch') {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(320 * freqFactor, now);
+      osc.frequency.exponentialRampToValueAtTime(700 * freqFactor, now + 0.08);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.08);
+    }
+    
+    if (type === 'hit_normal') {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(280 * freqFactor, now);
+      osc.frequency.exponentialRampToValueAtTime(90 * freqFactor, now + 0.08);
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.08);
+    }
+
+    if (type === 'hit_perfect') {
+      // 完美和弦 chimes
+      const chord = [523.25, 659.25, 783.99, 1046.50];
+      chord.forEach((freq, idx) => {
+        const oscBell = audioCtx.createOscillator();
+        const gainBell = audioCtx.createGain();
+        oscBell.type = 'sine';
+        oscBell.frequency.setValueAtTime(freq * freqFactor, now + idx * 0.03);
+        gainBell.gain.setValueAtTime(0.08, now + idx * 0.03);
+        gainBell.gain.exponentialRampToValueAtTime(0.001, now + 0.35 + idx * 0.03);
+        oscBell.connect(gainBell);
+        gainBell.connect(audioCtx.destination);
+        oscBell.start(now + idx * 0.03);
+        oscBell.stop(now + 0.4);
+      });
+    }
+    
+    if (type === 'fail') {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(160, now);
+      osc.frequency.linearRampToValueAtTime(45, now + 0.45);
+      gain.gain.setValueAtTime(0.22, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.45);
+    }
+    
+    if (type === 'fever_active') {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.linearRampToValueAtTime(880, now + 0.2);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.2);
+    }
+
+    if (type === 'stage_clear') {
+      const arpeggio = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99, 1046.50];
+      arpeggio.forEach((freq, idx) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq * freqFactor, now + idx * 0.04);
+        gain.gain.setValueAtTime(0.06, now + idx * 0.04);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25 + idx * 0.04);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now + idx * 0.04);
+        osc.stop(now + 0.3 + idx * 0.04);
+      });
+    }
+  }
+
+  // ---------- Isometric helpers ----------
+  const ISO = { angle: Math.PI / 6 }; // 30deg
+  function iso(x, y, z) {
+    const sx = (x - y) * Math.cos(ISO.angle);
+    const sy = (x + y) * Math.sin(ISO.angle) - (z || 0);
+    return { x: sx, y: sy };
+  }
+
+  // ---------- Game constants ----------
+  const DISK_R = 75;
+  const PIN_LEN = 26;
+  const LAUNCH_SPEED = 900; // 屏幕坐标单位/秒
+  const EYE_SIZE = 2.8;
+  const COLLISION_ANGLE_THRESH = 0.22; // 约12.6度
+  const WOBBLE_AMP = 14;
+  const WOBBLE_DECAY = 8;
+  const FEVER_HIT_CHARGE = 20; // 5次完美命中进Fever
+
+  // ---------- Game states ----------
+  let score = 0;
+  let stage = 1;
+  let bestScore = parseInt(localStorage.getItem("spinHitBest") || "0", 10);
+  bestEl.textContent = `BEST ${bestScore}`;
+
+  let state = "idle"; // idle, playing, launching, shattering, failed, gameover
+  let feverValue = 0; // 0 to 100
+  let isFever = false;
+  let feverTimeRemaining = 0; // fever持续时间（秒）
+  
+  let stagePinsTotal = 8;
+  let stagePinsLeft = 8;
+
+  let disk = {
+    x: 0, y: 0, z: 0, // 世界坐标（中心点）
+    radius: DISK_R,
+    rotation: 0,
+    speed: 1.8,       // 弧度/秒
+    speedDir: 1,      // 1 or -1
+    speedPattern: 0,  // 0: 匀速, 1: 变速, 2: 停顿, 3: 反转
+    patternTime: 0,   // 用于计算变速的正弦波等
+    pins: [],         // 已插入的针 { angle, sizeMultiplier, index }
+    gems: [],         // 目标宝石 { angle, active }
+    wobbleX: 0,       // 碰撞抖动
+    wobbleY: 0,
+    wobbleTime: 0,
+    hue: 260          // 圆盘主色调 (HSL)
+  };
+
+  // 当前正要发射的针
+  let launcher = {
+    x: 0, y: 0, z: 0, // 世界空间位置
+    active: false,
+    vx: 0, vy: 0,
+    progress: 0,      // 0 to 1 发射进度
+    eyeState: 'normal',
+    eyeTimer: 0,
+    trail: []         // 尾迹点 {x, y, z, alpha}
+  };
+
+  // 发射器的 3D 起点
+  // 保持投影在屏幕中轴线上，所以 x = y。
+  let launchStart3D = { x: 260, y: 260, z: 0 };
+  let diskCenter3D = { x: 0, y: 0, z: 0 }; // 投影时会偏移到屏幕中心偏上
+
+  // 粒子系统
+  let particles = [];
+  let floatingTexts = [];
+
+  // 风力系统
+  let wind = {
+    speed: 0, // 屏幕空间 sx 的偏移加速度
+    active: false
+  };
+
+  // 连击系统
+  let combo = 0;
+  let maxComboInRun = 0;
+
+  // 调试钩子
+  window.__spinhitDebug = {
+    getState: () => state,
+    getScore: () => score,
+    getStage: () => stage,
+    getPinsLeft: () => stagePinsLeft,
+    getDiskSpeed: () => disk.speed,
+    getFever: () => isFever,
+    launch: () => handleAction(),
+    setFever: (v) => { isFever = v; if(v) feverTimeRemaining = 5; },
+    setWind: (s) => { wind.active = true; wind.speed = s; }
+  };
+
+  function addParticle(x, y, z, color, count = 1, force = 1) {
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: x, y: y, z: z,
+        vx: (Math.random() - 0.5) * 200 * force,
+        vy: (Math.random() - 0.5) * 200 * force,
+        vz: (Math.random() - 0.5) * 150 * force + 50,
+        color: color,
+        size: Math.random() * 4 + 2,
+        life: 1.0,
+        decay: Math.random() * 1.5 + 1.2
+      });
+    }
+  }
+
+  function addFloatingText(x, y, text, color, isPerfect = false) {
+    floatingTexts.push({
+      x: x, y: y,
+      text: text,
+      color: color,
+      scale: isPerfect ? 1.5 : 1.0,
+      opacity: 1.0,
+      vy: -40,
+      life: 0.8
+    });
+  }
+
+  function setupStage(s) {
+    stage = s;
+    stageNumEl.textContent = s;
+    
+    // 关卡针数递增
+    stagePinsTotal = 6 + Math.min(Math.floor(s / 2), 10);
+    stagePinsLeft = stagePinsTotal;
+    
+    // 清空圆盘针和宝石
+    disk.pins = [];
+    disk.gems = [];
+    disk.wobbleX = 0;
+    disk.wobbleY = 0;
+    disk.wobbleTime = 0;
+    
+    // 根据关卡决定圆盘色调
+    disk.hue = (260 + (s - 1) * 35) % 360;
+    
+    // 决定旋转模式
+    // 模式 0: 匀速, 1: 正弦变速, 2: 周期停顿, 3: 频繁反转
+    if (s === 1) {
+      disk.speedPattern = 0;
+      disk.speed = 1.6;
+    } else if (s === 2) {
+      disk.speedPattern = 1;
+      disk.speed = 2.0;
+    } else if (s % 5 === 0) {
+      // Boss关：混合变速与障碍
+      disk.speedPattern = 3;
+      disk.speed = 2.5;
+    } else {
+      disk.speedPattern = Math.floor(Math.random() * 4);
+      disk.speed = 1.8 + Math.min(s * 0.1, 1.4);
+    }
+    
+    disk.speedDir = Math.random() < 0.5 ? 1 : -1;
+    disk.patternTime = 0;
+
+    // Boss关的特殊提示
+    if (s % 5 === 0) {
+      hint.innerHTML = `<span style="color: #ef4444; font-weight:800;">BOSS STAGE</span><br>高转速反转 + 装甲挡板！`;
+    } else {
+      hint.textContent = "点击屏幕任意位置发射";
+    }
+
+    // 在圆盘上生成初始宝石（供 Perfect 撞击）
+    // 数量：2到4个，互不重叠
+    const gemCount = s % 5 === 0 ? 4 : (Math.random() < 0.5 ? 2 : 3);
+    for (let i = 0; i < gemCount; i++) {
+      let angle = (i * (Math.PI * 2 / gemCount)) + Math.random() * 0.4;
+      disk.gems.push({ angle: angle, active: true });
+    }
+
+    // Boss关卡添加初始不可碰的“挡板/尖刺”
+    if (s % 5 === 0) {
+      // 预先安插2个危险的红色钢刺
+      disk.pins.push({ angle: 0, isObstacle: true, sizeMultiplier: 1.4 });
+      disk.pins.push({ angle: Math.PI, isObstacle: true, sizeMultiplier: 1.4 });
+    }
+
+    // 设置风力
+    if (s >= 3) {
+      wind.active = true;
+      // 风速在 [-180, 180] 之间，随着关卡风力上升
+      const maxWind = Math.min(60 + s * 15, 260);
+      wind.speed = (Math.random() - 0.5) * 2 * maxWind;
+      windHud.style.display = "flex";
+      updateWindHUD();
+    } else {
+      wind.active = false;
+      windHud.style.display = "none";
+    }
+
+    // 重建下方点数指示器
+    rebuildPinIndicator();
+    
+    // 重置发射器
+    resetLauncher();
+  }
+
+  function updateWindHUD() {
+    const ws = Math.round(Math.abs(wind.speed));
+    windPercent.textContent = `${ws}m/s`;
+    if (wind.speed > 0) {
+      windArrow.textContent = "→";
+      windArrow.style.color = "#38bdf8";
+      windArrow.style.animation = "wind-arrow-right 0.6s infinite";
+    } else {
+      windArrow.textContent = "←";
+      windArrow.style.color = "#fb7185";
+      windArrow.style.animation = "wind-arrow-left 0.6s infinite";
+    }
+  }
+
+  function rebuildPinIndicator() {
+    pinCounter.innerHTML = "";
+    for (let i = 0; i < stagePinsTotal; i++) {
+      const dot = document.createElement("div");
+      dot.className = "pin-dot";
+      if (i < stagePinsTotal - stagePinsLeft) {
+        dot.classList.add("active");
+        if (isFever) dot.classList.add("fever");
+      }
+      pinCounter.appendChild(dot);
+    }
+  }
+
+  function updatePinIndicator() {
+    const dots = pinCounter.children;
+    for (let i = 0; i < dots.length; i++) {
+      if (i < stagePinsTotal - stagePinsLeft) {
+        dots[i].classList.add("active");
+        if (isFever) dots[i].classList.add("fever");
+      } else {
+        dots[i].classList.remove("active", "fever");
+      }
+    }
+  }
+
+  function resetLauncher() {
+    launcher.x = launchStart3D.x;
+    launcher.y = launchStart3D.y;
+    launcher.z = launchStart3D.z;
+    launcher.active = false;
+    launcher.progress = 0;
+    launcher.eyeState = 'normal';
+    launcher.eyeTimer = 0;
+    launcher.trail = [];
+  }
+
+  function startFever() {
+    isFever = true;
+    feverTimeRemaining = 5.0; // Fever 持续 5 秒
+    feverBar.classList.add("active");
+    feverBar.style.width = "100%";
+    playSynthSound('fever_active');
+    addFloatingText(W / 2, H * 0.4, "FEVER MODE!", "#fbbf24", true);
+    
+    // Fever 期间，点数指示器的 active 针发金光
+    updatePinIndicator();
+  }
+
+  function stopFever() {
+    isFever = false;
+    feverValue = 0;
+    feverBar.classList.remove("active");
+    feverBar.style.width = "0%";
+    addFloatingText(W / 2, H * 0.4, "FEVER END", "#a78bfa");
+    updatePinIndicator();
+  }
+
+  function chargeFever(amount) {
+    if (isFever) return;
+    feverValue = Math.min(100, feverValue + amount);
+    feverBar.style.width = `${feverValue}%`;
+    if (feverValue >= 100) {
+      startFever();
+    }
+  }
+
+  function handleAction() {
+    if (state !== "playing") return;
+    
+    // 初始化发射参数
+    launcher.active = true;
+    launcher.progress = 0;
+    launcher.eyeState = 'normal';
+    launcher.trail = [];
+    state = "launching";
+    
+    playSynthSound('launch', isFever ? 1.2 : 1.0);
+  }
+
+  // 监听触摸/点击
+  window.addEventListener("pointerdown", (e) => {
+    // 排除 settings 点击
+    if (e.target.closest("#settingsBtnCard") || e.target.closest("#settingsScreen")) return;
+    if (startScreen.style.display !== "none") return;
+    if (overlay.classList.contains("show")) return;
+    
+    handleAction();
+  });
+
+  // 键盘空格键也可射击
+  window.addEventListener("keydown", (e) => {
+    if (e.code === "Space") {
+      e.preventDefault();
+      handleAction();
+    }
+  });
+
+  // ---------- Game Loop ----------
+  let lastTime = performance.now();
+
+  function loop(now) {
+    const dt = Math.min((now - lastTime) / 1000, 0.1); // 限制单帧最大时间
+    lastTime = now;
+
+    update(dt);
+    draw();
+
+    requestAnimationFrame(loop);
+  }
+
+  function update(dt) {
+    // 1. Fever 时间递减
+    if (isFever) {
+      feverTimeRemaining -= dt;
+      feverBar.style.width = `${(feverTimeRemaining / 5.0) * 100}%`;
+      if (feverTimeRemaining <= 0) {
+        stopFever();
+      }
+    }
+
+    // 2. 更新圆盘旋转和变速模式
+    disk.patternTime += dt;
+    let currentSpeed = disk.speed * disk.speedDir;
+    
+    if (disk.speedPattern === 1) {
+      // 变速模式：正弦慢速到高速周期变化
+      currentSpeed = disk.speed * (0.4 + 0.9 * Math.sin(disk.patternTime * 2.2)) * disk.speedDir;
+    } else if (disk.speedPattern === 2) {
+      // 停顿模式：转动 1.2 秒，停顿 0.6 秒
+      const cycle = disk.patternTime % 1.8;
+      if (cycle > 1.2) {
+        currentSpeed = 0;
+      }
+    } else if (disk.speedPattern === 3) {
+      // 频繁反转模式：每 2.5 秒改变一次方向，且伴随变速
+      const cycle = Math.floor(disk.patternTime / 2.5);
+      const isReversed = cycle % 2 === 1;
+      const localSpeed = disk.speed * (0.6 + 0.6 * Math.sin(disk.patternTime * 3.5));
+      currentSpeed = localSpeed * disk.speedDir * (isReversed ? -1 : 1);
+    }
+    
+    disk.rotation += currentSpeed * dt;
+
+    // 3. 更新圆盘碰撞抖动
+    if (disk.wobbleTime > 0) {
+      disk.wobbleTime -= dt;
+      disk.wobbleX = Math.sin(disk.wobbleTime * 30) * WOBBLE_AMP * Math.exp(-WOBBLE_DECAY * (0.3 - disk.wobbleTime));
+      disk.wobbleY = Math.cos(disk.wobbleTime * 30) * WOBBLE_AMP * Math.exp(-WOBBLE_DECAY * (0.3 - disk.wobbleTime));
+      if (disk.wobbleTime <= 0) {
+        disk.wobbleX = 0;
+        disk.wobbleY = 0;
+      }
+    }
+
+    // 4. 更新飞针飞行
+    if (state === "launching" && launcher.active) {
+      // 增加飞行进度
+      const step = LAUNCH_SPEED * dt;
+      
+      // 3D 飞行计算：向圆盘中心飞行。
+      // 入射方向为 x = y（在投影中是垂直向上的直线）。
+      // 飞行起点 launchStart3D (260, 260, 0)，终点是圆盘边缘 (R/sqrt(2), R/sqrt(2), 0)
+      const targetX = DISK_R / Math.sqrt(2);
+      const targetY = DISK_R / Math.sqrt(2);
+      
+      // 计算到圆盘边缘的当前距离
+      const currentDist = launcher.x; 
+      // 沿着 x = y 对称递减
+      let nextX = launcher.x - step / Math.sqrt(2);
+      let nextY = launcher.y - step / Math.sqrt(2);
+      
+      // 保存尾迹点
+      launcher.trail.push({
+        x: launcher.x, y: launcher.y, z: launcher.z,
+        alpha: 1.0
+      });
+      if (launcher.trail.length > 8) launcher.trail.shift();
+
+      // 风力偏转计算（作用在 3D 的 x 和 y 上，使投影水平偏移，即 x - y 产生变化，但不影响 x + y）
+      if (wind.active) {
+        // 风力水平加速度，在 x 轴上增加，在 y 轴上减少，从而投影产生水平位移
+        // 积分风速位移
+        const windAcc = wind.speed * 1.5;
+        // 在垂直飞行轴上，我们只让 x - y 的偏差累积。
+        // 用一个跟 launcher 的发射进度相关的偏移量来产生弯曲轨迹
+        const flightTime = (launchStart3D.x - nextX) / (LAUNCH_SPEED / Math.sqrt(2));
+        const windOffset = 0.5 * windAcc * Math.pow(flightTime, 2);
+        
+        // 调整坐标以应用风力偏移
+        // x_new - y_new = x_orig - y_orig + 2 * windOffset
+        // x_new + y_new = x_orig + y_orig
+        launcher.x = nextX + windOffset;
+        launcher.y = nextY - windOffset;
+      } else {
+        launcher.x = nextX;
+        launcher.y = nextY;
+      }
+
+      // 碰撞检测：当 3D 平面上的半径 <= DISK_R 时发生撞击
+      const currentR = Math.sqrt(launcher.x * launcher.x + launcher.y * launcher.y);
+      if (currentR <= DISK_R) {
+        handleHit();
+      }
+    }
+
+    // 5. 更新尾迹淡出
+    launcher.trail.forEach(t => {
+      t.alpha -= dt * 4;
+    });
+    launcher.trail = launcher.trail.filter(t => t.alpha > 0);
+
+    // 6. 更新粒子
+    particles.forEach(p => {
+      p.x += p.vx * dt;
+      p.y += p.vy * dt;
+      p.z += p.vz * dt;
+      p.vz -= 350 * dt; // 重力
+      p.life -= p.decay * dt;
+    });
+    particles = particles.filter(p => p.life > 0);
+
+    // 7. 更新浮动文字
+    floatingTexts.forEach(ft => {
+      ft.y += ft.vy * dt;
+      ft.life -= dt;
+      ft.opacity = Math.max(0, ft.life / 0.8);
+    });
+    floatingTexts = floatingTexts.filter(ft => ft.life > 0);
+  }
+
+  function handleHit() {
+    launcher.active = false;
+    
+    // 计算撞击时刻的极角
+    let hitAngle = Math.atan2(launcher.y, launcher.x);
+    // 保证角度在 0 到 2pi 之间
+    if (hitAngle < 0) hitAngle += Math.PI * 2;
+
+    // 转换为相对于圆盘的局部角度
+    let localAngle = hitAngle - disk.rotation;
+    // 规范化到 [0, 2pi)
+    localAngle = ((localAngle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+
+    // 触发圆盘受击抖动
+    disk.wobbleTime = 0.3;
+
+    // 检查是否撞击到宝石 (Perfect)
+    let hitGemIdx = -1;
+    for (let i = 0; i < disk.gems.length; i++) {
+      const gem = disk.gems[i];
+      if (!gem.active) continue;
+      
+      // 规范化宝石绝对角
+      const gemAbs = ((gem.angle + disk.rotation) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+      let diff = Math.abs(hitAngle - gemAbs);
+      if (diff > Math.PI) diff = Math.PI * 2 - diff;
+      
+      // 较宽的完美命中范围（约6度）
+      if (diff < 0.12) {
+        hitGemIdx = i;
+        break;
+      }
+    }
+
+    // 检查是否与已有的针或Boss障碍碰撞
+    let collision = false;
+    let collidedWithObstacle = false;
+
+    if (!isFever) { // Fever 模式下免疫碰撞，直接摧毁挡在前面的针！
+      for (let i = 0; i < disk.pins.length; i++) {
+        const pin = disk.pins[i];
+        const pinAbs = ((pin.angle + disk.rotation) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+        let diff = Math.abs(hitAngle - pinAbs);
+        if (diff > Math.PI) diff = Math.PI * 2 - diff;
+        
+        if (diff < COLLISION_ANGLE_THRESH) {
+          collision = true;
+          if (pin.isObstacle) {
+            collidedWithObstacle = true;
+          }
+          break;
+        }
+      }
+    }
+
+    if (collision) {
+      // 碰撞失败，游戏结束
+      state = "failed";
+      playSynthSound('fail');
+      
+      // 失败抛射物初始化（针弹飞）
+      launcher.vx = -Math.cos(hitAngle) * 350;
+      launcher.vy = -Math.sin(hitAngle) * 350;
+      launcher.vz = 250;
+      
+      // 溅射失败火花
+      const hitPt = iso(launcher.x, launcher.y, launcher.z);
+      addParticle(launcher.x, launcher.y, launcher.z, "#ef4444", 25, 1.8);
+      
+      addFloatingText(hitPt.x + W/2, hitPt.y + H * 0.45, collidedWithObstacle ? "ARMOR BLOCKED!" : "BLOCKED!", "#ef4444", true);
+
+      setTimeout(() => {
+        gameOver();
+      }, 900);
+      return;
+    }
+
+    // 成功插入！
+    stagePinsLeft--;
+    score++;
+    scoreEl.textContent = score;
+
+    // Fever 模式下若撞击到了已有的针，将它们撞飞碎裂（爽快感）
+    if (isFever) {
+      let pinsToKeep = [];
+      let smashedAny = false;
+      for (let i = 0; i < disk.pins.length; i++) {
+        const pin = disk.pins[i];
+        const pinAbs = ((pin.angle + disk.rotation) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+        let diff = Math.abs(hitAngle - pinAbs);
+        if (diff > Math.PI) diff = Math.PI * 2 - diff;
+        
+        if (diff < COLLISION_ANGLE_THRESH * 1.5) {
+          // 撞飞！
+          smashedAny = true;
+          const pinX = DISK_R * Math.cos(pinAbs);
+          const pinY = DISK_R * Math.sin(pinAbs);
+          addParticle(pinX, pinY, 0, `hsl(${disk.hue}, 90%, 65%)`, 12, 1.2);
+        } else {
+          pinsToKeep.push(pin);
+        }
+      }
+      disk.pins = pinsToKeep;
+      if (smashedAny) {
+        playSynthSound('fail', 1.8); // 清脆爆破音
+        addFloatingText(W/2, H * 0.45, "SMASH!", "#fbbf24", true);
+      }
+    }
+
+    // 处理宝石完美击中
+    const hitPt = iso(launcher.x, launcher.y, launcher.z);
+    if (hitGemIdx !== -1) {
+      disk.gems[hitGemIdx].active = false;
+      combo++;
+      maxComboInRun = Math.max(maxComboInRun, combo);
+      
+      // 分数额外加成
+      score += Math.min(combo, 5); // 连击加分封顶5
+      scoreEl.textContent = score;
+
+      // 完美特效
+      addParticle(launcher.x, launcher.y, launcher.z, "#fbbf24", 25, 2.0);
+      
+      // 连击 HUD 显示
+      const comboHUD = document.getElementById("combo-hud");
+      comboHUD.textContent = `Combo x${combo}`;
+      comboHUD.style.display = "block";
+      
+      addFloatingText(hitPt.x + W/2, hitPt.y + H * 0.45, `PERFECT +${Math.min(combo, 5)}`, "#fbbf24", true);
+      playSynthSound('hit_perfect', 1.0 + combo * 0.05);
+      
+      // Fever 充能
+      chargeFever(FEVER_HIT_CHARGE);
+    } else {
+      // 普通击中
+      combo = 0;
+      document.getElementById("combo-hud").style.display = "none";
+      
+      addParticle(launcher.x, launcher.y, launcher.z, "#38bdf8", 10, 1.0);
+      addFloatingText(hitPt.x + W/2, hitPt.y + H * 0.45, "+1", "#a78bfa");
+      playSynthSound('hit_normal');
+      
+      // 普通击中微量充能
+      chargeFever(4);
+    }
+
+    // 添加新针到圆盘
+    disk.pins.push({
+      angle: localAngle,
+      sizeMultiplier: isFever ? 1.2 : 1.0,
+      isFeverPin: isFever,
+      index: stagePinsTotal - stagePinsLeft
+    });
+
+    updatePinIndicator();
+
+    // 检查本关卡是否通过
+    if (stagePinsLeft <= 0) {
+      state = "shattering";
+      setTimeout(() => {
+        shatterDisk();
+      }, 200);
+    } else {
+      state = "playing";
+      resetLauncher();
+    }
+  }
+
+  function shatterDisk() {
+    playSynthSound('stage_clear');
+    
+    // 生成圆盘破碎粒子
+    const segments = 16;
+    for (let i = 0; i < segments; i++) {
+      const a1 = (i / segments) * Math.PI * 2;
+      const px = Math.cos(a1) * (DISK_R * 0.8);
+      const py = Math.sin(a1) * (DISK_R * 0.8);
+      addParticle(px, py, 0, `hsl(${disk.hue}, 80%, 55%)`, 8, 2.5);
+    }
+
+    // 爆飞所有插在上面的针
+    disk.pins.forEach(pin => {
+      const pinAbs = pin.angle + disk.rotation;
+      const px = DISK_R * Math.cos(pinAbs);
+      const py = DISK_R * Math.sin(pinAbs);
+      addParticle(px, py, 0, pin.isObstacle ? "#ef4444" : "#fff", 12, 3.0);
+    });
+
+    addFloatingText(W / 2, H * 0.45, `STAGE CLEAR!`, "#34d399", true);
+
+    setTimeout(() => {
+      setupStage(stage + 1);
+      state = "playing";
+    }, 1000);
+  }
+
+  function gameOver() {
+    state = "gameover";
+    if (score > bestScore) {
+      bestScore = score;
+      localStorage.setItem("spinHitBest", String(bestScore));
+      bestEl.textContent = `BEST ${bestScore}`;
+      overSubEl.textContent = "创造了全新纪录！";
+      overSubEl.style.color = "#fbbf24";
+    } else {
+      overSubEl.textContent = `最高纪录 ${bestScore}`;
+      overSubEl.style.color = "#38bdf8";
+    }
+    
+    finalScoreEl.textContent = score;
+    overlay.classList.add("show");
+  }
+
+  // ---------- DRAWING SYSTEM ----------
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // 绘制宇宙科技感发光背景
+    const gradBg = ctx.createRadialGradient(W / 2, H * 0.4, 10, W / 2, H * 0.4, W);
+    gradBg.addColorStop(0, '#11132c');
+    gradBg.addColorStop(0.5, '#070915');
+    gradBg.addColorStop(1, '#030408');
+    ctx.fillStyle = gradBg;
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.save();
+    const viewCenterY = H * 0.4;
+    ctx.translate(W / 2, viewCenterY);
+
+    // 1. 绘制辅助瞄准虚线 (弹道指示)
+    if (guideEnabled && (state === "playing" || state === "launching")) {
+      drawAimGuide();
+    }
+
+    // 2. 绘制圆盘后半部的飞针和宝石（Z-ordering）
+    drawDiskElements(false);
+
+    // 3. 绘制等距 2.5D 圆盘主体
+    if (state !== "shattering") {
+      drawDiskBody();
+    }
+
+    // 4. 绘制圆盘前半部的飞针和宝石
+    drawDiskElements(true);
+
+    // 5. 绘制飞行的针
+    if (state === "launching" && launcher.active) {
+      drawFlyingPin();
+    } else if (state === "failed" && !launcher.active) {
+      drawSmashedPin();
+    }
+
+    // 6. 绘制发射器上的萌萌胶囊角色
+    if (state === "playing" || state === "idle") {
+      drawLauncherCharacter();
+    }
+
+    // 7. 绘制粒子
+    drawParticles();
+
+    ctx.restore();
+
+    // 8. 绘制屏幕空间文字特效
+    drawFloatingTexts();
+  }
+
+  function drawAimGuide() {
+    ctx.save();
+    ctx.beginPath();
+    ctx.strokeStyle = isFever ? "rgba(251, 191, 36, 0.45)" : "rgba(167, 139, 250, 0.35)";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 6]);
+    
+    const steps = 30;
+    const start2D = iso(launchStart3D.x, launchStart3D.y, launchStart3D.z);
+    ctx.moveTo(start2D.x, start2D.y);
+
+    const targetX = DISK_R / Math.sqrt(2);
+    const flightDistX = launchStart3D.x - targetX;
+
+    for (let i = 1; i <= steps; i++) {
+      const t = i / steps;
+      let px = launchStart3D.x - flightDistX * t;
+      let py = launchStart3D.y - flightDistX * t;
+      let pz = 0;
+      
+      if (wind.active) {
+        const flightTime = (flightDistX * t) / (LAUNCH_SPEED / Math.sqrt(2));
+        const windOffset = 0.5 * (wind.speed * 1.5) * Math.pow(flightTime, 2);
+        px += windOffset;
+        py -= windOffset;
+      }
+      
+      const pt = iso(px, py, pz);
+      ctx.lineTo(pt.x, pt.y);
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawDiskBody() {
+    const cx = disk.x + disk.wobbleX;
+    const cy = disk.y + disk.wobbleY;
+    const cz = disk.z;
+
+    ctx.save();
+    const thickness = 14;
+    
+    // 1. 绘制底面及侧边
+    for (let h = thickness; h >= 0; h -= 2) {
+      const pt = iso(cx, cy, cz - h);
+      ctx.beginPath();
+      
+      const rx = disk.radius * Math.sqrt(2) * Math.cos(ISO.angle);
+      const ry = disk.radius * Math.sqrt(2) * Math.sin(ISO.angle);
+      ctx.ellipse(pt.x, pt.y, rx, ry, Math.PI / 4, 0, Math.PI * 2);
+      
+      if (h === thickness) {
+        ctx.fillStyle = `hsla(${disk.hue}, 90%, 15%, 0.9)`;
+      } else {
+        ctx.fillStyle = `hsla(${disk.hue}, 90%, ${28 - h * 0.8}%, 0.8)`;
+      }
+      ctx.fill();
+      
+      if (h === thickness || h === 0) {
+        ctx.strokeStyle = `hsla(${disk.hue}, 90%, 45%, 0.15)`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+
+    // 2. 绘制圆盘顶面
+    const ptTop = iso(cx, cy, cz);
+    const rx = disk.radius * Math.sqrt(2) * Math.cos(ISO.angle);
+    const ry = disk.radius * Math.sqrt(2) * Math.sin(ISO.angle);
+    
+    ctx.beginPath();
+    ctx.ellipse(ptTop.x, ptTop.y, rx, ry, Math.PI / 4, 0, Math.PI * 2);
+    ctx.fillStyle = isFever 
+      ? "rgba(251, 191, 36, 0.18)" 
+      : `hsla(${disk.hue}, 80%, 25%, 0.28)`;
+    ctx.fill();
+
+    ctx.strokeStyle = isFever 
+      ? "rgba(251, 191, 36, 0.95)" 
+      : `hsla(${disk.hue}, 90%, 65%, 0.9)`;
+    ctx.lineWidth = isFever ? 4 : 2.5;
+    ctx.shadowBlur = isFever ? 18 : 10;
+    ctx.shadowColor = isFever ? "#fbbf24" : `hsl(${disk.hue}, 90%, 60%)`;
+    ctx.stroke();
+    
+    ctx.shadowBlur = 0;
+
+    // 3. 绘制中心发光的圆核
+    ctx.beginPath();
+    ctx.ellipse(ptTop.x, ptTop.y, rx * 0.25, ry * 0.25, Math.PI / 4, 0, Math.PI * 2);
+    ctx.fillStyle = isFever ? "#fff" : `hsla(${disk.hue}, 90%, 75%, 0.95)`;
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = `hsl(${disk.hue}, 90%, 70%)`;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // 4. 绘制中心装饰性科技刻度线
+    ctx.beginPath();
+    ctx.strokeStyle = `hsla(${disk.hue}, 90%, 80%, 0.3)`;
+    ctx.lineWidth = 1.5;
+    ctx.ellipse(ptTop.x, ptTop.y, rx * 0.65, ry * 0.65, Math.PI / 4, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function drawDiskElements(frontSide) {
+    const cx = disk.x + disk.wobbleX;
+    const cy = disk.y + disk.wobbleY;
+    const cz = disk.z;
+
+    disk.pins.forEach(pin => {
+      const pinAbs = pin.angle + disk.rotation;
+      const depth = Math.cos(pinAbs) + Math.sin(pinAbs);
+      if ((frontSide && depth >= 0) || (!frontSide && depth < 0)) {
+        drawSinglePin(cx, cy, cz, pinAbs, pin);
+      }
+    });
+
+    disk.gems.forEach(gem => {
+      if (!gem.active) return;
+      const gemAbs = gem.angle + disk.rotation;
+      const depth = Math.cos(gemAbs) + Math.sin(gemAbs);
+      if ((frontSide && depth >= 0) || (!frontSide && depth < 0)) {
+        drawSingleGem(cx, cy, cz, gemAbs);
+      }
+    });
+  }
+
+  function drawSinglePin(cx, cy, cz, absAngle, pin) {
+    const r = disk.radius;
+    const len = PIN_LEN * (pin.sizeMultiplier || 1.0);
+    
+    const rootX = cx + r * Math.cos(absAngle);
+    const rootY = cy + r * Math.sin(absAngle);
+    const rootZ = cz;
+
+    const tipX = cx + (r + len) * Math.cos(absAngle);
+    const tipY = cy + (r + len) * Math.sin(absAngle);
+    const tipZ = cz;
+
+    const ptRoot = iso(rootX, rootY, rootZ);
+    const ptTip = iso(tipX, tipY, tipZ);
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(ptRoot.x, ptRoot.y);
+    ctx.lineTo(ptTip.x, ptTip.y);
+    ctx.lineWidth = pin.isObstacle ? 7 : 4;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = pin.isObstacle 
+      ? "#ef4444" 
+      : (pin.isFeverPin ? "#fbbf24" : "#ffffff");
+    
+    if (pin.isFeverPin) {
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = "#fbbf24";
+    } else if (pin.isObstacle) {
+      ctx.shadowBlur = 12;
+      ctx.shadowColor = "#ef4444";
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    const eyePt = iso(
+      cx + (r + len - 4) * Math.cos(absAngle),
+      cy + (r + len - 4) * Math.sin(absAngle),
+      cz
+    );
+
+    const normalAngle = Math.atan2(ptTip.y - ptRoot.y, ptTip.x - ptRoot.x) + Math.PI / 2;
+    const eyeSpacing = 3;
+
+    ctx.fillStyle = pin.isObstacle ? "#fff" : "#070913";
+    
+    const elX = eyePt.x - Math.cos(normalAngle) * eyeSpacing;
+    const elY = eyePt.y - Math.sin(normalAngle) * eyeSpacing;
+    const erX = eyePt.x + Math.cos(normalAngle) * eyeSpacing;
+    const erY = eyePt.y + Math.sin(normalAngle) * eyeSpacing;
+
+    if (state === "failed" && !pin.isObstacle) {
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 1.2;
+      drawCrossEye(ctx, elX, elY, EYE_SIZE);
+      drawCrossEye(ctx, erX, erY, EYE_SIZE);
+    } else {
+      ctx.beginPath();
+      ctx.arc(elX, elY, EYE_SIZE * 0.8, 0, Math.PI * 2);
+      ctx.arc(erX, erY, EYE_SIZE * 0.8, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawCrossEye(ctx, x, y, size) {
+    ctx.beginPath();
+    ctx.moveTo(x - size, y - size);
+    ctx.lineTo(x + size, y + size);
+    ctx.moveTo(x + size, y - size);
+    ctx.lineTo(x - size, y + size);
+    ctx.stroke();
+  }
+
+  function drawSingleGem(cx, cy, cz, absAngle) {
+    const r = disk.radius - 2;
+    const x = cx + r * Math.cos(absAngle);
+    const y = cy + r * Math.sin(absAngle);
+    const z = cz + 6;
+
+    const pt = iso(x, y, z);
+
+    ctx.save();
+    const sz = 8;
+    ctx.beginPath();
+    ctx.moveTo(pt.x, pt.y - sz * 1.3);
+    ctx.lineTo(pt.x + sz, pt.y);
+    ctx.lineTo(pt.x, pt.y + sz * 1.3);
+    ctx.lineTo(pt.x - sz, pt.y);
+    ctx.closePath();
+    
+    ctx.fillStyle = "#fbbf24";
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = "#f59e0b";
+    ctx.fill();
+    
+    ctx.beginPath();
+    ctx.moveTo(pt.x, pt.y - sz * 1.3);
+    ctx.lineTo(pt.x, pt.y + sz * 1.3);
+    ctx.lineTo(pt.x + sz, pt.y);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function drawFlyingPin() {
+    ctx.save();
+
+    launcher.trail.forEach(t => {
+      const pt = iso(t.x, t.y, t.z);
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, 4 * t.alpha, 0, Math.PI * 2);
+      ctx.fillStyle = isFever 
+        ? `rgba(251, 191, 36, ${t.alpha * 0.45})` 
+        : `rgba(167, 139, 250, ${t.alpha * 0.35})`;
+      ctx.fill();
+    });
+
+    const pt = iso(launcher.x, launcher.y, launcher.z);
+    
+    ctx.shadowBlur = isFever ? 20 : 12;
+    ctx.shadowColor = isFever ? "#fbbf24" : "#a78bfa";
+
+    ctx.beginPath();
+    ctx.ellipse(pt.x, pt.y, 4.5, 10, 0, 0, Math.PI * 2);
+    ctx.fillStyle = isFever ? "#fff" : "#a78bfa";
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function drawSmashedPin() {
+    ctx.save();
+    const pt = iso(launcher.x, launcher.y, launcher.z);
+    ctx.translate(pt.x, pt.y);
+    
+    const rot = performance.now() * 0.01;
+    ctx.rotate(rot);
+
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 4, 10, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "#ef4444";
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  function drawLauncherCharacter() {
+    const pt = iso(launchStart3D.x, launchStart3D.y, launchStart3D.z);
+    
+    ctx.save();
+    
+    ctx.beginPath();
+    ctx.ellipse(pt.x, pt.y + 12, 18, 7, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.04)";
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+    ctx.lineWidth = 1.5;
+    ctx.fill();
+    ctx.stroke();
+
+    const t = performance.now() * 0.005;
+    const stretchX = 1.0 + Math.sin(t) * 0.05;
+    const stretchY = 1.0 - Math.sin(t) * 0.05;
+
+    ctx.translate(pt.x, pt.y);
+    ctx.scale(stretchX, stretchY);
+
+    const grad = ctx.createLinearGradient(0, -18, 0, 10);
+    if (isFever) {
+      grad.addColorStop(0, '#fff');
+      grad.addColorStop(1, '#fbbf24');
+    } else {
+      grad.addColorStop(0, '#ffffff');
+      grad.addColorStop(1, '#a78bfa');
+    }
+    
+    ctx.shadowBlur = isFever ? 18 : 8;
+    ctx.shadowColor = isFever ? "#fbbf24" : "#a78bfa";
+
+    ctx.beginPath();
+    ctx.ellipse(0, -4, 6, 12, 0, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+    
+    ctx.shadowBlur = 0;
+
+    ctx.fillStyle = "#070913";
+    const eyeSpacing = 3;
+    const eyeY = -6;
+    
+    const blinkProgress = (performance.now() % 3000) / 150;
+    const isBlinking = blinkProgress < 1.0;
+
+    if (isBlinking) {
+      ctx.strokeStyle = "#070913";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(-eyeSpacing - 1.5, eyeY);
+      ctx.lineTo(-eyeSpacing + 1.5, eyeY);
+      ctx.moveTo(eyeSpacing - 1.5, eyeY);
+      ctx.lineTo(eyeSpacing + 1.5, eyeY);
+      ctx.stroke();
+    } else {
+      ctx.beginPath();
+      ctx.arc(-eyeSpacing, eyeY, EYE_SIZE * 0.9, 0, Math.PI * 2);
+      ctx.arc(eyeSpacing, eyeY, EYE_SIZE * 0.9, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
+  function drawParticles() {
+    ctx.save();
+    particles.forEach(p => {
+      const pt = iso(p.x, p.y, p.z);
+      ctx.beginPath();
+      ctx.arc(pt.x, pt.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fill();
+    });
+    ctx.restore();
+  }
+
+  function drawFloatingTexts() {
+    ctx.save();
+    floatingTexts.forEach(ft => {
+      ctx.globalAlpha = ft.opacity;
+      ctx.fillStyle = ft.color;
+      ctx.font = `800 ${Math.round(18 * ft.scale)}px 'Outfit', sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.shadowBlur = 8;
+      ctx.shadowColor = ft.color;
+      ctx.fillText(ft.text, ft.x, ft.y);
+    });
+    ctx.restore();
+  }
+
+  // ---------- GAME OVER & OVERLAYS ----------
+  function restartGame() {
+    overlay.classList.remove("show");
+    score = 0;
+    scoreEl.textContent = "0";
+    combo = 0;
+    document.getElementById("combo-hud").style.display = "none";
+    stopFever();
+    setupStage(1);
+    state = "playing";
+    resetLauncher();
+  }
+
+  startBtn.addEventListener("click", () => {
+    initAudio();
+    startScreen.style.display = "none";
+    restartGame();
+  });
+
+  restartBtn.addEventListener("click", () => {
+    initAudio();
+    restartGame();
+  });
+
+  requestAnimationFrame(loop);
+})();
+</script>
+
+</body>
+</html>

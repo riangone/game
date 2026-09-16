@@ -1,0 +1,2821 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>神奇声调小剧场 - 声调语调与情绪表达 (Tone Theater)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@600;700;800;900&family=Outfit:wght@600;700;800;900&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #f43f5e;
+    --primary-soft: #ffe4e6;
+    --primary-dark: #e11d48;
+    --tone1-color: #0ea5e9;
+    --tone1-bg: #e0f2fe;
+    --tone2-color: #f59e0b;
+    --tone2-bg: #fef3c7;
+    --tone3-color: #10b981;
+    --tone3-bg: #d1fae5;
+    --tone4-color: #8b5cf6;
+    --tone4-bg: #ede9fe;
+    --gold: #fbbf24;
+    --gold-dark: #d97706;
+    --bg-page: #f8fafc;
+    --bg-card: #ffffff;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border-light: #e2e8f0;
+    --radius-xl: 28px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --shadow-soft: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+    --shadow-card: 0 14px 30px rgba(15, 23, 42, 0.07);
+    --shadow-pop: 0 6px 0 rgba(0, 0, 0, 0.12);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #fdf2f8;
+    font-family: "M PLUS Rounded 1c", "Outfit", "PingFang SC", system-ui, -apple-system, sans-serif;
+    color: var(--text-main);
+    touch-action: manipulation;
+  }
+
+  /* Main App Container */
+  #app {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: linear-gradient(180deg, #fce7f3 0%, #ede9fe 40%, #f0fdf4 80%, #f8fafc 100%);
+    overflow: hidden;
+  }
+
+  /* Top Navigation Bar */
+  header.top-nav {
+    flex-shrink: 0;
+    height: 64px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.05);
+    z-index: 60;
+  }
+
+  .nav-left, .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-btn {
+    height: 42px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: none;
+    background: #ffffff;
+    box-shadow: 0 3px 0 #cbd5e1, 0 4px 10px rgba(0, 0, 0, 0.05);
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s, background-color 0.15s;
+  }
+  .nav-btn:hover { background: #f8fafc; }
+  .nav-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #cbd5e1, 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  .nav-btn.icon-only {
+    width: 42px;
+    padding: 0;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .nav-btn.active {
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+    box-shadow: 0 3px 0 #fda4af;
+  }
+
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .brand-icon {
+    font-size: 28px;
+    animation: gentle-wobble 3s infinite ease-in-out;
+  }
+  .brand-text h1 {
+    font-size: 17px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #e11d48 0%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.2;
+  }
+  .brand-text span {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 700;
+    display: block;
+  }
+
+  .trophy-pill {
+    background: #fef3c7;
+    border: 2px solid #fde68a;
+    box-shadow: 0 3px 0 #f59e0b, 0 4px 8px rgba(245, 158, 11, 0.2);
+    color: #b45309;
+    padding: 0 12px;
+    height: 40px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 900;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  .trophy-pill .trophy-icon {
+    font-size: 18px;
+    animation: bounce-small 2s infinite ease-in-out;
+  }
+
+  /* Viewport Main Container */
+  main#viewport {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Screens */
+  .screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none !important;
+    flex-direction: column;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .screen.active {
+    display: flex !important;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* =========================================
+     SCREEN 1: THEATER LOBBY (PLAY SELECTOR)
+     ========================================= */
+  #lobbyScreen {
+    padding: 16px 16px 60px 16px;
+    align-items: center;
+    background: radial-gradient(circle at 50% 15%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 75%);
+  }
+
+  .lobby-header {
+    text-align: center;
+    margin-bottom: 20px;
+    max-width: 680px;
+    width: 100%;
+  }
+  .lobby-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    background: #ffffff;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--primary-dark);
+    box-shadow: 0 4px 12px rgba(225, 29, 72, 0.12);
+    margin-bottom: 8px;
+  }
+  .lobby-title {
+    font-size: 26px;
+    font-weight: 900;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .lobby-subtitle {
+    font-size: 14px;
+    color: #475569;
+    font-weight: 700;
+  }
+  .hero-start-wrap {
+    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+  }
+  .hero-start-btn {
+    background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+    color: #ffffff;
+    border: none;
+    padding: 13px 28px;
+    border-radius: 999px;
+    font-size: 16px;
+    font-weight: 900;
+    box-shadow: 0 5px 0 #be123c, 0 10px 20px rgba(225, 29, 72, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s, filter 0.15s;
+    font-family: inherit;
+  }
+  .hero-start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 0 #be123c, 0 14px 24px rgba(225, 29, 72, 0.38);
+    filter: brightness(1.05);
+  }
+  .hero-start-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #be123c, 0 4px 8px rgba(225, 29, 72, 0.25);
+  }
+
+  /* Four Tone Summary Banner */
+  .tone-summary-banner {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    width: 100%;
+    max-width: 900px;
+    margin-bottom: 20px;
+  }
+  .tone-sum-card {
+    background: #ffffff;
+    border-radius: var(--radius-md);
+    padding: 10px 8px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .tone-sum-card:hover { transform: translateY(-2px); }
+  .tone-sum-card.t1 { border-color: #bae6fd; background: #f0f9ff; }
+  .tone-sum-card.t2 { border-color: #fde68a; background: #fffbeb; }
+  .tone-sum-card.t3 { border-color: #a7f3d0; background: #f0fdf4; }
+  .tone-sum-card.t4 { border-color: #ddd6fe; background: #faf5ff; }
+
+  .tone-sum-mark {
+    font-size: 22px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .tone-sum-name {
+    font-size: 13px;
+    font-weight: 800;
+    color: #1e293b;
+  }
+  .tone-sum-mood {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 700;
+  }
+
+  /* Plays Grid */
+  .plays-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    width: 100%;
+    max-width: 1000px;
+  }
+
+  .play-card {
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    padding: 18px;
+    box-shadow: 0 8px 0 #cbd5e1, 0 12px 24px rgba(0, 0, 0, 0.05);
+    border: 3px solid #ffffff;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .play-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 14px 0 #cbd5e1, 0 18px 28px rgba(0, 0, 0, 0.08);
+  }
+  .play-card:active {
+    transform: translateY(3px);
+    box-shadow: 0 3px 0 #cbd5e1, 0 6px 10px rgba(0, 0, 0, 0.05);
+  }
+  .play-card.completed {
+    border-color: #86efac;
+    background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
+  }
+
+  .play-badge-status {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 900;
+    background: #fee2e2;
+    color: #dc2626;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .play-card.completed .play-badge-status {
+    background: #dcfce7;
+    color: #15803d;
+  }
+
+  .play-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  .play-avatar-box {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    background: #fdf2f8;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.06);
+    flex-shrink: 0;
+  }
+  .play-meta h3 {
+    font-size: 17px;
+    font-weight: 900;
+    color: #0f172a;
+    line-height: 1.3;
+  }
+  .play-character-tag {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--primary-dark);
+  }
+  .play-desc {
+    font-size: 13px;
+    color: #475569;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 12px;
+    background: #f8fafc;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+  }
+  .play-footer {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 6px;
+  }
+  .play-tones-flow {
+    display: flex;
+    gap: 4px;
+  }
+  .tone-pill-mini {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 900;
+    color: #ffffff;
+  }
+  .tone-pill-mini.t1 { background: var(--tone1-color); }
+  .tone-pill-mini.t2 { background: var(--tone2-color); }
+  .tone-pill-mini.t3 { background: var(--tone3-color); }
+  .tone-pill-mini.t4 { background: var(--tone4-color); }
+
+  .play-action-btn {
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #f43f5e 0%, #fb7185 100%);
+    color: #ffffff;
+    font-weight: 900;
+    font-size: 13px;
+    box-shadow: 0 3px 0 #be123c;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s, filter 0.15s;
+  }
+  .play-action-btn:hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 0 #be123c;
+  }
+  .play-action-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #be123c;
+  }
+
+  /* =========================================
+     SCREEN 2: THEATER STAGE (THE ACTIVE PLAY)
+     ========================================= */
+  #stageScreen {
+    padding: 10px 14px 24px 14px;
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Proscenium Stage Frame */
+  .stage-proscenium {
+    position: relative;
+    width: 100%;
+    max-width: 960px;
+    height: clamp(180px, 32vh, 260px);
+    flex-shrink: 0;
+    margin: 0 auto 10px auto;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    background: #0f172a;
+    box-shadow: 0 16px 36px rgba(15, 23, 42, 0.25), 0 0 0 5px #e11d48, 0 0 0 8px #fbbf24;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  /* Curtains */
+  .curtain {
+    position: absolute;
+    top: 0;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, #991b1b 0%, #dc2626 40%, #b91c1c 70%, #7f1d1d 100%);
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+    z-index: 20;
+    transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .curtain-left {
+    left: 0;
+    transform: translateX(0);
+    border-right: 3px solid #fde047;
+  }
+  .curtain-right {
+    right: 0;
+    transform: translateX(0);
+    border-left: 3px solid #fde047;
+  }
+  .stage-proscenium.opened .curtain-left {
+    transform: translateX(-92%);
+  }
+  .stage-proscenium.opened .curtain-right {
+    transform: translateX(92%);
+  }
+
+  .curtain-top-valance {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 38px;
+    background: repeating-linear-gradient(90deg, #b91c1c, #b91c1c 25px, #dc2626 25px, #dc2626 50px);
+    border-bottom: 4px solid #fde047;
+    border-radius: 20px 20px 0 0;
+    z-index: 22;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .valance-crown {
+    font-size: 16px;
+    color: #fef08a;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  }
+
+  /* Stage Scenery & Lighting */
+  .stage-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    transition: background 0.5s ease;
+    z-index: 1;
+  }
+
+  /* Spotlight Cone */
+  .spotlight-cone {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 220px;
+    height: 100%;
+    transform: translateX(-50%);
+    background: radial-gradient(ellipse at top, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 75%);
+    pointer-events: none;
+    z-index: 5;
+    animation: spotlight-pulse 3s infinite alternate ease-in-out;
+  }
+
+  /* Stage Floor */
+  .stage-floor {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 54px;
+    background: linear-gradient(180deg, #78350f 0%, #451a03 100%);
+    border-top: 3px solid #b45309;
+    z-index: 6;
+  }
+
+  /* Audience Silhouette with waving glowsticks */
+  .stage-audience {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 28px;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    padding: 0 20px;
+    z-index: 25;
+    pointer-events: none;
+  }
+  .audience-critter {
+    font-size: 20px;
+    filter: drop-shadow(0 -2px 4px rgba(0,0,0,0.4));
+    transform-origin: bottom center;
+  }
+  .stage-proscenium.cheering .audience-critter {
+    animation: audience-jump 0.35s infinite alternate ease-in-out;
+  }
+
+  /* Actor on Stage */
+  .stage-actor-wrap {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .actor-avatar {
+    font-size: 72px;
+    filter: drop-shadow(0 8px 12px rgba(0,0,0,0.25));
+    transition: transform 0.25s ease;
+    cursor: pointer;
+  }
+  .stage-actor-wrap.mood-tone1 .actor-avatar {
+    animation: actor-calm-float 2.5s infinite ease-in-out;
+  }
+  .stage-actor-wrap.mood-tone2 .actor-avatar {
+    animation: actor-curious-tilt 0.6s infinite alternate ease-in-out;
+  }
+  .stage-actor-wrap.mood-tone3 .actor-avatar {
+    animation: actor-think-sway 1.4s infinite ease-in-out;
+  }
+  .stage-actor-wrap.mood-tone4 .actor-avatar {
+    animation: actor-energetic-punch 0.4s infinite alternate ease-in-out;
+  }
+
+  /* Actor Floating Emotion Indicator */
+  .actor-emotion-badge {
+    position: absolute;
+    top: -12px;
+    right: -10px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #ffffff;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    animation: pop-in 0.3s ease;
+  }
+
+  /* Floating Prop / Dialogue Bubble on Stage */
+  .stage-bubble-wrap {
+    position: absolute;
+    bottom: 125px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(8px);
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 3px solid #e11d48;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 15;
+    white-space: nowrap;
+    animation: bubble-float 3s infinite ease-in-out;
+  }
+  .stage-bubble-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 10px 8px 0 8px;
+    border-style: solid;
+    border-color: #e11d48 transparent transparent transparent;
+  }
+  .bubble-word-pinyin {
+    font-size: 20px;
+    font-weight: 900;
+    color: #e11d48;
+    letter-spacing: 0.5px;
+  }
+  .bubble-word-char {
+    font-size: 16px;
+    font-weight: 800;
+    color: #334155;
+  }
+  .btn-replay-voice {
+    background: #ffe4e6;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 15px;
+  }
+
+  /* Stage Control & Interaction Hub */
+  .stage-interactive-hub {
+    flex-shrink: 0;
+    width: 100%;
+    max-width: 960px;
+    margin: 0 auto 16px auto;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    border: 2px solid var(--border-light);
+    padding: 12px 16px;
+    gap: 10px;
+  }
+
+  /* Prompt Header Bar */
+  .hub-prompt-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff1f2;
+    border-radius: var(--radius-lg);
+    padding: 8px 14px;
+    border-left: 5px solid #f43f5e;
+  }
+  .prompt-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .prompt-zh {
+    font-size: 14px;
+    font-weight: 800;
+    color: #0f172a;
+  }
+  .prompt-ja {
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+  }
+  .prompt-step-badge {
+    background: #ffffff;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--primary-dark);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  }
+
+  /* Interaction Split Layout: Canvas (Left) + Blocks (Right) */
+  .hub-dual-input {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 12px;
+    min-height: 210px;
+  }
+  @media (max-width: 640px) {
+    .hub-dual-input {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Canvas Touch Area (Hand Gesture Drawing) */
+  .gesture-canvas-card {
+    position: relative;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: var(--radius-lg);
+    border: 2px dashed #cbd5e1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: crosshair;
+  }
+  .gesture-canvas-card.correct-glow {
+    border-color: #10b981;
+    background: #ecfdf5;
+  }
+  canvas#toneTraceCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+    z-index: 5;
+  }
+  .canvas-guide-overlay {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .guide-icon-stroke {
+    font-size: 40px;
+    color: #cbd5e1;
+    font-weight: 900;
+    line-height: 1;
+    animation: guide-pulse 2s infinite ease-in-out;
+  }
+  .guide-tip-text {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 800;
+    margin-top: 4px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+
+  /* 4 Tone Emotion Blocks */
+  .tone-blocks-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 8px;
+  }
+  .tone-btn-block {
+    border: none;
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.12);
+    transition: transform 0.1s, box-shadow 0.1s, filter 0.15s;
+    font-family: inherit;
+  }
+  .tone-btn-block:hover { filter: brightness(1.03); }
+  .tone-btn-block:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
+  }
+
+  .tone-btn-block.t1 {
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+    color: #0284c7;
+    border: 2px solid #7dd3fc;
+  }
+  .tone-btn-block.t2 {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #b45309;
+    border: 2px solid #fcd34d;
+  }
+  .tone-btn-block.t3 {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    color: #047857;
+    border: 2px solid #6ee7b7;
+  }
+  .tone-btn-block.t4 {
+    background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+    color: #6d28d9;
+    border: 2px solid #c4b5fd;
+  }
+
+  .btn-mark-symbol {
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .btn-tone-title {
+    font-size: 14px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .btn-tone-mood {
+    font-size: 11px;
+    font-weight: 800;
+    opacity: 0.85;
+  }
+
+  /* Step Progression Dots */
+  .stage-progress-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding-top: 4px;
+  }
+  .step-pill {
+    width: 28px;
+    height: 8px;
+    border-radius: 999px;
+    background: #e2e8f0;
+    transition: all 0.3s;
+  }
+  .step-pill.active {
+    background: var(--primary);
+    width: 44px;
+  }
+  .step-pill.done {
+    background: #10b981;
+  }
+
+  /* =========================================
+     SCREEN 3: TONE SYNTH & ECHO LAB
+     ========================================= */
+  #synthScreen {
+    padding: 20px;
+    align-items: center;
+  }
+  .synth-panel {
+    width: 100%;
+    max-width: 860px;
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .synth-header {
+    text-align: center;
+  }
+  .synth-header h2 {
+    font-size: 24px;
+    font-weight: 900;
+    color: #0f172a;
+  }
+  .synth-header p {
+    font-size: 14px;
+    color: #64748b;
+    font-weight: 700;
+  }
+
+  /* Syllable Picker Rows */
+  .vowel-selector-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .vowel-chip {
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: #f1f5f9;
+    font-size: 15px;
+    font-weight: 900;
+    color: #334155;
+    border: 2px solid #e2e8f0;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .vowel-chip:hover { background: #e2e8f0; }
+  .vowel-chip.active {
+    background: var(--primary);
+    color: #ffffff;
+    border-color: var(--primary-dark);
+    box-shadow: 0 4px 10px rgba(244, 63, 94, 0.3);
+  }
+
+  /* Waveform / Curve Monitor */
+  .tone-pitch-display {
+    height: 180px;
+    background: #0f172a;
+    border-radius: var(--radius-lg);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  canvas#pitchCanvas {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Big Piano Tone Triggers */
+  .synth-piano-keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .piano-key-btn {
+    height: 110px;
+    border-radius: var(--radius-lg);
+    border: none;
+    box-shadow: 0 6px 0 rgba(0,0,0,0.12);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+  .piano-key-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 rgba(0,0,0,0.12);
+  }
+  .piano-key-btn.t1 { background: var(--tone1-bg); color: var(--tone1-color); border: 2px solid #7dd3fc; }
+  .piano-key-btn.t2 { background: var(--tone2-bg); color: var(--tone2-color); border: 2px solid #fcd34d; }
+  .piano-key-btn.t3 { background: var(--tone3-bg); color: var(--tone3-color); border: 2px solid #6ee7b7; }
+  .piano-key-btn.t4 { background: var(--tone4-bg); color: var(--tone4-color); border: 2px solid #c4b5fd; }
+
+  /* Mnemonic Rhyme Player Bar */
+  .rhyme-player-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fdf2f8;
+    border-radius: var(--radius-md);
+    padding: 12px 18px;
+    border: 2px dashed #fbcfe8;
+  }
+  .rhyme-text {
+    font-size: 15px;
+    font-weight: 800;
+    color: #9d174d;
+  }
+
+  /* =========================================
+     SCREEN 4: TROPHY ALBUM
+     ========================================= */
+  #trophyScreen {
+    padding: 24px;
+    align-items: center;
+  }
+  .trophy-container {
+    width: 100%;
+    max-width: 860px;
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    padding: 24px;
+  }
+  .trophy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .trophy-item-card {
+    border: 2px dashed #cbd5e1;
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    text-align: center;
+    background: #f8fafc;
+    transition: all 0.2s;
+  }
+  .trophy-item-card.unlocked {
+    border: 2px solid #fde047;
+    background: linear-gradient(180deg, #ffffff 0%, #fefce8 100%);
+    box-shadow: 0 8px 16px rgba(245, 158, 11, 0.12);
+  }
+  .trophy-cup {
+    font-size: 48px;
+    filter: grayscale(1);
+    opacity: 0.4;
+    margin-bottom: 8px;
+  }
+  .trophy-item-card.unlocked .trophy-cup {
+    filter: none;
+    opacity: 1;
+    animation: gentle-wobble 2.5s infinite ease-in-out;
+  }
+  .trophy-title {
+    font-size: 15px;
+    font-weight: 900;
+    color: #0f172a;
+  }
+  .trophy-status {
+    font-size: 12px;
+    font-weight: 800;
+    color: #94a3b8;
+    margin-top: 4px;
+  }
+  .trophy-item-card.unlocked .trophy-status {
+    color: #b45309;
+  }
+
+  /* Celebratory Modal */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-dialog {
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 480px;
+    padding: 28px;
+    text-align: center;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    animation: scale-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .modal-badge-huge {
+    font-size: 64px;
+    margin-bottom: 12px;
+    animation: gentle-wobble 1.8s infinite ease-in-out;
+  }
+  .modal-dialog h2 {
+    font-size: 22px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 6px;
+  }
+  .modal-dialog p {
+    font-size: 14px;
+    color: #475569;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  .modal-btn-row {
+    display: flex;
+    gap: 10px;
+  }
+  .modal-btn {
+    flex: 1;
+    height: 48px;
+    border-radius: 999px;
+    border: none;
+    font-weight: 900;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.12);
+  }
+  .modal-btn.primary {
+    background: linear-gradient(135deg, #f43f5e 0%, #fb7185 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 0 #be123c;
+  }
+  .modal-btn.secondary {
+    background: #f1f5f9;
+    color: #475569;
+    box-shadow: 0 4px 0 #cbd5e1;
+  }
+
+  /* Keyframe Animations */
+  @keyframes gentle-wobble {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-5deg); }
+    75% { transform: rotate(5deg); }
+  }
+  @keyframes gentle-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  @keyframes bounce-small {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  @keyframes spotlight-pulse {
+    0% { opacity: 0.8; transform: translateX(-50%) scaleX(1); }
+    100% { opacity: 1; transform: translateX(-50%) scaleX(1.08); }
+  }
+  @keyframes audience-jump {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-10px); }
+  }
+  @keyframes actor-calm-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  @keyframes actor-curious-tilt {
+    0% { transform: rotate(-10deg) translateY(0); }
+    100% { transform: rotate(12deg) translateY(-6px); }
+  }
+  @keyframes actor-think-sway {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    30% { transform: translateY(6px) rotate(-6deg); }
+    70% { transform: translateY(-6px) rotate(6deg); }
+  }
+  @keyframes actor-energetic-punch {
+    0% { transform: scale(1) translateY(0); }
+    100% { transform: scale(1.18) translateY(-14px); }
+  }
+  @keyframes bubble-float {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-6px); }
+  }
+  @keyframes guide-pulse {
+    0%, 100% { opacity: 0.3; transform: scale(0.95); }
+    50% { opacity: 0.9; transform: scale(1.05); }
+  }
+  @keyframes scale-up {
+    0% { transform: scale(0.85); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes pop-in {
+    0% { transform: scale(0); }
+    80% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+
+  /* Confetti particle elements */
+  .confetti-piece {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    pointer-events: none;
+    z-index: 999;
+    border-radius: 2px;
+  }
+
+  /* Responsiveness */
+  @media (max-width: 640px) {
+    .stage-proscenium { height: 230px; }
+    .actor-avatar { font-size: 58px; }
+    .hub-dual-input { grid-template-columns: 1fr; }
+    .gesture-canvas-card { height: 110px; }
+    .brand-text h1 { font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- Top Navigation Header -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <button class="nav-btn icon-only" onclick="location.href='index.html'" title="返回首页 / ホームへ">
+        🏠
+      </button>
+      <div class="brand-logo" onclick="switchScreen('lobby')">
+        <span class="brand-icon">🎭</span>
+        <div class="brand-text">
+          <h1 id="txtAppTitle">神奇声调小剧场</h1>
+          <span id="txtAppSubtitle">声调语调与情绪表达 · Tone Theater</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <button class="nav-btn" id="btnModeLobby" onclick="switchScreen('lobby')">
+        <span>🎬 剧场选场</span>
+      </button>
+      <button class="nav-btn" id="btnModeSynth" onclick="switchScreen('synth')">
+        <span>🎹 声调琴</span>
+      </button>
+      <div class="trophy-pill" onclick="switchScreen('trophy')" title="演出荣誉 / トロフィー">
+        <span class="trophy-icon">🏆</span>
+        <span id="trophyCount">0/6</span>
+      </div>
+      <button class="nav-btn icon-only" id="btnLangToggle" onclick="toggleLanguage()" title="切换语言 / 言語切替">
+        🇨🇳
+      </button>
+      <button class="nav-btn icon-only" id="btnAudioToggle" onclick="audio.toggleMute()" title="声音开关 / 音声切替">
+        🔊
+      </button>
+    </div>
+  </header>
+
+  <!-- Viewport Container -->
+  <main id="viewport">
+
+    <!-- =========================================
+         SCREEN 1: LOBBY (PLAY SELECTION)
+         ========================================= -->
+    <div class="screen active" id="lobbyScreen">
+      <div class="lobby-header">
+        <div class="lobby-badge" id="txtLobbyBadge">✨ 3~6岁儿童声调与语用启蒙</div>
+        <h2 class="lobby-title" id="txtLobbyTitle">请选择今天要出演的童话剧目</h2>
+        <p class="lobby-subtitle" id="txtLobbySubtitle">滑动手指演声调，理解情绪与日常疑问语气！</p>
+        <div class="hero-start-wrap">
+          <button class="hero-start-btn" onclick="startPlay(PLAYS_DATA[0].id)" id="btnHeroStart">
+            <span style="font-size:22px;">🎭</span>
+            <span id="txtHeroStartLabel">▶ 立即开始游戏 (第 1 幕 · 咪咪的小猫日常)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tone Summary Banner -->
+      <div class="tone-summary-banner">
+        <div class="tone-sum-card t1" onclick="playToneRhyme(1)">
+          <div class="tone-sum-mark" style="color:var(--tone1-color);">—</div>
+          <div class="tone-sum-name" id="txtSumT1Name">一声平 (mā)</div>
+          <div class="tone-sum-mood" id="txtSumT1Mood">平静·温柔 🌤️</div>
+        </div>
+        <div class="tone-sum-card t2" onclick="playToneRhyme(2)">
+          <div class="tone-sum-mark" style="color:var(--tone2-color);">／</div>
+          <div class="tone-sum-name" id="txtSumT2Name">二声扬 (má?)</div>
+          <div class="tone-sum-mood" id="txtSumT2Mood">疑问·好奇 ❓</div>
+        </div>
+        <div class="tone-sum-card t3" onclick="playToneRhyme(3)">
+          <div class="tone-sum-mark" style="color:var(--tone3-color);">∨</div>
+          <div class="tone-sum-name" id="txtSumT3Name">三声转 (mǎ)</div>
+          <div class="tone-sum-mood" id="txtSumT3Mood">思考·起伏 🤔</div>
+        </div>
+        <div class="tone-sum-card t4" onclick="playToneRhyme(4)">
+          <div class="tone-sum-mark" style="color:var(--tone4-color);">＼</div>
+          <div class="tone-sum-name" id="txtSumT4Name">四声降 (mà!)</div>
+          <div class="tone-sum-mood" id="txtSumT4Mood">果断·欢呼 💥</div>
+        </div>
+      </div>
+
+      <!-- Plays Grid -->
+      <div class="plays-grid" id="playsGridContainer">
+        <!-- Rendered dynamically via JS -->
+      </div>
+    </div>
+
+    <!-- =========================================
+         SCREEN 2: STAGE (ACTIVE PLAY INTERACTION)
+         ========================================= -->
+    <div class="screen" id="stageScreen">
+      <!-- Proscenium Theater Frame -->
+      <div class="stage-proscenium" id="stageBox">
+        <div class="curtain-top-valance">
+          <div class="valance-crown">
+            <span>✨</span>
+            <span id="stageTitleText">神奇小剧场</span>
+            <span>✨</span>
+          </div>
+        </div>
+        <!-- Curtains -->
+        <div class="curtain curtain-left" id="curtainLeft"></div>
+        <div class="curtain curtain-right" id="curtainRight"></div>
+
+        <!-- Backdrop Scenery -->
+        <div class="stage-backdrop" id="stageBackdrop"></div>
+
+        <!-- Spotlight -->
+        <div class="spotlight-cone"></div>
+
+        <!-- Actor Speech Bubble -->
+        <div class="stage-bubble-wrap" id="stageSpeechBubble">
+          <div class="bubble-word-pinyin" id="bubblePinyin">mā</div>
+          <div class="bubble-word-char" id="bubbleChar">妈妈</div>
+          <button class="btn-replay-voice" onclick="playCurrentScenePromptVoice()" title="重播台词">
+            📢
+          </button>
+        </div>
+
+        <!-- Actor Figure -->
+        <div class="stage-actor-wrap" id="stageActorWrap">
+          <div class="actor-avatar" id="actorAvatar">🐱</div>
+          <div class="actor-emotion-badge" id="actorEmotionBadge">😊</div>
+        </div>
+
+        <!-- Stage Floor -->
+        <div class="stage-floor"></div>
+
+        <!-- Audience -->
+        <div class="stage-audience" id="stageAudience">
+          <div class="audience-critter">🐰</div>
+          <div class="audience-critter">🐻</div>
+          <div class="audience-critter">🐶</div>
+          <div class="audience-critter">🐼</div>
+          <div class="audience-critter">🐸</div>
+        </div>
+      </div>
+
+      <!-- Stage Interactive Hub -->
+      <div class="stage-interactive-hub">
+        <!-- Prompt Header -->
+        <div class="hub-prompt-bar">
+          <div class="prompt-content">
+            <div class="prompt-zh" id="stagePromptZh">咪咪揉揉眼睛，温柔地呼唤妈妈。该用哪一个声调呢？</div>
+            <div class="prompt-ja" id="stagePromptJa">やさしい声でママを呼ぼう！どの声調かな？</div>
+          </div>
+          <div class="prompt-step-badge" id="stageStepBadge">幕 1 / 4</div>
+        </div>
+
+        <!-- Dual Input Layout -->
+        <div class="hub-dual-input">
+          <!-- Gesture Trace Canvas -->
+          <div class="gesture-canvas-card" id="gestureCard">
+            <canvas id="toneTraceCanvas"></canvas>
+            <div class="canvas-guide-overlay" id="canvasGuideOverlay">
+              <div class="guide-icon-stroke" id="guideStrokeSymbol">—</div>
+              <div class="guide-tip-text" id="guideTipText">用手指划出声调轨迹</div>
+            </div>
+          </div>
+
+          <!-- 4 Tone Emotion Clickable Blocks -->
+          <div class="tone-blocks-grid">
+            <button class="tone-btn-block t1" onclick="handleToneSelect(1)">
+              <div class="btn-mark-symbol">—</div>
+              <div class="btn-tone-title">
+                <span>一声平</span>
+                <span class="btn-mood-icon">🌤️</span>
+              </div>
+              <div class="btn-tone-mood" id="btnMood1">平静温和</div>
+            </button>
+
+            <button class="tone-btn-block t2" onclick="handleToneSelect(2)">
+              <div class="btn-mark-symbol">／</div>
+              <div class="btn-tone-title">
+                <span>二声扬</span>
+                <span class="btn-mood-icon">❓</span>
+              </div>
+              <div class="btn-tone-mood" id="btnMood2">疑问好奇</div>
+            </button>
+
+            <button class="tone-btn-block t3" onclick="handleToneSelect(3)">
+              <div class="btn-mark-symbol">∨</div>
+              <div class="btn-tone-title">
+                <span>三声转</span>
+                <span class="btn-mood-icon">🤔</span>
+              </div>
+              <div class="btn-tone-mood" id="btnMood3">思考起伏</div>
+            </button>
+
+            <button class="tone-btn-block t4" onclick="handleToneSelect(4)">
+              <div class="btn-mark-symbol">＼</div>
+              <div class="btn-tone-title">
+                <span>四声降</span>
+                <span class="btn-mood-icon">💥</span>
+              </div>
+              <div class="btn-tone-mood" id="btnMood4">果断欢呼</div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress Steps -->
+        <div class="stage-progress-bar" id="stageProgressBar">
+          <!-- Dots rendered dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================
+         SCREEN 3: TONE SYNTH & ECHO LAB
+         ========================================= -->
+    <div class="screen" id="synthScreen">
+      <div class="synth-panel">
+        <div class="synth-header">
+          <h2 id="txtSynthTitle">🎹 声调回音琴与发音实验室</h2>
+          <p id="txtSynthSubtitle">自由点选音节，对比 4 种声调的情绪面貌与音调曲线！</p>
+        </div>
+
+        <!-- Syllable Vowel Selector -->
+        <div class="vowel-selector-wrap" id="synthVowelSelector">
+          <button class="vowel-chip active" onclick="selectSynthBase('a')">a (啊)</button>
+          <button class="vowel-chip" onclick="selectSynthBase('o')">o (喔)</button>
+          <button class="vowel-chip" onclick="selectSynthBase('e')">e (鹅)</button>
+          <button class="vowel-chip" onclick="selectSynthBase('i')">i (衣)</button>
+          <button class="vowel-chip" onclick="selectSynthBase('u')">u (乌)</button>
+          <button class="vowel-chip" onclick="selectSynthBase('v')">ü (鱼)</button>
+          <button class="vowel-chip" onclick="selectSynthBase('ma')">ma (妈)</button>
+          <button class="vowel-chip" onclick="selectSynthBase('ba')">ba (八)</button>
+        </div>
+
+        <!-- Waveform / Pitch Track Display -->
+        <div class="tone-pitch-display">
+          <canvas id="pitchCanvas"></canvas>
+        </div>
+
+        <!-- Big Piano Keys for 4 Tones -->
+        <div class="synth-piano-keys">
+          <button class="piano-key-btn t1" onclick="playSynthTone(1)">
+            <span style="font-size:32px; font-weight:900;">—</span>
+            <span style="font-size:16px; font-weight:800;" id="synthKeyT1">一声 (55)</span>
+            <span style="font-size:12px;" id="synthDescT1">平稳如歌</span>
+          </button>
+          <button class="piano-key-btn t2" onclick="playSynthTone(2)">
+            <span style="font-size:32px; font-weight:900;">／</span>
+            <span style="font-size:16px; font-weight:800;" id="synthKeyT2">二声 (35)</span>
+            <span style="font-size:12px;" id="synthDescT2">爬坡疑问</span>
+          </button>
+          <button class="piano-key-btn t3" onclick="playSynthTone(3)">
+            <span style="font-size:32px; font-weight:900;">∨</span>
+            <span style="font-size:16px; font-weight:800;" id="synthKeyT3">三声 (214)</span>
+            <span style="font-size:12px;" id="synthDescT3">回环起伏</span>
+          </button>
+          <button class="piano-key-btn t4" onclick="playSynthTone(4)">
+            <span style="font-size:32px; font-weight:900;">＼</span>
+            <span style="font-size:16px; font-weight:800;" id="synthKeyT4">四声 (51)</span>
+            <span style="font-size:12px;" id="synthDescT4">从天俯冲</span>
+          </button>
+        </div>
+
+        <!-- Mnemonic Rhyme Player -->
+        <div class="rhyme-player-bar">
+          <div class="rhyme-text" id="txtCurrentRhyme">
+            🎵 “一声平平高又平，二声扬起往上爬，三声拐弯下又上，四声从天落下来！”
+          </div>
+          <button class="nav-btn" onclick="playRhymeFull()" style="background:#f43f5e; color:#fff; border:none; box-shadow:0 3px 0 #be123c;">
+            ▶️ 朗读口诀
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================
+         SCREEN 4: TROPHY ALBUM
+         ========================================= -->
+    <div class="screen" id="trophyScreen">
+      <div class="trophy-container">
+        <div class="synth-header">
+          <h2 id="txtTrophyHeader">🏆 演出荣誉大殿</h2>
+          <p id="txtTrophySub">通关剧目即可获得由动物森林剧场颁发的金剧场奖杯！</p>
+        </div>
+
+        <div class="trophy-grid" id="trophyGridContainer">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Celebration Modal Popup -->
+  <div class="modal-overlay" id="celebrationModal">
+    <div class="modal-dialog">
+      <div class="modal-badge-huge" id="modalBadgeIcon">🏆</div>
+      <h2 id="modalTitle">本幕演出圆满成功！</h2>
+      <p id="modalDesc">太精彩了！你为小猫演出了最准确的情绪与声调！</p>
+      <div class="modal-btn-row">
+        <button class="modal-btn secondary" onclick="replayCurrentPlay()">
+          🔄 重新排练
+        </button>
+        <button class="modal-btn primary" onclick="nextPlayOrLobby()">
+          👉 下一个剧目
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   AUDIO ENGINE (NEURAL HUMAN AUDIO + PROCEDURAL WEB AUDIO)
+   ========================================================= */
+class TheaterAudioEngine {
+  constructor() {
+    this.ctx = null;
+    this.muted = false;
+    this.currentAudio = null;
+    this.synthOsc = null;
+    this.synthGain = null;
+
+    // Load available voices
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        this.populateVoices();
+      };
+      this.populateVoices();
+    }
+  }
+
+  populateVoices() {
+    const voices = window.speechSynthesis ? window.speechSynthesis.getVoices() : [];
+    this.zhVoice = voices.find(v => v.lang.includes('zh') || v.lang.includes('cmn'));
+    this.jaVoice = voices.find(v => v.lang.includes('ja'));
+  }
+
+  ensureContext() {
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) this.ctx = new AudioCtx();
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  }
+
+  toggleMute() {
+    this.muted = !this.muted;
+    const btn = document.getElementById('btnAudioToggle');
+    if (btn) btn.textContent = this.muted ? '🔇' : '🔊';
+  }
+
+  // Play natural neural audio MP3
+  playFile(fname, onEnd = null) {
+    if (this.muted) { if (onEnd) onEnd(); return; }
+    this.ensureContext();
+
+    if (this.currentAudio) {
+      try {
+        this.currentAudio.pause();
+        this.currentAudio.currentTime = 0;
+      } catch (e) {}
+    }
+
+    let endedFired = false;
+    let safetyTimer = null;
+    const safeEnd = () => {
+      if (endedFired) return;
+      endedFired = true;
+      if (safetyTimer) clearTimeout(safetyTimer);
+      if (onEnd) onEnd();
+    };
+    if (onEnd) {
+      safetyTimer = setTimeout(safeEnd, 3500);
+    }
+
+    const cleanName = encodeURIComponent(fname);
+    const url = 'audio/theater/' + cleanName + '.mp3';
+    const sound = new Audio(url);
+    this.currentAudio = sound;
+
+    sound.onended = safeEnd;
+    sound.onerror = () => {
+      // Fallback try audio/zh/
+      const zhUrl = 'audio/zh/' + cleanName + '.mp3';
+      const zhSound = new Audio(zhUrl);
+      this.currentAudio = zhSound;
+      zhSound.onended = safeEnd;
+      zhSound.onerror = () => {
+        this.speakZh(fname.replace(/^tone_/, ''), safeEnd);
+      };
+      zhSound.play().catch(() => {
+        this.speakZh(fname.replace(/^tone_/, ''), safeEnd);
+      });
+    };
+    sound.play().catch(() => {
+      sound.onerror();
+    });
+  }
+
+  speakZh(text, onEnd = null) {
+    if (this.muted) { if (onEnd) onEnd(); return; }
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'zh-CN';
+      utter.rate = 0.85;
+      utter.pitch = 1.1;
+      if (this.zhVoice) utter.voice = this.zhVoice;
+      utter.onend = () => { if (onEnd) onEnd(); };
+      utter.onerror = () => { if (onEnd) onEnd(); };
+      window.speechSynthesis.speak(utter);
+    } else {
+      if (onEnd) onEnd();
+    }
+  }
+
+  speakJa(text, onEnd = null) {
+    if (this.muted) { if (onEnd) onEnd(); return; }
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'ja-JP';
+      utter.rate = 0.9;
+      if (this.jaVoice) utter.voice = this.jaVoice;
+      utter.onend = () => { if (onEnd) onEnd(); };
+      utter.onerror = () => { if (onEnd) onEnd(); };
+      window.speechSynthesis.speak(utter);
+    } else {
+      if (onEnd) onEnd();
+    }
+  }
+
+  // Real-time gesture tone glide synthesis
+  startGestureTone(initialFreq = 380) {
+    if (this.muted) return;
+    this.ensureContext();
+    if (!this.ctx) return;
+    this.stopGestureTone();
+
+    const now = this.ctx.currentTime;
+    this.synthOsc = this.ctx.createOscillator();
+    this.synthGain = this.ctx.createGain();
+    this.synthOsc.type = 'sine';
+    this.synthOsc.frequency.setValueAtTime(initialFreq, now);
+
+    this.synthGain.gain.setValueAtTime(0.01, now);
+    this.synthGain.gain.linearRampToValueAtTime(0.18, now + 0.05);
+
+    this.synthOsc.connect(this.synthGain);
+    this.synthGain.connect(this.ctx.destination);
+    this.synthOsc.start(now);
+  }
+
+  updateGestureTone(freq) {
+    if (!this.synthOsc || !this.ctx) return;
+    const now = this.ctx.currentTime;
+    this.synthOsc.frequency.linearRampToValueAtTime(Math.max(160, Math.min(850, freq)), now + 0.03);
+  }
+
+  stopGestureTone() {
+    if (this.synthOsc && this.synthGain && this.ctx) {
+      const now = this.ctx.currentTime;
+      this.synthGain.gain.linearRampToValueAtTime(0.001, now + 0.08);
+      try {
+        this.synthOsc.stop(now + 0.09);
+      } catch (e) {}
+      this.synthOsc = null;
+      this.synthGain = null;
+    }
+  }
+
+  // Procedural Web Audio Sound Effects
+  playSfx(type) {
+    if (this.muted) return;
+    this.ensureContext();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+
+    if (type === 'curtain') {
+      // Smooth velvet curtain glide chord
+      const osc = this.ctx.createOscillator();
+      const g = this.ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.exponentialRampToValueAtTime(440, now + 0.8);
+      g.gain.setValueAtTime(0.08, now);
+      g.gain.linearRampToValueAtTime(0.001, now + 0.8);
+      osc.connect(g);
+      g.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.8);
+    } else if (type === 'correct') {
+      // Magical sparkling harp chime
+      const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+      notes.forEach((freq, idx) => {
+        const osc = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+        g.gain.setValueAtTime(0.16, now + idx * 0.07);
+        g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.4);
+        osc.connect(g);
+        g.connect(this.ctx.destination);
+        osc.start(now + idx * 0.07);
+        osc.stop(now + idx * 0.07 + 0.4);
+      });
+    } else if (type === 'cheer') {
+      // Crowd clapping burst simulation
+      for (let i = 0; i < 12; i++) {
+        setTimeout(() => {
+          if (this.muted || !this.ctx) return;
+          const nNow = this.ctx.currentTime;
+          const osc = this.ctx.createOscillator();
+          const g = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(400 + Math.random() * 300, nNow);
+          g.gain.setValueAtTime(0.12, nNow);
+          g.gain.exponentialRampToValueAtTime(0.001, nNow + 0.09);
+          osc.connect(g);
+          g.connect(this.ctx.destination);
+          osc.start(nNow);
+          osc.stop(nNow + 0.09);
+        }, i * 60 + Math.random() * 30);
+      }
+    } else if (type === 'boing') {
+      // Soft gentle spring for incorrect choice (zero harshness)
+      const osc = this.ctx.createOscillator();
+      const g = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(320, now);
+      osc.frequency.linearRampToValueAtTime(180, now + 0.18);
+      g.gain.setValueAtTime(0.18, now);
+      g.gain.linearRampToValueAtTime(0.001, now + 0.22);
+      osc.connect(g);
+      g.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.22);
+    }
+  }
+}
+
+const audio = new TheaterAudioEngine();
+
+/* =========================================================
+   DATA DEFINITION: 6 PLAYS, SCENES & MOOD SPECIFICATIONS
+   ========================================================= */
+const PLAYS_DATA = [
+  {
+    id: "play1",
+    nameZh: "小猫找妈妈",
+    nameJa: "こねこのママさがし",
+    avatar: "🐱",
+    descZh: "小猫咪咪在客厅找妈妈。体验四声的情绪大变身！",
+    descJa: "こねこのミミちゃんのお話。4つの声調で気持ちを表現しよう！",
+    introAudio: "play1_intro",
+    outroAudio: "p1_outro",
+    backdrop: "linear-gradient(180deg, #fef3c7 0%, #fed7aa 60%, #fdba74 100%)",
+    scenes: [
+      {
+        tone: 1,
+        pinyin: "mā",
+        char: "妈妈",
+        avatar: "🐱",
+        emotionBadge: "😊",
+        moodClass: "mood-tone1",
+        promptZh: "咪咪揉揉眼睛，温柔地呼唤妈妈。该用平静的一声吗？",
+        promptJa: "ミミちゃんが目をこすって、やさしくママを呼ぶよ。一声（まっすぐ）かな？",
+        promptAudio: "p1_s1_prompt",
+        voiceAudio: "p1_s1_voice",
+        actorText: "mā！妈妈！你在哪里呀？"
+      },
+      {
+        tone: 2,
+        pinyin: "má?",
+        char: "啥？",
+        avatar: "🐱",
+        emotionBadge: "❓",
+        moodClass: "mood-tone2",
+        promptZh: "门后传来沙沙声，咪咪好奇地歪起小脑袋：咦？是谁呀？",
+        promptJa: "カサカサ音が聞こえたよ。ミミちゃんが首をかしげて「あれ？」二声（上へキュッ）！",
+        promptAudio: "p1_s2_prompt",
+        voiceAudio: "p1_s2_voice",
+        actorText: "má？是妈妈回来了吗？"
+      },
+      {
+        tone: 3,
+        pinyin: "mǎ",
+        char: "小马",
+        avatar: "🐱",
+        emotionBadge: "🤔",
+        moodClass: "mood-tone3",
+        promptZh: "咪咪跳上摇摇木马，起起伏伏像骑小马一样等妈妈！",
+        promptJa: "木馬に乗ってゆらゆら！谷を下りて上る三声で表現しよう！",
+        promptAudio: "p1_s3_prompt",
+        voiceAudio: "p1_s3_voice",
+        actorText: "mǎ！摇摇小木马，晃悠悠！"
+      },
+      {
+        tone: 4,
+        pinyin: "mà!",
+        char: "批评/不淘气",
+        avatar: "🐱",
+        emotionBadge: "💥",
+        moodClass: "mood-tone4",
+        promptZh: "毛线球掉了，咪咪站得直直的，坚决不淘气被批评哦！",
+        promptJa: "毛糸玉を片付けてキリッと立とう！上から一気に下りる四声！",
+        promptAudio: "p1_s4_prompt",
+        voiceAudio: "p1_s4_voice",
+        actorText: "mà！不淘气，做个乖宝宝！"
+      }
+    ]
+  },
+  {
+    id: "play2",
+    nameZh: "小兔子的奇妙信箱",
+    nameJa: "うさぎさんのふしぎなポスト",
+    avatar: "🐰",
+    descZh: "波波在院子里收到了神秘大包裹，快来看看有什么宝物！",
+    descJa: "ボボちゃんのお庭に大きな荷物が届いたよ！何が入っているかな？",
+    introAudio: "play2_intro",
+    outroAudio: "p2_outro",
+    backdrop: "linear-gradient(180deg, #bae6fd 0%, #bbf7d0 70%, #86efac 100%)",
+    scenes: [
+      {
+        tone: 1,
+        pinyin: "huā",
+        char: "花朵",
+        avatar: "🐰",
+        emotionBadge: "🌸",
+        moodClass: "mood-tone1",
+        promptZh: "波波在花园散步，看着美丽的花朵，心情好悠闲！",
+        promptJa: "お庭でお花を眺めておだやかな気持ち。一声（平ら）を選ぼう！",
+        promptAudio: "p2_s1_prompt",
+        voiceAudio: "p2_s1_voice",
+        actorText: "huā！美丽的花儿开啦！"
+      },
+      {
+        tone: 2,
+        pinyin: "shéi?",
+        char: "谁？",
+        avatar: "🐰",
+        emotionBadge: "❓",
+        moodClass: "mood-tone2",
+        promptZh: "咚咚咚！门外有人敲门，波波好奇地问：是谁在外面呀？",
+        promptJa: "トントン！誰かがドアをノック。好奇心いっぱいの二声「だれ？」！",
+        promptAudio: "p2_s2_prompt",
+        voiceAudio: "p2_s2_voice",
+        actorText: "shéi？是谁在敲门呢？"
+      },
+      {
+        tone: 3,
+        pinyin: "bǎo",
+        char: "宝物",
+        avatar: "🐰",
+        emotionBadge: "🎁",
+        moodClass: "mood-tone3",
+        promptZh: "波波抱着沉甸甸的包裹，好奇地琢磨：这里面是什么宝物呢？",
+        promptJa: "重たい箱を抱えて「何が入っているのかな？」と考え中の三声！",
+        promptAudio: "p2_s3_prompt",
+        voiceAudio: "p2_s3_voice",
+        actorText: "bǎo！好珍贵的神秘大宝盒！"
+      },
+      {
+        tone: 4,
+        pinyin: "kàn!",
+        char: "看！",
+        avatar: "🐰",
+        emotionBadge: "🛴",
+        moodClass: "mood-tone4",
+        promptZh: "拆开一瞧，是一辆酷炫小滑板车！兴奋地欢呼：快看呀！",
+        promptJa: "キックボードだ！元気にみんなへ「見て見て！」と叫ぶ四声！",
+        promptAudio: "p2_s4_prompt",
+        voiceAudio: "p2_s4_voice",
+        actorText: "kàn！大家快来看我的新滑板车！"
+      }
+    ]
+  },
+  {
+    id: "play3",
+    nameZh: "小熊的大果园",
+    nameJa: "こぐまの大きなくだもの園",
+    avatar: "🐻",
+    descZh: "秋天硕果累累，和笨笨小熊一起摘果子、品尝丰收！",
+    descJa: "秋のみのりのきせつ。おいしい果物をたくさん収穫しよう！",
+    introAudio: "play3_intro",
+    outroAudio: "p3_outro",
+    backdrop: "linear-gradient(180deg, #fef08a 0%, #fed7aa 60%, #fb923c 100%)",
+    scenes: [
+      {
+        tone: 1,
+        pinyin: "fēng",
+        char: "清风",
+        avatar: "🐻",
+        emotionBadge: "🍃",
+        moodClass: "mood-tone1",
+        promptZh: "小熊坐在果树下，清凉的微风轻轻地吹拂着！",
+        promptJa: "木陰でそよ風を感じてリラックス。平らな一声で吹かせよう！",
+        promptAudio: "p3_s1_prompt",
+        voiceAudio: "p3_s1_voice",
+        actorText: "fēng！清凉的微风吹呀吹！"
+      },
+      {
+        tone: 2,
+        pinyin: "táo?",
+        char: "桃子？",
+        avatar: "🐻",
+        emotionBadge: "🍑",
+        moodClass: "mood-tone2",
+        promptZh: "头顶落下一个大果子，小熊揉揉鼻子：这是圆圆的桃子吗？",
+        promptJa: "ぽとん！頭の上に落ちてきたよ。「モモかな？」と疑問の二声！",
+        promptAudio: "p3_s2_prompt",
+        voiceAudio: "p3_s2_voice",
+        actorText: "táo？是一颗香香的大甜桃吗？"
+      },
+      {
+        tone: 3,
+        pinyin: "hǎo",
+        char: "好甜",
+        avatar: "🐻",
+        emotionBadge: "😋",
+        moodClass: "mood-tone3",
+        promptZh: "小熊咬了一口，满足地晃晃头：哇，味道真是太好啦！",
+        promptJa: "一口かじって「甘くておいし〜い！」と味わう三声！",
+        promptAudio: "p3_s3_prompt",
+        voiceAudio: "p3_s3_voice",
+        actorText: "hǎo！好甜好脆的味道！"
+      },
+      {
+        tone: 4,
+        pinyin: "dào!",
+        char: "到啦",
+        avatar: "🐻",
+        emotionBadge: "🧺",
+        moodClass: "mood-tone4",
+        promptZh: "装满整整一大篮果子，小熊欢呼：全都运送到家啦！",
+        promptJa: "カゴいっぱいに収穫！「お家についたぞ！」と力強い四声！",
+        promptAudio: "p3_s4_prompt",
+        voiceAudio: "p3_s4_voice",
+        actorText: "dào！果子全都送到家啦！"
+      }
+    ]
+  },
+  {
+    id: "play4",
+    nameZh: "小松鼠森林音乐会",
+    nameJa: "リスさんの森のコンサート",
+    avatar: "🐿️",
+    descZh: "森林蘑菇舞台开幕！用竹笛、啼鸣与大鼓奏响最酷交响乐！",
+    descJa: "きのこのステージで大合奏！笛や太鼓でカッコよく演奏しよう！",
+    introAudio: "play4_intro",
+    outroAudio: "p4_outro",
+    backdrop: "linear-gradient(180deg, #dcfce7 0%, #a7f3d0 60%, #059669 100%)",
+    scenes: [
+      {
+        tone: 1,
+        pinyin: "dī",
+        char: "笛声",
+        avatar: "🐿️",
+        emotionBadge: "🎵",
+        moodClass: "mood-tone1",
+        promptZh: "小松鼠吹响竹笛，悠扬平缓的音符飘向远方！",
+        promptJa: "竹の笛をまっすぐ平らに吹いてみよう。一声（ピー）！",
+        promptAudio: "p4_s1_prompt",
+        voiceAudio: "p4_s1_voice",
+        actorText: "dī！悠扬的小笛声响起来！"
+      },
+      {
+        tone: 2,
+        pinyin: "tí?",
+        char: "啼鸣？",
+        avatar: "🐿️",
+        emotionBadge: "🐦",
+        moodClass: "mood-tone2",
+        promptZh: "树枝上响起笃笃声，松鼠停下来听：咦？是谁在啼叫呢？",
+        promptJa: "木の上から音がするよ。「だれの鳴き声かな？」と探す二声！",
+        promptAudio: "p4_s2_prompt",
+        voiceAudio: "p4_s2_voice",
+        actorText: "tí？是啄木鸟先生在啼鸣吗？"
+      },
+      {
+        tone: 3,
+        pinyin: "gǔ",
+        char: "大鼓",
+        avatar: "🐿️",
+        emotionBadge: "🥁",
+        moodClass: "mood-tone3",
+        promptZh: "大熊搬出了大木鼓，大家一起随着节拍点头思考合奏！",
+        promptJa: "ドンドンと大きな太鼓を叩くよ！リズムに合わせてうなずく三声！",
+        promptAudio: "p4_s3_prompt",
+        voiceAudio: "p4_s3_voice",
+        actorText: "gǔ！咚咚咚敲响大鼓！"
+      },
+      {
+        tone: 4,
+        pinyin: "kù!",
+        char: "太酷",
+        avatar: "🐿️",
+        emotionBadge: "🎸",
+        moodClass: "mood-tone4",
+        promptZh: "乐器齐奏，音乐太震撼啦，小动物们欢呼：太酷啦！",
+        promptJa: "みんなでフィナーレ！「最高にカッコいい！」と歓声の四声！",
+        promptAudio: "p4_s4_prompt",
+        voiceAudio: "p4_s4_voice",
+        actorText: "kù！这首交响乐太酷啦！"
+      }
+    ]
+  },
+  {
+    id: "play5",
+    nameZh: "小恐龙飞天梦想",
+    nameJa: "ちび恐竜のそらとぶ夢",
+    avatar: "🦖",
+    descZh: "雷雷想和鸟儿一样飞翔！冲过彩虹门，达成飞天梦想！",
+    descJa: "レイレイは空を飛びたい！ロケットを背負って大空へダイブ！",
+    introAudio: "play5_intro",
+    outroAudio: "p5_outro",
+    backdrop: "linear-gradient(180deg, #e0e7ff 0%, #c7d2fe 50%, #818cf8 100%)",
+    scenes: [
+      {
+        tone: 1,
+        pinyin: "gāo",
+        char: "高空",
+        avatar: "🦖",
+        emotionBadge: "☁️",
+        moodClass: "mood-tone1",
+        promptZh: "雷雷抬头望向天空，彩云平平地飘在好高的地方！",
+        promptJa: "青空を見上げて「たかーいな！」と平らにのびる一声！",
+        promptAudio: "p5_s1_prompt",
+        voiceAudio: "p5_s1_voice",
+        actorText: "gāo！蓝蓝的天空飞得高！"
+      },
+      {
+        tone: 2,
+        pinyin: "néng?",
+        char: "能飞？",
+        avatar: "🦖",
+        emotionBadge: "❓",
+        moodClass: "mood-tone2",
+        promptZh: "雷雷系上红披风，好奇地问自己：我真的能飞起来吗？",
+        promptJa: "マントを身につけて「ぼくも飛べるかな？」と問いかける二声！",
+        promptAudio: "p5_s2_prompt",
+        voiceAudio: "p5_s2_voice",
+        actorText: "néng？我也能冲上云霄吗？"
+      },
+      {
+        tone: 3,
+        pinyin: "wěi",
+        char: "大尾巴",
+        avatar: "🦖",
+        emotionBadge: "🌀",
+        moodClass: "mood-tone3",
+        promptZh: "踩上弹簧蘑菇腾空，雷雷晃动着大尾巴保持平衡思考！",
+        promptJa: "しっぽをぐるぐる回してバランスをとる三声！",
+        promptAudio: "p5_s3_prompt",
+        voiceAudio: "p5_s3_voice",
+        actorText: "wěi！甩起大尾巴转个圈！"
+      },
+      {
+        tone: 4,
+        pinyin: "dào!",
+        char: "飞到终点",
+        avatar: "🦖",
+        emotionBadge: "🚀",
+        moodClass: "mood-tone4",
+        promptZh: "火箭背包喷出彩虹，一下子穿过彩虹大门：飞到终点啦！",
+        promptJa: "ロケット点火！一気にゴールへ突撃する四声（シューッ）！",
+        promptAudio: "p5_s4_prompt",
+        voiceAudio: "p5_s4_voice",
+        actorText: "dào！顺利飞到彩虹终点啦！"
+      }
+    ]
+  },
+  {
+    id: "play6",
+    nameZh: "萌宝礼貌交际屋",
+    nameJa: "なかよしお返事シアター",
+    avatar: "🐼",
+    descZh: "在幼儿园里做个有礼貌的阳光宝贝！学会倾听、问候与道谢！",
+    descJa: "幼稚園でのあいさつ劇。お友達と仲良くする日常会話を身につけよう！",
+    introAudio: "play6_intro",
+    outroAudio: "p6_outro",
+    backdrop: "linear-gradient(180deg, #fce7f3 0%, #fbcfe8 50%, #f472b6 100%)",
+    scenes: [
+      {
+        tone: 1,
+        pinyin: "tīng",
+        char: "听讲",
+        avatar: "🐼",
+        emotionBadge: "👂",
+        moodClass: "mood-tone1",
+        promptZh: "晨读时间到啦，小朋友们安静地坐在桌前认真听！",
+        promptJa: "お耳を澄まして静かに聴こう。平らでやさしい一声！",
+        promptAudio: "p6_s1_prompt",
+        voiceAudio: "p6_s1_voice",
+        actorText: "tīng！竖起小耳朵认真听！"
+      },
+      {
+        tone: 2,
+        pinyin: "shén?",
+        char: "什么？",
+        avatar: "🐼",
+        emotionBadge: "❓",
+        moodClass: "mood-tone2",
+        promptZh: "看到新来的小伙伴，小猫礼貌又好奇地上前问：你在读什么呀？",
+        promptJa: "「なに見ているの？」とお友達に優しく尋ねる二声！",
+        promptAudio: "p6_s2_prompt",
+        voiceAudio: "p6_s2_voice",
+        actorText: "shén？你在看什么有趣的画册呀？"
+      },
+      {
+        tone: 3,
+        pinyin: "hǎo",
+        char: "你好",
+        avatar: "🐼",
+        emotionBadge: "🤝",
+        moodClass: "mood-tone3",
+        promptZh: "小伙伴互相谦让分享玩具，笑眯眯地点头问好：你好！",
+        promptJa: "おもちゃをどうぞ。「こんにちは！」と笑顔でうなずく三声！",
+        promptAudio: "p6_s3_prompt",
+        voiceAudio: "p6_s3_voice",
+        actorText: "hǎo！你好呀，我们一起做好朋友！"
+      },
+      {
+        tone: 4,
+        pinyin: "xiè!",
+        char: "谢谢",
+        avatar: "🐼",
+        emotionBadge: "🏅",
+        moodClass: "mood-tone4",
+        promptZh: "放学收到老师奖励的红花贴纸，大声说一声谢谢！",
+        promptJa: "先生やお友達に元気に「ありがとう！」と感謝の四声！",
+        promptAudio: "p6_s4_prompt",
+        voiceAudio: "p6_s4_voice",
+        actorText: "xiè！非常感谢老师和小伙伴！"
+      }
+    ]
+  }
+];
+
+/* =========================================================
+   APPLICATION STATE
+   ========================================================= */
+const AppState = {
+  lang: 'zh', // 'zh' or 'ja'
+  currentScreen: 'lobby',
+  activePlay: null,
+  activeSceneIdx: 0,
+  completedPlays: {},
+  synthVowel: 'a',
+  gesturePoints: [],
+  isDrawing: false
+};
+
+// Load storage
+try {
+  const saved = localStorage.getItem('tone_theater_cleared');
+  if (saved) AppState.completedPlays = JSON.parse(saved);
+} catch (e) {}
+
+/* =========================================================
+   INITIALIZATION
+   ========================================================= */
+window.addEventListener('DOMContentLoaded', () => {
+  renderPlaysGrid();
+  renderTrophyGrid();
+  initGestureCanvas();
+  initPitchCanvas();
+  updateTrophyCount();
+
+  // Welcome prompt
+  setTimeout(() => {
+    audio.playFile('welcome_zh');
+  }, 500);
+});
+
+/* =========================================================
+   LANGUAGE TOGGLE
+   ========================================================= */
+function toggleLanguage() {
+  AppState.lang = AppState.lang === 'zh' ? 'ja' : 'zh';
+  const btn = document.getElementById('btnLangToggle');
+  btn.textContent = AppState.lang === 'zh' ? '🇨🇳' : '🇯🇵';
+
+  const isZh = AppState.lang === 'zh';
+  document.getElementById('txtAppTitle').textContent = isZh ? '神奇声调小剧场' : 'ふしぎなトーンシアター';
+  document.getElementById('txtAppSubtitle').textContent = isZh ? '声调语调与情绪表达 · Tone Theater' : 'こえの抑揚と気持ちの表現 · Tone Theater';
+
+  document.getElementById('txtLobbyBadge').textContent = isZh ? '✨ 3~6岁儿童声调与语用启蒙' : '✨ 幼児向け中国語声調・気持ちの劇あそび';
+  document.getElementById('txtLobbyTitle').textContent = isZh ? '请选择今天要出演的童话剧目' : 'きょう演じるげきを選んでね！';
+  document.getElementById('txtLobbySubtitle').textContent = isZh ? '滑动手指演声调，理解情绪与日常疑问语气！' : '指で声調をなぞって、気持ちを表現しよう！';
+  const heroBtnLabel = document.getElementById('txtHeroStartLabel');
+  if (heroBtnLabel) {
+    heroBtnLabel.textContent = isZh ? '▶ 立即开始游戏 (第 1 幕 · 咪咪的小猫日常)' : '▶ ゲームスタート (第1幕 · ミミの日常)';
+  }
+
+  document.getElementById('btnModeLobby').innerHTML = isZh ? '<span>🎬 剧场选场</span>' : '<span>🎬 げきを選ぶ</span>';
+  document.getElementById('btnModeSynth').innerHTML = isZh ? '<span>🎹 声调琴</span>' : '<span>🎹 トーンピアノ</span>';
+
+  // Synth text
+  document.getElementById('txtSynthTitle').textContent = isZh ? '🎹 声调回音琴与发音实验室' : '🎹 声調エコーピアノ＆発音ラボ';
+  document.getElementById('txtSynthSubtitle').textContent = isZh ? '自由点选音节，对比 4 种声调的情绪面貌与音调曲线！' : '音節を選んで4つの声調のメロディと抑揚を体験しよう！';
+
+  // Trophy text
+  document.getElementById('txtTrophyHeader').textContent = isZh ? '🏆 演出荣誉大殿' : '🏆 げきじょう記念館';
+  document.getElementById('txtTrophySub').textContent = isZh ? '通关剧目即可获得由动物森林剧场颁发的金剧场奖杯！' : '劇をクリアしてゴールドシアターメダルを集めよう！';
+
+  renderPlaysGrid();
+  renderTrophyGrid();
+  if (AppState.activePlay) {
+    updateStageUi();
+  }
+}
+
+/* =========================================================
+   SCREEN NAVIGATION
+   ========================================================= */
+function switchScreen(screenId) {
+  AppState.currentScreen = screenId;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+  const target = document.getElementById(screenId + 'Screen');
+  if (target) target.classList.add('active');
+
+  if (screenId === 'synth') {
+    drawPitchCurve(1);
+  }
+}
+
+/* =========================================================
+   LOBBY SCREEN: RENDER PLAYS
+   ========================================================= */
+function renderPlaysGrid() {
+  const container = document.getElementById('playsGridContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const isZh = AppState.lang === 'zh';
+
+  PLAYS_DATA.forEach(play => {
+    const isCompleted = !!AppState.completedPlays[play.id];
+    const card = document.createElement('div');
+    card.className = `play-card ${isCompleted ? 'completed' : ''}`;
+    card.onclick = () => startPlay(play.id);
+
+    const name = isZh ? play.nameZh : play.nameJa;
+    const desc = isZh ? play.descZh : play.descJa;
+    const statusText = isCompleted ? (isZh ? '✨ 演出成功' : '✨ 上演成功') : (isZh ? '🎭 准备开演' : '🎭 出演する');
+
+    card.innerHTML = `
+      <div class="play-badge-status">${statusText}</div>
+      <div class="play-top">
+        <div class="play-avatar-box">${play.avatar}</div>
+        <div class="play-meta">
+          <h3>${name}</h3>
+          <span class="play-character-tag">${isZh ? '主演: ' : '主演: '}${play.avatar}</span>
+        </div>
+      </div>
+      <div class="play-desc">${desc}</div>
+      <div class="play-footer">
+        <div class="play-tones-flow">
+          <div class="tone-pill-mini t1">—</div>
+          <div class="tone-pill-mini t2">／</div>
+          <div class="tone-pill-mini t3">∨</div>
+          <div class="tone-pill-mini t4">＼</div>
+        </div>
+        <button class="play-action-btn" onclick="event.stopPropagation(); startPlay('${play.id}')">
+          <span>${isCompleted ? (isZh ? '⭐ 再次出演' : '⭐ もう一度上演') : (isZh ? '▶ 开始游戏' : '▶ ゲーム開始')}</span>
+        </button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function updateTrophyCount() {
+  const cleared = Object.keys(AppState.completedPlays).length;
+  document.getElementById('trophyCount').textContent = `${cleared}/${PLAYS_DATA.length}`;
+}
+
+/* =========================================================
+   STAGE PLAY CONTROLLER
+   ========================================================= */
+function startPlay(playId) {
+  const play = PLAYS_DATA.find(p => p.id === playId);
+  if (!play) return;
+
+  AppState.activePlay = play;
+  AppState.activeSceneIdx = 0;
+
+  switchScreen('stage');
+
+  // Open curtains with sound
+  const stageBox = document.getElementById('stageBox');
+  stageBox.classList.remove('opened');
+  audio.playSfx('curtain');
+
+  setTimeout(() => {
+    stageBox.classList.add('opened');
+    loadCurrentScene();
+    if (window.resizeGestureCanvas) {
+      window.resizeGestureCanvas();
+    }
+  }, 350);
+
+  // Play intro audio
+  setTimeout(() => {
+    audio.playFile(play.introAudio);
+  }, 800);
+}
+
+function loadCurrentScene() {
+  const play = AppState.activePlay;
+  if (!play) return;
+
+  const scene = play.scenes[AppState.activeSceneIdx];
+  if (!scene) return;
+
+  // Set backdrop & actor
+  const stageBackdrop = document.getElementById('stageBackdrop');
+  stageBackdrop.style.background = play.backdrop;
+
+  const actorAvatar = document.getElementById('actorAvatar');
+  actorAvatar.textContent = scene.avatar;
+
+  const actorEmotionBadge = document.getElementById('actorEmotionBadge');
+  actorEmotionBadge.textContent = scene.emotionBadge;
+
+  const actorWrap = document.getElementById('stageActorWrap');
+  actorWrap.className = `stage-actor-wrap ${scene.moodClass}`;
+
+  // Update speech bubble
+  document.getElementById('bubblePinyin').textContent = scene.pinyin;
+  document.getElementById('bubbleChar').textContent = scene.char;
+
+  // Guide overlay stroke on canvas
+  const symbols = ['', '—', '／', '∨', '＼'];
+  document.getElementById('guideStrokeSymbol').textContent = symbols[scene.tone];
+  const isZh = AppState.lang === 'zh';
+  document.getElementById('guideTipText').textContent = isZh ? `用手指划出 ${symbols[scene.tone]}` : `指で ${symbols[scene.tone]} をなぞろう`;
+
+  updateStageUi();
+  renderProgressDots();
+
+  // Play scene prompt after a short delay
+  setTimeout(() => {
+    playCurrentScenePromptVoice();
+  }, 1000);
+}
+
+function updateStageUi() {
+  const play = AppState.activePlay;
+  if (!play) return;
+  const scene = play.scenes[AppState.activeSceneIdx];
+  if (!scene) return;
+
+  const isZh = AppState.lang === 'zh';
+  document.getElementById('stageTitleText').textContent = isZh ? play.nameZh : play.nameJa;
+  document.getElementById('stagePromptZh').textContent = scene.promptZh;
+  document.getElementById('stagePromptJa').textContent = scene.promptJa;
+  document.getElementById('stageStepBadge').textContent = isZh ? `第 ${AppState.activeSceneIdx + 1} / 4 幕` : `${AppState.activeSceneIdx + 1} / 4 幕`;
+}
+
+function renderProgressDots() {
+  const container = document.getElementById('stageProgressBar');
+  if (!container || !AppState.activePlay) return;
+  container.innerHTML = '';
+
+  AppState.activePlay.scenes.forEach((sc, idx) => {
+    const dot = document.createElement('div');
+    dot.className = `step-pill ${idx === AppState.activeSceneIdx ? 'active' : ''} ${idx < AppState.activeSceneIdx ? 'done' : ''}`;
+    container.appendChild(dot);
+  });
+}
+
+function playCurrentScenePromptVoice() {
+  const play = AppState.activePlay;
+  if (!play) return;
+  const scene = play.scenes[AppState.activeSceneIdx];
+  if (scene) {
+    audio.playFile(scene.promptAudio);
+  }
+}
+
+/* =========================================================
+   TONE SELECTION & GESTURE EVALUATION
+   ========================================================= */
+function handleToneSelect(selectedTone) {
+  const play = AppState.activePlay;
+  if (!play) return;
+  const scene = play.scenes[AppState.activeSceneIdx];
+  if (!scene) return;
+
+  if (selectedTone === scene.tone) {
+    // SUCCESS!
+    handleToneSuccess(scene);
+  } else {
+    // MISTAKE FEEDBACK (Gentle, child-friendly)
+    audio.playSfx('boing');
+    const actorWrap = document.getElementById('stageActorWrap');
+    actorWrap.style.transform = 'translateX(-50%) rotate(-8deg)';
+    setTimeout(() => {
+      actorWrap.style.transform = 'translateX(-50%) rotate(8deg)';
+      setTimeout(() => {
+        actorWrap.style.transform = 'translateX(-50%) rotate(0deg)';
+      }, 150);
+    }, 150);
+
+    // Replay prompt audio
+    playCurrentScenePromptVoice();
+  }
+}
+
+function handleToneSuccess(scene) {
+  audio.playSfx('correct');
+  audio.playSfx('cheer');
+
+  // Flash green border on gesture card
+  const gCard = document.getElementById('gestureCard');
+  gCard.classList.add('correct-glow');
+  setTimeout(() => gCard.classList.remove('correct-glow'), 1200);
+
+  // Audience jump cheer
+  const stageBox = document.getElementById('stageBox');
+  stageBox.classList.add('cheering');
+  setTimeout(() => stageBox.classList.remove('cheering'), 1800);
+
+  // Confetti
+  spawnConfetti(30);
+
+  // Play character line
+  setTimeout(() => {
+    audio.playFile(scene.voiceAudio, () => {
+      // Proceed to next scene or finale
+      setTimeout(() => {
+        if (AppState.activeSceneIdx < AppState.activePlay.scenes.length - 1) {
+          AppState.activeSceneIdx++;
+          loadCurrentScene();
+        } else {
+          finishCurrentPlay();
+        }
+      }, 600);
+    });
+  }, 400);
+}
+
+function finishCurrentPlay() {
+  const play = AppState.activePlay;
+  if (!play) return;
+
+  AppState.completedPlays[play.id] = true;
+  try {
+    localStorage.setItem('tone_theater_cleared', JSON.stringify(AppState.completedPlays));
+  } catch (e) {}
+
+  updateTrophyCount();
+  renderPlaysGrid();
+  renderTrophyGrid();
+
+  // Play outro voice
+  audio.playFile(play.outroAudio, () => {
+    audio.playFile('scene_clear_zh');
+  });
+
+  // Open modal
+  const modal = document.getElementById('celebrationModal');
+  const isZh = AppState.lang === 'zh';
+  document.getElementById('modalTitle').textContent = isZh ? '本幕演出圆满成功！' : '大成功！拍手かっさい！';
+  document.getElementById('modalDesc').textContent = isZh
+    ? `太精彩了！你为【${play.nameZh}】完成了最棒的声音演绎，获得一枚金剧场奖杯！`
+    : `お見事！【${play.nameJa}】をパーフェクトに演じ切ったよ！ゴールドメダル獲得！`;
+  modal.classList.add('active');
+
+  spawnConfetti(60);
+}
+
+function nextPlayOrLobby() {
+  document.getElementById('celebrationModal').classList.remove('active');
+  switchScreen('lobby');
+}
+
+function replayCurrentPlay() {
+  document.getElementById('celebrationModal').classList.remove('active');
+  if (AppState.activePlay) {
+    startPlay(AppState.activePlay.id);
+  }
+}
+
+/* =========================================================
+   GESTURE TRACE CANVAS (SMART STROKE RECOGNIZER)
+   ========================================================= */
+function initGestureCanvas() {
+  const canvas = document.getElementById('toneTraceCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width > 0 && rect.height > 0) {
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+    }
+  }
+  window.addEventListener('resize', resize);
+  window.resizeGestureCanvas = resize;
+  resize();
+
+  function start(e) {
+    e.preventDefault();
+    AppState.isDrawing = true;
+    AppState.gesturePoints = [];
+    const pt = getCanvasPos(e, canvas);
+    AppState.gesturePoints.push(pt);
+    audio.startGestureTone(400);
+  }
+
+  function move(e) {
+    if (!AppState.isDrawing) return;
+    e.preventDefault();
+    const pt = getCanvasPos(e, canvas);
+    AppState.gesturePoints.push(pt);
+
+    // Map Y coordinate to tone pitch frequency
+    const normY = 1 - (pt.y / canvas.height);
+    const freq = 220 + normY * 420;
+    audio.updateGestureTone(freq);
+
+    drawGesture(ctx, canvas);
+  }
+
+  function end(e) {
+    if (!AppState.isDrawing) return;
+    AppState.isDrawing = false;
+    audio.stopGestureTone();
+
+    // Recognize stroke gesture
+    const recognizedTone = analyzeStroke(AppState.gesturePoints);
+    if (recognizedTone) {
+      handleToneSelect(recognizedTone);
+    }
+
+    // Fade canvas out after a short moment
+    setTimeout(() => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }, 400);
+  }
+
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  window.addEventListener('mouseup', end);
+
+  canvas.addEventListener('touchstart', start, { passive: false });
+  canvas.addEventListener('touchmove', move, { passive: false });
+  window.addEventListener('touchend', end);
+}
+
+function getCanvasPos(e, canvas) {
+  const rect = canvas.getBoundingClientRect();
+  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  return {
+    x: clientX - rect.left,
+    y: clientY - rect.top,
+    t: Date.now()
+  };
+}
+
+function drawGesture(ctx, canvas) {
+  const pts = AppState.gesturePoints;
+  if (pts.length < 2) return;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  // Rainbow neon stroke
+  const grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
+  grad.addColorStop(0, '#f43f5e');
+  grad.addColorStop(0.5, '#f59e0b');
+  grad.addColorStop(1, '#10b981');
+
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = 10;
+  ctx.shadowColor = '#f43f5e';
+  ctx.shadowBlur = 12;
+
+  ctx.beginPath();
+  ctx.moveTo(pts[0].x, pts[0].y);
+  for (let i = 1; i < pts.length; i++) {
+    ctx.lineTo(pts[i].x, pts[i].y);
+  }
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+}
+
+// Child-friendly gesture analyzer
+function analyzeStroke(pts) {
+  if (pts.length < 4) return null;
+  const start = pts[0];
+  const end = pts[pts.length - 1];
+  const dx = end.x - start.x;
+  const dy = end.y - start.y;
+
+  // Find vertical extrema
+  let minY = start.y, maxY = start.y, minIdx = 0, maxIdx = 0;
+  for (let i = 0; i < pts.length; i++) {
+    if (pts[i].y < minY) { minY = pts[i].y; minIdx = i; }
+    if (pts[i].y > maxY) { maxY = pts[i].y; maxIdx = i; }
+  }
+
+  // Check Tone 3: dips down (maxY in middle) then rises up!
+  const hasDip = maxIdx > pts.length * 0.2 && maxIdx < pts.length * 0.8 && (maxY - start.y > 20) && (maxY - end.y > 15);
+  if (hasDip) {
+    return 3;
+  }
+
+  // Horizontal stroke -> Tone 1
+  if (Math.abs(dy) < 35 && dx > 30) {
+    return 1;
+  }
+
+  // Rising stroke (dy < -25) -> Tone 2
+  if (dy < -25 && dx > -20) {
+    return 2;
+  }
+
+  // Falling stroke (dy > 25) -> Tone 4
+  if (dy > 25 && dx > -20) {
+    return 4;
+  }
+
+  return null;
+}
+
+/* =========================================================
+   SYNTH LAB SCREEN
+   ========================================================= */
+function selectSynthBase(vowel) {
+  AppState.synthVowel = vowel;
+  document.querySelectorAll('.vowel-chip').forEach(c => c.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  drawPitchCurve(1);
+}
+
+function playSynthTone(tone) {
+  drawPitchCurve(tone);
+
+  // Play audio file (e.g. tone_a1, tone_ma1, etc.)
+  const v = AppState.synthVowel;
+  const audioName = `tone_${v}${tone}`;
+  audio.playFile(audioName);
+
+  // Play short mnemonic
+  setTimeout(() => {
+    audio.playFile(`rhyme_short${tone}`);
+  }, 600);
+}
+
+function playToneRhyme(tone) {
+  audio.playFile(`rhyme_tone${tone}`);
+}
+
+function playRhymeFull() {
+  audio.playFile('rhyme_tone1', () => {
+    audio.playFile('rhyme_tone2', () => {
+      audio.playFile('rhyme_tone3', () => {
+        audio.playFile('rhyme_tone4');
+      });
+    });
+  });
+}
+
+function initPitchCanvas() {
+  const canvas = document.getElementById('pitchCanvas');
+  if (!canvas) return;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width || 600;
+  canvas.height = rect.height || 180;
+  drawPitchCurve(1);
+}
+
+function drawPitchCurve(tone) {
+  const canvas = document.getElementById('pitchCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Draw 5-degree grid lines
+  ctx.strokeStyle = '#334155';
+  ctx.lineWidth = 1;
+  for (let i = 1; i <= 5; i++) {
+    const y = h - (i / 5) * (h - 30) - 15;
+    ctx.beginPath();
+    ctx.moveTo(30, y);
+    ctx.lineTo(w - 30, y);
+    ctx.stroke();
+
+    ctx.fillStyle = '#64748b';
+    ctx.font = '11px sans-serif';
+    ctx.fillText(`${i}`, 14, y + 4);
+  }
+
+  // Draw target curve
+  ctx.lineWidth = 8;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+
+  if (tone === 1) {
+    // 55 high level
+    const y = h - (5 / 5) * (h - 30) - 15;
+    ctx.strokeStyle = '#0ea5e9';
+    ctx.moveTo(50, y);
+    ctx.lineTo(w - 50, y);
+  } else if (tone === 2) {
+    // 35 rising
+    const y1 = h - (3 / 5) * (h - 30) - 15;
+    const y2 = h - (5 / 5) * (h - 30) - 15;
+    ctx.strokeStyle = '#f59e0b';
+    ctx.moveTo(50, y1);
+    ctx.lineTo(w - 50, y2);
+  } else if (tone === 3) {
+    // 214 dipping then rising
+    const y1 = h - (2.2 / 5) * (h - 30) - 15;
+    const yLow = h - (1.1 / 5) * (h - 30) - 15;
+    const yEnd = h - (4.2 / 5) * (h - 30) - 15;
+    ctx.strokeStyle = '#10b981';
+    ctx.moveTo(50, y1);
+    ctx.quadraticCurveTo(w * 0.45, yLow + 30, w - 50, yEnd);
+  } else if (tone === 4) {
+    // 51 falling
+    const y1 = h - (5 / 5) * (h - 30) - 15;
+    const y2 = h - (1.2 / 5) * (h - 30) - 15;
+    ctx.strokeStyle = '#8b5cf6';
+    ctx.moveTo(50, y1);
+    ctx.lineTo(w - 50, y2);
+  }
+  ctx.stroke();
+}
+
+/* =========================================================
+   TROPHY GRID SCREEN
+   ========================================================= */
+function renderTrophyGrid() {
+  const container = document.getElementById('trophyGridContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const isZh = AppState.lang === 'zh';
+
+  PLAYS_DATA.forEach(play => {
+    const isUnlocked = !!AppState.completedPlays[play.id];
+    const item = document.createElement('div');
+    item.className = `trophy-item-card ${isUnlocked ? 'unlocked' : ''}`;
+
+    const name = isZh ? play.nameZh : play.nameJa;
+    const status = isUnlocked ? (isZh ? '⭐ 荣耀公演已收录' : '⭐ 殿堂入り') : (isZh ? '🔒 待完成公演' : '🔒 未クリア');
+
+    item.innerHTML = `
+      <div class="trophy-cup">${play.avatar}</div>
+      <div class="trophy-title">${name}</div>
+      <div class="trophy-status">${status}</div>
+    `;
+    container.appendChild(item);
+  });
+}
+
+/* =========================================================
+   CONFETTI UTILITY
+   ========================================================= */
+function spawnConfetti(count = 30) {
+  const colors = ['#f43f5e', '#f59e0b', '#10b981', '#0ea5e9', '#8b5cf6', '#ec4899'];
+  for (let i = 0; i < count; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.left = `${Math.random() * 100}vw`;
+    piece.style.top = '-10px';
+
+    document.body.appendChild(piece);
+
+    const destX = (Math.random() - 0.5) * 300;
+    const destY = window.innerHeight + 50;
+    const duration = 1200 + Math.random() * 1400;
+
+    piece.animate([
+      { transform: `translate(0, 0) rotate(0deg)`, opacity: 1 },
+      { transform: `translate(${destX}px, ${destY}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+    ], {
+      duration: duration,
+      easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+    }).onfinish = () => piece.remove();
+  }
+}
+</script>
+</body>
+</html>

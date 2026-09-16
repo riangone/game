@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>节奏弹跳 - Rhythm Hop</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap');
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    overflow: hidden; background: #0a0713;
+    font-family: 'Outfit', "PingFang SC", "Microsoft YaHei", sans-serif;
+    touch-action: none;
+    -webkit-user-select: none; user-select: none;
+  }
+  #game { display: block; width: 100%; height: 100%; }
+
+  #hud {
+    position: fixed; top: 0; left: 0; width: 100%;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 20px 24px; box-sizing: border-box; pointer-events: none;
+    z-index: 5;
+  }
+  .hud-card {
+    background: rgba(10, 7, 19, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 12px 20px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  }
+  #score-container { display: flex; gap: 20px; }
+  .hud-value-highlight { font-size: 32px; font-weight: 800; color: #ec4899; line-height: 1.1; margin-top: 2px;}
+  .hud-value-purple { font-size: 32px; font-weight: 800; color: #a78bfa; line-height: 1.1; margin-top: 2px;}
+  .hud-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.6; margin-bottom: 2px; }
+  .hud-value { font-size: 14px; opacity: 0.9; }
+
+  #hint {
+    position: fixed; bottom: 46px; left: 50%; transform: translateX(-50%);
+    text-align: center; color: #fff; opacity: 0.85; font-size: 14px;
+    pointer-events: none; z-index: 5;
+    background: rgba(10, 7, 19, 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 8px 24px;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+  }
+
+  #overlay {
+    position: fixed; inset: 0; background: rgba(5, 3, 10, 0.8);
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    color: #fff; backdrop-filter: blur(8px); z-index: 9;
+  }
+  #overlay.show { display: flex; }
+
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 40px 30px;
+    width: 85%;
+    max-width: 380px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    text-align: center;
+  }
+
+  .glass-panel h1 {
+    font-size: 32px; font-weight: 800; margin: 0 0 10px;
+  }
+  .glass-panel .final-grade {
+    font-size: 76px; font-weight: 800; margin: 6px 0 0;
+    background: linear-gradient(135deg, #ec4899, #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+  }
+  .glass-panel .final-score { font-size: 26px; font-weight: 800; margin: 6px 0 12px; color: #fbbf24; }
+  .glass-panel .final-stats { font-size: 13px; opacity: 0.85; margin-bottom: 22px; line-height: 1.8; }
+  .glass-panel .sub { opacity: 0.8; font-size: 15px; margin-bottom: 24px; color: #a78bfa; font-weight: 600; }
+
+  #startScreen {
+    position: fixed; inset: 0;
+    background: radial-gradient(circle at center, #201230 0%, #08050f 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: #fff; text-align: center; z-index: 10;
+    padding: 20px;
+  }
+
+  #startBtn, #restartBtn {
+    padding: 14px 44px; font-size: 16px; border: none; border-radius: 50px;
+    background: linear-gradient(135deg, #ec4899, #a78bfa); color: #fff;
+    box-shadow: 0 8px 24px rgba(236, 72, 153, 0.35); cursor: pointer;
+    font-weight: 800; letter-spacing: 2px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    outline: none;
+  }
+  #startBtn:hover, #restartBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(236, 72, 153, 0.5);
+  }
+  #startBtn:active, #restartBtn:active {
+    transform: translateY(1px);
+    box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
+  }
+
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+  }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 0.15);
+    transition: .3s;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 16px; width: 16px;
+    left: 3px; bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  input:checked + .slider {
+    background: linear-gradient(135deg, #ec4899, #a78bfa);
+    border-color: rgba(236, 72, 153, 0.3);
+  }
+  input:checked + .slider:before { transform: translateX(20px); }
+  .slider.round { border-radius: 24px; }
+  .slider.round:before { border-radius: 50%; }
+
+  #comboIndicator {
+    position: fixed; top: 110px; left: 50%; transform: translateX(-50%);
+    background: rgba(236, 72, 153, 0.15);
+    border: 1px solid rgba(236, 72, 153, 0.5);
+    border-radius: 12px;
+    padding: 6px 16px;
+    color: #f9a8d4;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    display: none;
+    z-index: 5;
+    animation: pulse-glow 1s infinite alternate;
+  }
+  @keyframes pulse-glow {
+    from { box-shadow: 0 0 5px rgba(236, 72, 153, 0.4); opacity: 0.8; }
+    to { box-shadow: 0 0 20px rgba(236, 72, 153, 0.8); opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div id="startScreen">
+  <div class="glass-panel">
+    <h1 style="background: linear-gradient(135deg, #ec4899, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 2px 8px rgba(236,72,153,0.3));">节奏弹跳 <span style="font-size: 18px; font-weight: 400; color: #a78bfa; display: block; margin-top: 4px;">Rhythm Hop</span></h1>
+    <p style="font-size: 13px; line-height: 1.6; opacity: 0.85; margin: 15px 0 20px;">
+      <b>节奏判定模式</b>：音符会沿着跑道从远处向你脚下的判定环靠近<br>
+      当光环缩小到与音符完全重合时，点击屏幕 / 空格键起跳！<br>
+      遇到拉长的音符时按住不放，直到光环到达末端再松开<br>
+      节拍不难赶上，跟手感走就好，偶尔漏拍也不会导致游戏结束。
+    </p>
+
+    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 15px; margin-bottom: 25px; text-align: left; box-shadow: inset 0 0 12px rgba(255,255,255,0.02);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <span style="font-size: 14px; font-weight: 600; opacity: 0.9;">节奏辅助光环</span>
+        <label class="switch">
+          <input type="checkbox" id="startGuideToggle" checked>
+          <span class="slider round"></span>
+        </label>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 14px; font-weight: 600; opacity: 0.9;">游戏音效</span>
+        <label class="switch">
+          <input type="checkbox" id="startSoundToggle" checked>
+          <span class="slider round"></span>
+        </label>
+      </div>
+    </div>
+
+    <button id="startBtn">开始节奏</button>
+  </div>
+</div>
+
+<canvas id="game"></canvas>
+
+<div id="hud">
+  <div id="score-container">
+    <div class="hud-card">
+      <span class="hud-label">SCORE</span>
+      <span id="scoreEl" class="hud-value-highlight">0</span>
+    </div>
+    <div class="hud-card">
+      <span class="hud-label">ACCURACY</span>
+      <span id="accEl" class="hud-value-purple">100%</span>
+    </div>
+  </div>
+
+  <div class="hud-card" id="settingsBtnCard" style="pointer-events: auto; cursor: pointer; align-items: center; justify-content: center; padding: 12px; height: 42px; width: 42px; box-sizing: border-box; border-radius: 50%;">
+    <svg id="settingsBtn" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #fff; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+  </div>
+
+  <div class="hud-card" style="align-items: flex-end;">
+    <span id="bestEl" class="hud-value">BEST: 0</span>
+    <span id="comboEl" class="hud-value" style="margin-top:4px; color:#f9a8d4;">COMBO 0</span>
+  </div>
+</div>
+
+<div id="comboIndicator">COMBO x0</div>
+<div id="hint">跟随节拍，点击 / 空格 起跳</div>
+
+<div id="overlay">
+  <div class="glass-panel">
+    <h1 style="color: #a78bfa; margin-bottom:0;">节奏结束</h1>
+    <div class="final-grade" id="finalGrade">S</div>
+    <div class="final-score" id="finalScore">0 分</div>
+    <div class="final-stats" id="finalStats">PERFECT 0 · GREAT 0 · GOOD 0 · MISS 0</div>
+    <div class="sub">最大连击 <span id="finalCombo">0</span></div>
+    <button id="restartBtn">再来一轮</button>
+  </div>
+</div>
+
+<!-- 游戏设置磨砂玻璃面板 -->
+<div id="settingsScreen" style="position: fixed; inset: 0; background: rgba(5, 3, 10, 0.85); display: none; flex-direction: column; align-items: center; justify-content: center; color: #fff; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 15;">
+  <div class="glass-panel" style="max-width: 320px;">
+    <h2 style="font-size: 24px; font-weight: 800; margin: 0 0 25px; background: linear-gradient(135deg, #ec4899, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">设定选项</h2>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; text-align: left;">
+      <div>
+        <div style="font-size: 15px; font-weight: 600;">节奏辅助光环</div>
+        <div style="font-size: 11px; opacity: 0.6; margin-top: 2px;">显示缩圈提示精确的判定时机</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="guideToggle" checked>
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; text-align: left;">
+      <div>
+        <div style="font-size: 15px; font-weight: 600;">游戏音效</div>
+        <div style="font-size: 11px; opacity: 0.6; margin-top: 2px;">启用或禁用合成音乐与判定音效</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="soundToggle" checked>
+        <span class="slider round"></span>
+      </label>
+    </div>
+
+    <button id="closeSettingsBtn" style="padding: 12px 36px; font-size: 15px; border: none; border-radius: 50px; background: linear-gradient(135deg, #ec4899, #a78bfa); color: #fff; font-weight: 800; cursor: pointer; transition: all 0.3s ease;">返回游戏</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+  const scoreEl = document.getElementById("scoreEl");
+  const accEl = document.getElementById("accEl");
+  const bestEl = document.getElementById("bestEl");
+  const comboEl = document.getElementById("comboEl");
+  const overlay = document.getElementById("overlay");
+  const finalGradeEl = document.getElementById("finalGrade");
+  const finalScoreEl = document.getElementById("finalScore");
+  const finalStatsEl = document.getElementById("finalStats");
+  const finalComboEl = document.getElementById("finalCombo");
+  const restartBtn = document.getElementById("restartBtn");
+  const startScreen = document.getElementById("startScreen");
+  const startBtn = document.getElementById("startBtn");
+  const hint = document.getElementById("hint");
+  const comboIndicator = document.getElementById("comboIndicator");
+
+  const settingsBtnCard = document.getElementById("settingsBtnCard");
+  const settingsScreen = document.getElementById("settingsScreen");
+  const closeSettingsBtn = document.getElementById("closeSettingsBtn");
+  const settingsSvg = document.getElementById("settingsBtn");
+  const guideToggle = document.getElementById("guideToggle");
+  const soundToggle = document.getElementById("soundToggle");
+  const startGuideToggle = document.getElementById("startGuideToggle");
+  const startSoundToggle = document.getElementById("startSoundToggle");
+
+  let guideEnabled = localStorage.getItem("rhythmHopGuide") !== "false";
+  let soundEnabled = localStorage.getItem("rhythmHopSound") !== "false";
+
+  guideToggle.checked = guideEnabled;
+  startGuideToggle.checked = guideEnabled;
+  soundToggle.checked = soundEnabled;
+  startSoundToggle.checked = soundEnabled;
+
+  function updateGuideSetting(val) {
+    guideEnabled = val;
+    localStorage.setItem("rhythmHopGuide", String(val));
+    guideToggle.checked = val;
+    startGuideToggle.checked = val;
+  }
+  function updateSoundSetting(val) {
+    soundEnabled = val;
+    localStorage.setItem("rhythmHopSound", String(val));
+    soundToggle.checked = val;
+    startSoundToggle.checked = val;
+  }
+
+  guideToggle.addEventListener("change", (e) => updateGuideSetting(e.target.checked));
+  startGuideToggle.addEventListener("change", (e) => updateGuideSetting(e.target.checked));
+  soundToggle.addEventListener("change", (e) => updateSoundSetting(e.target.checked));
+  startSoundToggle.addEventListener("change", (e) => updateSoundSetting(e.target.checked));
+
+  settingsBtnCard.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (state === "idle" || state === "result") return;
+    settingsSvg.style.transform = "rotate(90deg)";
+    settingsScreen.style.display = "flex";
+    pauseGame();
+  });
+  closeSettingsBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    settingsScreen.style.display = "none";
+    settingsSvg.style.transform = "rotate(0deg)";
+    resumeGame();
+  });
+
+  let DPR = Math.min(window.devicePixelRatio || 1, 2);
+  let W = 0, H = 0;
+  function resize() {
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W * DPR; canvas.height = H * DPR;
+    canvas.style.width = W + "px"; canvas.style.height = H + "px";
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  // ---------- Web Audio ----------
+  let audioCtx = null;
+  function initAudio() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+
+  function scheduleClick(time, accent) {
+    if (!soundEnabled || !audioCtx || time < audioCtx.currentTime) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(accent ? 720 : 480, time);
+    gain.gain.setValueAtTime(accent ? 0.09 : 0.05, time);
+    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.06);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(time); osc.stop(time + 0.06);
+  }
+
+  function scheduleMelody(time, freq) {
+    if (!soundEnabled || !audioCtx || time < audioCtx.currentTime) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(freq, time);
+    gain.gain.setValueAtTime(0.001, time);
+    gain.gain.linearRampToValueAtTime(0.14, time + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.32);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(time); osc.stop(time + 0.33);
+  }
+
+  function playHitSound(tier) {
+    if (!soundEnabled) return;
+    if (!audioCtx) initAudio();
+    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    let freq = 300, gVal = 0.12, dur = 0.1, type = "sine";
+    if (tier === "perfect") { freq = 1180; gVal = 0.18; dur = 0.14; }
+    else if (tier === "great") { freq = 860; gVal = 0.15; dur = 0.12; }
+    else if (tier === "good") { freq = 560; gVal = 0.12; dur = 0.1; }
+    else if (tier === "miss") { freq = 140; gVal = 0.14; dur = 0.18; type = "sawtooth"; }
+    else { freq = 300; gVal = 0.03; dur = 0.05; } // empty tap
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now);
+    if (tier === "miss") osc.frequency.exponentialRampToValueAtTime(60, now + dur);
+    gain.gain.setValueAtTime(gVal, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(now); osc.stop(now + dur);
+  }
+
+  // ---------- Track / Rhythm Constants ----------
+  const BPM = 96;
+  const SEC_PER_BEAT = 60 / BPM;
+  const TOTAL_BEATS = 64;
+  const LEAD_TIME = 1.8; // seconds each note takes to travel from horizon to the hit ring
+  const JUDGE = { PERFECT: 0.07, GREAT: 0.14, GOOD: 0.24 };
+  const PENTATONIC = [523.25, 587.33, 659.25, 783.99, 880.00, 987.77];
+
+  function rand(a, b) { return a + Math.random() * (b - a); }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+  function pickPitch(i) {
+    return PENTATONIC[(i * 3 + Math.floor(i / 5)) % PENTATONIC.length];
+  }
+
+  function generateTrack() {
+    const notes = [];
+    const totalSteps = TOTAL_BEATS * 2; // eighth-note resolution
+    const consumed = new Array(totalSteps + 4).fill(false);
+    for (let i = 0; i < totalSteps; i++) {
+      if (consumed[i]) continue;
+      const beat = i / 2;
+      const diff = i / totalSteps;
+      const isDownbeat = i % 2 === 0;
+      let place = false;
+      if (isDownbeat) {
+        place = true;
+      } else if (i > 8) {
+        const offChance = Math.min(0.5, (diff - 0.1) * 0.85);
+        place = Math.random() < offChance;
+      }
+      if (!place) continue;
+
+      const canHold = isDownbeat && i > 24 && i % 8 === 0 && Math.random() < 0.5;
+      if (canHold) {
+        const holdBeats = 1.5 + Math.floor(Math.random() * 2) * 0.5; // 1.5 or 2.0 or 2.5
+        const holdSteps = Math.round(holdBeats * 2);
+        notes.push({ t: beat * SEC_PER_BEAT, type: "hold", dur: holdBeats * SEC_PER_BEAT, pitch: pickPitch(i), seed: i });
+        for (let k = i; k < i + holdSteps && k < consumed.length; k++) consumed[k] = true;
+      } else {
+        notes.push({ t: beat * SEC_PER_BEAT, type: "tap", pitch: pickPitch(i), seed: i });
+      }
+    }
+    return notes;
+  }
+
+  function noteHitTime(n) { return n.t + LEAD_TIME; }
+
+  // ---------- State ----------
+  let state = "idle"; // idle | playing | paused | result
+  let track = [];
+  let trackStartPerf = 0;
+  let pauseWallStart = 0;
+  let audioBaseTime = 0;
+  let activeHold = null;
+
+  let score = 0, combo = 0, maxCombo = 0;
+  let perfectCount = 0, greatCount = 0, goodCount = 0, missCount = 0, judgedTotal = 0;
+  let best = parseInt(localStorage.getItem("rhythmHopBest") || "0", 10);
+  bestEl.textContent = "BEST: " + best;
+
+  let particles = [];
+  let floatingTexts = [];
+  let lastT = 0;
+
+  let player = { squash: 0, jumping: false, jumpStart: 0, jumpDur: 280, lastBeatIdx: -1 };
+
+  function trackClock() { return (performance.now() - trackStartPerf) / 1000; }
+
+  function scheduleTrackAudio() {
+    const totalSteps = TOTAL_BEATS * 2;
+    for (let i = 0; i <= totalSteps; i++) {
+      if (i % 2 === 0) {
+        const t = audioBaseTime + (i / 2) * SEC_PER_BEAT + LEAD_TIME;
+        scheduleClick(t, i % 8 === 0);
+      }
+    }
+    for (const n of track) {
+      scheduleMelody(audioBaseTime + noteHitTime(n), n.pitch);
+      if (n.type === "hold") scheduleMelody(audioBaseTime + noteHitTime(n) + n.dur, n.pitch * 1.12);
+    }
+  }
+
+  function totalJudgeable() {
+    let sum = 0;
+    for (const n of track) sum += n.type === "hold" ? 2 : 1;
+    return sum;
+  }
+
+  function updateHUD() {
+    scoreEl.textContent = String(score);
+    const acc = judgedTotal > 0
+      ? ((perfectCount * 100 + greatCount * 70 + goodCount * 40) / (judgedTotal * 100)) * 100
+      : 100;
+    accEl.textContent = acc.toFixed(1) + "%";
+    comboEl.textContent = "COMBO " + combo;
+    if (combo >= 5) {
+      comboIndicator.style.display = "block";
+      comboIndicator.textContent = "COMBO x" + combo;
+    } else {
+      comboIndicator.style.display = "none";
+    }
+  }
+
+  function startTrack() {
+    track = generateTrack();
+    trackStartPerf = performance.now();
+    activeHold = null;
+    score = 0; combo = 0; maxCombo = 0;
+    perfectCount = 0; greatCount = 0; goodCount = 0; missCount = 0; judgedTotal = 0;
+    particles = []; floatingTexts = [];
+    player.squash = 0; player.jumping = false; player.lastBeatIdx = -1;
+    if (soundEnabled) {
+      initAudio();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      audioBaseTime = audioCtx.currentTime;
+      scheduleTrackAudio();
+    }
+    state = "playing";
+    overlay.classList.remove("show");
+    updateHUD();
+  }
+
+  function pauseGame() {
+    if (state !== "playing") return;
+    pauseWallStart = performance.now();
+    state = "paused";
+    if (audioCtx && audioCtx.state === "running") audioCtx.suspend();
+  }
+  function resumeGame() {
+    if (state !== "paused") return;
+    const delta = performance.now() - pauseWallStart;
+    trackStartPerf += delta;
+    state = "playing";
+    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+  }
+
+  function judgeTier(diff) {
+    if (diff <= JUDGE.PERFECT) return "perfect";
+    if (diff <= JUDGE.GREAT) return "great";
+    if (diff <= JUDGE.GOOD) return "good";
+    return "miss";
+  }
+
+  function registerResult(tier) {
+    judgedTotal++;
+    if (tier === "miss") {
+      combo = 0;
+      missCount++;
+      addFloatingText("MISS", "#f43f5e");
+    } else {
+      combo++;
+      maxCombo = Math.max(maxCombo, combo);
+      const mult = 1 + Math.min(combo, 20) * 0.05;
+      let base = tier === "perfect" ? 300 : tier === "great" ? 200 : 100;
+      score += Math.round(base * mult);
+      if (tier === "perfect") { perfectCount++; addFloatingText("PERFECT", "#4ade80"); }
+      else if (tier === "great") { greatCount++; addFloatingText("GREAT", "#38bdf8"); }
+      else { goodCount++; addFloatingText("GOOD", "#fbbf24"); }
+    }
+    updateHUD();
+  }
+
+  function triggerJumpAnim() {
+    player.jumping = true;
+    player.jumpStart = performance.now();
+  }
+  function stompAnim() {
+    player.squash = 0.5;
+  }
+
+  function findPressCandidate(now) {
+    let best = null, bestDiff = Infinity;
+    for (const n of track) {
+      if (n.type === "tap") {
+        if (n.judged) continue;
+        const diff = Math.abs(now - noteHitTime(n));
+        if (diff < bestDiff) { bestDiff = diff; best = n; }
+      } else {
+        if (n.pressJudged) continue;
+        const diff = Math.abs(now - noteHitTime(n));
+        if (diff < bestDiff) { bestDiff = diff; best = n; }
+      }
+    }
+    return { best, bestDiff };
+  }
+
+  function handlePress() {
+    if (state !== "playing") return;
+    if (activeHold) return;
+    if (!audioCtx && soundEnabled) initAudio();
+    const now = trackClock();
+    const { best, bestDiff } = findPressCandidate(now);
+    if (!best || bestDiff > JUDGE.GOOD) {
+      playHitSound("empty");
+      return;
+    }
+    const tier = judgeTier(bestDiff);
+    if (best.type === "tap") {
+      best.judged = true; best.result = tier;
+      registerResult(tier);
+      triggerJumpAnim();
+      playHitSound(tier);
+    } else {
+      best.pressJudged = true; best.pressResult = tier; best.holding = true;
+      activeHold = best;
+      registerResult(tier);
+      triggerJumpAnim();
+      playHitSound(tier);
+    }
+  }
+
+  function handleRelease() {
+    if (!activeHold) return;
+    const now = trackClock();
+    const target = noteHitTime(activeHold) + activeHold.dur;
+    const diff = Math.abs(now - target);
+    const tier = judgeTier(diff);
+    activeHold.releaseJudged = true; activeHold.releaseResult = tier; activeHold.holding = false;
+    registerResult(tier);
+    if (tier !== "miss") stompAnim();
+    playHitSound(tier);
+    activeHold = null;
+  }
+
+  function finishTrack() {
+    state = "result";
+    if (score > best) { best = score; localStorage.setItem("rhythmHopBest", String(best)); }
+    bestEl.textContent = "BEST: " + best;
+    const acc = judgedTotal > 0
+      ? ((perfectCount * 100 + greatCount * 70 + goodCount * 40) / (judgedTotal * 100)) * 100
+      : 100;
+    let grade = "D";
+    if (acc >= 95) grade = "S"; else if (acc >= 85) grade = "A"; else if (acc >= 70) grade = "B"; else if (acc >= 50) grade = "C";
+    finalGradeEl.textContent = grade;
+    finalScoreEl.textContent = score + " 分 · " + acc.toFixed(1) + "%";
+    finalStatsEl.textContent = "PERFECT " + perfectCount + " · GREAT " + greatCount + " · GOOD " + goodCount + " · MISS " + missCount;
+    finalComboEl.textContent = String(maxCombo);
+    overlay.classList.add("show");
+    comboIndicator.style.display = "none";
+  }
+
+  function updateJudgements(now) {
+    for (const n of track) {
+      if (n.type === "tap") {
+        if (!n.judged && now > noteHitTime(n) + JUDGE.GOOD) {
+          n.judged = true; n.result = "miss";
+          registerResult("miss");
+        }
+      } else {
+        if (!n.pressJudged && now > noteHitTime(n) + JUDGE.GOOD) {
+          n.pressJudged = true; n.pressResult = "miss";
+          n.releaseJudged = true; n.releaseResult = "miss";
+          registerResult("miss");
+          if (activeHold === n) activeHold = null;
+        } else if (n.pressJudged && n.holding && !n.releaseJudged) {
+          const endT = noteHitTime(n) + n.dur;
+          if (now > endT + JUDGE.GOOD) {
+            n.releaseJudged = true; n.releaseResult = "good"; n.holding = false;
+            registerResult("good");
+            if (activeHold === n) activeHold = null;
+          }
+        }
+      }
+    }
+    if (track.length > 0) {
+      const last = track[track.length - 1];
+      const endTime = noteHitTime(last) + (last.dur || 0) + JUDGE.GOOD + 0.6;
+      if (now > endTime) finishTrack();
+    }
+  }
+
+  // ---------- Particles / floating text ----------
+  function addParticle(x, y, color, count) {
+    count = count || 1;
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x, y, vx: rand(-90, 90), vy: rand(-140, -30),
+        color, size: rand(2.5, 5), life: 1, decay: rand(1.4, 2.2), gravity: 260
+      });
+    }
+  }
+  function updateParticles(dt) {
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.life -= p.decay * dt;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+      p.x += p.vx * dt; p.y += p.vy * dt; p.vy += p.gravity * dt;
+    }
+  }
+  function drawParticles() {
+    for (const p of particles) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  function addFloatingText(text, color) {
+    floatingTexts.push({ text, color, x: W / 2, y: hitY() - 90, vy: -55, alpha: 1 });
+  }
+  function updateFloatingTexts(dt) {
+    for (let i = floatingTexts.length - 1; i >= 0; i--) {
+      const ft = floatingTexts[i];
+      ft.y += ft.vy * dt;
+      ft.alpha -= 1.6 * dt;
+      if (ft.alpha <= 0) floatingTexts.splice(i, 1);
+    }
+  }
+  function drawFloatingTexts() {
+    for (const ft of floatingTexts) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, ft.alpha);
+      ctx.fillStyle = ft.color;
+      ctx.font = "bold 22px 'Outfit', sans-serif";
+      ctx.textAlign = "center";
+      ctx.shadowColor = "rgba(0,0,0,0.6)"; ctx.shadowBlur = 6;
+      ctx.fillText(ft.text, ft.x, ft.y);
+      ctx.restore();
+    }
+  }
+
+  // ---------- Perspective lane rendering ----------
+  function hitY() { return H * 0.72; }
+  function horizonY() { return H * 0.30; }
+  const FAR_SCALE = 0.16, NEAR_SCALE = 1.0;
+  const LANE_HALF_NEAR = 130, LANE_HALF_FAR = 16;
+  const NOTE_R = 26;
+
+  function depthToScreen(p) {
+    p = clamp(p, 0, 1);
+    const ease = Math.pow(p, 1.5);
+    const y = horizonY() + (hitY() - horizonY()) * (1 - ease);
+    const scale = FAR_SCALE + (NEAR_SCALE - FAR_SCALE) * (1 - ease);
+    return { y, scale };
+  }
+  function laneHalfWidth(p) {
+    p = clamp(p, 0, 1);
+    const ease = Math.pow(p, 1.5);
+    return LANE_HALF_FAR + (LANE_HALF_NEAR - LANE_HALF_FAR) * (1 - ease);
+  }
+  function laneX(p, seed, now) {
+    const wiggle = Math.sin((seed || 0) * 0.7 + now * 1.1) * 8 * (1 - clamp(p, 0, 1));
+    return W / 2 + wiggle;
+  }
+
+  function drawBackground() {
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, "#150a24");
+    g.addColorStop(0.5, "#1c0f2e");
+    g.addColorStop(1, "#08050f");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  }
+
+  function drawLane() {
+    const nearHalf = laneHalfWidth(0), farHalf = laneHalfWidth(1);
+    const nearY = hitY(), farY = horizonY();
+    const cx = W / 2;
+    ctx.save();
+    const grad = ctx.createLinearGradient(0, farY, 0, nearY);
+    grad.addColorStop(0, "rgba(167,139,250,0.05)");
+    grad.addColorStop(1, "rgba(236,72,153,0.16)");
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(cx - farHalf, farY);
+    ctx.lineTo(cx + farHalf, farY);
+    ctx.lineTo(cx + nearHalf, nearY);
+    ctx.lineTo(cx - nearHalf, nearY);
+    ctx.closePath(); ctx.fill();
+
+    ctx.strokeStyle = "rgba(236,72,153,0.5)"; ctx.shadowColor = "#ec4899"; ctx.shadowBlur = 6;
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(cx - farHalf, farY); ctx.lineTo(cx - nearHalf, nearY); ctx.stroke();
+    ctx.strokeStyle = "rgba(167,139,250,0.5)"; ctx.shadowColor = "#a78bfa";
+    ctx.beginPath(); ctx.moveTo(cx + farHalf, farY); ctx.lineTo(cx + nearHalf, nearY); ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // scroll ticks synced to the beat
+    if (state === "playing" || state === "paused") {
+      const now = trackClock();
+      for (let b = 0; b < TOTAL_BEATS + 4; b++) {
+        const t = b * SEC_PER_BEAT;
+        const p = (t + LEAD_TIME - now) / LEAD_TIME;
+        if (p < 0 || p > 1) continue;
+        const { y, scale } = depthToScreen(p);
+        const half = laneHalfWidth(p);
+        ctx.strokeStyle = "rgba(255,255,255,0.08)";
+        ctx.lineWidth = 1 * scale;
+        ctx.beginPath(); ctx.moveTo(cx - half, y); ctx.lineTo(cx + half, y); ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+
+  function drawHitRing() {
+    const cx = W / 2, cy = hitY();
+    const now = state === "playing" || state === "paused" ? trackClock() : 0;
+    const beatPhase = (now % SEC_PER_BEAT) / SEC_PER_BEAT;
+    const pulse = state === "playing" ? (1 - beatPhase) * 4 : 0;
+    ctx.save();
+    ctx.strokeStyle = "rgba(255,255,255,0.5)";
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(cx, cy, NOTE_R + pulse, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = "rgba(236,72,153,0.9)";
+    ctx.shadowColor = "#ec4899"; ctx.shadowBlur = 10;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.arc(cx, cy, NOTE_R, 0, Math.PI * 2); ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawTapNote(n, progress, now) {
+    const { y, scale } = depthToScreen(progress);
+    const x = laneX(progress, n.seed, now);
+    const r = NOTE_R * scale;
+    ctx.save();
+    const grad = ctx.createRadialGradient(x, y, 1, x, y, r);
+    grad.addColorStop(0, "#fde6f5");
+    grad.addColorStop(1, "#ec4899");
+    ctx.fillStyle = grad;
+    ctx.shadowColor = "#ec4899"; ctx.shadowBlur = 10 * scale;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+
+    if (guideEnabled && progress <= 0.62) {
+      const ringR = r + progress * 42 * Math.max(scale, 0.3);
+      ctx.strokeStyle = "rgba(255,255,255,0.75)";
+      ctx.lineWidth = 2 * Math.max(scale, 0.5);
+      ctx.beginPath(); ctx.arc(x, y, ringR, 0, Math.PI * 2); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawHoldNote(n, headProgress, tailProgress, now) {
+    const head = depthToScreen(headProgress);
+    const tail = depthToScreen(tailProgress);
+    const hx = laneX(headProgress, n.seed, now);
+    const tx = laneX(tailProgress, n.seed, now);
+    ctx.save();
+    const w = Math.max(head.scale, tail.scale) * NOTE_R * 1.5;
+    ctx.strokeStyle = n.holding ? "rgba(74,222,128,0.85)" : "rgba(167,139,250,0.7)";
+    ctx.shadowColor = n.holding ? "#4ade80" : "#a78bfa"; ctx.shadowBlur = 10;
+    ctx.lineWidth = Math.max(4, w * 0.5);
+    ctx.lineCap = "round";
+    ctx.beginPath(); ctx.moveTo(tx, tail.y); ctx.lineTo(hx, head.y); ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    const rHead = NOTE_R * head.scale;
+    ctx.fillStyle = n.holding ? "#4ade80" : "#c4b5fd";
+    ctx.beginPath(); ctx.arc(hx, head.y, rHead, 0, Math.PI * 2); ctx.fill();
+
+    if (guideEnabled && !n.holding && headProgress >= 0 && headProgress <= 0.62) {
+      const ringR = rHead + headProgress * 42 * Math.max(head.scale, 0.3);
+      ctx.strokeStyle = "rgba(255,255,255,0.75)";
+      ctx.lineWidth = 2 * Math.max(head.scale, 0.5);
+      ctx.beginPath(); ctx.arc(hx, head.y, ringR, 0, Math.PI * 2); ctx.stroke();
+    }
+    if (guideEnabled && n.holding) {
+      const ringR = NOTE_R * tail.scale + Math.max(0, tailProgress) * 42 * Math.max(tail.scale, 0.3);
+      ctx.strokeStyle = "rgba(255,255,255,0.6)";
+      ctx.lineWidth = 2 * Math.max(tail.scale, 0.4);
+      ctx.beginPath(); ctx.arc(tx, tail.y, ringR, 0, Math.PI * 2); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawNotes(now) {
+    for (const n of track) {
+      if (n.type === "tap") {
+        if (n.judged) continue;
+        const progress = (noteHitTime(n) - now) / LEAD_TIME;
+        if (progress < -0.05 || progress > 1.03) continue;
+        drawTapNote(n, clamp(progress, 0, 1), now);
+      } else {
+        if (n.releaseJudged) continue;
+        const headProgress = (noteHitTime(n) - now) / LEAD_TIME;
+        const tailProgress = (noteHitTime(n) + n.dur - now) / LEAD_TIME;
+        if (tailProgress < -0.05 && headProgress < -0.05) continue;
+        drawHoldNote(n, headProgress, tailProgress, now);
+      }
+    }
+  }
+
+  function drawPlayer(dtNow) {
+    const cx = W / 2, baseY = hitY() + 46;
+    let jumpH = 0;
+    if (player.jumping) {
+      const t = (performance.now() - player.jumpStart) / player.jumpDur;
+      if (t >= 1) { player.jumping = false; }
+      else { jumpH = Math.sin(Math.min(t, 1) * Math.PI) * 60; }
+    }
+    if (player.squash > 0) player.squash = Math.max(0, player.squash - 0.05);
+
+    const bodyW = 30 * (1 + player.squash * 0.25 - (jumpH / 60) * 0.12);
+    const bodyH = 78 * (1 - player.squash * 0.22 + (jumpH / 60) * 0.14);
+    const y = baseY - jumpH;
+
+    ctx.save();
+    const shadowScale = Math.max(0.25, 1 - jumpH / 90);
+    ctx.beginPath();
+    ctx.ellipse(cx, baseY + 6, 22 * shadowScale, 8 * shadowScale, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(0,0,0,0.4)"; ctx.fill();
+
+    ctx.translate(cx, y);
+    const r = bodyW, h = bodyH;
+    ctx.beginPath();
+    ctx.moveTo(-r, 0);
+    ctx.lineTo(-r, -h + r);
+    ctx.quadraticCurveTo(-r, -h, 0, -h);
+    ctx.quadraticCurveTo(r, -h, r, -h + r);
+    ctx.lineTo(r, 0);
+    ctx.quadraticCurveTo(r, r * 0.6, 0, r * 0.6);
+    ctx.quadraticCurveTo(-r, r * 0.6, -r, 0);
+    ctx.closePath();
+    const grad = ctx.createLinearGradient(0, -h, 0, 0);
+    grad.addColorStop(0, "#ffe08a"); grad.addColorStop(1, "#ff9a5a");
+    ctx.fillStyle = grad; ctx.fill();
+    ctx.strokeStyle = "rgba(0,0,0,0.15)"; ctx.lineWidth = 1; ctx.stroke();
+
+    ctx.fillStyle = "#2d2f3b";
+    const eyeSize = 3.2, eyeOffset = 6;
+    ctx.beginPath();
+    ctx.arc(eyeOffset - 3, -h * 0.82, eyeSize, 0, Math.PI * 2);
+    ctx.arc(eyeOffset + 5, -h * 0.82, eyeSize, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.ellipse(-r * 0.3, -h + r * 0.9, r * 0.35, r * 0.28, -0.4, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,255,255,0.38)"; ctx.fill();
+    ctx.restore();
+
+    if (jumpH > 20) addParticle(cx + rand(-14, 14), baseY + 4, "rgba(236,72,153,0.4)", 1);
+  }
+
+  function draw() {
+    drawBackground();
+    drawLane();
+    if (state === "playing" || state === "paused") {
+      const now = trackClock();
+      drawHitRing();
+      drawNotes(now);
+    } else {
+      drawHitRing();
+    }
+    drawPlayer();
+    drawParticles();
+    drawFloatingTexts();
+  }
+
+  function update(dt) {
+    if (state === "playing") {
+      const now = trackClock();
+      updateJudgements(now);
+      const beatIdx = Math.floor(now / SEC_PER_BEAT);
+      if (beatIdx !== player.lastBeatIdx && beatIdx >= 0) {
+        player.lastBeatIdx = beatIdx;
+        if (!player.jumping) player.squash = Math.max(player.squash, 0.18);
+      }
+    }
+    updateParticles(dt);
+    updateFloatingTexts(dt);
+  }
+
+  function loop(t) {
+    if (!lastT) lastT = t;
+    const dt = Math.min((t - lastT) / 1000, 0.033);
+    lastT = t;
+    update(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  // ---------- Inputs ----------
+  canvas.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    if (settingsScreen.style.display === "flex") return;
+    initAudio();
+    handlePress();
+  });
+  canvas.addEventListener("pointerup", (e) => {
+    e.preventDefault();
+    handleRelease();
+  });
+  canvas.addEventListener("pointercancel", () => { handleRelease(); });
+
+  window.addEventListener("keydown", (e) => {
+    if (settingsScreen.style.display === "flex") return;
+    if (e.code === "Space" || e.code === "ArrowUp") e.preventDefault();
+    if (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyW") {
+      if (!e.repeat) handlePress();
+    }
+  });
+  window.addEventListener("keyup", (e) => {
+    if (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyW") handleRelease();
+  });
+
+  restartBtn.addEventListener("click", () => { initAudio(); startTrack(); });
+  startBtn.addEventListener("click", () => {
+    initAudio();
+    startScreen.style.display = "none";
+    startTrack();
+  });
+
+  state = "idle";
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

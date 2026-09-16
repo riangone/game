@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>蓄力保龄 - Charge Bowl</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap');
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    overflow: hidden; background: #1a0f08;
+    font-family: 'Outfit', "PingFang SC", "Microsoft YaHei", sans-serif;
+    touch-action: none;
+    -webkit-user-select: none; user-select: none;
+  }
+  #game { display: block; width: 100%; height: 100%; }
+
+  #hud {
+    position: fixed; top: 0; left: 0; width: 100%;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 14px 10px 0; box-sizing: border-box; pointer-events: none;
+    z-index: 5; gap: 8px;
+  }
+  .hud-top-row { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; }
+  .hud-card {
+    background: rgba(40, 20, 8, 0.55);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 200, 140, 0.2);
+    border-radius: 16px;
+    padding: 10px 18px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  }
+  .hud-value-highlight { font-size: 26px; font-weight: 800; color: #fbbf24; line-height: 1.1; margin-top: 2px;}
+  .hud-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.75; margin-bottom: 2px; }
+  .hud-value { font-size: 13px; opacity: 0.95; }
+
+  #scoreboard {
+    display: flex; gap: 2px; background: rgba(40, 20, 8, 0.55);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 200, 140, 0.2); border-radius: 10px;
+    padding: 5px; pointer-events: none; box-shadow: 0 8px 32px 0 rgba(0,0,0,0.3);
+    max-width: 100%; overflow: hidden;
+  }
+  .frame-box {
+    width: 27px; display: flex; flex-direction: column; align-items: center;
+    border-right: 1px solid rgba(255,255,255,0.12); padding: 1px 2px;
+  }
+  .frame-box:last-child { border-right: none; width: 34px; }
+  .frame-box .fnum { font-size: 8px; color: rgba(255,255,255,0.5); }
+  .frame-box .frolls { font-size: 9px; color: #fde68a; font-weight: 700; height: 11px; letter-spacing: 1px; }
+  .frame-box .fscore { font-size: 10px; color: #fff; font-weight: 800; }
+  .frame-box.active { background: rgba(251, 191, 36, 0.22); border-radius: 4px; }
+
+  #hint {
+    position: fixed; top: 118px; left: 50%; transform: translateX(-50%);
+    text-align: center; color: #fff; opacity: 0.9; font-size: 13px;
+    pointer-events: none; z-index: 5;
+    background: rgba(40, 20, 8, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 200, 140, 0.2);
+    padding: 7px 20px;
+    border-radius: 20px;
+    max-width: 90vw; box-sizing: border-box;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    transition: opacity 0.3s ease;
+    white-space: normal;
+  }
+
+  #banner {
+    position: fixed; top: 40%; left: 50%; transform: translate(-50%, -50%);
+    color: #fff; font-size: 22px; font-weight: 800;
+    background: rgba(251, 191, 36, 0.22);
+    border: 1px solid rgba(251, 191, 36, 0.6);
+    padding: 12px 30px; border-radius: 16px;
+    display: none; z-index: 6; pointer-events: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+
+  #overlay {
+    position: fixed; inset: 0; background: rgba(20, 10, 4, 0.6);
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    color: #fff; backdrop-filter: blur(8px); z-index: 9;
+  }
+  #overlay.show { display: flex; }
+
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 220, 180, 0.25);
+    border-radius: 24px;
+    padding: 36px 30px;
+    width: 85%;
+    max-width: 380px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    color: #fff;
+  }
+
+  .glass-panel h1 { font-size: 26px; font-weight: 800; margin: 0 0 10px; }
+  .glass-panel .sub { opacity: 0.8; font-size: 14px; margin-bottom: 24px; font-weight: 600; }
+
+  #startScreen {
+    position: fixed; inset: 0;
+    background: linear-gradient(180deg, #1a0f08 0%, #4a2c12 55%, #2b1a0c 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: #fff; text-align: center; z-index: 10;
+    padding: 20px;
+  }
+
+  #startBtn, #restartBtn {
+    padding: 14px 44px; font-size: 16px; border: none; border-radius: 50px;
+    background: linear-gradient(135deg, #fbbf24, #f97316); color: #2b1a0c;
+    box-shadow: 0 8px 24px rgba(251, 191, 36, 0.4); cursor: pointer;
+    font-weight: 800; letter-spacing: 2px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    outline: none;
+  }
+  #startBtn:hover, #restartBtn:hover { transform: translateY(-2px); }
+  #startBtn:active, #restartBtn:active { transform: translateY(1px); }
+
+  .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 0.2);
+    transition: .3s; border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  .slider:before {
+    position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
+    background-color: white; transition: .3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  input:checked + .slider { background: linear-gradient(135deg, #fbbf24, #f97316); border-color: rgba(251, 191, 36, 0.3); }
+  input:checked + .slider:before { transform: translateX(20px); }
+  .slider.round { border-radius: 24px; }
+  .slider.round:before { border-radius: 50%; }
+
+  #throwZone {
+    position: fixed; inset: 0; z-index: 4; touch-action: none;
+  }
+
+  #chargeRing {
+    position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%);
+    width: 96px; height: 96px; pointer-events: none; display: none; z-index: 5;
+  }
+</style>
+</head>
+<body>
+
+<div id="startScreen">
+  <div class="glass-panel">
+    <h1 style="background: linear-gradient(135deg, #fde68a, #fb923c); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">蓄力保龄 <span style="font-size: 18px; font-weight: 400; color: #fde68a; display: block; margin-top: 4px;">Charge Bowl</span></h1>
+    <p style="font-size: 13px; line-height: 1.6; opacity: 0.9; margin: 15px 0 20px;">
+      <b>单指按住蓄力，左右拖动瞄准，松手掷出保龄球</b>（键盘：按住空格蓄力，方向键调整角度，松开发射）<br>
+      球道近端顺滑、远端咬球会自然"钩"向瞄准一侧——瞄准要预判钩球轨迹<br>
+      标准10局保龄记分：全中(STRIKE)、补中(SPARE)都有连击加分，角度过大会直接洗沟(GUTTER)得0分
+    </p>
+    <div style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255,220,180,0.2); border-radius: 16px; padding: 15px; margin-bottom: 25px; text-align: left;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <span style="font-size: 14px; font-weight: 600;">弹道辅助线</span>
+        <label class="switch"><input type="checkbox" id="startGuideToggle" checked><span class="slider round"></span></label>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 14px; font-weight: 600;">游戏音效</span>
+        <label class="switch"><input type="checkbox" id="startSoundToggle" checked><span class="slider round"></span></label>
+      </div>
+    </div>
+    <button id="startBtn">开始比赛</button>
+  </div>
+</div>
+
+<canvas id="game"></canvas>
+<div id="throwZone"></div>
+
+<div id="hud">
+  <div class="hud-top-row">
+    <div class="hud-card">
+      <span class="hud-label">SCORE</span>
+      <span id="scoreEl" class="hud-value-highlight">0</span>
+    </div>
+    <div class="hud-card" id="settingsBtnCard" style="pointer-events: auto; cursor: pointer; align-items: center; justify-content: center; padding: 10px; height: 40px; width: 40px; box-sizing: border-box; border-radius: 50%;">
+      <svg id="settingsBtn" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #fff; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+    </div>
+    <div class="hud-card" style="align-items: flex-end;">
+      <span id="bestEl" class="hud-value">BEST: 0</span>
+      <span id="frameLabelEl" class="hud-value" style="margin-top:4px; color:#fbbf24; font-weight:700;">FRAME 1</span>
+    </div>
+  </div>
+  <div id="scoreboard"></div>
+</div>
+
+<div id="banner"></div>
+<div id="hint">单指按住蓄力，左右拖动瞄准，松手发射</div>
+
+<canvas id="chargeRing" width="96" height="96"></canvas>
+
+<div id="overlay">
+  <div class="glass-panel">
+    <h1 id="resultTitle" style="color: #fde68a;">比赛结束</h1>
+    <div class="sub" id="resultSub">总分 0</div>
+    <button id="restartBtn">重新开始</button>
+  </div>
+</div>
+
+<!-- 设置面板 -->
+<div id="settingsScreen" style="position: fixed; inset: 0; background: rgba(20,10,4,0.55); display: none; flex-direction: column; align-items: center; justify-content: center; color: #1e293b; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 15;">
+  <div class="glass-panel" style="max-width: 320px; color:#fff;">
+    <h2 style="font-size: 22px; font-weight: 800; margin: 0 0 25px; color:#fde68a;">设定选项</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; text-align: left;">
+      <div>
+        <div style="font-size: 15px; font-weight: 600;">弹道辅助线</div>
+        <div style="font-size: 11px; opacity: 0.65; margin-top: 2px;">蓄力时实时预测钩球轨迹</div>
+      </div>
+      <label class="switch"><input type="checkbox" id="guideToggle" checked><span class="slider round"></span></label>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; text-align: left;">
+      <div>
+        <div style="font-size: 15px; font-weight: 600;">游戏音效</div>
+        <div style="font-size: 11px; opacity: 0.65; margin-top: 2px;">启用或禁用合成音效</div>
+      </div>
+      <label class="switch"><input type="checkbox" id="soundToggle" checked><span class="slider round"></span></label>
+    </div>
+    <button id="closeSettingsBtn" style="padding: 12px 36px; font-size: 15px; border: none; border-radius: 50px; background: linear-gradient(135deg, #fbbf24, #f97316); color: #2b1a0c; font-weight: 800; cursor: pointer;">返回游戏</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+  const scoreEl = document.getElementById("scoreEl");
+  const bestEl = document.getElementById("bestEl");
+  const frameLabelEl = document.getElementById("frameLabelEl");
+  const scoreboardEl = document.getElementById("scoreboard");
+  const hint = document.getElementById("hint");
+  const banner = document.getElementById("banner");
+  const overlay = document.getElementById("overlay");
+  const resultTitle = document.getElementById("resultTitle");
+  const resultSub = document.getElementById("resultSub");
+  const restartBtn = document.getElementById("restartBtn");
+  const startScreen = document.getElementById("startScreen");
+  const startBtn = document.getElementById("startBtn");
+  const throwZone = document.getElementById("throwZone");
+  const chargeRing = document.getElementById("chargeRing");
+  const chargeCtx = chargeRing.getContext("2d");
+
+  const settingsBtnCard = document.getElementById("settingsBtnCard");
+  const settingsScreen = document.getElementById("settingsScreen");
+  const closeSettingsBtn = document.getElementById("closeSettingsBtn");
+  const settingsSvg = document.getElementById("settingsBtn");
+  const guideToggle = document.getElementById("guideToggle");
+  const soundToggle = document.getElementById("soundToggle");
+  const startGuideToggle = document.getElementById("startGuideToggle");
+  const startSoundToggle = document.getElementById("startSoundToggle");
+
+  let guideEnabled = localStorage.getItem("chargeBowlGuide") !== "false";
+  let soundEnabled = localStorage.getItem("chargeBowlSound") !== "false";
+  guideToggle.checked = guideEnabled; startGuideToggle.checked = guideEnabled;
+  soundToggle.checked = soundEnabled; startSoundToggle.checked = soundEnabled;
+
+  function updateGuideSetting(v) { guideEnabled = v; localStorage.setItem("chargeBowlGuide", String(v)); guideToggle.checked = v; startGuideToggle.checked = v; }
+  function updateSoundSetting(v) { soundEnabled = v; localStorage.setItem("chargeBowlSound", String(v)); soundToggle.checked = v; startSoundToggle.checked = v; }
+  guideToggle.addEventListener("change", e => updateGuideSetting(e.target.checked));
+  startGuideToggle.addEventListener("change", e => updateGuideSetting(e.target.checked));
+  soundToggle.addEventListener("change", e => updateSoundSetting(e.target.checked));
+  startSoundToggle.addEventListener("change", e => updateSoundSetting(e.target.checked));
+
+  settingsBtnCard.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (state === "idle" || state === "gameover") return;
+    settingsSvg.style.transform = "rotate(90deg)";
+    settingsScreen.style.display = "flex";
+    paused = true;
+  });
+  closeSettingsBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    settingsScreen.style.display = "none";
+    settingsSvg.style.transform = "rotate(0deg)";
+    paused = false;
+  });
+
+  // ---------- Canvas sizing: fixed virtual world, letterboxed & scaled to fit screen ----------
+  let DPR = Math.min(window.devicePixelRatio || 1, 2);
+  let W = 0, H = 0;
+  const WORLD_W = 360, WORLD_H = 640;
+  let vscale = 1, offX = 0, offY = 0;
+  function resize() {
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W * DPR; canvas.height = H * DPR;
+    canvas.style.width = W + "px"; canvas.style.height = H + "px";
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    vscale = Math.min(W / WORLD_W, H / WORLD_H);
+    offX = (W - WORLD_W * vscale) / 2;
+    offY = (H - WORLD_H * vscale) / 2;
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  function toWorld(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    return { x: (clientX - rect.left - offX) / vscale, y: (clientY - rect.top - offY) / vscale };
+  }
+  function worldToScreenApprox(x, y) { return { x: offX + x * vscale, y: offY + y * vscale }; }
+
+  // ---------- Audio ----------
+  let audioCtx = null;
+  function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+  function tone(type, freq, freqEnd, dur, gainAmt, now, delay) {
+    delay = delay || 0;
+    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now + delay);
+    if (freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, now + delay + dur);
+    gain.gain.setValueAtTime(gainAmt, now + delay);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + dur);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(now + delay); osc.stop(now + delay + dur + 0.02);
+  }
+  function noiseBurst(dur, gainAmt, now, delay) {
+    delay = delay || 0;
+    const bufSize = audioCtx.sampleRate * dur;
+    const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufSize);
+    const src = audioCtx.createBufferSource(); src.buffer = buf;
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(gainAmt, now + delay);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + delay + dur);
+    src.connect(gain); gain.connect(audioCtx.destination);
+    src.start(now + delay);
+  }
+  function playSound(type) {
+    if (!soundEnabled) return;
+    if (!audioCtx) initAudio();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    const now = audioCtx.currentTime;
+    if (type === "chargeStart") tone("sine", 220, null, 0.1, 0.07, now);
+    else if (type === "launch") tone("sawtooth", 160, 340, 0.16, 0.14, now);
+    else if (type === "roll") { /* subtle continuous handled elsewhere */ }
+    else if (type === "pin") { tone("square", 480, 260, 0.06, 0.09, now); noiseBurst(0.08, 0.06, now); }
+    else if (type === "gutter") tone("triangle", 180, 70, 0.3, 0.12, now);
+    else if (type === "strike") { [660, 880, 1100, 1320].forEach((f, i) => tone("sine", f, null, 0.22, 0.12, now, i * 0.06)); noiseBurst(0.3, 0.1, now); }
+    else if (type === "spare") { [523, 784].forEach((f, i) => tone("sine", f, null, 0.18, 0.11, now, i * 0.08)); }
+    else if (type === "open") tone("sine", 400, 300, 0.12, 0.08, now);
+    else if (type === "frameEnd") tone("triangle", 300, 200, 0.1, 0.07, now);
+    else if (type === "gameover") { [523, 440, 349].forEach((f,i)=>tone("triangle", f, null, 0.3, 0.12, now, i*0.15)); }
+  }
+
+  // ---------- Physics constants (validated: /tmp/pw-test/chargebowl_sim4.js Monte-Carlo) ----------
+  // Two-zone friction lane: low friction (FRICTION_LOW) until BREAKPOINT_FRAC of travel, then
+  // FRICTION_HIGH engages along with a continuous hook lateral accel proportional to aim angle
+  // (HOOK_GAIN_PER_DEG) -- mimics an oil-pattern hook shot with no discontinuity in the angle->
+  // landing-spot mapping (verified: smooth ~5px/deg slope, no cliffs). Strike pocket window is
+  // ~2.6deg wide at frac=0.62 -- comfortably draggable on touch. Skilled/average/shaky noise
+  // models give 100%/72%/38% "clean pocket entry" rate pre-collision (actual pinfall then comes
+  // from real 2D ball/pin collision physics below, incl. a shockwave-assist for natural strikes).
+  const ORIGIN_X = 180, ORIGIN_Y = 600;
+  const LANE_MIN = 100, LANE_MAX = 260;
+  const PIN_FRONT_Y = 170;
+  const V_MIN = 155, V_MAX = 300;
+  const FRICTION_LOW = 22, FRICTION_HIGH = 46;
+  const BREAKPOINT_FRAC = 0.55;
+  const HOOK_GAIN_PER_DEG = 10;
+  const MAX_ANGLE = 16; // degrees
+  const DRAG_RANGE = 120; // world px of drag for full angle swing
+  const CHARGE_MS = 850;
+  const BALL_R = 13, PIN_R = 9;
+  const BALL_MASS = 6, PIN_MASS = 1;
+  const RESTITUTION = 0.55;
+  const KNOCK_SPEED_THRESH = 28; // pin px/s post-impact needed to count as "knocked down"
+  const SHOCKWAVE_RADIUS = 78;
+  const SHOCKWAVE_STRENGTH = 1.15;
+  const SETTLE_SPEED = 3;
+  const PIN_FRICTION = 90;
+
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function rand(a, b) { return a + Math.random() * (b - a); }
+
+  // Canonical 10-pin rack geometry (row0 = headpin, closest to bowler; row3 = back row).
+  const ROW_DY = 19;
+  const RACK_LAYOUT = [
+    { y: PIN_FRONT_Y, xs: [180] },
+    { y: PIN_FRONT_Y - ROW_DY, xs: [169, 191] },
+    { y: PIN_FRONT_Y - ROW_DY * 2, xs: [158, 180, 202] },
+    { y: PIN_FRONT_Y - ROW_DY * 3, xs: [147, 169, 191, 213] },
+  ];
+
+  function freshRack() {
+    const pins = [];
+    let n = 1;
+    for (const row of RACK_LAYOUT) {
+      for (const x of row.xs) {
+        pins.push({ num: n++, x, y: row.y, vx: 0, vy: 0, standing: true, down: false, settled: true, pop: 0, opacity: 1 });
+      }
+    }
+    return pins;
+  }
+
+  // ---------- Classic bowling scorer (validated: /tmp/pw-test/bowl_score_test.js) ----------
+  function calculateScore(rolls) {
+    let score = 0, i = 0;
+    for (let frame = 0; frame < 10; frame++) {
+      if (rolls[i] === undefined) break;
+      if (rolls[i] === 10) { score += 10 + (rolls[i + 1] || 0) + (rolls[i + 2] || 0); i += 1; }
+      else if ((rolls[i] || 0) + (rolls[i + 1] || 0) === 10) { score += 10 + (rolls[i + 2] || 0); i += 2; }
+      else { score += (rolls[i] || 0) + (rolls[i + 1] || 0); i += 2; }
+    }
+    return score;
+  }
+  // partial per-frame breakdown for scoreboard rendering, mirrors calculateScore's consumption
+  function frameBreakdown(rolls) {
+    const frames = []; let i = 0;
+    for (let frame = 0; frame < 10; frame++) {
+      if (frame < 9) {
+        if (rolls[i] === undefined) { frames.push(null); continue; }
+        if (rolls[i] === 10) {
+          const complete = rolls[i + 1] !== undefined && rolls[i + 2] !== undefined;
+          frames.push({ rolls: [10], score: complete ? 10 + rolls[i + 1] + rolls[i + 2] : null, type: "strike" });
+          i += 1;
+        } else if (rolls[i + 1] !== undefined) {
+          const sum = rolls[i] + rolls[i + 1];
+          if (sum === 10) {
+            const complete = rolls[i + 2] !== undefined;
+            frames.push({ rolls: [rolls[i], rolls[i + 1]], score: complete ? 10 + rolls[i + 2] : null, type: "spare" });
+          } else {
+            frames.push({ rolls: [rolls[i], rolls[i + 1]], score: sum, type: "open" });
+          }
+          i += 2;
+        } else {
+          frames.push({ rolls: [rolls[i]], score: null, type: "partial" });
+          i += 1;
+        }
+      } else {
+        // 10th frame: consume remaining rolls as-is (up to 3)
+        const rem = rolls.slice(i);
+        if (rem.length === 0) { frames.push(null); continue; }
+        const sum10 = rem.reduce((a, b) => a + b, 0);
+        frames.push({ rolls: rem, score: sum10, type: rem[0] === 10 ? "strike" : (rem.length >= 2 && rem[0] + rem[1] === 10 ? "spare" : "open") });
+      }
+    }
+    return frames;
+  }
+  function rollLabel(frames, fi) {
+    const f = frames[fi];
+    if (!f) return "";
+    if (fi < 9) {
+      if (f.type === "strike") return "X";
+      if (f.type === "spare") return f.rolls[0] === 0 ? "-" : String(f.rolls[0] === 10 ? "X" : f.rolls[0] === 0 ? "-" : f.rolls[0]) + " /";
+      if (f.rolls.length === 2) return (f.rolls[0] || "-") + " " + (f.rolls[1] === 0 ? "-" : f.rolls[1]);
+      return String(f.rolls[0]);
+    } else {
+      return f.rolls.map((r, idx) => {
+        if (r === 10) return "X";
+        if (idx > 0 && f.rolls[idx - 1] !== 10 && f.rolls[idx - 1] + r === 10) return "/";
+        return r === 0 ? "-" : String(r);
+      }).join(" ");
+    }
+  }
+
+  // ---------- Game state ----------
+  let state = "idle"; // idle | playing | gameover
+  let paused = false;
+  let ball = null; // {x,y,vx,vy,active}
+  let pins = [];
+  let particles = [];
+  let floatingTexts = [];
+  let rolls = []; // flat pinfall-per-ball array (classic bowling scorer input)
+  let frameIndex = 0; // 0-based, 0..9
+  let ballInFrame = 1; // 1,2,(3 for 10th)
+  let standingBeforeThrow = 10;
+  let throwReady = true;
+  let awaitingSettle = false;
+  let lastT = 0;
+  let best = parseInt(localStorage.getItem("chargeBowlBest") || "0", 10);
+  bestEl.textContent = "BEST: " + best;
+
+  let charging = false, chargeStart = 0, chargeAmount = 0, aimAngle = 0, dragStartX = 0, dragActive = false;
+
+  function standingCount() { return pins.filter(p => p.standing).length; }
+
+  function resetGame() {
+    ball = null;
+    pins = freshRack();
+    particles = []; floatingTexts = [];
+    rolls = [];
+    frameIndex = 0; ballInFrame = 1; standingBeforeThrow = 10;
+    throwReady = true; awaitingSettle = false;
+    charging = false; chargeAmount = 0; aimAngle = 0;
+    scoreEl.textContent = "0";
+    banner.style.display = "none";
+    updateHudFrameLabel();
+    renderScoreboard();
+  }
+
+  function beginGame() {
+    resetGame();
+    state = "playing";
+  }
+
+  function updateHudFrameLabel() {
+    frameLabelEl.textContent = "FRAME " + (frameIndex + 1) + (ballInFrame > 1 ? " · " + ballInFrame + "球" : "");
+  }
+
+  function renderScoreboard() {
+    const frames = frameBreakdown(rolls);
+    let html = "";
+    for (let i = 0; i < 10; i++) {
+      const f = frames[i];
+      const active = i === frameIndex ? " active" : "";
+      const label = f ? rollLabel(frames, i) : "";
+      const scoreTxt = f && f.score !== null ? f.score : "";
+      html += `<div class="frame-box${active}"><div class="fnum">${i + 1}</div><div class="frolls">${label}</div><div class="fscore">${scoreTxt}</div></div>`;
+    }
+    scoreboardEl.innerHTML = html;
+  }
+
+  // ---------- Input ----------
+  let pressPointerId = null;
+
+  throwZone.addEventListener("pointerdown", (e) => {
+    if (state !== "playing" || paused || !throwReady) return;
+    e.preventDefault();
+    pressPointerId = e.pointerId;
+    try { throwZone.setPointerCapture(e.pointerId); } catch (err) { /* nice-to-have only */ }
+    dragStartX = e.clientX;
+    dragActive = true;
+    startCharge();
+  });
+  throwZone.addEventListener("pointermove", (e) => {
+    if (pressPointerId === null || e.pointerId !== pressPointerId || !dragActive) return;
+    const dx = (e.clientX - dragStartX) / vscale;
+    aimAngle = clamp(dx / DRAG_RANGE, -1, 1) * MAX_ANGLE;
+  });
+  function endPress(e) {
+    if (pressPointerId === null || e.pointerId !== pressPointerId) return;
+    pressPointerId = null;
+    dragActive = false;
+    releaseCharge();
+  }
+  throwZone.addEventListener("pointerup", endPress);
+  throwZone.addEventListener("pointercancel", endPress);
+
+  window.addEventListener("keydown", (e) => {
+    if (e.code === "Space" && !e.repeat) { e.preventDefault(); startCharge(); }
+    if (e.code === "ArrowLeft") { e.preventDefault(); if (charging) aimAngle = clamp(aimAngle - 0.9, -MAX_ANGLE, MAX_ANGLE); }
+    if (e.code === "ArrowRight") { e.preventDefault(); if (charging) aimAngle = clamp(aimAngle + 0.9, -MAX_ANGLE, MAX_ANGLE); }
+  });
+  window.addEventListener("keyup", (e) => {
+    if (e.code === "Space") releaseCharge();
+  });
+
+  function startCharge() {
+    if (state !== "playing" || paused || !throwReady) return;
+    charging = true;
+    chargeStart = performance.now();
+    chargeAmount = 0;
+    aimAngle = 0;
+    chargeRing.style.display = "block";
+    initAudio();
+    playSound("chargeStart");
+  }
+
+  function releaseCharge() {
+    if (!charging) return;
+    charging = false;
+    chargeRing.style.display = "none";
+    if (state !== "playing" || paused) return;
+    launchBall(chargeAmount, aimAngle);
+  }
+
+  function launchBall(frac, angleDeg) {
+    throwReady = false;
+    standingBeforeThrow = standingCount();
+    const v0 = V_MIN + (V_MAX - V_MIN) * clamp(frac, 0, 1);
+    const rad = angleDeg * Math.PI / 180;
+    ball = {
+      x: ORIGIN_X, y: ORIGIN_Y,
+      vx: v0 * Math.sin(rad), vy: -v0 * Math.cos(rad),
+      traveled: 0, angleDeg, active: true, offLane: false
+    };
+    awaitingSettle = true;
+    playSound("launch");
+    addParticle(worldToScreenApprox(ORIGIN_X, ORIGIN_Y), "#fbbf24", 6);
+  }
+
+  // ---------- Physics update ----------
+  function applyImpulse(a, b, massA, massB) {
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const dist = Math.hypot(dx, dy) || 0.001;
+    const nx = dx / dist, ny = dy / dist;
+    const relVx = a.vx - b.vx, relVy = a.vy - b.vy;
+    const relVn = relVx * nx + relVy * ny;
+    if (relVn <= 0) return;
+    const invA = 1 / massA, invB = 1 / massB;
+    const j = relVn * (1 + RESTITUTION) / (invA + invB);
+    a.vx -= (j * invA) * nx; a.vy -= (j * invA) * ny;
+    b.vx += (j * invB) * nx; b.vy += (j * invB) * ny;
+  }
+
+  function knockPin(p) {
+    if (p.down) return;
+    const speed = Math.hypot(p.vx, p.vy);
+    if (speed > KNOCK_SPEED_THRESH) {
+      p.down = true; p.standing = false; p.settled = false;
+      playSound("pin");
+      addParticle(worldToScreenApprox(p.x, p.y), "#fde68a", 3);
+    }
+  }
+
+  function shockwaveAt(cx, cy, impactSpeed) {
+    for (const p of pins) {
+      if (!p.standing || p.down) continue;
+      const dx = p.x - cx, dy = p.y - cy;
+      const dist = Math.hypot(dx, dy);
+      if (dist > SHOCKWAVE_RADIUS || dist < 0.001) continue;
+      const falloff = 1 - dist / SHOCKWAVE_RADIUS;
+      const mag = impactSpeed * SHOCKWAVE_STRENGTH * falloff * falloff;
+      p.vx += (dx / dist) * mag * 0.35 + rand(-mag * 0.15, mag * 0.15);
+      p.vy += (dy / dist) * mag * 0.35 + rand(-mag * 0.15, mag * 0.15);
+      p.settled = false;
+      knockPin(p);
+    }
+  }
+
+  function updateBall(dt) {
+    if (!ball || !ball.active) return;
+    const totalDist = ORIGIN_Y - PIN_FRONT_Y;
+    const speed = Math.hypot(ball.vx, ball.vy);
+    if (speed <= SETTLE_SPEED * 4 && ball.y > PIN_FRONT_Y - 40) {
+      // rolled out of steam before / around the pin deck -> weak roll, stop it
+      ball.active = false;
+      return;
+    }
+    const progress = clamp(ball.traveled / totalDist, 0, 1);
+    const friction = progress < BREAKPOINT_FRAC ? FRICTION_LOW : FRICTION_HIGH;
+    const dvx = -(ball.vx / speed) * friction * dt;
+    const dvy = -(ball.vy / speed) * friction * dt;
+    ball.vx += dvx; ball.vy += dvy;
+    if (progress >= BREAKPOINT_FRAC) {
+      const hp = (progress - BREAKPOINT_FRAC) / (1 - BREAKPOINT_FRAC);
+      ball.vx += HOOK_GAIN_PER_DEG * ball.angleDeg * hp * dt;
+    }
+    ball.x += ball.vx * dt; ball.y += ball.vy * dt;
+    ball.traveled = ORIGIN_Y - ball.y;
+    if (ball.x < LANE_MIN - BALL_R || ball.x > LANE_MAX + BALL_R) {
+      ball.offLane = true; ball.active = false;
+      playSound("gutter");
+      return;
+    }
+    if (ball.y < PIN_FRONT_Y - 90) { ball.active = false; return; } // exited past the deck
+
+    // ball vs standing pins
+    for (const p of pins) {
+      if (!p.standing || p.down) continue;
+      const dx = p.x - ball.x, dy = p.y - ball.y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < BALL_R + PIN_R) {
+        const impactSpeed = Math.hypot(ball.vx, ball.vy);
+        applyImpulse(ball, p, BALL_MASS, PIN_MASS);
+        p.settled = false;
+        knockPin(p);
+        shockwaveAt(p.x, p.y, impactSpeed);
+      }
+    }
+  }
+
+  function updatePins(dt) {
+    for (const p of pins) {
+      if (p.settled) continue;
+      const speed = Math.hypot(p.vx, p.vy);
+      if (speed <= SETTLE_SPEED) { p.vx = 0; p.vy = 0; p.settled = true; continue; }
+      const dvx = -(p.vx / speed) * PIN_FRICTION * dt;
+      const dvy = -(p.vy / speed) * PIN_FRICTION * dt;
+      p.vx += dvx; p.vy += dvy;
+      p.x += p.vx * dt; p.y += p.vy * dt;
+    }
+    // pin-pin collisions among currently moving (or standing-but-touched) pins
+    for (let i = 0; i < pins.length; i++) {
+      for (let j = i + 1; j < pins.length; j++) {
+        const a = pins[i], b = pins[j];
+        if (a.down && b.down) continue; // both already fallen, skip for perf/visual cleanliness
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const dist = Math.hypot(dx, dy);
+        const minDist = PIN_R * 2;
+        if (dist > 0 && dist < minDist) {
+          const nx = dx / dist, ny = dy / dist;
+          const pen = (minDist - dist) / 2;
+          a.x -= nx * pen; a.y -= ny * pen;
+          b.x += nx * pen; b.y += ny * pen;
+          applyImpulse(a, b, PIN_MASS, PIN_MASS);
+          a.settled = false; b.settled = false;
+          knockPin(a); knockPin(b);
+        }
+      }
+    }
+  }
+
+  function finalizeIfSettled() {
+    if (!awaitingSettle) return;
+    const ballDone = !ball || !ball.active;
+    if (!ballDone) return;
+    const pinsMoving = pins.some(p => !p.settled);
+    if (pinsMoving) return;
+    awaitingSettle = false;
+    const knockedThisThrow = standingBeforeThrow - standingCount();
+    registerThrow(clamp(knockedThisThrow, 0, standingBeforeThrow));
+  }
+
+  function registerThrow(pinCount) {
+    rolls.push(pinCount);
+    const isFirstBallOfFrame = ballInFrame === 1;
+    const isLast = frameIndex === 9;
+
+    if (pinCount === 10) {
+      playSound(pinCount === standingBeforeThrow && isFirstBallOfFrame ? "strike" : "pin");
+      if (isFirstBallOfFrame) showBanner("STRIKE! 全中！", "#fbbf24");
+    } else if (!isFirstBallOfFrame && pinCount + rolls[rolls.length - 2] === 10 && !isLast) {
+      playSound("spare");
+      showBanner("SPARE! 补中！", "#fde68a");
+    } else if (pinCount === 0) {
+      playSound("gutter");
+    } else {
+      playSound("open");
+    }
+
+    renderScoreboard();
+    scoreEl.textContent = String(calculateScore(rolls));
+
+    if (!isLast) {
+      if (ballInFrame === 1 && pinCount === 10) {
+        advanceFrame(true);
+      } else if (ballInFrame === 1) {
+        ballInFrame = 2;
+        throwReady = true;
+        updateHudFrameLabel();
+      } else {
+        advanceFrame(true);
+      }
+    } else {
+      // 10th frame special handling
+      handleTenthFrame(pinCount);
+    }
+  }
+
+  function handleTenthFrame(pinCount) {
+    const r = rolls;
+    const base = r.length - ballInFrame; // index of ball1 of this frame within rolls[]
+    if (ballInFrame === 1) {
+      if (pinCount === 10) { pins = freshRack(); ballInFrame = 2; throwReady = true; }
+      else { ballInFrame = 2; throwReady = true; }
+      updateHudFrameLabel();
+      return;
+    }
+    if (ballInFrame === 2) {
+      const b1 = r[base];
+      const b1b2 = b1 + pinCount;
+      if (b1 === 10) {
+        // frame started with strike
+        if (pinCount === 10) { pins = freshRack(); } // second strike -> reset for 3rd
+        ballInFrame = 3; throwReady = true; updateHudFrameLabel();
+        return;
+      }
+      if (b1b2 === 10) { pins = freshRack(); ballInFrame = 3; throwReady = true; updateHudFrameLabel(); return; }
+      // open 10th frame, no bonus ball -> game over
+      finishGame();
+      return;
+    }
+    // ballInFrame === 3, always ends the game
+    finishGame();
+  }
+
+  function advanceFrame(resetPins) {
+    throwReady = false;
+    showBanner("第 " + (frameIndex + 1) + " 局结束", "#fde68a");
+    playSound("frameEnd");
+    setTimeout(() => {
+      if (state !== "playing") return;
+      frameIndex++;
+      ballInFrame = 1;
+      if (resetPins) pins = freshRack();
+      updateHudFrameLabel();
+      renderScoreboard();
+      throwReady = true;
+    }, 950);
+  }
+
+  function showBanner(text, color) {
+    banner.textContent = text;
+    banner.style.color = color || "#fff";
+    banner.style.display = "block";
+    clearTimeout(showBanner._t);
+    showBanner._t = setTimeout(() => { banner.style.display = "none"; }, 1100);
+  }
+
+  function finishGame() {
+    if (state !== "playing") return;
+    state = "gameover";
+    playSound("gameover");
+    const total = calculateScore(rolls);
+    if (total > best) { best = total; localStorage.setItem("chargeBowlBest", String(best)); bestEl.textContent = "BEST: " + best; }
+    resultTitle.textContent = total === 300 ? "完美满分局！" : "比赛结束";
+    resultSub.textContent = "总分 " + total + " / 300";
+    overlay.classList.add("show");
+  }
+
+  function update(dt) {
+    if (state !== "playing" || paused) return;
+    if (charging) chargeAmount = clamp((performance.now() - chargeStart) / CHARGE_MS, 0, 1);
+    updateBall(dt);
+    updatePins(dt);
+    finalizeIfSettled();
+    for (const p of pins) {
+      if (p.pop > 0) p.pop = Math.max(0, p.pop - dt * 3);
+    }
+    updateParticles(dt);
+    updateFloatingTexts(dt);
+  }
+
+  // ---------- Particles / floating text ----------
+  function addParticle(pos, color, count) {
+    for (let i = 0; i < count; i++) {
+      particles.push({ x: pos.x, y: pos.y, vx: rand(-70, 70), vy: rand(-90, -5), color, size: rand(2, 4), life: 1, decay: rand(1.4, 2.4) });
+    }
+  }
+  function updateParticles(dt) {
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.life -= p.decay * dt;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+      p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 220 * dt;
+    }
+  }
+  function drawParticles() {
+    for (const p of particles) {
+      ctx.save(); ctx.globalAlpha = Math.max(0, p.life); ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    }
+  }
+  function addFloatingText(text, pos, color) { floatingTexts.push({ text, color, x: pos.x, y: pos.y, vy: -45, alpha: 1 }); }
+  function updateFloatingTexts(dt) {
+    for (let i = floatingTexts.length - 1; i >= 0; i--) {
+      const ft = floatingTexts[i];
+      ft.y += ft.vy * dt; ft.alpha -= 1.1 * dt;
+      if (ft.alpha <= 0) floatingTexts.splice(i, 1);
+    }
+  }
+  function drawFloatingTexts() {
+    for (const ft of floatingTexts) {
+      ctx.save(); ctx.globalAlpha = Math.max(0, ft.alpha); ctx.fillStyle = ft.color;
+      ctx.font = "bold 15px 'Outfit', sans-serif"; ctx.textAlign = "center";
+      ctx.fillText(ft.text, ft.x, ft.y); ctx.restore();
+    }
+  }
+
+  // ---------- Drawing (all in world coords 0..360 x 0..640, transformed once) ----------
+  function drawBackground() {
+    ctx.fillStyle = "#1a0f08";
+    ctx.fillRect(0, 0, W, H);
+    ctx.save();
+    ctx.translate(offX, offY);
+    ctx.scale(vscale, vscale);
+
+    const g = ctx.createLinearGradient(0, 0, 0, WORLD_H);
+    g.addColorStop(0, "#3d2410"); g.addColorStop(0.55, "#5a3418"); g.addColorStop(1, "#3d2410");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, WORLD_W, WORLD_H);
+
+    // wood lane planks
+    ctx.strokeStyle = "rgba(0,0,0,0.12)"; ctx.lineWidth = 1;
+    for (let x = LANE_MIN; x <= LANE_MAX; x += 8) {
+      ctx.beginPath(); ctx.moveTo(x, 60); ctx.lineTo(x, WORLD_H); ctx.stroke();
+    }
+    // gutters
+    ctx.fillStyle = "rgba(0,0,0,0.5)";
+    ctx.fillRect(0, 60, LANE_MIN, WORLD_H - 60);
+    ctx.fillRect(LANE_MAX, 60, WORLD_W - LANE_MAX, WORLD_H - 60);
+    ctx.strokeStyle = "rgba(251,191,36,0.3)"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(LANE_MIN, 60); ctx.lineTo(LANE_MIN, WORLD_H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(LANE_MAX, 60); ctx.lineTo(LANE_MAX, WORLD_H); ctx.stroke();
+
+    // breakpoint marker (where oil ends / hook engages)
+    const bpY = ORIGIN_Y - (ORIGIN_Y - PIN_FRONT_Y) * BREAKPOINT_FRAC;
+    ctx.setLineDash([6, 6]);
+    ctx.strokeStyle = "rgba(255,255,255,0.15)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(LANE_MIN, bpY); ctx.lineTo(LANE_MAX, bpY); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // foul line
+    ctx.strokeStyle = "rgba(255,255,255,0.25)"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(LANE_MIN, ORIGIN_Y + 6); ctx.lineTo(LANE_MAX, ORIGIN_Y + 6); ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function drawPin(p) {
+    if (p.down && p.pop <= 0 && p.opacity <= 0) return;
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    if (p.down) {
+      const speed = Math.hypot(p.vx, p.vy);
+      const tilt = clamp(speed / 60, 0, 1);
+      ctx.rotate(tilt * 0.9 * (p.vx >= 0 ? 1 : -1));
+      p.opacity = Math.max(0, (p.opacity === undefined ? 1 : p.opacity) - 0.012);
+      ctx.globalAlpha = Math.max(0.15, p.opacity);
+    }
+    // shadow
+    ctx.beginPath(); ctx.ellipse(0, PIN_R * 0.7, PIN_R * 0.8, PIN_R * 0.35, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(0,0,0,0.3)"; ctx.fill();
+    // pin body (simple bowling-pin silhouette)
+    const h = PIN_R * 2.6;
+    ctx.beginPath();
+    ctx.moveTo(0, -h * 0.55);
+    ctx.quadraticCurveTo(PIN_R * 0.55, -h * 0.3, PIN_R * 0.32, -h * 0.05);
+    ctx.quadraticCurveTo(PIN_R * 0.7, h * 0.15, PIN_R * 0.65, h * 0.45);
+    ctx.quadraticCurveTo(PIN_R * 0.5, h * 0.55, 0, h * 0.55);
+    ctx.quadraticCurveTo(-PIN_R * 0.5, h * 0.55, -PIN_R * 0.65, h * 0.45);
+    ctx.quadraticCurveTo(-PIN_R * 0.7, h * 0.15, -PIN_R * 0.32, -h * 0.05);
+    ctx.quadraticCurveTo(-PIN_R * 0.55, -h * 0.3, 0, -h * 0.55);
+    ctx.closePath();
+    const grad = ctx.createLinearGradient(0, -h * 0.55, 0, h * 0.55);
+    grad.addColorStop(0, "#ffffff"); grad.addColorStop(1, "#e2e8f0");
+    ctx.fillStyle = grad; ctx.fill();
+    ctx.strokeStyle = "rgba(0,0,0,0.15)"; ctx.lineWidth = 1; ctx.stroke();
+    // red stripe
+    ctx.fillStyle = "#ef4444";
+    ctx.fillRect(-PIN_R * 0.45, -h * 0.18, PIN_R * 0.9, PIN_R * 0.32);
+    ctx.restore();
+  }
+
+  function drawBall() {
+    if (!ball) return;
+    ctx.save();
+    ctx.translate(ball.x, ball.y);
+    ctx.beginPath(); ctx.ellipse(0, BALL_R * 0.6, BALL_R * 0.9, BALL_R * 0.4, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(0,0,0,0.3)"; ctx.fill();
+    const grad = ctx.createRadialGradient(-BALL_R * 0.3, -BALL_R * 0.3, BALL_R * 0.2, 0, 0, BALL_R);
+    grad.addColorStop(0, "#fde68a"); grad.addColorStop(0.4, "#f97316"); grad.addColorStop(1, "#7c2d12");
+    ctx.beginPath(); ctx.arc(0, 0, BALL_R, 0, Math.PI * 2);
+    ctx.fillStyle = grad; ctx.fill();
+    ctx.strokeStyle = "rgba(0,0,0,0.25)"; ctx.lineWidth = 1; ctx.stroke();
+    ctx.beginPath(); ctx.arc(-3, -4, 1.4, 0, Math.PI * 2); ctx.arc(2, -2, 1.4, 0, Math.PI * 2); ctx.arc(0, 3, 1.4, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(0,0,0,0.35)"; ctx.fill();
+    ctx.restore();
+  }
+
+  function simulateGuidePath(frac, angleDeg) {
+    const v0 = V_MIN + (V_MAX - V_MIN) * clamp(frac, 0, 1);
+    const rad = angleDeg * Math.PI / 180;
+    let x = ORIGIN_X, y = ORIGIN_Y, vx = v0 * Math.sin(rad), vy = -v0 * Math.cos(rad);
+    const totalDist = ORIGIN_Y - PIN_FRONT_Y;
+    const dt = 1 / 60;
+    const pts = [{ x, y }];
+    let traveled = 0;
+    for (let i = 0; i < 260; i++) {
+      const speed = Math.hypot(vx, vy);
+      if (speed <= SETTLE_SPEED * 4 && y > PIN_FRONT_Y - 40) break;
+      const progress = clamp(traveled / totalDist, 0, 1);
+      const friction = progress < BREAKPOINT_FRAC ? FRICTION_LOW : FRICTION_HIGH;
+      vx += -(vx / speed) * friction * dt; vy += -(vy / speed) * friction * dt;
+      if (progress >= BREAKPOINT_FRAC) {
+        const hp = (progress - BREAKPOINT_FRAC) / (1 - BREAKPOINT_FRAC);
+        vx += HOOK_GAIN_PER_DEG * angleDeg * hp * dt;
+      }
+      x += vx * dt; y += vy * dt;
+      traveled = ORIGIN_Y - y;
+      if (x < LANE_MIN || x > LANE_MAX) { pts.push({ x, y }); break; }
+      if (y < PIN_FRONT_Y - 90) break;
+      pts.push({ x, y });
+    }
+    return pts;
+  }
+
+  function drawGuideAndAim() {
+    ctx.save();
+    ctx.translate(offX, offY);
+    ctx.scale(vscale, vscale);
+    if (charging) {
+      if (guideEnabled) {
+        const pts = simulateGuidePath(chargeAmount, aimAngle);
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = "rgba(255,255,255,0.75)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        pts.forEach((p, i) => { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); });
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      const rad = aimAngle * Math.PI / 180;
+      const len = 30 + chargeAmount * 30;
+      ctx.strokeStyle = "#fbbf24"; ctx.lineWidth = 3; ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(ORIGIN_X, ORIGIN_Y);
+      ctx.lineTo(ORIGIN_X + Math.sin(rad) * len, ORIGIN_Y - Math.cos(rad) * len);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function draw() {
+    drawBackground();
+    ctx.save();
+    ctx.translate(offX, offY); ctx.scale(vscale, vscale);
+    for (const p of pins) drawPin(p);
+    drawBall();
+    ctx.restore();
+    drawGuideAndAim();
+    ctx.save();
+    ctx.translate(offX, offY); ctx.scale(vscale, vscale);
+    drawParticles();
+    drawFloatingTexts();
+    ctx.restore();
+    drawChargeRing();
+  }
+
+  function drawChargeRing() {
+    chargeCtx.clearRect(0, 0, 96, 96);
+    if (!charging) return;
+    chargeCtx.strokeStyle = "rgba(255,255,255,0.25)";
+    chargeCtx.lineWidth = 6;
+    chargeCtx.beginPath(); chargeCtx.arc(48, 48, 40, 0, Math.PI * 2); chargeCtx.stroke();
+    chargeCtx.strokeStyle = "#fbbf24";
+    chargeCtx.lineWidth = 6; chargeCtx.lineCap = "round";
+    chargeCtx.beginPath();
+    chargeCtx.arc(48, 48, 40, -Math.PI / 2, -Math.PI / 2 + chargeAmount * Math.PI * 2);
+    chargeCtx.stroke();
+  }
+
+  function loop(t) {
+    if (!lastT) lastT = t;
+    const dt = Math.min((t - lastT) / 1000, 0.033);
+    lastT = t;
+    update(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  startBtn.addEventListener("click", () => {
+    initAudio();
+    startScreen.style.display = "none";
+    beginGame();
+  });
+  restartBtn.addEventListener("click", () => {
+    overlay.classList.remove("show");
+    beginGame();
+  });
+
+  state = "idle";
+  pins = freshRack();
+  renderScoreboard();
+  requestAnimationFrame(loop);
+
+  // ---------- Debug hook for automated testing ----------
+  window.__bowlDebug = {
+    getState: () => state,
+    getBall: () => ball,
+    getPins: () => pins,
+    getRolls: () => rolls.slice(),
+    getScore: () => calculateScore(rolls),
+    calculateScore,
+    getFrameIndex: () => frameIndex,
+    getBallInFrame: () => ballInFrame,
+    getThrowReady: () => throwReady,
+    getAimAngle: () => aimAngle,
+    getChargeAmount: () => chargeAmount,
+    startCharge, releaseCharge,
+    setChargeAmount: (v) => { chargeAmount = v; },
+    setAimAngle: (v) => { aimAngle = v; },
+    launchBall,
+    forceBegin: () => { initAudio(); startScreen.style.display = "none"; beginGame(); },
+    worldToScreenApprox,
+    toWorld,
+    getWorldConsts: () => ({ ORIGIN_X, ORIGIN_Y, LANE_MIN, LANE_MAX, PIN_FRONT_Y, WORLD_W, WORLD_H }),
+  };
+})();
+</script>
+</body>
+</html>

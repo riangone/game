@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>わくわく摩天楼アドベンチャー - 萌趣摩天楼小天才 · Skyscrapers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #FFFDF9;
+    --bg-card: #FFFFFF;
+    --primary: #2563EB;
+    --primary-hover: #1D4ED8;
+    --primary-light: #EFF6FF;
+    --secondary: #06B6D4;
+    --secondary-light: #ECFEFF;
+    --accent: #F59E0B;
+    --accent-light: #FFFBEB;
+    --success: #10B981;
+    --success-light: #ECFDF5;
+    --error: #EF4444;
+    --error-light: #FEE2E2;
+    --text-main: #1E293B;
+    --text-sub: #64748B;
+    --border-soft: #E2E8F0;
+    --border-bold: #94A3B8;
+    --cell-bg: #FFFFFF;
+    --cell-selected: #FEF08A;
+    --cell-highlight: #EFF6FF;
+    --cell-same: #DBEAFE;
+    --cell-error: #FEE2E2;
+    --shadow-sm: 0 3px 10px rgba(70, 90, 140, 0.08);
+    --shadow-md: 0 8px 20px rgba(70, 90, 140, 0.14);
+    --radius-xl: 24px;
+    --radius-lg: 18px;
+    --radius-md: 14px;
+    --radius-sm: 8px;
+    --ss-cell: 60px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; -webkit-tap-highlight-color: transparent; }
+  html, body { width: 100%; height: 100%; overflow-x: hidden; }
+  body {
+    font-family: "M PLUS Rounded 1c", "Outfit", system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 12% 12%, #DBEAFE 0%, #FFFDF9 48%, #FEF9C3 100%);
+    color: var(--text-main);
+    display: flex; flex-direction: column; align-items: center;
+    position: relative; min-height: 100vh;
+  }
+  .bg-decor { position: fixed; pointer-events: none; z-index: 0; opacity: 0.5; border-radius: 50%; }
+  .bg-blob-1 { top: -60px; right: -50px; width: 300px; height: 300px; background: radial-gradient(circle, #BFDBFE 0%, transparent 70%); }
+  .bg-blob-2 { bottom: -80px; left: -60px; width: 340px; height: 340px; background: radial-gradient(circle, #FEF3C7 0%, transparent 70%); }
+  canvas#confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 999; width: 100%; height: 100%; }
+  #app { width: 100%; max-width: 480px; min-height: 100vh; position: relative; z-index: 1; display: flex; flex-direction: column; padding: 12px 14px 24px; }
+  header.top-bar { display: flex; align-items: center; justify-content: space-between; padding: 4px 2px 10px; }
+  .logo-group { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+  .logo-emoji { font-size: 26px; }
+  .logo-text { display: flex; flex-direction: column; line-height: 1.1; }
+  .logo-text b { font-size: 15px; font-weight: 800; color: var(--primary); }
+  .logo-text span { font-size: 10px; color: var(--text-sub); font-weight: 600; }
+  .top-actions { display: flex; gap: 6px; }
+  .round-btn {
+    width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--bg-card);
+    box-shadow: var(--shadow-sm); font-size: 16px; display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: transform 0.15s;
+  }
+  .round-btn:active { transform: scale(0.88); }
+
+  .mode-tabs { display: flex; gap: 8px; background: var(--bg-card); border-radius: var(--radius-lg); padding: 5px; box-shadow: var(--shadow-sm); margin-bottom: 14px; }
+  .mode-tab { flex: 1; text-align: center; padding: 10px 6px; border-radius: var(--radius-md); font-weight: 800; font-size: 13.5px; color: var(--text-sub); cursor: pointer; transition: all 0.2s; }
+  .mode-tab.active { background: linear-gradient(135deg, var(--primary), #3B82F6); color: #fff; box-shadow: var(--shadow-sm); }
+
+  .view { display: none; flex-direction: column; gap: 14px; animation: fadeIn 0.25s ease; }
+  .view.active { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .progress-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 14px 16px; box-shadow: var(--shadow-sm); display: flex; align-items: center; justify-content: space-between; }
+  .progress-card .lbl { font-size: 12.5px; color: var(--text-sub); font-weight: 700; }
+  .progress-card .val { font-size: 17px; font-weight: 800; color: var(--primary); }
+  .progress-bar-track { flex: 1; height: 8px; background: var(--border-soft); border-radius: 8px; margin: 0 10px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #FBBF24, #F59E0B); border-radius: 8px; transition: width 0.4s; }
+
+  .stage-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .stage-card {
+    background: var(--bg-card); border-radius: var(--radius-lg); padding: 12px 6px 10px; text-align: center;
+    box-shadow: var(--shadow-sm); cursor: pointer; position: relative; transition: transform 0.15s;
+    border: 2px solid transparent;
+  }
+  .stage-card:active { transform: scale(0.94); }
+  .stage-card.locked { opacity: 0.5; cursor: default; }
+  .stage-card.group-start { border-color: #BFDBFE; }
+  .stage-card .num { font-size: 20px; font-weight: 900; color: var(--primary); }
+  .stage-card .sz { font-size: 10.5px; color: var(--text-sub); font-weight: 700; margin-top: 1px; }
+  .stage-card .stars { font-size: 11px; margin-top: 4px; letter-spacing: 1px; }
+  .stage-card .lock-icon { font-size: 18px; margin-top: 2px; }
+
+  .free-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 16px; box-shadow: var(--shadow-sm); }
+  .free-card h3 { font-size: 13.5px; font-weight: 800; margin-bottom: 10px; color: var(--text-main); }
+  .option-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .option-btn {
+    flex: 1; min-width: 64px; text-align: center; padding: 10px 4px; border-radius: var(--radius-md);
+    background: var(--primary-light); font-weight: 800; font-size: 13px; color: var(--primary); cursor: pointer;
+    border: 2px solid transparent; transition: all 0.15s;
+  }
+  .option-btn.active { background: var(--primary); color: #fff; border-color: var(--primary-hover); transform: scale(1.03); }
+  .start-free-btn {
+    width: 100%; margin-top: 4px; padding: 14px; border: none; border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, var(--primary), #3B82F6); color: #fff; font-weight: 800; font-size: 15px;
+    box-shadow: var(--shadow-md); cursor: pointer;
+  }
+  .skin-row { display: flex; gap: 8px; }
+  .skin-btn { flex: 1; padding: 12px 4px; border-radius: var(--radius-md); background: var(--secondary-light); text-align: center; font-size: 22px; cursor: pointer; border: 2px solid transparent; }
+  .skin-btn.active { border-color: var(--secondary); background: #fff; box-shadow: var(--shadow-sm); }
+  .skin-btn .lbl2 { display: block; font-size: 10px; font-weight: 700; color: var(--text-sub); margin-top: 2px; }
+
+  main#gameplayView { gap: 10px; }
+  .game-top-bar { display: flex; align-items: center; justify-content: space-between; background: var(--bg-card); border-radius: var(--radius-lg); padding: 10px 14px; box-shadow: var(--shadow-sm); }
+  .game-badge { font-weight: 800; font-size: 13.5px; color: var(--primary); }
+  .game-subinfo { font-size: 10.5px; color: var(--text-sub); font-weight: 600; margin-top: 1px; }
+  .game-stats { display: flex; gap: 10px; font-size: 12.5px; font-weight: 700; color: var(--text-sub); }
+  .game-stats span.hi { color: var(--error); }
+
+  .mascot-hint-box { display: flex; align-items: center; gap: 10px; background: #fff; border-radius: var(--radius-lg); padding: 8px 12px; box-shadow: var(--shadow-sm); }
+  .mascot-avatar { font-size: 26px; flex-shrink: 0; }
+  .mascot-text { font-size: 12px; font-weight: 600; color: var(--text-main); line-height: 1.4; }
+
+  .grid-wrapper { display: flex; justify-content: center; padding: 4px 0; }
+  #ss-grid { display: grid; gap: 3px; background: transparent; }
+  .ss-cell-base { width: var(--ss-cell); height: var(--ss-cell); border-radius: 10px; display: flex; align-items: center; justify-content: center; position: relative; }
+  .ss-corner { background: transparent; }
+  .ss-clue { background: var(--primary-light); color: var(--primary); font-weight: 800; font-size: calc(var(--ss-cell) * 0.42); transition: all 0.2s; }
+  .ss-clue.hidden-clue { background: var(--border-soft); color: transparent; }
+  .ss-clue.satisfied { background: var(--success-light); color: var(--success); }
+  .ss-clue.violated { background: var(--error-light); color: var(--error); animation: shake 0.3s; }
+  .ss-main {
+    background: var(--cell-bg); box-shadow: inset 0 0 0 1.5px var(--border-soft); cursor: pointer;
+    font-weight: 800; font-size: calc(var(--ss-cell) * 0.44); color: var(--text-main); overflow: hidden;
+  }
+  .ss-main.given { background: #F1F5F9; color: var(--text-sub); box-shadow: inset 0 0 0 2px var(--border-bold); cursor: default; }
+  .ss-main.hint-cell { color: var(--accent); background: var(--accent-light); }
+  .ss-main.selected { box-shadow: inset 0 0 0 3px var(--primary); background: var(--cell-selected); }
+  .ss-main.err { background: var(--cell-error); box-shadow: inset 0 0 0 3px var(--error); animation: shake 0.3s; }
+  .ss-bar { position: absolute; bottom: 0; left: 0; width: 100%; opacity: 0.28; border-radius: 0 0 8px 8px; transition: height 0.2s; z-index: 0; }
+  .ss-glyph { position: relative; z-index: 1; }
+  @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-3px);} 75%{transform:translateX(3px);} }
+
+  .toolbar-row { display: flex; gap: 8px; justify-content: center; }
+  .action-tool-btn {
+    flex: 1; max-width: 90px; display: flex; flex-direction: column; align-items: center; gap: 2px;
+    background: var(--bg-card); border: none; border-radius: var(--radius-md); padding: 8px 4px;
+    box-shadow: var(--shadow-sm); font-size: 18px; cursor: pointer; position: relative;
+  }
+  .action-tool-btn span.lbl { font-size: 9.5px; font-weight: 700; color: var(--text-sub); }
+  .hint-count-tag { position: absolute; top: -4px; right: 2px; background: var(--accent); color: #fff; font-size: 10px; font-weight: 800; border-radius: 8px; padding: 1px 5px; }
+
+  .numpad-grid { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+  .numpad-btn {
+    width: 44px; height: 44px; border-radius: 12px; border: none; background: var(--bg-card); box-shadow: var(--shadow-sm);
+    font-size: 19px; font-weight: 800; color: var(--primary); cursor: pointer;
+  }
+  .numpad-btn:active { transform: scale(0.9); }
+  .numpad-btn.erase-btn { background: var(--error-light); color: var(--error); font-size: 16px; }
+
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(30,41,59,0.5); display: none; align-items: center; justify-content: center;
+    z-index: 500; padding: 20px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-box { background: var(--bg-card); border-radius: var(--radius-xl); padding: 22px 20px; max-width: 380px; width: 100%; box-shadow: var(--shadow-md); text-align: center; max-height: 88vh; overflow-y: auto; }
+  .modal-title { font-size: 18px; font-weight: 900; margin-bottom: 8px; color: var(--primary); }
+  .modal-desc { font-size: 13px; color: var(--text-sub); line-height: 1.6; margin-bottom: 12px; text-align: left; }
+  .btn-primary { border: none; border-radius: var(--radius-md); background: linear-gradient(135deg, var(--primary), #3B82F6); color: #fff; font-weight: 800; padding: 13px; font-size: 14.5px; cursor: pointer; }
+  .btn-secondary { border: none; border-radius: var(--radius-md); background: var(--primary-light); color: var(--primary); font-weight: 800; padding: 13px; font-size: 14px; cursor: pointer; }
+  .win-stars { font-size: 36px; margin: 10px 0; letter-spacing: 6px; }
+  .win-stats-row { display: flex; justify-content: space-around; margin: 10px 0 16px; }
+  .win-stats-row .item { text-align: center; }
+  .win-stats-row .item .lbl { font-size: 10.5px; color: var(--text-sub); font-weight: 700; }
+  .win-stats-row .item .val { font-size: 16px; font-weight: 800; color: var(--text-main); }
+  .win-action-row { display: flex; gap: 8px; }
+  .win-action-row button { flex: 1; }
+  .tutorial-example { display: flex; align-items: center; justify-content: center; gap: 4px; margin: 10px 0; }
+  .tut-cell { width: 38px; height: 38px; border-radius: 8px; background: var(--primary-light); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; }
+  .tut-clue { width: 30px; height: 38px; border-radius: 8px; background: var(--accent-light); color: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 15px; }
+  .loading-overlay { position: fixed; inset: 0; background: rgba(255,253,249,0.85); z-index: 600; display: none; align-items: center; justify-content: center; flex-direction: column; gap: 10px; }
+  .loading-overlay.active { display: flex; }
+  .loading-overlay .spin { font-size: 40px; animation: spinAnim 1s linear infinite; }
+  @keyframes spinAnim { from{transform:rotate(0);} to{transform:rotate(360deg);} }
+</style>
+</head>
+<body>
+<canvas id="confetti-canvas"></canvas>
+<div class="bg-decor bg-blob-1"></div>
+<div class="bg-decor bg-blob-2"></div>
+<div class="loading-overlay" id="loadingOverlay"><div class="spin">🏗️</div><div style="font-weight:800;color:var(--primary);">たてもの　つくりちゅう...</div></div>
+
+<div id="app">
+  <header class="top-bar">
+    <div class="logo-group" id="logoBtn">
+      <div class="logo-emoji">🏙️</div>
+      <div class="logo-text"><b>摩天楼アドベンチャー</b><span>Skyscrapers Puzzle</span></div>
+    </div>
+    <div class="top-actions">
+      <button class="round-btn" id="tutorialBtn" title="ルール教室">📖</button>
+      <button class="round-btn" id="skinBtn" title="スキン切替">🎨</button>
+      <button class="round-btn" id="soundBtn" title="音のオン/オフ">🔊</button>
+      <button class="round-btn" id="mapBackBtn" title="マップへ戻る" style="display:none;">🗺️</button>
+    </div>
+  </header>
+
+  <div class="mode-tabs" id="modeTabs">
+    <div class="mode-tab active" data-mode="adventure">🗺️ アドベンチャー</div>
+    <div class="mode-tab" data-mode="free">🎯 フリー練習</div>
+  </div>
+
+  <main id="adventureView" class="view active">
+    <div class="progress-card">
+      <div>
+        <div class="lbl">ぼうけんの　すすみ</div>
+        <div class="val" id="totalStarsCount">0 / 54</div>
+      </div>
+      <div class="progress-bar-track"><div class="progress-bar-fill" id="progressBarFill" style="width:0%;"></div></div>
+      <div style="font-size:22px;">🏆</div>
+    </div>
+    <div class="stage-grid" id="stageGrid"></div>
+  </main>
+
+  <main id="freePlayView" class="view">
+    <div class="free-card">
+      <h3>🏢 たてもの盤の大きさ</h3>
+      <div class="option-row" id="freeSizeOptions">
+        <div class="option-btn active" data-size="4">4×4</div>
+        <div class="option-btn" data-size="5">5×5</div>
+        <div class="option-btn" data-size="6">6×6</div>
+        <div class="option-btn" data-size="7">7×7</div>
+      </div>
+    </div>
+    <div class="free-card">
+      <h3>⭐ むずかしさ</h3>
+      <div class="option-row" id="freeDiffOptions">
+        <div class="option-btn active" data-diff="easy">やさしい</div>
+        <div class="option-btn" data-diff="normal">ふつう</div>
+        <div class="option-btn" data-diff="hard">むずかしい</div>
+      </div>
+    </div>
+    <button class="start-free-btn" id="startFreeBtn">🎮 このルールであそぶ！</button>
+  </main>
+
+  <main id="gameplayView" class="view">
+    <div class="game-top-bar">
+      <div>
+        <div class="game-badge" id="gameStageBadge">⭐ ステージ 1</div>
+        <div class="game-subinfo" id="gameStageSubinfo">4×4・たかさくらべ</div>
+      </div>
+      <div class="game-stats">
+        <span>⏱️ <span id="timerDisplay">00:00</span></span>
+        <span class="hi">❌ <span id="mistakesDisplay">0</span></span>
+      </div>
+    </div>
+    <div class="mascot-hint-box">
+      <div class="mascot-avatar" id="mascotIcon">🐧</div>
+      <div class="mascot-text" id="mascotMsg">まわりの数字は「その方向から見えるビルの数」だよ！たかいビルは、うしろの低いビルをかくしちゃうんだ。</div>
+    </div>
+    <div class="grid-wrapper"><div id="ss-grid"></div></div>
+    <div class="toolbar-row">
+      <button class="action-tool-btn" id="undoBtn"><span>↩️</span><span class="lbl">戻す</span></button>
+      <button class="action-tool-btn" id="eraseBtn"><span>🧹</span><span class="lbl">消す</span></button>
+      <button class="action-tool-btn" id="hintBtn"><span>💡</span><span class="lbl">ヒント</span><span class="hint-count-tag" id="hintCountBadge">3</span></button>
+      <button class="action-tool-btn" id="restartBtn"><span>🔄</span><span class="lbl">やり直す</span></button>
+    </div>
+    <div class="numpad-grid" id="numpadGrid"></div>
+  </main>
+</div>
+
+<div class="modal-overlay" id="tutorialModal">
+  <div class="modal-box">
+    <div class="modal-title">🏙️ 摩天楼パズルの遊び方</div>
+    <div class="modal-desc">
+      ① マスに1〜N（ビルの高さ）を1つずつ、タテ・ヨコの列で数字が重ならないように入れよう。<br>
+      ② 盤の外にある数字は「その方向から見えるビルの数」のヒント！<br>
+      ③ 高いビルの後ろにある低いビルは、隠れて見えなくなるよ。
+    </div>
+    <div class="tutorial-example">
+      <div class="tut-clue">1</div>
+      <div class="tut-cell">1</div><div class="tut-cell">3</div><div class="tut-cell">2</div><div class="tut-cell">4</div>
+      <div class="tut-clue">3</div>
+    </div>
+    <div class="modal-desc" style="text-align:center;">← から見ると「4」が一番高くて奥まで見えるから3コ見える／→ から見ると「4」しか見えないから1コ！</div>
+    <button class="btn-primary" style="width:100%;" id="closeTutorialBtn">わかった！あそぶ！</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="victoryModal">
+  <div class="modal-box">
+    <div style="font-size:42px;" id="winEmoji">🎉</div>
+    <div class="modal-title" id="winTitle">ステージクリア！</div>
+    <div class="modal-desc" style="text-align:center;" id="winSubtitle">すばらしい空間認識力です！</div>
+    <div class="win-stars" id="winStarsBox">⭐⭐⭐</div>
+    <div class="win-stats-row">
+      <div class="item"><div class="lbl">タイム</div><div class="val" id="winTimeVal">00:00</div></div>
+      <div class="item"><div class="lbl">ミス</div><div class="val" id="winMistakesVal">0</div></div>
+      <div class="item"><div class="lbl">ヒント</div><div class="val" id="winHintsVal">0</div></div>
+    </div>
+    <div class="win-action-row">
+      <button class="btn-secondary" id="winMapBtn">🗺️ マップ</button>
+      <button class="btn-secondary" id="winRetryBtn">🔄 もう一度</button>
+      <button class="btn-primary" id="winNextBtn">次へ 🚀</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ================= Utility ================= */
+function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+function pad2(n){ return n<10?'0'+n:''+n; }
+function fmtTime(sec){ return pad2(Math.floor(sec/60))+':'+pad2(sec%60); }
+
+/* ================= Skyscraper CSP Engine ================= */
+function countVisible(arr){
+  let count=0, max=0;
+  for(const v of arr){ if(v>max){ count++; max=v; } }
+  return count;
+}
+
+function computeClues(grid){
+  const N = grid.length;
+  const top=[], bottom=[], left=[], right=[];
+  for(let c=0;c<N;c++){
+    const col=[]; for(let r=0;r<N;r++) col.push(grid[r][c]);
+    top.push(countVisible(col));
+    bottom.push(countVisible(col.slice().reverse()));
+  }
+  for(let r=0;r<N;r++){
+    const row = grid[r];
+    left.push(countVisible(row));
+    right.push(countVisible(row.slice().reverse()));
+  }
+  return { top, bottom, left, right };
+}
+
+function generateLatinSquare(N){
+  const grid = Array.from({length:N}, () => Array(N).fill(0));
+  const rowUsed = Array.from({length:N}, () => new Set());
+  const colUsed = Array.from({length:N}, () => new Set());
+  function findMRV(){
+    let best=null, bestCands=null;
+    for(let r=0;r<N;r++){
+      for(let c=0;c<N;c++){
+        if(grid[r][c]!==0) continue;
+        const cands=[];
+        for(let v=1;v<=N;v++) if(!rowUsed[r].has(v) && !colUsed[c].has(v)) cands.push(v);
+        if(cands.length===0) return {dead:true};
+        if(!best || cands.length<bestCands.length){ best=[r,c]; bestCands=cands; }
+      }
+    }
+    return { best, bestCands };
+  }
+  function solve(){
+    const { dead, best, bestCands } = findMRV();
+    if(dead) return false;
+    if(!best) return true;
+    const [r,c]=best;
+    shuffle(bestCands);
+    for(const v of bestCands){
+      grid[r][c]=v; rowUsed[r].add(v); colUsed[c].add(v);
+      if(solve()) return true;
+      grid[r][c]=0; rowUsed[r].delete(v); colUsed[c].delete(v);
+    }
+    return false;
+  }
+  solve();
+  return grid;
+}
+
+// Enumerate every permutation of 1..N for a single row that (a) matches any
+// fixed/given values at their positions and (b) satisfies that row's own
+// left/right visibility clue (a row's clue never depends on other rows, so
+// this can be solved completely in isolation -- the key trick that keeps the
+// full-board search below from blowing up combinatorially).
+function rowCandidatesFor(N, rowGivens, leftShown, leftTarget, rightShown, rightTarget){
+  const results = [];
+  const used = new Array(N+1).fill(false);
+  const perm = new Array(N).fill(0);
+  function place(pos, runMax, runCount){
+    if(leftShown && runCount > leftTarget) return;
+    if(pos === N){
+      if(leftShown && runCount !== leftTarget) return;
+      if(rightShown){
+        let max=0, count=0;
+        for(let i=N-1;i>=0;i--){ if(perm[i]>max){ count++; max=perm[i]; } }
+        if(count !== rightTarget) return;
+      }
+      results.push(perm.slice());
+      return;
+    }
+    const fixed = rowGivens[pos];
+    const lo = fixed || 1, hi = fixed || N;
+    for(let v=lo; v<=hi; v++){
+      if(used[v]) continue;
+      used[v]=true; perm[pos]=v;
+      const nm = v>runMax ? v : runMax;
+      const nc = v>runMax ? runCount+1 : runCount;
+      place(pos+1, nm, nc);
+      used[v]=false; perm[pos]=0;
+    }
+  }
+  place(0,0,0);
+  return results;
+}
+
+// Full-board solution counter. Rows are pre-filtered independently (see
+// above) then combined top-to-bottom with forward checking on columns
+// (Latin constraint) and an incremental, monotonic bound on each column's
+// "visible from top" count -- since that count can only grow as rows are
+// added, illegal branches are pruned long before the board is full.
+function countSolutions(N, givens, clueMask, clues, limit, nodeBudget){
+  nodeBudget = nodeBudget || 400000;
+  const rowGivensArr = Array.from({length:N}, () => Array(N).fill(0));
+  for(const g of givens) rowGivensArr[g.r][g.c] = g.v;
+  const rowCandidates = [];
+  for(let r=0;r<N;r++){
+    const cands = rowCandidatesFor(N, rowGivensArr[r], clueMask.left[r], clues.left[r], clueMask.right[r], clues.right[r]);
+    if(cands.length === 0) return 0;
+    shuffle(cands);
+    rowCandidates.push(cands);
+  }
+  let solutions = 0, nodes = 0, aborted = false;
+  const colUsed = Array.from({length:N}, () => new Array(N+1).fill(false));
+  const colRunMax = new Array(N).fill(0);
+  const colRunCount = new Array(N).fill(0);
+  const chosen = new Array(N);
+  function dfs(r){
+    if(solutions>=limit || aborted) return;
+    if(r === N){
+      for(let c=0;c<N;c++){
+        if(clueMask.bottom[c]){
+          let max=0, count=0;
+          for(let rr=N-1; rr>=0; rr--){ const v = chosen[rr][c]; if(v>max){ count++; max=v; } }
+          if(count !== clues.bottom[c]) return;
+        }
+      }
+      solutions++;
+      return;
+    }
+    for(const perm of rowCandidates[r]){
+      nodes++;
+      if(nodes > nodeBudget){ aborted = true; return; }
+      let ok = true;
+      for(let c=0;c<N;c++){ if(colUsed[c][perm[c]]) { ok=false; break; } }
+      if(!ok) continue;
+      const savedMax = colRunMax.slice(), savedCount = colRunCount.slice();
+      for(let c=0;c<N;c++){
+        colUsed[c][perm[c]] = true;
+        if(perm[c] > colRunMax[c]) { colRunMax[c] = perm[c]; colRunCount[c]++; }
+      }
+      let valid = true;
+      for(let c=0;c<N;c++){
+        if(clueMask.top[c]){
+          if(colRunCount[c] > clues.top[c]) { valid = false; break; }
+          if(r === N-1 && colRunCount[c] !== clues.top[c]) { valid = false; break; }
+        }
+      }
+      if(valid){ chosen[r] = perm; dfs(r+1); }
+      for(let c=0;c<N;c++){ colUsed[c][perm[c]] = false; }
+      for(let c=0;c<N;c++){ colRunMax[c] = savedMax[c]; colRunCount[c] = savedCount[c]; }
+      if(solutions>=limit || aborted) return;
+    }
+  }
+  dfs(0);
+  return aborted ? -1 : solutions;
+}
+
+function generatePuzzle(N, keepClueCount, givenCount){
+  const maxAttempts = 60;
+  for(let attempt=0; attempt<maxAttempts; attempt++){
+    const solution = generateLatinSquare(N);
+    const clues = computeClues(solution);
+    const slots = [];
+    ['top','bottom','left','right'].forEach(side => { for(let i=0;i<N;i++) slots.push([side,i]); });
+    shuffle(slots);
+    const clueMask = { top:Array(N).fill(true), bottom:Array(N).fill(true), left:Array(N).fill(true), right:Array(N).fill(true) };
+    let removeTarget = Math.max(0, 4*N - keepClueCount);
+    for(let k=0; k<slots.length && removeTarget>0; k++){
+      const [side,i] = slots[k];
+      clueMask[side][i] = false;
+      removeTarget--;
+    }
+    let cells=[]; for(let r=0;r<N;r++) for(let c=0;c<N;c++) cells.push([r,c]);
+    shuffle(cells);
+    const givenList=[];
+    for(let k=0; k<givenCount && k<cells.length; k++){ const [r,c]=cells[k]; givenList.push({r,c,v:solution[r][c]}); }
+    let extra=0, failed=false;
+    while(true){
+      const cnt = countSolutions(N, givenList, clueMask, clues, 2);
+      if(cnt===1) return { size:N, solution, clues, clueMask, givens: givenList };
+      if(cnt<=0){ failed=true; break; } // 0 = contradiction, -1 = search budget exceeded
+      extra++;
+      if(extra > N*N){ failed=true; break; }
+      const remaining = cells.filter(([r,c]) => !givenList.some(g=>g.r===r && g.c===c));
+      if(remaining.length===0){ failed=true; break; }
+      const [r,c] = remaining[Math.floor(Math.random()*remaining.length)];
+      givenList.push({ r, c, v: solution[r][c] });
+    }
+    if(failed) continue;
+  }
+  // Fallback: full clues guarantee near-certain uniqueness; add givens if needed.
+  const solution = generateLatinSquare(N);
+  const clues = computeClues(solution);
+  const clueMask = { top:Array(N).fill(true), bottom:Array(N).fill(true), left:Array(N).fill(true), right:Array(N).fill(true) };
+  const givenList=[];
+  let cells=[]; for(let r=0;r<N;r++) for(let c=0;c<N;c++) cells.push([r,c]);
+  shuffle(cells);
+  let idx=0;
+  while(countSolutions(N, givenList, clueMask, clues, 2) !== 1 && idx < cells.length){
+    const [r,c] = cells[idx++]; givenList.push({ r, c, v: solution[r][c] });
+  }
+  return { size:N, solution, clues, clueMask, givens: givenList };
+}
+
+/* ================= Audio Synth ================= */
+let audioCtx = null, soundOn = true;
+function ensureAudio(){ if(!audioCtx){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } }
+function beep(freq, dur, type, vol){
+  if(!soundOn) return;
+  ensureAudio();
+  if(!audioCtx) return;
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = type || 'sine';
+  o.frequency.value = freq;
+  g.gain.value = (vol!==undefined?vol:0.14);
+  o.connect(g); g.connect(audioCtx.destination);
+  const now = audioCtx.currentTime;
+  g.gain.setValueAtTime(g.gain.value, now);
+  g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+  o.start(now); o.stop(now + dur);
+}
+function playPlace(){ beep(520, 0.1, 'triangle', 0.13); }
+function playError(){ beep(180, 0.22, 'sawtooth', 0.14); }
+function playClueOk(){ beep(700, 0.12, 'sine', 0.1); setTimeout(()=>beep(920,0.14,'sine',0.09),80); }
+function playWin(){
+  [523,659,784,1046].forEach((f,i)=> setTimeout(()=>beep(f,0.28,'triangle',0.15), i*130));
+}
+
+/* ================= Confetti ================= */
+const confettiCanvas = document.getElementById('confetti-canvas');
+const cctx = confettiCanvas.getContext('2d');
+let confettiParticles = [];
+function resizeConfetti(){ confettiCanvas.width = window.innerWidth; confettiCanvas.height = window.innerHeight; }
+window.addEventListener('resize', resizeConfetti); resizeConfetti();
+function burstConfetti(){
+  confettiParticles = [];
+  const colors = ['#F59E0B','#2563EB','#10B981','#EC4899','#8B5CF6'];
+  for(let i=0;i<80;i++){
+    confettiParticles.push({
+      x: confettiCanvas.width/2, y: confettiCanvas.height/3,
+      vx: (Math.random()-0.5)*10, vy: Math.random()*-8-2,
+      g: 0.28, size: 4+Math.random()*4, color: colors[Math.floor(Math.random()*colors.length)],
+      life: 100
+    });
+  }
+  requestAnimationFrame(animateConfetti);
+}
+function animateConfetti(){
+  cctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
+  let alive=false;
+  for(const p of confettiParticles){
+    if(p.life<=0) continue;
+    p.x+=p.vx; p.y+=p.vy; p.vy+=p.g; p.life--;
+    if(p.life>0){ alive=true; cctx.fillStyle=p.color; cctx.fillRect(p.x,p.y,p.size,p.size); }
+  }
+  if(alive) requestAnimationFrame(animateConfetti);
+  else cctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
+}
+
+/* ================= Stage Config ================= */
+const STAGE_SIZES  = [4,4,4,4,4,4, 5,5,5,5,5,5, 6,6,6,6,6,6];
+const STAGE_KEEPFR = [1,1,1,0.9,0.85,0.8, 1,0.95,0.9,0.85,0.8,0.75, 0.9,0.85,0.8,0.75,0.7,0.65];
+const STAGE_GIVENS = [3,2,2,1,1,0, 1,1,0,0,0,0, 1,0,0,0,0,0];
+const TOTAL_STAGES = 18;
+function stageConfig(idx){ // idx 0-based
+  const N = STAGE_SIZES[idx];
+  const keep = Math.max(N, Math.round(4*N*STAGE_KEEPFR[idx]));
+  const givens = STAGE_GIVENS[idx];
+  const par = N*N*4;
+  return { size:N, keep, givens, par, group: idx<6?'初級':(idx<12?'中級':'上級') };
+}
+const DIFF_PARAMS = {
+  easy:   { keepFrac: 1.0,  givenFrac: 0.18 },
+  normal: { keepFrac: 0.82, givenFrac: 0.06 },
+  hard:   { keepFrac: 0.65, givenFrac: 0.0 }
+};
+
+/* ================= Persistence ================= */
+const STORAGE_KEY = 'skyscrapers_progress_v1';
+function loadProgress(){
+  try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }catch(e){ return {}; }
+}
+function saveProgress(p){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); }catch(e){} }
+let progress = loadProgress();
+
+/* ================= App State ================= */
+let currentMode = 'adventure';
+let currentStageIdx = null; // 0-based, null if free play
+let freeSize = 4, freeDiff = 'easy';
+let skin = 'color'; // color | animal | sweet
+const SKIN_ORDER = ['color','animal','sweet'];
+const SKIN_EMOJI = { color:'🎨', animal:'🐣', sweet:'🍰' };
+const ANIMAL_SET = ['🐭','🐹','🐰','🐱','🐶','🦊','🦁'];
+const SWEET_SET  = ['🍬','🍪','🧁','🍩','🍰','🎂','🍭'];
+const NUM_COLORS = ['#EF4444','#F59E0B','#10B981','#2563EB','#8B5CF6','#EC4899','#0EA5E9'];
+
+let puzzle = null;       // {size, solution, clues, clueMask, givens}
+let grid = null;         // current player grid NxN, 0 = empty
+let givenSet = null;     // Set of "r,c"
+let hintCells = null;    // Set of "r,c" filled via hint
+let selected = null;     // {r,c}
+let mistakes = 0, hintsUsed = 0, hintBudget = 3;
+let timerSec = 0, timerHandle = null, gameActive = false;
+let undoStack = [];
+
+/* ================= DOM refs ================= */
+const stageGridEl = document.getElementById('stageGrid');
+const totalStarsCountEl = document.getElementById('totalStarsCount');
+const progressBarFillEl = document.getElementById('progressBarFill');
+const ssGridEl = document.getElementById('ss-grid');
+const numpadGridEl = document.getElementById('numpadGrid');
+const timerDisplayEl = document.getElementById('timerDisplay');
+const mistakesDisplayEl = document.getElementById('mistakesDisplay');
+const gameStageBadgeEl = document.getElementById('gameStageBadge');
+const gameStageSubinfoEl = document.getElementById('gameStageSubinfo');
+const mascotMsgEl = document.getElementById('mascotMsg');
+const hintCountBadgeEl = document.getElementById('hintCountBadge');
+const loadingOverlay = document.getElementById('loadingOverlay');
+
+const MASCOT_TIPS = [
+  'まわりの数字は「その方向から見えるビルの数」だよ！',
+  'タテとヨコの列で、同じ高さのビルは1つだけ！',
+  '一番高い数字は必ず見える！はじっこから考えよう。',
+  '見える数がその列のマス数と同じなら、順番に高くなっているよ！',
+  '見える数が1なら、いちばん高いビルが一番手前にあるよ！',
+  '迷ったら、ヒントのペンギンに聞いてね💡'
+];
+
+/* ================= View / Mode switching ================= */
+function setMode(mode){
+  currentMode = mode;
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.toggle('active', t.dataset.mode===mode));
+  document.getElementById('adventureView').classList.toggle('active', mode==='adventure');
+  document.getElementById('freePlayView').classList.toggle('active', mode==='free');
+  document.getElementById('gameplayView').classList.remove('active');
+  document.getElementById('mapBackBtn').style.display = 'none';
+  document.querySelector('.mode-tabs').style.display = 'flex';
+  stopTimer();
+}
+document.querySelectorAll('.mode-tab').forEach(t => t.addEventListener('click', () => setMode(t.dataset.mode)));
+document.getElementById('logoBtn').addEventListener('click', () => setMode(currentMode==='adventure'?'adventure':currentMode));
+document.getElementById('mapBackBtn').addEventListener('click', () => { setMode(currentMode==='free' && currentStageIdx===null ? 'free' : 'adventure'); renderStageGrid(); });
+
+/* ================= Stage Grid Rendering ================= */
+function renderStageGrid(){
+  stageGridEl.innerHTML = '';
+  let totalStars = 0;
+  for(let i=0;i<TOTAL_STAGES;i++){
+    const st = progress['s'+i] || { stars:0, best:null };
+    totalStars += st.stars || 0;
+    const unlocked = i===0 || (progress['s'+(i-1)] && progress['s'+(i-1)].stars > 0);
+    const cfg = stageConfig(i);
+    const card = document.createElement('div');
+    card.className = 'stage-card' + (unlocked?'':' locked') + (i%6===0?' group-start':'');
+    if(unlocked){
+      card.innerHTML = `<div class="num">${i+1}</div><div class="sz">${cfg.size}×${cfg.size}</div><div class="stars">${'⭐'.repeat(st.stars||0)}${'☆'.repeat(3-(st.stars||0))}</div>`;
+      card.addEventListener('click', () => startStage(i));
+    } else {
+      card.innerHTML = `<div class="lock-icon">🔒</div><div class="sz">${cfg.size}×${cfg.size}</div>`;
+    }
+    stageGridEl.appendChild(card);
+  }
+  totalStarsCountEl.textContent = totalStars + ' / ' + (TOTAL_STAGES*3);
+  progressBarFillEl.style.width = (totalStars/(TOTAL_STAGES*3)*100) + '%';
+}
+
+/* ================= Free Play Options ================= */
+document.getElementById('freeSizeOptions').addEventListener('click', (e) => {
+  const btn = e.target.closest('.option-btn'); if(!btn) return;
+  document.querySelectorAll('#freeSizeOptions .option-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); freeSize = parseInt(btn.dataset.size,10);
+});
+document.getElementById('freeDiffOptions').addEventListener('click', (e) => {
+  const btn = e.target.closest('.option-btn'); if(!btn) return;
+  document.querySelectorAll('#freeDiffOptions .option-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); freeDiff = btn.dataset.diff;
+});
+document.getElementById('startFreeBtn').addEventListener('click', () => startFreePlay());
+
+/* ================= Skin ================= */
+document.getElementById('skinBtn').addEventListener('click', () => {
+  const idx = SKIN_ORDER.indexOf(skin);
+  skin = SKIN_ORDER[(idx+1)%SKIN_ORDER.length];
+  document.getElementById('skinBtn').textContent = SKIN_EMOJI[skin];
+  if(puzzle) renderGrid();
+});
+
+/* ================= Sound toggle ================= */
+document.getElementById('soundBtn').addEventListener('click', () => {
+  soundOn = !soundOn;
+  document.getElementById('soundBtn').textContent = soundOn ? '🔊' : '🔇';
+});
+
+/* ================= Tutorial Modal ================= */
+document.getElementById('tutorialBtn').addEventListener('click', () => document.getElementById('tutorialModal').classList.add('active'));
+document.getElementById('closeTutorialBtn').addEventListener('click', () => document.getElementById('tutorialModal').classList.remove('active'));
+
+/* ================= Start Stage / Free Play ================= */
+function startStage(idx){
+  currentStageIdx = idx;
+  const cfg = stageConfig(idx);
+  launchPuzzle(cfg.size, cfg.keep, cfg.givens, `ステージ ${idx+1}`, `${cfg.size}×${cfg.size}・${cfg.group}`);
+}
+function startFreePlay(){
+  currentStageIdx = null;
+  const N = freeSize;
+  const dp = DIFF_PARAMS[freeDiff];
+  const keep = Math.max(N, Math.round(4*N*dp.keepFrac));
+  const givens = Math.round(N*N*dp.givenFrac);
+  const label = { easy:'やさしい', normal:'ふつう', hard:'むずかしい' }[freeDiff];
+  launchPuzzle(N, keep, givens, 'フリー練習', `${N}×${N}・${label}`);
+}
+function launchPuzzle(N, keep, givens, badgeText, subText){
+  loadingOverlay.classList.add('active');
+  setTimeout(() => {
+    puzzle = generatePuzzle(N, keep, givens);
+    grid = Array.from({length:N}, () => Array(N).fill(0));
+    givenSet = new Set();
+    for(const g of puzzle.givens){ grid[g.r][g.c] = g.v; givenSet.add(g.r+','+g.c); }
+    hintCells = new Set();
+    selected = null;
+    mistakes = 0; hintsUsed = 0;
+    hintBudget = currentStageIdx===null ? 5 : 3;
+    undoStack = [];
+    timerSec = 0;
+    gameActive = true;
+    document.querySelectorAll('.mode-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelector('.mode-tabs').style.display = 'none';
+    document.getElementById('adventureView').classList.remove('active');
+    document.getElementById('freePlayView').classList.remove('active');
+    document.getElementById('gameplayView').classList.add('active');
+    document.getElementById('mapBackBtn').style.display = 'flex';
+    gameStageBadgeEl.textContent = '⭐ ' + badgeText;
+    gameStageSubinfoEl.textContent = subText;
+    mascotMsgEl.textContent = MASCOT_TIPS[0];
+    updateStatsDisplay();
+    buildNumpad(N);
+    renderGrid();
+    startTimer();
+    loadingOverlay.classList.remove('active');
+  }, 30);
+}
+
+/* ================= Timer ================= */
+function startTimer(){
+  stopTimer();
+  timerHandle = setInterval(() => {
+    if(!gameActive) return;
+    timerSec++;
+    timerDisplayEl.textContent = fmtTime(timerSec);
+  }, 1000);
+}
+function stopTimer(){ if(timerHandle){ clearInterval(timerHandle); timerHandle=null; } }
+
+function updateStatsDisplay(){
+  timerDisplayEl.textContent = fmtTime(timerSec);
+  mistakesDisplayEl.textContent = mistakes;
+  hintCountBadgeEl.textContent = Math.max(0, hintBudget - hintsUsed);
+}
+
+/* ================= Grid Rendering ================= */
+function layoutCellSize(N){
+  const maxBoard = Math.min(window.innerWidth*0.86, 420, window.innerHeight*0.5);
+  const cell = Math.floor(maxBoard/(N+2));
+  document.documentElement.style.setProperty('--ss-cell', cell+'px');
+}
+window.addEventListener('resize', () => { if(puzzle) { layoutCellSize(puzzle.size); } });
+
+function glyphFor(v){
+  if(v===0) return '';
+  if(skin==='animal') return ANIMAL_SET[(v-1)%ANIMAL_SET.length];
+  if(skin==='sweet') return SWEET_SET[(v-1)%SWEET_SET.length];
+  return String(v);
+}
+function colorFor(v){ return NUM_COLORS[(v-1)%NUM_COLORS.length]; }
+
+function renderGrid(){
+  const N = puzzle.size;
+  layoutCellSize(N);
+  ssGridEl.style.gridTemplateColumns = `repeat(${N+2}, var(--ss-cell))`;
+  ssGridEl.style.gridTemplateRows = `repeat(${N+2}, var(--ss-cell))`;
+  ssGridEl.innerHTML = '';
+
+  // conflict detection
+  const rowDup = Array.from({length:N}, () => new Set());
+  const colDup = Array.from({length:N}, () => new Set());
+  for(let r=0;r<N;r++){
+    const seen = {};
+    for(let c=0;c<N;c++){ const v = grid[r][c]; if(v!==0){ seen[v]=(seen[v]||0)+1; } }
+    for(let c=0;c<N;c++){ const v=grid[r][c]; if(v!==0 && seen[v]>1) rowDup[r].add(c); }
+  }
+  for(let c=0;c<N;c++){
+    const seen = {};
+    for(let r=0;r<N;r++){ const v = grid[r][c]; if(v!==0){ seen[v]=(seen[v]||0)+1; } }
+    for(let r=0;r<N;r++){ const v=grid[r][c]; if(v!==0 && seen[v]>1) colDup[c].add(r); }
+  }
+
+  function rowFull(r){ for(let c=0;c<N;c++) if(grid[r][c]===0) return false; return true; }
+  function colFull(c){ for(let r=0;r<N;r++) if(grid[r][c]===0) return false; return true; }
+
+  // Row 0: top clues
+  appendCell(null, null, 'ss-corner');
+  for(let c=0;c<N;c++){
+    let cls = 'ss-clue';
+    const shown = puzzle.clueMask.top[c];
+    if(!shown) cls += ' hidden-clue';
+    else if(colFull(c)){
+      const col=[]; for(let r=0;r<N;r++) col.push(grid[r][c]);
+      cls += (countVisible(col)===puzzle.clues.top[c]) ? ' satisfied' : ' violated';
+    }
+    appendClueCell(shown ? puzzle.clues.top[c] : '', cls);
+  }
+  appendCell(null, null, 'ss-corner');
+
+  // Rows 1..N
+  for(let r=0;r<N;r++){
+    let clsL = 'ss-clue';
+    const shownL = puzzle.clueMask.left[r];
+    if(!shownL) clsL += ' hidden-clue';
+    else if(rowFull(r)){
+      const row = grid[r];
+      clsL += (countVisible(row)===puzzle.clues.left[r]) ? ' satisfied' : ' violated';
+    }
+    appendClueCell(shownL ? puzzle.clues.left[r] : '', clsL);
+
+    for(let c=0;c<N;c++){
+      const v = grid[r][c];
+      const key = r+','+c;
+      let cls = 'ss-main';
+      if(givenSet.has(key)) cls += ' given';
+      else if(hintCells.has(key)) cls += ' hint-cell';
+      if(selected && selected.r===r && selected.c===c) cls += ' selected';
+      if(rowDup[r].has(c) || colDup[c].has(r)) cls += ' err';
+      const cellDiv = document.createElement('div');
+      cellDiv.className = 'ss-cell-base ' + cls;
+      cellDiv.dataset.r = r; cellDiv.dataset.c = c;
+      if(v!==0){
+        const bar = document.createElement('div');
+        bar.className = 'ss-bar';
+        bar.style.height = (v/N*100)+'%';
+        bar.style.background = colorFor(v);
+        cellDiv.appendChild(bar);
+        const glyph = document.createElement('div');
+        glyph.className = 'ss-glyph';
+        glyph.textContent = glyphFor(v);
+        if(skin==='color') glyph.style.color = colorFor(v);
+        cellDiv.appendChild(glyph);
+      }
+      cellDiv.addEventListener('click', onCellClick);
+      ssGridEl.appendChild(cellDiv);
+    }
+
+    let clsR = 'ss-clue';
+    const shownR = puzzle.clueMask.right[r];
+    if(!shownR) clsR += ' hidden-clue';
+    else if(rowFull(r)){
+      const row = grid[r];
+      clsR += (countVisible(row.slice().reverse())===puzzle.clues.right[r]) ? ' satisfied' : ' violated';
+    }
+    appendClueCell(shownR ? puzzle.clues.right[r] : '', clsR);
+  }
+
+  // Bottom row
+  appendCell(null, null, 'ss-corner');
+  for(let c=0;c<N;c++){
+    let cls = 'ss-clue';
+    const shown = puzzle.clueMask.bottom[c];
+    if(!shown) cls += ' hidden-clue';
+    else if(colFull(c)){
+      const col=[]; for(let r=0;r<N;r++) col.push(grid[r][c]);
+      cls += (countVisible(col.slice().reverse())===puzzle.clues.bottom[c]) ? ' satisfied' : ' violated';
+    }
+    appendClueCell(shown ? puzzle.clues.bottom[c] : '', cls);
+  }
+  appendCell(null, null, 'ss-corner');
+
+  function appendCell(){
+    const d = document.createElement('div');
+    d.className = 'ss-cell-base ss-corner';
+    ssGridEl.appendChild(d);
+  }
+  function appendClueCell(text, cls){
+    const d = document.createElement('div');
+    d.className = 'ss-cell-base ' + cls;
+    d.textContent = text;
+    ssGridEl.appendChild(d);
+  }
+}
+
+function onCellClick(e){
+  const r = parseInt(this.dataset.r,10), c = parseInt(this.dataset.c,10);
+  if(givenSet.has(r+','+c)) return;
+  selected = { r, c };
+  renderGrid();
+}
+
+/* ================= Numpad ================= */
+function buildNumpad(N){
+  numpadGridEl.innerHTML = '';
+  for(let v=1; v<=N; v++){
+    const b = document.createElement('button');
+    b.className = 'numpad-btn';
+    b.textContent = glyphFor(v) === String(v) ? v : (glyphFor(v));
+    b.style.color = colorFor(v);
+    b.addEventListener('click', () => inputNumber(v));
+    numpadGridEl.appendChild(b);
+  }
+  const erase = document.createElement('button');
+  erase.className = 'numpad-btn erase-btn';
+  erase.textContent = '✕';
+  erase.addEventListener('click', () => inputNumber(0));
+  numpadGridEl.appendChild(erase);
+}
+
+function inputNumber(v){
+  if(!gameActive || !selected) return;
+  const { r, c } = selected;
+  if(givenSet.has(r+','+c)) return;
+  const prev = grid[r][c];
+  if(prev === v) return;
+  undoStack.push({ r, c, prev });
+  if(undoStack.length > 50) undoStack.shift();
+  grid[r][c] = v;
+  if(v !== 0){
+    const correct = puzzle.solution[r][c] === v;
+    if(!correct){ mistakes++; playError(); }
+    else { playPlace(); }
+  }
+  updateStatsDisplay();
+  renderGrid();
+  updateMascot();
+  checkWin();
+}
+
+document.getElementById('undoBtn').addEventListener('click', () => {
+  if(!gameActive || undoStack.length===0) return;
+  const last = undoStack.pop();
+  grid[last.r][last.c] = last.prev;
+  selected = { r:last.r, c:last.c };
+  renderGrid();
+});
+document.getElementById('eraseBtn').addEventListener('click', () => inputNumber(0));
+document.getElementById('restartBtn').addEventListener('click', () => {
+  if(!puzzle) return;
+  grid = Array.from({length:puzzle.size}, () => Array(puzzle.size).fill(0));
+  for(const g of puzzle.givens) grid[g.r][g.c] = g.v;
+  hintCells = new Set(); selected = null; mistakes = 0; hintsUsed = 0; undoStack = [];
+  timerSec = 0; updateStatsDisplay(); renderGrid();
+});
+document.getElementById('hintBtn').addEventListener('click', () => {
+  if(!gameActive) return;
+  if(hintsUsed >= hintBudget){ mascotMsgEl.textContent = 'ヒントは使い切ったよ！自分の力で頑張ろう💪'; return; }
+  let target = selected;
+  if(!target || grid[target.r][target.c] !== 0){
+    // find an empty cell
+    const N = puzzle.size;
+    outer: for(let r=0;r<N;r++){ for(let c=0;c<N;c++){ if(grid[r][c]===0){ target = {r,c}; break outer; } } }
+  }
+  if(!target) return;
+  const { r, c } = target;
+  if(grid[r][c] === puzzle.solution[r][c] && grid[r][c]!==0) return;
+  grid[r][c] = puzzle.solution[r][c];
+  hintCells.add(r+','+c);
+  hintsUsed++;
+  selected = { r, c };
+  updateStatsDisplay();
+  renderGrid();
+  checkWin();
+});
+
+/* ================= Keyboard support ================= */
+document.addEventListener('keydown', (e) => {
+  if(!gameActive || !document.getElementById('gameplayView').classList.contains('active')) return;
+  if(e.key >= '1' && e.key <= '9'){
+    const v = parseInt(e.key,10);
+    if(v <= puzzle.size) inputNumber(v);
+  } else if(e.key === 'Backspace' || e.key === 'Delete' || e.key === '0'){
+    inputNumber(0);
+  }
+});
+
+/* ================= Mascot ================= */
+function updateMascot(){
+  mascotMsgEl.textContent = MASCOT_TIPS[Math.floor(Math.random()*MASCOT_TIPS.length)];
+}
+
+/* ================= Win Check ================= */
+function checkWin(){
+  const N = puzzle.size;
+  for(let r=0;r<N;r++) for(let c=0;c<N;c++) if(grid[r][c] !== puzzle.solution[r][c]) return;
+  gameActive = false;
+  stopTimer();
+  playWin();
+  burstConfetti();
+  const cfg = currentStageIdx!==null ? stageConfig(currentStageIdx) : null;
+  const par = cfg ? cfg.par : N*N*4;
+  let stars = 1;
+  if(mistakes===0 && hintsUsed===0 && timerSec<=par) stars = 3;
+  else if(mistakes<=2 && hintsUsed<=1 && timerSec<=par*1.6) stars = 2;
+  if(currentStageIdx !== null){
+    const key = 's'+currentStageIdx;
+    const prevBest = progress[key] || { stars:0, best:null };
+    progress[key] = { stars: Math.max(prevBest.stars, stars), best: (prevBest.best===null? timerSec : Math.min(prevBest.best,timerSec)) };
+    saveProgress(progress);
+  }
+  showVictory(stars, par);
+}
+
+function showVictory(stars, par){
+  document.getElementById('winStarsBox').textContent = '⭐'.repeat(stars) + '☆'.repeat(3-stars);
+  document.getElementById('winTimeVal').textContent = fmtTime(timerSec);
+  document.getElementById('winMistakesVal').textContent = mistakes;
+  document.getElementById('winHintsVal').textContent = hintsUsed;
+  document.getElementById('winTitle').textContent = stars===3 ? 'パーフェクト！' : (stars===2 ? 'よくできました！' : 'クリア！');
+  document.getElementById('winSubtitle').textContent = stars===3 ? 'かんぺきな空間認識力です！' : 'すばらしい論理的思考力です！';
+  const nextBtn = document.getElementById('winNextBtn');
+  nextBtn.style.display = (currentStageIdx !== null && currentStageIdx < TOTAL_STAGES-1) ? 'block' : 'none';
+  document.getElementById('victoryModal').classList.add('active');
+}
+document.getElementById('winMapBtn').addEventListener('click', () => {
+  document.getElementById('victoryModal').classList.remove('active');
+  setMode('adventure'); renderStageGrid();
+});
+document.getElementById('winRetryBtn').addEventListener('click', () => {
+  document.getElementById('victoryModal').classList.remove('active');
+  if(currentStageIdx !== null) startStage(currentStageIdx);
+  else startFreePlay();
+});
+document.getElementById('winNextBtn').addEventListener('click', () => {
+  document.getElementById('victoryModal').classList.remove('active');
+  if(currentStageIdx !== null && currentStageIdx < TOTAL_STAGES-1) startStage(currentStageIdx+1);
+});
+
+/* ================= Init ================= */
+renderStageGrid();
+setMode('adventure');
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2796 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>拼音小镇生活记 - 萌趣角色扮演与情境求助 (Pinyin Town Life)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@600;700;800;900&family=Outfit:wght@600;700;800;900&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #0ea5e9;
+    --primary-soft: #e0f2fe;
+    --primary-dark: #0284c7;
+    --secondary: #f59e0b;
+    --secondary-soft: #fef3c7;
+    --accent-pink: #ec4899;
+    --accent-pink-soft: #fce7f3;
+    --accent-green: #10b981;
+    --accent-green-soft: #d1fae5;
+    --accent-purple: #8b5cf6;
+    --accent-purple-soft: #ede9fe;
+    --accent-red: #ef4444;
+    --bg-page: #f8fafc;
+    --bg-card: #ffffff;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border-light: #e2e8f0;
+    --radius-xl: 28px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --radius-sm: 10px;
+    --shadow-soft: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+    --shadow-card: 0 14px 30px rgba(15, 23, 42, 0.07);
+    --shadow-pop: 0 6px 0 rgba(0, 0, 0, 0.12);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #e0f2fe;
+    font-family: "M PLUS Rounded 1c", "Outfit", "PingFang SC", system-ui, -apple-system, sans-serif;
+    color: var(--text-main);
+    touch-action: manipulation;
+  }
+
+  /* App Container */
+  #app {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: linear-gradient(180deg, #bae6fd 0%, #e0f2fe 35%, #f0fdf4 70%, #dcfce7 100%);
+    overflow: hidden;
+  }
+
+  /* Top Navigation Bar */
+  header.top-nav {
+    flex-shrink: 0;
+    height: 68px;
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 15px rgba(15, 23, 42, 0.05);
+    z-index: 50;
+  }
+
+  .nav-left, .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-btn {
+    height: 44px;
+    padding: 0 16px;
+    border-radius: 999px;
+    border: none;
+    background: #ffffff;
+    box-shadow: 0 4px 0 #cbd5e1, 0 6px 12px rgba(0, 0, 0, 0.06);
+    color: var(--text-main);
+    font-size: 15px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s, background-color 0.15s;
+  }
+  .nav-btn:hover { background: #f8fafc; }
+  .nav-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #cbd5e1, 0 2px 4px rgba(0, 0, 0, 0.06);
+  }
+  .nav-btn.icon-only {
+    width: 44px;
+    padding: 0;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .brand-icon {
+    font-size: 30px;
+    animation: gentle-bounce 3s infinite ease-in-out;
+  }
+  .brand-text h1 {
+    font-size: 18px;
+    font-weight: 900;
+    background: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.2;
+  }
+  .brand-text span {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 700;
+    display: block;
+  }
+
+  .star-pill {
+    background: #fef3c7;
+    border: 2px solid #fde68a;
+    box-shadow: 0 4px 0 #f59e0b, 0 4px 8px rgba(245, 158, 11, 0.2);
+    color: #b45309;
+    padding: 0 14px;
+    height: 44px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 900;
+    font-size: 16px;
+  }
+  .star-pill .star-icon {
+    font-size: 20px;
+    color: #f59e0b;
+    animation: spin-pulse 3s infinite linear;
+  }
+
+  /* Main Viewport Container */
+  main#viewport {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Screen Views */
+  .screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none !important;
+    flex-direction: column;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .screen.active {
+    display: flex !important;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* =========================================
+     SCREEN 1: TOWN MAP VIEW
+     ========================================= */
+  #townScreen {
+    padding: 20px 20px 80px 20px;
+    align-items: center;
+    background: radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
+  }
+
+  .town-header {
+    text-align: center;
+    margin-bottom: 24px;
+    max-width: 680px;
+    width: 100%;
+  }
+  .town-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 16px;
+    background: #ffffff;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #0284c7;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.12);
+    margin-bottom: 8px;
+  }
+  .town-title {
+    font-size: 28px;
+    font-weight: 900;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .town-subtitle {
+    font-size: 14px;
+    color: #475569;
+    font-weight: 700;
+  }
+  .town-hero-wrap {
+    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+  }
+  .town-hero-btn {
+    background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+    color: #ffffff;
+    border: none;
+    padding: 13px 28px;
+    border-radius: 999px;
+    font-size: 16px;
+    font-weight: 900;
+    box-shadow: 0 5px 0 #1d4ed8, 0 10px 20px rgba(37, 99, 235, 0.3);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s, filter 0.15s;
+    font-family: inherit;
+  }
+  .town-hero-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 0 #1d4ed8, 0 14px 24px rgba(37, 99, 235, 0.4);
+    filter: brightness(1.05);
+  }
+  .town-hero-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #1d4ed8, 0 4px 8px rgba(37, 99, 235, 0.25);
+  }
+
+  /* Town Grid */
+  .town-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 1100px;
+  }
+
+  .shop-card {
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    padding: 20px;
+    box-shadow: 0 10px 0 #cbd5e1, 0 15px 30px rgba(0, 0, 0, 0.06);
+    border: 3px solid #ffffff;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .shop-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 16px 0 #cbd5e1, 0 22px 35px rgba(0, 0, 0, 0.08);
+  }
+  .shop-card:active {
+    transform: translateY(4px);
+    box-shadow: 0 4px 0 #cbd5e1, 0 8px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  .shop-card.completed {
+    border-color: #86efac;
+    background: linear-gradient(180deg, #ffffff 0%, #f0fdf4 100%);
+  }
+
+  .shop-card-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 900;
+    background: #fee2e2;
+    color: #dc2626;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .shop-card.completed .shop-card-badge {
+    background: #dcfce7;
+    color: #15803d;
+  }
+
+  .shop-top-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+
+  .shop-avatar-box {
+    width: 68px;
+    height: 68px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38px;
+    flex-shrink: 0;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.07);
+    position: relative;
+  }
+
+  .shop-info h3 {
+    font-size: 19px;
+    font-weight: 900;
+    color: #0f172a;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .shop-info .resident-name {
+    font-size: 13px;
+    font-weight: 800;
+    color: #64748b;
+  }
+
+  /* Request Speech Bubble in Card */
+  .shop-bubble {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: var(--radius-md);
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    position: relative;
+    font-size: 13px;
+    font-weight: 800;
+    color: #334155;
+    line-height: 1.4;
+  }
+  .shop-bubble::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 24px;
+    border-width: 0 8px 8px 8px;
+    border-style: solid;
+    border-color: transparent transparent #e2e8f0 transparent;
+  }
+  .shop-bubble .target-word {
+    color: #0284c7;
+    font-size: 14px;
+    font-weight: 900;
+  }
+  .shop-bubble .pinyin-tag {
+    background: #e0f2fe;
+    color: #0369a1;
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: "Outfit", sans-serif;
+    margin-left: 4px;
+  }
+
+  .shop-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 10px;
+    border-top: 2px dashed #f1f5f9;
+  }
+  .shop-action-btn {
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+    color: #ffffff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 900;
+    box-shadow: 0 4px 0 #0369a1;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s, filter 0.15s;
+  }
+  .shop-action-btn:hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+    box-shadow: 0 5px 0 #0369a1;
+  }
+  .shop-action-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #0369a1;
+  }
+  .shop-card.completed .shop-action-btn {
+    background: linear-gradient(180deg, #4ade80 0%, #16a34a 100%);
+    box-shadow: 0 4px 0 #15803d;
+  }
+  .shop-card.completed .shop-action-btn:hover {
+    box-shadow: 0 5px 0 #15803d;
+  }
+  .shop-card.completed .shop-action-btn:active {
+    box-shadow: 0 1px 0 #15803d;
+  }
+
+  /* =========================================
+     SCREEN 2: QUEST PLAY SCREEN
+     ========================================= */
+  #questScreen {
+    background: #f8fafc;
+    flex-direction: column;
+    padding: 0;
+  }
+
+  /* Quest Stage Header */
+  .quest-topbar {
+    background: #ffffff;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #e2e8f0;
+    flex-shrink: 0;
+  }
+  .quest-steps {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .step-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    border: 2px solid #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 900;
+    color: #64748b;
+    transition: all 0.2s;
+  }
+  .step-dot.active {
+    background: #0284c7;
+    border-color: #0284c7;
+    color: #ffffff;
+    box-shadow: 0 0 0 4px #bae6fd;
+  }
+  .step-dot.done {
+    background: #22c55e;
+    border-color: #22c55e;
+    color: #ffffff;
+  }
+
+  .quest-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 16px 20px 40px 20px;
+    gap: 16px;
+  }
+
+  /* Resident Scene Banner */
+  .resident-scene {
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    padding: 20px;
+    box-shadow: var(--shadow-card);
+    border: 3px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scene-avatar-wrap {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+  }
+  .scene-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 58px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .scene-avatar.bounce {
+    animation: avatar-happy 0.8s ease;
+  }
+  .scene-emotion {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    width: 32px;
+    height: 32px;
+    background: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+  }
+
+  .scene-dialogue {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .scene-resident-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .scene-bubble {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: var(--radius-lg);
+    padding: 14px 18px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .scene-bubble:hover {
+    background: #f0f9ff;
+    border-color: #38bdf8;
+  }
+  .bubble-text-wrap {
+    flex: 1;
+  }
+  .bubble-speech-zh {
+    font-size: 18px;
+    font-weight: 900;
+    color: #0f172a;
+    line-height: 1.3;
+    margin-bottom: 3px;
+  }
+  .bubble-speech-pinyin {
+    font-size: 13px;
+    font-weight: 700;
+    color: #0284c7;
+    font-family: "Outfit", sans-serif;
+  }
+  .bubble-speech-ja {
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+    margin-top: 2px;
+  }
+  .bubble-speak-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #0284c7;
+    border: none;
+    color: #ffffff;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 0 #0369a1;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: transform 0.1s;
+  }
+  .bubble-speak-btn:active {
+    transform: translateY(2px);
+  }
+
+  /* Assembly Area: The Magic Pinyin Blender */
+  .assembly-card {
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    box-shadow: var(--shadow-card);
+    border: 3px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+  }
+
+  .assembly-goal-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    font-weight: 900;
+    color: #334155;
+    background: #f1f5f9;
+    padding: 8px 20px;
+    border-radius: 999px;
+  }
+  .goal-char-tag {
+    background: #0284c7;
+    color: #ffffff;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 14px;
+  }
+
+  /* The Slots Box */
+  .blender-box {
+    width: 100%;
+    max-width: 520px;
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+    border: 3px dashed #cbd5e1;
+    border-radius: var(--radius-xl);
+    padding: 24px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    position: relative;
+  }
+  .blender-plus {
+    font-size: 28px;
+    font-weight: 900;
+    color: #94a3b8;
+  }
+  .blender-equal {
+    font-size: 28px;
+    font-weight: 900;
+    color: #94a3b8;
+  }
+
+  /* Slot Element */
+  .pinyin-slot {
+    width: 110px;
+    height: 120px;
+    background: #ffffff;
+    border: 3px dashed #94a3b8;
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+  .pinyin-slot.initial-slot {
+    border-color: #38bdf8;
+    background: #f0f9ff;
+  }
+  .pinyin-slot.final-slot {
+    border-color: #fbbf24;
+    background: #fffbeb;
+  }
+  .pinyin-slot.active {
+    animation: slot-pulse 1.6s infinite ease-in-out;
+  }
+  .pinyin-slot.filled {
+    border-style: solid;
+    border-width: 3px;
+    transform: scale(1.04);
+  }
+  .slot-label {
+    font-size: 11px;
+    font-weight: 900;
+    color: #64748b;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+  }
+  .slot-content {
+    font-size: 38px;
+    font-weight: 900;
+    color: #0f172a;
+    font-family: "Outfit", sans-serif;
+    line-height: 1;
+  }
+  .slot-tone-accent {
+    font-size: 11px;
+    font-weight: 800;
+    color: #d97706;
+  }
+
+  /* Result Syllable Preview Box */
+  .result-slot {
+    width: 120px;
+    height: 120px;
+    background: #ffffff;
+    border: 3px solid #e2e8f0;
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+    position: relative;
+  }
+  .result-slot.ready {
+    border-color: #22c55e;
+    background: #f0fdf4;
+    animation: result-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .result-pinyin {
+    font-size: 32px;
+    font-weight: 900;
+    color: #15803d;
+    font-family: "Outfit", sans-serif;
+    line-height: 1;
+  }
+  .result-hanzi {
+    font-size: 22px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-top: 4px;
+  }
+
+  /* Options Palette / Trays */
+  .options-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .options-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 900;
+    color: #475569;
+    padding: 0 6px;
+  }
+
+  .options-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    width: 100%;
+  }
+
+  /* Pinyin Block Button */
+  .pinyin-block {
+    min-width: 90px;
+    height: 80px;
+    padding: 10px 16px;
+    background: #ffffff;
+    border-radius: var(--radius-lg);
+    border: 3px solid #cbd5e1;
+    box-shadow: 0 6px 0 #cbd5e1, 0 8px 14px rgba(0, 0, 0, 0.06);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.12s;
+    position: relative;
+  }
+  .pinyin-block:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 0 #cbd5e1, 0 12px 18px rgba(0, 0, 0, 0.08);
+  }
+  .pinyin-block:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #cbd5e1, 0 4px 6px rgba(0, 0, 0, 0.06);
+  }
+  .pinyin-block.initial-type {
+    border-color: #38bdf8;
+    box-shadow: 0 6px 0 #0284c7, 0 8px 14px rgba(2, 132, 199, 0.15);
+    background: #f0f9ff;
+  }
+  .pinyin-block.final-type {
+    border-color: #f59e0b;
+    box-shadow: 0 6px 0 #d97706, 0 8px 14px rgba(245, 158, 11, 0.15);
+    background: #fffbeb;
+  }
+  .pinyin-block.used {
+    opacity: 0.35;
+    pointer-events: none;
+    transform: none;
+    box-shadow: 0 2px 0 #cbd5e1;
+  }
+  .pinyin-block.hint-glow {
+    animation: hint-glow 1.2s infinite alternate;
+  }
+
+  .block-symbol {
+    font-size: 32px;
+    font-weight: 900;
+    color: #0f172a;
+    font-family: "Outfit", sans-serif;
+    line-height: 1;
+  }
+  .block-sub {
+    font-size: 11px;
+    font-weight: 800;
+    color: #64748b;
+    margin-top: 4px;
+  }
+
+  /* Delivery / Roleplay Dialogue Stage */
+  .delivery-card {
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    box-shadow: var(--shadow-card);
+    border: 3px solid #bbf7d0;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 18px;
+    animation: scale-up 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .delivery-card.active {
+    display: flex;
+  }
+
+  .item-reveal-box {
+    width: 140px;
+    height: 140px;
+    border-radius: 36px;
+    background: radial-gradient(circle, #fef08a 0%, #fde047 60%, #facc15 100%);
+    box-shadow: 0 10px 30px rgba(234, 179, 8, 0.35), 0 0 0 8px rgba(254, 240, 138, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 76px;
+    position: relative;
+    animation: item-float 2.5s infinite ease-in-out;
+  }
+
+  .item-title-wrap h2 {
+    font-size: 26px;
+    font-weight: 900;
+    color: #0f172a;
+    margin-bottom: 4px;
+  }
+  .item-title-wrap .item-pinyin {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0284c7;
+    font-family: "Outfit", sans-serif;
+  }
+
+  /* Dialogue Buttons */
+  .dialogue-prompt-box {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .prompt-instruction {
+    font-size: 14px;
+    font-weight: 800;
+    color: #475569;
+  }
+
+  .dialogue-btn {
+    width: 100%;
+    padding: 16px 20px;
+    border-radius: var(--radius-xl);
+    border: none;
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 900;
+    box-shadow: 0 8px 0 #0369a1, 0 12px 20px rgba(2, 132, 199, 0.25);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+  .dialogue-btn:hover {
+    background: linear-gradient(180deg, #60a5fa 0%, #2563eb 100%);
+    box-shadow: 0 8px 0 #1d4ed8;
+  }
+  .dialogue-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 4px 0 #0369a1;
+  }
+  .dialogue-btn .sub-pinyin {
+    font-size: 14px;
+    font-weight: 700;
+    opacity: 0.9;
+    font-family: "Outfit", sans-serif;
+  }
+
+  .reply-branches {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+  .reply-branches.active {
+    display: flex;
+  }
+
+  .reply-btn {
+    padding: 14px 18px;
+    border-radius: var(--radius-lg);
+    background: #ffffff;
+    border: 3px solid #cbd5e1;
+    box-shadow: 0 5px 0 #cbd5e1;
+    font-size: 17px;
+    font-weight: 900;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .reply-btn:hover {
+    border-color: #10b981;
+    background: #f0fdf4;
+    box-shadow: 0 5px 0 #059669;
+  }
+  .reply-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #059669;
+  }
+  .reply-btn.primary {
+    border-color: #10b981;
+    background: #ecfdf5;
+    box-shadow: 0 5px 0 #059669;
+    color: #065f46;
+  }
+
+  /* Quest Success Celebration Overlay */
+  .celebration-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .celebration-modal.active {
+    display: flex;
+  }
+
+  .celebration-card {
+    width: 100%;
+    max-width: 440px;
+    background: #ffffff;
+    border-radius: 36px;
+    padding: 32px 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    border: 4px solid #fef08a;
+    animation: scale-up 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .badge-reveal-box {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fde047 0%, #eab308 100%);
+    box-shadow: 0 10px 25px rgba(234, 179, 8, 0.4), 0 0 0 10px rgba(254, 240, 138, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 54px;
+    animation: badge-spin 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .celebration-card h2 {
+    font-size: 26px;
+    font-weight: 900;
+    color: #0f172a;
+  }
+  .celebration-card p {
+    font-size: 15px;
+    font-weight: 700;
+    color: #64748b;
+    line-height: 1.5;
+  }
+
+  .celebration-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  /* Modals: Album & Sound Chart */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.active {
+    display: flex;
+  }
+
+  .modal-sheet {
+    width: 100%;
+    max-width: 640px;
+    max-height: 85vh;
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+    border: 3px solid #e2e8f0;
+  }
+  .modal-header {
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 2px solid #e2e8f0;
+  }
+  .modal-header h3 {
+    font-size: 20px;
+    font-weight: 900;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .modal-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+  }
+
+  /* Stamp Collection Grid */
+  .album-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 14px;
+  }
+  .album-item {
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: var(--radius-lg);
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    transition: all 0.2s;
+  }
+  .album-item.unlocked {
+    background: #f0fdf4;
+    border-style: solid;
+    border-color: #86efac;
+    box-shadow: 0 6px 12px rgba(34, 197, 94, 0.1);
+  }
+  .album-badge-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #94a3b8;
+  }
+  .album-item.unlocked .album-badge-icon {
+    background: radial-gradient(circle, #fef08a 0%, #fde047 100%);
+    box-shadow: 0 4px 10px rgba(234, 179, 8, 0.3);
+  }
+  .album-title {
+    font-size: 13px;
+    font-weight: 900;
+    color: #1e293b;
+  }
+  .album-replay-btn {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid #86efac;
+    background: #ffffff;
+    color: #16a34a;
+    cursor: pointer;
+    margin-top: 2px;
+  }
+
+  /* Sound Chart Grid */
+  .chart-group-title {
+    font-size: 15px;
+    font-weight: 900;
+    color: #0284c7;
+    margin: 14px 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .chart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+    gap: 8px;
+  }
+  .chart-tile {
+    height: 52px;
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: 900;
+    font-size: 18px;
+    font-family: "Outfit", sans-serif;
+    color: #0f172a;
+    box-shadow: 0 3px 0 #cbd5e1;
+    transition: transform 0.1s;
+  }
+  .chart-tile:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #cbd5e1;
+  }
+
+  /* Canvas Particle FX */
+  #fxCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 120;
+  }
+
+  /* Friendly Pointer Hand */
+  #guidePointer {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    pointer-events: none;
+    z-index: 90;
+    font-size: 38px;
+    display: none;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: hand-bounce 1s infinite alternate ease-in-out;
+  }
+
+  /* Keyframe Animations */
+  @keyframes gentle-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  @keyframes spin-pulse {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.15); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+  @keyframes slot-pulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.4); }
+    50% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(2, 132, 199, 0.15); }
+  }
+  @keyframes result-pop {
+    0% { transform: scale(0.6); opacity: 0; }
+    70% { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes hint-glow {
+    0% { box-shadow: 0 0 0 2px #38bdf8, 0 6px 0 #0284c7; }
+    100% { box-shadow: 0 0 0 8px rgba(56, 189, 248, 0.6), 0 6px 0 #0284c7; }
+  }
+  @keyframes avatar-happy {
+    0%, 100% { transform: scale(1); }
+    30% { transform: scale(1.2) rotate(-8deg); }
+    60% { transform: scale(1.2) rotate(8deg); }
+  }
+  @keyframes item-float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-8px) rotate(4deg); }
+  }
+  @keyframes scale-up {
+    0% { transform: scale(0.7); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes badge-spin {
+    0% { transform: rotate(-180deg) scale(0); }
+    100% { transform: rotate(0deg) scale(1); }
+  }
+  @keyframes hand-bounce {
+    0% { transform: translateY(0) scale(1); }
+    100% { transform: translateY(-12px) scale(1.1); }
+  }
+
+  /* Responsive Adjustments */
+  @media (max-width: 640px) {
+    header.top-nav { padding: 8px 12px; height: 60px; }
+    .nav-btn { height: 38px; padding: 0 12px; font-size: 13px; }
+    .nav-btn.icon-only { width: 38px; }
+    .star-pill { height: 38px; padding: 0 10px; font-size: 14px; }
+    .brand-text h1 { font-size: 16px; }
+    .town-title { font-size: 22px; }
+    .town-grid { grid-template-columns: 1fr; }
+    .pinyin-slot { width: 90px; height: 100px; }
+    .slot-content { font-size: 28px; }
+    .result-slot { width: 95px; height: 100px; }
+    .result-pinyin { font-size: 26px; }
+    .blender-box { gap: 8px; padding: 16px 10px; }
+    .pinyin-block { min-width: 76px; height: 72px; padding: 6px 10px; }
+    .block-symbol { font-size: 26px; }
+    .scene-avatar-wrap { width: 72px; height: 72px; }
+    .scene-avatar { width: 72px; height: 72px; font-size: 42px; border-radius: 20px; }
+    .bubble-speech-zh { font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="index.html" class="nav-btn icon-only" title="返回大厅 (Return to Arcade)" id="btnHome">🏠</a>
+      <div class="brand-logo" onclick="switchScreen('town')">
+        <div class="brand-icon">🏡</div>
+        <div class="brand-text">
+          <h1 id="uiLogoTitle">拼音小镇生活记</h1>
+          <span id="uiLogoSub">Pinyin Town Life · 角色扮演与情境求助</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-right">
+      <button class="nav-btn icon-only" id="btnAudioToggle" title="音效开关" onclick="audio.toggleMute()">🔊</button>
+      <button class="nav-btn icon-only" id="btnSoundChart" title="拼音宝典 (Pinyin Chart)" onclick="openModal('chartModal')">📖</button>
+      <button class="nav-btn icon-only" id="btnAlbum" title="纪念册 (Stamp Album)" onclick="openModal('albumModal')">🎖️</button>
+      <button class="nav-btn" id="btnLangToggle" onclick="toggleLanguage()">🇨🇳 中文</button>
+      <div class="star-pill">
+        <span class="star-icon">⭐</span>
+        <span id="starCounter">0</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Viewport -->
+  <main id="viewport">
+    
+    <!-- SCREEN 1: TOWN MAP -->
+    <div class="screen active" id="townScreen">
+      <div class="town-header">
+        <div class="town-badge" id="uiTownBadge">🌈 动物朋友们的愿望与求助</div>
+        <h2 class="town-title" id="uiTownTitle">欢迎来到拼音小镇！</h2>
+        <p class="town-subtitle" id="uiTownSubtitle">选一位遇到困难的小动物邻居，帮他们拼出想要的物品吧！</p>
+        <div class="town-hero-wrap">
+          <button class="town-hero-btn" onclick="startQuest(QUESTS_DATA[0].id)" id="btnTownHeroStart">
+            <span style="font-size:22px;">🐻</span>
+            <span id="uiTownHeroStart">▶ 立即开始游戏 (小熊面包房)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 7 Shops Grid -->
+      <div class="town-grid" id="townGrid"></div>
+    </div>
+
+    <!-- SCREEN 2: QUEST PLAY SCREEN -->
+    <div class="screen" id="questScreen">
+      <div class="quest-topbar">
+        <button class="nav-btn" onclick="switchScreen('town')" id="uiBtnBackTown">⬅️ 回小镇</button>
+        <div class="quest-steps" id="questStepsIndicator"></div>
+        <div class="nav-btn icon-only" onclick="playCurrentQuestPrompt()" title="重听需求">👂</div>
+      </div>
+
+      <div class="quest-body">
+        <!-- Resident Scene Banner -->
+        <div class="resident-scene" id="residentScene">
+          <div class="scene-avatar-wrap">
+            <div class="scene-avatar" id="questResidentAvatar">🐻</div>
+            <div class="scene-emotion" id="questResidentEmotion">😋</div>
+          </div>
+          <div class="scene-dialogue">
+            <div class="scene-resident-title">
+              <span id="questResidentName">小熊波波</span> · <span id="questShopName">面包房</span>
+            </div>
+            <div class="scene-bubble" onclick="playCurrentQuestPrompt()">
+              <div class="bubble-text-wrap">
+                <div class="bubble-speech-zh" id="questSpeechZh">肚子好饿呀，我想吃面包！</div>
+                <div class="bubble-speech-pinyin" id="questSpeechPinyin">Nǐ hǎo! Wǒ xiǎng chī miànbāo!</div>
+                <div class="bubble-speech-ja" id="questSpeechJa">お腹がすいたよ、パンが食べたいな！</div>
+              </div>
+              <button class="bubble-speak-btn" title="朗读">📢</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assembly Card (Pinyin Blender) -->
+        <div class="assembly-card" id="assemblyCard">
+          <div class="assembly-goal-bar">
+            <span id="uiAssemblingLabel">正在拼装：</span>
+            <span class="goal-char-tag" id="currentSyllableChar">面 (miàn)</span>
+            <span style="font-size:12px; color:#64748b;" id="currentSyllableProgress">第 1 / 2 音节</span>
+          </div>
+
+          <div class="blender-box" id="blenderBox">
+            <!-- Initial Slot -->
+            <div class="pinyin-slot initial-slot active" id="slotInitial" onclick="handleSlotClick('initial')">
+              <div class="slot-label" id="uiLabelInitial">声母 (Initial)</div>
+              <div class="slot-content" id="slotInitialVal">?</div>
+            </div>
+
+            <div class="blender-plus">+</div>
+
+            <!-- Final Slot -->
+            <div class="pinyin-slot final-slot" id="slotFinal" onclick="handleSlotClick('final')">
+              <div class="slot-label" id="uiLabelFinal">韵母与声调</div>
+              <div class="slot-content" id="slotFinalVal">?</div>
+            </div>
+
+            <div class="blender-equal">=</div>
+
+            <!-- Result Slot -->
+            <div class="result-slot" id="slotResult">
+              <div class="result-pinyin" id="slotResultPinyin">...</div>
+              <div class="result-hanzi" id="slotResultHanzi">?</div>
+            </div>
+          </div>
+
+          <!-- Options Palette -->
+          <div class="options-section">
+            <div class="options-header">
+              <span id="uiOptionsPrompt">👇 点击或拖拽拼音积木放入上方方框：</span>
+              <span style="font-size:12px; color:#0284c7; cursor:pointer;" onclick="playCurrentHintAudio()">💡 听音提示</span>
+            </div>
+            <div class="options-grid" id="optionsGrid"></div>
+          </div>
+        </div>
+
+        <!-- Delivery & Roleplay Card (Revealed after assembling all syllables) -->
+        <div class="delivery-card" id="deliveryCard">
+          <div class="item-reveal-box" id="deliveryItemIcon">🍞</div>
+          <div class="item-title-wrap">
+            <h2 id="deliveryItemName">香喷喷的面包</h2>
+            <div class="item-pinyin" id="deliveryItemPinyin">miàn bāo · 面包</div>
+          </div>
+
+          <div class="dialogue-prompt-box">
+            <div class="prompt-instruction" id="uiPromptDeliver">
+              🎉 拼装完成啦！请送给好朋友并表达礼貌日常问候：
+            </div>
+
+            <!-- Deliver Action Button -->
+            <button class="dialogue-btn" id="btnDeliverAction" onclick="performDeliverAction()">
+              <span>🎁</span>
+              <span id="txtDeliverAction">给你面包！</span>
+              <span class="sub-pinyin">(Gěi nǐ miànbāo!)</span>
+            </button>
+
+            <!-- Polite Branch choices (Revealed after delivering) -->
+            <div class="reply-branches" id="replyBranches">
+              <div style="font-size:13px; font-weight:800; color:#64748b; margin-top:6px;" id="uiLabelReply">
+                🗣️ 小熊说了“谢谢”，现在轮到你回应啦：
+              </div>
+              <button class="reply-btn primary" onclick="handlePoliteResponse('youre_welcome')">
+                <span>💚 不客气！ <small style="font-family:Outfit; color:#059669;">(Bú kèqi! / どういたしまして)</small></span>
+                <span>✨</span>
+              </button>
+              <button class="reply-btn" onclick="handlePoliteResponse('goodbye')">
+                <span>👋 再见！ <small style="font-family:Outfit; color:#64748b;">(Zàijiàn! / またね)</small></span>
+                <span>⭐</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Modal: Stamp Album (友谊纪念册) -->
+<div class="modal-overlay" id="albumModal">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <h3 id="uiAlbumModalTitle">🎖️ 友谊勋章纪念册 (Friendship Stamps)</h3>
+      <button class="nav-btn icon-only" onclick="closeModal('albumModal')">✕</button>
+    </div>
+    <div class="modal-content">
+      <p style="font-size:13px; color:#64748b; font-weight:700; margin-bottom:16px;" id="uiAlbumDesc">
+        每帮助一位居民拼出愿望，就会得到专属勋章与感谢明信片哦！点击可重复收听好友原声！
+      </p>
+      <div class="album-grid" id="albumGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Pinyin Sound Chart (拼音宝典) -->
+<div class="modal-overlay" id="chartModal">
+  <div class="modal-sheet">
+    <div class="modal-header">
+      <h3 id="uiChartModalTitle">📖 拼音听音百宝箱 (Pinyin Soundboard)</h3>
+      <button class="nav-btn icon-only" onclick="closeModal('chartModal')">✕</button>
+    </div>
+    <div class="modal-content" id="chartModalContent">
+      <div class="chart-group-title">🟦 声母 (Initials · 23个)</div>
+      <div class="chart-grid" id="initialsGrid"></div>
+
+      <div class="chart-group-title">🟨 单韵母与基础复韵母 (Finals)</div>
+      <div class="chart-grid" id="finalsGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Quest Celebration Banner -->
+<div class="celebration-modal" id="celebrationModal">
+  <div class="celebration-card">
+    <div class="badge-reveal-box" id="celebrationBadgeIcon">🏅</div>
+    <h2 id="celebrationTitle">太棒了！</h2>
+    <p id="celebrationMsg">你帮助了小熊波波，掌握了「面包 miànbāo」的拼音与礼貌表达！</p>
+    <div class="celebration-actions">
+      <button class="dialogue-btn" onclick="nextOrReturnQuest()" id="btnCelebrationNext">
+        <span>⭐</span>
+        <span id="uiBtnNextTown">获得 3 颗星星 · 回小镇</span>
+      </button>
+      <button class="nav-btn" onclick="replayCurrentQuest()" style="width:100%; justify-content:center;" id="uiBtnReplay">
+        🔄 再次体验本关
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Friendly Pointing Hand for Toddlers -->
+<div id="guidePointer">👆</div>
+
+<!-- Confetti Canvas -->
+<canvas id="fxCanvas"></canvas>
+
+<script>
+/* =========================================================
+   AUDIO ENGINE (Multi-Tier Robust Audio)
+   ========================================================= */
+class TownAudioEngine {
+  constructor() {
+    this.ctx = null;
+    this.muted = false;
+    this.currentAudio = null;
+    this.zhVoice = null;
+    this.jaVoice = null;
+    this.initSpeech();
+  }
+
+  initSpeech() {
+    if ('speechSynthesis' in window) {
+      const loadVoices = () => {
+        const voices = window.speechSynthesis.getVoices();
+        if (voices && voices.length > 0) {
+          this.zhVoice = voices.find(v => v.lang === 'zh-CN' || v.lang === 'zh_CN') ||
+                         voices.find(v => v.lang.startsWith('zh')) || null;
+          this.jaVoice = voices.find(v => v.lang === 'ja-JP' || v.lang === 'ja_JP') ||
+                         voices.find(v => v.lang.startsWith('ja')) || null;
+        }
+      };
+      loadVoices();
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+  }
+
+  ensureContext() {
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) this.ctx = new AudioCtx();
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  }
+
+  toggleMute() {
+    this.muted = !this.muted;
+    const btn = document.getElementById('btnAudioToggle');
+    if (btn) btn.textContent = this.muted ? '🔇' : '🔊';
+  }
+
+  // Play natural neural audio MP3
+  playFile(fname, onEnd = null) {
+    if (this.muted) { if (onEnd) onEnd(); return; }
+    this.ensureContext();
+
+    if (this.currentAudio) {
+      try {
+        this.currentAudio.pause();
+        this.currentAudio.currentTime = 0;
+      } catch (e) {}
+    }
+
+    // Try audio/town/ first, then fallback to audio/zh/
+    const cleanName = encodeURIComponent(fname);
+    const url = 'audio/town/' + cleanName + '.mp3';
+    const sound = new Audio(url);
+    this.currentAudio = sound;
+    let played = false;
+
+    sound.onended = () => { if (onEnd) onEnd(); };
+    sound.onplay = () => { played = true; };
+    sound.play().catch(() => {
+      // Fallback try audio/zh/
+      const fallbackName = fname.replace(/^sym_/, '');
+      const zhUrl = 'audio/zh/' + encodeURIComponent(fallbackName) + '.mp3';
+      const zhSound = new Audio(zhUrl);
+      this.currentAudio = zhSound;
+      zhSound.onended = () => { if (onEnd) onEnd(); };
+      zhSound.play().catch(() => {
+        // Fallback to speech synthesis
+        this.speakZh(getPinyinName(fallbackName) || fallbackName, onEnd);
+      });
+    });
+  }
+
+  // Fallback speech synthesis
+  speakZh(text, onEnd = null) {
+    if (this.muted) { if (onEnd) onEnd(); return; }
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'zh-CN';
+      utter.rate = 0.88;
+      utter.pitch = 1.1;
+      if (this.zhVoice) utter.voice = this.zhVoice;
+      utter.onend = () => { if (onEnd) onEnd(); };
+      utter.onerror = () => { if (onEnd) onEnd(); };
+      window.speechSynthesis.speak(utter);
+    } else {
+      if (onEnd) onEnd();
+    }
+  }
+
+  speakJa(text, onEnd = null) {
+    if (this.muted) { if (onEnd) onEnd(); return; }
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'ja-JP';
+      utter.rate = 0.9;
+      if (this.jaVoice) utter.voice = this.jaVoice;
+      utter.onend = () => { if (onEnd) onEnd(); };
+      utter.onerror = () => { if (onEnd) onEnd(); };
+      window.speechSynthesis.speak(utter);
+    } else {
+      if (onEnd) onEnd();
+    }
+  }
+
+  // Procedural Web Audio Sound Effects
+  playSfx(type) {
+    if (this.muted) return;
+    this.ensureContext();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    if (type === 'pop') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(320, now);
+      osc.frequency.exponentialRampToValueAtTime(780, now + 0.08);
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
+      osc.start(now);
+      osc.stop(now + 0.1);
+    } else if (type === 'snap') {
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(520, now);
+      osc.frequency.exponentialRampToValueAtTime(950, now + 0.12);
+      gain.gain.setValueAtTime(0.25, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+      osc.start(now);
+      osc.stop(now + 0.15);
+    } else if (type === 'blend') {
+      // Magic shimmer
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.linearRampToValueAtTime(880, now + 0.15);
+      osc.frequency.linearRampToValueAtTime(1320, now + 0.3);
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.35);
+      osc.start(now);
+      osc.stop(now + 0.35);
+    } else if (type === 'wiggle') {
+      // Soft boing for error without harshness
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(240, now);
+      osc.frequency.linearRampToValueAtTime(180, now + 0.15);
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+      osc.start(now);
+      osc.stop(now + 0.2);
+    } else if (type === 'fanfare') {
+      // Little triumphant chord
+      const freqs = [523.25, 659.25, 783.99, 1046.50];
+      freqs.forEach((f, idx) => {
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(f, now + idx * 0.08);
+        g.gain.setValueAtTime(0.15, now + idx * 0.08);
+        g.gain.linearRampToValueAtTime(0.001, now + idx * 0.08 + 0.35);
+        o.connect(g);
+        g.connect(this.ctx.destination);
+        o.start(now + idx * 0.08);
+        o.stop(now + idx * 0.08 + 0.35);
+      });
+    } else if (type === 'chew') {
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(300, now);
+      osc.frequency.exponentialRampToValueAtTime(160, now + 0.1);
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
+      osc.start(now);
+      osc.stop(now + 0.12);
+    }
+  }
+}
+
+const audio = new TownAudioEngine();
+
+/* =========================================================
+   DATA DEFINITION: 7 ANIMAL RESIDENTS & QUESTS
+   ========================================================= */
+const QUESTS_DATA = [
+  {
+    id: "bear",
+    nameZh: "小熊波波",
+    nameJa: "クマのボボ",
+    shopZh: "小熊面包房",
+    shopJa: "ボボのパン屋さん",
+    avatar: "🐻",
+    badgeIcon: "🍞",
+    badgeNameZh: "面包大师勋章",
+    badgeNameJa: "パンマスターバッジ",
+    targetWordZh: "面包",
+    targetWordJa: "パン",
+    targetPinyin: "miàn bāo",
+    reqAudio: "bear_req",
+    thanksAudio: "bear_thanks",
+    giveAudio: "give_miànbāo",
+    speechZh: "小镇新朋友，你好！我肚子好饿呀，好想吃香喷喷的面包！",
+    speechPinyin: "Nǐ hǎo! Wǒ xiǎng chī miànbāo!",
+    speechJa: "お腹がぺこぺこだよ！焼きたてのおいしいパンが食べたいな！",
+    itemIcon: "🍞",
+    itemNameZh: "香脆可颂面包",
+    itemNameJa: "サクサクのクロワッサン",
+    syllables: [
+      {
+        char: "面",
+        pinyin: "miàn",
+        initial: { sym: "m", name: "摸", audioKey: "sym_m", distractors: ["b", "p", "d"] },
+        final: { sym: "iàn", name: "面 (四声)", tone: 4, audioKey: "sym_ian4", distractors: ["āo", "íng", "uǒ"] },
+        blendAudio: "m_ian_blend"
+      },
+      {
+        char: "包",
+        pinyin: "bāo",
+        initial: { sym: "b", name: "玻", audioKey: "sym_b", distractors: ["m", "p", "t"] },
+        final: { sym: "āo", name: "包 (一声)", tone: 1, audioKey: "sym_ao1", distractors: ["iàn", "uǒ", "ǎi"] },
+        blendAudio: "b_ao_blend"
+      }
+    ]
+  },
+  {
+    id: "bunny",
+    nameZh: "小兔米米",
+    nameJa: "ウサギのミミ",
+    shopZh: "小兔水果铺",
+    shopJa: "ミミのくだもの屋さん",
+    avatar: "🐰",
+    badgeIcon: "🍎",
+    badgeNameZh: "甜果勋章",
+    badgeNameJa: "スウィートフルーツバッジ",
+    targetWordZh: "苹果",
+    targetWordJa: "リンゴ",
+    targetPinyin: "píng guǒ",
+    reqAudio: "bunny_req",
+    thanksAudio: "bunny_thanks",
+    giveAudio: "give_píngguǒ",
+    speechZh: "你好呀！小兔今天想吃红红的大苹果！",
+    speechPinyin: "Nǐ hǎo ya! Xiǎng chī hóng píngguǒ!",
+    speechJa: "こんにちは！真っ赤でおいしいリンゴが食べたいな！",
+    itemIcon: "🍎",
+    itemNameZh: "红润甜苹果",
+    itemNameJa: "ジューシーな赤リンゴ",
+    syllables: [
+      {
+        char: "苹",
+        pinyin: "píng",
+        initial: { sym: "p", name: "坡", audioKey: "sym_p", distractors: ["b", "m", "f"] },
+        final: { sym: "íng", name: "平 (二声)", tone: 2, audioKey: "sym_ing2", distractors: ["uǒ", "iú", "āo"] },
+        blendAudio: "p_ing_blend"
+      },
+      {
+        char: "果",
+        pinyin: "guǒ",
+        initial: { sym: "g", name: "哥", audioKey: "sym_g", distractors: ["k", "h", "p"] },
+        final: { sym: "uǒ", name: "果 (三声)", tone: 3, audioKey: "sym_uo3", distractors: ["íng", "iàn", "uā"] },
+        blendAudio: "g_uo_blend"
+      }
+    ]
+  },
+  {
+    id: "cat",
+    nameZh: "小猫咪亚",
+    nameJa: "子猫のミア",
+    shopZh: "猫咪饮品吧",
+    shopJa: "ミアのミルクバー",
+    avatar: "🐱",
+    badgeIcon: "🥛",
+    badgeNameZh: "纯白奶香勋章",
+    badgeNameJa: "ピュアミルクバッジ",
+    targetWordZh: "牛奶",
+    targetWordJa: "ミルク",
+    targetPinyin: "niú nǎi",
+    reqAudio: "cat_req",
+    thanksAudio: "cat_thanks",
+    giveAudio: "give_niúnǎi",
+    speechZh: "喵呜~ 玩耍了一上午，我想喝一盒甜甜的牛奶！",
+    speechPinyin: "Miāo~ Wǒ xiǎng hē niúnǎi!",
+    speechJa: "にゃーん！いっぱい遊んだから、甘くておいしいミルクが飲みたいにゃ！",
+    itemIcon: "🥛",
+    itemNameZh: "浓醇鲜牛奶",
+    itemNameJa: "あま〜い新鮮ミルク",
+    syllables: [
+      {
+        char: "牛",
+        pinyin: "niú",
+        initial: { sym: "n", name: "讷", audioKey: "sym_n", distractors: ["l", "m", "d"] },
+        final: { sym: "iú", name: "牛 (二声)", tone: 2, audioKey: "sym_iu2", distractors: ["ǎi", "āo", "uǐ"] },
+        blendAudio: "n_iu_blend"
+      },
+      {
+        char: "奶",
+        pinyin: "nǎi",
+        initial: { sym: "n", name: "讷", audioKey: "sym_n", distractors: ["l", "b", "t"] },
+        final: { sym: "ǎi", name: "奶 (三声)", tone: 3, audioKey: "sym_ai3", distractors: ["iú", "iàn", "ēi"] },
+        blendAudio: "n_ai_blend"
+      }
+    ]
+  },
+  {
+    id: "puppy",
+    nameZh: "小狗旺旺",
+    nameJa: "子犬のワンワン",
+    shopZh: "小狗书屋",
+    shopJa: "ワンワンの文房具屋さん",
+    avatar: "🐶",
+    badgeIcon: "🎒",
+    badgeNameZh: "好学小星勋章",
+    badgeNameJa: "がくしゅうスターバッジ",
+    targetWordZh: "书包",
+    targetWordJa: "リュック",
+    targetPinyin: "shū bāo",
+    reqAudio: "puppy_req",
+    thanksAudio: "puppy_thanks",
+    giveAudio: "give_shūbāo",
+    speechZh: "汪汪！明天要去动物学校，我想背上漂亮的新书包！",
+    speechPinyin: "Wǒ xiǎng bèi xīn shūbāo!",
+    speechJa: "わんわん！明日から学校だワン、かっこいい新しいランドセルがほしいな！",
+    itemIcon: "🎒",
+    itemNameZh: "阳光新书包",
+    itemNameJa: "わくわくランドセル",
+    syllables: [
+      {
+        char: "书",
+        pinyin: "shū",
+        initial: { sym: "sh", name: "狮", audioKey: "sym_sh", distractors: ["s", "ch", "zh"] },
+        final: { sym: "ū", name: "书 (一声)", tone: 1, audioKey: "sym_u1", distractors: ["āo", "iú", "á"] },
+        blendAudio: "sh_u_blend"
+      },
+      {
+        char: "包",
+        pinyin: "bāo",
+        initial: { sym: "b", name: "玻", audioKey: "sym_b", distractors: ["d", "p", "sh"] },
+        final: { sym: "āo", name: "包 (一声)", tone: 1, audioKey: "sym_ao1", distractors: ["ū", "uǐ", "iàn"] },
+        blendAudio: "b_ao_blend"
+      }
+    ]
+  },
+  {
+    id: "panda",
+    nameZh: "熊猫盼盼",
+    nameJa: "パンダのパンパン",
+    shopZh: "熊猫冰果亭",
+    shopJa: "パンパンのすいか亭",
+    avatar: "🐼",
+    badgeIcon: "🍉",
+    badgeNameZh: "清凉夏日勋章",
+    badgeNameJa: "ひんやり夏バッジ",
+    targetWordZh: "西瓜",
+    targetWordJa: "スイカ",
+    targetPinyin: "xī guā",
+    reqAudio: "panda_req",
+    thanksAudio: "panda_thanks",
+    giveAudio: "give_xīguā",
+    speechZh: "哈喽！今天天气好热，好想吃一片凉爽爽的大西瓜！",
+    speechPinyin: "Hǎo xiǎng chī dà xīguā!",
+    speechJa: "ハロー！今日はとっても暑いね、冷たくて甘いスイカが食べたいよ！",
+    itemIcon: "🍉",
+    itemNameZh: "清凉甜西瓜",
+    itemNameJa: "シャキシャキの冷やしスイカ",
+    syllables: [
+      {
+        char: "西",
+        pinyin: "xī",
+        initial: { sym: "x", name: "西", audioKey: "sym_x", distractors: ["s", "q", "j"] },
+        final: { sym: "ī", name: "衣 (一声)", tone: 1, audioKey: "sym_i1", distractors: ["uā", "āo", "uǐ"] },
+        blendAudio: "x_i_blend"
+      },
+      {
+        char: "瓜",
+        pinyin: "guā",
+        initial: { sym: "g", name: "哥", audioKey: "sym_g", distractors: ["k", "h", "x"] },
+        final: { sym: "uā", name: "瓜 (一声)", tone: 1, audioKey: "sym_ua1", distractors: ["ī", "uǒ", "ǎi"] },
+        blendAudio: "g_ua_blend"
+      }
+    ]
+  },
+  {
+    id: "bird",
+    nameZh: "小鸟啾啾",
+    nameJa: "小鳥のチュチュ",
+    shopZh: "小鸟野餐角",
+    shopJa: "チュチュのピクニック広場",
+    avatar: "🐦",
+    badgeIcon: "🥤",
+    badgeNameZh: "活力水滴勋章",
+    badgeNameJa: "げんきウォーターバッジ",
+    targetWordZh: "水杯",
+    targetWordJa: "みずのボトル",
+    targetPinyin: "shuǐ bēi",
+    reqAudio: "bird_req",
+    thanksAudio: "bird_thanks",
+    giveAudio: "give_shuǐbēi",
+    speechZh: "啾啾！去野餐啦，我想要一个装满水的水杯！",
+    speechPinyin: "Xūyào yí gè shuǐbēi!",
+    speechJa: "ピピピッ！ピクニックに行くんだ、お水がいっぱい入るボトルがほしいな！",
+    itemIcon: "🥤",
+    itemNameZh: "炫彩便携水杯",
+    itemNameJa: "カラフルな水筒",
+    syllables: [
+      {
+        char: "水",
+        pinyin: "shuǐ",
+        initial: { sym: "sh", name: "狮", audioKey: "sym_sh", distractors: ["s", "ch", "b"] },
+        final: { sym: "uǐ", name: "水 (三声)", tone: 3, audioKey: "sym_ui3", distractors: ["ēi", "uā", "iú"] },
+        blendAudio: "sh_ui_blend"
+      },
+      {
+        char: "杯",
+        pinyin: "bēi",
+        initial: { sym: "b", name: "玻", audioKey: "sym_b", distractors: ["p", "d", "sh"] },
+        final: { sym: "ēi", name: "杯 (一声)", tone: 1, audioKey: "sym_ei1", distractors: ["uǐ", "iàn", "āo"] },
+        blendAudio: "b_ei_blend"
+      }
+    ]
+  },
+  {
+    id: "elephant",
+    nameZh: "大象伯伯",
+    nameJa: "ゾウのおじさん",
+    shopZh: "大象茶艺轩",
+    shopJa: "ゾウのお茶屋さん",
+    avatar: "🐘",
+    badgeIcon: "🍵",
+    badgeNameZh: "清心茶道勋章",
+    badgeNameJa: "いやしのお茶バッジ",
+    targetWordZh: "茶",
+    targetWordJa: "おちゃ",
+    targetPinyin: "chá",
+    reqAudio: "elephant_req",
+    thanksAudio: "elephant_thanks",
+    giveAudio: "give_chá",
+    speechZh: "散步走累了，我想喝一杯热茶！",
+    speechPinyin: "Wǒ xiǎng hē yí bēi chá!",
+    speechJa: "ふぅ、散歩で少し疲れたね。あたたかいお茶を一杯いただきたいな。",
+    itemIcon: "🍵",
+    itemNameZh: "碧螺春热香茶",
+    itemNameJa: "かおり豊かな緑茶",
+    syllables: [
+      {
+        char: "茶",
+        pinyin: "chá",
+        initial: { sym: "ch", name: "吃", audioKey: "sym_ch", distractors: ["c", "zh", "sh"] },
+        final: { sym: "á", name: "茶 (二声)", tone: 2, audioKey: "sym_a2", distractors: ["ēi", "uā", "uǐ"] },
+        blendAudio: "ch_a_blend"
+      }
+    ]
+  }
+];
+
+/* =========================================================
+   PINYIN CHART DATA FOR REFERENCE
+   ========================================================= */
+const INITIALS_LIST = [
+  { sym: "b", name: "玻", audio: "sym_b" },
+  { sym: "p", name: "坡", audio: "sym_p" },
+  { sym: "m", name: "摸", audio: "sym_m" },
+  { sym: "f", name: "佛", audio: "f" },
+  { sym: "d", name: "得", audio: "d" },
+  { sym: "t", name: "特", audio: "t" },
+  { sym: "n", name: "讷", audio: "sym_n" },
+  { sym: "l", name: "勒", audio: "l" },
+  { sym: "g", name: "哥", audio: "sym_g" },
+  { sym: "k", name: "科", audio: "k" },
+  { sym: "h", name: "喝", audio: "h" },
+  { sym: "j", name: "鸡", audio: "j" },
+  { sym: "q", name: "七", audio: "q" },
+  { sym: "x", name: "西", audio: "sym_x" },
+  { sym: "zh", name: "知", audio: "zh" },
+  { sym: "ch", name: "吃", audio: "sym_ch" },
+  { sym: "sh", name: "狮", audio: "sym_sh" },
+  { sym: "r", name: "日", audio: "r" },
+  { sym: "z", name: "资", audio: "z" },
+  { sym: "c", name: "疵", audio: "c" },
+  { sym: "s", name: "思", audio: "s" },
+  { sym: "y", name: "衣", audio: "y" },
+  { sym: "w", name: "乌", audio: "w" }
+];
+
+const FINALS_LIST = [
+  { sym: "a", name: "啊", audio: "a" },
+  { sym: "o", name: "喔", audio: "o" },
+  { sym: "e", name: "鹅", audio: "e" },
+  { sym: "i", name: "衣", audio: "sym_i1" },
+  { sym: "u", name: "乌", audio: "sym_u1" },
+  { sym: "ü", name: "迂", audio: "ü" },
+  { sym: "ai", name: "爱", audio: "ai" },
+  { sym: "ei", name: "诶", audio: "sym_ei1" },
+  { sym: "ao", name: "奥", audio: "sym_ao1" },
+  { sym: "ou", name: "欧", audio: "ou" },
+  { sym: "an", name: "安", audio: "an" },
+  { sym: "en", name: "恩", audio: "en" }
+];
+
+/* =========================================================
+   GAME STATE
+   ========================================================= */
+const AppState = {
+  lang: 'zh', // 'zh' or 'ja'
+  currentScreen: 'town',
+  completedQuests: {}, // { questId: true }
+  stars: 0,
+  currentQuest: null,
+  currentSyllableIdx: 0,
+  selectedInitial: null,
+  selectedFinal: null,
+  idleTimer: null
+};
+
+// Load saved data
+try {
+  const savedStars = localStorage.getItem('pinyin_town_stars');
+  if (savedStars) AppState.stars = parseInt(savedStars, 10) || 0;
+  const savedCompleted = localStorage.getItem('pinyin_town_completed');
+  if (savedCompleted) AppState.completedQuests = JSON.parse(savedCompleted) || {};
+} catch(e) {}
+
+/* =========================================================
+   INITIALIZATION & UI RENDERING
+   ========================================================= */
+function initGame() {
+  updateStarCounter();
+  renderTownGrid();
+  renderAlbumGrid();
+  renderSoundChart();
+  initPointerGuide();
+  initConfettiCanvas();
+
+  // Play gentle welcome chime on first user click
+  document.body.addEventListener('click', function unlockAudio() {
+    audio.ensureContext();
+    document.body.removeEventListener('click', unlockAudio);
+  }, { once: true });
+}
+
+function updateStarCounter() {
+  const el = document.getElementById('starCounter');
+  if (el) el.textContent = AppState.stars;
+  try {
+    localStorage.setItem('pinyin_town_stars', AppState.stars);
+  } catch(e) {}
+}
+
+function saveCompletedQuests() {
+  try {
+    localStorage.setItem('pinyin_town_completed', JSON.stringify(AppState.completedQuests));
+  } catch(e) {}
+}
+
+function toggleLanguage() {
+  AppState.lang = AppState.lang === 'zh' ? 'ja' : 'zh';
+  const btn = document.getElementById('btnLangToggle');
+  if (btn) btn.textContent = AppState.lang === 'zh' ? '🇨🇳 中文' : '🇯🇵 日本語';
+  
+  // Update header text
+  if (AppState.lang === 'zh') {
+    document.getElementById('uiLogoTitle').textContent = '拼音小镇生活记';
+    document.getElementById('uiLogoSub').textContent = 'Pinyin Town Life · 角色扮演与情境求助';
+    document.getElementById('uiTownBadge').textContent = '🌈 动物朋友们的愿望与求助';
+    document.getElementById('uiTownTitle').textContent = '欢迎来到拼音小镇！';
+    document.getElementById('uiTownSubtitle').textContent = '选一位遇到困难的小动物邻居，帮他们拼出想要的物品吧！';
+    const heroBtn = document.getElementById('uiTownHeroStart');
+    if (heroBtn) heroBtn.textContent = '▶ 立即开始游戏 (小熊面包房)';
+    document.getElementById('uiBtnBackTown').textContent = '⬅️ 回小镇';
+    document.getElementById('uiAlbumModalTitle').textContent = '🎖️ 友谊勋章纪念册 (Friendship Stamps)';
+    document.getElementById('uiAlbumDesc').textContent = '每帮助一位居民拼出愿望，就会得到专属勋章与感谢明信片哦！点击可重复收听好友原声！';
+    document.getElementById('uiChartModalTitle').textContent = '📖 拼音听音百宝箱 (Pinyin Soundboard)';
+  } else {
+    document.getElementById('uiLogoTitle').textContent = 'ピンインタウン生活記';
+    document.getElementById('uiLogoSub').textContent = 'Pinyin Town Life · ごっこ遊び＆日常会話';
+    document.getElementById('uiTownBadge').textContent = '🌈 どうぶつのお友達のお願い';
+    document.getElementById('uiTownTitle').textContent = 'ピンインタウンへようこそ！';
+    document.getElementById('uiTownSubtitle').textContent = 'こまっているお友達をえらんで、ピンインをガッチャンコして助けてあげよう！';
+    const heroBtn = document.getElementById('uiTownHeroStart');
+    if (heroBtn) heroBtn.textContent = '▶ ゲームスタート (ボボのパン屋さん)';
+    document.getElementById('uiBtnBackTown').textContent = '⬅️ タウンにもどる';
+    document.getElementById('uiAlbumModalTitle').textContent = '🎖️ おもいでアルバム (Friendship Stamps)';
+    document.getElementById('uiAlbumDesc').textContent = 'お友達のお願いをかなえると、記念のバッジがもらえるよ！いつでも声を聞いてみてね！';
+    document.getElementById('uiChartModalTitle').textContent = '📖 ピンインおと図鑑 (Pinyin Soundboard)';
+  }
+
+  renderTownGrid();
+  renderAlbumGrid();
+  if (AppState.currentQuest) {
+    updateQuestUiText();
+  }
+}
+
+function renderTownGrid() {
+  const grid = document.getElementById('townGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  QUESTS_DATA.forEach(q => {
+    const isCompleted = !!AppState.completedQuests[q.id];
+    const card = document.createElement('div');
+    card.className = `shop-card ${isCompleted ? 'completed' : ''}`;
+    card.onclick = () => startQuest(q.id);
+
+    const name = AppState.lang === 'zh' ? q.nameZh : q.nameJa;
+    const shop = AppState.lang === 'zh' ? q.shopZh : q.shopJa;
+    const targetWord = AppState.lang === 'zh' ? q.targetWordZh : q.targetWordJa;
+    const badgeText = isCompleted
+      ? (AppState.lang === 'zh' ? '✨ 已获得勋章' : '✨ 達成・バッジ獲得')
+      : (AppState.lang === 'zh' ? '🆘 求助中' : '🆘 おねがい中');
+
+    card.innerHTML = `
+      <div class="shop-card-badge">${badgeText}</div>
+      <div class="shop-top-row">
+        <div class="shop-avatar-box">${q.avatar}</div>
+        <div class="shop-info">
+          <h3>${shop}</h3>
+          <div class="resident-name">${name}</div>
+        </div>
+      </div>
+      <div class="shop-bubble">
+        ${AppState.lang === 'zh' ? '愿望：我想吃/要' : 'おねがい：ほしいもの'} 
+        <span class="target-word">${targetWord}</span>
+        <span class="pinyin-tag">${q.targetPinyin}</span>
+      </div>
+      <div class="shop-bottom">
+        <span style="font-size:24px;">${q.itemIcon}</span>
+        <button class="shop-action-btn" onclick="event.stopPropagation(); startQuest('${q.id}')">
+          <span>${isCompleted ? (AppState.lang === 'zh' ? '⭐ 再次挑战' : '⭐ もう一度') : (AppState.lang === 'zh' ? '▶ 开始游戏' : '▶ スタート')}</span>
+        </button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+/* =========================================================
+   SCREEN NAVIGATION
+   ========================================================= */
+function switchScreen(screenName) {
+  AppState.currentScreen = screenName;
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+
+  if (screenName === 'town') {
+    document.getElementById('townScreen').classList.add('active');
+    hidePointerGuide();
+    clearIdleTimer();
+    renderTownGrid();
+  } else if (screenName === 'quest') {
+    document.getElementById('questScreen').classList.add('active');
+  }
+}
+
+/* =========================================================
+   QUEST LOGIC (THE DUAL-LOOP COGNITIVE ENGINE)
+   ========================================================= */
+function startQuest(questId) {
+  const quest = QUESTS_DATA.find(q => q.id === questId);
+  if (!quest) return;
+
+  AppState.currentQuest = quest;
+  AppState.currentSyllableIdx = 0;
+  AppState.selectedInitial = null;
+  AppState.selectedFinal = null;
+
+  switchScreen('quest');
+  updateQuestUiText();
+  renderQuestSteps();
+  loadCurrentSyllable();
+
+  // Play animal's opening voice
+  setTimeout(() => {
+    playCurrentQuestPrompt();
+  }, 250);
+}
+
+function updateQuestUiText() {
+  const q = AppState.currentQuest;
+  if (!q) return;
+
+  const residentName = AppState.lang === 'zh' ? q.nameZh : q.nameJa;
+  const shopName = AppState.lang === 'zh' ? q.shopZh : q.shopJa;
+
+  document.getElementById('questResidentAvatar').textContent = q.avatar;
+  document.getElementById('questResidentName').textContent = residentName;
+  document.getElementById('questShopName').textContent = shopName;
+
+  document.getElementById('questSpeechZh').textContent = q.speechZh;
+  document.getElementById('questSpeechPinyin').textContent = q.speechPinyin;
+  document.getElementById('questSpeechJa').textContent = q.speechJa;
+
+  document.getElementById('deliveryItemIcon').textContent = q.itemIcon;
+  document.getElementById('deliveryItemName').textContent = AppState.lang === 'zh' ? q.itemNameZh : q.itemNameJa;
+  document.getElementById('deliveryItemPinyin').textContent = `${q.targetPinyin} · ${q.targetWordZh}`;
+
+  document.getElementById('txtDeliverAction').textContent = AppState.lang === 'zh' ? `给你${q.targetWordZh}！` : `どうぞ！(${q.targetWordZh})`;
+}
+
+function renderQuestSteps() {
+  const q = AppState.currentQuest;
+  const container = document.getElementById('questStepsIndicator');
+  if (!container || !q) return;
+  container.innerHTML = '';
+
+  q.syllables.forEach((s, idx) => {
+    const dot = document.createElement('div');
+    dot.className = `step-dot ${idx === AppState.currentSyllableIdx ? 'active' : ''} ${idx < AppState.currentSyllableIdx ? 'done' : ''}`;
+    dot.textContent = idx + 1;
+    container.appendChild(dot);
+  });
+  // Delivery step dot
+  const delivDot = document.createElement('div');
+  delivDot.className = `step-dot ${AppState.currentSyllableIdx >= q.syllables.length ? 'active' : ''}`;
+  delivDot.textContent = '🎁';
+  container.appendChild(delivDot);
+}
+
+function playCurrentQuestPrompt() {
+  const q = AppState.currentQuest;
+  if (!q) return;
+  audio.playFile(q.reqAudio);
+  triggerAvatarBounce();
+}
+
+function triggerAvatarBounce() {
+  const av = document.getElementById('questResidentAvatar');
+  if (av) {
+    av.classList.add('bounce');
+    setTimeout(() => av.classList.remove('bounce'), 800);
+  }
+}
+
+/* =========================================================
+   SYLLABLE BLENDING & ASSEMBLY
+   ========================================================= */
+function loadCurrentSyllable() {
+  const q = AppState.currentQuest;
+  if (!q) return;
+
+  // Check if all syllables are done
+  if (AppState.currentSyllableIdx >= q.syllables.length) {
+    revealDeliveryStage();
+    return;
+  }
+
+  // Show Assembly Card, Hide Delivery Card
+  document.getElementById('assemblyCard').style.display = 'flex';
+  document.getElementById('deliveryCard').classList.remove('active');
+
+  const syl = q.syllables[AppState.currentSyllableIdx];
+  AppState.selectedInitial = null;
+  AppState.selectedFinal = null;
+
+  // Reset Slot UIs
+  document.getElementById('currentSyllableChar').textContent = `${syl.char} (${syl.pinyin})`;
+  document.getElementById('currentSyllableProgress').textContent = `第 ${AppState.currentSyllableIdx + 1} / ${q.syllables.length} 音节`;
+
+  const slotI = document.getElementById('slotInitial');
+  slotI.className = 'pinyin-slot initial-slot active';
+  document.getElementById('slotInitialVal').textContent = '?';
+
+  const slotF = document.getElementById('slotFinal');
+  slotF.className = 'pinyin-slot final-slot';
+  document.getElementById('slotFinalVal').textContent = '?';
+
+  const slotR = document.getElementById('slotResult');
+  slotR.className = 'result-slot';
+  document.getElementById('slotResultPinyin').textContent = '...';
+  document.getElementById('slotResultHanzi').textContent = '?';
+
+  // Render Options
+  renderOptions(syl);
+  renderQuestSteps();
+  resetIdleTimer();
+}
+
+function renderOptions(syl) {
+  const grid = document.getElementById('optionsGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  // Gather Initials choices
+  const initialPool = [
+    { type: 'initial', sym: syl.initial.sym, name: syl.initial.name, audio: getPinyinAudio(syl.initial.sym), isCorrect: true },
+    ...syl.initial.distractors.map(d => ({ type: 'initial', sym: d, name: getPinyinName(d), audio: getPinyinAudio(d), isCorrect: false }))
+  ];
+
+  // Gather Finals choices
+  const finalPool = [
+    { type: 'final', sym: syl.final.sym, name: syl.final.name, audio: getPinyinAudio(syl.final.sym), isCorrect: true },
+    ...syl.final.distractors.map(d => ({ type: 'final', sym: d, name: getPinyinName(d), audio: getPinyinAudio(d), isCorrect: false }))
+  ];
+
+  // Shuffle arrays gently
+  const shuffledInitials = shuffle(initialPool);
+  const shuffledFinals = shuffle(finalPool);
+
+  // Group: Initials row
+  const rowInitials = document.createElement('div');
+  rowInitials.style.cssText = 'display:flex; gap:10px; flex-wrap:wrap; justify-content:center; width:100%; margin-bottom:6px;';
+  shuffledInitials.forEach(item => {
+    const btn = createBlockBtn(item);
+    rowInitials.appendChild(btn);
+  });
+  grid.appendChild(rowInitials);
+
+  // Group: Finals row
+  const rowFinals = document.createElement('div');
+  rowFinals.style.cssText = 'display:flex; gap:10px; flex-wrap:wrap; justify-content:center; width:100%;';
+  shuffledFinals.forEach(item => {
+    const btn = createBlockBtn(item);
+    rowFinals.appendChild(btn);
+  });
+  grid.appendChild(rowFinals);
+}
+
+function createBlockBtn(item) {
+  const btn = document.createElement('button');
+  btn.className = `pinyin-block ${item.type}-type`;
+  btn.dataset.type = item.type;
+  btn.dataset.sym = item.sym;
+  btn.dataset.correct = item.isCorrect ? '1' : '0';
+  btn.dataset.audio = item.audio;
+
+  btn.innerHTML = `
+    <div class="block-symbol">${item.sym}</div>
+    <div class="block-sub">${item.name || ''}</div>
+  `;
+
+  btn.onclick = () => handleBlockClick(item, btn);
+  return btn;
+}
+
+function handleBlockClick(item, btnEl) {
+  audio.playFile(item.audio);
+  audio.playSfx('pop');
+  resetIdleTimer();
+
+  if (item.type === 'initial') {
+    if (item.isCorrect) {
+      AppState.selectedInitial = item;
+      const slot = document.getElementById('slotInitial');
+      slot.classList.add('filled');
+      slot.classList.remove('active');
+      document.getElementById('slotInitialVal').textContent = item.sym;
+      audio.playSfx('snap');
+
+      // Next focus final slot
+      const slotF = document.getElementById('slotFinal');
+      if (!AppState.selectedFinal) {
+        slotF.classList.add('active');
+      }
+      btnEl.classList.add('used');
+      checkBlendReady();
+    } else {
+      triggerWiggle(btnEl);
+    }
+  } else if (item.type === 'final') {
+    if (item.isCorrect) {
+      AppState.selectedFinal = item;
+      const slot = document.getElementById('slotFinal');
+      slot.classList.add('filled');
+      slot.classList.remove('active');
+      document.getElementById('slotFinalVal').textContent = item.sym;
+      audio.playSfx('snap');
+
+      btnEl.classList.add('used');
+      checkBlendReady();
+    } else {
+      triggerWiggle(btnEl);
+    }
+  }
+}
+
+function handleSlotClick(type) {
+  if (type === 'initial' && AppState.selectedInitial) {
+    // allow unselecting
+    AppState.selectedInitial = null;
+    const slot = document.getElementById('slotInitial');
+    slot.classList.remove('filled');
+    slot.classList.add('active');
+    document.getElementById('slotInitialVal').textContent = '?';
+    // restore button
+    document.querySelectorAll('.pinyin-block[data-type="initial"].used').forEach(b => b.classList.remove('used'));
+    audio.playSfx('pop');
+  } else if (type === 'final' && AppState.selectedFinal) {
+    AppState.selectedFinal = null;
+    const slot = document.getElementById('slotFinal');
+    slot.classList.remove('filled');
+    slot.classList.add('active');
+    document.getElementById('slotFinalVal').textContent = '?';
+    document.querySelectorAll('.pinyin-block[data-type="final"].used').forEach(b => b.classList.remove('used'));
+    audio.playSfx('pop');
+  }
+}
+
+function triggerWiggle(el) {
+  audio.playSfx('wiggle');
+  el.style.animation = 'none';
+  el.offsetHeight; // reflow
+  el.style.animation = 'avatar-happy 0.4s ease';
+  setTimeout(() => el.style.animation = '', 400);
+}
+
+function checkBlendReady() {
+  if (AppState.selectedInitial && AppState.selectedFinal) {
+    // Trigger Synthesis & Blending
+    clearIdleTimer();
+    hidePointerGuide();
+
+    const q = AppState.currentQuest;
+    const syl = q.syllables[AppState.currentSyllableIdx];
+
+    audio.playSfx('blend');
+    spawnConfettiAtEl(document.getElementById('blenderBox'), 25);
+
+    // Show result slot
+    const slotR = document.getElementById('slotResult');
+    slotR.classList.add('ready');
+    document.getElementById('slotResultPinyin').textContent = syl.pinyin;
+    document.getElementById('slotResultHanzi').textContent = syl.char;
+
+    // Play synthesis voice line ("摸，面，miàn，面包的面！")
+    setTimeout(() => {
+      audio.playFile(syl.blendAudio, () => {
+        // Proceed to next syllable or delivery stage
+        setTimeout(() => {
+          AppState.currentSyllableIdx++;
+          loadCurrentSyllable();
+        }, 600);
+      });
+    }, 400);
+  }
+}
+
+function playCurrentHintAudio() {
+  const q = AppState.currentQuest;
+  if (!q) return;
+  const syl = q.syllables[AppState.currentSyllableIdx];
+  if (!AppState.selectedInitial) {
+    audio.playFile(syl.initial.audioKey);
+  } else if (!AppState.selectedFinal) {
+    audio.playFile(syl.final.audioKey);
+  }
+}
+
+/* =========================================================
+   STAGE 3: DELIVERY & ROLEPLAY DIALOGUE
+   ========================================================= */
+function revealDeliveryStage() {
+  clearIdleTimer();
+  document.getElementById('assemblyCard').style.display = 'none';
+  const delivCard = document.getElementById('deliveryCard');
+  delivCard.classList.add('active');
+
+  renderQuestSteps();
+  audio.playSfx('fanfare');
+  spawnConfettiAtEl(delivCard, 40);
+
+  // Play guide prompt: "拼成功啦！把物品送给好朋友吧！"
+  setTimeout(() => {
+    audio.playFile('guide_deliver');
+  }, 400);
+
+  // Reset dialogue buttons
+  document.getElementById('btnDeliverAction').style.display = 'flex';
+  document.getElementById('replyBranches').classList.remove('active');
+}
+
+function performDeliverAction() {
+  const q = AppState.currentQuest;
+  if (!q) return;
+
+  // Player says: "给你面包！"
+  audio.playFile(q.giveAudio, () => {
+    // Animal chews & jumps for joy
+    triggerAvatarBounce();
+    audio.playSfx('chew');
+    setTimeout(() => {
+      // Animal says thank you: "哇，太香了！谢谢你！"
+      audio.playFile(q.thanksAudio, () => {
+        // Show reply branch choices: "不客气！" / "再见！"
+        document.getElementById('btnDeliverAction').style.display = 'none';
+        document.getElementById('replyBranches').classList.add('active');
+      });
+    }, 400);
+  });
+}
+
+function handlePoliteResponse(type) {
+  if (type === 'youre_welcome') {
+    audio.playFile('youre_welcome', () => {
+      finishQuest();
+    });
+  } else if (type === 'goodbye') {
+    audio.playFile('goodbye', () => {
+      finishQuest();
+    });
+  }
+}
+
+function finishQuest() {
+  const q = AppState.currentQuest;
+  if (!q) return;
+
+  // Mark completed & add stars
+  AppState.completedQuests[q.id] = true;
+  AppState.stars += 3;
+  updateStarCounter();
+  saveCompletedQuests();
+
+  // Show celebration popup
+  const modal = document.getElementById('celebrationModal');
+  document.getElementById('celebrationBadgeIcon').textContent = q.badgeIcon;
+  document.getElementById('celebrationTitle').textContent = AppState.lang === 'zh' ? '太棒了，回答完全正确！' : 'すごい！かんせいだよ！';
+  document.getElementById('celebrationMsg').textContent = AppState.lang === 'zh'
+    ? `你成功帮助了 ${q.nameZh}，获得了【${q.badgeNameZh}】！`
+    : `${q.nameJa} をたすけて、【${q.badgeNameJa}】をゲットしたよ！`;
+
+  modal.classList.add('active');
+  audio.playFile('quest_complete');
+  spawnConfettiAtCenter(60);
+}
+
+function nextOrReturnQuest() {
+  closeCelebrationModal();
+  switchScreen('town');
+}
+
+function replayCurrentQuest() {
+  closeCelebrationModal();
+  if (AppState.currentQuest) {
+    startQuest(AppState.currentQuest.id);
+  }
+}
+
+function closeCelebrationModal() {
+  document.getElementById('celebrationModal').classList.remove('active');
+}
+
+/* =========================================================
+   STAMP ALBUM & SOUND CHART MODALS
+   ========================================================= */
+function openModal(id) {
+  const m = document.getElementById(id);
+  if (m) m.classList.add('active');
+  audio.playSfx('pop');
+}
+
+function closeModal(id) {
+  const m = document.getElementById(id);
+  if (m) m.classList.remove('active');
+  audio.playSfx('pop');
+}
+
+function renderAlbumGrid() {
+  const grid = document.getElementById('albumGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  QUESTS_DATA.forEach(q => {
+    const isUnlocked = !!AppState.completedQuests[q.id];
+    const item = document.createElement('div');
+    item.className = `album-item ${isUnlocked ? 'unlocked' : ''}`;
+
+    const badgeName = AppState.lang === 'zh' ? q.badgeNameZh : q.badgeNameJa;
+    const residentName = AppState.lang === 'zh' ? q.nameZh : q.nameJa;
+
+    item.innerHTML = `
+      <div class="album-badge-icon">${isUnlocked ? q.badgeIcon : '🔒'}</div>
+      <div class="album-title">${badgeName}</div>
+      <div style="font-size:11px; color:#64748b; font-weight:700;">${residentName}</div>
+      ${isUnlocked ? `<button class="album-replay-btn" onclick="audio.playFile('${q.thanksAudio}')">👂 听感谢声</button>` : ''}
+    `;
+    grid.appendChild(item);
+  });
+}
+
+function renderSoundChart() {
+  const initGrid = document.getElementById('initialsGrid');
+  const finalGrid = document.getElementById('finalsGrid');
+  if (!initGrid || !finalGrid) return;
+
+  initGrid.innerHTML = '';
+  INITIALS_LIST.forEach(item => {
+    const tile = document.createElement('div');
+    tile.className = 'chart-tile';
+    tile.textContent = item.sym;
+    tile.onclick = () => {
+      audio.playFile(item.audio);
+      audio.playSfx('pop');
+    };
+    initGrid.appendChild(tile);
+  });
+
+  finalGrid.innerHTML = '';
+  FINALS_LIST.forEach(item => {
+    const tile = document.createElement('div');
+    tile.className = 'chart-tile';
+    tile.textContent = item.sym;
+    tile.onclick = () => {
+      audio.playFile(item.audio);
+      audio.playSfx('pop');
+    };
+    finalGrid.appendChild(tile);
+  });
+}
+
+/* =========================================================
+   TODDLER IDLE GUIDE & POINTER
+   ========================================================= */
+function initPointerGuide() {
+  const ptr = document.getElementById('guidePointer');
+  if (ptr) ptr.style.display = 'none';
+}
+
+function resetIdleTimer() {
+  clearIdleTimer();
+  hidePointerGuide();
+  // If toddler is idle for 6s, point to correct block
+  AppState.idleTimer = setTimeout(() => {
+    showGuidePointer();
+  }, 6000);
+}
+
+function clearIdleTimer() {
+  if (AppState.idleTimer) {
+    clearTimeout(AppState.idleTimer);
+    AppState.idleTimer = null;
+  }
+}
+
+function showGuidePointer() {
+  const ptr = document.getElementById('guidePointer');
+  if (!ptr || AppState.currentScreen !== 'quest') return;
+
+  // Find correct block to highlight
+  let targetType = !AppState.selectedInitial ? 'initial' : (!AppState.selectedFinal ? 'final' : null);
+  if (!targetType) return;
+
+  const targetBtn = document.querySelector(`.pinyin-block[data-type="${targetType}"][data-correct="1"]:not(.used)`);
+  if (!targetBtn) return;
+
+  targetBtn.classList.add('hint-glow');
+  const rect = targetBtn.getBoundingClientRect();
+  ptr.style.display = 'block';
+  ptr.style.top = `${rect.bottom + 4}px`;
+  ptr.style.left = `${rect.left + rect.width / 2 - 25}px`;
+
+  // Gentle audio hint prompt
+  audio.playFile('guide_place');
+}
+
+function hidePointerGuide() {
+  const ptr = document.getElementById('guidePointer');
+  if (ptr) ptr.style.display = 'none';
+  document.querySelectorAll('.pinyin-block.hint-glow').forEach(b => b.classList.remove('hint-glow'));
+}
+
+/* =========================================================
+   CONFETTI CANVASES
+   ========================================================= */
+let confettiCtx = null;
+let particles = [];
+
+function initConfettiCanvas() {
+  const c = document.getElementById('fxCanvas');
+  if (!c) return;
+  confettiCtx = c.getContext('2d');
+
+  function resize() {
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function loop() {
+    if (confettiCtx && particles.length > 0) {
+      confettiCtx.clearRect(0, 0, c.width, c.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += p.gravity;
+        p.rot += p.vrot;
+        p.life -= 0.015;
+
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        confettiCtx.save();
+        confettiCtx.translate(p.x, p.y);
+        confettiCtx.rotate(p.rot);
+        confettiCtx.fillStyle = p.color;
+        confettiCtx.globalAlpha = Math.max(0, p.life);
+        confettiCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        confettiCtx.restore();
+      }
+    }
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+}
+
+function spawnConfettiAtEl(el, count = 30) {
+  if (!el) return;
+  const rect = el.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  spawnConfetti(cx, cy, count);
+}
+
+function spawnConfettiAtCenter(count = 50) {
+  spawnConfetti(window.innerWidth / 2, window.innerHeight / 2, count);
+}
+
+function spawnConfetti(cx, cy, count) {
+  const colors = ['#f59e0b', '#0ea5e9', '#ec4899', '#10b981', '#8b5cf6', '#f43f5e', '#fbbf24'];
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 4 + Math.random() * 8;
+    particles.push({
+      x: cx,
+      y: cy,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 3,
+      gravity: 0.25,
+      rot: Math.random() * Math.PI,
+      vrot: (Math.random() - 0.5) * 0.2,
+      size: 6 + Math.random() * 8,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      life: 1.0
+    });
+  }
+}
+
+/* =========================================================
+   UTILITIES
+   ========================================================= */
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function getPinyinName(sym) {
+  const map = {
+    'b': '玻', 'p': '坡', 'm': '摸', 'f': '佛',
+    'd': '得', 't': '特', 'n': '讷', 'l': '勒',
+    'g': '哥', 'k': '科', 'h': '喝',
+    'j': '鸡', 'q': '七', 'x': '西',
+    'zh': '知', 'ch': '吃', 'sh': '狮', 'r': '日',
+    'z': '资', 'c': '疵', 's': '思', 'y': '衣', 'w': '乌',
+    'iàn': '面', 'āo': '包', 'íng': '平', 'uǒ': '果',
+    'iú': '牛', 'ǎi': '奶', 'ū': '书', 'ī': '西',
+    'uā': '瓜', 'uǐ': '水', 'ēi': '杯', 'á': '茶'
+  };
+  return map[sym] || sym;
+}
+
+const PINYIN_AUDIO_MAP = {
+  'b': 'sym_b', 'p': 'sym_p', 'm': 'sym_m', 'f': 'sym_f',
+  'd': 'sym_d', 't': 'sym_t', 'n': 'sym_n', 'l': 'sym_l',
+  'g': 'sym_g', 'k': 'sym_k', 'h': 'sym_h', 'j': 'sym_j',
+  'q': 'sym_q', 'x': 'sym_x', 'zh': 'sym_zh', 'ch': 'sym_ch',
+  'sh': 'sym_sh', 'r': 'sym_r', 'z': 'sym_z', 'c': 'sym_c',
+  's': 'sym_s', 'y': 'sym_y', 'w': 'sym_w',
+  'iàn': 'sym_ian4', 'āo': 'sym_ao1', 'íng': 'sym_ing2',
+  'uǒ': 'sym_uo3', 'iú': 'sym_iu2', 'ǎi': 'sym_ai3',
+  'ū': 'sym_u1', 'ī': 'sym_i1', 'uā': 'sym_ua1',
+  'uǐ': 'sym_ui3', 'ēi': 'sym_ei1', 'á': 'sym_a2'
+};
+
+function getPinyinAudio(sym) {
+  return PINYIN_AUDIO_MAP[sym] || ('sym_' + sym);
+}
+
+// Start on DOMContentLoaded
+window.addEventListener('DOMContentLoaded', initGame);
+</script>
+</body>
+</html>

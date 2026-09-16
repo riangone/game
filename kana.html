@@ -1,0 +1,3271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>萌趣假名小天才 - 日语五十音数独冒险</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #FCFBF7;
+    --bg-card: #FFFFFF;
+    --primary: #FF758F;
+    --primary-hover: #E65C76;
+    --primary-light: #FFF0F3;
+    --primary-dark: #A4133C;
+    --secondary: #F59E0B;
+    --secondary-light: #FEF3C7;
+    --accent-green: #10B981;
+    --accent-green-light: #ECFDF5;
+    --accent-blue: #0EA5E9;
+    --accent-blue-light: #E0F2FE;
+    --accent-purple: #8B5CF6;
+    --accent-purple-light: #F3E8FF;
+    --success: #10B981;
+    --error: #EF4444;
+    --error-light: #FEE2E2;
+    --text-main: #1F2937;
+    --text-sub: #6B7280;
+    --text-muted: #9CA3AF;
+    --border-soft: #E5E7EB;
+    --border-strong: #374151;
+    --shadow-sm: 0 4px 12px rgba(255, 117, 143, 0.1);
+    --shadow-md: 0 8px 24px rgba(31, 41, 55, 0.08);
+    --shadow-pop: 0 6px 0 rgba(0, 0, 0, 0.08);
+    --radius-xl: 24px;
+    --radius-lg: 18px;
+    --radius-md: 14px;
+    --radius-sm: 8px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-family: "M PLUS Rounded 1c", system-ui, -apple-system, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    background: radial-gradient(circle at 10% 15%, #FFF0F5 0%, #FCFBF7 45%, #F0FDF4 100%);
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    min-height: 100vh;
+  }
+
+  /* Decorative Background Elements */
+  .bg-decor {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+  .bg-blob-1 { top: -60px; right: -40px; width: 260px; height: 260px; background: radial-gradient(circle, #FFE4E8 0%, transparent 70%); }
+  .bg-blob-2 { bottom: -60px; left: -50px; width: 280px; height: 280px; background: radial-gradient(circle, #FEF3C7 0%, transparent 70%); }
+
+  #app {
+    width: 100%;
+    max-width: 530px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+    padding: 8px 14px 24px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0 8px;
+    flex-shrink: 0;
+  }
+  .logo-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+  .shiba-avatar {
+    font-size: 32px;
+    filter: drop-shadow(0 4px 8px rgba(255, 117, 143, 0.25));
+    animation: shibaBounce 2.5s infinite ease-in-out;
+  }
+  @keyframes shibaBounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-4px) rotate(3deg); }
+  }
+  .logo-title {
+    display: flex;
+    flex-direction: column;
+  }
+  .logo-title .main-title {
+    font-size: 17px;
+    font-weight: 900;
+    color: var(--text-main);
+    letter-spacing: -0.3px;
+    line-height: 1.15;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .logo-title .sub-title {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: 0.5px;
+  }
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    color: var(--text-main);
+    text-decoration: none;
+  }
+  .icon-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+  .icon-btn:active { transform: translateY(1px); }
+
+  /* Navigation Tabs */
+  .nav-tabs {
+    display: flex;
+    background: #EFE9E6;
+    padding: 4px;
+    border-radius: 16px;
+    margin: 2px 0 10px;
+    flex-shrink: 0;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
+  }
+  .tab-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 8px 4px;
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--text-sub);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+  .tab-btn.active {
+    background: #FFFFFF;
+    color: var(--primary);
+    box-shadow: 0 3px 10px rgba(255, 117, 143, 0.25);
+    transform: scale(1.02);
+  }
+
+  /* Views */
+  .view {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    animation: fadeIn 0.2s ease-out;
+  }
+  .view.active {
+    display: flex;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Shiba Speech Bubble (Tutor) */
+  .tutor-bubble {
+    background: #FFFFFF;
+    border: 2px solid #FED7AA;
+    border-radius: var(--radius-lg);
+    padding: 9px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+  .tutor-bubble:hover { transform: translateY(-1px); }
+  .tutor-avatar {
+    font-size: 32px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .tutor-sound-wave {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    font-size: 11px;
+    background: var(--primary);
+    color: white;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); opacity: 0.8; }
+  }
+  .tutor-content {
+    flex: 1;
+    overflow: hidden;
+  }
+  .tutor-name {
+    font-size: 11px;
+    font-weight: 800;
+    color: #EA580C;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 2px;
+  }
+  .tutor-name .badge-tip {
+    font-size: 9px;
+    background: #FFF7ED;
+    color: #EA580C;
+    padding: 1px 6px;
+    border-radius: 6px;
+    font-weight: 700;
+    border: 1px solid #FFEDD5;
+  }
+  .tutor-text {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Tier Selector (Stage Maps) */
+  .tier-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .tier-pill {
+    flex: 1;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    padding: 7px 6px;
+    border-radius: var(--radius-md);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+  }
+  .tier-pill.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    transform: translateY(-2px);
+  }
+  .tier-pill-title {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .tier-pill.active .tier-pill-title {
+    color: var(--primary);
+  }
+  .tier-pill-sub {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-sub);
+    margin-top: 2px;
+  }
+
+  /* Stages Grid Container */
+  .stages-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .stage-card {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .stage-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary);
+    box-shadow: 0 6px 16px rgba(255, 117, 143, 0.2);
+  }
+  .stage-card:active { transform: translateY(0); }
+  .stage-card.locked {
+    opacity: 0.6;
+    pointer-events: none;
+    filter: grayscale(0.8);
+    background: #F3F4F6;
+  }
+  .stage-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .stage-num-badge {
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--primary);
+    background: var(--primary-light);
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .stage-stars {
+    font-size: 11px;
+    color: #F59E0B;
+  }
+  .stage-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-main);
+    line-height: 1.25;
+  }
+  .stage-symbols-row {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    margin-top: 2px;
+    flex-wrap: wrap;
+  }
+  .symbol-tag {
+    font-size: 11px;
+    font-weight: 800;
+    background: #F3F4F6;
+    color: var(--text-main);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+
+  /* Game Playground */
+  .game-container {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    animation: fadeIn 0.25s ease-out;
+  }
+  .game-container.active {
+    display: flex;
+  }
+
+  .game-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .btn-back-stages {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-sub);
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+  .game-stats {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .stat-chip {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-main);
+    background: var(--bg-card);
+    padding: 5px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-soft);
+  }
+
+  /* Sudoku Board Wrapper */
+  .sudoku-card {
+    background: var(--bg-card);
+    border: 3px solid #FCDDEC;
+    border-radius: var(--radius-xl);
+    padding: 10px;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  .sudoku-grid {
+    display: grid;
+    gap: 2px;
+    background: #FEE2E2;
+    border: 3px solid #FDA4AF;
+    border-radius: 12px;
+    padding: 4px;
+    touch-action: manipulation;
+    width: 100%;
+    max-width: 440px;
+    aspect-ratio: 1 / 1;
+    position: relative;
+  }
+
+  /* Grid Cells */
+  .cell {
+    background: #FFFFFF;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: 900;
+    color: var(--text-main);
+    position: relative;
+    transition: background 0.12s ease, transform 0.08s ease;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .cell:active { transform: scale(0.96); }
+  .cell .kana-char {
+    font-size: 22px;
+    line-height: 1.05;
+    font-weight: 900;
+  }
+  .cell .romaji-sub {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text-muted);
+    line-height: 1;
+    margin-top: 1px;
+  }
+
+  /* 4x4, 6x6, 9x9 sizing adaptations */
+  .grid-4 .cell .kana-char { font-size: 32px; }
+  .grid-4 .cell .romaji-sub { font-size: 11px; }
+  .grid-6 .cell .kana-char { font-size: 24px; }
+  .grid-6 .cell .romaji-sub { font-size: 9px; }
+  .grid-9 .cell .kana-char { font-size: 18px; }
+  .grid-9 .cell .romaji-sub { font-size: 7px; display: none; }
+
+  /* Sudoku cell states */
+  .cell.given {
+    background: #FFF5F7;
+    color: #881337;
+    cursor: default;
+  }
+  .cell.selected {
+    background: #FFE4E6 !important;
+    outline: 3px solid var(--primary);
+    z-index: 2;
+  }
+  .cell.highlighted-same {
+    background: #FFF1F2;
+  }
+  .cell.highlighted-peer {
+    background: #FFF7F9;
+  }
+  .cell.conflict {
+    background: var(--error-light) !important;
+    color: var(--error) !important;
+    animation: shake 0.35s ease;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+  }
+
+  /* Draft Notes in Cell */
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    width: 100%;
+    height: 100%;
+    padding: 2px;
+    pointer-events: none;
+  }
+  .note-item {
+    font-size: 8px;
+    font-weight: 800;
+    color: var(--text-sub);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  /* Block Borders */
+  .grid-4 .cell:nth-child(2n) { margin-right: 3px; }
+  .grid-4 .cell:nth-child(4n) { margin-right: 0; }
+  .grid-4 .cell:nth-child(n+5):nth-child(-n+8) { margin-bottom: 3px; }
+
+  .grid-6 .cell:nth-child(3n) { margin-right: 3px; }
+  .grid-6 .cell:nth-child(6n) { margin-right: 0; }
+  .grid-6 .cell:nth-child(n+7):nth-child(-n+12),
+  .grid-6 .cell:nth-child(n+19):nth-child(-n+24) { margin-bottom: 3px; }
+
+  .grid-9 .cell:nth-child(3n) { margin-right: 3px; }
+  .grid-9 .cell:nth-child(9n) { margin-right: 0; }
+  .grid-9 .cell:nth-child(n+19):nth-child(-n+27),
+  .grid-9 .cell:nth-child(n+46):nth-child(-n+54) { margin-bottom: 3px; }
+
+  /* Game Controls Toolbar */
+  .game-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 440px;
+    margin-bottom: 10px;
+    gap: 8px;
+  }
+  .tool-btn {
+    flex: 1;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 8px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+  }
+  .tool-btn:hover { border-color: var(--primary); background: var(--primary-light); }
+  .tool-btn:active { transform: translateY(1px); }
+  .tool-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    box-shadow: 0 4px 10px rgba(255, 117, 143, 0.3);
+  }
+  .tool-btn .tool-icon { font-size: 16px; }
+
+  /* Input Keypad */
+  .keypad-container {
+    width: 100%;
+    max-width: 440px;
+    display: grid;
+    gap: 8px;
+  }
+  .keypad-4 { grid-template-columns: repeat(4, 1fr); }
+  .keypad-6 { grid-template-columns: repeat(6, 1fr); }
+  .keypad-9 { grid-template-columns: repeat(5, 1fr); }
+
+  .key-btn {
+    background: var(--bg-card);
+    border: 2px solid #FED7AA;
+    border-radius: var(--radius-md);
+    padding: 8px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.12s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 0 #FED7AA;
+  }
+  .key-btn:hover {
+    border-color: var(--primary);
+    box-shadow: 0 4px 0 var(--primary);
+    transform: translateY(-2px);
+  }
+  .key-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 var(--primary);
+  }
+  .key-btn .key-kana {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--text-main);
+    line-height: 1.1;
+  }
+  .key-btn .key-sub {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+  }
+  .key-btn.completed {
+    opacity: 0.35;
+    pointer-events: none;
+    filter: grayscale(1);
+  }
+
+  /* Bottom Assistant Bar */
+  .kana-helper-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 440px;
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #FFF7ED;
+    border-radius: var(--radius-md);
+    border: 1px solid #FFEDD5;
+  }
+  .helper-sound-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    color: #EA580C;
+    background: white;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid #FDBA74;
+    cursor: pointer;
+  }
+  .helper-mode-toggle {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-sub);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* ===================================================
+     CHART ENCYCLOPEDIA (五十音图谱)
+     =================================================== */
+  .chart-filter-tabs {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 4px 2px 10px;
+    scrollbar-width: none;
+    flex-shrink: 0;
+  }
+  .chart-filter-tabs::-webkit-scrollbar { display: none; }
+  .filter-pill {
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-sub);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+  }
+  .filter-pill.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 117, 143, 0.3);
+  }
+
+  .chart-sub-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 6px 10px;
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-soft);
+  }
+  .mode-switch-group {
+    display: flex;
+    gap: 4px;
+    background: #F3F4F6;
+    padding: 3px;
+    border-radius: 10px;
+  }
+  .mode-btn {
+    border: none;
+    background: transparent;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 800;
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--text-sub);
+  }
+  .mode-btn.active {
+    background: white;
+    color: var(--primary);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  }
+
+  .chart-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .chart-card {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 10px 4px 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+  }
+  .chart-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--primary);
+    box-shadow: 0 6px 16px rgba(255, 117, 143, 0.2);
+  }
+  .chart-card:active { transform: translateY(0); }
+  .chart-card .char-main {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--text-main);
+    line-height: 1.1;
+  }
+  .chart-card .char-katakana {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-sub);
+    line-height: 1;
+    margin-top: 2px;
+  }
+  .chart-card .char-romaji {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-top: 2px;
+  }
+  .chart-card .origin-badge {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    font-size: 9px;
+    font-weight: 800;
+    background: #FEF3C7;
+    color: #B45309;
+    padding: 1px 4px;
+    border-radius: 4px;
+    line-height: 1;
+  }
+
+  /* Modal Details */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 16px;
+  }
+  .modal-overlay.active { display: flex; }
+
+  .detail-modal {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 440px;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .modal-close-btn {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background: #F3F4F6;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-sub);
+  }
+  .detail-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .detail-big-char {
+    font-size: 54px;
+    font-weight: 900;
+    color: var(--primary);
+    line-height: 1;
+    background: var(--primary-light);
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .detail-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .detail-meta .romaji-title {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .detail-meta .pair-text {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-sub);
+  }
+  .btn-play-voice {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--primary);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    border: none;
+    cursor: pointer;
+    width: fit-content;
+    margin-top: 4px;
+    box-shadow: 0 4px 10px rgba(255, 117, 143, 0.3);
+  }
+
+  .origin-box {
+    background: #FFFBEB;
+    border: 1px solid #FDE68A;
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+  }
+  .origin-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: #92400E;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+  .origin-body {
+    font-size: 13px;
+    font-weight: 700;
+    color: #78350F;
+    line-height: 1.4;
+  }
+
+  .mnemonic-box {
+    background: #F0FDF4;
+    border: 1px solid #BBF7D0;
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+  }
+  .mnemonic-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: #166534;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+  .mnemonic-body {
+    font-size: 13px;
+    font-weight: 700;
+    color: #14532D;
+    line-height: 1.4;
+  }
+
+  .vocab-card {
+    background: #F8FAFC;
+    border: 1px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .vocab-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .vocab-jp {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-main);
+  }
+  .vocab-cn {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-sub);
+  }
+
+  /* ===================================================
+     LISTENING QUIZ & MATCHING (耳力挑战)
+     =================================================== */
+  .quiz-modes-nav {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .quiz-mode-pill {
+    flex: 1;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    padding: 8px 6px;
+    border-radius: var(--radius-md);
+    text-align: center;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-sub);
+    transition: all 0.2s ease;
+  }
+  .quiz-mode-pill.active {
+    border-color: var(--accent-blue);
+    background: var(--accent-blue-light);
+    color: var(--accent-blue);
+    box-shadow: 0 4px 10px rgba(14, 165, 233, 0.2);
+  }
+
+  .quiz-card-box {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-xl);
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 14px;
+    position: relative;
+  }
+  .quiz-speaker-btn {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FF758F 0%, #FF4D6D 100%);
+    border: none;
+    color: white;
+    font-size: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(255, 77, 109, 0.35);
+    transition: transform 0.15s ease;
+    animation: speakerPulse 2s infinite ease-in-out;
+  }
+  @keyframes speakerPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+  }
+  .quiz-speaker-btn:active { transform: scale(0.95); }
+  .quiz-prompt-text {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text-sub);
+    margin-top: 12px;
+  }
+
+  .quiz-options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    width: 100%;
+    margin-top: 16px;
+  }
+  .quiz-opt-btn {
+    background: #FFFFFF;
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 16px 8px;
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--text-main);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    box-shadow: 0 3px 0 var(--border-soft);
+  }
+  .quiz-opt-btn:hover {
+    border-color: var(--accent-blue);
+    box-shadow: 0 3px 0 var(--accent-blue);
+    transform: translateY(-2px);
+  }
+  .quiz-opt-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 var(--accent-blue);
+  }
+  .quiz-opt-btn.correct {
+    background: var(--accent-green-light) !important;
+    border-color: var(--accent-green) !important;
+    color: var(--accent-green) !important;
+    box-shadow: 0 3px 0 var(--accent-green) !important;
+  }
+  .quiz-opt-btn.wrong {
+    background: var(--error-light) !important;
+    border-color: var(--error) !important;
+    color: var(--error) !important;
+    box-shadow: 0 3px 0 var(--error) !important;
+    animation: shake 0.3s ease;
+  }
+
+  /* Memory Match (平片对对碰) */
+  .match-board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    width: 100%;
+    margin-top: 10px;
+  }
+  .match-card {
+    aspect-ratio: 1 / 1;
+    background: #FFF1F2;
+    border: 2px solid #FDA4AF;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--primary);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 4px 0 #FDA4AF;
+  }
+  .match-card.flipped {
+    background: white;
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+    box-shadow: 0 4px 0 var(--accent-blue);
+  }
+  .match-card.matched {
+    background: #ECFDF5;
+    border-color: #10B981;
+    color: #10B981;
+    box-shadow: 0 2px 0 #10B981;
+    opacity: 0.8;
+    pointer-events: none;
+    transform: scale(0.96);
+  }
+
+  /* Free Mode Options */
+  .free-card {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-xl);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: var(--shadow-sm);
+  }
+  .free-field-title {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-sub);
+    margin-bottom: 6px;
+  }
+  .btn-generate-free {
+    background: linear-gradient(135deg, #FF758F 0%, #FF4D6D 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 12px;
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 6px 16px rgba(255, 77, 109, 0.35);
+    transition: all 0.15s ease;
+  }
+  .btn-generate-free:hover { transform: translateY(-2px); }
+  .btn-generate-free:active { transform: translateY(1px); }
+
+  /* Celebration Modal */
+  .celebration-modal {
+    background: white;
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 400px;
+    padding: 24px 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+    animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .celeb-icon {
+    font-size: 56px;
+    animation: jump 1s infinite alternate ease-in-out;
+  }
+  @keyframes jump {
+    from { transform: translateY(0); }
+    to { transform: translateY(-10px); }
+  }
+  .celeb-title {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .celeb-stars {
+    font-size: 32px;
+    color: #F59E0B;
+    margin: 4px 0;
+  }
+  .celeb-desc {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-sub);
+    line-height: 1.4;
+  }
+  .celeb-actions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin-top: 8px;
+  }
+  .btn-primary-action {
+    flex: 1;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 117, 143, 0.35);
+  }
+  .btn-secondary-action {
+    flex: 1;
+    background: #F3F4F6;
+    color: var(--text-main);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-decor bg-blob-1"></div>
+<div class="bg-decor bg-blob-2"></div>
+
+<div id="app">
+  <!-- Top Header -->
+  <header class="header">
+    <div class="logo-group" onclick="switchView('adventure')">
+      <div class="shiba-avatar">🐕</div>
+      <div class="logo-title">
+        <div class="main-title">萌趣假名小天才 <span>🌸</span></div>
+        <div class="sub-title">中国儿童日语五十音数独冒险 · KANA SUDOKU</div>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <button class="icon-btn" id="btn-sound-toggle" onclick="toggleMute()" title="声音开关">🔊</button>
+      <a class="icon-btn" href="index.html" title="返回游戏大厅">🏠</a>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="nav-tabs">
+    <button class="tab-btn active" id="tab-adventure" onclick="switchView('adventure')">
+      <span>🧩</span> 闯关数独
+    </button>
+    <button class="tab-btn" id="tab-chart" onclick="switchView('chart')">
+      <span>📖</span> 五十音图
+    </button>
+    <button class="tab-btn" id="tab-quiz" onclick="switchView('quiz')">
+      <span>🎧</span> 耳力挑战
+    </button>
+    <button class="tab-btn" id="tab-free" onclick="switchView('free')">
+      <span>🎲</span> 自由模式
+    </button>
+  </nav>
+
+  <!-- Shiba Tutor Assistant Banner -->
+  <div class="tutor-bubble" id="tutor-bubble" onclick="onTutorClick()">
+    <div class="tutor-avatar">
+      🐕
+      <div class="tutor-sound-wave">♪</div>
+    </div>
+    <div class="tutor-content">
+      <div class="tutor-name">
+        <span>小柴老师</span>
+        <span class="badge-tip">点击发音与指导</span>
+      </div>
+      <div class="tutor-text" id="tutor-text">欢迎小朋友！我是小柴老师，带你轻松玩数独学假名！</div>
+    </div>
+  </div>
+
+  <!-- VIEW 1: ADVENTURE STAGES -->
+  <section class="view active" id="view-adventure">
+    <!-- Tier Tabs -->
+    <div class="tier-nav">
+      <div class="tier-pill active" id="tier-pill-1" onclick="switchTier(1)">
+        <div class="tier-pill-title">🌱 萌芽入门</div>
+        <div class="tier-pill-sub">4×4 网格 · 8关</div>
+      </div>
+      <div class="tier-pill" id="tier-pill-2" onclick="switchTier(2)">
+        <div class="tier-pill-title">🌿 进阶探索</div>
+        <div class="tier-pill-sub">6×6 网格 · 8关</div>
+      </div>
+      <div class="tier-pill" id="tier-pill-3" onclick="switchTier(3)">
+        <div class="tier-pill-title">🌸 巅峰大师</div>
+        <div class="tier-pill-sub">9×9 网格 · 6关</div>
+      </div>
+    </div>
+
+    <!-- Stage Cards Grid -->
+    <div class="stages-container" id="stages-container">
+      <!-- Injected by JavaScript -->
+    </div>
+  </section>
+
+  <!-- VIEW: GAME PLAYGROUND (SUDOKU) -->
+  <section class="view" id="view-game">
+    <div class="game-container active">
+      <div class="game-top-bar">
+        <button class="btn-back-stages" onclick="exitGameToStages()">
+          <span>←</span> 关卡列表
+        </button>
+        <div class="game-stats">
+          <div class="stat-chip">⏱️ <span id="game-timer">00:00</span></div>
+          <div class="stat-chip">⭐ 难度: <span id="game-diff-tag">4×4</span></div>
+        </div>
+      </div>
+
+      <!-- Sudoku Board Wrapper -->
+      <div class="sudoku-card">
+        <div class="sudoku-grid grid-4" id="sudoku-grid">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+
+      <!-- Action Toolbar -->
+      <div class="game-toolbar">
+        <button class="tool-btn" id="btn-undo" onclick="gameUndo()">
+          <span class="tool-icon">↩️</span>
+          <span>撤销</span>
+        </button>
+        <button class="tool-btn" id="btn-erase" onclick="gameErase()">
+          <span class="tool-icon">🧹</span>
+          <span>清除</span>
+        </button>
+        <button class="tool-btn" id="btn-draft" onclick="toggleDraftMode()">
+          <span class="tool-icon">✏️</span>
+          <span id="draft-label">草稿</span>
+        </button>
+        <button class="tool-btn" id="btn-hint" onclick="gameHint()">
+          <span class="tool-icon">💡</span>
+          <span>提示</span>
+        </button>
+        <button class="tool-btn" id="btn-kana-toggle" onclick="toggleKanaScript()">
+          <span class="tool-icon">🔤</span>
+          <span id="script-mode-label">平/片</span>
+        </button>
+      </div>
+
+      <!-- Number/Kana Keypad -->
+      <div class="keypad-container keypad-4" id="game-keypad">
+        <!-- Injected dynamically -->
+      </div>
+
+      <!-- Bottom Audio & Mnemonic Helper -->
+      <div class="kana-helper-row">
+        <div class="helper-sound-btn" onclick="playCurrentTargetSound()">
+          <span>🔊</span> 听标准发音
+        </div>
+        <div class="helper-mode-toggle" onclick="toggleRomajiDisplay()">
+          <span id="romaji-toggle-status">🔤 罗马音: 开</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VIEW 2: KANA CHART / ENCYCLOPEDIA (五十音图谱) -->
+  <section class="view" id="view-chart">
+    <div class="chart-filter-tabs" id="chart-filter-tabs">
+      <div class="filter-pill active" onclick="filterChart('all')">🌟 全部清音 (46)</div>
+      <div class="filter-pill" onclick="filterChart('a')">あ行 (元音)</div>
+      <div class="filter-pill" onclick="filterChart('ka')">か行</div>
+      <div class="filter-pill" onclick="filterChart('sa')">さ行</div>
+      <div class="filter-pill" onclick="filterChart('ta')">た行</div>
+      <div class="filter-pill" onclick="filterChart('na')">な行</div>
+      <div class="filter-pill" onclick="filterChart('ha')">は行</div>
+      <div class="filter-pill" onclick="filterChart('ma')">ま行</div>
+      <div class="filter-pill" onclick="filterChart('ya')">や行</div>
+      <div class="filter-pill" onclick="filterChart('ra')">ら行</div>
+      <div class="filter-pill" onclick="filterChart('wa')">わ行 / ん</div>
+      <div class="filter-pill" onclick="filterChart('dakuon')">⚡ 浊音/半浊音 (25)</div>
+      <div class="filter-pill" onclick="filterChart('youon')">✨ 拗音 (36)</div>
+    </div>
+
+    <div class="chart-sub-bar">
+      <div class="mode-switch-group">
+        <button class="mode-btn active" id="chart-mode-hira" onclick="setChartScriptMode('hiragana')">平假名</button>
+        <button class="mode-btn" id="chart-mode-kata" onclick="setChartScriptMode('katakana')">片假名</button>
+        <button class="mode-btn" id="chart-mode-dual" onclick="setChartScriptMode('dual')">双显</button>
+      </div>
+      <div style="font-size:11px; font-weight:800; color:var(--text-sub);">
+        💡 点击卡片听原声与汉字溯源
+      </div>
+    </div>
+
+    <div class="chart-grid" id="chart-grid">
+      <!-- Injected by JavaScript -->
+    </div>
+  </section>
+
+  <!-- VIEW 3: LISTENING QUIZ (耳力挑战) -->
+  <section class="view" id="view-quiz">
+    <div class="quiz-modes-nav">
+      <div class="quiz-mode-pill active" id="quiz-pill-listen" onclick="setQuizMode('listen')">
+        🎧 听音辨假名
+      </div>
+      <div class="quiz-mode-pill" id="quiz-pill-match" onclick="setQuizMode('match')">
+        🃏 平片对对碰
+      </div>
+      <div class="quiz-mode-pill" id="quiz-pill-origin" onclick="setQuizMode('origin')">
+        🏮 汉字寻根
+      </div>
+    </div>
+
+    <!-- Quiz Mode 1: Listening -->
+    <div id="quiz-panel-listen" style="display: flex; flex-direction: column; width: 100%;">
+      <div class="quiz-card-box">
+        <button class="quiz-speaker-btn" onclick="playQuizTargetAudio()">
+          🔊
+        </button>
+        <div class="quiz-prompt-text" id="quiz-prompt-text">仔细听小柴老师的发音，选出正确的假名吧！</div>
+        <div class="quiz-options-grid" id="quiz-options-grid">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+      <div style="text-align:center; font-size:13px; font-weight:800; color:var(--text-sub);">
+        当前连续答对: <span id="quiz-streak" style="color:var(--primary); font-size:16px;">0</span> 次 🔥
+      </div>
+    </div>
+
+    <!-- Quiz Mode 2: Match Memory -->
+    <div id="quiz-panel-match" style="display: none; flex-direction: column; width: 100%;">
+      <div style="font-size:13px; font-weight:800; color:var(--text-sub); text-align:center; margin-bottom:6px;">
+        找出配对的平假名与片假名（如：あ ↔ ア）
+      </div>
+      <div class="match-board" id="match-board">
+        <!-- Injected dynamically -->
+      </div>
+    </div>
+
+    <!-- Quiz Mode 3: Chinese Origin Match -->
+    <div id="quiz-panel-origin" style="display: none; flex-direction: column; width: 100%;">
+      <div class="quiz-card-box">
+        <div style="font-size:12px; font-weight:800; color:#B45309; background:#FEF3C7; padding:2px 10px; border-radius:999px;">
+          汉字字源挑战
+        </div>
+        <div style="font-size:44px; font-weight:900; color:var(--text-main); margin:12px 0 6px;" id="origin-quiz-kanji">
+          安
+        </div>
+        <div class="quiz-prompt-text">这个汉字演变成了哪个假名呢？</div>
+        <div class="quiz-options-grid" id="origin-options-grid">
+          <!-- Injected dynamically -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VIEW 4: FREE SUDOKU GENERATOR -->
+  <section class="view" id="view-free">
+    <div class="free-card">
+      <div>
+        <div class="free-field-title">1. 选择棋盘规格</div>
+        <div class="tier-nav">
+          <div class="tier-pill active" id="free-size-4" onclick="setFreeSize(4)">
+            <div class="tier-pill-title">4×4 入门</div>
+            <div class="tier-pill-sub">4个假名</div>
+          </div>
+          <div class="tier-pill" id="free-size-6" onclick="setFreeSize(6)">
+            <div class="tier-pill-title">6×6 进阶</div>
+            <div class="tier-pill-sub">6个假名</div>
+          </div>
+          <div class="tier-pill" id="free-size-9" onclick="setFreeSize(9)">
+            <div class="tier-pill-title">9×9 大师</div>
+            <div class="tier-pill-sub">9个假名</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="free-field-title">2. 挑选出题范围</div>
+        <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:8px;">
+          <button class="stage-card" id="free-grp-a" onclick="setFreeKanaGroup('a')">
+            <span style="font-weight:900; font-size:14px;">あ行・元音小队</span>
+            <span style="font-size:11px; color:var(--text-sub);">あ い う え お ん</span>
+          </button>
+          <button class="stage-card" id="free-grp-ka" onclick="setFreeKanaGroup('ka')">
+            <span style="font-weight:900; font-size:14px;">か行・清爽微风</span>
+            <span style="font-size:11px; color:var(--text-sub);">か き く け こ ん</span>
+          </button>
+          <button class="stage-card" id="free-grp-mixed" onclick="setFreeKanaGroup('mixed')">
+            <span style="font-weight:900; font-size:14px;">平假名综合大混战</span>
+            <span style="font-size:11px; color:var(--text-sub);">全五十音随机抓取</span>
+          </button>
+          <button class="stage-card" id="free-grp-kata" onclick="setFreeKanaGroup('kata')">
+            <span style="font-weight:900; font-size:14px;">片假名专项特训</span>
+            <span style="font-size:11px; color:var(--text-sub);">ア イ ウ エ オ...</span>
+          </button>
+        </div>
+      </div>
+
+      <button class="btn-generate-free" onclick="startFreeCustomGame()">
+        🚀 立即生成全新数独题！
+      </button>
+    </div>
+  </section>
+
+  <!-- KANA DETAIL MODAL (汉字溯源与例词大图鉴) -->
+  <div class="modal-overlay" id="modal-kana-detail" onclick="closeDetailModal(event)">
+    <div class="detail-modal" onclick="event.stopPropagation()">
+      <button class="modal-close-btn" onclick="closeDetailModal()">✕</button>
+      <div class="detail-header">
+        <div class="detail-big-char" id="modal-char-big">あ</div>
+        <div class="detail-meta">
+          <div class="romaji-title" id="modal-romaji">a</div>
+          <div class="pair-text" id="modal-pair">平假名: あ | 片假名: ア</div>
+          <button class="btn-play-voice" onclick="playModalKanaVoice()">
+            <span>🔊</span> 点击朗读
+          </button>
+        </div>
+      </div>
+
+      <!-- 汉字字源演变 -->
+      <div class="origin-box">
+        <div class="origin-title">🏮 汉字字源演变 (中国儿童秒记法)</div>
+        <div class="origin-body" id="modal-origin-desc">
+          「あ」由汉字「安」之草书演变而来；片假名「ア」取自汉字「阿」之偏旁部首。
+        </div>
+      </div>
+
+      <!-- 趣味联想口诀 -->
+      <div class="mnemonic-box">
+        <div class="mnemonic-title">💡 形象记忆顺口溜</div>
+        <div class="mnemonic-body" id="modal-mnemonic">
+          “安”字草书圆溜溜，大肚子靠椅坐稳当，读作「あ」！
+        </div>
+      </div>
+
+      <!-- 常用词汇 -->
+      <div class="vocab-card">
+        <div class="vocab-info">
+          <div class="vocab-jp" id="modal-vocab-jp">🍬 飴 (あめ)</div>
+          <div class="vocab-cn" id="modal-vocab-cn">糖果 · 甜甜的糖果</div>
+        </div>
+        <button class="btn-play-voice" style="padding:4px 10px; font-size:11px;" onclick="playModalVocabVoice()">
+          🔊 点读例词
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CELEBRATION MODAL -->
+  <div class="modal-overlay" id="modal-celebration">
+    <div class="celebration-modal">
+      <div class="celeb-icon">🎉🐕</div>
+      <div class="celeb-title">太棒了！顺利通关！</div>
+      <div class="celeb-stars" id="celeb-stars-display">★★★</div>
+      <div class="celeb-desc" id="celeb-desc-text">
+        你用聪明的智慧解开了假名数独，获得了闪亮的小星星！
+      </div>
+      <div class="celeb-actions">
+        <button class="btn-secondary-action" onclick="exitGameToStages()">返回关卡</button>
+        <button class="btn-primary-action" id="btn-next-stage" onclick="playNextStage()">下一关卡 ➔</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ==========================================================
+   1. KANA DATABASE: 50-SOUNDS, ORIGINS, MNEMONICS & VOCABULARY
+   ========================================================== */
+const KANA_DB = [
+  // あ行
+  { hira: 'あ', kata: 'ア', romaji: 'a', row: 'a', originHira: '安 (草书)', originKata: '阿 (偏旁)', mnemonic: '“安”字草书圆溜溜，大肚子靠椅坐稳当，读作 a！', vocab: { jp: '飴 (あめ)', cn: '糖果', icon: '🍬' } },
+  { hira: 'い', kata: 'イ', romaji: 'i', row: 'a', originHira: '以 (草书)', originKata: '伊 (左偏旁)', mnemonic: '“以”字两竖连起来，一长一短像两根筷子，读作 i！', vocab: { jp: '犬 (いぬ)', cn: '小狗', icon: '🐶' } },
+  { hira: 'う', kata: 'ウ', romaji: 'u', row: 'a', originHira: '宇 (草书)', originKata: '宇 (宝盖头)', mnemonic: '“宇”字宝盖带弯钩，像只可爱的小耳朵，读作 u！', vocab: { jp: '海 (うみ)', cn: '大海', icon: '🌊' } },
+  { hira: 'え', kata: 'エ', romaji: 'e', row: 'a', originHira: '衣 (草书)', originKata: '江 (右偏旁工)', mnemonic: '“衣”字狂草飞快写，伸展翅膀像天鹅，读作 e！', vocab: { jp: '絵 (え)', cn: '图画', icon: '🎨' } },
+  { hira: 'お', kata: 'オ', romaji: 'o', row: 'a', originHira: '於 (草书)', originKata: '於 (左方旁)', mnemonic: '十字右边画个圈，右上一点像饭团，读作 o！', vocab: { jp: 'お握り (おにぎり)', cn: '饭团', icon: '🍙' } },
+
+  // か行
+  { hira: 'か', kata: 'カ', romaji: 'ka', row: 'ka', originHira: '加 (草书)', originKata: '加 (力字旁)', mnemonic: '“加”字左力右一点，撑起雨伞遮风雨，读作 ka！', vocab: { jp: '傘 (かさ)', cn: '雨伞', icon: '☂️' } },
+  { hira: 'き', kata: 'キ', romaji: 'ki', row: 'ka', originHira: '幾 (草书)', originKata: '幾 (上半部)', mnemonic: '两横一竖带个弯，像把开启宝箱的金色钥匙，读作 ki！', vocab: { jp: '狐 (きつね)', cn: '狐狸', icon: '🦊' } },
+  { hira: 'く', kata: 'ク', romaji: 'ku', row: 'ka', originHira: '久 (草书)', originKata: '久 (左上两笔)', mnemonic: '大于号向左张口，像小鸟张嘴讨虫吃，读作 ku！', vocab: { jp: '車 (くるま)', cn: '汽车', icon: '🚗' } },
+  { hira: 'け', kata: 'ケ', romaji: 'ke', row: 'ka', originHira: '計 (草书)', originKata: '介 (草体)', mnemonic: '左边一竖右边挑，像吃蛋糕的小叉子，读作 ke！', vocab: { jp: 'ケーキ', cn: '蛋糕', icon: '🍰' } },
+  { hira: 'こ', kata: 'コ', romaji: 'ko', row: 'ka', originHira: '己 (草书)', originKata: '己 (上半部)', mnemonic: '上面一横下面兜，上下两片甜面包，读作 ko！', vocab: { jp: '独楽 (こま)', cn: '陀螺', icon: '🪀' } },
+
+  // さ行
+  { hira: 'さ', kata: 'サ', romaji: 'sa', row: 'sa', originHira: '左 (草书)', originKata: '散 (左上)', mnemonic: '一横一竖向右绕，小鱼跃水摇尾巴，读作 sa！', vocab: { jp: '魚 (さかな)', cn: '小鱼', icon: '🐟' } },
+  { hira: 'し', kata: 'シ', romaji: 'shi', row: 'sa', originHira: '之 (草书)', originKata: '之 (草体)', mnemonic: '自上而下一弯钩，像个垂钓的银鱼钩，读作 shi！', vocab: { jp: '鹿 (しか)', cn: '小鹿', icon: '🦌' } },
+  { hira: 'す', kata: 'ス', romaji: 'su', row: 'sa', originHira: '寸 (草书)', originKata: '須 (右页草)', mnemonic: '一横一竖打个结，藤上挂个大西瓜，读作 su！', vocab: { jp: '西瓜 (すいか)', cn: '西瓜', icon: '🍉' } },
+  { hira: 'せ', kata: 'セ', romaji: 'se', row: 'sa', originHira: '世 (草书)', originKata: '世 (简写)', mnemonic: '“世”字大门敞开怀，夏日蝉儿树上鸣，读作 se！', vocab: { jp: '蝉 (せみ)', cn: '知了蝉', icon: '🦗' } },
+  { hira: 'そ', kata: 'ソ', romaji: 'so', row: 'sa', originHira: '曽 (草书)', originKata: '曽 (上两笔)', mnemonic: '一笔连续连折线，像闪电划破蓝天，读作 so！', vocab: { jp: '空 (そら)', cn: '天空', icon: '☁️' } },
+
+  // た行
+  { hira: 'た', kata: 'タ', romaji: 'ta', row: 'ta', originHira: '太 (草书)', originKata: '多 (上半夕)', mnemonic: '十字旁边带两横，“太”阳公公笑眯眯，读作 ta！', vocab: { jp: '太陽 (たいよう)', cn: '太阳', icon: '☀️' } },
+  { hira: 'ち', kata: 'チ', romaji: 'chi', row: 'ta', originHira: '知 (草书)', originKata: '千 (变形)', mnemonic: '看似数字5多一横，“知”道藏宝图在哪，读作 chi！', vocab: { jp: '地図 (ちず)', cn: '地图', icon: '🗺️' } },
+  { hira: 'つ', kata: 'ツ', romaji: 'tsu', row: 'ta', originHira: '川 (草书)', originKata: '川 (草体)', mnemonic: '弯弯弧线像月牙，一弯新月挂夜空，读作 tsu！', vocab: { jp: '月 (つき)', cn: '月亮', icon: '🌙' } },
+  { hira: 'て', kata: 'テ', romaji: 'te', row: 'ta', originHira: '天 (草书)', originKata: '天 (前三笔)', mnemonic: '一横连着大弯钩，拍拍手心做好朋友，读作 te！', vocab: { jp: '手 (て)', cn: '手手', icon: '✋' } },
+  { hira: 'と', kata: 'ト', romaji: 'to', row: 'ta', originHira: '止 (草书)', originKata: '止 (首两笔)', mnemonic: '一竖右边斜靠拢，携手同行好伙伴，读作 to！', vocab: { jp: '友達 (ともだち)', cn: '朋友', icon: '🤝' } },
+
+  // な行
+  { hira: 'な', kata: 'ナ', romaji: 'na', row: 'na', originHira: '奈 (草书)', originKata: '奈 (首二笔)', mnemonic: '十字旁边画圈圈，“奈”何夏日格外美，读作 na！', vocab: { jp: '夏 (なつ)', cn: '夏天', icon: '🌻' } },
+  { hira: 'に', kata: 'ニ', romaji: 'ni', row: 'na', originHira: '仁 (草书)', originKata: '二 (楷书)', mnemonic: '左边一竖右两横，“仁”字彩虹桥上挂，读作 ni！', vocab: { jp: '虹 (にじ)', cn: '彩虹', icon: '🌈' } },
+  { hira: 'ぬ', kata: 'ヌ', romaji: 'nu', row: 'na', originHira: '奴 (草书)', originKata: '奴 (右侧又)', mnemonic: '“奴”字草书尾打圈，软萌毛绒布娃娃，读作 nu！', vocab: { jp: 'ぬいぐるみ', cn: '毛绒玩具', icon: '🧸' } },
+  { hira: 'ね', kata: 'ネ', romaji: 'ne', row: 'na', originHira: '祢 (草书)', originKata: '祢 (示字旁)', mnemonic: '左立一竖右卷尾，小猫咪卷尾睡觉，读作 ne！', vocab: { jp: '猫 (ねこ)', cn: '小猫', icon: '🐱' } },
+  { hira: 'の', kata: 'ノ', romaji: 'no', row: 'na', originHira: '乃 (草书)', originKata: '乃 (首笔撇)', mnemonic: '一笔回旋画圆盘，香脆圆片包海苔，读作 no！', vocab: { jp: '海苔 (のり)', cn: '海苔', icon: '🍙' } },
+
+  // は行
+  { hira: 'は', kata: 'ハ', romaji: 'ha', row: 'ha', originHira: '波 (草书)', originKata: '八 (楷书)', mnemonic: '左竖右圈笑哈哈，春风吹拂百花开，读作 ha！', vocab: { jp: '花 (はな)', cn: '花朵', icon: '🌸' } },
+  { hira: 'ひ', kata: 'ヒ', romaji: 'hi', row: 'ha', originHira: '比 (草书)', originKata: '比 (右侧)', mnemonic: '大凹槽像微笑嘴，飞机展翅阳光照，读作 hi！', vocab: { jp: '飛行機 (ひこうき)', cn: '飞机', icon: '✈️' } },
+  { hira: 'ふ', kata: 'フ', romaji: 'fu', row: 'ha', originHira: '不 (草书)', originKata: '不 (前两笔)', mnemonic: '小钩两边带小点，气球轻飘飞蓝天，读作 fu！', vocab: { jp: '風船 (ふうせん)', cn: '气球', icon: '🎈' } },
+  { hira: 'へ', kata: 'ヘ', romaji: 'he', row: 'ha', originHira: '部 (草书)', originKata: '部 (草体)', mnemonic: '一座小山尖尖角，推开家门进房间，读作 he！', vocab: { jp: '部屋 (へや)', cn: '房间', icon: '🚪' } },
+  { hira: 'ほ', kata: 'ホ', romaji: 'ho', row: 'ha', originHira: '保 (草书)', originKata: '保 (右下)', mnemonic: '头戴小帽穿裙子，夜空眨眼亮星星，读作 ho！', vocab: { jp: '星 (ほし)', cn: '星星', icon: '⭐' } },
+
+  // ま行
+  { hira: 'ま', kata: 'マ', romaji: 'ma', row: 'ma', originHira: '末 (草书)', originKata: '末 (首二笔)', mnemonic: '两横一竖绕个圈，漫步繁华大街市，读作 ma！', vocab: { jp: '街 (まち)', cn: '街道', icon: '🏙️' } },
+  { hira: 'み', kata: 'ミ', romaji: 'mi', row: 'ma', originHira: '美 (草书)', originKata: '三 (草体)', mnemonic: '数字2拖小斜撇，香甜多汁金蜜柑，读作 mi！', vocab: { jp: '蜜柑 (みかん)', cn: '蜜桔', icon: '🍊' } },
+  { hira: 'む', kata: 'ム', romaji: 'mu', row: 'ma', originHira: '武 (草书)', originKata: '牟 (头部)', mnemonic: '一横一转带小结，右上一点小昆虫，读作 mu！', vocab: { jp: '虫 (むし)', cn: '小虫子', icon: '🐛' } },
+  { hira: 'め', kata: 'メ', romaji: 'me', row: 'ma', originHira: '女 (草书)', originKata: '女 (两划交叉)', mnemonic: '十字交错圆圆面，戴上眼镜看得清，读作 me！', vocab: { jp: '眼鏡 (めがね)', cn: '眼镜', icon: '👓' } },
+  { hira: 'も', kata: 'モ', romaji: 'mo', row: 'ma', originHira: '毛 (草书)', originKata: '毛 (变形)', mnemonic: '竖弯钩穿两道横，粉嫩多汁大蜜桃，读作 mo！', vocab: { jp: '桃 (もも)', cn: '桃子', icon: '🍑' } },
+
+  // や行
+  { hira: 'や', kata: 'ヤ', romaji: 'ya', row: 'ya', originHira: '也 (草书)', originKata: '也 (前两笔)', mnemonic: '一笔勾勒山峰立，壮美高山入云霄，读作 ya！', vocab: { jp: '山 (やま)', cn: '高山', icon: '⛰️' } },
+  { hira: 'ゆ', kata: 'ユ', romaji: 'yu', row: 'ya', originHira: '由 (草书)', originKata: '由 (右下折)', mnemonic: '绕过一圈竖中穿，冬日飘飘纯白雪，读作 yu！', vocab: { jp: '雪 (ゆき)', cn: '白雪', icon: '❄️' } },
+  { hira: 'よ', kata: 'ヨ', romaji: 'yo', row: 'ya', originHira: '与 (草书)', originKata: '与 (前三笔)', mnemonic: '短横向下一打圈，月色温柔静悄悄，读作 yo！', vocab: { jp: '夜 (よる)', cn: '夜晚', icon: '🌙' } },
+
+  // ら行
+  { hira: 'ら', kata: 'ラ', romaji: 'ra', row: 'ra', originHira: '良 (草书)', originKata: '良 (前两笔)', mnemonic: '一点下面像个5，高大骆驼穿沙漠，读作 ra！', vocab: { jp: '駱駝 (らくだ)', cn: '骆驼', icon: '🐫' } },
+  { hira: 'り', kata: 'リ', romaji: 'ri', row: 'ra', originHira: '利 (草书)', originKata: '利 (立刀旁)', mnemonic: '两竖并排右边长，红彤彤脆甜大苹果，读作 ri！', vocab: { jp: '林檎 (りんご)', cn: '苹果', icon: '🍎' } },
+  { hira: 'る', kata: 'ル', romaji: 'ru', row: 'ra', originHira: '留 (草书)', originKata: '流 (右侧两笔)', mnemonic: '像数字3底下挽个圈，乖乖在家看家门，读作 ru！', vocab: { jp: '留守番 (るすばん)', cn: '看家', icon: '🏠' } },
+  { hira: 'れ', kata: 'レ', romaji: 're', row: 'ra', originHira: '礼 (草书)', originKata: '礼 (右侧撇折)', mnemonic: '左竖右侧向上扬，酸甜清香黄柠檬，读作 re！', vocab: { jp: 'レモン', cn: '柠檬', icon: '🍋' } },
+  { hira: 'ろ', kata: 'ロ', romaji: 'ro', row: 'ra', originHira: '吕 (草书)', originKata: '吕 (上部口)', mnemonic: '像数字3没挽结，点亮温暖红蜡烛，读作 ro！', vocab: { jp: 'ろうそく', cn: '蜡烛', icon: '🕯️' } },
+
+  // わ行 / 拨音
+  { hira: 'わ', kata: 'ワ', romaji: 'wa', row: 'wa', originHira: '和 (草书)', originKata: '和 (口字部)', mnemonic: '“れ”字右边变圆滚，精致香甜和果子，读作 wa！', vocab: { jp: '和菓子 (わがし)', cn: '和果子', icon: '🍡' } },
+  { hira: 'を', kata: 'ヲ', romaji: 'wo', row: 'wa', originHira: '远 (草书)', originKata: '乎 (首三笔)', mnemonic: '穿针引线助词桥，连接句子读好书，读作 o (wo)！', vocab: { jp: '本を読む', cn: '看书(助词)', icon: '📖' } },
+  { hira: 'ん', kata: 'ン', romaji: 'n', row: 'wa', originHira: '无 (草书)', originKata: '尔 (变形)', mnemonic: '像小写英文h，清脆叮当风铃声，读作 n (鼻音)！', vocab: { jp: '風鈴 (ふうりん)', cn: '风铃', icon: '🔔' } }
+];
+
+// 浊音与半浊音 (Dakuon)
+const DAKUON_DB = [
+  { hira: 'が', kata: 'ガ', romaji: 'ga', origin: 'か + 两点 (浊音化)', mnemonic: '清音「か」加浊音点，从 k 变成 g 音', vocab: { jp: '学校 (がっこう)', cn: '学校', icon: '🏫' } },
+  { hira: 'ぎ', kata: 'ギ', romaji: 'gi', origin: 'き + 两点', mnemonic: '清音「き」加浊音点，读作 gi', vocab: { jp: '銀 (ぎん)', cn: '白银', icon: '🥈' } },
+  { hira: 'ぐ', kata: 'グ', romaji: 'gu', origin: 'く + 两点', mnemonic: '清音「く」加浊音点，读作 gu', vocab: { jp: '軍手 (ぐんて)', cn: '手套', icon: '🧤' } },
+  { hira: 'げ', kata: 'ゲ', romaji: 'ge', origin: 'け + 两点', mnemonic: '清音「け」加浊音点，读作 ge', vocab: { jp: '元気 (げんき)', cn: '有活力', icon: '💪' } },
+  { hira: 'ご', kata: 'ゴ', romaji: 'go', origin: 'こ + 两点', mnemonic: '清音「こ」加浊音点，读作 go', vocab: { jp: 'ご飯 (ごはん)', cn: '米饭', icon: '🍚' } },
+
+  { hira: 'ざ', kata: 'ザ', romaji: 'za', origin: 'さ + 两点', mnemonic: '清音「さ」加浊音点，读作 za', vocab: { jp: '雑誌 (ざっし)', cn: '杂志', icon: '📚' } },
+  { hira: 'じ', kata: 'ジ', romaji: 'ji', origin: 'し + 两点', mnemonic: '清音「し」加浊音点，读作 ji', vocab: { jp: '時間 (じかん)', cn: '时间', icon: '⏰' } },
+  { hira: 'ず', kata: 'ズ', romaji: 'zu', origin: 'す + 两点', mnemonic: '清音「す」加浊音点，读作 zu', vocab: { jp: '雀 (すずめ)', cn: '麻雀', icon: '🐦' } },
+  { hira: 'ぜ', kata: 'ゼ', romaji: 'ze', origin: 'せ + 两点', mnemonic: '清音「せ」加浊音点，读作 ze', vocab: { jp: 'ゼリー', cn: '果冻', icon: '🍮' } },
+  { hira: 'ぞ', kata: 'ゾ', romaji: 'zo', origin: 'そ + 两点', mnemonic: '清音「そ」加浊音点，读作 zo', vocab: { jp: '象 (ぞう)', cn: '大象', icon: '🐘' } },
+
+  { hira: 'だ', kata: 'ダ', romaji: 'da', origin: 'た + 两点', mnemonic: '清音「た」加浊音点，读作 da', vocab: { jp: '大根 (だいこん)', cn: '白萝卜', icon: '🥕' } },
+  { hira: 'ぢ', kata: 'ヂ', romaji: 'ji', origin: 'ち + 两点', mnemonic: '清音「ち」加浊音点，读作 ji', vocab: { jp: '鼻血 (はなぢ)', cn: '鼻血', icon: '🩹' } },
+  { hira: 'づ', kata: 'ヅ', romaji: 'zu', origin: 'つ + 两点', mnemonic: '清音「つ」加浊音点，读作 zu', vocab: { jp: '三日月 (みかづき)', cn: '弦月', icon: '🌙' } },
+  { hira: 'で', kata: 'デ', romaji: 'de', origin: 'て + 两点', mnemonic: '清音「て」加浊音点，读作 de', vocab: { jp: '電車 (でんしゃ)', cn: '电车', icon: '🚃' } },
+  { hira: 'ど', kata: 'ド', romaji: 'do', origin: 'と + 两点', mnemonic: '清音「と」加浊音点，读作 do', vocab: { jp: '動物 (どうぶつ)', cn: '动物', icon: '🦁' } },
+
+  { hira: 'ば', kata: 'バ', romaji: 'ba', origin: 'は + 两点', mnemonic: '清音「は」加浊音点，读作 ba', vocab: { jp: 'バナナ', cn: '香蕉', icon: '🍌' } },
+  { hira: 'び', kata: 'ビ', romaji: 'bi', origin: 'ひ + 两点', mnemonic: '清音「ひ」加浊音点，读作 bi', vocab: { jp: '病院 (びょういん)', cn: '医院', icon: '🏥' } },
+  { hira: 'ぶ', kata: 'ブ', romaji: 'bu', origin: 'ふ + 两点', mnemonic: '清音「ふ」加浊音点，读作 bu', vocab: { jp: '豚 (ぶた)', cn: '小猪', icon: '🐷' } },
+  { hira: 'べ', kata: 'ベ', romaji: 'be', origin: 'へ + 两点', mnemonic: '清音「へ」加浊音点，读作 be', vocab: { jp: '勉強 (べんきょう)', cn: '学习', icon: '📝' } },
+  { hira: 'ぼ', kata: 'ボ', romaji: 'bo', origin: 'ほ + 两点', mnemonic: '清音「ほ」加浊音点，读作 bo', vocab: { jp: '帽子 (ぼうし)', cn: '帽子', icon: '🧢' } },
+
+  { hira: 'ぱ', kata: 'パ', romaji: 'pa', origin: 'は + 小圆圈 (半浊音)', mnemonic: '右上加小圆圈，爆破清脆读作 pa', vocab: { jp: 'パン', cn: '面包', icon: '🍞' } },
+  { hira: 'ぴ', kata: 'ピ', romaji: 'pi', origin: 'ひ + 小圆圈', mnemonic: '右上加小圆圈，读作 pi', vocab: { jp: 'ピアノ', cn: '钢琴', icon: '🎹' } },
+  { hira: 'ぷ', kata: 'プ', romaji: 'pu', origin: 'ふ + 小圆圈', mnemonic: '右上加小圆圈，读作 pu', vocab: { jp: 'プリン', cn: '布丁', icon: '🍮' } },
+  { hira: 'ぺ', kata: 'ペ', romaji: 'pe', origin: 'へ + 小圆圈', mnemonic: '右上加小圆圈，读作 pe', vocab: { jp: 'ペンギン', cn: '企鹅', icon: '🐧' } },
+  { hira: 'ぽ', kata: 'ポ', romaji: 'po', origin: 'ほ + 小圆圈', mnemonic: '右上加小圆圈，读作 po', vocab: { jp: 'ポスト', cn: '邮筒', icon: '📮' } }
+];
+
+// 拗音 (Youon - 常用集)
+const YOUON_DB = [
+  { hira: 'きゃ', kata: 'キャ', romaji: 'kya', vocab: { jp: '客 (きゃく)', cn: '客人', icon: '🧑' } },
+  { hira: 'きゅ', kata: 'キュ', romaji: 'kyu', vocab: { jp: '胡瓜 (きゅうり)', cn: '黄瓜', icon: '🥒' } },
+  { hira: 'きょ', kata: 'キョ', romaji: 'kyo', vocab: { jp: '今日 (きょう)', cn: '今天', icon: '📅' } },
+  { hira: 'しゃ', kata: 'シャ', romaji: 'sha', vocab: { jp: '写真 (しゃしん)', cn: '照片', icon: '📷' } },
+  { hira: 'しゅ', kata: 'シュ', romaji: 'shu', vocab: { jp: '宿題 (しゅくだい)', cn: '作业', icon: '📖' } },
+  { hira: 'しょ', kata: 'ショ', romaji: 'sho', vocab: { jp: '食堂 (しょくどう)', cn: '食堂', icon: '🍽️' } },
+  { hira: 'ちゃ', kata: 'チャ', romaji: 'cha', vocab: { jp: 'お茶 (おちゃ)', cn: '茶水', icon: '🍵' } },
+  { hira: 'ちゅ', kata: 'チュ', romaji: 'chu', vocab: { jp: '注意 (ちゅうい)', cn: '注意', icon: '⚠️' } },
+  { hira: 'ちょ', kata: 'チョ', romaji: 'cho', vocab: { jp: '蝶 (ちょう)', cn: '蝴蝶', icon: '🦋' } },
+  { hira: 'にゃ', kata: 'ニャ', romaji: 'nya', vocab: { jp: 'ニャー', cn: '喵喵叫', icon: '🐾' } },
+  { hira: 'ひゃ', kata: 'ヒャ', romaji: 'hya', vocab: { jp: '百 (ひゃく)', cn: '一百', icon: '💯' } },
+  { hira: 'みゃ', kata: 'ミャ', romaji: 'mya', vocab: { jp: '脈 (みゃく)', cn: '脉搏', icon: '💓' } },
+  { hira: 'りょ', kata: 'リョ', romaji: 'ryo', vocab: { jp: '旅行 (りょこう)', cn: '旅行', icon: '🧳' } }
+];
+
+// Quick index map by hiragana & katakana
+const ALL_KANA_MAP = {};
+[...KANA_DB, ...DAKUON_DB, ...YOUON_DB].forEach(k => {
+  ALL_KANA_MAP[k.hira] = k;
+  ALL_KANA_MAP[k.kata] = k;
+});
+
+/* ==========================================================
+   2. CURATED ADVENTURE STAGES DEFINITION
+   ========================================================== */
+const STAGES = [
+  // TIER 1: 4×4 入门 (8 关)
+  {
+    id: 1, tier: 1, size: 4, boxR: 2, boxC: 2, clues: 7,
+    title: '🌸 あ行萌芽',
+    symbols: ['あ', 'い', 'う', 'え'],
+    tip: '这一关我们要运用元音「あ、い、う、え」！观察字源，中国汉字「安、以、宇、衣」助你秒记！'
+  },
+  {
+    id: 2, tier: 1, size: 4, boxR: 2, boxC: 2, clues: 6,
+    title: '🚗 か行探索',
+    symbols: ['か', 'き', 'く', 'け'],
+    tip: 'か行四个假名登场：雨伞「か」、钥匙「き」、车车「く」、蛋糕「け」！'
+  },
+  {
+    id: 3, tier: 1, size: 4, boxR: 2, boxC: 2, clues: 6,
+    title: '🍉 さ行凉爽',
+    symbols: ['さ', 'し', 'す', 'せ'],
+    tip: 'さ行四个假名：小鱼「さ」、鱼钩「し」、西瓜「す」、知了「せ」！'
+  },
+  {
+    id: 4, tier: 1, size: 4, boxR: 2, boxC: 2, clues: 6,
+    title: '🌙 た行跳跃',
+    symbols: ['た', 'ち', 'つ', 'て'],
+    tip: 'た行假名：太阳「た」、地图「ち」、月牙「つ」、小手「て」！'
+  },
+  {
+    id: 5, tier: 1, size: 4, boxR: 2, boxC: 2, clues: 6,
+    title: '🐱 な行可爱伴',
+    symbols: ['な', 'に', 'ぬ', 'ね'],
+    tip: 'な行四个假名：夏天「な」、彩虹「に」、玩偶「ぬ」、小猫「ね」！'
+  },
+  {
+    id: 6, tier: 1, size: 4, boxR: 2, boxC: 2, clues: 6,
+    title: '🤖 片假名挑战',
+    symbols: ['ア', 'イ', 'ウ', 'エ'],
+    tip: '片假名闪亮登场！它们直接取自汉字楷书的偏旁部首，像积木一样方正！'
+  },
+  {
+    id: 7, tier: 1, size: 4, boxR: 2, boxC: 2, clues: 6,
+    title: '🐾 萌宠好朋友',
+    symbols: ['い', 'ね', 'こ', 'と'],
+    tip: '由「小狗 いぬ」、「小猫 ねこ」提取出的假名小队，推理试试！'
+  },
+  {
+    id: 8, tier: 1, size: 4, boxR: 2, boxC: 2, clues: 5,
+    title: '🏆 4格大满贯',
+    symbols: ['あ', 'か', 'さ', 'た'],
+    tip: '四大主流清音行首音齐聚一堂！看看谁是最棒的小小侦探！'
+  },
+
+  // TIER 2: 6×6 进阶 (8 关)
+  {
+    id: 9, tier: 2, size: 6, boxR: 2, boxC: 3, clues: 18,
+    title: '⭐ 元音六星阵',
+    symbols: ['あ', 'い', 'う', 'え', 'お', 'ん'],
+    tip: '五大基础母音加上鼻音「ん」，构成日语发音基石！6×6 考验更进一步！'
+  },
+  {
+    id: 10, tier: 2, size: 6, boxR: 2, boxC: 3, clues: 17,
+    title: '🦊 か行全家福',
+    symbols: ['か', 'き', 'く', 'け', 'こ', 'ん'],
+    tip: 'か行五个音全部集结，加上「ん」，每行每列每宫格都不能重复哦！'
+  },
+  {
+    id: 11, tier: 2, size: 6, boxR: 2, boxC: 3, clues: 17,
+    title: '🌈 さ行彩虹空',
+    symbols: ['さ', 'し', 'す', 'せ', 'そ', 'ん'],
+    tip: '天空「そ」也加入了さ行大家族！用铅笔草稿功能来排除唯一解吧！'
+  },
+  {
+    id: 12, tier: 2, size: 6, boxR: 2, boxC: 3, clues: 17,
+    title: '☀️ た行阳光阵',
+    symbols: ['た', 'ち', 'つ', 'て', 'と', 'ん'],
+    tip: '加上朋友「と」的た行大进阶！仔细观察哪一行已有最多的假名！'
+  },
+  {
+    id: 13, tier: 2, size: 6, boxR: 2, boxC: 3, clues: 16,
+    title: '🎈 は行微风起',
+    symbols: ['は', 'ひ', 'ふ', 'へ', 'ほ', 'ん'],
+    tip: '花朵「は」、飞机「ひ」、气球「ふ」、房间「へ」、星星「ほ」齐聚！'
+  },
+  {
+    id: 14, tier: 2, size: 6, boxR: 2, boxC: 3, clues: 16,
+    title: '🍑 ま行甜蜜蜜',
+    symbols: ['ま', 'み', 'む', 'め', 'も', 'ん'],
+    tip: '大桃子「も」领衔的ま行大探险，点击棋盘随时听标准日语！'
+  },
+  {
+    id: 15, tier: 2, size: 6, boxR: 2, boxC: 3, clues: 15,
+    title: '⚡ 浊音小分队',
+    symbols: ['が', 'ぎ', 'ぐ', 'げ', 'ご', 'ざ'],
+    tip: '加上两点浊音符号的假名大阅兵！听小柴老师朗读区分清音与浊音！'
+  },
+  {
+    id: 16, tier: 2, size: 6, boxR: 2, boxC: 3, clues: 14,
+    title: '🧩 平片假名大融合',
+    symbols: ['あ', 'ア', 'い', 'イ', 'う', 'ウ'],
+    tip: '平假名和片假名双宿双飞！既考验空间逻辑，又考察平片对应能力！'
+  },
+
+  // TIER 3: 9×9 巅峰大师 (6 关)
+  {
+    id: 17, tier: 3, size: 9, boxR: 3, boxC: 3, clues: 38,
+    title: '🏯 清音天守阁',
+    symbols: ['あ', 'い', 'う', 'え', 'お', 'か', 'き', 'く', 'け'],
+    tip: '正统九宫数独！覆盖あ行与か行的9大主力假名，挑战脑力极限！'
+  },
+  {
+    id: 18, tier: 3, size: 9, boxR: 3, boxC: 3, clues: 36,
+    title: '🌲 奇幻森林行',
+    symbols: ['さ', 'し', 'す', 'せ', 'そ', 'た', 'ち', 'つ', 'て'],
+    tip: 'さ行全队与た行主力合体！善用草稿备忘功能，逐格击破！'
+  },
+  {
+    id: 19, tier: 3, size: 9, boxR: 3, boxC: 3, clues: 35,
+    title: '🌸 な行与は行',
+    symbols: ['な', 'に', 'ぬ', 'ね', 'の', 'は', 'ひ', 'ふ', 'へ'],
+    tip: '猫咪与花朵的浪漫交响！9×9棋盘每一个3×3宫格都各显神通！'
+  },
+  {
+    id: 20, tier: 3, size: 9, boxR: 3, boxC: 3, clues: 34,
+    title: '🍎 ま行与ら行',
+    symbols: ['ま', 'み', 'む', 'め', 'も', 'ら', 'り', 'る', 'れ'],
+    tip: '蜜桃与苹果的果园大狂欢！观察出现频次最多的假名优先破局！'
+  },
+  {
+    id: 21, tier: 3, size: 9, boxR: 3, boxC: 3, clues: 32,
+    title: '🐲 浊音大师殿',
+    symbols: ['が', 'ぎ', 'ぐ', 'げ', 'ご', 'ざ', 'じ', 'ず', 'ぜ'],
+    tip: '9个饱满有力的浊音符号，在九宫格中演绎精妙的拉丁方阵平衡！'
+  },
+  {
+    id: 22, tier: 3, size: 9, boxR: 3, boxC: 3, clues: 30,
+    title: '👑 五十音极峰王冠',
+    symbols: ['あ', 'か', 'さ', 'た', 'な', 'は', 'ま', 'や', 'ら'],
+    tip: '五十音九大主要行首音终极王冠对决！通关你就是日语小达人！'
+  }
+];
+
+/* ==========================================================
+   3. RESILIENT DUAL-MODE ACOUSTIC ENGINE (Web Speech + Web Audio Formant)
+   ========================================================== */
+
+// Complete phonetic mapping for Japanese Hiragana & Katakana
+const KANA_PHONEME_TABLE = {
+  'あ':{c:'',v:'a'}, 'い':{c:'',v:'i'}, 'う':{c:'',v:'u'}, 'え':{c:'',v:'e'}, 'お':{c:'',v:'o'},
+  'か':{c:'k',v:'a'}, 'き':{c:'k',v:'i'}, 'く':{c:'k',v:'u'}, 'け':{c:'k',v:'e'}, 'こ':{c:'k',v:'o'},
+  'さ':{c:'s',v:'a'}, 'し':{c:'sh',v:'i'}, 'す':{c:'s',v:'u'}, 'せ':{c:'s',v:'e'}, 'そ':{c:'s',v:'o'},
+  'た':{c:'t',v:'a'}, 'ち':{c:'ch',v:'i'}, 'つ':{c:'ts',v:'u'}, 'て':{c:'t',v:'e'}, 'と':{c:'t',v:'o'},
+  'な':{c:'n',v:'a'}, 'に':{c:'n',v:'i'}, 'ぬ':{c:'n',v:'u'}, 'ね':{c:'n',v:'e'}, 'の':{c:'n',v:'o'},
+  'は':{c:'h',v:'a'}, 'ひ':{c:'h',v:'i'}, 'ふ':{c:'f',v:'u'}, 'へ':{c:'h',v:'e'}, 'ほ':{c:'h',v:'o'},
+  'ま':{c:'m',v:'a'}, 'み':{c:'m',v:'i'}, 'む':{c:'m',v:'u'}, 'め':{c:'m',v:'e'}, 'も':{c:'m',v:'o'},
+  'や':{c:'y',v:'a'}, 'ゆ':{c:'y',v:'u'}, 'よ':{c:'y',v:'o'},
+  'ら':{c:'r',v:'a'}, 'り':{c:'r',v:'i'}, 'る':{c:'r',v:'u'}, 'れ':{c:'r',v:'e'}, 'ろ':{c:'r',v:'o'},
+  'わ':{c:'w',v:'a'}, 'を':{c:'',v:'o'}, 'ん':{c:'nasal',v:'n'},
+  'が':{c:'g',v:'a'}, 'ぎ':{c:'g',v:'i'}, 'ぐ':{c:'g',v:'u'}, 'げ':{c:'g',v:'e'}, 'ご':{c:'g',v:'o'},
+  'ざ':{c:'z',v:'a'}, 'じ':{c:'j',v:'i'}, 'ず':{c:'z',v:'u'}, 'ぜ':{c:'z',v:'e'}, 'ぞ':{c:'z',v:'o'},
+  'だ':{c:'d',v:'a'}, 'ぢ':{c:'j',v:'i'}, 'づ':{c:'z',v:'u'}, 'で':{c:'d',v:'e'}, 'ど':{c:'d',v:'o'},
+  'ば':{c:'b',v:'a'}, 'び':{c:'b',v:'i'}, 'ぶ':{c:'b',v:'u'}, 'べ':{c:'b',v:'e'}, 'ぼ':{c:'b',v:'o'},
+  'ぱ':{c:'p',v:'a'}, 'ぴ':{c:'p',v:'i'}, 'ぷ':{c:'p',v:'u'}, 'ぺ':{c:'p',v:'e'}, 'ぽ':{c:'p',v:'o'},
+  'きゃ':{c:'k',v:'ya'}, 'きゅ':{c:'k',v:'yu'}, 'きょ':{c:'k',v:'yo'},
+  'しゃ':{c:'sh',v:'a'}, 'しゅ':{c:'sh',v:'u'}, 'しょ':{c:'sh',v:'o'},
+  'ちゃ':{c:'ch',v:'a'}, 'ちゅ':{c:'ch',v:'u'}, 'ちょ':{c:'ch',v:'o'},
+  'にゃ':{c:'n',v:'ya'}, 'にゅ':{c:'n',v:'yu'}, 'にょ':{c:'n',v:'yo'},
+  'ひゃ':{c:'h',v:'ya'}, 'ひゅ':{c:'h',v:'yu'}, 'ひょ':{c:'h',v:'yo'},
+  'みゃ':{c:'m',v:'ya'}, 'みゅ':{c:'m',v:'yu'}, 'みょ':{c:'m',v:'yo'},
+  'りゃ':{c:'r',v:'ya'}, 'りゅ':{c:'r',v:'yu'}, 'りょ':{c:'r',v:'yo'},
+  'ぎゃ':{c:'g',v:'ya'}, 'ぎゅ':{c:'g',v:'yu'}, 'ぎょ':{c:'g',v:'yo'},
+  'じゃ':{c:'j',v:'a'},  'じゅ':{c:'j',v:'u'},  'じょ':{c:'j',v:'o'},
+  'びゃ':{c:'b',v:'ya'}, 'びゅ':{c:'b',v:'yu'}, 'びょ':{c:'b',v:'yo'},
+  'ぴゃ':{c:'p',v:'ya'}, 'ぴゅ':{c:'p',v:'yu'}, 'ぴょ':{c:'p',v:'yo'}
+};
+
+function normalizeKanaChar(char) {
+  if (!char) return '';
+  return char.replace(/[\u30a1-\u30f6]/g, ch => String.fromCharCode(ch.charCodeAt(0) - 0x60));
+}
+
+class AudioEngine {
+  constructor() {
+    this.ctx = null;
+    this.muted = false;
+    this.jaVoice = null;
+    this.noiseBuffer = null;
+    this.hasTestedVoice = false;
+    this.voiceAvailable = false;
+    this.initSpeech();
+  }
+
+  initSpeech() {
+    if ('speechSynthesis' in window) {
+      const loadVoices = () => {
+        const voices = window.speechSynthesis.getVoices() || [];
+        this.jaVoice = voices.find(v => v.lang === 'ja-JP' || v.lang === 'ja_JP') ||
+                       voices.find(v => v.lang && v.lang.toLowerCase().startsWith('ja')) || null;
+        this.voiceAvailable = !!this.jaVoice;
+      };
+      loadVoices();
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+  }
+
+  ensureContext() {
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) this.ctx = new AudioCtx();
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  }
+
+  getNoiseBuffer() {
+    if (this.noiseBuffer) return this.noiseBuffer;
+    if (!this.ctx) return null;
+    const bufferSize = Math.floor(this.ctx.sampleRate * 0.4);
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+    this.noiseBuffer = buffer;
+    return buffer;
+  }
+
+  speak(text) {
+    if (this.muted || !text) return;
+    this.ensureContext();
+
+    const str = String(text).trim();
+    if (!str) return;
+
+    const cleanKey = str.replace(/[\/\\:*?"<>|]/g, '').trim();
+
+    // 1. Tier 1: Try playing server-side studio-quality neural human audio (MP3)
+    if (this.currentAudio) {
+      try {
+        this.currentAudio.pause();
+        this.currentAudio.currentTime = 0;
+      } catch(e) {}
+    }
+
+    const audioUrl = 'audio/ja/' + encodeURIComponent(cleanKey) + '.mp3';
+    const sound = new Audio(audioUrl);
+    this.currentAudio = sound;
+
+    let played = false;
+    sound.onplay = () => { played = true; };
+
+    sound.play().then(() => {
+      // High-fidelity natural human voice played successfully
+    }).catch(() => {
+      if (!played) {
+        this.fallbackSpeak(str);
+      }
+    });
+
+    sound.onerror = () => {
+      if (!played) {
+        this.fallbackSpeak(str);
+      }
+    };
+  }
+
+  fallbackSpeak(str) {
+    if (!this.jaVoice && 'speechSynthesis' in window) {
+      const voices = window.speechSynthesis.getVoices() || [];
+      this.jaVoice = voices.find(v => v.lang === 'ja-JP' || v.lang === 'ja_JP') ||
+                     voices.find(v => v.lang && v.lang.toLowerCase().startsWith('ja')) || null;
+      this.voiceAvailable = !!this.jaVoice;
+    }
+
+    // 2. Tier 2: Web Speech API
+    if (this.jaVoice && 'speechSynthesis' in window) {
+      try {
+        if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+        window.speechSynthesis.cancel();
+
+        const utter = new SpeechSynthesisUtterance(str);
+        utter.lang = 'ja-JP';
+        utter.rate = 0.88;
+        utter.pitch = 1.12;
+        utter.voice = this.jaVoice;
+        utter.onerror = () => { this.synthesizeFormantSpeech(str); };
+        window.speechSynthesis.speak(utter);
+        return;
+      } catch (e) {}
+    }
+
+    // 3. Tier 3: Pure Web Audio Acoustic Formant Speech Synthesizer
+    this.synthesizeFormantSpeech(str);
+  }
+
+  // Pure Web Audio Acoustic Formant Speech Synthesizer (Fant/Klatt Acoustic Model)
+  synthesizeFormantSpeech(text) {
+    this.ensureContext();
+    if (!this.ctx) return;
+
+    // Handle words or sentences by sequencing characters
+    const chars = Array.from(text);
+    if (chars.length === 0) return;
+
+    // If short single/pair kana, play directly
+    if (chars.length <= 2) {
+      this.playSingleKana(text);
+    } else {
+      // Play phrase with slight cadence
+      chars.forEach((ch, idx) => {
+        setTimeout(() => {
+          this.playSingleKana(ch);
+        }, idx * 160);
+      });
+    }
+  }
+
+  playSingleKana(rawChar) {
+    if (!this.ctx) return;
+    const norm = normalizeKanaChar(rawChar);
+    if (norm === 'ん') {
+      this.playNasalN();
+      return;
+    }
+
+    const info = KANA_PHONEME_TABLE[norm] || KANA_PHONEME_TABLE[norm[0]] || { c: '', v: 'a' };
+    this.playAcousticPhoneme(info.c, info.v);
+  }
+
+  playAcousticPhoneme(consonant, vowel) {
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    const baseFreq = 225; // Friendly, clear young voice
+    const dur = 0.28;
+
+    const VOWELS = {
+      a:  { f1: 820, f2: 1350, f3: 2600 },
+      i:  { f1: 300, f2: 2300, f3: 3000 },
+      u:  { f1: 360, f2: 1250, f3: 2400 },
+      e:  { f1: 520, f2: 1850, f3: 2650 },
+      o:  { f1: 500, f2: 880,  f3: 2500 },
+      ya: { f1: 820, f2: 1450, f3: 2600, glide: true },
+      yu: { f1: 360, f2: 1300, f3: 2400, glide: true },
+      yo: { f1: 500, f2: 950,  f3: 2500, glide: true }
+    };
+    const v = VOWELS[vowel] || VOWELS.a;
+
+    let leadTime = 0;
+    if (consonant === 's') {
+      leadTime = 0.07;
+      this.playBandNoise(now, 0.07, 5400, 1.8, 0.12);
+    } else if (consonant === 'sh') {
+      leadTime = 0.08;
+      this.playBandNoise(now, 0.08, 3300, 2.0, 0.14);
+    } else if (consonant === 'h') {
+      leadTime = 0.05;
+      this.playBandNoise(now, 0.05, 1800, 1.2, 0.08);
+    } else if (consonant === 'f') {
+      leadTime = 0.06;
+      this.playBandNoise(now, 0.06, 1400, 1.5, 0.1);
+    } else if (consonant === 'ts') {
+      leadTime = 0.07;
+      this.playBandNoise(now + 0.015, 0.055, 4800, 2.5, 0.13);
+    } else if (consonant === 'ch') {
+      leadTime = 0.07;
+      this.playBandNoise(now + 0.015, 0.055, 3400, 2.0, 0.13);
+    } else if (consonant === 'k') {
+      leadTime = 0.025;
+      this.playBandNoise(now + 0.008, 0.02, 2600, 3.5, 0.15);
+    } else if (consonant === 't') {
+      leadTime = 0.025;
+      this.playBandNoise(now + 0.008, 0.02, 3800, 3.5, 0.15);
+    } else if (consonant === 'p') {
+      leadTime = 0.025;
+      this.playBandNoise(now + 0.008, 0.02, 1100, 2.5, 0.15);
+    } else if (consonant === 'n' || consonant === 'm') {
+      leadTime = 0.06;
+      this.playHum(now, 0.06, consonant === 'm' ? 220 : 260);
+    } else if (['g', 'z', 'j', 'd', 'b'].includes(consonant)) {
+      leadTime = 0.035;
+      this.playHum(now, 0.035, 120);
+      if (consonant === 'g') this.playBandNoise(now + 0.02, 0.02, 2200, 3.0, 0.08);
+      if (consonant === 'z') this.playBandNoise(now + 0.01, 0.03, 4500, 2.0, 0.07);
+      if (consonant === 'j') this.playBandNoise(now + 0.01, 0.03, 3000, 2.0, 0.08);
+      if (consonant === 'd') this.playBandNoise(now + 0.02, 0.02, 3000, 3.0, 0.08);
+      if (consonant === 'b') this.playBandNoise(now + 0.02, 0.02, 900, 2.0, 0.08);
+    }
+
+    const vStart = now + leadTime;
+
+    // Glottal source (harmonic-rich sawtooth with subtle pitch decay)
+    const osc = this.ctx.createOscillator();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(baseFreq, vStart);
+    osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.93, vStart + dur);
+
+    // Vocal tract Formants (F1, F2, F3)
+    const f1 = this.ctx.createBiquadFilter();
+    f1.type = 'bandpass';
+    f1.frequency.setValueAtTime(v.f1, vStart);
+    f1.Q.value = 5.5;
+
+    const f2 = this.ctx.createBiquadFilter();
+    f2.type = 'bandpass';
+    f2.frequency.setValueAtTime(v.glide ? 2300 : v.f2, vStart);
+    if (v.glide) {
+      f2.frequency.exponentialRampToValueAtTime(v.f2, vStart + 0.08);
+    }
+    f2.Q.value = 6.5;
+
+    const f3 = this.ctx.createBiquadFilter();
+    f3.type = 'bandpass';
+    f3.frequency.setValueAtTime(v.f3, vStart);
+    f3.Q.value = 7.0;
+
+    // Transition for semivowels
+    if (consonant === 'y') {
+      f2.frequency.setValueAtTime(2400, vStart);
+      f2.frequency.exponentialRampToValueAtTime(v.f2, vStart + 0.07);
+    } else if (consonant === 'w') {
+      f2.frequency.setValueAtTime(800, vStart);
+      f2.frequency.exponentialRampToValueAtTime(v.f2, vStart + 0.07);
+    }
+
+    const g1 = this.ctx.createGain(); g1.gain.value = 1.0;
+    const g2 = this.ctx.createGain(); g2.gain.value = 0.68;
+    const g3 = this.ctx.createGain(); g3.gain.value = 0.30;
+
+    const master = this.ctx.createGain();
+    master.gain.setValueAtTime(0.001, vStart);
+    master.gain.linearRampToValueAtTime(0.20, vStart + 0.025);
+    if (consonant === 'r') {
+      // Tap/flap dip
+      master.gain.setValueAtTime(0.20, vStart + 0.035);
+      master.gain.linearRampToValueAtTime(0.04, vStart + 0.048);
+      master.gain.linearRampToValueAtTime(0.20, vStart + 0.062);
+    }
+    master.gain.setValueAtTime(0.20, vStart + dur - 0.05);
+    master.gain.linearRampToValueAtTime(0.001, vStart + dur);
+
+    osc.connect(f1);
+    osc.connect(f2);
+    osc.connect(f3);
+
+    f1.connect(g1);
+    f2.connect(g2);
+    f3.connect(g3);
+
+    g1.connect(master);
+    g2.connect(master);
+    g3.connect(master);
+
+    master.connect(this.ctx.destination);
+
+    osc.start(vStart);
+    osc.stop(vStart + dur);
+  }
+
+  playBandNoise(startTime, duration, centerFreq, q, volume) {
+    const buf = this.getNoiseBuffer();
+    if (!buf) return;
+    const src = this.ctx.createBufferSource();
+    src.buffer = buf;
+
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(centerFreq, startTime);
+    filter.Q.value = q;
+
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.001, startTime);
+    gain.gain.linearRampToValueAtTime(volume, startTime + 0.008);
+    gain.gain.setValueAtTime(volume, startTime + duration - 0.012);
+    gain.gain.linearRampToValueAtTime(0.001, startTime + duration);
+
+    src.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    src.start(startTime);
+    src.stop(startTime + duration);
+  }
+
+  playHum(startTime, duration, freq) {
+    const osc = this.ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, startTime);
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.001, startTime);
+    gain.gain.linearRampToValueAtTime(0.12, startTime + 0.008);
+    gain.gain.setValueAtTime(0.12, startTime + duration - 0.008);
+    gain.gain.linearRampToValueAtTime(0.001, startTime + duration);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(startTime);
+    osc.stop(startTime + duration);
+  }
+
+  playNasalN() {
+    this.ensureContext();
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(220, now);
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.value = 280;
+    filter.Q.value = 4.0;
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.linearRampToValueAtTime(0.18, now + 0.025);
+    gain.gain.setValueAtTime(0.18, now + 0.22);
+    gain.gain.linearRampToValueAtTime(0.001, now + 0.26);
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.26);
+  }
+
+  playSfx(type) {
+    if (this.muted) return;
+    this.ensureContext();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    if (type === 'pop') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(540, now);
+      osc.frequency.exponentialRampToValueAtTime(920, now + 0.08);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.08);
+      osc.start(now);
+      osc.stop(now + 0.08);
+    } else if (type === 'success') {
+      const freqs = [523.25, 659.25, 783.99, 1046.50];
+      freqs.forEach((f, idx) => {
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.type = 'triangle';
+        o.frequency.value = f;
+        o.connect(g);
+        g.connect(this.ctx.destination);
+        const t = now + idx * 0.09;
+        g.gain.setValueAtTime(0.15, t);
+        g.gain.linearRampToValueAtTime(0.001, t + 0.25);
+        o.start(t);
+        o.stop(t + 0.25);
+      });
+    } else if (type === 'error') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(200, now);
+      osc.frequency.exponentialRampToValueAtTime(120, now + 0.22);
+      gain.gain.setValueAtTime(0.1, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.22);
+      osc.start(now);
+      osc.stop(now + 0.22);
+    } else if (type === 'hint') {
+      const freqs = [880, 1174.66, 1318.51];
+      freqs.forEach((f, idx) => {
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.type = 'sine';
+        o.frequency.value = f;
+        o.connect(g);
+        g.connect(this.ctx.destination);
+        const t = now + idx * 0.07;
+        g.gain.setValueAtTime(0.12, t);
+        g.gain.linearRampToValueAtTime(0.001, t + 0.3);
+        o.start(t);
+        o.stop(t + 0.3);
+      });
+    } else if (type === 'fanfare') {
+      const melody = [
+        { f: 523.25, d: 0.15 }, { f: 659.25, d: 0.15 },
+        { f: 783.99, d: 0.15 }, { f: 1046.50, d: 0.45 }
+      ];
+      let t = now;
+      melody.forEach(m => {
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.type = 'triangle';
+        o.frequency.value = m.f;
+        o.connect(g);
+        g.connect(this.ctx.destination);
+        g.gain.setValueAtTime(0.18, t);
+        g.gain.linearRampToValueAtTime(0.001, t + m.d);
+        o.start(t);
+        o.stop(t + m.d);
+        t += m.d * 0.85;
+      });
+    }
+  }
+}
+
+const audio = new AudioEngine();
+
+/* ==========================================================
+   4. ROBUST BACKTRACKING SUDOKU ENGINE (4x4, 6x6, 9x9)
+   ========================================================== */
+class SudokuGenerator {
+  static countSolutions(grid, n, br, bc, limit = 2) {
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        if (grid[r][c] === 0) {
+          let count = 0;
+          for (let num = 1; num <= n; num++) {
+            if (this.isValid(grid, n, br, bc, r, c, num)) {
+              grid[r][c] = num;
+              count += this.countSolutions(grid, n, br, bc, limit - count);
+              grid[r][c] = 0;
+              if (count >= limit) return count;
+            }
+          }
+          return count;
+        }
+      }
+    }
+    return 1;
+  }
+
+  static isValid(grid, n, br, bc, r, c, num) {
+    for (let i = 0; i < n; i++) {
+      if (grid[r][i] === num || grid[i][c] === num) return false;
+    }
+    const startR = Math.floor(r / br) * br;
+    const startC = Math.floor(c / bc) * bc;
+    for (let i = 0; i < br; i++) {
+      for (let j = 0; j < bc; j++) {
+        if (grid[startR + i][startC + j] === num) return false;
+      }
+    }
+    return true;
+  }
+
+  static fillBoard(grid, n, br, bc) {
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        if (grid[r][c] === 0) {
+          const nums = [];
+          for (let i = 1; i <= n; i++) nums.push(i);
+          nums.sort(() => Math.random() - 0.5);
+
+          for (const num of nums) {
+            if (this.isValid(grid, n, br, bc, r, c, num)) {
+              grid[r][c] = num;
+              if (this.fillBoard(grid, n, br, bc)) return true;
+              grid[r][c] = 0;
+            }
+          }
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  static generate(n, br, bc, targetClues) {
+    const grid = Array.from({ length: n }, () => Array(n).fill(0));
+    this.fillBoard(grid, n, br, bc);
+    const solution = grid.map(row => [...row]);
+
+    const cells = [];
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        cells.push({ r, c });
+      }
+    }
+    cells.sort(() => Math.random() - 0.5);
+
+    let clues = n * n;
+    for (const cell of cells) {
+      if (clues <= targetClues) break;
+      const backup = grid[cell.r][cell.c];
+      grid[cell.r][cell.c] = 0;
+
+      if (this.countSolutions(grid, n, br, bc, 2) !== 1) {
+        grid[cell.r][cell.c] = backup;
+      } else {
+        clues--;
+      }
+    }
+
+    return { solution, puzzle: grid, clues };
+  }
+}
+
+/* ==========================================================
+   5. APPLICATION STATE & CONTROLLER
+   ========================================================== */
+const AppState = {
+  activeView: 'adventure',
+  activeTier: 1,
+  currentStage: null,
+  isFreeMode: false,
+  freeConfig: { size: 4, group: 'a' },
+
+  size: 4,
+  boxR: 2,
+  boxC: 2,
+  solution: null,
+  puzzle: null,
+  currentBoard: null,
+  draftNotes: null,
+  initialMask: null,
+  selectedCell: null,
+  symbolMap: [],
+  isDraftMode: false,
+  scriptDisplayMode: 'hiragana',
+  showRomaji: true,
+  undoStack: [],
+  timerInterval: null,
+  elapsedSeconds: 0,
+  stageProgress: {},
+
+  chartFilter: 'all',
+  chartScriptMode: 'hiragana',
+
+  quizMode: 'listen',
+  quizTarget: null,
+  quizStreak: 0,
+  matchCards: [],
+  matchFlipped: []
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadProgress();
+  renderStagesGrid();
+  renderChartGrid();
+  initQuiz();
+});
+
+/* ==========================================================
+   6. VIEW SWITCHING & NAVIGATION
+   ========================================================= */
+function switchView(viewName) {
+  audio.ensureContext();
+  audio.playSfx('pop');
+  AppState.activeView = viewName;
+
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+  const targetView = document.getElementById(`view-${viewName}`);
+  const targetTab = document.getElementById(`tab-${viewName}`);
+  if (targetView) targetView.classList.add('active');
+  if (targetTab) targetTab.classList.add('active');
+
+  const tutor = document.getElementById('tutor-text');
+  if (viewName === 'adventure') {
+    tutor.innerText = '快来挑选关卡开启假名冒险吧！从 4×4 新手关卡开始冲刺！';
+  } else if (viewName === 'chart') {
+    tutor.innerText = '这是最全的假名大百科！点击任意卡片听真人发音与汉字字源演变！';
+  } else if (viewName === 'quiz') {
+    tutor.innerText = '耳力大比拼！仔细听小柴老师朗读，看看你的假名听力多厉害！';
+  } else if (viewName === 'free') {
+    tutor.innerText = '想练哪行就练哪行！自由配置大小，生成独一无二的假名数独题！';
+  }
+}
+
+function switchTier(tierNum) {
+  audio.playSfx('pop');
+  AppState.activeTier = tierNum;
+  document.querySelectorAll('.tier-pill').forEach(el => el.classList.remove('active'));
+  const activePill = document.getElementById(`tier-pill-${tierNum}`);
+  if (activePill) activePill.classList.add('active');
+  renderStagesGrid();
+}
+
+function onTutorClick() {
+  audio.playSfx('pop');
+  if (AppState.activeView === 'game' && AppState.currentStage) {
+    playCurrentTargetSound();
+  } else {
+    audio.speak('こんにちは！いっしょに楽しく日本語を勉強しましょう！');
+  }
+}
+
+function toggleMute() {
+  audio.muted = !audio.muted;
+  const btn = document.getElementById('btn-sound-toggle');
+  btn.innerText = audio.muted ? '🔇' : '🔊';
+  if (!audio.muted) audio.playSfx('pop');
+}
+
+/* ==========================================================
+   7. STAGES RENDERING & PROGRESS PERSISTENCE
+   ========================================================== */
+function loadProgress() {
+  try {
+    const saved = localStorage.getItem('kana_sudoku_progress');
+    if (saved) AppState.stageProgress = JSON.parse(saved);
+  } catch (e) {
+    AppState.stageProgress = {};
+  }
+}
+
+function saveProgress() {
+  try {
+    localStorage.setItem('kana_sudoku_progress', JSON.stringify(AppState.stageProgress));
+  } catch (e) {}
+}
+
+function renderStagesGrid() {
+  const container = document.getElementById('stages-container');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const tierStages = STAGES.filter(s => s.tier === AppState.activeTier);
+
+  tierStages.forEach((stage) => {
+    const card = document.createElement('div');
+    card.className = 'stage-card';
+
+    const isUnlocked = stage.id === 1 || AppState.stageProgress[stage.id - 1] !== undefined;
+    if (!isUnlocked) card.classList.add('locked');
+
+    const starsCount = AppState.stageProgress[stage.id] || 0;
+    const starsStr = '★'.repeat(starsCount) + '☆'.repeat(3 - starsCount);
+
+    card.onclick = () => {
+      if (isUnlocked) startStageGame(stage);
+    };
+
+    card.innerHTML = `
+      <div class="stage-header">
+        <span class="stage-num-badge">第 ${stage.id} 关 · ${stage.size}×${stage.size}</span>
+        <span class="stage-stars">${isUnlocked ? starsStr : '🔒'}</span>
+      </div>
+      <div class="stage-title">${stage.title}</div>
+      <div class="stage-symbols-row">
+        ${stage.symbols.map(s => `<span class="symbol-tag">${s}</span>`).join('')}
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+/* ==========================================================
+   8. GAME INITIALIZATION & BOARD LOGIC
+   ========================================================== */
+function startStageGame(stage) {
+  audio.playSfx('pop');
+  AppState.isFreeMode = false;
+  AppState.currentStage = stage;
+  AppState.size = stage.size;
+  AppState.boxR = stage.boxR;
+  AppState.boxC = stage.boxC;
+
+  AppState.symbolMap = stage.symbols.map(sym => {
+    return ALL_KANA_MAP[sym] || { hira: sym, kata: sym, romaji: sym };
+  });
+
+  initBoardWithGenerator(stage.clues);
+
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-game').classList.add('active');
+
+  document.getElementById('tutor-text').innerText = stage.tip;
+
+  setTimeout(() => {
+    if (AppState.symbolMap[0]) audio.speak(AppState.symbolMap[0].hira);
+  }, 400);
+}
+
+function initBoardWithGenerator(targetClues) {
+  const { solution, puzzle } = SudokuGenerator.generate(
+    AppState.size,
+    AppState.boxR,
+    AppState.boxC,
+    targetClues
+  );
+
+  AppState.solution = solution;
+  AppState.puzzle = puzzle;
+  AppState.currentBoard = puzzle.map(row => [...row]);
+  AppState.initialMask = puzzle.map(row => row.map(val => val !== 0));
+  AppState.draftNotes = Array.from({ length: AppState.size }, () =>
+    Array.from({ length: AppState.size }, () => new Set())
+  );
+  AppState.undoStack = [];
+  AppState.selectedCell = null;
+
+  startTimer();
+  renderBoard();
+  renderKeypad();
+}
+
+function startTimer() {
+  clearInterval(AppState.timerInterval);
+  AppState.elapsedSeconds = 0;
+  const timerEl = document.getElementById('game-timer');
+  timerEl.innerText = '00:00';
+
+  AppState.timerInterval = setInterval(() => {
+    AppState.elapsedSeconds++;
+    const mins = String(Math.floor(AppState.elapsedSeconds / 60)).padStart(2, '0');
+    const secs = String(AppState.elapsedSeconds % 60).padStart(2, '0');
+    timerEl.innerText = `${mins}:${secs}`;
+  }, 1000);
+}
+
+function renderBoard() {
+  const grid = document.getElementById('sudoku-grid');
+  if (!grid) return;
+
+  grid.className = `sudoku-grid grid-${AppState.size}`;
+  grid.style.gridTemplateColumns = `repeat(${AppState.size}, 1fr)`;
+  grid.style.gridTemplateRows = `repeat(${AppState.size}, 1fr)`;
+  grid.innerHTML = '';
+
+  for (let r = 0; r < AppState.size; r++) {
+    for (let c = 0; c < AppState.size; c++) {
+      const cellEl = document.createElement('div');
+      cellEl.className = 'cell';
+      cellEl.dataset.r = r;
+      cellEl.dataset.c = c;
+
+      const val = AppState.currentBoard[r][c];
+      const isGiven = AppState.initialMask[r][c];
+
+      if (isGiven) cellEl.classList.add('given');
+
+      if (AppState.selectedCell && AppState.selectedCell.r === r && AppState.selectedCell.c === c) {
+        cellEl.classList.add('selected');
+      } else if (AppState.selectedCell) {
+        const selVal = AppState.currentBoard[AppState.selectedCell.r][AppState.selectedCell.c];
+        if (selVal !== 0 && selVal === val) {
+          cellEl.classList.add('highlighted-same');
+        } else if (AppState.selectedCell.r === r || AppState.selectedCell.c === c) {
+          cellEl.classList.add('highlighted-peer');
+        }
+      }
+
+      if (val !== 0) {
+        const kanaObj = AppState.symbolMap[val - 1];
+        const displayChar = (AppState.scriptDisplayMode === 'katakana') ? kanaObj.kata : kanaObj.hira;
+
+        cellEl.innerHTML = `
+          <span class="kana-char">${displayChar}</span>
+          ${AppState.showRomaji && AppState.size !== 9 ? `<span class="romaji-sub">${kanaObj.romaji}</span>` : ''}
+        `;
+      } else {
+        const notes = AppState.draftNotes[r][c];
+        if (notes && notes.size > 0) {
+          const notesGrid = document.createElement('div');
+          notesGrid.className = 'notes-grid';
+          notesGrid.style.gridTemplateColumns = `repeat(${Math.min(AppState.size, 3)}, 1fr)`;
+          for (let i = 1; i <= AppState.size; i++) {
+            const noteItem = document.createElement('div');
+            noteItem.className = 'note-item';
+            if (notes.has(i)) {
+              const kObj = AppState.symbolMap[i - 1];
+              noteItem.innerText = (AppState.scriptDisplayMode === 'katakana') ? kObj.kata : kObj.hira;
+            }
+            notesGrid.appendChild(noteItem);
+          }
+          cellEl.appendChild(notesGrid);
+        }
+      }
+
+      cellEl.onclick = () => selectCell(r, c);
+      grid.appendChild(cellEl);
+    }
+  }
+}
+
+function selectCell(r, c) {
+  audio.playSfx('pop');
+  AppState.selectedCell = { r, c };
+
+  const val = AppState.currentBoard[r][c];
+  if (val !== 0) {
+    const kanaObj = AppState.symbolMap[val - 1];
+    if (kanaObj) audio.speak(kanaObj.hira);
+  }
+
+  renderBoard();
+}
+
+function renderKeypad() {
+  const pad = document.getElementById('game-keypad');
+  if (!pad) return;
+
+  pad.className = `keypad-container keypad-${AppState.size}`;
+  pad.innerHTML = '';
+
+  for (let i = 1; i <= AppState.size; i++) {
+    const kanaObj = AppState.symbolMap[i - 1];
+    const displayChar = (AppState.scriptDisplayMode === 'katakana') ? kanaObj.kata : kanaObj.hira;
+
+    let count = 0;
+    for (let r = 0; r < AppState.size; r++) {
+      for (let c = 0; c < AppState.size; c++) {
+        if (AppState.currentBoard[r][c] === i) count++;
+      }
+    }
+    const isCompleted = count >= AppState.size;
+
+    const btn = document.createElement('button');
+    btn.className = `key-btn ${isCompleted ? 'completed' : ''}`;
+    btn.innerHTML = `
+      <span class="key-kana">${displayChar}</span>
+      <span class="key-sub">${kanaObj.romaji}</span>
+    `;
+
+    btn.onclick = () => fillNumber(i);
+    pad.appendChild(btn);
+  }
+}
+
+function fillNumber(num) {
+  if (!AppState.selectedCell) return;
+  const { r, c } = AppState.selectedCell;
+
+  if (AppState.initialMask[r][c]) {
+    audio.playSfx('error');
+    return;
+  }
+
+  const kanaObj = AppState.symbolMap[num - 1];
+
+  if (AppState.isDraftMode) {
+    audio.playSfx('pop');
+    if (AppState.draftNotes[r][c].has(num)) {
+      AppState.draftNotes[r][c].delete(num);
+    } else {
+      AppState.draftNotes[r][c].add(num);
+    }
+    renderBoard();
+    return;
+  }
+
+  AppState.undoStack.push({
+    r, c,
+    prevVal: AppState.currentBoard[r][c],
+    prevNotes: new Set(AppState.draftNotes[r][c])
+  });
+
+  AppState.currentBoard[r][c] = num;
+  AppState.draftNotes[r][c].clear();
+  audio.playSfx('pop');
+  if (kanaObj) audio.speak(kanaObj.hira);
+
+  checkConflicts();
+  renderBoard();
+  renderKeypad();
+  checkVictory();
+}
+
+function checkConflicts() {
+  const n = AppState.size;
+  const br = AppState.boxR;
+  const bc = AppState.boxC;
+
+  document.querySelectorAll('.cell').forEach(el => el.classList.remove('conflict'));
+
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      const val = AppState.currentBoard[r][c];
+      if (val === 0) continue;
+
+      let conflict = false;
+      for (let i = 0; i < n; i++) {
+        if (i !== c && AppState.currentBoard[r][i] === val) conflict = true;
+        if (i !== r && AppState.currentBoard[i][c] === val) conflict = true;
+      }
+      const startR = Math.floor(r / br) * br;
+      const startC = Math.floor(c / bc) * bc;
+      for (let i = 0; i < br; i++) {
+        for (let j = 0; j < bc; j++) {
+          const nr = startR + i;
+          const nc = startC + j;
+          if ((nr !== r || nc !== c) && AppState.currentBoard[nr][nc] === val) {
+            conflict = true;
+          }
+        }
+      }
+
+      if (conflict) {
+        const cellEl = document.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
+        if (cellEl) cellEl.classList.add('conflict');
+      }
+    }
+  }
+}
+
+function checkVictory() {
+  const n = AppState.size;
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      if (AppState.currentBoard[r][c] !== AppState.solution[r][c]) return;
+    }
+  }
+
+  clearInterval(AppState.timerInterval);
+  audio.playSfx('fanfare');
+
+  let stars = 3;
+  if (AppState.elapsedSeconds > 180) stars = 2;
+  if (AppState.elapsedSeconds > 360) stars = 1;
+
+  if (AppState.currentStage) {
+    AppState.stageProgress[AppState.currentStage.id] = Math.max(
+      AppState.stageProgress[AppState.currentStage.id] || 0,
+      stars
+    );
+    saveProgress();
+    renderStagesGrid();
+  }
+
+  const modal = document.getElementById('modal-celebration');
+  const starsEl = document.getElementById('celeb-stars-display');
+  const descEl = document.getElementById('celeb-desc-text');
+  starsEl.innerText = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+  descEl.innerText = `太棒了！用时 ${document.getElementById('game-timer').innerText}，完美解开假名数独！`;
+  modal.classList.add('active');
+}
+
+function gameUndo() {
+  if (AppState.undoStack.length === 0) return;
+  audio.playSfx('pop');
+  const last = AppState.undoStack.pop();
+  AppState.currentBoard[last.r][last.c] = last.prevVal;
+  AppState.draftNotes[last.r][last.c] = last.prevNotes;
+  checkConflicts();
+  renderBoard();
+  renderKeypad();
+}
+
+function gameErase() {
+  if (!AppState.selectedCell) return;
+  const { r, c } = AppState.selectedCell;
+  if (AppState.initialMask[r][c]) return;
+
+  audio.playSfx('pop');
+  AppState.undoStack.push({
+    r, c,
+    prevVal: AppState.currentBoard[r][c],
+    prevNotes: new Set(AppState.draftNotes[r][c])
+  });
+
+  AppState.currentBoard[r][c] = 0;
+  AppState.draftNotes[r][c].clear();
+  checkConflicts();
+  renderBoard();
+  renderKeypad();
+}
+
+function toggleDraftMode() {
+  audio.playSfx('pop');
+  AppState.isDraftMode = !AppState.isDraftMode;
+  const btn = document.getElementById('btn-draft');
+  if (AppState.isDraftMode) {
+    btn.classList.add('active');
+  } else {
+    btn.classList.remove('active');
+  }
+}
+
+function gameHint() {
+  const emptyCells = [];
+  for (let r = 0; r < AppState.size; r++) {
+    for (let c = 0; c < AppState.size; c++) {
+      if (AppState.currentBoard[r][c] !== AppState.solution[r][c]) {
+        emptyCells.push({ r, c });
+      }
+    }
+  }
+
+  if (emptyCells.length === 0) return;
+  audio.playSfx('hint');
+
+  const target = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+  const correctVal = AppState.solution[target.r][target.c];
+  const kanaObj = AppState.symbolMap[correctVal - 1];
+
+  AppState.selectedCell = target;
+  AppState.currentBoard[target.r][target.c] = correctVal;
+  AppState.draftNotes[target.r][target.c].clear();
+
+  document.getElementById('tutor-text').innerText = `小柴老师提示你：第 ${target.r + 1} 行第 ${target.c + 1} 格填入「${kanaObj.hira}」哦！`;
+  audio.speak(kanaObj.hira);
+
+  checkConflicts();
+  renderBoard();
+  renderKeypad();
+  checkVictory();
+}
+
+function toggleKanaScript() {
+  audio.playSfx('pop');
+  AppState.scriptDisplayMode = (AppState.scriptDisplayMode === 'hiragana') ? 'katakana' : 'hiragana';
+  document.getElementById('script-mode-label').innerText = (AppState.scriptDisplayMode === 'hiragana') ? '平假名' : '片假名';
+  renderBoard();
+  renderKeypad();
+}
+
+function toggleRomajiDisplay() {
+  audio.playSfx('pop');
+  AppState.showRomaji = !AppState.showRomaji;
+  document.getElementById('romaji-toggle-status').innerText = `🔤 罗马音: ${AppState.showRomaji ? '开' : '关'}`;
+  renderBoard();
+}
+
+function playCurrentTargetSound() {
+  if (AppState.selectedCell) {
+    const val = AppState.currentBoard[AppState.selectedCell.r][AppState.selectedCell.c];
+    if (val !== 0) {
+      const k = AppState.symbolMap[val - 1];
+      if (k) { audio.speak(k.hira); return; }
+    }
+  }
+  if (AppState.symbolMap[0]) audio.speak(AppState.symbolMap[0].hira);
+}
+
+function exitGameToStages() {
+  clearInterval(AppState.timerInterval);
+  document.getElementById('modal-celebration').classList.remove('active');
+  switchView('adventure');
+}
+
+function playNextStage() {
+  document.getElementById('modal-celebration').classList.remove('active');
+  if (AppState.currentStage) {
+    const nextStage = STAGES.find(s => s.id === AppState.currentStage.id + 1);
+    if (nextStage) {
+      startStageGame(nextStage);
+      return;
+    }
+  }
+  exitGameToStages();
+}
+
+/* ==========================================================
+   9. KANA CHART ENCYCLOPEDIA (五十音图大百科)
+   ========================================================== */
+function filterChart(filterKey) {
+  audio.playSfx('pop');
+  AppState.chartFilter = filterKey;
+  document.querySelectorAll('#chart-filter-tabs .filter-pill').forEach(el => el.classList.remove('active'));
+  event.target.classList.add('active');
+  renderChartGrid();
+}
+
+function setChartScriptMode(mode) {
+  audio.playSfx('pop');
+  AppState.chartScriptMode = mode;
+  document.querySelectorAll('.mode-switch-group .mode-btn').forEach(el => el.classList.remove('active'));
+  if (mode === 'hiragana') document.getElementById('chart-mode-hira').classList.add('active');
+  else if (mode === 'katakana') document.getElementById('chart-mode-kata').classList.add('active');
+  else document.getElementById('chart-mode-dual').classList.add('active');
+  renderChartGrid();
+}
+
+function renderChartGrid() {
+  const grid = document.getElementById('chart-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  let list = KANA_DB;
+  if (AppState.chartFilter === 'dakuon') {
+    list = DAKUON_DB;
+  } else if (AppState.chartFilter === 'youon') {
+    list = YOUON_DB;
+  } else if (AppState.chartFilter !== 'all') {
+    list = KANA_DB.filter(k => k.row === AppState.chartFilter);
+  }
+
+  list.forEach(k => {
+    const card = document.createElement('div');
+    card.className = 'chart-card';
+
+    let mainChar = k.hira;
+    let subChar = k.kata;
+    if (AppState.chartScriptMode === 'katakana') {
+      mainChar = k.kata;
+      subChar = k.hira;
+    } else if (AppState.chartScriptMode === 'dual') {
+      mainChar = `${k.hira}`;
+      subChar = `[${k.kata}]`;
+    }
+
+    const originBadge = k.originHira ? k.originHira.split(' ')[0] : (k.origin ? '浊' : '');
+
+    card.innerHTML = `
+      ${originBadge ? `<span class="origin-badge">${originBadge}</span>` : ''}
+      <span class="char-main">${mainChar}</span>
+      <span class="char-katakana">${subChar}</span>
+      <span class="char-romaji">${k.romaji}</span>
+    `;
+
+    card.onclick = () => {
+      audio.playSfx('pop');
+      audio.speak(k.hira);
+      openDetailModal(k);
+    };
+
+    grid.appendChild(card);
+  });
+}
+
+let currentDetailKana = null;
+
+function openDetailModal(kanaObj) {
+  currentDetailKana = kanaObj;
+  const modal = document.getElementById('modal-kana-detail');
+  document.getElementById('modal-char-big').innerText = kanaObj.hira;
+  document.getElementById('modal-romaji').innerText = `${kanaObj.romaji} · 罗马音`;
+  document.getElementById('modal-pair').innerText = `平假名: ${kanaObj.hira}  |  片假名: ${kanaObj.kata}`;
+
+  document.getElementById('modal-origin-desc').innerText = kanaObj.originHira
+    ? `「${kanaObj.hira}」来自汉字「${kanaObj.originHira}」；片假名「${kanaObj.kata}」取自汉字「${kanaObj.originKata}」之部首。`
+    : (kanaObj.origin || '浊音/半浊音规则衍生');
+
+  document.getElementById('modal-mnemonic').innerText = kanaObj.mnemonic || '多听多念，感受和风发音魅力！';
+
+  if (kanaObj.vocab) {
+    document.getElementById('modal-vocab-jp').innerText = `${kanaObj.vocab.icon} ${kanaObj.vocab.jp}`;
+    document.getElementById('modal-vocab-cn').innerText = `${kanaObj.vocab.cn}`;
+  }
+
+  modal.classList.add('active');
+}
+
+function closeDetailModal(e) {
+  document.getElementById('modal-kana-detail').classList.remove('active');
+}
+
+function playModalKanaVoice() {
+  if (currentDetailKana) audio.speak(currentDetailKana.hira);
+}
+
+function playModalVocabVoice() {
+  if (currentDetailKana && currentDetailKana.vocab) {
+    const textToSay = currentDetailKana.vocab.jp.replace(/\(.*\)/, '').replace(/.* /, '');
+    audio.speak(textToSay);
+  }
+}
+
+/* ==========================================================
+   10. LISTENING QUIZ & CARD MATCH (耳力挑战)
+   ========================================================== */
+function setQuizMode(mode) {
+  audio.playSfx('pop');
+  AppState.quizMode = mode;
+  document.querySelectorAll('.quiz-modes-nav .quiz-mode-pill').forEach(el => el.classList.remove('active'));
+  document.getElementById(`quiz-pill-${mode}`).classList.add('active');
+
+  document.getElementById('quiz-panel-listen').style.display = (mode === 'listen') ? 'flex' : 'none';
+  document.getElementById('quiz-panel-match').style.display = (mode === 'match') ? 'flex' : 'none';
+  document.getElementById('quiz-panel-origin').style.display = (mode === 'origin') ? 'flex' : 'none';
+
+  if (mode === 'listen') nextListeningQuestion();
+  else if (mode === 'match') initMatchGame();
+  else if (mode === 'origin') nextOriginQuestion();
+}
+
+function initQuiz() {
+  nextListeningQuestion();
+}
+
+// Mode 1: Listening
+function nextListeningQuestion() {
+  const pool = KANA_DB.slice(0, 25);
+  const target = pool[Math.floor(Math.random() * pool.length)];
+  AppState.quizTarget = target;
+
+  const choices = [target];
+  while (choices.length < 4) {
+    const rand = pool[Math.floor(Math.random() * pool.length)];
+    if (!choices.includes(rand)) choices.push(rand);
+  }
+  choices.sort(() => Math.random() - 0.5);
+
+  const container = document.getElementById('quiz-options-grid');
+  container.innerHTML = '';
+
+  choices.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt-btn';
+    btn.innerText = opt.hira;
+    btn.onclick = () => onSelectQuizOption(opt, btn);
+    container.appendChild(btn);
+  });
+
+  setTimeout(() => playQuizTargetAudio(), 250);
+}
+
+function playQuizTargetAudio() {
+  if (AppState.quizTarget) audio.speak(AppState.quizTarget.hira);
+}
+
+function onSelectQuizOption(chosen, btn) {
+  if (chosen === AppState.quizTarget) {
+    audio.playSfx('success');
+    btn.classList.add('correct');
+    AppState.quizStreak++;
+    document.getElementById('quiz-streak').innerText = AppState.quizStreak;
+    setTimeout(() => nextListeningQuestion(), 700);
+  } else {
+    audio.playSfx('error');
+    btn.classList.add('wrong');
+    AppState.quizStreak = 0;
+    document.getElementById('quiz-streak').innerText = AppState.quizStreak;
+  }
+}
+
+// Mode 2: Match Memory (平片对对碰)
+function initMatchGame() {
+  const pool = KANA_DB.slice(0, 15);
+  pool.sort(() => Math.random() - 0.5);
+  const selected = pool.slice(0, 6);
+
+  const cards = [];
+  selected.forEach(k => {
+    cards.push({ id: k.hira, char: k.hira, type: 'hira', pairId: k.romaji });
+    cards.push({ id: k.kata, char: k.kata, type: 'kata', pairId: k.romaji });
+  });
+  cards.sort(() => Math.random() - 0.5);
+
+  AppState.matchCards = cards;
+  AppState.matchFlipped = [];
+
+  const board = document.getElementById('match-board');
+  board.innerHTML = '';
+
+  cards.forEach((c, idx) => {
+    const cardEl = document.createElement('div');
+    cardEl.className = 'match-card';
+    cardEl.innerText = '?';
+    cardEl.onclick = () => onFlipMatchCard(idx, cardEl);
+    board.appendChild(cardEl);
+  });
+}
+
+function onFlipMatchCard(idx, cardEl) {
+  if (AppState.matchFlipped.length >= 2) return;
+  if (cardEl.classList.contains('flipped') || cardEl.classList.contains('matched')) return;
+
+  audio.playSfx('pop');
+  const cardData = AppState.matchCards[idx];
+  cardEl.innerText = cardData.char;
+  cardEl.classList.add('flipped');
+  AppState.matchFlipped.push({ idx, cardData, cardEl });
+
+  audio.speak(cardData.char);
+
+  if (AppState.matchFlipped.length === 2) {
+    const [c1, c2] = AppState.matchFlipped;
+    if (c1.cardData.pairId === c2.cardData.pairId && c1.cardData.type !== c2.cardData.type) {
+      setTimeout(() => {
+        audio.playSfx('success');
+        c1.cardEl.classList.add('matched');
+        c2.cardEl.classList.add('matched');
+        AppState.matchFlipped = [];
+
+        const allMatched = document.querySelectorAll('.match-card.matched').length;
+        if (allMatched === AppState.matchCards.length) {
+          audio.playSfx('fanfare');
+          setTimeout(() => initMatchGame(), 1200);
+        }
+      }, 400);
+    } else {
+      setTimeout(() => {
+        audio.playSfx('error');
+        c1.cardEl.classList.remove('flipped');
+        c2.cardEl.classList.remove('flipped');
+        c1.cardEl.innerText = '?';
+        c2.cardEl.innerText = '?';
+        AppState.matchFlipped = [];
+      }, 800);
+    }
+  }
+}
+
+// Mode 3: Chinese Origin Match (汉字寻根)
+let currentOriginTarget = null;
+function nextOriginQuestion() {
+  const pool = KANA_DB.filter(k => k.originHira);
+  currentOriginTarget = pool[Math.floor(Math.random() * pool.length)];
+
+  const hanzi = currentOriginTarget.originHira.split(' ')[0];
+  document.getElementById('origin-quiz-kanji').innerText = hanzi;
+
+  const choices = [currentOriginTarget];
+  while (choices.length < 4) {
+    const rand = pool[Math.floor(Math.random() * pool.length)];
+    if (!choices.includes(rand)) choices.push(rand);
+  }
+  choices.sort(() => Math.random() - 0.5);
+
+  const container = document.getElementById('origin-options-grid');
+  container.innerHTML = '';
+
+  choices.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt-btn';
+    btn.innerText = `${opt.hira} (${opt.kata})`;
+    btn.onclick = () => {
+      if (opt === currentOriginTarget) {
+        audio.playSfx('success');
+        btn.classList.add('correct');
+        audio.speak(opt.hira);
+        setTimeout(() => nextOriginQuestion(), 800);
+      } else {
+        audio.playSfx('error');
+        btn.classList.add('wrong');
+      }
+    };
+    container.appendChild(btn);
+  });
+}
+
+/* ==========================================================
+   11. FREE SUDOKU GENERATOR MODE
+   ========================================================== */
+function setFreeSize(n) {
+  audio.playSfx('pop');
+  AppState.freeConfig.size = n;
+  document.querySelectorAll('#view-free .tier-pill').forEach(el => el.classList.remove('active'));
+  document.getElementById(`free-size-${n}`).classList.add('active');
+}
+
+function setFreeKanaGroup(grp) {
+  audio.playSfx('pop');
+  AppState.freeConfig.group = grp;
+  document.querySelectorAll('#view-free .stage-card').forEach(el => el.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+
+function startFreeCustomGame() {
+  audio.playSfx('pop');
+  const size = AppState.freeConfig.size;
+  AppState.isFreeMode = true;
+  AppState.size = size;
+  AppState.boxR = (size === 4) ? 2 : (size === 6 ? 2 : 3);
+  AppState.boxC = (size === 4) ? 2 : (size === 6 ? 3 : 3);
+
+  let symbols = [];
+  if (AppState.freeConfig.group === 'a') {
+    symbols = ['あ', 'い', 'う', 'え', 'お', 'ん', 'か', 'き', 'く'].slice(0, size);
+  } else if (AppState.freeConfig.group === 'ka') {
+    symbols = ['か', 'き', 'く', 'け', 'こ', 'ん', 'さ', 'し', 'す'].slice(0, size);
+  } else if (AppState.freeConfig.group === 'kata') {
+    symbols = ['ア', 'イ', 'ウ', 'エ', 'オ', 'ン', 'カ', 'キ', 'ク'].slice(0, size);
+  } else {
+    const shuffled = [...KANA_DB].sort(() => Math.random() - 0.5);
+    symbols = shuffled.slice(0, size).map(k => k.hira);
+  }
+
+  AppState.symbolMap = symbols.map(sym => ALL_KANA_MAP[sym] || { hira: sym, kata: sym, romaji: sym });
+  AppState.currentStage = null;
+
+  const targetClues = (size === 4) ? 6 : (size === 6 ? 16 : 34);
+  initBoardWithGenerator(targetClues);
+
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-game').classList.add('active');
+  document.getElementById('tutor-text').innerText = `自由数独练习开始！这一关考察 ${size}×${size}，加油！`;
+}
+</script>
+</body>
+</html>

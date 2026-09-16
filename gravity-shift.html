@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>重力跃迁 - Gravity Shift</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap');
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    overflow: hidden; background: #06070e;
+    font-family: 'Outfit', "PingFang SC", "Microsoft YaHei", sans-serif;
+    touch-action: none;
+    -webkit-user-select: none; user-select: none;
+  }
+  #game { display: block; width: 100%; height: 100%; }
+  
+  #hud {
+    position: fixed; top: 0; left: 0; width: 100%;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 20px 24px; box-sizing: border-box; pointer-events: none;
+    z-index: 5;
+  }
+  .hud-card {
+    background: rgba(15, 17, 35, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 12px 20px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+  #score { font-size: 42px; font-weight: 800; color: #38bdf8; line-height: 1.1; margin-top: 2px;}
+  .hud-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.6; margin-bottom: 2px; }
+  .hud-value { font-size: 14px; opacity: 0.9; }
+  
+  #combo-hud {
+    position: fixed; top: 80px; left: 50%; transform: translateX(-50%);
+    color: #fbbf24; font-size: 18px; font-weight: 800;
+    text-shadow: 0 0 20px rgba(251,191,36,0.5);
+    opacity: 0; transition: opacity 0.3s;
+    pointer-events: none; z-index: 5;
+  }
+  #combo-hud.show { opacity: 1; }
+
+  #hint {
+    position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%);
+    text-align: center; color: #fff; opacity: 0.7; font-size: 14px;
+    pointer-events: none; z-index: 5;
+    background: rgba(15, 17, 35, 0.5);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 10px 28px;
+    border-radius: 20px;
+    transition: opacity 0.5s ease;
+  }
+
+  #overlay, #startScreen {
+    position: fixed; inset: 0;
+    background: rgba(6, 7, 14, 0.82);
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    color: #fff; backdrop-filter: blur(12px); z-index: 9;
+  }
+  #startScreen { display: flex; background: radial-gradient(circle at center, #1a1e3b 0%, #06070e 100%); z-index: 10; }
+  #overlay.show { display: flex; }
+  
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 40px 30px;
+    width: 85%; max-width: 380px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    text-align: center;
+  }
+  .glass-panel h1 {
+    font-size: 32px; font-weight: 800; margin: 0 0 8px;
+    background: linear-gradient(135deg, #a78bfa, #ec4899);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .glass-panel .sub { opacity: 0.8; font-size: 15px; margin-bottom: 30px; color: #cbd5e1; line-height: 1.5; }
+  .final-score {
+    font-size: 72px; font-weight: 800; margin: 10px 0;
+    background: linear-gradient(135deg, #38bdf8, #a78bfa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  
+  #startBtn, #restartBtn {
+    padding: 14px 44px; font-size: 16px; border: none; border-radius: 50px;
+    background: linear-gradient(135deg, #a78bfa, #3b82f6); color: #fff;
+    box-shadow: 0 8px 24px rgba(59,130,246,0.35);
+    cursor: pointer; font-weight: 800; letter-spacing: 2px;
+    transition: all 0.3s cubic-bezier(0.16,1,0.3,1);
+  }
+  #startBtn:hover, #restartBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(59,130,246,0.5);
+  }
+  #restartBtn {
+    background: linear-gradient(135deg, #f43f5e, #ec4899);
+    box-shadow: 0 8px 24px rgba(244,63,94,0.35);
+  }
+  #restartBtn:hover {
+    box-shadow: 0 12px 32px rgba(244,63,94,0.5);
+  }
+
+  .switch {
+    position: relative; display: inline-block; width: 44px; height: 24px;
+  }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; cursor: pointer; top:0; left:0; right:0; bottom:0;
+    background: rgba(255,255,255,0.15); transition: .3s;
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 24px;
+  }
+  .slider:before {
+    position: absolute; content: ""; height: 16px; width: 16px;
+    left: 3px; bottom: 3px; background: white; transition: .3s;
+    border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  input:checked + .slider {
+    background: linear-gradient(135deg, #a78bfa, #3b82f6);
+    border-color: rgba(167,139,250,0.3);
+  }
+  input:checked + .slider:before { transform: translateX(20px); }
+</style>
+</head>
+<body>
+
+<div id="startScreen">
+  <div class="glass-panel">
+    <h1>重力跃迁 <span style="font-size:16px;display:block;margin-top:4px;color:#a78bfa;font-weight:400;">Gravity Shift</span></h1>
+    <p class="sub">点击屏幕翻转重力 · 躲避红色尖刺<br>收集蓝色晶体触发 <b>连击倍率</b><br>速度会越来越快，你能坚持多久？</p>
+    
+    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);border-radius:16px;padding:15px;margin-bottom:25px;text-align:left;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <span style="font-size:14px;font-weight:600;">翻转预警线</span>
+        <label class="switch"><input type="checkbox" id="guideToggle" checked><span class="slider"></span></label>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:14px;font-weight:600;">游戏音效</span>
+        <label class="switch"><input type="checkbox" id="soundToggle" checked><span class="slider"></span></label>
+      </div>
+    </div>
+    <button id="startBtn">开始挑战</button>
+  </div>
+</div>
+
+<canvas id="game"></canvas>
+
+<div id="hud">
+  <div class="hud-card">
+    <span class="hud-label">SCORE</span>
+    <span id="score">0</span>
+  </div>
+  <div class="hud-card" style="align-items:flex-end;">
+    <span id="best" class="hud-value">最高分 0</span>
+  </div>
+</div>
+
+<div id="combo-hud">Combo x0</div>
+
+<div id="hint">点击屏幕翻转重力方向</div>
+
+<div id="overlay">
+  <div class="glass-panel">
+    <h1 style="color:#f43f5e;">游戏结束</h1>
+    <div style="font-size:12px;opacity:0.5;margin-bottom:2px;">FINAL SCORE</div>
+    <div class="final-score">0</div>
+    <div style="opacity:0.8;font-size:15px;margin-bottom:30px;color:#cbd5e1;" id="endSub">再试一次，突破极限</div>
+    <button id="restartBtn">再来一次</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+  const scoreEl = document.getElementById('score');
+  const bestEl = document.getElementById('best');
+  const overlay = document.getElementById('overlay');
+  const finalScoreEl = overlay.querySelector('.final-score');
+  const endSub = document.getElementById('endSub');
+  const startScreen = document.getElementById('startScreen');
+  const comboHud = document.getElementById('combo-hud');
+  const hint = document.getElementById('hint');
+
+  let guideEnabled = true, soundEnabled = true;
+  const guideToggle = document.getElementById('guideToggle');
+  const soundToggle = document.getElementById('soundToggle');
+  
+  let DPR = Math.min(window.devicePixelRatio||1, 2);
+  let W=0, H=0;
+  function resize(){
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W*DPR; canvas.height = H*DPR;
+    canvas.style.width = W+'px'; canvas.style.height = H+'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // ===== Audio =====
+  let audioCtx = null;
+  function initAudio(){ if(!audioCtx) audioCtx = new(window.AudioContext||window.webkitAudioContext)(); }
+  function playSound(type){
+    if(!soundEnabled || !audioCtx) return;
+    if(audioCtx.state==='suspended') audioCtx.resume();
+    const now = audioCtx.currentTime;
+    if(type==='flip'){
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type='sine'; o.frequency.setValueAtTime(320, now);
+      o.frequency.exponentialRampToValueAtTime(680, now+0.12);
+      g.gain.setValueAtTime(0.15, now); g.gain.exponentialRampToValueAtTime(0.001, now+0.15);
+      o.connect(g); g.connect(audioCtx.destination); o.start(now); o.stop(now+0.15);
+    } else if(type==='collect'){
+      const notes = [523.25, 659.25, 783.99];
+      notes.forEach((f,i)=>{
+        const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+        o.type='sine'; o.frequency.value=f;
+        g.gain.setValueAtTime(0.1, now+i*0.03);
+        g.gain.exponentialRampToValueAtTime(0.001, now+i*0.03+0.2);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(now+i*0.03); o.stop(now+i*0.03+0.2);
+      });
+    } else if(type==='hit'){
+      const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+      o.type='sawtooth'; o.frequency.setValueAtTime(180, now);
+      o.frequency.exponentialRampToValueAtTime(40, now+0.3);
+      g.gain.setValueAtTime(0.2, now); g.gain.exponentialRampToValueAtTime(0.001, now+0.3);
+      o.connect(g); g.connect(audioCtx.destination); o.start(now); o.stop(now+0.3);
+    } else if(type==='combo'){
+      const chord=[523.25, 659.25, 783.99, 1046.5];
+      chord.forEach((f,i)=>{
+        const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+        o.type='sine'; o.frequency.value=f;
+        g.gain.setValueAtTime(0.08, now+i*0.02);
+        g.gain.exponentialRampToValueAtTime(0.001, now+0.4+i*0.02);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(now+i*0.02); o.stop(now+0.5);
+      });
+    }
+  }
+
+  // ===== Game Constants =====
+  const LANE_TOP = 0.22;      // top lane Y ratio
+  const LANE_BOT = 0.78;      // bottom lane Y ratio
+  const PLAYER_R = 14;
+  const GRAVITY = 3200;       // flip gravity strength
+  const FLIP_V = 950;         // initial flip velocity
+  const BASE_SPEED = 280;     // world scroll speed
+  const MAX_SPEED = 900;
+  const SPAWN_DIST = 40;      // min pixels between obstacles
+
+  // ===== State =====
+  let state = 'idle'; // idle, playing, dead
+  let score = 0, combo = 0, best = parseInt(localStorage.getItem('gravBest')||'0',10);
+  bestEl.textContent = '最高分 '+best;
+  let gameTime = 0, lastT = 0;
+  let speed = BASE_SPEED;
+  let shake = 0;
+  
+  let player = { x:0, y:0, vy:0, lane:1, r:PLAYER_R, glow:0 };
+  let obstacles = [];   // {x,y,w,h,type}
+  let collectibles = []; // {x,y,r,collected}
+  let particles = [];
+  let floatingTexts = [];
+  let stars = [];
+  let nextSpawnX = 0;
+
+  function rand(a,b){ return a+Math.random()*(b-a); }
+  function lerp(a,b,t){ return a+(b-a)*t; }
+
+  // ===== Stars Background =====
+  for(let i=0;i<80;i++){
+    stars.push({ x:rand(0,W), y:rand(0,H), size:rand(0.5,2.5), speed:rand(10,40), alpha:rand(0.2,0.8) });
+  }
+
+  // ===== Particles =====
+  function addParticle(x,y,vx,vy,color,size,life){
+    particles.push({x,y,vx,vy,life:life||1, maxLife:life||1, color, size:size||3, decay:rand(1.5,3)});
+  }
+  function updateParticles(dt){
+    for(let i=particles.length-1;i>=0;i--){
+      const p=particles[i];
+      p.life -= p.decay*dt;
+      if(p.life<=0){ particles.splice(i,1); continue; }
+      p.x += p.vx*dt; p.y += p.vy*dt;
+      p.vy += 80*dt; // slight gravity
+    }
+  }
+  function drawParticles(){
+    for(const p of particles){
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.life/p.maxLife);
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size*(p.life/p.maxLife), 0, Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  // ===== Floating Texts =====
+  function addFloatText(text,x,y,color){
+    floatingTexts.push({text,x,y,vy:-60,alpha:1,color:color||'#fff',size:16});
+  }
+  function updateFloatTexts(dt){
+    for(let i=floatingTexts.length-1;i>=0;i--){
+      const ft=floatingTexts[i];
+      ft.y += ft.vy*dt; ft.alpha -= 1.2*dt;
+      if(ft.alpha<=0) floatingTexts.splice(i,1);
+    }
+  }
+  function drawFloatTexts(){
+    for(const ft of floatingTexts){
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, ft.alpha);
+      ctx.fillStyle = ft.color;
+      ctx.font = `bold ${ft.size}px 'Outfit', sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.shadowColor = ft.color; ctx.shadowBlur = 10;
+      ctx.fillText(ft.text, ft.x, ft.y);
+      ctx.restore();
+    }
+  }
+
+  // ===== Player =====
+  function resetGame(){
+    score = 0; combo = 0; speed = BASE_SPEED; gameTime = 0;
+    scoreEl.textContent = '0'; comboHud.classList.remove('show');
+    player.x = W*0.22;
+    player.y = H*LANE_BOT;
+    player.vy = 0;
+    player.lane = 1; // 0=top, 1=bottom
+    player.glow = 0;
+    obstacles = []; collectibles = []; particles = []; floatingTexts = [];
+    nextSpawnX = W + 200;
+    state = 'playing';
+    overlay.classList.remove('show');
+    hint.style.opacity = '0.7';
+    setTimeout(()=> hint.style.opacity='0', 2500);
+  }
+
+  function flip(){
+    if(state!=='playing') return;
+    initAudio();
+    playSound('flip');
+    player.vy = player.lane===1 ? -FLIP_V : FLIP_V;
+    player.lane = player.lane===1 ? 0 : 1;
+    // trail burst
+    for(let i=0;i<8;i++){
+      addParticle(player.x, player.y, rand(-40,40), rand(-80,80), '#a78bfa', rand(2,5), 0.6);
+    }
+  }
+
+  // ===== Spawning =====
+  function difficulty(){
+    return Math.min(gameTime/60, 1); // 0~1 over 60s
+  }
+  
+  function spawnObstacle(){
+    const d = difficulty();
+    const obsW = 30 + rand(0, 40*d);
+    const obsH = 18 + rand(0, 25*d);
+    const lane = Math.random() < 0.5 ? 0 : 1;
+    const y = lane===0 ? H*LANE_TOP - obsH/2 : H*LANE_BOT - obsH/2;
+    
+    // Types: 0=static, 1=moving (later)
+    let type = 'spike';
+    if(d>0.3 && Math.random()<0.25) type = 'laser'; // horizontal laser beam
+    
+    obstacles.push({
+      x: nextSpawnX, y, w: obsW, h: obsH, lane, type,
+      movePhase: rand(0, Math.PI*2),
+      moveAmp: d>0.4 ? rand(20, 60) : 0,
+      moveFreq: rand(1.5, 3)
+    });
+    
+    // Chance to spawn collectible in the opposite lane
+    if(Math.random() < 0.6){
+      const cLane = lane===0 ? 1 : 0;
+      const cy = cLane===0 ? H*LANE_TOP : H*LANE_BOT;
+      collectibles.push({ x: nextSpawnX + rand(20,80), y: cy, r: 10, collected: false, pulse: rand(0,Math.PI*2) });
+    }
+    
+    const gap = lerp(220, 90, d) + rand(-20, 40);
+    nextSpawnX += gap;
+  }
+
+  // ===== Update =====
+  function update(dt){
+    if(state!=='playing' && state!=='dead') return;
+    gameTime += dt;
+    
+    // Speed ramp
+    const targetSpeed = lerp(BASE_SPEED, MAX_SPEED, difficulty());
+    speed += (targetSpeed - speed) * Math.min(dt*2, 1);
+    
+    // Stars
+    for(const s of stars){ s.y += s.speed*dt*0.5; if(s.y>H){ s.y=0; s.x=rand(0,W); } }
+    
+    if(state==='playing'){
+      // Player physics
+      player.vy += (player.lane===1 ? GRAVITY : -GRAVITY)*dt;
+      player.y += player.vy*dt;
+      
+      // Clamp to lanes with bounce
+      const topY = H*LANE_TOP;
+      const botY = H*LANE_BOT;
+      if(player.lane===1 && player.y > botY){
+        player.y = botY; player.vy = 0;
+        if(Math.abs(player.vy)>100) player.vy *= -0.3;
+      } else if(player.lane===0 && player.y < topY){
+        player.y = topY; player.vy = 0;
+      }
+      
+      // Auto forward scroll (visual: everything moves left)
+      const scroll = speed*dt;
+      
+      // Spawn
+      if(nextSpawnX < W + 400) spawnObstacle();
+      
+      // Update obstacles
+      for(let i=obstacles.length-1;i>=0;i--){
+        const o=obstacles[i];
+        o.x -= scroll;
+        if(o.moveAmp>0){
+          o.y += Math.sin(gameTime*o.moveFreq + o.movePhase)*o.moveAmp*dt*2;
+        }
+        if(o.x + o.w < -50) obstacles.splice(i,1);
+        
+        // Collision
+        const px = player.x, py = player.y, pr = player.r;
+        // Circle vs AABB
+        const testX = Math.max(o.x, Math.min(px, o.x+o.w));
+        const testY = Math.max(o.y, Math.min(py, o.y+o.h));
+        const distX = px-testX, distY = py-testY;
+        if(distX*distX + distY*distY < pr*pr){
+          // Hit!
+          state = 'dead';
+          shake = 15;
+          playSound('hit');
+          for(let k=0;k<20;k++){
+            addParticle(px, py, rand(-120,120), rand(-120,120), '#f43f5e', rand(3,7), 1.2);
+          }
+          if(score>best){
+            best=score; localStorage.setItem('gravBest', String(best));
+            bestEl.textContent = '最高分 '+best;
+          }
+          finalScoreEl.textContent = String(score);
+          endSub.textContent = score>=best&&score>0 ? '打破个人最高纪录！' : '再试一次，突破极限';
+          setTimeout(()=> overlay.classList.add('show'), 600);
+        }
+      }
+      
+      // Collectibles
+      for(const c of collectibles){
+        if(c.collected) continue;
+        c.x -= scroll;
+        c.pulse += dt*3;
+        const dx = player.x-c.x, dy = player.y-c.y;
+        if(dx*dx+dy*dy < (player.r+c.r+8)**2){
+          c.collected = true;
+          combo++;
+          const pts = combo;
+          score += pts;
+          scoreEl.textContent = String(score);
+          playSound(combo>=3?'combo':'collect');
+          addFloatText('+'+pts, c.x, c.y, combo>=3?'#fbbf24':'#38bdf8');
+          comboHud.textContent = 'Combo x'+combo;
+          comboHud.classList.add('show');
+          for(let k=0;k<10;k++){
+            addParticle(c.x, c.y, rand(-60,60), rand(-60,60), combo>=3?'#fbbf24':'#38bdf8', rand(2,5), 0.8);
+          }
+          player.glow = 1;
+        }
+      }
+      collectibles = collectibles.filter(c=> !c.collected && c.x > -50);
+      
+      // Reset combo if no collect in 3s? Actually keep it simple: combo breaks on miss? 
+      // For this endless runner, combo breaks when you hit obstacle (game over)
+      
+      player.glow = Math.max(0, player.glow - dt*3);
+    } else if(state==='dead'){
+      // Keep scrolling slowly for visual
+      const slowScroll = 80*dt;
+      for(const o of obstacles) o.x -= slowScroll;
+      for(const c of collectibles) c.x -= slowScroll;
+    }
+    
+    if(shake>0) shake = Math.max(0, shake - dt*25);
+    updateParticles(dt);
+    updateFloatTexts(dt);
+  }
+
+  // ===== Draw =====
+  function draw(){
+    // Background
+    const g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#0a0b14'); g.addColorStop(1,'#06070e');
+    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+    
+    // Stars
+    ctx.save();
+    for(const s of stars){
+      ctx.globalAlpha = s.alpha;
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
+    
+    // Lane lines
+    const topY = H*LANE_TOP;
+    const botY = H*LANE_BOT;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(167,139,250,0.15)';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([8,12]);
+    ctx.beginPath(); ctx.moveTo(0, topY); ctx.lineTo(W, topY); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, botY); ctx.lineTo(W, botY); ctx.stroke();
+    ctx.restore();
+    
+    // Warning lines for upcoming obstacles (guide)
+    if(guideEnabled && state==='playing'){
+      for(const o of obstacles){
+        if(o.x > player.x && o.x < player.x + 280){
+          ctx.save();
+          ctx.globalAlpha = 0.15 * (1 - (o.x-player.x)/280);
+          ctx.fillStyle = '#f43f5e';
+          ctx.fillRect(o.x, 0, 2, H);
+          ctx.restore();
+        }
+      }
+    }
+    
+    // Obstacles
+    for(const o of obstacles){
+      ctx.save();
+      if(o.type==='spike'){
+        const grad = ctx.createLinearGradient(o.x, o.y, o.x, o.y+o.h);
+        grad.addColorStop(0,'#f43f5e'); grad.addColorStop(1,'#be123c');
+        ctx.fillStyle = grad;
+        roundRect(ctx, o.x, o.y, o.w, o.h, 4);
+        ctx.fill();
+        // glow
+        ctx.shadowColor = '#f43f5e'; ctx.shadowBlur = 12;
+        ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1;
+        ctx.stroke(); ctx.shadowBlur = 0;
+      } else {
+        // laser
+        ctx.fillStyle = 'rgba(244,63,94,0.25)';

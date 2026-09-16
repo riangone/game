@@ -1,0 +1,2493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>魔法点餐小餐厅 - 拼音听辨与情境点单 (Pinyin Bistro)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@600;700;800;900&family=Outfit:wght@600;700;800;900&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #f97316;
+    --primary-soft: #ffedd5;
+    --primary-dark: #ea580c;
+    --secondary: #0ea5e9;
+    --secondary-soft: #e0f2fe;
+    --accent-green: #10b981;
+    --accent-green-soft: #d1fae5;
+    --accent-pink: #f43f5e;
+    --accent-pink-soft: #ffe4e6;
+    --accent-purple: #8b5cf6;
+    --accent-purple-soft: #ede9fe;
+    --gold: #f59e0b;
+    --gold-soft: #fef3c7;
+    --gold-dark: #d97706;
+    --bg-page: #fffbeb;
+    --bg-card: #ffffff;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border-light: #fed7aa;
+    --radius-xl: 28px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --shadow-soft: 0 10px 25px -5px rgba(249, 115, 22, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+    --shadow-card: 0 12px 28px rgba(15, 23, 42, 0.06);
+    --shadow-pop: 0 6px 0 rgba(234, 88, 12, 0.18);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #fffbeb;
+    font-family: "M PLUS Rounded 1c", "Outfit", "PingFang SC", system-ui, -apple-system, sans-serif;
+    color: var(--text-main);
+    touch-action: manipulation;
+  }
+
+  #app {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    background: linear-gradient(180deg, #fff7ed 0%, #ffedd5 35%, #fef3c7 70%, #f0fdf4 100%);
+    overflow: hidden;
+  }
+
+  /* Top Navigation */
+  header.top-nav {
+    flex-shrink: 0;
+    height: 64px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 2px solid #fed7aa;
+    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.06);
+    z-index: 60;
+  }
+
+  .nav-left, .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-btn {
+    height: 42px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: none;
+    background: #ffffff;
+    box-shadow: 0 3px 0 #cbd5e1, 0 4px 10px rgba(0, 0, 0, 0.05);
+    color: var(--text-main);
+    font-size: 14px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s, background-color 0.15s;
+    font-family: inherit;
+  }
+  .nav-btn:hover { background: #f8fafc; }
+  .nav-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #cbd5e1, 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  .nav-btn.icon-only {
+    width: 42px;
+    padding: 0;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .nav-btn.active {
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+    box-shadow: 0 3px 0 #fdba74;
+  }
+
+  .logo-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 900;
+    font-size: 17px;
+    color: var(--primary-dark);
+    letter-spacing: -0.3px;
+    cursor: pointer;
+  }
+  .logo-brand .brand-icon {
+    font-size: 26px;
+    filter: drop-shadow(0 2px 4px rgba(249, 115, 22, 0.3));
+    animation: gentle-wiggle 3s ease-in-out infinite;
+  }
+
+  .stat-pill {
+    height: 38px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: #fff;
+    border: 2px solid #fed7aa;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #c2410c;
+  }
+  .stat-pill .icon { font-size: 16px; }
+
+  /* Screens Management (STRICT ISOLATION) */
+  main#viewport {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none !important;
+    pointer-events: none !important;
+    opacity: 0;
+    flex-direction: column;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    transition: opacity 0.25s ease;
+  }
+  .screen.active {
+    display: flex !important;
+    opacity: 1;
+    pointer-events: auto !important;
+  }
+
+  /* =========================================
+     SCREEN 1: BISTRO LOBBY (RECEPTION & GUESTS)
+     ========================================= */
+  #lobbyScreen {
+    padding: 16px 16px 60px 16px;
+    align-items: center;
+    background: radial-gradient(circle at 50% 15%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 75%);
+  }
+
+  .lobby-header {
+    text-align: center;
+    margin-bottom: 20px;
+    max-width: 680px;
+    width: 100%;
+  }
+  .lobby-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    background: #ffffff;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--primary-dark);
+    box-shadow: 0 4px 12px rgba(234, 88, 12, 0.12);
+    border: 1px solid #fed7aa;
+    margin-bottom: 8px;
+  }
+  .lobby-title {
+    font-size: 28px;
+    font-weight: 900;
+    color: #7c2d12;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+  .lobby-subtitle {
+    font-size: 14px;
+    color: #78350f;
+    font-weight: 700;
+  }
+
+  .hero-start-wrap {
+    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+  }
+  .hero-start-btn {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    color: #ffffff;
+    border: none;
+    padding: 14px 30px;
+    border-radius: 999px;
+    font-size: 17px;
+    font-weight: 900;
+    box-shadow: 0 5px 0 #c2410c, 0 12px 24px rgba(234, 88, 12, 0.35);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+    font-family: inherit;
+  }
+  .hero-start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 0 #c2410c, 0 14px 28px rgba(234, 88, 12, 0.4);
+  }
+  .hero-start-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #c2410c, 0 6px 12px rgba(234, 88, 12, 0.25);
+  }
+  .hero-start-btn .pulse-icon {
+    font-size: 20px;
+    animation: bounce-small 1.2s infinite ease-in-out;
+  }
+
+  /* Mode Selector */
+  .mode-switch-card {
+    background: #ffffff;
+    border: 2px solid #fed7aa;
+    border-radius: var(--radius-lg);
+    padding: 12px 16px;
+    margin: 16px 0 20px 0;
+    max-width: 680px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    box-shadow: var(--shadow-card);
+  }
+  .mode-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: #9a3412;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .mode-tabs {
+    display: flex;
+    gap: 6px;
+  }
+  .mode-tab-btn {
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background: #fff7ed;
+    color: #9a3412;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .mode-tab-btn.active {
+    background: #f97316;
+    color: #fff;
+    border-color: #ea580c;
+    box-shadow: 0 3px 0 #c2410c;
+  }
+
+  /* Guest Cards Grid */
+  .guests-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    max-width: 960px;
+    width: 100%;
+  }
+
+  .guest-card {
+    background: #ffffff;
+    border-radius: var(--radius-lg);
+    border: 2px solid #fed7aa;
+    padding: 16px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    cursor: pointer;
+  }
+  .guest-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 32px rgba(249, 115, 22, 0.12);
+    border-color: #fb923c;
+  }
+  .guest-card-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .guest-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 20px;
+    background: #fff7ed;
+    border: 2px solid #fdba74;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+    flex-shrink: 0;
+  }
+  .guest-meta {
+    flex: 1;
+    min-width: 0;
+  }
+  .guest-name-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .guest-name {
+    font-size: 17px;
+    font-weight: 900;
+    color: #431407;
+  }
+  .guest-order-pill {
+    margin-top: 4px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #ea580c;
+    background: #fff7ed;
+    padding: 3px 8px;
+    border-radius: 8px;
+    display: inline-block;
+  }
+  .guest-order-desc {
+    font-size: 13px;
+    color: #78350f;
+    line-height: 1.4;
+    background: #fefce8;
+    padding: 8px 10px;
+    border-radius: var(--radius-md);
+    border: 1px dashed #fde047;
+  }
+  .guest-card-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 4px;
+  }
+  .guest-stars {
+    display: flex;
+    gap: 3px;
+    font-size: 15px;
+  }
+  .btn-start-guest {
+    background: #f97316;
+    color: #ffffff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: 0 3px 0 #c2410c;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: transform 0.1s;
+  }
+  .btn-start-guest:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #c2410c;
+  }
+
+  /* =========================================
+     SCREEN 2: KITCHEN COUNTER (CORE GAMEPLAY)
+     ========================================= */
+  #kitchenScreen {
+    padding: 12px 14px 40px 14px;
+    align-items: center;
+    background: linear-gradient(180deg, #ffedd5 0%, #fffbeb 40%, #fef3c7 100%);
+    overflow-y: auto;
+  }
+
+  .kitchen-top-bar {
+    max-width: 760px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .kitchen-guest-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 800;
+    color: #9a3412;
+    background: #ffffff;
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 2px solid #fed7aa;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Dining Customer Stage */
+  .guest-stage-card {
+    max-width: 760px;
+    width: 100%;
+    background: #ffffff;
+    border: 3px solid #fdba74;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-card);
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+    background-image: radial-gradient(#fff7ed 15%, transparent 16%);
+    background-size: 20px 20px;
+  }
+
+  .guest-scene-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+  }
+  .guest-figure {
+    width: 100px;
+    height: 100px;
+    border-radius: 30px;
+    background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
+    border: 3px solid #fb923c;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    flex-shrink: 0;
+    box-shadow: 0 8px 16px rgba(249, 115, 22, 0.15);
+    position: relative;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .guest-figure.happy {
+    animation: happy-bounce 0.8s ease-in-out infinite;
+  }
+  .guest-figure.confused {
+    animation: head-tilt 0.6s ease-in-out;
+  }
+  .guest-figure .guest-badge-tag {
+    position: absolute;
+    bottom: -6px;
+    background: #ea580c;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 2px solid #fff;
+  }
+
+  /* Speech Bubble */
+  .speech-bubble {
+    flex: 1;
+    background: #ffffff;
+    border: 3px solid #f97316;
+    border-radius: 22px;
+    padding: 14px 18px;
+    position: relative;
+    box-shadow: 0 8px 20px rgba(234, 88, 12, 0.1);
+  }
+  .speech-bubble::before {
+    content: '';
+    position: absolute;
+    left: -14px;
+    top: 36px;
+    border-width: 10px 14px 10px 0;
+    border-style: solid;
+    border-color: transparent #f97316 transparent transparent;
+    display: block;
+    width: 0;
+  }
+  .speech-bubble::after {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 38px;
+    border-width: 8px 11px 8px 0;
+    border-style: solid;
+    border-color: transparent #ffffff transparent transparent;
+    display: block;
+    width: 0;
+  }
+  .bubble-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .bubble-prompt-tag {
+    font-size: 12px;
+    font-weight: 800;
+    color: #ea580c;
+    background: #ffedd5;
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+  .bubble-audio-btn {
+    background: #fff7ed;
+    border: 1.5px solid #fed7aa;
+    color: #ea580c;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.1s;
+    font-family: inherit;
+  }
+  .bubble-audio-btn:hover { background: #fed7aa; }
+  .bubble-audio-btn:active { transform: scale(0.96); }
+
+  .bubble-text-zh {
+    font-size: 20px;
+    font-weight: 900;
+    color: #1e293b;
+    line-height: 1.35;
+    letter-spacing: 0.3px;
+  }
+  .bubble-pinyin {
+    font-family: "Outfit", sans-serif;
+    font-size: 15px;
+    font-weight: 800;
+    color: #0284c7;
+    margin-top: 3px;
+    letter-spacing: 0.5px;
+  }
+  .bubble-text-ja {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  /* Step Progress Pills */
+  .step-pills-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 4px 0;
+    flex-wrap: wrap;
+  }
+  .step-pill {
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+    background: #f1f5f9;
+    color: #94a3b8;
+    border: 2px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s;
+  }
+  .step-pill.done {
+    background: #ecfdf5;
+    color: #059669;
+    border-color: #a7f3d0;
+  }
+  .step-pill.current {
+    background: #fff7ed;
+    color: #ea580c;
+    border-color: #f97316;
+    box-shadow: 0 4px 10px rgba(234, 88, 12, 0.15);
+    transform: scale(1.04);
+  }
+
+  /* Magic Cooking Platter */
+  .cooking-platter-wrap {
+    max-width: 760px;
+    width: 100%;
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .magic-platter {
+    width: 100%;
+    min-height: 110px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    border: 3px solid #e2e8f0;
+    border-radius: 26px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .platter-dish-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 42px;
+    min-height: 54px;
+  }
+  .platter-item-pill {
+    background: #fff7ed;
+    border: 2px solid #fed7aa;
+    border-radius: 18px;
+    padding: 6px 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 900;
+    color: #9a3412;
+    animation: pop-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .platter-placeholder {
+    font-size: 14px;
+    font-weight: 800;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Choices Tray (Ingredients & Attributes) */
+  .choices-shelf {
+    max-width: 760px;
+    width: 100%;
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .shelf-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 6px;
+  }
+  .shelf-instruction {
+    font-size: 15px;
+    font-weight: 900;
+    color: #7c2d12;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .choices-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    width: 100%;
+  }
+
+  .choice-card {
+    background: #ffffff;
+    border: 3px solid #fed7aa;
+    border-radius: var(--radius-lg);
+    padding: 14px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    box-shadow: var(--shadow-card), 0 5px 0 #fdba74;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s;
+    position: relative;
+    overflow: hidden;
+  }
+  .choice-card:hover {
+    transform: translateY(-3px);
+    border-color: #f97316;
+    box-shadow: 0 14px 28px rgba(249, 115, 22, 0.15), 0 5px 0 #ea580c;
+  }
+  .choice-card:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #ea580c;
+  }
+  .choice-card.wiggle {
+    animation: error-wiggle 0.5s ease-in-out;
+    border-color: #f43f5e;
+  }
+  .choice-card .choice-icon {
+    font-size: 40px;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .choice-card .choice-pinyin {
+    font-family: "Outfit", sans-serif;
+    font-size: 16px;
+    font-weight: 900;
+    color: #0284c7;
+    letter-spacing: 0.5px;
+  }
+  .choice-card .choice-hanzi {
+    font-size: 17px;
+    font-weight: 900;
+    color: #1e293b;
+  }
+  .choice-card .choice-kana {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+  }
+
+  /* Serve Bell Station */
+  .serve-station {
+    max-width: 760px;
+    width: 100%;
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .btn-serve-bell {
+    background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+    color: #ffffff;
+    border: none;
+    padding: 16px 36px;
+    border-radius: 999px;
+    font-size: 20px;
+    font-weight: 900;
+    box-shadow: 0 6px 0 #b45309, 0 14px 28px rgba(217, 119, 6, 0.35);
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform 0.12s, box-shadow 0.12s;
+    animation: pulse-ring 2s infinite ease-in-out;
+  }
+  .btn-serve-bell:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 0 #b45309, 0 18px 36px rgba(217, 119, 6, 0.45);
+  }
+  .btn-serve-bell:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #b45309;
+  }
+
+  /* Success & Feedback Modal Overlay */
+  .celebration-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(6px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 20px;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .celebration-overlay.active {
+    display: flex;
+    opacity: 1;
+  }
+  .celebration-modal {
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    border: 4px solid #f97316;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    max-width: 460px;
+    width: 100%;
+    padding: 28px 24px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    animation: zoom-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .modal-avatar-big {
+    font-size: 72px;
+    animation: happy-bounce 1s infinite;
+  }
+  .modal-title {
+    font-size: 24px;
+    font-weight: 900;
+    color: #7c2d12;
+  }
+  .modal-guest-words {
+    font-size: 16px;
+    font-weight: 800;
+    color: #1e293b;
+    background: #fff7ed;
+    border: 2px solid #fed7aa;
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    width: 100%;
+    line-height: 1.5;
+  }
+  .modal-badge-earn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 800;
+    color: #b45309;
+    background: #fef3c7;
+    padding: 6px 14px;
+    border-radius: 999px;
+  }
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    margin-top: 6px;
+  }
+  .modal-btn {
+    flex: 1;
+    padding: 13px 18px;
+    border-radius: 999px;
+    border: none;
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+    font-family: inherit;
+    transition: transform 0.1s;
+  }
+  .modal-btn.primary {
+    background: #f97316;
+    color: #fff;
+    box-shadow: 0 4px 0 #c2410c;
+  }
+  .modal-btn.primary:active { transform: translateY(2px); box-shadow: 0 2px 0 #c2410c; }
+  .modal-btn.secondary {
+    background: #f1f5f9;
+    color: #475569;
+    box-shadow: 0 4px 0 #cbd5e1;
+  }
+  .modal-btn.secondary:active { transform: translateY(2px); box-shadow: 0 2px 0 #cbd5e1; }
+
+  /* =========================================
+     SCREEN 3: MENU & ENCYCLOPEDIA (POINT & READ)
+     ========================================= */
+  #menuScreen {
+    padding: 16px 16px 60px 16px;
+    align-items: center;
+    background: #fffbeb;
+  }
+  .menu-tabs-row {
+    display: flex;
+    gap: 8px;
+    margin: 12px 0 20px 0;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 760px;
+    width: 100%;
+  }
+  .menu-tab-btn {
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 2px solid #fed7aa;
+    background: #ffffff;
+    color: #9a3412;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .menu-tab-btn.active {
+    background: #f97316;
+    color: #ffffff;
+    border-color: #ea580c;
+    box-shadow: 0 3px 0 #c2410c;
+  }
+  .dict-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px;
+    max-width: 860px;
+    width: 100%;
+  }
+  .dict-card {
+    background: #ffffff;
+    border-radius: var(--radius-lg);
+    border: 2px solid #fed7aa;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--shadow-card);
+    cursor: pointer;
+    transition: transform 0.12s, border-color 0.12s;
+  }
+  .dict-card:hover {
+    transform: translateY(-3px);
+    border-color: #f97316;
+  }
+  .dict-card-icon {
+    font-size: 46px;
+  }
+  .dict-card-py {
+    font-family: "Outfit", sans-serif;
+    font-size: 17px;
+    font-weight: 900;
+    color: #0284c7;
+  }
+  .dict-card-zh {
+    font-size: 18px;
+    font-weight: 900;
+    color: #1e293b;
+  }
+  .dict-card-ja {
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+  }
+  .dict-audio-badge {
+    background: #fff7ed;
+    color: #ea580c;
+    border: 1px solid #fed7aa;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 10px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* =========================================
+     SCREEN 4: BADGES & ACHIEVEMENTS
+     ========================================= */
+  #badgesScreen {
+    padding: 16px 16px 60px 16px;
+    align-items: center;
+    background: #fffbeb;
+  }
+  .badges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    max-width: 860px;
+    width: 100%;
+    margin-top: 16px;
+  }
+  .badge-card {
+    background: #ffffff;
+    border-radius: var(--radius-lg);
+    border: 2px solid #fed7aa;
+    padding: 18px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+    box-shadow: var(--shadow-card);
+  }
+  .badge-card.locked {
+    opacity: 0.6;
+    filter: grayscale(0.85);
+  }
+  .badge-medal-icon {
+    font-size: 50px;
+    filter: drop-shadow(0 4px 8px rgba(245, 158, 11, 0.3));
+  }
+  .badge-card-title {
+    font-size: 16px;
+    font-weight: 900;
+    color: #431407;
+  }
+  .badge-card-sub {
+    font-size: 12px;
+    color: #78350f;
+    font-weight: 700;
+  }
+
+  /* Canvas Confetti */
+  #confettiCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 150;
+  }
+
+  /* Keyframe Animations */
+  @keyframes gentle-wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-6deg); }
+    75% { transform: rotate(6deg); }
+  }
+  @keyframes bounce-small {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  @keyframes happy-bounce {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-10px) scale(1.05); }
+  }
+  @keyframes head-tilt {
+    0%, 100% { transform: rotate(0deg); }
+    30% { transform: rotate(-12deg); }
+    70% { transform: rotate(12deg); }
+  }
+  @keyframes error-wiggle {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-8px); }
+    40%, 80% { transform: translateX(8px); }
+  }
+  @keyframes pop-in {
+    0% { transform: scale(0.6); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes pulse-ring {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+  }
+  @keyframes zoom-pop {
+    0% { transform: scale(0.85); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* Tone Accent Colors for Pinyin */
+  .tone-1 { color: #0284c7; } /* Blue 一声平 */
+  .tone-2 { color: #f59e0b; } /* Amber 二声扬 */
+  .tone-3 { color: #10b981; } /* Green 三声转 */
+  .tone-4 { color: #8b5cf6; } /* Purple 四声降 */
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- Top Navigation -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <div class="logo-brand" onclick="switchScreen('lobby')">
+        <span class="brand-icon">🍳</span>
+        <span id="txtLogoTitle">魔法点餐小餐厅</span>
+      </div>
+      <button class="nav-btn" id="btnNavLobby" onclick="switchScreen('lobby')">
+        <span>🏠</span>
+        <span data-i18n="navLobby">餐厅大堂</span>
+      </button>
+      <button class="nav-btn" id="btnNavMenu" onclick="switchScreen('menu')">
+        <span>📖</span>
+        <span data-i18n="navMenu">点读图鉴</span>
+      </button>
+      <button class="nav-btn" id="btnNavBadges" onclick="switchScreen('badges')">
+        <span>🏆</span>
+        <span data-i18n="navBadges">大厨勋章</span>
+      </button>
+    </div>
+
+    <div class="nav-right">
+      <div class="stat-pill">
+        <span class="icon">⭐</span>
+        <span id="starCounter">0</span>
+      </div>
+      <div class="stat-pill">
+        <span class="icon">🪙</span>
+        <span id="coinCounter">0</span>
+      </div>
+      <button class="nav-btn icon-only" id="btnSound" onclick="toggleAudio()" title="声音开关">
+        <span id="soundIcon">🔊</span>
+      </button>
+      <button class="nav-btn" id="btnLangToggle" onclick="toggleLanguage()">
+        <span id="langFlag">🇨🇳</span>
+        <span id="langName">中文</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Viewport Screens -->
+  <main id="viewport">
+    
+    <!-- ==================== SCREEN 1: LOBBY ==================== -->
+    <section id="lobbyScreen" class="screen active">
+      <div class="lobby-header">
+        <div class="lobby-badge">
+          <span>🌟</span>
+          <span data-i18n="heroBadge">3~6岁 幼儿园幼儿拼音听辨与情境点餐</span>
+        </div>
+        <h1 class="lobby-title" data-i18n="heroTitle">魔法点餐小餐厅 · Pinyin Bistro</h1>
+        <p class="lobby-subtitle" data-i18n="heroSubtitle">听小动物点单，拆解数量、颜色与食物拼音，做出美味佳肴！</p>
+        
+        <div class="hero-start-wrap">
+          <button class="hero-start-btn" onclick="startCurrentOrder(0)">
+            <span class="pulse-icon">▶</span>
+            <span id="txtHeroStart">开始营业 (接待第 1 位客人 · 🐱 咪咪猫)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mode Selector -->
+      <div class="mode-switch-card">
+        <div class="mode-label">
+          <span>🍳</span>
+          <span data-i18n="modeTitle">主厨挑战模式：</span>
+        </div>
+        <div class="mode-tabs">
+          <button class="mode-tab-btn" data-mode="easy" onclick="selectGameMode('easy')" data-i18n="modeEasy">🐣 启蒙小帮手</button>
+          <button class="mode-tab-btn" data-mode="standard" onclick="selectGameMode('standard')" data-i18n="modeStandard">🍳 见习主厨</button>
+          <button class="mode-tab-btn active" data-mode="master" onclick="selectGameMode('master')" data-i18n="modeMaster">👑 金牌大厨</button>
+        </div>
+      </div>
+
+      <!-- Guests Grid -->
+      <div class="guests-grid" id="guestsGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 2: KITCHEN COUNTER ==================== -->
+    <section id="kitchenScreen" class="screen">
+      <div class="kitchen-top-bar">
+        <button class="nav-btn" onclick="switchScreen('lobby')">
+          <span>◀</span>
+          <span data-i18n="btnBackLobby">返回大堂</span>
+        </button>
+        <div class="kitchen-guest-indicator">
+          <span>🍽️</span>
+          <span id="kitchenGuestIndex">客人 1 / 10</span>
+        </div>
+        <button class="nav-btn" onclick="replayOrderAudio()">
+          <span>🔊</span>
+          <span data-i18n="btnReplayAudio">再听一次客人点单</span>
+        </button>
+        <button class="nav-btn" id="btnJaVoiceHelp" onclick="playGuestJaAudio()">
+          <span>🇯🇵</span>
+          <span data-i18n="btnJaHelp">日本語ヒント</span>
+        </button>
+      </div>
+
+      <!-- Guest Dining Stage -->
+      <div class="guest-stage-card">
+        <div class="guest-scene-row">
+          <div class="guest-figure" id="guestFigure">
+            <span id="guestAvatarEmoji">🐱</span>
+            <div class="guest-badge-tag" id="guestNameTag">咪咪猫</div>
+          </div>
+          
+          <div class="speech-bubble">
+            <div class="bubble-top-row">
+              <span class="bubble-prompt-tag" data-i18n="guestOrdering">💬 客人正在点单...</span>
+              <button class="bubble-audio-btn" onclick="replayOrderAudio()">
+                <span>🔊</span>
+                <span data-i18n="btnSpeak">朗读</span>
+              </button>
+            </div>
+            <div class="bubble-text-zh" id="guestBubbleZh">你好！我想吃两个红苹果！</div>
+            <div class="bubble-pinyin" id="guestBubblePy">Nǐ hǎo! Wǒ xiǎng chī liǎng gè hóng píngguǒ!</div>
+            <div class="bubble-text-ja" id="guestBubbleJa">こんにちは！赤いリンゴを2つ食べたいな！</div>
+          </div>
+        </div>
+
+        <!-- Step Progress Indicator -->
+        <div class="step-pills-row" id="stepPillsRow">
+          <div class="step-pill current" id="pillNum">
+            <span>1️⃣</span>
+            <span data-i18n="step1Name">数量 (Number)</span>
+          </div>
+          <div class="step-pill" id="pillAttr">
+            <span>🎨</span>
+            <span data-i18n="step2Name">特征/颜色 (Color)</span>
+          </div>
+          <div class="step-pill" id="pillFood">
+            <span>🍎</span>
+            <span data-i18n="step3Name">食物拼音 (Food)</span>
+          </div>
+          <div class="step-pill" id="pillServe">
+            <span>🛎️</span>
+            <span data-i18n="step4Name">装盘出餐 (Serve)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Magic Cooking Platter -->
+      <div class="cooking-platter-wrap">
+        <div class="magic-platter" id="magicPlatter">
+          <div class="platter-placeholder" id="platterPlaceholder">
+            <span>✨</span>
+            <span data-i18n="platterWaiting">请在下方备料台挑选食材与拼音...</span>
+          </div>
+          <div class="platter-dish-preview" id="platterDishPreview" style="display:none;"></div>
+        </div>
+      </div>
+
+      <!-- Choices Tray (The Cooking Shelf) -->
+      <div class="choices-shelf" id="choicesShelf">
+        <div class="shelf-header">
+          <div class="shelf-instruction" id="shelfInstruction">
+            <span>👉</span>
+            <span id="shelfInstructionText">第一步：客人要几个？选出正确的数字拼音！</span>
+          </div>
+        </div>
+        <div class="choices-grid" id="choicesGrid">
+          <!-- Dynamic choice cards -->
+        </div>
+      </div>
+
+      <!-- Serve Bell Station (Step 4) -->
+      <div class="serve-station" id="serveStation" style="display:none;">
+        <button class="btn-serve-bell" onclick="serveOrderToGuest()">
+          <span>🔔</span>
+          <span data-i18n="btnServeDish">制作完成！请慢用！(Qǐng Màn Yòng)</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 3: MENU & ENCYCLOPEDIA ==================== -->
+    <section id="menuScreen" class="screen">
+      <div class="lobby-header">
+        <div class="lobby-badge">
+          <span>📖</span>
+          <span data-i18n="menuBadge">标准普通话原声点读图鉴</span>
+        </div>
+        <h2 class="lobby-title" data-i18n="menuTitle">魔法餐厅点读书</h2>
+        <p class="lobby-subtitle" data-i18n="menuSubtitle">点击任意卡片聆听发音，掌握日常数字、颜色与食物拼音！</p>
+      </div>
+
+      <div class="menu-tabs-row">
+        <button class="menu-tab-btn active" data-dict-tab="numbers" onclick="filterDict('numbers')" data-i18n="tabNumbers">🔢 数字拼音</button>
+        <button class="menu-tab-btn" data-dict-tab="attributes" onclick="filterDict('attributes')" data-i18n="tabAttrs">🎨 颜色与特征</button>
+        <button class="menu-tab-btn" data-dict-tab="foods" onclick="filterDict('foods')" data-i18n="tabFoods">🍎 美味食物</button>
+        <button class="menu-tab-btn" data-dict-tab="phrases" onclick="filterDict('phrases')" data-i18n="tabPhrases">💬 日常礼貌用语</button>
+      </div>
+
+      <div class="dict-cards-grid" id="dictCardsGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- ==================== SCREEN 4: BADGES ==================== -->
+    <section id="badgesScreen" class="screen">
+      <div class="lobby-header">
+        <div class="lobby-badge">
+          <span>🏆</span>
+          <span data-i18n="badgeWallTag">大厨荣誉殿堂</span>
+        </div>
+        <h2 class="lobby-title" data-i18n="badgeWallTitle">小动物友情徽章馆</h2>
+        <p class="lobby-subtitle" data-i18n="badgeWallSubtitle">为每位小动物客人成功准备美食，收集专属金牌勋章！</p>
+      </div>
+
+      <div class="badges-grid" id="badgesGrid">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Celebration Modal -->
+  <div class="celebration-overlay" id="celebrationOverlay">
+    <div class="celebration-modal">
+      <div class="modal-avatar-big" id="modalGuestAvatar">🐱</div>
+      <div class="modal-title" id="modalTitle">美食大成功！</div>
+      <div class="modal-guest-words" id="modalGuestWords">
+        “喵呜！红苹果又脆又甜，真好吃！谢谢你！”
+      </div>
+      <div class="modal-badge-earn" id="modalBadgeEarn">
+        <span>🏅</span>
+        <span id="modalBadgeText">解锁【咪咪的猫咪金币】！</span>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-btn secondary" onclick="closeCelebrationModal(false)" data-i18n="btnLobbyReturn">回大堂</button>
+        <button class="modal-btn primary" onclick="closeCelebrationModal(true)" data-i18n="btnNextGuest">接下一单 ➔</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confettiCanvas"></canvas>
+</div>
+
+<script>
+/* =========================================================
+   PINYIN BISTRO ENGINE & DATA MODEL
+   ========================================================= */
+
+// i18n Localization Table
+const i18nData = {
+  zh: {
+    siteTitle: "魔法点餐小餐厅 - 拼音听辨与情境点单 (Pinyin Bistro)",
+    logoTitle: "魔法点餐小餐厅",
+    navLobby: "餐厅大堂",
+    navMenu: "点读图鉴",
+    navBadges: "大厨勋章",
+    heroBadge: "3~6岁 幼儿园幼儿拼音听辨与情境点餐",
+    heroTitle: "魔法点餐小餐厅 · Pinyin Bistro",
+    heroSubtitle: "听小动物点单，拆解数量、颜色与食物拼音，做出美味佳肴！",
+    heroStart: "开始营业 (接待第 1 位客人 · 🐱 咪咪猫)",
+    modeTitle: "主厨挑战模式：",
+    modeEasy: "🐣 启蒙小帮手",
+    modeStandard: "🍳 见习主厨",
+    modeMaster: "👑 金牌大厨",
+    btnBackLobby: "返回大堂",
+    btnReplayAudio: "再听一次客人点单",
+    btnJaHelp: "日本語ヒント",
+    guestOrdering: "💬 客人正在点单...",
+    btnSpeak: "朗读",
+    step1Name: "数量 (Number)",
+    step2Name: "特征/颜色 (Color)",
+    step3Name: "食物拼音 (Food)",
+    step4Name: "装盘出餐 (Serve)",
+    platterWaiting: "请在下方备料台挑选食材与拼音...",
+    stepInstructionNum: "第一步：客人要几个？选出正确的数字拼音！",
+    stepInstructionAttr: "第二步：客人要什么颜色和口味？选出特征拼音！",
+    stepInstructionFood: "第三步：客人要吃什么食物？选出正确的食物拼音！",
+    btnServeDish: "制作完成！请慢用！(Qǐng Màn Yòng)",
+    menuBadge: "标准普通话原声点读图鉴",
+    menuTitle: "魔法餐厅点读书",
+    menuSubtitle: "点击任意卡片聆听发音，掌握日常数字、颜色与食物拼音！",
+    tabNumbers: "🔢 数字拼音",
+    tabAttrs: "🎨 颜色与特征",
+    tabFoods: "🍎 美味食物",
+    tabPhrases: "💬 日常礼貌用语",
+    badgeWallTag: "大厨荣誉殿堂",
+    badgeWallTitle: "小动物友情徽章馆",
+    badgeWallSubtitle: "为每位小动物客人成功准备美食，收集专属金牌勋章！",
+    btnLobbyReturn: "回大堂",
+    btnNextGuest: "接下一单 ➔",
+    guestBadgeUnlocked: "已获得专属勋章",
+    guestBadgeLocked: "尚未接待",
+    btnStartGuest: "▶ 接单",
+    badgeCardLocked: "未解锁 (接待该客人后点亮)",
+    badgeCardUnlocked: "已达成！荣誉伙伴"
+  },
+  ja: {
+    siteTitle: "魔法のピンインレストラン - 聞き取り＆ごっこ遊び (Pinyin Bistro)",
+    logoTitle: "魔法のピンインレストラン",
+    navLobby: "ホール受付",
+    navMenu: "図鑑＆発音",
+    navBadges: "シェフ勲章",
+    heroBadge: "3〜6歳 幼児向け中国語ピンイン＆注文ごっこ",
+    heroTitle: "魔法のピンインレストラン · Pinyin Bistro",
+    heroSubtitle: "動物たちのご注文を聞いて、数字・色・食べ物のピンインを選んでお料理しよう！",
+    heroStart: "開店する (1番目のお客さんを迎える · 🐱 ミミちゃん)",
+    modeTitle: "シェフの難易度：",
+    modeEasy: "🐣 はじめてコース",
+    modeStandard: "🍳 見習いシェフ",
+    modeMaster: "👑 星付きマスター",
+    btnBackLobby: "受付へもどる",
+    btnReplayAudio: "注文をもう一度きく",
+    btnJaHelp: "日本語ガイド",
+    guestOrdering: "💬 お客さんが注文中...",
+    btnSpeak: "きく",
+    step1Name: "数字 (いくつ)",
+    step2Name: "色・味 (どんな)",
+    step3Name: "料理のピンイン",
+    step4Name: "ベルを鳴らす",
+    platterWaiting: "下のカウンターからピンインを選んでね...",
+    stepInstructionNum: "ステップ1：いくつほしいかな？数字のピンインを選ぼう！",
+    stepInstructionAttr: "ステップ2：どんな色や味かな？特徴のピンインを選ぼう！",
+    stepInstructionFood: "ステップ3：何を食べるかな？料理のピンインを選ぼう！",
+    stepInstructionServe: "ステップ4：ベルを押してお客さんにお届けしよう！",
+    btnServeDish: "できたよ！どうぞ！(Qǐng Màn Yòng)",
+    menuBadge: "ネイティブ音声つき発音ずかん",
+    menuTitle: "魔法のメニューずかん",
+    menuSubtitle: "カードをタップしてネイティブ発音をきこう！数字・色・食べ物をマスター！",
+    tabNumbers: "🔢 数字のピンイン",
+    tabAttrs: "🎨 色と味の特徴",
+    tabFoods: "🍎 おいしい食べ物",
+    tabPhrases: "💬 まいにちの挨拶",
+    badgeWallTag: "名誉シェフの殿堂",
+    badgeWallTitle: "どうぶつのお友達メダル館",
+    badgeWallSubtitle: "お客さんに美味しいごはんをお届けして、特製ゴールドメダルを集めよう！",
+    btnLobbyReturn: "ホールへ",
+    btnNextGuest: "次のお客さん ➔",
+    guestBadgeUnlocked: "メダル獲得済み",
+    guestBadgeLocked: "まだ来ていません",
+    btnStartGuest: "▶ ご案内",
+    badgeCardLocked: "未解放 (ごちそうを作るとゲット)",
+    badgeCardUnlocked: "達成！なかよしシェフ"
+  }
+};
+
+// 10 Animal Guests Order Specifications
+const GUESTS_CONFIG = [
+  {
+    id: 1,
+    key: "guest1",
+    nameZh: "咪咪猫",
+    nameJa: "ミミちゃん (ねこ)",
+    avatar: "🐱",
+    orderZh: "你好！我想吃两个红苹果！",
+    orderPy: "Nǐ hǎo! Wǒ xiǎng chī liǎng gè hóng píngguǒ!",
+    orderJa: "こんにちは！赤いリンゴを2つ食べたいな！",
+    targetNum: "liang",
+    targetAttr: "hong",
+    targetFood: "pingguo",
+    resultIcons: "🍎🍎",
+    dishNameZh: "红苹果",
+    dishNameJa: "あかいリンゴ",
+    thanksZh: "喵呜！红苹果又脆又甜，真好吃！谢谢你！",
+    badgeZh: "咪咪的萌猫金币",
+    badgeJa: "ミミのゴールドコイン",
+    audioOrder: "guest1_order",
+    audioOrderJa: "guest1_order_ja",
+    audioThanks: "guest1_thanks",
+    audioHint: "guest1_hint"
+  },
+  {
+    id: 2,
+    key: "guest2",
+    nameZh: "小熊波波",
+    nameJa: "ボボくん (くま)",
+    avatar: "🐻",
+    orderZh: "你好！请给我一个甜面包！",
+    orderPy: "Nǐ hǎo! Qǐng gěi wǒ yí gè tián miànbāo!",
+    orderJa: "こんにちは！甘いパンを1つください！",
+    targetNum: "yi",
+    targetAttr: "tian",
+    targetFood: "mianbao",
+    resultIcons: "🍞",
+    dishNameZh: "甜面包",
+    dishNameJa: "あまいパン",
+    thanksZh: "哇吼！甜甜的面包太香了！非常感谢！",
+    badgeZh: "波波的面包大师徽章",
+    badgeJa: "ボボのベーカリーバッジ",
+    audioOrder: "guest2_order",
+    audioOrderJa: "guest2_order_ja",
+    audioThanks: "guest2_thanks",
+    audioHint: "guest2_hint"
+  },
+  {
+    id: 3,
+    key: "guest3",
+    nameZh: "小兔米米",
+    nameJa: "ミミちゃん (うさぎ)",
+    avatar: "🐰",
+    orderZh: "你好！我想吃三个红草莓！",
+    orderPy: "Nǐ hǎo! Wǒ xiǎng chī sān gè hóng cǎoméi!",
+    orderJa: "こんにちは！赤いイチゴを3つ食べたいな！",
+    targetNum: "san",
+    targetAttr: "hong",
+    targetFood: "caomei",
+    resultIcons: "🍓🍓🍓",
+    dishNameZh: "红草莓",
+    dishNameJa: "あかいイチゴ",
+    thanksZh: "哇，草莓酸酸甜甜，太美味啦！谢谢小主厨！",
+    badgeZh: "米米的甜心草莓勋章",
+    badgeJa: "ミミのストロベリー勲章",
+    audioOrder: "guest3_order",
+    audioOrderJa: "guest3_order_ja",
+    audioThanks: "guest3_thanks",
+    audioHint: "guest3_hint"
+  },
+  {
+    id: 4,
+    key: "guest4",
+    nameZh: "小狗旺旺",
+    nameJa: "ワンワン (こいぬ)",
+    avatar: "🐶",
+    orderZh: "你好！我想吃一碗热米饭！",
+    orderPy: "Nǐ hǎo! Wǒ xiǎng chī yì wǎn rè mǐfàn!",
+    orderJa: "こんにちは！あつあつのご飯を1杯食べたいな！",
+    targetNum: "yi",
+    targetAttr: "re",
+    targetFood: "mifan",
+    resultIcons: "🍚",
+    dishNameZh: "热米饭",
+    dishNameJa: "あつあつごはん",
+    thanksZh: "汪汪！热气腾腾的米饭真香！谢谢小老板！",
+    badgeZh: "旺旺的金饭碗奖章",
+    badgeJa: "ワンワンの黄金ライスボウル",
+    audioOrder: "guest4_order",
+    audioOrderJa: "guest4_order_ja",
+    audioThanks: "guest4_thanks",
+    audioHint: "guest4_hint"
+  },
+  {
+    id: 5,
+    key: "guest5",
+    nameZh: "熊猫盼盼",
+    nameJa: "パンパン (パンダ)",
+    avatar: "🐼",
+    orderZh: "你好！我想吃一个大西瓜！",
+    orderPy: "Nǐ hǎo! Wǒ xiǎng chī yí gè dà xīguā!",
+    orderJa: "こんにちは！大きなスイカを1つ食べたいな！",
+    targetNum: "yi",
+    targetAttr: "lv",
+    targetFood: "xigua",
+    resultIcons: "🍉",
+    dishNameZh: "大西瓜",
+    dishNameJa: "おおきなスイカ",
+    thanksZh: "咕咚！大西瓜好甜好凉快！太棒啦，谢谢！",
+    badgeZh: "盼盼的翠绿清凉星",
+    badgeJa: "パンパンのスイカメダル",
+    audioOrder: "guest5_order",
+    audioOrderJa: "guest5_order_ja",
+    audioThanks: "guest5_thanks",
+    audioHint: "guest5_hint"
+  },
+  {
+    id: 6,
+    key: "guest6",
+    nameZh: "小猴皮皮",
+    nameJa: "ピピくん (さる)",
+    avatar: "🐵",
+    orderZh: "你好！我想吃四个黄香蕉！",
+    orderPy: "Nǐ hǎo! Wǒ xiǎng chī sì gè huáng xiāngjiāo!",
+    orderJa: "こんにちは！黄色いバナナを4つ食べたいな！",
+    targetNum: "si",
+    targetAttr: "huang",
+    targetFood: "xiangjiao",
+    resultIcons: "🍌🍌🍌🍌",
+    dishNameZh: "黄香蕉",
+    dishNameJa: "きいろいバナナ",
+    thanksZh: "吱吱！四个香蕉太可口了！你真是天才主厨！",
+    badgeZh: "皮皮的活力香蕉徽章",
+    badgeJa: "ピピのバナナバッジ",
+    audioOrder: "guest6_order",
+    audioOrderJa: "guest6_order_ja",
+    audioThanks: "guest6_thanks",
+    audioHint: "guest6_hint"
+  },
+  {
+    id: 7,
+    key: "guest7",
+    nameZh: "大象伯伯",
+    nameJa: "ゾウのおじさん",
+    avatar: "🐘",
+    orderZh: "你好！请给我两杯绿茶！",
+    orderPy: "Nǐ hǎo! Qǐng gěi wǒ liǎng bēi lǜchá!",
+    orderJa: "こんにちは！おいしい緑茶を2杯ください！",
+    targetNum: "liang",
+    targetAttr: "lv",
+    targetFood: "cha",
+    resultIcons: "🍵🍵",
+    dishNameZh: "清香绿茶",
+    dishNameJa: "おいしい緑茶",
+    thanksZh: "温润清香，真是好茶！多谢小主厨！",
+    badgeZh: "大象伯伯的茶道清心章",
+    badgeJa: "ゾウさんの茶道メダル",
+    audioOrder: "guest7_order",
+    audioOrderJa: "guest7_order_ja",
+    audioThanks: "guest7_thanks",
+    audioHint: "guest7_hint"
+  },
+  {
+    id: 8,
+    key: "guest8",
+    nameZh: "小鹿悠悠",
+    nameJa: "ユウユウ (しか)",
+    avatar: "🦌",
+    orderZh: "你好！请给我两杯温牛奶！",
+    orderPy: "Nǐ hǎo! Qǐng gěi wǒ liǎng bēi wēn niúnǎi!",
+    orderJa: "こんにちは！あたたかいミルクを2杯ください！",
+    targetNum: "liang",
+    targetAttr: "wen",
+    targetFood: "niunai",
+    resultIcons: "🥛🥛",
+    dishNameZh: "温牛奶",
+    dishNameJa: "あたたかいミルク",
+    thanksZh: "好香好滑的温牛奶，肚子暖烘烘的！谢谢你！",
+    badgeZh: "悠悠的纯白暖心徽章",
+    badgeJa: "ユウユウのミルクバッジ",
+    audioOrder: "guest8_order",
+    audioOrderJa: "guest8_order_ja",
+    audioThanks: "guest8_thanks",
+    audioHint: "guest8_hint"
+  },
+  {
+    id: 9,
+    key: "guest9",
+    nameZh: "小猪嘟嘟",
+    nameJa: "ドゥドゥ (こぶた)",
+    avatar: "🐷",
+    orderZh: "你好！我想吃五个香水饺！",
+    orderPy: "Nǐ hǎo! Wǒ xiǎng chī wǔ gè xiāng shuǐjiǎo!",
+    orderJa: "こんにちは！おいしい水餃子を5つ食べたいな！",
+    targetNum: "wu",
+    targetAttr: "xiang",
+    targetFood: "jiaozi",
+    resultIcons: "🥟🥟🥟🥟🥟",
+    dishNameZh: "香水饺",
+    dishNameJa: "おいしい水餃子",
+    thanksZh: "嗷呜一口！水饺馅料太足啦，超满足！谢谢！",
+    badgeZh: "嘟嘟的元宝水饺星",
+    badgeJa: "ドゥドゥのぎょうざスター",
+    audioOrder: "guest9_order",
+    audioOrderJa: "guest9_order_ja",
+    audioThanks: "guest9_thanks",
+    audioHint: "guest9_hint"
+  },
+  {
+    id: 10,
+    key: "guest10",
+    nameZh: "企鹅波波",
+    nameJa: "ポポ (ペンギン)",
+    avatar: "🐧",
+    orderZh: "你好！我想吃一块甜蛋糕！",
+    orderPy: "Nǐ hǎo! Wǒ xiǎng chī yí kuài tián dàngāo!",
+    orderJa: "こんにちは！甘いケーキを1つ食べたいな！",
+    targetNum: "yi",
+    targetAttr: "tian",
+    targetFood: "dangao",
+    resultIcons: "🍰",
+    dishNameZh: "甜蛋糕",
+    dishNameJa: "あまいケーキ",
+    thanksZh: "哇！草莓奶油甜蛋糕，幸福满满！谢谢！",
+    badgeZh: "波波的法式烘焙冠冕",
+    badgeJa: "ポポのクラウンケーキ賞",
+    audioOrder: "guest10_order",
+    audioOrderJa: "guest10_order_ja",
+    audioThanks: "guest10_thanks",
+    audioHint: "guest10_hint"
+  }
+];
+
+// Vocabulary definitions for options generation
+const VOCAB_NUMBERS = [
+  { id: "yi", py: "yī", zh: "一个", ja: "１つ", icon: "1️⃣", audio: "num_1" },
+  { id: "liang", py: "liǎng", zh: "两个", ja: "２つ", icon: "2️⃣", audio: "num_2" },
+  { id: "san", py: "sān", zh: "三个", ja: "３つ", icon: "3️⃣", audio: "num_3" },
+  { id: "si", py: "sì", zh: "四个", ja: "４つ", icon: "4️⃣", audio: "num_4" },
+  { id: "wu", py: "wǔ", zh: "五个", ja: "５つ", icon: "5️⃣", audio: "num_5" }
+];
+
+const VOCAB_ATTRS = [
+  { id: "hong", py: "hóng", zh: "红色的", ja: "あかい", icon: "🔴", audio: "attr_hong" },
+  { id: "huang", py: "huáng", zh: "黄色的", ja: "きいろい", icon: "🟡", audio: "attr_huang" },
+  { id: "lv", py: "lǜ", zh: "绿色的", ja: "みどりの", icon: "🟢", audio: "attr_lv" },
+  { id: "bai", py: "bái", zh: "白色的", ja: "しろい", icon: "⚪", audio: "attr_bai" },
+  { id: "tian", py: "tián", zh: "甜甜的", ja: "あまい", icon: "🍯", audio: "attr_tian" },
+  { id: "re", py: "rè", zh: "热乎乎", ja: "あつい", icon: "♨️", audio: "attr_re" },
+  { id: "wen", py: "wēn", zh: "温温的", ja: "あたたかい", icon: "🥛", audio: "attr_wen" },
+  { id: "xiang", py: "xiāng", zh: "香喷喷", ja: "いいかおり", icon: "✨", audio: "attr_xiang" }
+];
+
+const VOCAB_FOODS = [
+  { id: "pingguo", py: "píngguǒ", zh: "苹果", ja: "リンゴ", icon: "🍎", audio: "food_pingguo" },
+  { id: "mianbao", py: "miànbāo", zh: "面包", ja: "パン", icon: "🍞", audio: "food_mianbao" },
+  { id: "niunai", py: "niúnǎi", zh: "牛奶", ja: "ミルク", icon: "🥛", audio: "food_niunai" },
+  { id: "xigua", py: "xīguā", zh: "西瓜", ja: "スイカ", icon: "🍉", audio: "food_xigua" },
+  { id: "xiangjiao", py: "xiāngjiāo", zh: "香蕉", ja: "バナナ", icon: "🍌", audio: "food_xiangjiao" },
+  { id: "mifan", py: "mǐfàn", zh: "米饭", ja: "ごはん", icon: "🍚", audio: "food_mifan" },
+  { id: "cha", py: "chá", zh: "茶", ja: "おちゃ", icon: "🍵", audio: "food_cha" },
+  { id: "caomei", py: "cǎoméi", zh: "草莓", ja: "イチゴ", icon: "🍓", audio: "food_caomei" },
+  { id: "dangao", py: "dàngāo", zh: "蛋糕", ja: "ケーキ", icon: "🍰", audio: "food_dangao" },
+  { id: "jiaozi", py: "jiǎozi", zh: "水饺", ja: "ぎょうざ", icon: "🥟", audio: "food_jiaozi" }
+];
+
+/* =========================================================
+   APPLICATION STATE & AUDIO ENGINE
+   ========================================================= */
+
+let currentLang = 'zh';
+let currentScreen = 'lobby';
+let currentGameMode = 'master'; // 'easy', 'standard', 'master'
+let currentGuestIndex = 0;
+let currentStep = 'num'; // 'num', 'attr', 'food', 'serve'
+let selectedPicks = { num: null, attr: null, food: null };
+let isAudioMuted = false;
+let userStats = {
+  stars: 0,
+  coins: 0,
+  completedGuests: []
+};
+
+// Web Audio API Procedural SFX
+let audioCtx = null;
+
+function getAudioContext() {
+  if (!audioCtx) {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (AudioContext) {
+      audioCtx = new AudioContext();
+    }
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  return audioCtx;
+}
+
+function playSynthesizedSound(type) {
+  if (isAudioMuted) return;
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    
+    if (type === 'click') {
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(600, now);
+      osc.frequency.exponentialRampToValueAtTime(300, now + 0.08);
+      g.gain.setValueAtTime(0.2, now);
+      g.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+      osc.connect(g);
+      g.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.08);
+    } else if (type === 'bell') {
+      // Golden Service Bell Ding
+      const osc = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'triangle';
+      osc2.type = 'sine';
+      osc.frequency.setValueAtTime(1400, now);
+      osc2.frequency.setValueAtTime(2800, now);
+      g.gain.setValueAtTime(0.35, now);
+      g.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+      osc.connect(g);
+      osc2.connect(g);
+      g.connect(ctx.destination);
+      osc.start(now);
+      osc2.start(now);
+      osc.stop(now + 1.2);
+      osc2.stop(now + 1.2);
+    } else if (type === 'correct') {
+      // Happy chime
+      [523.25, 659.25, 783.99, 1046.50].forEach((f, idx) => {
+        const osc = ctx.createOscillator();
+        const g = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(f, now + idx * 0.08);
+        g.gain.setValueAtTime(0.25, now + idx * 0.08);
+        g.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.3);
+        osc.connect(g);
+        g.connect(ctx.destination);
+        osc.start(now + idx * 0.08);
+        osc.stop(now + idx * 0.08 + 0.3);
+      });
+    } else if (type === 'boing') {
+      // Soft gentle error boing
+      const osc = ctx.createOscillator();
+      const g = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(280, now);
+      osc.frequency.exponentialRampToValueAtTime(140, now + 0.25);
+      g.gain.setValueAtTime(0.2, now);
+      g.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+      osc.connect(g);
+      g.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.25);
+    }
+  } catch (e) {
+    console.warn("SFX error:", e);
+  }
+}
+
+// Master Audio Player (Pre-generated Neural MP3 + Web Speech fallback)
+let currentAudioEl = null;
+
+function playAudio(audioName, fallbackText = "", lang = "zh-CN") {
+  if (isAudioMuted) return Promise.resolve();
+  getAudioContext();
+
+  return new Promise((resolve) => {
+    if (currentAudioEl) {
+      currentAudioEl.pause();
+      currentAudioEl = null;
+    }
+
+    const audioUrl = `audio/bistro/${audioName}.mp3`;
+    const audio = new Audio(audioUrl);
+    currentAudioEl = audio;
+
+    let resolved = false;
+    const finish = () => {
+      if (!resolved) {
+        resolved = true;
+        resolve();
+      }
+    };
+
+    // 3.5s safety timeout
+    const timer = setTimeout(finish, 3500);
+
+    audio.onended = () => {
+      clearTimeout(timer);
+      finish();
+    };
+
+    audio.onerror = () => {
+      clearTimeout(timer);
+      if (fallbackText && 'speechSynthesis' in window) {
+        try {
+          window.speechSynthesis.cancel();
+          const u = new SpeechSynthesisUtterance(fallbackText);
+          u.lang = lang;
+          u.rate = 0.85;
+          u.onend = finish;
+          u.onerror = finish;
+          window.speechSynthesis.speak(u);
+          return;
+        } catch (e) {}
+      }
+      finish();
+    };
+
+    audio.play().catch(() => {
+      clearTimeout(timer);
+      finish();
+    });
+  });
+}
+
+function toggleAudio() {
+  isAudioMuted = !isAudioMuted;
+  document.getElementById('soundIcon').textContent = isAudioMuted ? '🔇' : '🔊';
+  if (isAudioMuted && currentAudioEl) {
+    currentAudioEl.pause();
+  }
+}
+
+/* =========================================================
+   LOCAL STORAGE PERSISTENCE
+   ========================================================= */
+
+function loadStats() {
+  try {
+    const saved = localStorage.getItem('hyperion_pinyin_bistro_stats');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      userStats = Object.assign(userStats, parsed);
+    }
+  } catch (e) {}
+  updateHeaderStats();
+}
+
+function saveStats() {
+  try {
+    localStorage.setItem('hyperion_pinyin_bistro_stats', JSON.stringify(userStats));
+  } catch (e) {}
+  updateHeaderStats();
+}
+
+function updateHeaderStats() {
+  document.getElementById('starCounter').textContent = userStats.stars;
+  document.getElementById('coinCounter').textContent = userStats.coins;
+}
+
+/* =========================================================
+   I18N & SCREEN NAVIGATION
+   ========================================================= */
+
+function toggleLanguage() {
+  currentLang = currentLang === 'zh' ? 'ja' : 'zh';
+  applyLanguage();
+}
+
+function applyLanguage() {
+  const t = i18nData[currentLang];
+  document.documentElement.lang = currentLang === 'zh' ? 'zh-CN' : 'ja';
+  document.title = t.siteTitle;
+  document.getElementById('txtLogoTitle').textContent = t.logoTitle;
+  document.getElementById('langFlag').textContent = currentLang === 'zh' ? '🇨🇳' : '🇯🇵';
+  document.getElementById('langName').textContent = currentLang === 'zh' ? '中文' : '日本語';
+
+  // Static texts
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key]) el.textContent = t[key];
+  });
+
+  // Re-render components
+  renderLobbyGuests();
+  renderDictionary();
+  renderBadges();
+
+  if (currentScreen === 'kitchen') {
+    renderKitchenGuest();
+    renderStepChoices();
+  }
+}
+
+function switchScreen(screenName) {
+  playSynthesizedSound('click');
+  currentScreen = screenName;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+  // Nav buttons highlight
+  document.getElementById('btnNavLobby').classList.toggle('active', screenName === 'lobby');
+  document.getElementById('btnNavMenu').classList.toggle('active', screenName === 'menu');
+  document.getElementById('btnNavBadges').classList.toggle('active', screenName === 'badges');
+
+  const target = document.getElementById(`${screenName}Screen`);
+  if (target) {
+    target.classList.add('active');
+    target.scrollTop = 0;
+  }
+}
+
+function selectGameMode(mode) {
+  playSynthesizedSound('click');
+  currentGameMode = mode;
+  document.querySelectorAll('.mode-tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === mode);
+  });
+}
+
+/* =========================================================
+   LOBBY SCREEN & GUEST CARDS
+   ========================================================= */
+
+function renderLobbyGuests() {
+  const t = i18nData[currentLang];
+  const container = document.getElementById('guestsGrid');
+  container.innerHTML = '';
+
+  GUESTS_CONFIG.forEach((guest, index) => {
+    const isCompleted = userStats.completedGuests.includes(guest.id);
+    const card = document.createElement('div');
+    card.className = 'guest-card';
+    card.onclick = (e) => {
+      e.stopPropagation();
+      startCurrentOrder(index);
+    };
+
+    const guestName = currentLang === 'zh' ? guest.nameZh : guest.nameJa;
+    const dishName = currentLang === 'zh' ? guest.dishNameZh : guest.dishNameJa;
+    const orderText = currentLang === 'zh' ? guest.orderZh : guest.orderJa;
+    const starsHtml = isCompleted ? '⭐⭐⭐' : '☆☆☆';
+    const badgeStatus = isCompleted ? `🏅 ${t.guestBadgeUnlocked}` : `⏳ ${t.guestBadgeLocked}`;
+
+    card.innerHTML = `
+      <div class="guest-card-top">
+        <div class="guest-avatar">${guest.avatar}</div>
+        <div class="guest-meta">
+          <div class="guest-name-row">
+            <div class="guest-name">${guestName}</div>
+            <div class="guest-stars">${starsHtml}</div>
+          </div>
+          <div class="guest-order-pill">${guest.resultIcons} ${dishName}</div>
+        </div>
+      </div>
+      <div class="guest-order-desc">${orderText}</div>
+      <div class="guest-card-bottom">
+        <span style="font-size:12px; font-weight:800; color:${isCompleted ? '#059669' : '#94a3b8'};">${badgeStatus}</span>
+        <button class="btn-start-guest">
+          <span>${t.btnStartGuest}</span>
+        </button>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+/* =========================================================
+   KITCHEN COUNTER & ORDER FLOW
+   ========================================================= */
+
+function startCurrentOrder(index) {
+  playSynthesizedSound('click');
+  currentGuestIndex = index;
+  selectedPicks = { num: null, attr: null, food: null };
+
+  // Setup initial step based on mode
+  if (currentGameMode === 'easy') {
+    currentStep = 'food';
+  } else if (currentGameMode === 'standard') {
+    currentStep = 'num';
+  } else {
+    currentStep = 'num';
+  }
+
+  switchScreen('kitchen');
+  renderKitchenGuest();
+  renderStepChoices();
+  replayOrderAudio();
+}
+
+function renderKitchenGuest() {
+  const t = i18nData[currentLang];
+  const guest = GUESTS_CONFIG[currentGuestIndex];
+  if (!guest) return;
+
+  document.getElementById('kitchenGuestIndex').textContent = `${currentLang === 'zh' ? '客人' : 'お客さん'} ${currentGuestIndex + 1} / ${GUESTS_CONFIG.length}`;
+  document.getElementById('guestAvatarEmoji').textContent = guest.avatar;
+  document.getElementById('guestNameTag').textContent = currentLang === 'zh' ? guest.nameZh : guest.nameJa;
+
+  document.getElementById('guestBubbleZh').textContent = guest.orderZh;
+  document.getElementById('guestBubblePy').textContent = guest.orderPy;
+  document.getElementById('guestBubbleJa').textContent = guest.orderJa;
+
+  // Reset character expression
+  const figure = document.getElementById('guestFigure');
+  figure.className = 'guest-figure';
+
+  updateStepIndicators();
+  updatePlatterDisplay();
+}
+
+function updateStepIndicators() {
+  const pillNum = document.getElementById('pillNum');
+  const pillAttr = document.getElementById('pillAttr');
+  const pillFood = document.getElementById('pillFood');
+  const pillServe = document.getElementById('pillServe');
+
+  // Mode visibility
+  if (currentGameMode === 'easy') {
+    pillNum.style.display = 'none';
+    pillAttr.style.display = 'none';
+  } else if (currentGameMode === 'standard') {
+    pillNum.style.display = 'flex';
+    pillAttr.style.display = 'none';
+  } else {
+    pillNum.style.display = 'flex';
+    pillAttr.style.display = 'flex';
+  }
+
+  // Active status
+  [pillNum, pillAttr, pillFood, pillServe].forEach(p => {
+    p.classList.remove('current', 'done');
+  });
+
+  if (selectedPicks.num) pillNum.classList.add('done');
+  if (selectedPicks.attr) pillAttr.classList.add('done');
+  if (selectedPicks.food) pillFood.classList.add('done');
+
+  if (currentStep === 'num') pillNum.classList.add('current');
+  else if (currentStep === 'attr') pillAttr.classList.add('current');
+  else if (currentStep === 'food') pillFood.classList.add('current');
+  else if (currentStep === 'serve') pillServe.classList.add('current');
+}
+
+function updatePlatterDisplay() {
+  const placeholder = document.getElementById('platterPlaceholder');
+  const preview = document.getElementById('platterDishPreview');
+  const guest = GUESTS_CONFIG[currentGuestIndex];
+
+  const hasPicks = selectedPicks.num || selectedPicks.attr || selectedPicks.food;
+
+  if (!hasPicks && currentStep !== 'serve') {
+    placeholder.style.display = 'flex';
+    preview.style.display = 'none';
+    preview.innerHTML = '';
+    return;
+  }
+
+  placeholder.style.display = 'none';
+  preview.style.display = 'flex';
+  preview.innerHTML = '';
+
+  if (currentStep === 'serve') {
+    // Finished dish presentation
+    preview.innerHTML = `
+      <div class="platter-item-pill" style="font-size:24px; padding:10px 22px;">
+        <span>${guest.resultIcons}</span>
+        <span>${currentLang === 'zh' ? guest.dishNameZh : guest.dishNameJa}</span>
+        <span>✨</span>
+      </div>
+    `;
+    return;
+  }
+
+  if (selectedPicks.num) {
+    const numObj = VOCAB_NUMBERS.find(v => v.id === selectedPicks.num);
+    if (numObj) {
+      preview.innerHTML += `<div class="platter-item-pill">${numObj.icon} ${numObj.py}</div>`;
+    }
+  }
+  if (selectedPicks.attr) {
+    const attrObj = VOCAB_ATTRS.find(v => v.id === selectedPicks.attr);
+    if (attrObj) {
+      preview.innerHTML += `<div class="platter-item-pill">${attrObj.icon} ${attrObj.py}</div>`;
+    }
+  }
+  if (selectedPicks.food) {
+    const foodObj = VOCAB_FOODS.find(v => v.id === selectedPicks.food);
+    if (foodObj) {
+      preview.innerHTML += `<div class="platter-item-pill">${foodObj.icon} ${foodObj.py}</div>`;
+    }
+  }
+}
+
+function replayOrderAudio() {
+  const guest = GUESTS_CONFIG[currentGuestIndex];
+  if (!guest) return;
+  playAudio(guest.audioOrder, guest.orderZh, 'zh-CN');
+}
+
+function playGuestJaAudio() {
+  const guest = GUESTS_CONFIG[currentGuestIndex];
+  if (!guest) return;
+  playAudio(guest.audioOrderJa, guest.orderJa, 'ja-JP');
+}
+
+/* =========================================================
+   DYNAMIC CHOICES GENERATOR (ZERO-FRUSTRATION PRINCIPLE)
+   ========================================================= */
+
+function renderStepChoices() {
+  const t = i18nData[currentLang];
+  const guest = GUESTS_CONFIG[currentGuestIndex];
+  const shelf = document.getElementById('choicesShelf');
+  const grid = document.getElementById('choicesGrid');
+  const serveStation = document.getElementById('serveStation');
+  const instructionEl = document.getElementById('shelfInstructionText');
+
+  grid.innerHTML = '';
+
+  if (currentStep === 'serve') {
+    shelf.style.display = 'none';
+    serveStation.style.display = 'flex';
+    playAudio('order_ready', '做好了！请慢用！');
+    return;
+  }
+
+  shelf.style.display = 'flex';
+  serveStation.style.display = 'none';
+
+  let targetId = null;
+  let vocabList = [];
+  let stepVoicePrompt = "";
+
+  if (currentStep === 'num') {
+    targetId = guest.targetNum;
+    vocabList = VOCAB_NUMBERS;
+    instructionEl.textContent = t.stepInstructionNum;
+    stepVoicePrompt = currentLang === 'zh' ? 'step_num_zh' : 'step_num_ja';
+  } else if (currentStep === 'attr') {
+    targetId = guest.targetAttr;
+    vocabList = VOCAB_ATTRS;
+    instructionEl.textContent = t.stepInstructionAttr;
+    stepVoicePrompt = currentLang === 'zh' ? 'step_attr_zh' : 'step_attr_ja';
+  } else if (currentStep === 'food') {
+    targetId = guest.targetFood;
+    vocabList = VOCAB_FOODS;
+    instructionEl.textContent = t.stepInstructionFood;
+    stepVoicePrompt = currentLang === 'zh' ? 'step_food_zh' : 'step_food_ja';
+  }
+
+  // Pick correct target + 2 or 3 random distractors
+  const correctObj = vocabList.find(item => item.id === targetId);
+  const distractors = vocabList.filter(item => item.id !== targetId);
+  shuffleArray(distractors);
+  const options = [correctObj, ...distractors.slice(0, 3)];
+  shuffleArray(options);
+
+  options.forEach(opt => {
+    const card = document.createElement('div');
+    card.className = 'choice-card';
+    card.dataset.id = opt.id;
+
+    card.innerHTML = `
+      <div class="choice-icon">${opt.icon}</div>
+      <div class="choice-pinyin">${opt.py}</div>
+      <div class="choice-hanzi">${opt.zh}</div>
+      <div class="choice-kana">${opt.ja}</div>
+    `;
+
+    card.onclick = () => handleChoiceClick(card, opt, targetId);
+    grid.appendChild(card);
+  });
+}
+
+function handleChoiceClick(cardEl, opt, targetId) {
+  // Always pronounce the clicked token so child learns
+  playAudio(opt.audio, opt.zh, 'zh-CN');
+
+  if (opt.id === targetId) {
+    // CORRECT CHOICE!
+    playSynthesizedSound('correct');
+    cardEl.style.borderColor = '#10b981';
+    cardEl.style.transform = 'scale(0.95)';
+
+    if (currentStep === 'num') {
+      selectedPicks.num = opt.id;
+      if (currentGameMode === 'master') {
+        currentStep = 'attr';
+      } else {
+        currentStep = 'food';
+      }
+    } else if (currentStep === 'attr') {
+      selectedPicks.attr = opt.id;
+      currentStep = 'food';
+    } else if (currentStep === 'food') {
+      selectedPicks.food = opt.id;
+      currentStep = 'serve';
+    }
+
+    updateStepIndicators();
+    updatePlatterDisplay();
+
+    setTimeout(() => {
+      renderStepChoices();
+    }, 350);
+
+  } else {
+    // INCORRECT CHOICE (Gentle wiggle without penalty)
+    playSynthesizedSound('boing');
+    cardEl.classList.add('wiggle');
+    setTimeout(() => cardEl.classList.remove('wiggle'), 550);
+
+    const figure = document.getElementById('guestFigure');
+    figure.classList.add('confused');
+    setTimeout(() => figure.classList.remove('confused'), 800);
+
+    const guest = GUESTS_CONFIG[currentGuestIndex];
+    if (guest && guest.audioHint) {
+      setTimeout(() => {
+        playAudio(guest.audioHint, guest.thanksZh, 'zh-CN');
+      }, 500);
+    }
+  }
+}
+
+function serveOrderToGuest() {
+  playSynthesizedSound('bell');
+  const guest = GUESTS_CONFIG[currentGuestIndex];
+  const figure = document.getElementById('guestFigure');
+  figure.classList.add('happy');
+
+  // Record stats
+  userStats.stars += 3;
+  userStats.coins += 10;
+  if (!userStats.completedGuests.includes(guest.id)) {
+    userStats.completedGuests.push(guest.id);
+  }
+  saveStats();
+
+  // Trigger celebration modal & confetti
+  setTimeout(() => {
+    launchConfetti();
+    playAudio(guest.audioThanks, guest.thanksZh, 'zh-CN');
+    showCelebrationModal(guest);
+  }, 400);
+}
+
+function showCelebrationModal(guest) {
+  const overlay = document.getElementById('celebrationOverlay');
+  document.getElementById('modalGuestAvatar').textContent = guest.avatar;
+  document.getElementById('modalTitle').textContent = currentLang === 'zh' ? '美食大成功！' : '大成功！ごちそうさま！';
+  document.getElementById('modalGuestWords').textContent = currentLang === 'zh' ? `“${guest.thanksZh}”` : `“${guest.orderJa} とってもおいしい！”`;
+  document.getElementById('modalBadgeText').textContent = currentLang === 'zh' ? `解锁【${guest.badgeZh}】！` : `【${guest.badgeJa}】を獲得！`;
+  overlay.classList.add('active');
+}
+
+function closeCelebrationModal(goNext) {
+  playSynthesizedSound('click');
+  document.getElementById('celebrationOverlay').classList.remove('active');
+
+  if (goNext) {
+    const nextIdx = (currentGuestIndex + 1) % GUESTS_CONFIG.length;
+    startCurrentOrder(nextIdx);
+  } else {
+    switchScreen('lobby');
+    renderLobbyGuests();
+  }
+}
+
+/* =========================================================
+   DICTIONARY / POINT-AND-READ ENCYCLOPEDIA
+   ========================================================= */
+
+let currentDictTab = 'numbers';
+
+function filterDict(tabKey) {
+  playSynthesizedSound('click');
+  currentDictTab = tabKey;
+  document.querySelectorAll('.menu-tab-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.dictTab === tabKey);
+  });
+  renderDictionary();
+}
+
+function renderDictionary() {
+  const container = document.getElementById('dictCardsGrid');
+  container.innerHTML = '';
+
+  let list = [];
+  if (currentDictTab === 'numbers') list = VOCAB_NUMBERS;
+  else if (currentDictTab === 'attributes') list = VOCAB_ATTRS;
+  else if (currentDictTab === 'foods') list = VOCAB_FOODS;
+  else if (currentDictTab === 'phrases') {
+    list = [
+      { id: "welcome", py: "Nǐ hǎo!", zh: "你好！", ja: "こんにちは", icon: "👋", audio: "welcome_zh" },
+      { id: "please", py: "Qǐng màn yòng!", zh: "请慢用！", ja: "どうぞ召し上がれ", icon: "🛎️", audio: "please_enjoy" },
+      { id: "give", py: "Gěi nǐ!", zh: "给你！", ja: "はい、どうぞ", icon: "🤲", audio: "give_you" },
+      { id: "order_ready", py: "Zuò hǎo le!", zh: "做好了！", ja: "できました！", icon: "✨", audio: "order_ready" },
+      { id: "praise", py: "Zhēn hǎochī!", zh: "真好吃！", ja: "とてもおいしい！", icon: "😋", audio: "chef_praise_zh" }
+    ];
+  }
+
+  list.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'dict-card';
+    card.onclick = () => {
+      playSynthesizedSound('click');
+      playAudio(item.audio, item.zh, 'zh-CN');
+    };
+
+    card.innerHTML = `
+      <div class="dict-card-icon">${item.icon}</div>
+      <div class="dict-card-py">${item.py}</div>
+      <div class="dict-card-zh">${item.zh}</div>
+      <div class="dict-card-ja">${item.ja}</div>
+      <div class="dict-audio-badge"><span>🔊</span> <span>点读</span></div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+/* =========================================================
+   BADGES SCREEN
+   ========================================================= */
+
+function renderBadges() {
+  const t = i18nData[currentLang];
+  const container = document.getElementById('badgesGrid');
+  container.innerHTML = '';
+
+  GUESTS_CONFIG.forEach(guest => {
+    const isUnlocked = userStats.completedGuests.includes(guest.id);
+    const card = document.createElement('div');
+    card.className = `badge-card ${isUnlocked ? 'unlocked' : 'locked'}`;
+
+    const medalTitle = currentLang === 'zh' ? guest.badgeZh : guest.badgeJa;
+    const subText = isUnlocked ? t.badgeCardUnlocked : t.badgeCardLocked;
+
+    card.innerHTML = `
+      <div class="badge-medal-icon">${isUnlocked ? '🏅' : '🔒'}</div>
+      <div class="badge-card-title">${medalTitle}</div>
+      <div class="badge-card-sub">${subText}</div>
+      <div style="font-size:24px; margin-top:4px;">${guest.avatar}</div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+/* =========================================================
+   CANVAS CONFETTI EFFECT
+   ========================================================= */
+
+let confettiParticles = [];
+let confettiAnimId = null;
+
+function launchConfetti() {
+  const canvas = document.getElementById('confettiCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  confettiParticles = [];
+  const colors = ['#f97316', '#fbbf24', '#34d399', '#60a5fa', '#f43f5e', '#a78bfa'];
+
+  for (let i = 0; i < 70; i++) {
+    confettiParticles.push({
+      x: canvas.width * 0.5 + (Math.random() - 0.5) * 120,
+      y: canvas.height * 0.45,
+      vx: (Math.random() - 0.5) * 16,
+      vy: (Math.random() - 1.2) * 14,
+      size: Math.random() * 8 + 6,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rotation: Math.random() * 360,
+      rotSpeed: (Math.random() - 0.5) * 12,
+      life: 1.0
+    });
+  }
+
+  if (confettiAnimId) cancelAnimationFrame(confettiAnimId);
+  animateConfetti();
+}
+
+function animateConfetti() {
+  const canvas = document.getElementById('confettiCanvas');
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  let active = false;
+  confettiParticles.forEach(p => {
+    if (p.life > 0) {
+      active = true;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.45; // gravity
+      p.rotation += p.rotSpeed;
+      p.life -= 0.015;
+
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate((p.rotation * Math.PI) / 180);
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.7);
+      ctx.restore();
+    }
+  });
+
+  if (active) {
+    confettiAnimId = requestAnimationFrame(animateConfetti);
+  } else {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+}
+
+/* =========================================================
+   UTILITIES
+   ========================================================= */
+
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
+// Global window resize
+window.addEventListener('resize', () => {
+  const canvas = document.getElementById('confettiCanvas');
+  if (canvas) {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+});
+
+// App Initialization
+window.addEventListener('DOMContentLoaded', () => {
+  loadStats();
+  applyLanguage();
+  renderLobbyGuests();
+
+  // Play gentle welcome audio on first click
+  const unlockAudio = () => {
+    getAudioContext();
+    playAudio('welcome_zh', '欢迎来到魔法点餐小餐厅！');
+    window.removeEventListener('pointerdown', unlockAudio);
+  };
+  window.addEventListener('pointerdown', unlockAudio, { once: true });
+});
+</script>
+
+</body>
+</html>

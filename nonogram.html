@@ -1,0 +1,2433 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>わくわく数織アドベンチャー - 萌趣数织小天才 · Nonogram</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #FFFDF7;
+    --bg-card: #FFFFFF;
+    --primary: #4F46E5;
+    --primary-hover: #4338CA;
+    --primary-light: #EEF2FF;
+    --secondary: #06B6D4;
+    --secondary-light: #ECFEFF;
+    --accent: #F59E0B;
+    --accent-light: #FFFBEB;
+    --success: #10B981;
+    --success-light: #ECFDF5;
+    --error: #EF4444;
+    --error-light: #FEE2E2;
+    --text-main: #1E293B;
+    --text-sub: #64748B;
+    --border-soft: #E2E8F0;
+    --border-bold: #94A3B8;
+    --grid-border-thick: #475569;
+    --grid-border-thin: #CBD5E1;
+    --cell-bg: #FFFFFF;
+    --cell-filled: #4F46E5;
+    --cell-cross: #94A3B8;
+    --cell-highlight: rgba(79, 70, 229, 0.08);
+    --cell-focus: #FEF08A;
+    --clue-bg: #F8FAFC;
+    --clue-text: #1E293B;
+    --clue-cleared: #94A3B8;
+    --shadow-sm: 0 3px 10px rgba(100, 110, 140, 0.07);
+    --shadow-md: 0 8px 20px rgba(100, 110, 140, 0.12);
+    --shadow-lg: 0 14px 30px rgba(100, 110, 140, 0.18);
+    --radius-xl: 24px;
+    --radius-lg: 18px;
+    --radius-md: 14px;
+    --radius-sm: 8px;
+  }
+
+  /* Theme: Classic Dark */
+  body[data-theme="classic"] {
+    --bg-main: #0F172A;
+    --bg-card: #1E293B;
+    --text-main: #F8FAFC;
+    --text-sub: #94A3B8;
+    --border-soft: #334155;
+    --border-bold: #64748B;
+    --grid-border-thick: #94A3B8;
+    --grid-border-thin: #475569;
+    --cell-bg: #1E293B;
+    --cell-filled: #38BDF8;
+    --cell-cross: #64748B;
+    --cell-highlight: rgba(56, 189, 248, 0.12);
+    --cell-focus: #F59E0B;
+    --clue-bg: #0F172A;
+    --clue-text: #E2E8F0;
+    --clue-cleared: #475569;
+  }
+
+  /* Theme: Forest Nature */
+  body[data-theme="forest"] {
+    --bg-main: #F4F8F3;
+    --bg-card: #FFFFFF;
+    --primary: #059669;
+    --primary-hover: #047857;
+    --primary-light: #ECFDF5;
+    --secondary: #D97706;
+    --secondary-light: #FEF3C7;
+    --text-main: #14532D;
+    --text-sub: #4B7A5C;
+    --border-soft: #D1E7DD;
+    --border-bold: #86B89A;
+    --grid-border-thick: #2D6A4F;
+    --grid-border-thin: #A7D7C5;
+    --cell-bg: #FFFFFF;
+    --cell-filled: #10B981;
+    --cell-cross: #74A892;
+    --cell-highlight: rgba(16, 185, 129, 0.12);
+    --cell-focus: #FDE047;
+    --clue-bg: #E8F5E9;
+    --clue-text: #1B4332;
+    --clue-cleared: #86B89A;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-family: "M PLUS Rounded 1c", "Outfit", system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 15% 15%, #FEF9C3 0%, var(--bg-main) 55%, #E0F2FE 100%);
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  body[data-theme="classic"] {
+    background: radial-gradient(circle at 20% 20%, #1E293B 0%, #0F172A 70%, #020617 100%);
+  }
+
+  body[data-theme="forest"] {
+    background: radial-gradient(circle at 15% 15%, #FEF3C7 0%, #F4F8F3 50%, #DCFCE7 100%);
+  }
+
+  .bg-decor {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.55;
+  }
+  .bg-blob-1 { top: -60px; right: -50px; width: 300px; height: 300px; background: radial-gradient(circle, #E0E7FF 0%, transparent 70%); }
+  .bg-blob-2 { bottom: -80px; left: -60px; width: 340px; height: 340px; background: radial-gradient(circle, #FEF3C7 0%, transparent 70%); }
+
+  #app {
+    width: 100%;
+    max-width: 500px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+    padding: 8px 12px 16px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 0 6px;
+    flex-shrink: 0;
+  }
+  .logo-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .logo-icon {
+    font-size: 26px;
+    animation: floatBounce 2.4s infinite ease-in-out;
+  }
+  @keyframes floatBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  .logo-title {
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--text-main);
+    letter-spacing: -0.3px;
+    display: flex;
+    flex-direction: column;
+  }
+  .logo-title span.sub {
+    font-size: 9px;
+    color: var(--primary);
+    font-weight: 800;
+    letter-spacing: 0.5px;
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .round-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    color: var(--text-main);
+  }
+  .round-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .round-btn:active {
+    transform: translateY(1px);
+  }
+
+  /* Mode Switch Tabs */
+  .mode-tabs {
+    display: flex;
+    background: #EFEFE9;
+    padding: 4px;
+    border-radius: 16px;
+    margin: 4px 0 10px;
+    flex-shrink: 0;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+  }
+  body[data-theme="classic"] .mode-tabs {
+    background: #1E293B;
+  }
+  .tab-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 7px 10px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-sub);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .tab-btn.active {
+    background: var(--bg-card);
+    color: var(--primary);
+    box-shadow: 0 3px 10px rgba(79, 70, 229, 0.2);
+    transform: scale(1.02);
+  }
+  body[data-theme="classic"] .tab-btn.active {
+    background: #334155;
+    color: #38BDF8;
+    box-shadow: 0 3px 10px rgba(56, 189, 248, 0.2);
+  }
+
+  /* Screen Views */
+  .view {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    animation: fadeIn 0.22s ease-out;
+  }
+  .view.active {
+    display: flex;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ================== MAP VIEW ================== */
+  .section-banner {
+    background: linear-gradient(135deg, #EEF2FF 0%, #FEF3C7 100%);
+    border: 2px solid #C7D2FE;
+    border-radius: var(--radius-lg);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
+  }
+  body[data-theme="classic"] .section-banner {
+    background: linear-gradient(135deg, #1E293B 0%, #312E81 100%);
+    border-color: #4F46E5;
+  }
+  .banner-left h2 {
+    font-size: 15px;
+    font-weight: 900;
+    color: #3730A3;
+  }
+  body[data-theme="classic"] .banner-left h2 {
+    color: #C7D2FE;
+  }
+  .banner-left p {
+    font-size: 11px;
+    color: #4338CA;
+    margin-top: 2px;
+  }
+  body[data-theme="classic"] .banner-left p {
+    color: #A5B4FC;
+  }
+  .banner-stars {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #FFFFFF;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #D97706;
+    box-shadow: 0 2px 6px rgba(217, 119, 6, 0.15);
+  }
+  body[data-theme="classic"] .banner-stars {
+    background: #0F172A;
+    color: #FBBF24;
+  }
+
+  .tier-selector {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+  }
+  .tier-pill {
+    flex: 1;
+    border: 2px solid var(--border-soft);
+    background: var(--bg-card);
+    border-radius: 14px;
+    padding: 8px 4px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .tier-pill.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(79, 70, 229, 0.2);
+  }
+  body[data-theme="classic"] .tier-pill.active {
+    background: #334155;
+    border-color: #38BDF8;
+  }
+  .tier-pill .pill-title {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--text-main);
+    white-space: nowrap;
+  }
+  .tier-pill.active .pill-title {
+    color: var(--primary);
+  }
+  body[data-theme="classic"] .tier-pill.active .pill-title {
+    color: #38BDF8;
+  }
+  .tier-pill .pill-sub {
+    font-size: 10px;
+    color: var(--text-sub);
+    margin-top: 1px;
+  }
+
+  .stage-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .stage-card {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    min-height: 98px;
+  }
+  .stage-card:hover:not(.locked) {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary);
+  }
+  .stage-card:active:not(.locked) {
+    transform: translateY(1px);
+  }
+  .stage-card.locked {
+    opacity: 0.65;
+    cursor: not-allowed;
+    background: #F1F5F9;
+  }
+  body[data-theme="classic"] .stage-card.locked {
+    background: #152238;
+  }
+  .stage-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .stage-num {
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--primary);
+    background: var(--primary-light);
+    padding: 2px 7px;
+    border-radius: 8px;
+  }
+  body[data-theme="classic"] .stage-num {
+    background: #334155;
+    color: #38BDF8;
+  }
+  .stage-icon {
+    font-size: 26px;
+  }
+  .stage-info {
+    margin: 6px 0 4px;
+  }
+  .stage-name {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--text-main);
+    line-height: 1.2;
+  }
+  .stage-sub {
+    font-size: 10px;
+    color: var(--text-sub);
+    margin-top: 1px;
+  }
+  .stage-stars {
+    display: flex;
+    gap: 3px;
+    font-size: 13px;
+    color: #E2E8F0;
+  }
+  .stage-stars .star-filled {
+    color: #F59E0B;
+    text-shadow: 0 1px 3px rgba(245, 158, 11, 0.4);
+  }
+
+  /* ================== FREE PLAY VIEW ================== */
+  .free-play-card {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-xl);
+    padding: 20px 16px;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .config-section h3 {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--text-main);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .opt-grid {
+    display: flex;
+    gap: 8px;
+  }
+  .opt-btn {
+    flex: 1;
+    border: 2px solid var(--border-soft);
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    padding: 10px 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-sub);
+  }
+  .opt-btn:hover {
+    border-color: var(--primary);
+  }
+  .opt-btn.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary);
+    transform: scale(1.02);
+  }
+  body[data-theme="classic"] .opt-btn.active {
+    background: #334155;
+    color: #38BDF8;
+    border-color: #38BDF8;
+  }
+  .start-btn {
+    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    color: #FFFFFF;
+    border: none;
+    border-radius: var(--radius-lg);
+    padding: 14px;
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+  }
+  .start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(79, 70, 229, 0.45);
+  }
+  .start-btn:active {
+    transform: translateY(1px);
+  }
+
+  /* ================== GAMEPLAY SCREEN ================== */
+  .game-hud {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    flex-shrink: 0;
+  }
+  .hud-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .back-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 2px solid var(--border-soft);
+    background: var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    cursor: pointer;
+    color: var(--text-main);
+  }
+  .hud-title {
+    display: flex;
+    flex-direction: column;
+  }
+  .hud-stage-badge {
+    font-size: 11px;
+    font-weight: 900;
+    color: var(--primary);
+  }
+  .hud-stage-name {
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .hud-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .hud-timer {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-main);
+    font-family: "Outfit", sans-serif;
+  }
+  .hud-lives {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 15px;
+  }
+
+  /* Mascot Speech Bubble */
+  .mascot-bubble {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .mascot-bubble::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 4px; height: 100%;
+    background: linear-gradient(to bottom, #4F46E5, #06B6D4);
+  }
+  .mascot-avatar {
+    font-size: 26px;
+    animation: bounce 2s infinite ease-in-out;
+  }
+  .mascot-text {
+    flex: 1;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.4;
+  }
+
+  /* Nonogram Board Container */
+  .board-outer-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 4px 0 10px;
+    flex: 1;
+    overflow: hidden;
+    touch-action: none;
+  }
+  .board-frame {
+    background: var(--bg-card);
+    border: 3px solid var(--grid-border-thick);
+    border-radius: 14px;
+    box-shadow: var(--shadow-md);
+    padding: 6px;
+    display: grid;
+    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
+    max-width: 100%;
+  }
+
+  /* Clues and Grid Components */
+  .corner-box {
+    background: var(--clue-bg);
+    border-bottom: 2px solid var(--grid-border-thick);
+    border-right: 2px solid var(--grid-border-thick);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: var(--text-sub);
+    border-top-left-radius: 8px;
+  }
+
+  .col-clues-wrapper {
+    display: flex;
+    border-bottom: 2px solid var(--grid-border-thick);
+    background: var(--clue-bg);
+    border-top-right-radius: 8px;
+    overflow: hidden;
+  }
+  .col-clue-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 4px 1px;
+    gap: 2px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--clue-text);
+    border-right: 1px solid var(--grid-border-thin);
+    transition: background 0.15s, color 0.15s;
+  }
+  .col-clue-item:last-child {
+    border-right: none;
+  }
+  .col-clue-item.thick-right {
+    border-right: 2px solid var(--grid-border-thick);
+  }
+  .col-clue-item.satisfied {
+    color: var(--clue-cleared);
+    opacity: 0.55;
+  }
+  .col-clue-item.highlight {
+    background: var(--cell-highlight);
+  }
+
+  .row-clues-wrapper {
+    display: flex;
+    flex-direction: column;
+    border-right: 2px solid var(--grid-border-thick);
+    background: var(--clue-bg);
+    border-bottom-left-radius: 8px;
+    overflow: hidden;
+  }
+  .row-clue-item {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 1px 6px;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--clue-text);
+    border-bottom: 1px solid var(--grid-border-thin);
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+  .row-clue-item:last-child {
+    border-bottom: none;
+  }
+  .row-clue-item.thick-bottom {
+    border-bottom: 2px solid var(--grid-border-thick);
+  }
+  .row-clue-item.satisfied {
+    color: var(--clue-cleared);
+    opacity: 0.55;
+  }
+  .row-clue-item.highlight {
+    background: var(--cell-highlight);
+  }
+
+  /* Grid Canvas */
+  .grid-container {
+    display: grid;
+    background: var(--cell-bg);
+    border-bottom-right-radius: 8px;
+    overflow: hidden;
+    touch-action: none;
+  }
+  .grid-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--cell-bg);
+    border-right: 1px solid var(--grid-border-thin);
+    border-bottom: 1px solid var(--grid-border-thin);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 900;
+    transition: background-color 0.12s ease, transform 0.1s ease;
+    position: relative;
+  }
+  .grid-cell.thick-right {
+    border-right: 2px solid var(--grid-border-thick);
+  }
+  .grid-cell.thick-bottom {
+    border-bottom: 2px solid var(--grid-border-thick);
+  }
+  .grid-cell.row-highlight, .grid-cell.col-highlight {
+    background: var(--cell-highlight);
+  }
+  .grid-cell.cursor-focused {
+    outline: 2px solid #F59E0B;
+    outline-offset: -2px;
+    z-index: 2;
+  }
+  .grid-cell.filled {
+    background-color: var(--cell-filled) !important;
+  }
+  .grid-cell.crossed {
+    color: var(--cell-cross);
+    font-size: 13px;
+    font-weight: 800;
+  }
+  .grid-cell.crossed::after {
+    content: "✕";
+  }
+  .grid-cell.revealed {
+    border-color: rgba(0,0,0,0.06) !important;
+    animation: cellReveal 0.35s ease-out forwards;
+  }
+  @keyframes cellReveal {
+    0% { transform: scale(0.6); opacity: 0; }
+    60% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* Gameplay Tools Toolbar */
+  .game-toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+  .tool-row-main {
+    display: flex;
+    gap: 10px;
+  }
+  .tool-btn {
+    flex: 1;
+    height: 48px;
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--border-soft);
+    background: var(--bg-card);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--text-main);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .tool-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .tool-btn.active {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: #FFFFFF;
+    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.3);
+    transform: translateY(-2px) scale(1.02);
+  }
+  .tool-btn.active.cross-mode {
+    border-color: #EF4444;
+    background: #EF4444;
+    box-shadow: 0 6px 16px rgba(239, 68, 68, 0.3);
+  }
+
+  .actions-row {
+    display: flex;
+    gap: 8px;
+  }
+  .action-btn {
+    flex: 1;
+    height: 38px;
+    border-radius: 12px;
+    border: 2px solid var(--border-soft);
+    background: var(--bg-card);
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-main);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.15s ease;
+  }
+  .action-btn:hover {
+    transform: translateY(-1px);
+    border-color: var(--primary);
+  }
+  .action-btn.active-toggle {
+    background: var(--success-light);
+    border-color: var(--success);
+    color: #047857;
+  }
+
+  /* ================== MODALS ================== */
+  .modal-backdrop {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: fadeIn 0.2s ease-out;
+  }
+  .modal-backdrop.active {
+    display: flex;
+  }
+  .modal-window {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 400px;
+    box-shadow: var(--shadow-lg);
+    border: 3px solid var(--border-soft);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: modalPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes modalPop {
+    0% { transform: scale(0.85); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .modal-header {
+    padding: 14px 18px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-header h3 {
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .modal-close {
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--text-sub);
+  }
+  .modal-body {
+    padding: 8px 18px 16px;
+    font-size: 12px;
+    color: var(--text-main);
+    line-height: 1.6;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  /* Victory Specific */
+  .victory-art-frame {
+    background: #FFFBEB;
+    border: 3px dashed #F59E0B;
+    border-radius: 16px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 8px 0 14px;
+  }
+  .art-canvas-preview {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .art-title {
+    font-size: 16px;
+    font-weight: 900;
+    color: #B45309;
+    margin-top: 8px;
+  }
+  .win-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .win-stat-box {
+    background: #F8FAFC;
+    border-radius: 12px;
+    padding: 8px;
+    text-align: center;
+  }
+  body[data-theme="classic"] .win-stat-box {
+    background: #0F172A;
+  }
+  .win-stat-label {
+    font-size: 10px;
+    color: var(--text-sub);
+  }
+  .win-stat-val {
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .modal-footer {
+    padding: 10px 18px 16px;
+    display: flex;
+    gap: 8px;
+  }
+  .modal-btn {
+    flex: 1;
+    padding: 11px;
+    border-radius: 12px;
+    border: none;
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.15s ease;
+  }
+  .modal-btn-primary {
+    background: linear-gradient(135deg, #4F46E5, #7C3AED);
+    color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  }
+  .modal-btn-sub {
+    background: var(--border-soft);
+    color: var(--text-main);
+  }
+
+  /* Confetti Canvas */
+  #confettiCanvas {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 99;
+  }
+</style>
+</head>
+<body data-theme="pastel">
+
+<div class="bg-decor bg-blob-1"></div>
+<div class="bg-decor bg-blob-2"></div>
+<canvas id="confettiCanvas"></canvas>
+
+<div id="app">
+  <!-- Header -->
+  <header class="header">
+    <a href="index.html" class="logo-group" title="ゲームロビーに戻る">
+      <div class="logo-icon">🎨</div>
+      <div class="logo-title">
+        わくわく数織
+        <span class="sub">NONOGRAM ADVENTURE</span>
+      </div>
+    </a>
+    <div class="nav-actions">
+      <button class="round-btn" id="themeBtn" title="テーマ変更">🎨</button>
+      <button class="round-btn" id="tutorialBtn" title="あそびかた">❓</button>
+      <button class="round-btn" id="soundBtn" title="サウンド切替">🔊</button>
+    </div>
+  </header>
+
+  <!-- Mode Switch Tabs -->
+  <nav class="mode-tabs">
+    <button class="tab-btn active" data-tab="adventure" id="tabAdventure">
+      🗺️ 冒険ステージ
+    </button>
+    <button class="tab-btn" data-tab="free" id="tabFree">
+      🎲 自由トレーニング
+    </button>
+  </nav>
+
+  <!-- View 1: Adventure Map -->
+  <section class="view active" id="viewAdventure">
+    <div class="section-banner">
+      <div class="banner-left">
+        <h2>ピクセルお絵かき大冒険</h2>
+        <p>18の隠されたピクセルアートを解き明かそう！</p>
+      </div>
+      <div class="banner-stars" id="totalStarsBadge">
+        ⭐ 0 / 54
+      </div>
+    </div>
+
+    <!-- Tier Selector -->
+    <div class="tier-selector">
+      <div class="tier-pill active" data-tier="1">
+        <div class="pill-title">🍓 5×5 萌萌启蒙</div>
+        <div class="pill-sub">1~2年生向け</div>
+      </div>
+      <div class="tier-pill" data-tier="2">
+        <div class="pill-title">🐼 10×10 探险进阶</div>
+        <div class="pill-sub">3~4年生向け</div>
+      </div>
+      <div class="tier-pill" data-tier="3">
+        <div class="pill-title">🦄 15×15 经典大师</div>
+        <div class="pill-sub">5~6年生＆挑戦</div>
+      </div>
+    </div>
+
+    <!-- Stage Grid Cards -->
+    <div class="stage-grid" id="stageGrid"></div>
+  </section>
+
+  <!-- View 2: Free Play Config -->
+  <section class="view" id="viewFree">
+    <div class="free-play-card">
+      <div class="config-section">
+        <h3>📐 グリッドサイズ (規格選択)</h3>
+        <div class="opt-grid" id="freeSizeOptions">
+          <div class="opt-btn active" data-size="5">5×5 (かんたん)</div>
+          <div class="opt-btn" data-size="10">10×10 (ふつう)</div>
+          <div class="opt-btn" data-size="15">15×15 (じっくり)</div>
+        </div>
+      </div>
+
+      <div class="config-section">
+        <h3>🎨 テーマ・モチーフ (絵画ジャンル)</h3>
+        <div class="opt-grid" id="freeThemeOptions">
+          <div class="opt-btn active" data-theme="fruits">🍎 くだもの</div>
+          <div class="opt-btn" data-theme="animals">🐾 どうぶつ</div>
+          <div class="opt-btn" data-theme="symbols">⭐️ きごう</div>
+          <div class="opt-btn" data-theme="random">🎲 おまかせ</div>
+        </div>
+      </div>
+
+      <button class="start-btn" id="startFreeBtn">
+        ✨ あたらしい絵を描く
+      </button>
+    </div>
+  </section>
+
+  <!-- View 3: Gameplay Screen -->
+  <section class="view" id="viewGame">
+    <!-- Top HUD -->
+    <div class="game-hud">
+      <div class="hud-left">
+        <button class="back-btn" id="backToMapBtn" title="戻る">◀</button>
+        <div class="hud-title">
+          <span class="hud-stage-badge" id="hudStageBadge">STAGE 1</span>
+          <span class="hud-stage-name" id="hudStageName">あっぷる</span>
+        </div>
+      </div>
+      <div class="hud-right">
+        <div class="hud-timer">⏱️ <span id="gameTimer">00:00</span></div>
+        <div class="hud-lives" id="gameLives" title="ミス数">❤️❤️❤️</div>
+      </div>
+    </div>
+
+    <!-- Mascot Coach -->
+    <div class="mascot-bubble">
+      <div class="mascot-avatar">🐹</div>
+      <div class="mascot-text" id="mascotText">
+        行や列の数字を見て、連続して塗るマスの数を当ててね！
+      </div>
+    </div>
+
+    <!-- Nonogram Board -->
+    <div class="board-outer-wrapper">
+      <div class="board-frame" id="boardFrame">
+        <div class="corner-box" id="cornerBox">🎨</div>
+        <div class="col-clues-wrapper" id="colClues"></div>
+        <div class="row-clues-wrapper" id="rowClues"></div>
+        <div class="grid-container" id="gridContainer"></div>
+      </div>
+    </div>
+
+    <!-- Controls Toolbar -->
+    <div class="game-toolbar">
+      <div class="tool-row-main">
+        <button class="tool-btn active" id="toolFillBtn" title="スペースキー">
+          🖌️ ぬる (塗色)
+        </button>
+        <button class="tool-btn cross-mode" id="toolCrossBtn" title="Xキー">
+          ✕ ばつ (打叉)
+        </button>
+      </div>
+      <div class="actions-row">
+        <button class="action-btn" id="undoBtn" title="Zキー">↩️ もどす</button>
+        <button class="action-btn" id="hintBtn" title="Hキー">💡 ヒント</button>
+        <button class="action-btn" id="autoCrossBtn" title="完成した列を自動で✕">⚙️ 自動✕: ON</button>
+        <button class="action-btn" id="resetBtn">🧹 やり直す</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Tutorial Modal -->
+<div class="modal-backdrop" id="tutorialModal">
+  <div class="modal-window">
+    <div class="modal-header">
+      <h3>📖 数織 (ピクロス) のあそびかた</h3>
+      <button class="modal-close" id="closeTutorialBtn">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom: 8px;"><strong>数字のルール：</strong></p>
+      <p>外側の数字は、その行や列に「連続して塗る黒マスの数」を表しています。</p>
+      <div style="background:#EEF2FF; padding:8px 12px; border-radius:8px; margin:6px 0 10px;">
+        • <strong>「5」</strong> (5マス中)：全部塗る！<br>
+        • <strong>「2 1」</strong>：2マス連続で塗ったあと、<strong>必ず1マス以上のすき間</strong>を空けて1マス塗る！
+      </div>
+
+      <p style="margin-bottom: 8px;"><strong>便利なテクニック：</strong></p>
+      <p>1. <strong>重なりチェック：</strong>大きな数字は、左から詰めても右から詰めても重なる場所が必ず塗れます！</p>
+      <p>2. <strong>✕（バツ）を活用：</strong>絶対に塗らないマスには✕印をつけておくと、残りのマスがすぐに分かります！</p>
+      <p>3. すべて正しく塗れると、鮮やかなピクセルアートが完成します！</p>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-primary" id="confirmTutorialBtn">わかった！</button>
+    </div>
+  </div>
+</div>
+
+<!-- Victory Modal -->
+<div class="modal-backdrop" id="victoryModal">
+  <div class="modal-window">
+    <div class="modal-header">
+      <h3>🎉 ステージクリア！</h3>
+    </div>
+    <div class="modal-body" style="text-align: center;">
+      <div class="victory-art-frame">
+        <canvas id="artCanvas" width="160" height="160" class="art-canvas-preview"></canvas>
+        <div class="art-title" id="victoryArtTitle">あっぷる (甜心红苹果)</div>
+      </div>
+      <div class="win-stats-grid">
+        <div class="win-stat-box">
+          <div class="win-stat-label">クリアタイム</div>
+          <div class="win-stat-val" id="winTimeVal">00:45</div>
+        </div>
+        <div class="win-stat-box">
+          <div class="win-stat-label">獲得スター</div>
+          <div class="win-stat-val" id="winStarsVal">⭐⭐⭐</div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-sub" id="winMapBtn">🗺️ マップ</button>
+      <button class="modal-btn modal-btn-sub" id="winRetryBtn">🔄 再挑戦</button>
+      <button class="modal-btn modal-btn-primary" id="winNextBtn">次へ進む ➔</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== STAGES DATA ====================
+const STAGES_DATA = [{"id": 1, "name": "あっぷる", "titleZh": "甜心红苹果", "icon": "🍎", "size": 5, "grid": [[0, 0, 1, 0, 0], [0, 1, 1, 1, 0], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [0, 1, 0, 1, 0]], "colors": [["", "", "#16a34a", "", ""], ["", "#ef4444", "#ef4444", "#ef4444", ""], ["#ef4444", "#f87171", "#ef4444", "#ef4444", "#ef4444"], ["#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444"], ["", "#dc2626", "", "#dc2626", ""]], "tip": "第3行和第4行的提示都是 5，整整5格全部都要涂色哦！"}, {"id": 2, "name": "ハート", "titleZh": "温暖爱心", "icon": "❤️", "size": 5, "grid": [[0, 1, 0, 1, 0], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1], [0, 1, 1, 1, 0], [0, 0, 1, 0, 0]], "colors": [["", "#fb7185", "", "#fb7185", ""], ["#f43f5e", "#fda4af", "#f43f5e", "#f43f5e", "#f43f5e"], ["#f43f5e", "#f43f5e", "#f43f5e", "#f43f5e", "#f43f5e"], ["", "#e11d48", "#e11d48", "#e11d48", ""], ["", "", "#be123c", "", ""]], "tip": "爱心对称又好看！第2行和第3行的 5 代表整行全满，先填满它们吧！"}, {"id": 3, "name": "こねこ", "titleZh": "萌趣小猫", "icon": "🐱", "size": 5, "grid": [[1, 0, 0, 0, 1], [1, 1, 1, 1, 1], [1, 0, 1, 0, 1], [1, 1, 1, 1, 1], [0, 1, 1, 1, 0]], "colors": [["#fb7185", "", "", "", "#fb7185"], ["#f97316", "#fb923c", "#fb923c", "#fb923c", "#f97316"], ["#f97316", "", "#1e293b", "", "#f97316"], ["#f97316", "#fed7aa", "#fb7185", "#fed7aa", "#f97316"], ["", "#f97316", "#f97316", "#f97316", ""]], "tip": "小猫咪的耳朵在第一行（1 1），两个耳朵中间空格可以先打叉✕哦！"}, {"id": 4, "name": "ヨット", "titleZh": "扬帆小船", "icon": "⛵", "size": 5, "grid": [[0, 0, 1, 0, 0], [0, 1, 1, 0, 0], [1, 1, 1, 0, 0], [0, 0, 1, 0, 0], [1, 1, 1, 1, 1]], "colors": [["", "", "#38bdf8", "", ""], ["", "#0ea5e9", "#38bdf8", "", ""], ["#0284c7", "#0ea5e9", "#38bdf8", "", ""], ["", "", "#78350f", "", ""], ["#b45309", "#d97706", "#d97706", "#d97706", "#b45309"]], "tip": "最后一行的 5 是船底，第3列的 5 是桅杆！交叉点一目了然！"}, {"id": 5, "name": "あひる", "titleZh": "快乐小鸭", "icon": "🦆", "size": 5, "grid": [[0, 1, 1, 0, 0], [1, 1, 1, 0, 0], [0, 1, 0, 0, 0], [1, 1, 1, 1, 0], [0, 1, 1, 1, 1]], "colors": [["", "#facc15", "#facc15", "", ""], ["#ea580c", "#fde047", "#facc15", "", ""], ["", "#facc15", "", "", ""], ["#facc15", "#fde047", "#facc15", "#eab308", ""], ["", "#38bdf8", "#0ea5e9", "#0284c7", "#0369a1"]], "tip": "第2列的提示是 5，代表从上到下整列全涂满，小鸭子的脖子和身体就相连啦！"}, {"id": 6, "name": "さくらんぼ", "titleZh": "双生樱桃", "icon": "🍒", "size": 5, "grid": [[0, 0, 1, 1, 0], [0, 1, 0, 0, 1], [1, 1, 0, 1, 1], [1, 1, 0, 1, 1], [0, 1, 0, 0, 1]], "colors": [["", "", "#22c55e", "#16a34a", ""], ["", "#84cc16", "", "", "#84cc16"], ["#e11d48", "#f43f5e", "", "#e11d48", "#f43f5e"], ["#be123c", "#e11d48", "", "#be123c", "#e11d48"], ["", "#be123c", "", "", "#be123c"]], "tip": "第3行和第4行都是 2 2！因为每组数字间至少隔1个空格，2+1+2正好是5格！"}, {"id": 7, "name": "パンダ", "titleZh": "憨憨大熊猫", "icon": "🐼", "size": 10, "grid": [[1, 1, 0, 0, 0, 0, 0, 0, 1, 1], [1, 1, 0, 0, 0, 0, 0, 0, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 0, 1, 1, 1, 1, 0, 1, 1], [1, 1, 0, 1, 1, 1, 1, 0, 1, 1], [1, 1, 1, 1, 0, 0, 1, 1, 1, 1], [0, 1, 1, 0, 1, 1, 0, 1, 1, 0], [0, 0, 1, 1, 1, 1, 1, 1, 0, 0], [0, 0, 0, 1, 1, 1, 1, 0, 0, 0]], "colors": [["#1e293b", "#334155", "", "", "", "", "", "", "#334155", "#1e293b"], ["#1e293b", "#334155", "", "", "", "", "", "", "#334155", "#1e293b"], ["#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc"], ["#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc"], ["#f8fafc", "#1e293b", "", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "", "#1e293b", "#f8fafc"], ["#f8fafc", "#1e293b", "", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "", "#1e293b", "#f8fafc"], ["#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "", "", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc"], ["", "#f8fafc", "#f8fafc", "", "#1e293b", "#1e293b", "", "#f8fafc", "#f8fafc", ""], ["", "", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "", ""], ["", "", "", "#1e293b", "#334155", "#334155", "#1e293b", "", "", ""]], "tip": "第3和第4行的提示是 10，整整10格全部填满！熊猫的额头最先显露出来啦！"}, {"id": 8, "name": "ロケット", "titleZh": "宇宙火箭", "icon": "🚀", "size": 10, "grid": [[0, 0, 0, 0, 1, 1, 0, 0, 0, 0], [0, 0, 0, 1, 1, 1, 1, 0, 0, 0], [0, 0, 0, 1, 1, 1, 1, 0, 0, 0], [0, 0, 1, 1, 0, 0, 1, 1, 0, 0], [0, 0, 1, 1, 0, 0, 1, 1, 0, 0], [0, 0, 1, 1, 1, 1, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 1, 1, 1, 1, 0, 0, 1], [0, 0, 0, 0, 1, 1, 0, 0, 0, 0]], "colors": [["", "", "", "", "#ef4444", "#ef4444", "", "", "", ""], ["", "", "", "#ef4444", "#f87171", "#f87171", "#ef4444", "", "", ""], ["", "", "", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "", "", ""], ["", "", "#f8fafc", "#38bdf8", "", "", "#38bdf8", "#f8fafc", "", ""], ["", "", "#f8fafc", "#0284c7", "", "", "#0284c7", "#f8fafc", "", ""], ["", "", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "", ""], ["", "#ef4444", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#ef4444", ""], ["#ef4444", "#ef4444", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#ef4444", "#ef4444"], ["#dc2626", "", "", "#64748b", "#94a3b8", "#94a3b8", "#64748b", "", "", "#dc2626"], ["", "", "", "", "#f59e0b", "#ea580c", "", "", "", ""]], "tip": "第8行的 10 是火箭的底座机翼，先填满整行，再向上推导箭体吧！"}, {"id": 9, "name": "ペンギン", "titleZh": "极地小企鹅", "icon": "🐧", "size": 10, "grid": [[0, 0, 0, 1, 1, 1, 1, 0, 0, 0], [0, 0, 1, 1, 1, 1, 1, 1, 0, 0], [0, 0, 1, 0, 1, 1, 0, 1, 0, 0], [0, 0, 1, 1, 0, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 0], [1, 1, 1, 0, 0, 0, 0, 1, 1, 1], [1, 1, 1, 0, 0, 0, 0, 1, 1, 1], [0, 1, 1, 0, 0, 0, 0, 1, 1, 0], [0, 0, 1, 1, 1, 1, 1, 1, 0, 0], [0, 0, 1, 1, 0, 0, 1, 1, 0, 0]], "colors": [["", "", "", "#1e293b", "#1e293b", "#1e293b", "#1e293b", "", "", ""], ["", "", "#1e293b", "#334155", "#334155", "#334155", "#334155", "#1e293b", "", ""], ["", "", "#1e293b", "", "#f8fafc", "#f8fafc", "", "#1e293b", "", ""], ["", "", "#1e293b", "#f97316", "", "", "#f97316", "#1e293b", "", ""], ["", "#1e293b", "#334155", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#334155", "#1e293b", ""], ["#1e293b", "#334155", "#1e293b", "", "", "", "", "#1e293b", "#334155", "#1e293b"], ["#1e293b", "#334155", "#1e293b", "", "", "", "", "#1e293b", "#334155", "#1e293b"], ["", "#1e293b", "#334155", "", "", "", "", "#334155", "#1e293b", ""], ["", "", "#1e293b", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#1e293b", "", ""], ["", "", "#f97316", "#f97316", "", "", "#f97316", "#f97316", "", ""]], "tip": "企鹅的肚子在中间是白色的，利用第6和第7行的 3 3 可以确定两侧的翅膀！"}, {"id": 10, "name": "いちご", "titleZh": "诱人草莓", "icon": "🍓", "size": 10, "grid": [[0, 0, 1, 0, 1, 1, 0, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 0, 1, 1, 1, 0, 1, 1, 1], [1, 1, 1, 1, 0, 1, 1, 1, 1, 1], [1, 1, 0, 1, 1, 1, 0, 1, 1, 1], [0, 1, 1, 1, 1, 1, 1, 1, 1, 0], [0, 0, 1, 1, 0, 1, 1, 1, 0, 0], [0, 0, 0, 1, 1, 1, 1, 0, 0, 0], [0, 0, 0, 0, 1, 1, 0, 0, 0, 0]], "colors": [["", "", "#16a34a", "", "#22c55e", "#22c55e", "", "#16a34a", "", ""], ["", "#22c55e", "#22c55e", "#4ade80", "#22c55e", "#22c55e", "#4ade80", "#22c55e", "#22c55e", ""], ["#ef4444", "#f87171", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#f87171", "#ef4444"], ["#ef4444", "#ef4444", "", "#ef4444", "#f87171", "#ef4444", "", "#ef4444", "#ef4444", "#ef4444"], ["#ef4444", "#ef4444", "#ef4444", "#ef4444", "", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444"], ["#ef4444", "#ef4444", "", "#ef4444", "#ef4444", "#ef4444", "", "#ef4444", "#ef4444", "#ef4444"], ["", "#dc2626", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#dc2626", ""], ["", "", "#dc2626", "#ef4444", "", "#ef4444", "#ef4444", "#dc2626", "", ""], ["", "", "", "#dc2626", "#dc2626", "#dc2626", "#dc2626", "", "", ""], ["", "", "", "", "#991b1b", "#991b1b", "", "", "", ""]], "tip": "第3行提示是 10，整行满涂！第2行和第7行提示都是 8，两端各有1格打叉！"}, {"id": 11, "name": "お城", "titleZh": "童话城堡", "icon": "🏰", "size": 10, "grid": [[1, 0, 1, 0, 0, 0, 0, 1, 0, 1], [1, 1, 1, 0, 0, 0, 0, 1, 1, 1], [1, 1, 1, 0, 1, 1, 0, 1, 1, 1], [0, 1, 0, 1, 1, 1, 1, 0, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 0], [0, 1, 0, 1, 1, 1, 1, 0, 1, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 0, 0, 0, 0, 1, 1, 1], [1, 1, 1, 0, 0, 0, 0, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]], "colors": [["#ef4444", "", "#ef4444", "", "", "", "", "#ef4444", "", "#ef4444"], ["#8b5cf6", "#a78bfa", "#8b5cf6", "", "", "", "", "#8b5cf6", "#a78bfa", "#8b5cf6"], ["#8b5cf6", "#a78bfa", "#8b5cf6", "", "#f59e0b", "#f59e0b", "", "#8b5cf6", "#a78bfa", "#8b5cf6"], ["", "#64748b", "", "#94a3b8", "#cbd5e1", "#cbd5e1", "#94a3b8", "", "#64748b", ""], ["", "#64748b", "#94a3b8", "#94a3b8", "#cbd5e1", "#cbd5e1", "#94a3b8", "#94a3b8", "#64748b", ""], ["", "#64748b", "", "#94a3b8", "#38bdf8", "#38bdf8", "#94a3b8", "", "#64748b", ""], ["#64748b", "#94a3b8", "#94a3b8", "#94a3b8", "#cbd5e1", "#cbd5e1", "#94a3b8", "#94a3b8", "#94a3b8", "#64748b"], ["#64748b", "#94a3b8", "#64748b", "", "", "", "", "#64748b", "#94a3b8", "#64748b"], ["#64748b", "#94a3b8", "#64748b", "", "", "", "", "#64748b", "#94a3b8", "#64748b"], ["#475569", "#475569", "#475569", "#475569", "#475569", "#475569", "#475569", "#475569", "#475569", "#475569"]], "tip": "第7行和第10行的 10 是坚固的城墙和地基，全涂满！城门在下方正中间洞开！"}, {"id": 12, "name": "きょうりゅう", "titleZh": "萌趣小恐龙", "icon": "🦖", "size": 10, "grid": [[0, 0, 0, 1, 1, 1, 1, 1, 0, 0], [0, 0, 0, 1, 0, 1, 1, 1, 1, 0], [0, 0, 0, 1, 1, 1, 0, 0, 0, 0], [0, 0, 1, 1, 1, 1, 0, 0, 0, 0], [0, 1, 1, 1, 1, 1, 1, 0, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 0, 0], [1, 1, 1, 1, 1, 1, 1, 0, 0, 0], [0, 1, 1, 1, 1, 1, 0, 0, 0, 0], [0, 0, 1, 0, 0, 1, 0, 0, 0, 0], [0, 0, 1, 1, 0, 1, 1, 0, 0, 0]], "colors": [["", "", "", "#84cc16", "#84cc16", "#84cc16", "#84cc16", "#65a30d", "", ""], ["", "", "", "#84cc16", "", "#84cc16", "#84cc16", "#84cc16", "#65a30d", ""], ["", "", "", "#84cc16", "#84cc16", "#65a30d", "", "", "", ""], ["", "", "#84cc16", "#84cc16", "#84cc16", "#65a30d", "", "", "", ""], ["", "#84cc16", "#84cc16", "#84cc16", "#a3e635", "#a3e635", "#65a30d", "", "", ""], ["#65a30d", "#84cc16", "#84cc16", "#84cc16", "#fef08a", "#fef08a", "#84cc16", "#65a30d", "", ""], ["#65a30d", "#84cc16", "#84cc16", "#84cc16", "#fef08a", "#fef08a", "#65a30d", "", "", ""], ["", "#65a30d", "#84cc16", "#84cc16", "#84cc16", "#65a30d", "", "", "", ""], ["", "", "#65a30d", "", "", "#65a30d", "", "", "", ""], ["", "", "#4d7c0f", "#4d7c0f", "", "#4d7c0f", "#4d7c0f", "", "", ""]], "tip": "第6行提示是 8，结合左右两端的空格打叉，小恐龙圆滚滚的肚皮马上现身！"}, {"id": 13, "name": "ユニコーン", "titleZh": "梦幻独角兽", "icon": "🦄", "size": 15, "grid": [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0], [0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0], [1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0], [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0]], "colors": [["", "", "", "", "", "", "", "", "", "", "", "", "#fbbf24", "#f59e0b", ""], ["", "", "", "", "", "", "", "", "", "", "#fbbf24", "#f59e0b", "", "", ""], ["", "", "", "", "", "", "", "", "#fbbf24", "#f59e0b", "", "", "", "", ""], ["", "", "", "", "#ec4899", "#ec4899", "#f43f5e", "#f43f5e", "#f43f5e", "", "", "", "", "", ""], ["", "", "#f8fafc", "#f8fafc", "#f8fafc", "", "#a855f7", "#a855f7", "#8b5cf6", "", "", "", "", "", ""], ["", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "", "#06b6d4", "#06b6d4", "#0891b2", "", "", "", "", "", ""], ["#fb7185", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "", "#ec4899", "#ec4899", "#db2777", "", "", "", "", "", ""], ["#f8fafc", "#f8fafc", "#f8fafc", "#38bdf8", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "", "#a855f7", "#8b5cf6", "", "", ""], ["#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "", "#06b6d4", "#0891b2", "", ""], ["#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "", "#ec4899", "#db2777", ""], ["", "", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "", "#a855f7", "#8b5cf6", ""], ["", "", "", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "", "#06b6d4", "#0891b2", ""], ["", "", "", "", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "", "#ec4899", "#db2777", ""], ["", "", "", "", "", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "", "", "", "", ""], ["", "", "", "", "", "", "#f8fafc", "#f8fafc", "#f8fafc", "", "", "", "", "", ""]], "tip": "独角兽头顶的金角从第1行的右上角斜斜伸出，第10行高达 11 2，利用重叠法定下中轴！"}, {"id": 14, "name": "レーシングカー", "titleZh": "极速赛车", "icon": "🏎️", "size": 15, "grid": [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0], [1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0], [1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0], [0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0], [0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], "colors": [["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "", "", "#facc15", "#facc15", "#eab308", "#eab308", "", "", "", ""], ["", "", "", "", "", "", "#38bdf8", "#38bdf8", "#0284c7", "#0284c7", "#facc15", "#facc15", "", "", ""], ["#dc2626", "#dc2626", "", "", "", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "", ""], ["#dc2626", "#dc2626", "", "", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#f87171", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", ""], ["#dc2626", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#f87171", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#dc2626", ""], ["#dc2626", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#dc2626", "#b91c1c"], ["#dc2626", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#ef4444", "#dc2626", "#b91c1c"], ["", "", "#1e293b", "#334155", "#1e293b", "", "", "", "", "", "#1e293b", "#334155", "#1e293b", "", ""], ["", "#1e293b", "#facc15", "#facc15", "#facc15", "#1e293b", "", "", "", "#1e293b", "#facc15", "#facc15", "#facc15", "#1e293b", ""], ["", "#1e293b", "#facc15", "#facc15", "#facc15", "#1e293b", "", "", "", "#1e293b", "#facc15", "#facc15", "#facc15", "#1e293b", ""], ["", "", "#1e293b", "#334155", "#1e293b", "", "", "", "", "", "#1e293b", "#334155", "#1e293b", "", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["#64748b", "#94a3b8", "#cbd5e1", "#94a3b8", "#64748b", "#94a3b8", "#cbd5e1", "#94a3b8", "#64748b", "#94a3b8", "#cbd5e1", "#94a3b8", "#64748b", "#94a3b8", "#64748b"], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]], "tip": "第7行、第8行和第14行的提示都是 15，整整15格全满！车轮和赛道瞬间确立！"}, {"id": 15, "name": "イルカ", "titleZh": "跃浪海豚", "icon": "🐬", "size": 15, "grid": [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0], [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0], [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0], [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0], [0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0], [0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0], [1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1], [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]], "colors": [["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "", "", "", "#0284c7", "#0ea5e9", "#38bdf8", "#0ea5e9", "#0284c7", "", "", "", "", ""], ["", "", "", "#0284c7", "#0ea5e9", "#38bdf8", "#7dd3fc", "#38bdf8", "#0ea5e9", "#0284c7", "#0369a1", "#0284c7", "", "", ""], ["", "", "#0284c7", "#0ea5e9", "#38bdf8", "#7dd3fc", "#e0f2fe", "#7dd3fc", "#38bdf8", "#0ea5e9", "#0284c7", "#0369a1", "#0284c7", "", ""], ["", "#0284c7", "#0ea5e9", "#38bdf8", "#7dd3fc", "#f8fafc", "#f8fafc", "#f8fafc", "#7dd3fc", "#38bdf8", "#0ea5e9", "#0284c7", "#0369a1", "#0284c7", ""], ["#0284c7", "#0ea5e9", "#38bdf8", "#7dd3fc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#f8fafc", "#7dd3fc", "#38bdf8", "#0ea5e9", "#0284c7", "#0369a1", "#0284c7"], ["", "", "#0284c7", "#0ea5e9", "#38bdf8", "#0ea5e9", "#0284c7", "", "", "", "#0284c7", "#0ea5e9", "#0284c7", "#0369a1", ""], ["", "", "", "", "#0284c7", "", "", "", "", "", "", "#0284c7", "#0ea5e9", "#0284c7", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "#0284c7", "#0ea5e9", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "", "#0284c7", ""], ["", "", "", "", "", "", "", "", "", "", "", "", "#0284c7", "#0ea5e9", ""], ["", "", "#38bdf8", "", "", "", "", "", "", "", "", "#0284c7", "#0ea5e9", "#0284c7", ""], ["", "#38bdf8", "#7dd3fc", "#38bdf8", "", "", "", "", "", "", "#0284c7", "#0ea5e9", "#0284c7", "#0369a1", ""], ["#0284c7", "#0ea5e9", "#38bdf8", "#0ea5e9", "#0284c7", "", "", "", "#0284c7", "#0ea5e9", "#38bdf8", "#0ea5e9", "#0284c7", "#0369a1", "#0284c7"], ["", "", "#0369a1", "#0284c7", "#0ea5e9", "#38bdf8", "#7dd3fc", "#38bdf8", "#0ea5e9", "#0284c7", "#0369a1", "#0284c7", "#0369a1", "", ""]], "tip": "第6行提示是 15，整行全涂！海豚跃出水面的美丽圆弧就在眼前！"}, {"id": 16, "name": "きかんしゃ", "titleZh": "复古蒸汽火车", "icon": "🚂", "size": 15, "grid": [[0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0], [0, 1, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0], [0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1], [1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1], [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1], [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1], [0, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]], "colors": [["", "", "#94a3b8", "#cbd5e1", "", "", "", "", "", "", "", "", "", "", ""], ["", "", "#94a3b8", "#cbd5e1", "", "", "", "#f59e0b", "#f59e0b", "#fbbf24", "#f59e0b", "#f59e0b", "", "", ""], ["", "#1e293b", "#334155", "#334155", "#1e293b", "", "", "#f59e0b", "", "", "", "#f59e0b", "", "", ""], ["", "#1e293b", "#334155", "#334155", "#1e293b", "", "", "#f59e0b", "#f59e0b", "#fbbf24", "#f59e0b", "#f59e0b", "", "", ""], ["#ef4444", "#1e293b", "#1e293b", "#047857", "#059669", "#059669", "#047857", "#1e293b", "#1e293b", "#1e293b", "#1e293b", "#1e293b", "#1e293b", "#1e293b", "#1e293b"], ["#ef4444", "#1e293b", "#1e293b", "#047857", "#059669", "#059669", "#047857", "#1e293b", "#1e293b", "#1e293b", "#1e293b", "#1e293b", "#1e293b", "#1e293b", "#1e293b"], ["#ef4444", "", "", "#38bdf8", "", "", "#38bdf8", "", "", "#047857", "#059669", "#059669", "#047857", "#1e293b", "#1e293b"], ["#ef4444", "", "", "#38bdf8", "", "", "#38bdf8", "", "", "#047857", "#059669", "#059669", "#047857", "#1e293b", "#1e293b"], ["#ef4444", "#1e293b", "#1e293b", "#047857", "#059669", "#059669", "#047857", "#1e293b", "#1e293b", "#1e293b", "#1e293b", "#1e293b", "#1e293b", "#1e293b", "#1e293b"], ["#ef4444", "#1e293b", "#1e293b", "#047857", "#059669", "#059669", "#047857", "#1e293b", "#1e293b", "#1e293b", "#1e293b", "#1e293b", "#1e293b", "#1e293b", "#1e293b"], ["", "#1e293b", "#334155", "#1e293b", "", "", "", "#1e293b", "#334155", "#1e293b", "", "", "#1e293b", "#334155", "#1e293b"], ["#1e293b", "#f59e0b", "#fbbf24", "#f59e0b", "#1e293b", "", "#1e293b", "#f59e0b", "#fbbf24", "#f59e0b", "#1e293b", "", "#1e293b", "#f59e0b", "#1e293b"], ["#1e293b", "#f59e0b", "#fbbf24", "#f59e0b", "#1e293b", "", "#1e293b", "#f59e0b", "#fbbf24", "#f59e0b", "#1e293b", "", "#1e293b", "#f59e0b", "#1e293b"], ["", "#1e293b", "#334155", "#1e293b", "", "", "", "#1e293b", "#334155", "#1e293b", "", "", "#1e293b", "#334155", "#1e293b"], ["#64748b", "#94a3b8", "#94a3b8", "#64748b", "#64748b", "#94a3b8", "#94a3b8", "#64748b", "#64748b", "#94a3b8", "#94a3b8", "#64748b", "#64748b", "#94a3b8", "#64748b"]], "tip": "第5、6、9、10、15行全是 15！大面积车身和铁轨填满后，三个大车轮便轻松攻克！"}, {"id": 17, "name": "クラウン", "titleZh": "王者皇冠", "icon": "👑", "size": 15, "grid": [[0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0], [1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1], [0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0], [0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0], [0, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0], [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], "colors": [["", "#fbbf24", "", "", "", "", "", "#fbbf24", "", "", "", "", "", "#fbbf24", ""], ["#fbbf24", "#f59e0b", "#fbbf24", "", "", "", "#fbbf24", "#f59e0b", "#fbbf24", "", "", "", "#fbbf24", "#f59e0b", "#fbbf24"], ["", "#fbbf24", "", "", "", "", "", "#fbbf24", "", "", "", "", "", "#fbbf24", ""], ["", "#fbbf24", "", "", "#38bdf8", "", "", "#fbbf24", "", "", "#38bdf8", "", "", "#fbbf24", ""], ["", "#fbbf24", "#f59e0b", "#f59e0b", "#fbbf24", "", "#fbbf24", "#f59e0b", "#fbbf24", "", "#fbbf24", "#f59e0b", "#f59e0b", "#fbbf24", ""], ["", "#fbbf24", "#e11d48", "#e11d48", "#e11d48", "#be123c", "#e11d48", "#e11d48", "#e11d48", "#be123c", "#e11d48", "#e11d48", "#e11d48", "#fbbf24", ""], ["#fbbf24", "#f59e0b", "#e11d48", "#e11d48", "#e11d48", "#be123c", "#e11d48", "#e11d48", "#e11d48", "#be123c", "#e11d48", "#e11d48", "#e11d48", "#f59e0b", "#fbbf24"], ["#fbbf24", "", "#e11d48", "#e11d48", "#e11d48", "#be123c", "#10b981", "#10b981", "#10b981", "#be123c", "#e11d48", "#e11d48", "#e11d48", "", "#fbbf24"], ["#fbbf24", "", "#e11d48", "#e11d48", "#e11d48", "#be123c", "#10b981", "#34d399", "#10b981", "#be123c", "#e11d48", "#e11d48", "#e11d48", "", "#fbbf24"], ["#fbbf24", "#f59e0b", "#e11d48", "#e11d48", "#e11d48", "#be123c", "#e11d48", "#e11d48", "#e11d48", "#be123c", "#e11d48", "#e11d48", "#e11d48", "#f59e0b", "#fbbf24"], ["", "#fbbf24", "#f59e0b", "#fbbf24", "#fbbf24", "#f59e0b", "#fbbf24", "#f59e0b", "#fbbf24", "#f59e0b", "#fbbf24", "#fbbf24", "#f59e0b", "#fbbf24", ""], ["", "#f8fafc", "", "#a855f7", "", "#f8fafc", "", "#38bdf8", "", "#f8fafc", "", "#ef4444", "", "#f8fafc", ""], ["", "#fbbf24", "#f59e0b", "#fbbf24", "#fbbf24", "#f59e0b", "#fbbf24", "#f59e0b", "#fbbf24", "#f59e0b", "#fbbf24", "#fbbf24", "#f59e0b", "#fbbf24", ""], ["#d97706", "#f59e0b", "#fbbf24", "#fbbf24", "#fbbf24", "#fbbf24", "#fbbf24", "#fbbf24", "#fbbf24", "#fbbf24", "#fbbf24", "#fbbf24", "#fbbf24", "#f59e0b", "#d97706"], ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]], "tip": "皇冠左右完美对称！第7行和第10行是 15，第8、9行是 1 11 1，两边宝石闪闪发光！"}, {"id": 18, "name": "ふくろう", "titleZh": "智慧猫头鹰", "icon": "🦉", "size": 15, "grid": [[0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0], [0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0], [1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1], [1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1], [1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1], [1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1], [0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0], [0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0], [0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0], [0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0], [0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1], [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0]], "colors": [["", "", "#78350f", "#9a3412", "", "", "", "", "", "", "", "#9a3412", "#78350f", "", ""], ["", "#78350f", "#9a3412", "#c2410c", "#9a3412", "", "", "", "", "", "#9a3412", "#c2410c", "#9a3412", "#78350f", ""], ["#78350f", "#9a3412", "#c2410c", "#ea580c", "#c2410c", "#9a3412", "", "", "", "#9a3412", "#c2410c", "#ea580c", "#c2410c", "#9a3412", "#78350f"], ["#78350f", "#9a3412", "#c2410c", "#ea580c", "#c2410c", "#9a3412", "#c2410c", "#c2410c", "#c2410c", "#9a3412", "#c2410c", "#ea580c", "#c2410c", "#9a3412", "#78350f"], ["#78350f", "#9a3412", "", "", "#eab308", "#fde047", "#c2410c", "#c2410c", "#c2410c", "#fde047", "#eab308", "", "", "#9a3412", "#78350f"], ["#78350f", "", "", "", "", "#1e293b", "#eab308", "#c2410c", "#eab308", "#1e293b", "", "", "", "", "#78350f"], ["#78350f", "", "", "", "", "#1e293b", "#eab308", "#ea580c", "#eab308", "#1e293b", "", "", "", "", "#78350f"], ["#78350f", "#9a3412", "", "", "#eab308", "#fde047", "#ea580c", "", "#ea580c", "#fde047", "#eab308", "", "", "#9a3412", "#78350f"], ["", "#78350f", "#9a3412", "#c2410c", "#fef3c7", "#fef3c7", "#ea580c", "", "#ea580c", "#fef3c7", "#fef3c7", "#c2410c", "#9a3412", "#78350f", ""], ["", "", "#78350f", "#9a3412", "#c2410c", "#fef3c7", "#fef3c7", "#fef3c7", "#fef3c7", "#fef3c7", "#c2410c", "#9a3412", "#78350f", "", ""], ["", "", "", "#78350f", "#9a3412", "#c2410c", "#fef3c7", "#fef3c7", "#fef3c7", "#c2410c", "#9a3412", "#78350f", "", "", ""], ["", "", "#78350f", "#9a3412", "#c2410c", "", "", "#f59e0b", "", "", "#c2410c", "#9a3412", "#78350f", "", ""], ["", "#78350f", "#9a3412", "#c2410c", "", "", "", "#f59e0b", "", "", "", "#c2410c", "#9a3412", "#78350f", ""], ["#451a03", "#78350f", "#78350f", "#78350f", "#78350f", "#78350f", "#78350f", "#78350f", "#78350f", "#78350f", "#78350f", "#78350f", "#78350f", "#78350f", "#451a03"], ["", "", "", "#22c55e", "", "", "", "", "", "", "", "#22c55e", "", "", ""]], "tip": "终极大师关！猫头鹰栖息在树枝上，第4行和第14行都是 15 整行全满，双眼大如铜铃！"}];
+
+// ==================== AUDIO SYNTHESIZER ====================
+class SoundManager {
+  constructor() {
+    this.ctx = null;
+    this.muted = localStorage.getItem("nonogram_muted") === "true";
+  }
+
+  initCtx() {
+    if (!this.ctx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      this.ctx = new AudioContext();
+    }
+    if (this.ctx.state === "suspended") {
+      this.ctx.resume();
+    }
+  }
+
+  playPop() {
+    if (this.muted) return;
+    this.initCtx();
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    const now = this.ctx.currentTime;
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(440, now);
+    osc.frequency.exponentialRampToValueAtTime(720, now + 0.08);
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.1);
+  }
+
+  playTick() {
+    if (this.muted) return;
+    this.initCtx();
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    const now = this.ctx.currentTime;
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(800, now);
+    osc.frequency.exponentialRampToValueAtTime(200, now + 0.05);
+    gain.gain.setValueAtTime(0.15, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.07);
+  }
+
+  playErase() {
+    if (this.muted) return;
+    this.initCtx();
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    const now = this.ctx.currentTime;
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(320, now);
+    osc.frequency.exponentialRampToValueAtTime(160, now + 0.06);
+    gain.gain.setValueAtTime(0.12, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.08);
+  }
+
+  playLineClear() {
+    if (this.muted) return;
+    this.initCtx();
+    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+    notes.forEach((freq, idx) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      const now = this.ctx.currentTime + idx * 0.04;
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(freq, now);
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.25);
+    });
+  }
+
+  playVictory() {
+    if (this.muted) return;
+    this.initCtx();
+    const melody = [
+      { f: 523.25, d: 0.12 }, // C
+      { f: 659.25, d: 0.12 }, // E
+      { f: 783.99, d: 0.12 }, // G
+      { f: 1046.5, d: 0.35 }, // C
+      { f: 880.00, d: 0.15 }, // A
+      { f: 1046.5, d: 0.50 }  // C
+    ];
+    let offset = 0;
+    melody.forEach(note => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      const now = this.ctx.currentTime + offset;
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(note.f, now);
+      gain.gain.setValueAtTime(0.24, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + note.d);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(now);
+      osc.stop(now + note.d + 0.05);
+      offset += note.d * 0.85;
+    });
+  }
+
+  playBuzzer() {
+    if (this.muted) return;
+    this.initCtx();
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    const now = this.ctx.currentTime;
+    osc.type = "sawtooth";
+    osc.frequency.setValueAtTime(150, now);
+    osc.frequency.setValueAtTime(110, now + 0.08);
+    gain.gain.setValueAtTime(0.18, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.2);
+  }
+}
+
+// ==================== CONFETTI PARTICLES ====================
+class ConfettiSystem {
+  constructor() {
+    this.canvas = document.getElementById("confettiCanvas");
+    this.ctx = this.canvas.getContext("2d");
+    this.particles = [];
+    this.active = false;
+    this.resize();
+    window.addEventListener("resize", () => this.resize());
+  }
+
+  resize() {
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+  }
+
+  burst() {
+    this.particles = [];
+    const colors = ["#4F46E5", "#06B6D4", "#F59E0B", "#10B981", "#EF4444", "#EC4899", "#8B5CF6"];
+    for (let i = 0; i < 90; i++) {
+      this.particles.push({
+        x: window.innerWidth * 0.5 + (Math.random() - 0.5) * 120,
+        y: window.innerHeight * 0.45 + (Math.random() - 0.5) * 80,
+        vx: (Math.random() - 0.5) * 16,
+        vy: (Math.random() - 0.8) * 18,
+        size: Math.random() * 8 + 4,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rotation: Math.random() * 360,
+        rotSpeed: (Math.random() - 0.5) * 14,
+        alpha: 1
+      });
+    }
+    if (!this.active) {
+      this.active = true;
+      this.tick();
+    }
+  }
+
+  tick() {
+    if (!this.active) return;
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    let alive = 0;
+    this.particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.45; // gravity
+      p.vx *= 0.98;
+      p.rotation += p.rotSpeed;
+      p.alpha -= 0.009;
+
+      if (p.alpha > 0 && p.y < this.canvas.height) {
+        alive++;
+        this.ctx.save();
+        this.ctx.translate(p.x, p.y);
+        this.ctx.rotate((p.rotation * Math.PI) / 180);
+        this.ctx.globalAlpha = Math.max(0, p.alpha);
+        this.ctx.fillStyle = p.color;
+        this.ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.7);
+        this.ctx.restore();
+      }
+    });
+
+    if (alive > 0) {
+      requestAnimationFrame(() => this.tick());
+    } else {
+      this.active = false;
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+  }
+}
+
+// ==================== PROCEDURAL FREE PLAY GENERATOR ====================
+class FreePlayGenerator {
+  static generate(size, theme) {
+    const grid = Array.from({ length: size }, () => Array(size).fill(0));
+    const colors = Array.from({ length: size }, () => Array(size).fill(""));
+
+    // Pre-crafted procedural templates or symmetric generators
+    if (size === 5) {
+      const presets = [
+        {
+          name: "りんご",
+          grid: [[0,0,1,0,0],[0,1,1,1,0],[1,1,1,1,1],[1,1,1,1,1],[0,1,0,1,0]],
+          c: "#EF4444"
+        },
+        {
+          name: "ダイヤ",
+          grid: [[0,0,1,0,0],[0,1,1,1,0],[1,1,1,1,1],[0,1,1,1,0],[0,0,1,0,0]],
+          c: "#06B6D4"
+        },
+        {
+          name: "クラウン",
+          grid: [[1,0,1,0,1],[1,1,1,1,1],[1,1,1,1,1],[0,1,1,1,0],[1,1,1,1,1]],
+          c: "#F59E0B"
+        },
+        {
+          name: "クローバー",
+          grid: [[0,1,0,1,0],[1,1,1,1,1],[0,1,1,1,0],[0,0,1,0,0],[0,0,1,0,0]],
+          c: "#10B981"
+        }
+      ];
+      const p = presets[Math.floor(Math.random() * presets.length)];
+      for (let r = 0; r < 5; r++) {
+        for (let c = 0; c < 5; c++) {
+          grid[r][c] = p.grid[r][c];
+          if (grid[r][c]) colors[r][c] = p.c;
+        }
+      }
+      return {
+        id: 999,
+        name: p.name,
+        titleZh: "自由絵画 · " + p.name,
+        icon: "🎨",
+        size: 5,
+        grid,
+        colors,
+        tip: "自由トレーニングモード！落ち着いて重なり合いを探してみよう！"
+      };
+    }
+
+    // Symmetrical solvable procedural generation for 10 or 15
+    const half = Math.ceil(size / 2);
+    const colorPalette = ["#4F46E5", "#06B6D4", "#F59E0B", "#10B981", "#EF4444", "#8B5CF6"];
+    const baseColor = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < half; c++) {
+        // Bias towards organic shapes
+        const distFromCenter = Math.hypot(r - size / 2, c - size / 2);
+        const prob = Math.max(0.2, 0.75 - distFromCenter / (size * 0.9));
+        if (Math.random() < prob) {
+          grid[r][c] = 1;
+          grid[r][size - 1 - c] = 1;
+          colors[r][c] = baseColor;
+          colors[r][size - 1 - c] = baseColor;
+        }
+      }
+    }
+
+    return {
+      id: 999,
+      name: "オリジナル",
+      titleZh: "自由創作 · 像素小画",
+      icon: "✨",
+      size,
+      grid,
+      colors,
+      tip: "この絵は左右対称になっているよ！片側が解けたらもう片側も同じだよ！"
+    };
+  }
+}
+
+// ==================== CORE GAME CONTROLLER ====================
+class NonogramGame {
+  constructor() {
+    this.audio = new SoundManager();
+    this.confetti = new ConfettiSystem();
+    this.currentMode = "adventure"; // adventure | free
+    this.activeTier = 1; // 1 (5x5), 2 (10x10), 3 (15x15)
+    this.currentStage = null;
+    this.size = 5;
+
+    // Board state: 0 = empty, 1 = filled, 2 = crossed
+    this.board = [];
+    this.solution = [];
+    this.colorMap = [];
+    this.rowClues = [];
+    this.colClues = [];
+
+    // Controls & History
+    this.activeTool = 1; // 1 = Fill, 2 = Cross
+    this.autoCross = true;
+    this.undoStack = [];
+    this.currentStroke = null;
+    this.dragAxis = null; // 'row' | 'col' | null
+    this.dragStartCell = null;
+    this.dragAction = null; // what value to paint during drag
+    this.isCompleted = false;
+
+    // Timer & Mistakes
+    this.timer = 0;
+    this.timerInterval = null;
+    this.mistakes = 0;
+    this.hintsUsed = 0;
+
+    // Cursor focus for keyboard
+    this.cursor = { r: 0, c: 0 };
+
+    // Storage
+    this.progress = JSON.parse(localStorage.getItem("nonogram_progress") || "{}");
+
+    this.initDOM();
+    this.initEvents();
+    this.updateTotalStars();
+    this.renderStageGrid();
+  }
+
+  initDOM() {
+    this.dom = {
+      // Tabs
+      tabAdventure: document.getElementById("tabAdventure"),
+      tabFree: document.getElementById("tabFree"),
+      viewAdventure: document.getElementById("viewAdventure"),
+      viewFree: document.getElementById("viewFree"),
+      viewGame: document.getElementById("viewGame"),
+
+      // Header
+      themeBtn: document.getElementById("themeBtn"),
+      tutorialBtn: document.getElementById("tutorialBtn"),
+      soundBtn: document.getElementById("soundBtn"),
+      totalStarsBadge: document.getElementById("totalStarsBadge"),
+      stageGrid: document.getElementById("stageGrid"),
+
+      // Free Play
+      freeSizeOptions: document.getElementById("freeSizeOptions"),
+      freeThemeOptions: document.getElementById("freeThemeOptions"),
+      startFreeBtn: document.getElementById("startFreeBtn"),
+
+      // HUD
+      backToMapBtn: document.getElementById("backToMapBtn"),
+      hudStageBadge: document.getElementById("hudStageBadge"),
+      hudStageName: document.getElementById("hudStageName"),
+      gameTimer: document.getElementById("gameTimer"),
+      gameLives: document.getElementById("gameLives"),
+      mascotText: document.getElementById("mascotText"),
+
+      // Board Elements
+      boardFrame: document.getElementById("boardFrame"),
+      cornerBox: document.getElementById("cornerBox"),
+      colClues: document.getElementById("colClues"),
+      rowClues: document.getElementById("rowClues"),
+      gridContainer: document.getElementById("gridContainer"),
+
+      // Toolbar
+      toolFillBtn: document.getElementById("toolFillBtn"),
+      toolCrossBtn: document.getElementById("toolCrossBtn"),
+      undoBtn: document.getElementById("undoBtn"),
+      hintBtn: document.getElementById("hintBtn"),
+      autoCrossBtn: document.getElementById("autoCrossBtn"),
+      resetBtn: document.getElementById("resetBtn"),
+
+      // Modals
+      tutorialModal: document.getElementById("tutorialModal"),
+      closeTutorialBtn: document.getElementById("closeTutorialBtn"),
+      confirmTutorialBtn: document.getElementById("confirmTutorialBtn"),
+      victoryModal: document.getElementById("victoryModal"),
+      artCanvas: document.getElementById("artCanvas"),
+      victoryArtTitle: document.getElementById("victoryArtTitle"),
+      winTimeVal: document.getElementById("winTimeVal"),
+      winStarsVal: document.getElementById("winStarsVal"),
+      winMapBtn: document.getElementById("winMapBtn"),
+      winRetryBtn: document.getElementById("winRetryBtn"),
+      winNextBtn: document.getElementById("winNextBtn")
+    };
+
+    // Update sound icon
+    this.dom.soundBtn.textContent = this.audio.muted ? "🔇" : "🔊";
+  }
+
+  // Clue computation
+  computeClues(matrix) {
+    const rowClues = [];
+    const colClues = [];
+    const N = matrix.length;
+
+    // Rows
+    for (let r = 0; r < N; r++) {
+      const clues = [];
+      let count = 0;
+      for (let c = 0; c < N; c++) {
+        if (matrix[r][c] === 1) {
+          count++;
+        } else if (count > 0) {
+          clues.append ? clues.append(count) : clues.push(count);
+          count = 0;
+        }
+      }
+      if (count > 0) clues.push(count);
+      rowClues.push(clues.length ? clues : [0]);
+    }
+
+    // Cols
+    for (let c = 0; c < N; c++) {
+      const clues = [];
+      let count = 0;
+      for (let r = 0; r < N; r++) {
+        if (matrix[r][c] === 1) {
+          count++;
+        } else if (count > 0) {
+          clues.push(count);
+          count = 0;
+        }
+      }
+      if (count > 0) clues.push(count);
+      colClues.push(clues.length ? clues : [0]);
+    }
+
+    return { rowClues, colClues };
+  }
+
+  switchView(target) {
+    this.dom.viewAdventure.classList.remove("active");
+    this.dom.viewFree.classList.remove("active");
+    this.dom.viewGame.classList.remove("active");
+
+    if (target === "adventure") {
+      this.dom.viewAdventure.classList.add("active");
+      this.dom.tabAdventure.classList.add("active");
+      this.dom.tabFree.classList.remove("active");
+      this.renderStageGrid();
+    } else if (target === "free") {
+      this.dom.viewFree.classList.add("active");
+      this.dom.tabFree.classList.add("active");
+      this.dom.tabAdventure.classList.remove("active");
+    } else if (target === "game") {
+      this.dom.viewGame.classList.add("active");
+    }
+  }
+
+  updateTotalStars() {
+    let count = 0;
+    Object.values(this.progress).forEach(p => {
+      if (p.stars) count += p.stars;
+    });
+    this.dom.totalStarsBadge.textContent = `⭐ ${count} / 54`;
+  }
+
+  renderStageGrid() {
+    this.dom.stageGrid.innerHTML = "";
+    const filtered = STAGES_DATA.filter(s => {
+      if (this.activeTier === 1) return s.size === 5;
+      if (this.activeTier === 2) return s.size === 10;
+      return s.size === 15;
+    });
+
+    filtered.forEach((stage, idx) => {
+      const prog = this.progress[`stage_${stage.id}`];
+      const isCleared = prog && prog.cleared;
+      // First stage of tier is unlocked, or previous stage completed
+      const isUnlocked = stage.id === 1 || stage.id === 7 || stage.id === 13 || this.progress[`stage_${stage.id - 1}`]?.cleared;
+
+      const card = document.createElement("div");
+      card.className = `stage-card ${isUnlocked ? "" : "locked"}`;
+
+      let starsHtml = "";
+      const sCount = prog?.stars || 0;
+      for (let i = 1; i <= 3; i++) {
+        starsHtml += `<span class="${i <= sCount ? "star-filled" : ""}">★</span>`;
+      }
+
+      card.innerHTML = `
+        <div class="stage-top">
+          <span class="stage-num">STAGE ${stage.id}</span>
+          <span class="stage-icon">${isUnlocked ? stage.icon : "🔒"}</span>
+        </div>
+        <div class="stage-info">
+          <div class="stage-name">${stage.name}</div>
+          <div class="stage-sub">${stage.titleZh}</div>
+        </div>
+        <div class="stage-stars">${starsHtml}</div>
+      `;
+
+      if (isUnlocked) {
+        card.addEventListener("click", () => {
+          this.audio.playPop();
+          this.startStage(stage);
+        });
+      }
+
+      this.dom.stageGrid.appendChild(card);
+    });
+  }
+
+  startStage(stage) {
+    this.currentMode = "adventure";
+    this.currentStage = stage;
+    this.size = stage.size;
+    this.solution = stage.grid;
+    this.colorMap = stage.colors;
+    const computed = this.computeClues(this.solution);
+    this.rowClues = computed.rowClues;
+    this.colClues = computed.colClues;
+
+    this.board = Array.from({ length: this.size }, () => Array(this.size).fill(0));
+    this.undoStack = [];
+    this.mistakes = 0;
+    this.hintsUsed = 0;
+    this.isCompleted = false;
+
+    this.dom.hudStageBadge.textContent = `STAGE ${stage.id} · ${this.size}×${this.size}`;
+    this.dom.hudStageName.textContent = `${stage.name} (${stage.titleZh})`;
+    this.dom.mascotText.textContent = stage.tip || "行と列のヒント数字を見て、マスを推理しよう！";
+    this.updateMistakesDisplay();
+
+    this.buildBoard();
+    this.switchView("game");
+    this.startTimer();
+  }
+
+  startFreePlay(size, theme) {
+    this.currentMode = "free";
+    const generated = FreePlayGenerator.generate(size, theme);
+    this.currentStage = generated;
+    this.size = generated.size;
+    this.solution = generated.grid;
+    this.colorMap = generated.colors;
+    const computed = this.computeClues(this.solution);
+    this.rowClues = computed.rowClues;
+    this.colClues = computed.colClues;
+
+    this.board = Array.from({ length: this.size }, () => Array(this.size).fill(0));
+    this.undoStack = [];
+    this.mistakes = 0;
+    this.hintsUsed = 0;
+    this.isCompleted = false;
+
+    this.dom.hudStageBadge.textContent = `FREE · ${this.size}×${this.size}`;
+    this.dom.hudStageName.textContent = generated.name;
+    this.dom.mascotText.textContent = generated.tip;
+    this.updateMistakesDisplay();
+
+    this.buildBoard();
+    this.switchView("game");
+    this.startTimer();
+  }
+
+  updateMistakesDisplay() {
+    if (this.mistakes === 0) {
+      this.dom.gameLives.innerHTML = "❤️❤️❤️";
+    } else if (this.mistakes === 1) {
+      this.dom.gameLives.innerHTML = "❤️❤️🖤";
+    } else if (this.mistakes === 2) {
+      this.dom.gameLives.innerHTML = "❤️🖤🖤";
+    } else {
+      this.dom.gameLives.innerHTML = `💔 ×${this.mistakes}`;
+    }
+  }
+
+  startTimer() {
+    clearInterval(this.timerInterval);
+    this.timer = 0;
+    this.dom.gameTimer.textContent = "00:00";
+    this.timerInterval = setInterval(() => {
+      this.timer++;
+      const m = String(Math.floor(this.timer / 60)).padStart(2, "0");
+      const s = String(this.timer % 60).padStart(2, "0");
+      this.dom.gameTimer.textContent = `${m}:${s}`;
+    }, 1000);
+  }
+
+  stopTimer() {
+    clearInterval(this.timerInterval);
+  }
+
+  // Build Board DOM with dynamic sizing
+  buildBoard() {
+    const N = this.size;
+    this.cursor = { r: 0, c: 0 };
+
+    // Responsive cell size calculation
+    const viewportWidth = window.innerWidth;
+    let maxBoardPx = Math.min(viewportWidth - 36, 440);
+    // Reserve header sizes: 5x5 needs ~45px clues, 10x10 ~60px, 15x15 ~75px
+    const clueHeaderPx = N === 5 ? 44 : (N === 10 ? 60 : 72);
+    const gridAreaPx = maxBoardPx - clueHeaderPx;
+    const cellSizePx = Math.floor(gridAreaPx / N);
+
+    // Apply grid template styles
+    this.dom.boardFrame.style.gridTemplateColumns = `${clueHeaderPx}px ${cellSizePx * N}px`;
+    this.dom.boardFrame.style.gridTemplateRows = `${clueHeaderPx}px ${cellSizePx * N}px`;
+
+    this.dom.cornerBox.style.width = `${clueHeaderPx}px`;
+    this.dom.cornerBox.style.height = `${clueHeaderPx}px`;
+
+    // Column Clues
+    this.dom.colClues.innerHTML = "";
+    this.dom.colClues.style.width = `${cellSizePx * N}px`;
+    this.dom.colClues.style.height = `${clueHeaderPx}px`;
+    for (let c = 0; c < N; c++) {
+      const colDiv = document.createElement("div");
+      colDiv.className = `col-clue-item ${ (c + 1) % 5 === 0 && c !== N - 1 ? "thick-right" : "" }`;
+      colDiv.dataset.col = c;
+      const clues = this.colClues[c];
+      clues.forEach(num => {
+        const span = document.createElement("span");
+        span.textContent = num;
+        colDiv.appendChild(span);
+      });
+      this.dom.colClues.appendChild(colDiv);
+    }
+
+    // Row Clues
+    this.dom.rowClues.innerHTML = "";
+    this.dom.rowClues.style.width = `${clueHeaderPx}px`;
+    this.dom.rowClues.style.height = `${cellSizePx * N}px`;
+    for (let r = 0; r < N; r++) {
+      const rowDiv = document.createElement("div");
+      rowDiv.className = `row-clue-item ${ (r + 1) % 5 === 0 && r !== N - 1 ? "thick-bottom" : "" }`;
+      rowDiv.dataset.row = r;
+      const clues = this.rowClues[r];
+      clues.forEach(num => {
+        const span = document.createElement("span");
+        span.textContent = num;
+        rowDiv.appendChild(span);
+      });
+      this.dom.rowClues.appendChild(rowDiv);
+    }
+
+    // Grid Container
+    this.dom.gridContainer.innerHTML = "";
+    this.dom.gridContainer.style.width = `${cellSizePx * N}px`;
+    this.dom.gridContainer.style.height = `${cellSizePx * N}px`;
+    this.dom.gridContainer.style.gridTemplateColumns = `repeat(${N}, ${cellSizePx}px)`;
+    this.dom.gridContainer.style.gridTemplateRows = `repeat(${N}, ${cellSizePx}px)`;
+
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const cell = document.createElement("div");
+        cell.className = "grid-cell";
+        cell.dataset.r = r;
+        cell.dataset.c = c;
+        if ((c + 1) % 5 === 0 && c !== N - 1) cell.classList.add("thick-right");
+        if ((r + 1) % 5 === 0 && r !== N - 1) cell.classList.add("thick-bottom");
+        this.dom.gridContainer.appendChild(cell);
+      }
+    }
+
+    this.checkLinesSatisfaction();
+  }
+
+  // Touch and Mouse Drag Logic
+  handlePointerDown(e) {
+    if (this.isCompleted) return;
+    const target = e.target.closest(".grid-cell");
+    if (!target) return;
+
+    const r = parseInt(target.dataset.r);
+    const c = parseInt(target.dataset.c);
+    this.dragStartCell = { r, c };
+    this.dragAxis = null; // unset until movement direction is clear
+
+    // If Right Click (button === 2), force Cross tool
+    const toolToUse = e.button === 2 ? 2 : this.activeTool;
+
+    const currentVal = this.board[r][c];
+    if (toolToUse === 1) {
+      // Fill tool: if currently filled -> clear (0); else -> fill (1)
+      this.dragAction = currentVal === 1 ? 0 : 1;
+    } else {
+      // Cross tool: if currently crossed -> clear (0); else -> cross (2)
+      this.dragAction = currentVal === 2 ? 0 : 2;
+    }
+
+    this.currentStroke = [];
+    this.applyCellChange(r, c, this.dragAction);
+    this.updateHighlights(r, c);
+
+    // Capture pointer
+    this.dom.gridContainer.setPointerCapture(e.pointerId);
+  }
+
+  handlePointerMove(e) {
+    if (!this.dragStartCell || this.isCompleted) return;
+    const target = document.elementFromPoint(e.clientX, e.clientY)?.closest(".grid-cell");
+    if (!target) return;
+
+    let r = parseInt(target.dataset.r);
+    let c = parseInt(target.dataset.c);
+
+    // Axis lock: ensure drag stays in single row or column
+    if (!this.dragAxis) {
+      const dr = Math.abs(r - this.dragStartCell.r);
+      const dc = Math.abs(c - this.dragStartCell.c);
+      if (dr > 0 && dr >= dc) this.dragAxis = "col";
+      else if (dc > 0 && dc > dr) this.dragAxis = "row";
+    }
+
+    if (this.dragAxis === "row") {
+      r = this.dragStartCell.r; // lock to initial row
+    } else if (this.dragAxis === "col") {
+      c = this.dragStartCell.c; // lock to initial column
+    }
+
+    this.applyCellChange(r, c, this.dragAction);
+    this.updateHighlights(r, c);
+  }
+
+  handlePointerUp(e) {
+    if (!this.dragStartCell) return;
+    try {
+      this.dom.gridContainer.releasePointerCapture(e.pointerId);
+    } catch (err) {}
+
+    if (this.currentStroke && this.currentStroke.length > 0) {
+      this.undoStack.push(this.currentStroke);
+    }
+
+    this.dragStartCell = null;
+    this.dragAxis = null;
+    this.currentStroke = null;
+
+    this.checkLinesSatisfaction();
+    this.checkVictory();
+  }
+
+  applyCellChange(r, c, newVal) {
+    if (r < 0 || r >= this.size || c < 0 || c >= this.size) return;
+    const oldVal = this.board[r][c];
+    if (oldVal === newVal) return;
+
+    // Check mistake if player fills a cell that is not 1 in solution
+    if (newVal === 1 && this.solution[r][c] !== 1) {
+      this.mistakes++;
+      this.updateMistakesDisplay();
+      this.audio.playBuzzer();
+      this.dom.mascotText.textContent = `あれれ？ そこは塗らないマスだよ！(ミス ${this.mistakes} 回目)`;
+    }
+
+    this.board[r][c] = newVal;
+    if (this.currentStroke) {
+      this.currentStroke.push({ r, c, oldVal, newVal });
+    } else {
+      this.undoStack.push([{ r, c, oldVal, newVal }]);
+    }
+
+    // Sound
+    if (newVal === 1) this.audio.playPop();
+    else if (newVal === 2) this.audio.playTick();
+    else this.audio.playErase();
+
+    // DOM Update
+    const cell = this.dom.gridContainer.querySelector(`.grid-cell[data-r="${r}"][data-c="${c}"]`);
+    if (cell) {
+      cell.classList.toggle("filled", newVal === 1);
+      cell.classList.toggle("crossed", newVal === 2);
+    }
+  }
+
+  updateHighlights(r, c) {
+    this.cursor = { r, c };
+    this.dom.gridContainer.querySelectorAll(".grid-cell").forEach(cell => {
+      const cr = parseInt(cell.dataset.r);
+      const cc = parseInt(cell.dataset.c);
+      cell.classList.toggle("row-highlight", cr === r);
+      cell.classList.toggle("col-highlight", cc === c);
+      cell.classList.toggle("cursor-focused", cr === r && cc === c);
+    });
+
+    this.dom.rowClues.querySelectorAll(".row-clue-item").forEach(item => {
+      item.classList.toggle("highlight", parseInt(item.dataset.row) === r);
+    });
+    this.dom.colClues.querySelectorAll(".col-clue-item").forEach(item => {
+      item.classList.toggle("highlight", parseInt(item.dataset.col) === c);
+    });
+  }
+
+  // Line satisfaction & Auto-Cross
+  checkLinesSatisfaction() {
+    const N = this.size;
+    let newlySatisfiedRow = false;
+    let newlySatisfiedCol = false;
+
+    // Check rows
+    for (let r = 0; r < N; r++) {
+      const runs = [];
+      let count = 0;
+      for (let c = 0; c < N; c++) {
+        if (this.board[r][c] === 1) count++;
+        else if (count > 0) {
+          runs.push(count);
+          count = 0;
+        }
+      }
+      if (count > 0) runs.push(count);
+      const rowRuns = runs.length ? runs : [0];
+      const isSat = JSON.stringify(rowRuns) === JSON.stringify(this.rowClues[r]);
+
+      const rowElem = this.dom.rowClues.querySelector(`.row-clue-item[data-row="${r}"]`);
+      if (rowElem) {
+        const wasSat = rowElem.classList.contains("satisfied");
+        rowElem.classList.toggle("satisfied", isSat);
+        if (!wasSat && isSat) newlySatisfiedRow = true;
+      }
+
+      // Auto-cross empty cells in this satisfied row
+      if (isSat && this.autoCross && !this.isCompleted) {
+        for (let c = 0; c < N; c++) {
+          if (this.board[r][c] === 0) {
+            this.board[r][c] = 2; // cross
+            const cell = this.dom.gridContainer.querySelector(`.grid-cell[data-r="${r}"][data-c="${c}"]`);
+            if (cell) cell.classList.add("crossed");
+          }
+        }
+      }
+    }
+
+    // Check cols
+    for (let c = 0; c < N; c++) {
+      const runs = [];
+      let count = 0;
+      for (let r = 0; r < N; r++) {
+        if (this.board[r][c] === 1) count++;
+        else if (count > 0) {
+          runs.push(count);
+          count = 0;
+        }
+      }
+      if (count > 0) runs.push(count);
+      const colRuns = runs.length ? runs : [0];
+      const isSat = JSON.stringify(colRuns) === JSON.stringify(this.colClues[c]);
+
+      const colElem = this.dom.colClues.querySelector(`.col-clue-item[data-col="${c}"]`);
+      if (colElem) {
+        const wasSat = colElem.classList.contains("satisfied");
+        colElem.classList.toggle("satisfied", isSat);
+        if (!wasSat && isSat) newlySatisfiedCol = true;
+      }
+
+      // Auto-cross empty cells in this satisfied col
+      if (isSat && this.autoCross && !this.isCompleted) {
+        for (let r = 0; r < N; r++) {
+          if (this.board[r][c] === 0) {
+            this.board[r][c] = 2; // cross
+            const cell = this.dom.gridContainer.querySelector(`.grid-cell[data-r="${r}"][data-c="${c}"]`);
+            if (cell) cell.classList.add("crossed");
+          }
+        }
+      }
+    }
+
+    if ((newlySatisfiedRow || newlySatisfiedCol) && !this.isCompleted) {
+      this.audio.playLineClear();
+    }
+  }
+
+  checkVictory() {
+    const N = this.size;
+    let solved = true;
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const shouldBeFilled = this.solution[r][c] === 1;
+        const isFilled = this.board[r][c] === 1;
+        if (shouldBeFilled !== isFilled) {
+          solved = false;
+          break;
+        }
+      }
+      if (!solved) break;
+    }
+
+    if (solved && !this.isCompleted) {
+      this.handleVictory();
+    }
+  }
+
+  handleVictory() {
+    this.isCompleted = true;
+    this.stopTimer();
+    this.audio.playVictory();
+    this.confetti.burst();
+
+    // Reveal colors on board with stagger animation
+    const N = this.size;
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const cell = this.dom.gridContainer.querySelector(`.grid-cell[data-r="${r}"][data-c="${c}"]`);
+        if (cell) {
+          cell.classList.remove("crossed");
+          if (this.solution[r][c] === 1) {
+            const hex = this.colorMap[r][c] || "#4F46E5";
+            const delay = (r + c) * 0.03;
+            cell.style.animationDelay = `${delay}s`;
+            cell.classList.add("revealed");
+            cell.style.backgroundColor = hex;
+          } else {
+            cell.style.backgroundColor = "transparent";
+          }
+        }
+      }
+    }
+
+    // Calculate stars: 3 stars = 0 mistakes, 2 stars = 1-2 mistakes, 1 star = >=3 mistakes
+    let stars = 3;
+    if (this.mistakes >= 3) stars = 1;
+    else if (this.mistakes > 0) stars = 2;
+
+    // Save progress
+    if (this.currentMode === "adventure") {
+      const stId = this.currentStage.id;
+      const prev = this.progress[`stage_${stId}`];
+      const prevStars = prev?.stars || 0;
+      this.progress[`stage_${stId}`] = {
+        cleared: true,
+        stars: Math.max(prevStars, stars),
+        bestTime: prev?.bestTime ? Math.min(prev.bestTime, this.timer) : this.timer
+      };
+      localStorage.setItem("nonogram_progress", JSON.stringify(this.progress));
+      this.updateTotalStars();
+    }
+
+    // Render Victory Artwork onto modal canvas
+    setTimeout(() => {
+      this.renderVictoryCanvas();
+      this.dom.victoryArtTitle.textContent = `${this.currentStage.name} (${this.currentStage.titleZh})`;
+      this.dom.winTimeVal.textContent = this.dom.gameTimer.textContent;
+      this.dom.winStarsVal.textContent = "⭐".repeat(stars);
+      this.dom.victoryModal.classList.add("active");
+    }, 1200);
+  }
+
+  renderVictoryCanvas() {
+    const canvas = this.dom.artCanvas;
+    const ctx = canvas.getContext("2d");
+    const N = this.size;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const pad = 10;
+    const cellSize = (canvas.width - pad * 2) / N;
+
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        if (this.solution[r][c] === 1) {
+          ctx.fillStyle = this.colorMap[r][c] || "#4F46E5";
+          ctx.fillRect(pad + c * cellSize, pad + r * cellSize, cellSize + 0.5, cellSize + 0.5);
+        }
+      }
+    }
+  }
+
+  undo() {
+    if (this.undoStack.length === 0 || this.isCompleted) return;
+    const lastStroke = this.undoStack.pop();
+    // Revert in reverse order
+    for (let i = lastStroke.length - 1; i >= 0; i--) {
+      const { r, c, oldVal } = lastStroke[i];
+      this.board[r][c] = oldVal;
+      const cell = this.dom.gridContainer.querySelector(`.grid-cell[data-r="${r}"][data-c="${c}"]`);
+      if (cell) {
+        cell.classList.toggle("filled", oldVal === 1);
+        cell.classList.toggle("crossed", oldVal === 2);
+      }
+    }
+    this.audio.playErase();
+    this.checkLinesSatisfaction();
+  }
+
+  useSmartHint() {
+    if (this.isCompleted) return;
+    this.hintsUsed++;
+
+    // Find any cell in solution that is not filled, or error cell that is wrongly filled
+    const N = this.size;
+    let hintFound = false;
+
+    // 1. Check for wrongly filled cell
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        if (this.board[r][c] === 1 && this.solution[r][c] !== 1) {
+          this.applyCellChange(r, c, 0); // clear mistake
+          this.dom.mascotText.textContent = `💡 ヒント：第 ${r+1} 行 第 ${c+1} 列 は塗り間違いでした！クリアしておきましたよ。`;
+          this.updateHighlights(r, c);
+          hintFound = true;
+          break;
+        }
+      }
+      if (hintFound) break;
+    }
+
+    // 2. Reveal an unfilled solution cell
+    if (!hintFound) {
+      for (let r = 0; r < N; r++) {
+        for (let c = 0; c < N; c++) {
+          if (this.solution[r][c] === 1 && this.board[r][c] !== 1) {
+            this.applyCellChange(r, c, 1);
+            this.dom.mascotText.textContent = `💡 ヒント：第 ${r+1} 行 第 ${c+1} 列 は塗るマスです！ピクセルが1つ点灯しました！`;
+            this.updateHighlights(r, c);
+            hintFound = true;
+            break;
+          }
+        }
+        if (hintFound) break;
+      }
+    }
+
+    this.checkLinesSatisfaction();
+    this.checkVictory();
+  }
+
+  initEvents() {
+    // Pointer Dragging on Board
+    this.dom.gridContainer.addEventListener("pointerdown", (e) => this.handlePointerDown(e));
+    window.addEventListener("pointermove", (e) => this.handlePointerMove(e));
+    window.addEventListener("pointerup", (e) => this.handlePointerUp(e));
+    window.addEventListener("pointercancel", (e) => this.handlePointerUp(e));
+
+    // Disable default contextmenu on grid
+    this.dom.gridContainer.addEventListener("contextmenu", (e) => e.preventDefault());
+
+    // Tabs
+    this.dom.tabAdventure.addEventListener("click", () => {
+      this.audio.playPop();
+      this.switchView("adventure");
+    });
+    this.dom.tabFree.addEventListener("click", () => {
+      this.audio.playPop();
+      this.switchView("free");
+    });
+
+    // Tier Selector
+    document.querySelectorAll(".tier-pill").forEach(pill => {
+      pill.addEventListener("click", () => {
+        this.audio.playPop();
+        document.querySelectorAll(".tier-pill").forEach(p => p.classList.remove("active"));
+        pill.classList.add("active");
+        this.activeTier = parseInt(pill.dataset.tier);
+        this.renderStageGrid();
+      });
+    });
+
+    // Tools
+    this.dom.toolFillBtn.addEventListener("click", () => {
+      this.audio.playPop();
+      this.activeTool = 1;
+      this.dom.toolFillBtn.classList.add("active");
+      this.dom.toolCrossBtn.classList.remove("active");
+    });
+    this.dom.toolCrossBtn.addEventListener("click", () => {
+      this.audio.playTick();
+      this.activeTool = 2;
+      this.dom.toolCrossBtn.classList.add("active");
+      this.dom.toolFillBtn.classList.remove("active");
+    });
+
+    // Actions
+    this.dom.undoBtn.addEventListener("click", () => this.undo());
+    this.dom.hintBtn.addEventListener("click", () => this.useSmartHint());
+    this.dom.autoCrossBtn.addEventListener("click", () => {
+      this.autoCross = !this.autoCross;
+      this.dom.autoCrossBtn.textContent = `⚙️ 自動✕: ${this.autoCross ? "ON" : "OFF"}`;
+      this.dom.autoCrossBtn.classList.toggle("active-toggle", this.autoCross);
+      this.audio.playPop();
+      if (this.autoCross) this.checkLinesSatisfaction();
+    });
+    this.dom.resetBtn.addEventListener("click", () => {
+      if (confirm("盤面をリセットしますか？")) {
+        if (this.currentMode === "adventure") this.startStage(this.currentStage);
+        else this.startFreePlay(this.size, "random");
+      }
+    });
+
+    // HUD back
+    this.dom.backToMapBtn.addEventListener("click", () => {
+      this.stopTimer();
+      this.switchView(this.currentMode === "adventure" ? "adventure" : "free");
+    });
+
+    // Theme Toggle
+    const themes = ["pastel", "classic", "forest"];
+    this.dom.themeBtn.addEventListener("click", () => {
+      const cur = document.body.dataset.theme || "pastel";
+      const next = themes[(themes.indexOf(cur) + 1) % themes.length];
+      document.body.dataset.theme = next;
+      this.audio.playPop();
+    });
+
+    // Sound Toggle
+    this.dom.soundBtn.addEventListener("click", () => {
+      this.audio.muted = !this.audio.muted;
+      localStorage.setItem("nonogram_muted", this.audio.muted);
+      this.dom.soundBtn.textContent = this.audio.muted ? "🔇" : "🔊";
+    });
+
+    // Free Play Config Options
+    this.dom.freeSizeOptions.querySelectorAll(".opt-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        this.dom.freeSizeOptions.querySelectorAll(".opt-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        this.audio.playPop();
+      });
+    });
+    this.dom.freeThemeOptions.querySelectorAll(".opt-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        this.dom.freeThemeOptions.querySelectorAll(".opt-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        this.audio.playPop();
+      });
+    });
+    this.dom.startFreeBtn.addEventListener("click", () => {
+      const sizeBtn = this.dom.freeSizeOptions.querySelector(".opt-btn.active");
+      const themeBtn = this.dom.freeThemeOptions.querySelector(".opt-btn.active");
+      const sz = parseInt(sizeBtn.dataset.size);
+      const th = themeBtn.dataset.theme;
+      this.audio.playPop();
+      this.startFreePlay(sz, th);
+    });
+
+    // Tutorial Modal
+    this.dom.tutorialBtn.addEventListener("click", () => {
+      this.audio.playPop();
+      this.dom.tutorialModal.classList.add("active");
+    });
+    this.dom.closeTutorialBtn.addEventListener("click", () => {
+      this.dom.tutorialModal.classList.remove("active");
+    });
+    this.dom.confirmTutorialBtn.addEventListener("click", () => {
+      this.dom.tutorialModal.classList.remove("active");
+    });
+
+    // Victory Modal buttons
+    this.dom.winMapBtn.addEventListener("click", () => {
+      this.dom.victoryModal.classList.remove("active");
+      this.switchView("adventure");
+    });
+    this.dom.winRetryBtn.addEventListener("click", () => {
+      this.dom.victoryModal.classList.remove("active");
+      this.startStage(this.currentStage);
+    });
+    this.dom.winNextBtn.addEventListener("click", () => {
+      this.dom.victoryModal.classList.remove("active");
+      if (this.currentMode === "adventure") {
+        const nextId = this.currentStage.id + 1;
+        const nextStage = STAGES_DATA.find(s => s.id === nextId);
+        if (nextStage) {
+          if (nextId >= 13) this.activeTier = 3;
+          else if (nextId >= 7) this.activeTier = 2;
+          else this.activeTier = 1;
+          document.querySelectorAll(".tier-pill").forEach(p => {
+            p.classList.toggle("active", parseInt(p.dataset.tier) === this.activeTier);
+          });
+          this.startStage(nextStage);
+        } else {
+          this.switchView("adventure");
+        }
+      } else {
+        this.dom.startFreeBtn.click();
+      }
+    });
+
+    // Keyboard Shortcuts
+    window.addEventListener("keydown", (e) => {
+      if (this.isCompleted) return;
+      const key = e.key.toLowerCase();
+
+      if (key === " " || key === "enter") {
+        e.preventDefault();
+        this.currentStroke = [];
+        const curVal = this.board[this.cursor.r][this.cursor.c];
+        const nextVal = this.activeTool === 1 ? (curVal === 1 ? 0 : 1) : (curVal === 2 ? 0 : 2);
+        this.applyCellChange(this.cursor.r, this.cursor.c, nextVal);
+        this.undoStack.push(this.currentStroke);
+        this.checkLinesSatisfaction();
+        this.checkVictory();
+      } else if (key === "x") {
+        e.preventDefault();
+        this.currentStroke = [];
+        const curVal = this.board[this.cursor.r][this.cursor.c];
+        const nextVal = curVal === 2 ? 0 : 2;
+        this.applyCellChange(this.cursor.r, this.cursor.c, nextVal);
+        this.undoStack.push(this.currentStroke);
+        this.checkLinesSatisfaction();
+        this.checkVictory();
+      } else if (key === "c") {
+        if (this.activeTool === 1) this.dom.toolCrossBtn.click();
+        else this.dom.toolFillBtn.click();
+      } else if (key === "z" || key === "u") {
+        this.undo();
+      } else if (key === "h") {
+        this.useSmartHint();
+      } else if (key.startsWith("arrow")) {
+        e.preventDefault();
+        let { r, c } = this.cursor;
+        const N = this.size;
+        if (key === "arrowup") r = (r - 1 + N) % N;
+        else if (key === "arrowdown") r = (r + 1) % N;
+        else if (key === "arrowleft") c = (c - 1 + N) % N;
+        else if (key === "arrowright") c = (c + 1) % N;
+        this.updateHighlights(r, c);
+      }
+    });
+  }
+}
+
+// Initialize
+window.addEventListener("DOMContentLoaded", () => {
+  window.game = new NonogramGame();
+});
+</script>
+</body>
+</html>

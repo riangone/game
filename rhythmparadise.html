@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>节奏天国 - Rhythm Paradise</title>
+<style>
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    overflow: hidden; background: #140c24;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    touch-action: none;
+    -webkit-user-select: none; user-select: none;
+  }
+  #game { display: block; width: 100%; height: 100%; }
+
+  #hud {
+    position: fixed; top: 0; left: 0; width: 100%;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 18px 22px; box-sizing: border-box; pointer-events: none;
+    z-index: 5;
+  }
+  .hud-card {
+    background: rgba(10, 7, 19, 0.42);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 10px 18px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  }
+  #score-container { display: flex; gap: 16px; }
+  .hud-value-highlight { font-size: 28px; font-weight: 800; color: #ffd93d; line-height: 1.1; margin-top: 2px;}
+  .hud-value-purple { font-size: 28px; font-weight: 800; color: #ff6f61; line-height: 1.1; margin-top: 2px;}
+  .hud-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.6; margin-bottom: 2px; }
+  .hud-value { font-size: 13px; opacity: 0.9; }
+  #stageBadge {
+    position: fixed; top: 98px; left: 50%; transform: translateX(-50%);
+    z-index: 5; pointer-events: none; text-align: center;
+    background: rgba(10,7,19,0.42);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
+    padding: 8px 22px; color: #fff;
+  }
+  #stageBadge .num { font-size: 10.5px; opacity: 0.6; letter-spacing: 1.5px; text-transform: uppercase; }
+  #stageBadge .name { font-size: 16px; font-weight: 800; margin-top: 2px; }
+
+  #hint {
+    position: fixed; bottom: 44px; left: 50%; transform: translateX(-50%);
+    text-align: center; color: #fff; opacity: 0.85; font-size: 14px;
+    pointer-events: none; z-index: 5;
+    background: rgba(10, 7, 19, 0.55);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 8px 24px; border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    white-space: nowrap;
+  }
+
+  .overlay {
+    position: fixed; inset: 0; background: rgba(5, 3, 10, 0.82);
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    color: #fff; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 12;
+    padding: 20px; box-sizing: border-box;
+  }
+  .overlay.show { display: flex; }
+
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    padding: 36px 28px;
+    width: 85%; max-width: 400px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    text-align: center;
+  }
+
+  .glass-panel h1 { font-size: 30px; font-weight: 800; margin: 0 0 8px; }
+  .grade-big {
+    font-size: 70px; font-weight: 800; margin: 4px 0 0;
+    background: linear-gradient(135deg, #ffd93d, #ff6f61);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1;
+  }
+  .stat-line { font-size: 13px; opacity: 0.85; margin: 10px 0 20px; line-height: 1.8; }
+  .sub-line { opacity: 0.85; font-size: 14px; margin-bottom: 20px; color: #ffd93d; font-weight: 600; }
+
+  .btn {
+    padding: 13px 40px; font-size: 15px; border: none; border-radius: 50px;
+    background: linear-gradient(135deg, #ff6f61, #ffd93d); color: #1a1030;
+    box-shadow: 0 8px 24px rgba(255, 111, 97, 0.35); cursor: pointer;
+    font-weight: 800; letter-spacing: 1.5px;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    outline: none;
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(255, 111, 97, 0.5); }
+  .btn:active { transform: translateY(1px); box-shadow: 0 4px 15px rgba(255, 111, 97, 0.4); }
+  .btn-ghost {
+    background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.25);
+    box-shadow: none; margin-top: 10px;
+  }
+  .btn-ghost:hover { box-shadow: none; background: rgba(255,255,255,0.06); }
+
+  .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 0.15); transition: .3s;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .slider:before {
+    position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
+    background-color: white; transition: .3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  input:checked + .slider { background: linear-gradient(135deg, #ff6f61, #ffd93d); border-color: rgba(255,111,97,0.3); }
+  input:checked + .slider:before { transform: translateX(20px); }
+  .slider.round { border-radius: 24px; }
+  .slider.round:before { border-radius: 50%; }
+
+  #comboIndicator {
+    position: fixed; top: 168px; left: 50%; transform: translateX(-50%);
+    background: rgba(255, 111, 97, 0.15);
+    border: 1px solid rgba(255, 111, 97, 0.5);
+    border-radius: 12px; padding: 6px 16px; color: #ffd08a;
+    font-size: 14px; font-weight: 800; letter-spacing: 1px;
+    display: none; z-index: 5; animation: pulse-glow 1s infinite alternate;
+  }
+  @keyframes pulse-glow {
+    from { box-shadow: 0 0 5px rgba(255, 111, 97, 0.4); opacity: 0.8; }
+    to { box-shadow: 0 0 20px rgba(255, 111, 97, 0.8); opacity: 1; }
+  }
+
+  #settingsBtnCard {
+    pointer-events: auto; cursor: pointer; align-items: center; justify-content: center;
+    padding: 12px; height: 40px; width: 40px; box-sizing: border-box; border-radius: 50%;
+  }
+</style>
+</head>
+<body>
+
+<div id="startScreen" class="overlay show" style="background: radial-gradient(circle at center, #2a1440 0%, #0c0718 100%); z-index: 20;">
+  <div class="glass-panel">
+    <h1 style="background: linear-gradient(135deg, #ff6f61, #ffd93d); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">节奏天国 <span style="font-size: 16px; font-weight: 400; color: #ffd93d; display: block; margin-top: 4px; -webkit-text-fill-color: #ffd93d;">Rhythm Paradise</span></h1>
+    <p style="font-size: 13px; line-height: 1.7; opacity: 0.88; margin: 14px 0 18px;">
+      四段迷你节奏关卡接连登场，每一关的角色与玩法都不同。<br>
+      不需要追着音符跑——盯紧角色的动作与光环的脉冲，<br>
+      在正确的瞬间点击屏幕 / 按空格键即可！<br>
+      漏拍不会导致游戏结束，尽情享受节奏吧。
+    </p>
+    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 16px; padding: 15px; margin-bottom: 24px; text-align: left;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <span style="font-size: 14px; font-weight: 600; opacity: 0.9;">节拍辅助光环</span>
+        <label class="switch"><input type="checkbox" id="startGuideToggle" checked><span class="slider round"></span></label>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 14px; font-weight: 600; opacity: 0.9;">游戏音效</span>
+        <label class="switch"><input type="checkbox" id="startSoundToggle" checked><span class="slider round"></span></label>
+      </div>
+    </div>
+    <button id="startBtn" class="btn">开始演出</button>
+  </div>
+</div>
+
+<canvas id="game"></canvas>
+
+<div id="hud">
+  <div id="score-container">
+    <div class="hud-card">
+      <span class="hud-label">SCORE</span>
+      <span id="scoreEl" class="hud-value-highlight">0</span>
+    </div>
+    <div class="hud-card">
+      <span class="hud-label">ACCURACY</span>
+      <span id="accEl" class="hud-value-purple">100%</span>
+    </div>
+  </div>
+  <div class="hud-card" id="settingsBtnCard">
+    <svg id="settingsBtn" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #fff; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+  </div>
+  <div class="hud-card" style="align-items: flex-end;">
+    <span id="bestEl" class="hud-value">BEST: 0</span>
+    <span id="comboEl" class="hud-value" style="margin-top:4px; color:#ffd08a;">COMBO 0</span>
+  </div>
+</div>
+
+<div id="stageBadge"><div class="num">STAGE <span id="stageNum">1</span>/<span id="stageTotal">4</span></div><div class="name" id="stageName">-</div></div>
+<div id="comboIndicator">COMBO x0</div>
+<div id="hint">跟随角色的动作，在光环脉冲时点击 / 空格</div>
+
+<!-- Stage intro card -->
+<div id="stageIntroScreen" class="overlay">
+  <div class="glass-panel">
+    <div style="font-size: 12px; letter-spacing: 3px; opacity: 0.6; margin-bottom: 6px;" id="introNum">STAGE 1/4</div>
+    <h1 id="introTitle" style="background: linear-gradient(135deg, #ff6f61, #ffd93d); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">-</h1>
+    <div class="sub-line" id="introSubtitle">-</div>
+    <p style="font-size: 13.5px; line-height: 1.7; opacity: 0.88; margin: 6px 0 26px;" id="introDesc">-</p>
+    <button id="introBtn" class="btn">准备!</button>
+  </div>
+</div>
+
+<!-- Stage result card -->
+<div id="stageResultScreen" class="overlay">
+  <div class="glass-panel">
+    <h1 style="color: #ffd93d; margin-bottom:0; font-size: 22px;" id="resultStageName">-</h1>
+    <div class="grade-big" id="resultGrade">S</div>
+    <div class="stat-line" id="resultStats">PERFECT 0 · GREAT 0 · GOOD 0 · MISS 0</div>
+    <div class="sub-line" id="resultComment">-</div>
+    <button id="resultBtn" class="btn">继续</button>
+  </div>
+</div>
+
+<!-- Final result -->
+<div id="finalResultScreen" class="overlay">
+  <div class="glass-panel">
+    <h1 style="color: #ffd93d; margin-bottom:0;">公演落幕</h1>
+    <div class="grade-big" id="finalGrade">S</div>
+    <div class="stat-line" id="finalScoreLine">总分 0</div>
+    <div class="stat-line" id="finalBreakdown">-</div>
+    <button id="finalRestartBtn" class="btn">再来一轮</button>
+  </div>
+</div>
+
+<!-- Settings -->
+<div id="settingsScreen" class="overlay" style="z-index: 15;">
+  <div class="glass-panel" style="max-width: 320px;">
+    <h2 style="font-size: 22px; font-weight: 800; margin: 0 0 22px; background: linear-gradient(135deg, #ff6f61, #ffd93d); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">设定选项</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; text-align: left;">
+      <div>
+        <div style="font-size: 15px; font-weight: 600;">节拍辅助光环</div>
+        <div style="font-size: 11px; opacity: 0.6; margin-top: 2px;">显示脉冲提示精确的判定时机</div>
+      </div>
+      <label class="switch"><input type="checkbox" id="guideToggle" checked><span class="slider round"></span></label>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 26px; text-align: left;">
+      <div>
+        <div style="font-size: 15px; font-weight: 600;">游戏音效</div>
+        <div style="font-size: 11px; opacity: 0.6; margin-top: 2px;">启用或禁用合成音乐与判定音效</div>
+      </div>
+      <label class="switch"><input type="checkbox" id="soundToggle" checked><span class="slider round"></span></label>
+    </div>
+    <button id="closeSettingsBtn" class="btn">返回游戏</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+  const scoreEl = document.getElementById("scoreEl");
+  const accEl = document.getElementById("accEl");
+  const bestEl = document.getElementById("bestEl");
+  const comboEl = document.getElementById("comboEl");
+  const comboIndicator = document.getElementById("comboIndicator");
+  const hint = document.getElementById("hint");
+  const stageNumEl = document.getElementById("stageNum");
+  const stageTotalEl = document.getElementById("stageTotal");
+  const stageNameEl = document.getElementById("stageName");
+
+  const startScreen = document.getElementById("startScreen");
+  const startBtn = document.getElementById("startBtn");
+  const stageIntroScreen = document.getElementById("stageIntroScreen");
+  const introNum = document.getElementById("introNum");
+  const introTitle = document.getElementById("introTitle");
+  const introSubtitle = document.getElementById("introSubtitle");
+  const introDesc = document.getElementById("introDesc");
+  const introBtn = document.getElementById("introBtn");
+  const stageResultScreen = document.getElementById("stageResultScreen");
+  const resultStageName = document.getElementById("resultStageName");
+  const resultGrade = document.getElementById("resultGrade");
+  const resultStats = document.getElementById("resultStats");
+  const resultComment = document.getElementById("resultComment");
+  const resultBtn = document.getElementById("resultBtn");
+  const finalResultScreen = document.getElementById("finalResultScreen");
+  const finalGrade = document.getElementById("finalGrade");
+  const finalScoreLine = document.getElementById("finalScoreLine");
+  const finalBreakdown = document.getElementById("finalBreakdown");
+  const finalRestartBtn = document.getElementById("finalRestartBtn");
+
+  const settingsBtnCard = document.getElementById("settingsBtnCard");
+  const settingsScreen = document.getElementById("settingsScreen");
+  const closeSettingsBtn = document.getElementById("closeSettingsBtn");
+  const settingsSvg = document.getElementById("settingsBtn");
+  const guideToggle = document.getElementById("guideToggle");
+  const soundToggle = document.getElementById("soundToggle");
+  const startGuideToggle = document.getElementById("startGuideToggle");
+  const startSoundToggle = document.getElementById("startSoundToggle");
+
+  let guideEnabled = localStorage.getItem("rhythmParadiseGuide") !== "false";
+  let soundEnabled = localStorage.getItem("rhythmParadiseSound") !== "false";
+  guideToggle.checked = guideEnabled; startGuideToggle.checked = guideEnabled;
+  soundToggle.checked = soundEnabled; startSoundToggle.checked = soundEnabled;
+
+  function updateGuideSetting(val) {
+    guideEnabled = val;
+    localStorage.setItem("rhythmParadiseGuide", String(val));
+    guideToggle.checked = val; startGuideToggle.checked = val;
+  }
+  function updateSoundSetting(val) {
+    soundEnabled = val;
+    localStorage.setItem("rhythmParadiseSound", String(val));
+    soundToggle.checked = val; startSoundToggle.checked = val;
+  }
+  guideToggle.addEventListener("change", (e) => updateGuideSetting(e.target.checked));
+  startGuideToggle.addEventListener("change", (e) => updateGuideSetting(e.target.checked));
+  soundToggle.addEventListener("change", (e) => updateSoundSetting(e.target.checked));
+  startSoundToggle.addEventListener("change", (e) => updateSoundSetting(e.target.checked));
+
+  settingsBtnCard.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (state !== "playing" && state !== "paused") return;
+    settingsSvg.style.transform = "rotate(90deg)";
+    settingsScreen.classList.add("show");
+    pauseGame();
+  });
+  closeSettingsBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    settingsScreen.classList.remove("show");
+    settingsSvg.style.transform = "rotate(0deg)";
+    resumeGame();
+  });
+
+  let DPR = Math.min(window.devicePixelRatio || 1, 2);
+  let W = 0, H = 0;
+  function resize() {
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W * DPR; canvas.height = H * DPR;
+    canvas.style.width = W + "px"; canvas.style.height = H + "px";
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  function rand(a, b) { return a + Math.random() * (b - a); }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function shuffleArr(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); const t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+  // ---------- Web Audio ----------
+  let audioCtx = null;
+  function initAudio() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+
+  function scheduleClick(time, accent) {
+    if (!soundEnabled || !audioCtx || time < audioCtx.currentTime) return;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(accent ? 900 : 620, time);
+    gain.gain.setValueAtTime(accent ? 0.07 : 0.035, time);
+    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(time); osc.stop(time + 0.05);
+  }
+
+  function playTone(time, freq, opts) {
+    if (!soundEnabled || !audioCtx || time < audioCtx.currentTime - 0.02) return;
+    opts = opts || {};
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = opts.type || "sine";
+    osc.frequency.setValueAtTime(freq, time);
+    const peak = opts.gain != null ? opts.gain : 0.14;
+    const dur = opts.dur != null ? opts.dur : 0.3;
+    gain.gain.setValueAtTime(0.001, time);
+    gain.gain.linearRampToValueAtTime(peak, time + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.001, time + dur);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(time); osc.stop(time + dur + 0.02);
+  }
+
+  function playDrum(time, opts) {
+    if (!soundEnabled || !audioCtx || time < audioCtx.currentTime - 0.02) return;
+    opts = opts || {};
+    const gainAmt = opts.gain != null ? opts.gain : 0.22;
+    // low thump
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(160, time);
+    osc.frequency.exponentialRampToValueAtTime(48, time + 0.14);
+    gain.gain.setValueAtTime(gainAmt, time);
+    gain.gain.exponentialRampToValueAtTime(0.001, time + 0.16);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(time); osc.stop(time + 0.18);
+    // noise crack
+    const bufSize = Math.floor(audioCtx.sampleRate * 0.06);
+    const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufSize);
+    const noise = audioCtx.createBufferSource();
+    noise.buffer = buf;
+    const nGain = audioCtx.createGain();
+    nGain.gain.setValueAtTime(gainAmt * 0.5, time);
+    nGain.gain.exponentialRampToValueAtTime(0.001, time + 0.06);
+    const filt = audioCtx.createBiquadFilter();
+    filt.type = "highpass"; filt.frequency.value = 800;
+    noise.connect(filt); filt.connect(nGain); nGain.connect(audioCtx.destination);
+    noise.start(time); noise.stop(time + 0.06);
+  }
+
+  function playPluck(time, freq, opts) {
+    if (!soundEnabled || !audioCtx || time < audioCtx.currentTime - 0.02) return;
+    opts = opts || {};
+    const osc = audioCtx.createOscillator();
+    const osc2 = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = "triangle"; osc2.type = "square";
+    osc.frequency.setValueAtTime(freq, time);
+    osc2.frequency.setValueAtTime(freq * 2.01, time);
+    const peak = opts.gain != null ? opts.gain : 0.12;
+    gain.gain.setValueAtTime(peak, time);
+    gain.gain.exponentialRampToValueAtTime(0.001, time + (opts.dur || 0.18));
+    const g2 = audioCtx.createGain(); g2.gain.value = 0.35;
+    osc.connect(gain); osc2.connect(g2); g2.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(time); osc.stop(time + (opts.dur || 0.18) + 0.02);
+    osc2.start(time); osc2.stop(time + (opts.dur || 0.18) + 0.02);
+  }
+
+  function playHitSound(tier) {
+    if (!soundEnabled) return;
+    if (!audioCtx) initAudio();
+    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    if (!audioCtx) return;
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    let freq = 300, gVal = 0.12, dur = 0.1, type = "sine";
+    if (tier === "perfect") { freq = 1180; gVal = 0.18; dur = 0.14; }
+    else if (tier === "great") { freq = 860; gVal = 0.15; dur = 0.12; }
+    else if (tier === "good") { freq = 560; gVal = 0.12; dur = 0.1; }
+    else if (tier === "miss") { freq = 140; gVal = 0.14; dur = 0.18; type = "sawtooth"; }
+    else { freq = 300; gVal = 0.03; dur = 0.05; }
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now);
+    if (tier === "miss") osc.frequency.exponentialRampToValueAtTime(60, now + dur);
+    gain.gain.setValueAtTime(gVal, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(now); osc.stop(now + dur);
+  }
+
+  // ---------- Judgement constants ----------
+  const JUDGE = { PERFECT: 0.07, GREAT: 0.14, GOOD: 0.24 };
+
+  // ---------- Stage note builders (beat units; converted to seconds on instantiation) ----------
+  function buildDrumNotes() {
+    const notes = [];
+    const bars = [
+      [0, 1, 2, 3],
+      [0, 1, 2, 3],
+      [0, 1, 2, 3, 3.5],
+      [0, 1.5, 2, 3],
+      [0, 1, 2, 3],
+      [0, 1, 1.5, 2, 3],
+      [0, 0.5, 1, 2, 3],
+      [0, 2],
+    ];
+    bars.forEach((arr, i) => arr.forEach((o) => notes.push({ t: i * 4 + o, type: "tap" })));
+    notes.push({ t: 7 * 4 + 3.5, type: "hold", dur: 1.5 });
+    return { notes };
+  }
+
+  function buildEchoNotes() {
+    const notes = []; const labels = [];
+    let cursor = 0;
+    for (let p = 0; p < 4; p++) {
+      labels.push({ beat: cursor, text: "听好…" });
+      const hitCount = 3 + p;
+      const slots = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5];
+      shuffleArr(slots);
+      let chosen = slots.slice(0, Math.min(hitCount, slots.length));
+      if (chosen.indexOf(0) === -1) chosen[0] = 0;
+      chosen.sort((a, b) => a - b);
+      const holdIdx = (p >= 2 && chosen.length > 1) ? 1 : -1;
+      chosen.forEach((off, idx) => {
+        if (idx === holdIdx) notes.push({ t: cursor + off, type: "hold", dur: 0.5, ghost: true, pitch: 659.25 });
+        else notes.push({ t: cursor + off, type: "tap", ghost: true, pitch: 659.25 });
+      });
+      labels.push({ beat: cursor + 4, text: "轮到你了!" });
+      chosen.forEach((off, idx) => {
+        if (idx === holdIdx) notes.push({ t: cursor + 4 + off, type: "hold", dur: 0.5, pitch: 880 });
+        else notes.push({ t: cursor + 4 + off, type: "tap", pitch: 880 });
+      });
+      cursor += 8;
+    }
+    return { notes, labels };
+  }
+
+  function buildRopeNotes() {
+    const notes = [];
+    for (let bar = 0; bar < 6; bar++) {
+      const base = bar * 4;
+      notes.push({ t: base + 0, type: "tap" });
+      notes.push({ t: base + 1, type: "tap" });
+      if (bar >= 3) notes.push({ t: base + 1.5, type: "tap" });
+      notes.push({ t: base + 2, type: "tap" });
+      notes.push({ t: base + 3, type: "hold", dur: bar === 5 ? 1.5 : 1 });
+    }
+    return { notes };
+  }
+
+  function buildRemixNotes() {
+    const notes = []; const labels = [];
+    let cursor = 0;
+    labels.push({ beat: cursor, text: "鼓灵小子!" });
+    [0, 1, 2, 3, 4, 5, 6, 7].forEach((o) => notes.push({ t: cursor + o, type: "tap" }));
+    cursor += 9;
+    labels.push({ beat: cursor, text: "回声猿!" });
+    const echoOffsets = [0, 0.5, 1, 2];
+    echoOffsets.forEach((o) => notes.push({ t: cursor + o, type: "tap", ghost: true, pitch: 659.25 }));
+    cursor += 4;
+    labels.push({ beat: cursor, text: "跟上!" });
+    echoOffsets.forEach((o) => notes.push({ t: cursor + o, type: "tap", pitch: 880 }));
+    cursor += 5;
+    labels.push({ beat: cursor, text: "跳绳兔!" });
+    notes.push({ t: cursor + 0, type: "tap" });
+    notes.push({ t: cursor + 1, type: "tap" });
+    notes.push({ t: cursor + 2, type: "tap" });
+    notes.push({ t: cursor + 3, type: "hold", dur: 1 });
+    cursor += 5;
+    notes.push({ t: cursor + 0, type: "tap" });
+    notes.push({ t: cursor + 0.5, type: "tap" });
+    notes.push({ t: cursor + 1, type: "tap" });
+    notes.push({ t: cursor + 2, type: "hold", dur: 1.5 });
+    cursor += 4;
+    labels.push({ beat: cursor, text: "全部合体!" });
+    const finale = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5];
+    finale.forEach((o) => notes.push({ t: cursor + o, type: "tap" }));
+    cursor += 6;
+    notes.push({ t: cursor, type: "hold", dur: 2 });
+    return { notes, labels };
+  }
+
+  // ---------- Stage config ----------
+  const STAGES = [
+    {
+      key: "drum", title: "鼓灵小子", subtitle: "DRUM KID", bpm: 104,
+      color: "#ff6f61", accent: "#ffd93d", character: "drum", build: buildDrumNotes,
+      desc: "鼓槌抬起、落下——光环在鼓面亮起的瞬间点击 / 空格！",
+    },
+    {
+      key: "echo", title: "回声猿", subtitle: "ECHO MONKEY", bpm: 96,
+      color: "#7c5cff", accent: "#5cffa3", character: "monkey", build: buildEchoNotes,
+      desc: "先看小猴子敲出的节奏范例，再原样重复一遍！",
+    },
+    {
+      key: "rope", title: "跳绳兔", subtitle: "JUMP ROPE", bpm: 112,
+      color: "#22c1c3", accent: "#fdbb2d", character: "rabbit", build: buildRopeNotes,
+      desc: "短促点击起跳，遇到长绳甩过就按住蓄力再松手！",
+    },
+    {
+      key: "remix", title: "毕业公演", subtitle: "GRAND REMIX", bpm: 120,
+      color: "#ff6f61", accent: "#7c5cff", character: "remix", build: buildRemixNotes,
+      desc: "三种节奏轮番登场，速度也更快了，全部记住了吗？",
+    },
+  ];
+
+  function voiceFor(stage) {
+    if (stage.character === "drum") return (time, n) => playDrum(time, { gain: n.ghost ? 0.12 : 0.22 });
+    if (stage.character === "monkey") return (time, n) => playTone(time, n.pitch || 659.25, { type: "sine", gain: n.ghost ? 0.08 : 0.15, dur: 0.28 });
+    if (stage.character === "rabbit") return (time, n) => playPluck(time, n.type === "hold" ? 392 : 523.25, { gain: n.ghost ? 0.06 : 0.13, dur: 0.22 });
+    return (time, n) => {
+      if (n.pitch) playTone(time, n.pitch, { gain: n.ghost ? 0.08 : 0.15, dur: 0.24 });
+      else playDrum(time, { gain: 0.18 });
+    };
+  }
+
+  // ---------- Game / stage state ----------
+  let state = "idle"; // idle | intro | playing | paused | stageResult | finalResult
+  let stageIdx = 0;
+  let rt = null; // runtime for the current stage
+  let pauseWallStart = 0;
+
+  let best = parseInt(localStorage.getItem("rhythmParadiseBest") || "0", 10);
+  bestEl.textContent = "BEST: " + best;
+  const stageResults = [];
+  const stageScores = [];
+  function totalScore() {
+    let sum = 0;
+    for (const s of stageScores) sum += (s || 0);
+    if (rt && (state === "playing" || state === "paused")) sum += rt.stageScore || 0;
+    return sum;
+  }
+
+  let particles = [];
+  let floatingTexts = [];
+  let lastT = 0;
+
+  function trackClock() {
+    if (!rt) return 0;
+    return (performance.now() - rt.trackStartPerf) / 1000;
+  }
+
+  function instantiateStage(stage) {
+    const spb = 60 / stage.bpm;
+    const raw = stage.build();
+    const notes = raw.notes.map((n) => ({
+      t: n.t * spb, type: n.type, dur: (n.dur || 0) * spb,
+      ghost: !!n.ghost, pitch: n.pitch || null,
+      judged: false, result: null, pressJudged: false, releaseJudged: false, holding: false,
+    }));
+    const labels = (raw.labels || []).map((l) => ({ t: l.beat * spb, text: l.text, shown: false }));
+    return { stage, spb, notes, labels, voice: voiceFor(stage) };
+  }
+
+  function totalJudgeable(notes) {
+    let sum = 0;
+    for (const n of notes) { if (n.ghost) continue; sum += n.type === "hold" ? 2 : 1; }
+    return sum;
+  }
+
+  function scheduleStageAudio(runtime, audioBaseTime) {
+    const spb = runtime.spb;
+    const beatsTotal = Math.ceil((Math.max.apply(null, runtime.notes.map((n) => n.t + (n.dur || 0))) / spb)) + 1;
+    for (let b = 0; b <= beatsTotal; b++) {
+      scheduleClick(audioBaseTime + b * spb, b % 4 === 0);
+    }
+    for (const n of runtime.notes) {
+      runtime.voice(audioBaseTime + n.t, n);
+      if (n.type === "hold") runtime.voice(audioBaseTime + n.t + n.dur, Object.assign({}, n, { pitch: (n.pitch || 440) * 1.12 }));
+    }
+  }
+
+  function updateHUD() {
+    scoreEl.textContent = String(totalScore());
+    const acc = rt && rt.judgedTotal > 0
+      ? ((rt.perfectCount * 100 + rt.greatCount * 70 + rt.goodCount * 40) / (rt.judgedTotal * 100)) * 100
+      : 100;
+    accEl.textContent = acc.toFixed(1) + "%";
+    comboEl.textContent = "COMBO " + (rt ? rt.combo : 0);
+    if (rt && rt.combo >= 5) {
+      comboIndicator.style.display = "block";
+      comboIndicator.textContent = "COMBO x" + rt.combo;
+    } else {
+      comboIndicator.style.display = "none";
+    }
+  }
+
+  function showStageIntro(idx) {
+    state = "intro";
+    stageIdx = idx;
+    const stage = STAGES[idx];
+    stageNumEl.textContent = String(idx + 1);
+    stageTotalEl.textContent = String(STAGES.length);
+    stageNameEl.textContent = stage.title;
+    introNum.textContent = "STAGE " + (idx + 1) + "/" + STAGES.length;
+    introTitle.textContent = stage.title;
+    introSubtitle.textContent = stage.subtitle;
+    introDesc.textContent = stage.desc;
+    stageIntroScreen.classList.add("show");
+  }
+
+  function startStage(idx) {
+    stageIdx = idx;
+    const stage = STAGES[idx];
+    rt = instantiateStage(stage);
+    rt.trackStartPerf = performance.now();
+    rt.activeHold = null;
+    rt.combo = 0; rt.maxCombo = 0; rt.stageScore = 0;
+    rt.perfectCount = 0; rt.greatCount = 0; rt.goodCount = 0; rt.missCount = 0; rt.judgedTotal = 0;
+    rt.judgeableTotal = totalJudgeable(rt.notes);
+    rt.finished = false;
+    particles = []; floatingTexts = [];
+    rt.pendulumPhase = 0;
+    rt.squash = 0;
+    if (soundEnabled) {
+      initAudio();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      rt.audioBaseTime = audioCtx.currentTime + 0.05;
+      scheduleStageAudio(rt, rt.audioBaseTime);
+    } else {
+      rt.audioBaseTime = 0;
+    }
+    state = "playing";
+    stageIntroScreen.classList.remove("show");
+    stageResultScreen.classList.remove("show");
+    updateHUD();
+  }
+
+  function pauseGame() {
+    if (state !== "playing") return;
+    pauseWallStart = performance.now();
+    state = "paused";
+    if (audioCtx && audioCtx.state === "running") audioCtx.suspend();
+  }
+  function resumeGame() {
+    if (state !== "paused") return;
+    const delta = performance.now() - pauseWallStart;
+    if (rt) rt.trackStartPerf += delta;
+    state = "playing";
+    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+  }
+
+  function judgeTier(diff) {
+    if (diff <= JUDGE.PERFECT) return "perfect";
+    if (diff <= JUDGE.GREAT) return "great";
+    if (diff <= JUDGE.GOOD) return "good";
+    return "miss";
+  }
+
+  function registerResult(tier) {
+    rt.judgedTotal++;
+    if (tier === "miss") {
+      rt.combo = 0;
+      rt.missCount++;
+      addFloatingText("MISS", "#f43f5e");
+    } else {
+      rt.combo++;
+      rt.maxCombo = Math.max(rt.maxCombo, rt.combo);
+      const mult = 1 + Math.min(rt.combo, 20) * 0.05;
+      let base = tier === "perfect" ? 300 : tier === "great" ? 200 : 100;
+      rt.stageScore += Math.round(base * mult);
+      if (tier === "perfect") { rt.perfectCount++; addFloatingText("PERFECT", "#4ade80"); }
+      else if (tier === "great") { rt.greatCount++; addFloatingText("GREAT", "#38bdf8"); }
+      else { rt.goodCount++; addFloatingText("GOOD", "#fbbf24"); }
+    }
+    updateHUD();
+  }
+
+  function findPressCandidate(now) {
+    let best = null, bestDiff = Infinity;
+    for (const n of rt.notes) {
+      if (n.ghost) continue;
+      if (n.type === "tap") {
+        if (n.judged) continue;
+        const diff = Math.abs(now - n.t);
+        if (diff < bestDiff) { bestDiff = diff; best = n; }
+      } else {
+        if (n.pressJudged) continue;
+        const diff = Math.abs(now - n.t);
+        if (diff < bestDiff) { bestDiff = diff; best = n; }
+      }
+    }
+    return { best, bestDiff };
+  }
+
+  function handlePress() {
+    if (state !== "playing" || !rt) return;
+    if (rt.activeHold) return;
+    if (!audioCtx && soundEnabled) initAudio();
+    const now = trackClock();
+    const { best, bestDiff } = findPressCandidate(now);
+    if (!best || bestDiff > JUDGE.GOOD) {
+      playHitSound("empty");
+      triggerBounce();
+      return;
+    }
+    const tier = judgeTier(bestDiff);
+    if (best.type === "tap") {
+      best.judged = true; best.result = tier;
+      registerResult(tier);
+      triggerBounce();
+      playHitSound(tier);
+    } else {
+      best.pressJudged = true; best.pressResult = tier; best.holding = true;
+      rt.activeHold = best;
+      registerResult(tier);
+      triggerBounce();
+      playHitSound(tier);
+    }
+  }
+
+  function handleRelease() {
+    if (!rt || !rt.activeHold) return;
+    const now = trackClock();
+    const target = rt.activeHold.t + rt.activeHold.dur;
+    const diff = Math.abs(now - target);
+    const tier = judgeTier(diff);
+    rt.activeHold.releaseJudged = true; rt.activeHold.releaseResult = tier; rt.activeHold.holding = false;
+    registerResult(tier);
+    if (tier !== "miss") triggerBounce();
+    playHitSound(tier);
+    rt.activeHold = null;
+  }
+
+  function triggerBounce() { if (rt) rt.squash = 1; }
+
+  function computeStageGrade() {
+    const acc = rt.judgedTotal > 0
+      ? ((rt.perfectCount * 100 + rt.greatCount * 70 + rt.goodCount * 40) / (rt.judgedTotal * 100)) * 100
+      : 100;
+    let grade = "TRY AGAIN";
+    if (acc >= 92) grade = "SUPERB";
+    else if (acc >= 70) grade = "OK";
+    return { acc, grade };
+  }
+
+  function finishStage() {
+    if (rt.finished) return;
+    rt.finished = true;
+    state = "stageResult";
+    const { acc, grade } = computeStageGrade();
+    stageScores[stageIdx] = rt.stageScore;
+    stageResults[stageIdx] = {
+      key: rt.stage.key, title: rt.stage.title, acc, grade,
+      perfect: rt.perfectCount, great: rt.greatCount, good: rt.goodCount, miss: rt.missCount,
+    };
+    resultStageName.textContent = rt.stage.title;
+    resultGrade.textContent = grade;
+    resultStats.textContent = "PERFECT " + rt.perfectCount + " · GREAT " + rt.greatCount + " · GOOD " + rt.goodCount + " · MISS " + rt.missCount + " (" + acc.toFixed(1) + "%)";
+    if (grade === "SUPERB") resultComment.textContent = "完美演出！";
+    else if (grade === "OK") resultComment.textContent = "还不错，继续加油！";
+    else resultComment.textContent = "要不要再试一次这一关？";
+    resultBtn.textContent = grade === "TRY AGAIN" ? "重新挑战" : (stageIdx < STAGES.length - 1 ? "继续" : "查看结算");
+    stageResultScreen.classList.add("show");
+    comboIndicator.style.display = "none";
+  }
+
+  function showFinalResult() {
+    state = "finalResult";
+    const finalTotal = totalScore();
+    if (finalTotal > best) { best = finalTotal; localStorage.setItem("rhythmParadiseBest", String(best)); }
+    bestEl.textContent = "BEST: " + best;
+    const superbCount = stageResults.filter((r) => r.grade === "SUPERB").length;
+    const tryCount = stageResults.filter((r) => r.grade === "TRY AGAIN").length;
+    let grade = "OK";
+    if (tryCount > 0) grade = "再挑战";
+    else if (superbCount === stageResults.length) grade = "PERFECT";
+    else grade = "SUPERB";
+    finalGrade.textContent = grade;
+    finalScoreLine.textContent = "总分 " + finalTotal;
+    finalBreakdown.textContent = stageResults.map((r) => r.title + " " + r.grade).join(" · ");
+    finalResultScreen.classList.add("show");
+  }
+
+  function updateJudgements(now) {
+    for (const n of rt.notes) {
+      if (n.ghost) continue;
+      if (n.type === "tap") {
+        if (!n.judged && now > n.t + JUDGE.GOOD) {
+          n.judged = true; n.result = "miss";
+          registerResult("miss");
+        }
+      } else {
+        if (!n.pressJudged && now > n.t + JUDGE.GOOD) {
+          n.pressJudged = true; n.pressResult = "miss";
+          n.releaseJudged = true; n.releaseResult = "miss";
+          registerResult("miss");
+          if (rt.activeHold === n) rt.activeHold = null;
+        } else if (n.pressJudged && n.holding && !n.releaseJudged) {
+          const endT = n.t + n.dur;
+          if (now > endT + JUDGE.GOOD) {
+            n.releaseJudged = true; n.releaseResult = "good"; n.holding = false;
+            registerResult("good");
+            if (rt.activeHold === n) rt.activeHold = null;
+          }
+        }
+      }
+    }
+    let lastEnd = 0;
+    for (const n of rt.notes) lastEnd = Math.max(lastEnd, n.t + (n.dur || 0));
+    if (now > lastEnd + JUDGE.GOOD + 0.7) finishStage();
+  }
+
+  // ---------- Particles / floating text ----------
+  function addParticle(x, y, color, count) {
+    count = count || 1;
+    for (let i = 0; i < count; i++) {
+      particles.push({ x, y, vx: rand(-90, 90), vy: rand(-140, -30), color, size: rand(2.5, 5), life: 1, decay: rand(1.4, 2.2), gravity: 260 });
+    }
+  }
+  function updateParticles(dt) {
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.life -= p.decay * dt;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+      p.x += p.vx * dt; p.y += p.vy * dt; p.vy += p.gravity * dt;
+    }
+  }
+  function drawParticles() {
+    for (const p of particles) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, p.life);
+      ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+  }
+  function addFloatingText(text, color) {
+    floatingTexts.push({ text, color, x: W / 2, y: hitY() - 100, vy: -55, alpha: 1 });
+  }
+  function updateFloatingTexts(dt) {
+    for (let i = floatingTexts.length - 1; i >= 0; i--) {
+      const ft = floatingTexts[i];
+      ft.y += ft.vy * dt;
+      ft.alpha -= 1.6 * dt;
+      if (ft.alpha <= 0) floatingTexts.splice(i, 1);
+    }
+  }
+  function drawFloatingTexts() {
+    for (const ft of floatingTexts) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, ft.alpha);
+      ctx.fillStyle = ft.color;
+      ctx.font = "bold 22px sans-serif";
+      ctx.textAlign = "center";
+      ctx.shadowColor = "rgba(0,0,0,0.6)"; ctx.shadowBlur = 6;
+      ctx.fillText(ft.text, ft.x, ft.y);
+      ctx.restore();
+    }
+  }
+
+  // ---------- Rendering ----------
+  function hitY() { return H * 0.6; }
+
+  function drawBackground(stage) {
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    const c1 = stage ? stage.color : "#241238";
+    g.addColorStop(0, shade(c1, -0.75));
+    g.addColorStop(0.55, shade(c1, -0.85));
+    g.addColorStop(1, "#08050f");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  }
+  function shade(hex, amt) {
+    const c = hex.replace("#", "");
+    const num = parseInt(c, 16);
+    let r = (num >> 16) & 255, g = (num >> 8) & 255, b = num & 255;
+    r = clamp(Math.round(r + (amt < 0 ? r : (255 - r)) * amt), 0, 255);
+    g = clamp(Math.round(g + (amt < 0 ? g : (255 - g)) * amt), 0, 255);
+    b = clamp(Math.round(b + (amt < 0 ? b : (255 - b)) * amt), 0, 255);
+    return "rgb(" + r + "," + g + "," + b + ")";
+  }
+
+  function drawFloor(stage) {
+    const cx = W / 2, y = hitY() + 60;
+    ctx.save();
+    const grad = ctx.createRadialGradient(cx, y, 10, cx, y, 220);
+    grad.addColorStop(0, hexAlpha(stage.color, 0.22));
+    grad.addColorStop(1, hexAlpha(stage.color, 0));
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.ellipse(cx, y, 220, 60, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  function hexAlpha(hex, a) {
+    const c = hex.replace("#", "");
+    const num = parseInt(c, 16);
+    const r = (num >> 16) & 255, g = (num >> 8) & 255, b = num & 255;
+    return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+  }
+
+  function pendulumPhase(now, spb) {
+    const phase = ((now / spb) % 1 + 1) % 1;
+    return phase;
+  }
+
+  function drawHitRing(stage, now) {
+    const cx = W / 2, cy = hitY();
+    const phase = rt ? pendulumPhase(now, rt.spb) : 0;
+    const pulse = state === "playing" ? (1 - phase) * 5 : 0;
+    ctx.save();
+    ctx.strokeStyle = "rgba(255,255,255,0.4)";
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(cx, cy, 34 + pulse, 0, Math.PI * 2); ctx.stroke();
+    ctx.strokeStyle = hexAlpha(stage.accent, 0.9);
+    ctx.shadowColor = stage.accent; ctx.shadowBlur = 10;
+    ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.arc(cx, cy, 34, 0, Math.PI * 2); ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawBeatPulses(now) {
+    if (!guideEnabled) return;
+    const cx = W / 2, cy = hitY();
+    for (const n of rt.notes) {
+      const dHead = now - n.t;
+      if (dHead > -0.4 && dHead < 0.18) {
+        const p = clamp((dHead + 0.4) / 0.4, 0, 1);
+        const r = 34 + (1 - p) * 46;
+        ctx.save();
+        ctx.globalAlpha = n.ghost ? 0.35 * p : 0.55 * p;
+        ctx.strokeStyle = n.ghost ? "rgba(255,255,255,0.9)" : hexAlpha(rt.stage.accent, 1);
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+      }
+      if (n.type === "hold" && n.dur > 0) {
+        const dTail = now - (n.t + n.dur);
+        if (dTail > -0.4 && dTail < 0.18) {
+          const p = clamp((dTail + 0.4) / 0.4, 0, 1);
+          const r = 34 + (1 - p) * 46;
+          ctx.save();
+          ctx.globalAlpha = 0.5 * p;
+          ctx.strokeStyle = hexAlpha(rt.stage.accent, 1);
+          ctx.lineWidth = 3;
+          ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+          ctx.restore();
+        }
+        if (n.holding) {
+          ctx.save();
+          ctx.strokeStyle = hexAlpha("#4ade80", 0.85);
+          ctx.lineWidth = 4;
+          ctx.beginPath(); ctx.arc(cx, cy, 40, 0, Math.PI * 2); ctx.stroke();
+          ctx.restore();
+        }
+      }
+    }
+  }
+
+  function drawLabelCallouts(now) {
+    if (!rt.labels) return;
+    for (const l of rt.labels) {
+      const d = now - l.t;
+      if (d > -0.3 && d < 0.9) {
+        const p = d < 0 ? clamp((d + 0.3) / 0.3, 0, 1) : clamp(1 - d / 0.9, 0, 1);
+        ctx.save();
+        ctx.globalAlpha = p;
+        ctx.fillStyle = "#fff";
+        ctx.font = "800 34px sans-serif";
+        ctx.textAlign = "center";
+        ctx.shadowColor = rt.stage.color; ctx.shadowBlur = 16;
+        ctx.fillText(l.text, W / 2, H * 0.38);
+        ctx.restore();
+      }
+    }
+  }
+
+  function drawCharacter(stage, now) {
+    const cx = W / 2, baseY = hitY();
+    const spb = rt ? rt.spb : 0.5;
+    const phase = pendulumPhase(now, spb);
+    const swing = -Math.cos(phase * Math.PI * 2); // -1 at beat hit, +1 at top
+    if (rt.squash > 0) rt.squash = Math.max(0, rt.squash - 0.06);
+    const squashAmt = rt.squash;
+    const bob = Math.max(0, -swing) * 10;
+    const bodyW = 32 * (1 + squashAmt * 0.22);
+    const bodyH = 66 * (1 - squashAmt * 0.18);
+    const y = baseY - bob;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.ellipse(cx, baseY + 40, 26, 9, 0, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(0,0,0,0.35)"; ctx.fill();
+
+    ctx.translate(cx, y);
+    const r = bodyW, h = bodyH;
+    ctx.beginPath();
+    ctx.moveTo(-r, 0);
+    ctx.lineTo(-r, -h + r);
+    ctx.quadraticCurveTo(-r, -h, 0, -h);
+    ctx.quadraticCurveTo(r, -h, r, -h + r);
+    ctx.lineTo(r, 0);
+    ctx.quadraticCurveTo(r, r * 0.6, 0, r * 0.6);
+    ctx.quadraticCurveTo(-r, r * 0.6, -r, 0);
+    ctx.closePath();
+    const grad = ctx.createLinearGradient(0, -h, 0, 0);
+    grad.addColorStop(0, "#fff"); grad.addColorStop(1, stage.color);
+    ctx.fillStyle = grad; ctx.fill();
+    ctx.strokeStyle = "rgba(0,0,0,0.15)"; ctx.lineWidth = 1; ctx.stroke();
+
+    ctx.fillStyle = "#2d2f3b";
+    ctx.beginPath();
+    ctx.arc(-4, -h * 0.8, 3.2, 0, Math.PI * 2);
+    ctx.arc(6, -h * 0.8, 3.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // accessory prop swinging with the beat, per character
+    ctx.save();
+    ctx.translate(0, -h * 0.55);
+    const angle = swing * 0.6; // radians
+    ctx.rotate(angle);
+    if (stage.character === "drum") {
+      ctx.fillStyle = "#3a2a1a";
+      ctx.fillRect(-3, -46, 6, 46);
+      ctx.beginPath(); ctx.arc(0, -50, 6, 0, Math.PI * 2); ctx.fillStyle = "#e8b23a"; ctx.fill();
+    } else if (stage.character === "monkey") {
+      ctx.strokeStyle = "#5a3a20"; ctx.lineWidth = 6; ctx.lineCap = "round";
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(30, -20, 20, -46); ctx.stroke();
+    } else if (stage.character === "rabbit") {
+      ctx.strokeStyle = hexAlpha(stage.accent, 0.9); ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.moveTo(-40, 0); ctx.quadraticCurveTo(0, -40 * Math.abs(swing), 40, 0); ctx.stroke();
+    } else {
+      ctx.fillStyle = stage.accent;
+      ctx.beginPath(); ctx.arc(0, -30, 8, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+
+    ctx.restore();
+
+    if (bob > 6) addParticle(cx + rand(-14, 14), baseY + 10, hexAlpha(stage.accent, 0.5), 1);
+  }
+
+  function drawIdleScene() {
+    drawBackground(null);
+  }
+
+  function draw() {
+    if (state === "playing" || state === "paused") {
+      const stage = rt.stage;
+      const now = trackClock();
+      drawBackground(stage);
+      drawFloor(stage);
+      drawLabelCallouts(now);
+      drawHitRing(stage, now);
+      drawBeatPulses(now);
+      drawCharacter(stage, now);
+      drawParticles();
+      drawFloatingTexts();
+    } else {
+      drawIdleScene();
+    }
+  }
+
+  function update(dt) {
+    if (state === "playing" && rt) {
+      const now = trackClock();
+      updateJudgements(now);
+    }
+    updateParticles(dt);
+    updateFloatingTexts(dt);
+  }
+
+  function loop(t) {
+    if (!lastT) lastT = t;
+    const dt = Math.min((t - lastT) / 1000, 0.033);
+    lastT = t;
+    update(dt);
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  // ---------- Inputs ----------
+  canvas.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    if (settingsScreen.classList.contains("show")) return;
+    initAudio();
+    handlePress();
+  });
+  canvas.addEventListener("pointerup", (e) => { e.preventDefault(); handleRelease(); });
+  canvas.addEventListener("pointercancel", () => { handleRelease(); });
+
+  window.addEventListener("keydown", (e) => {
+    if (settingsScreen.classList.contains("show")) return;
+    if (e.code === "Space" || e.code === "ArrowUp") e.preventDefault();
+    if (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyW") {
+      if (!e.repeat) handlePress();
+    }
+  });
+  window.addEventListener("keyup", (e) => {
+    if (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyW") handleRelease();
+  });
+
+  startBtn.addEventListener("click", () => {
+    initAudio();
+    startScreen.classList.remove("show");
+    stageResults.length = 0;
+    stageScores.length = 0;
+    showStageIntro(0);
+  });
+
+  introBtn.addEventListener("click", () => { initAudio(); startStage(stageIdx); });
+
+  resultBtn.addEventListener("click", () => {
+    const last = stageResults[stageIdx];
+    stageResultScreen.classList.remove("show");
+    if (last.grade === "TRY AGAIN") {
+      showStageIntro(stageIdx);
+    } else if (stageIdx < STAGES.length - 1) {
+      showStageIntro(stageIdx + 1);
+    } else {
+      showFinalResult();
+    }
+  });
+
+  finalRestartBtn.addEventListener("click", () => {
+    finalResultScreen.classList.remove("show");
+    stageResults.length = 0;
+    stageScores.length = 0;
+    showStageIntro(0);
+  });
+
+  state = "idle";
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

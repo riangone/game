@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>霓虹攀塔 - Sky Climber</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap');
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    overflow: hidden; background: #1e1b4b;
+    font-family: 'Outfit', "PingFang SC", "Microsoft YaHei", sans-serif;
+    touch-action: none;
+    -webkit-user-select: none; user-select: none;
+  }
+  #game { display: block; width: 100%; height: 100%; }
+
+  #hud {
+    position: fixed; top: 0; left: 0; width: 100%;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 20px 24px; box-sizing: border-box; pointer-events: none;
+    z-index: 5;
+  }
+  .hud-card {
+    background: rgba(15, 23, 42, 0.35);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    padding: 12px 20px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+  }
+  #score-container { display: flex; gap: 20px; }
+  .hud-value-highlight { font-size: 30px; font-weight: 800; color: #a78bfa; line-height: 1.1; margin-top: 2px;}
+  .hud-value-green { font-size: 30px; font-weight: 800; color: #4ade80; line-height: 1.1; margin-top: 2px;}
+  .hud-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.75; margin-bottom: 2px; }
+  .hud-value { font-size: 14px; opacity: 0.95; }
+  .net-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; background: rgba(255,255,255,0.25); }
+  .net-dot.active { background: #38bdf8; box-shadow: 0 0 8px #38bdf8; }
+
+  #hint {
+    position: fixed; top: 90px; left: 50%; transform: translateX(-50%);
+    text-align: center; color: #fff; opacity: 0.9; font-size: 13px;
+    pointer-events: none; z-index: 5;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 7px 20px;
+    border-radius: 20px;
+    max-width: 90vw; box-sizing: border-box;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    transition: opacity 0.3s ease;
+    white-space: normal;
+  }
+
+  #banner {
+    position: fixed; top: 38%; left: 50%; transform: translate(-50%, -50%);
+    color: #fff; font-size: 20px; font-weight: 800;
+    background: rgba(56, 189, 248, 0.25);
+    border: 1px solid rgba(56, 189, 248, 0.6);
+    padding: 10px 28px; border-radius: 16px;
+    display: none; z-index: 6; pointer-events: none;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  }
+
+  #overlay {
+    position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55);
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    color: #fff; backdrop-filter: blur(8px); z-index: 9;
+  }
+  #overlay.show { display: flex; }
+
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 24px;
+    padding: 36px 30px;
+    width: 85%;
+    max-width: 380px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    color: #1e293b;
+  }
+
+  .glass-panel h1 { font-size: 28px; font-weight: 800; margin: 0 0 10px; }
+  .glass-panel .sub { opacity: 0.75; font-size: 14px; margin-bottom: 24px; font-weight: 600; }
+
+  #startScreen {
+    position: fixed; inset: 0;
+    background: linear-gradient(180deg, #1e1b4b 0%, #312e81 55%, #4c1d95 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: #1e293b; text-align: center; z-index: 10;
+    padding: 20px;
+  }
+  #startScreen .glass-panel { color: #fff; }
+
+  #startBtn, #restartBtn {
+    padding: 14px 44px; font-size: 16px; border: none; border-radius: 50px;
+    background: linear-gradient(135deg, #8b5cf6, #38bdf8); color: #fff;
+    box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4); cursor: pointer;
+    font-weight: 800; letter-spacing: 2px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    outline: none;
+  }
+  #startBtn:hover, #restartBtn:hover { transform: translateY(-2px); }
+  #startBtn:active, #restartBtn:active { transform: translateY(1px); }
+
+  .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(30, 41, 59, 0.2);
+    transition: .3s; border: 1px solid rgba(30, 41, 59, 0.15);
+  }
+  .slider:before {
+    position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
+    background-color: white; transition: .3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  input:checked + .slider { background: linear-gradient(135deg, #8b5cf6, #38bdf8); border-color: rgba(139, 92, 246, 0.3); }
+  input:checked + .slider:before { transform: translateX(20px); }
+  .slider.round { border-radius: 24px; }
+  .slider.round:before { border-radius: 50%; }
+
+  #touchControls {
+    position: fixed; left: 0; right: 0; bottom: 0; height: 150px;
+    z-index: 5; pointer-events: none;
+  }
+  #jumpZone {
+    position: absolute; inset: 0; pointer-events: auto; touch-action: none;
+  }
+  #jumpIndicator {
+    position: absolute; left: 50%; bottom: 26px; margin-left: -44px;
+    width: 88px; height: 88px; border-radius: 50%; font-size: 14px; letter-spacing: 1px;
+    background: rgba(139, 92, 246, 0.35);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.3);
+    display: flex; align-items: center; justify-content: center; text-align: center;
+    color: #fff; font-weight: 800;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    user-select: none; -webkit-user-select: none;
+    transition: transform 0.12s ease, background 0.12s ease;
+  }
+  #jumpIndicator.charging { background: rgba(56, 189, 248, 0.55); }
+  #jumpIndicator.pressed { transform: scale(0.92); }
+
+  #chargeRing {
+    position: absolute; left: 50%; bottom: 132px; transform: translateX(-50%);
+    width: 96px; height: 96px; pointer-events: none; display: none; z-index: 5;
+  }
+</style>
+</head>
+<body>
+
+<div id="startScreen">
+  <div class="glass-panel">
+    <h1 style="background: linear-gradient(135deg, #a78bfa, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">霓虹攀塔 <span style="font-size: 18px; font-weight: 400; color: #a78bfa; display: block; margin-top: 4px;">Sky Climber</span></h1>
+    <p style="font-size: 13px; line-height: 1.6; opacity: 0.9; margin: 15px 0 20px;">
+      <b>无限攀爬</b>：触屏单指按住蓄力、左右滑动瞄准平台，松手起跳（键盘用 ← → + 空格）<br>
+      轻点跳得近，蓄满跳得高更远——平台会越来越窄、间距越来越大<br>
+      踩空跌落有一次"安全网"缓冲，別担心失误，尽力爬得更高！
+    </p>
+    <div style="background: rgba(255, 255, 255, 0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 16px; padding: 15px; margin-bottom: 25px; text-align: left;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <span style="font-size: 14px; font-weight: 600;">落点辅助线</span>
+        <label class="switch"><input type="checkbox" id="startGuideToggle" checked><span class="slider round"></span></label>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 14px; font-weight: 600;">游戏音效</span>
+        <label class="switch"><input type="checkbox" id="startSoundToggle" checked><span class="slider round"></span></label>
+      </div>
+    </div>
+    <button id="startBtn">开始攀爬</button>
+  </div>
+</div>
+
+<canvas id="game"></canvas>
+
+<div id="hud">
+  <div id="score-container">
+    <div class="hud-card">
+      <span class="hud-label">HEIGHT</span>
+      <span id="heightEl" class="hud-value-highlight">0m</span>
+    </div>
+    <div class="hud-card">
+      <span class="hud-label">NET</span>
+      <span id="netEl" class="hud-value-green"><span class="net-dot"></span><span class="net-dot"></span></span>
+    </div>
+  </div>
+
+  <div class="hud-card" id="settingsBtnCard" style="pointer-events: auto; cursor: pointer; align-items: center; justify-content: center; padding: 12px; height: 42px; width: 42px; box-sizing: border-box; border-radius: 50%;">
+    <svg id="settingsBtn" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #fff; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+  </div>
+
+  <div class="hud-card" style="align-items: flex-end;">
+    <span id="bestEl" class="hud-value">BEST: 0m</span>
+  </div>
+</div>
+
+<div id="banner">安全网救了你一命！</div>
+<div id="hint">键盘：← → 移动，按住跳跃键蓄力 ｜ 触屏：单指按住滑动瞄准，松手起跳</div>
+
+<div id="touchControls">
+  <div id="jumpZone">
+    <div id="jumpIndicator">跳跃<br>滑动瞄准</div>
+  </div>
+</div>
+<canvas id="chargeRing" width="96" height="96"></canvas>
+
+<div id="overlay">
+  <div class="glass-panel">
+    <h1 id="resultTitle" style="color: #a78bfa;">跌落谷底</h1>
+    <div class="sub" id="resultSub">攀爬高度 0m</div>
+    <button id="restartBtn">重新开始</button>
+  </div>
+</div>
+
+<!-- 设置面板 -->
+<div id="settingsScreen" style="position: fixed; inset: 0; background: rgba(15,23,42,0.5); display: none; flex-direction: column; align-items: center; justify-content: center; color: #1e293b; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 15;">
+  <div class="glass-panel" style="max-width: 320px; color:#fff;">
+    <h2 style="font-size: 22px; font-weight: 800; margin: 0 0 25px; color:#a78bfa;">设定选项</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; text-align: left;">
+      <div>
+        <div style="font-size: 15px; font-weight: 600;">落点辅助线</div>
+        <div style="font-size: 11px; opacity: 0.65; margin-top: 2px;">蓄力时实时预测起跳弧线与落点</div>
+      </div>
+      <label class="switch"><input type="checkbox" id="guideToggle" checked><span class="slider round"></span></label>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; text-align: left;">
+      <div>
+        <div style="font-size: 15px; font-weight: 600;">游戏音效</div>
+        <div style="font-size: 11px; opacity: 0.65; margin-top: 2px;">启用或禁用合成音效</div>
+      </div>
+      <label class="switch"><input type="checkbox" id="soundToggle" checked><span class="slider round"></span></label>
+    </div>
+    <button id="closeSettingsBtn" style="padding: 12px 36px; font-size: 15px; border: none; border-radius: 50px; background: linear-gradient(135deg, #8b5cf6, #38bdf8); color: #fff; font-weight: 800; cursor: pointer;">返回游戏</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  const canvas = document.getElementById("game");
+  const ctx = canvas.getContext("2d");
+  const heightEl = document.getElementById("heightEl");
+  const netEl = document.getElementById("netEl");
+  const bestEl = document.getElementById("bestEl");
+  const hint = document.getElementById("hint");
+  const banner = document.getElementById("banner");
+  const overlay = document.getElementById("overlay");
+  const resultTitle = document.getElementById("resultTitle");
+  const resultSub = document.getElementById("resultSub");
+  const restartBtn = document.getElementById("restartBtn");
+  const startScreen = document.getElementById("startScreen");
+  const startBtn = document.getElementById("startBtn");
+  const jumpZone = document.getElementById("jumpZone");
+  const jumpIndicator = document.getElementById("jumpIndicator");
+  const chargeRing = document.getElementById("chargeRing");
+  const chargeCtx = chargeRing.getContext("2d");
+
+  const settingsBtnCard = document.getElementById("settingsBtnCard");
+  const settingsScreen = document.getElementById("settingsScreen");
+  const closeSettingsBtn = document.getElementById("closeSettingsBtn");
+  const settingsSvg = document.getElementById("settingsBtn");
+  const guideToggle = document.getElementById("guideToggle");
+  const soundToggle = document.getElementById("soundToggle");
+  const startGuideToggle = document.getElementById("startGuideToggle");
+  const startSoundToggle = document.getElementById("startSoundToggle");
+
+  let guideEnabled = localStorage.getItem("skyClimberGuide") !== "false";
+  let soundEnabled = localStorage.getItem("skyClimberSound") !== "false";
+  guideToggle.checked = guideEnabled; startGuideToggle.checked = guideEnabled;
+  soundToggle.checked = soundEnabled; startSoundToggle.checked = soundEnabled;
+
+  function updateGuideSetting(v) { guideEnabled = v; localStorage.setItem("skyClimberGuide", String(v)); guideToggle.checked = v; startGuideToggle.checked = v; }
+  function updateSoundSetting(v) { soundEnabled = v; localStorage.setItem("skyClimberSound", String(v)); soundToggle.checked = v; startSoundToggle.checked = v; }
+  guideToggle.addEventListener("change", e => updateGuideSetting(e.target.checked));
+  startGuideToggle.addEventListener("change", e => updateGuideSetting(e.target.checked));
+  soundToggle.addEventListener("change", e => updateSoundSetting(e.target.checked));
+  startSoundToggle.addEventListener("change", e => updateSoundSetting(e.target.checked));
+
+  settingsBtnCard.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (state === "idle" || state === "gameover") return;
+    settingsSvg.style.transform = "rotate(90deg)";
+    settingsScreen.style.display = "flex";
+    paused = true;
+  });
+  closeSettingsBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    settingsScreen.style.display = "none";
+    settingsSvg.style.transform = "rotate(0deg)";
+    paused = false;
+  });
+
+  let DPR = Math.min(window.devicePixelRatio || 1, 2);
+  let W = 0, H = 0;
+  function resize() {
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W * DPR; canvas.height = H * DPR;
+    canvas.style.width = W + "px"; canvas.style.height = H + "px";
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  window.addEventListener("resize", resize);
+  resize();
+
+  // ---------- Audio ----------
+  let audioCtx = null;
+  function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+  function playSound(type, pitch) {
+    if (!soundEnabled) return;
+    if (!audioCtx) initAudio();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    const now = audioCtx.currentTime;
+    const p = pitch || 1;
+    if (type === "chargeStart") {
+      const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(220, now);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now); osc.stop(now + 0.12);
+    } else if (type === "launch") {
+      const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(140 * p, now);
+      osc.frequency.exponentialRampToValueAtTime(520 * p, now + 0.15);
+      gain.gain.setValueAtTime(0.16, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now); osc.stop(now + 0.16);
+    } else if (type === "land") {
+      const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = "square";
+      osc.frequency.setValueAtTime(200, now);
+      osc.frequency.exponentialRampToValueAtTime(80, now + 0.1);
+      gain.gain.setValueAtTime(0.14, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.11);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now); osc.stop(now + 0.11);
+    } else if (type === "netSave") {
+      [440, 660, 880].forEach((f, i) => {
+        const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(f, now + i * 0.07);
+        gain.gain.setValueAtTime(0.14, now + i * 0.07);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2 + i * 0.07);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(now + i * 0.07); osc.stop(now + 0.25 + i * 0.07);
+      });
+    } else if (type === "gameover") {
+      const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(320, now);
+      osc.frequency.exponentialRampToValueAtTime(90, now + 0.4);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(now); osc.stop(now + 0.42);
+    } else if (type === "milestone") {
+      [660, 990].forEach((f, i) => {
+        const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(f, now + i * 0.05);
+        gain.gain.setValueAtTime(0.1, now + i * 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15 + i * 0.05);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(now + i * 0.05); osc.stop(now + 0.18 + i * 0.05);
+      });
+    }
+  }
+
+  // ---------- Physics / difficulty constants (verified via Node Monte-Carlo sim, see climber_sim3.js) ----------
+  const GRAVITY = 1600;
+  const MIN_JUMP_VZ = 620;   // light tap
+  const MAX_JUMP_VZ = 900;   // full charge
+  const CHARGE_MS = 480;
+  const MOVE_ACCEL = 2200;
+  const MOVE_MAX_SPEED = 420;
+  const MOVE_FRICTION = 2600;
+  const PLAT_PAD = 20;
+  const PLAYER_HALF_W = 15;
+  const MAX_NET_CHARGES = 2;
+  const DEATH_MARGIN = 90; // world units below screen bottom before triggering net/death
+
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function lerp(a, b, d) { return a + (b - a) * d; }
+  function rand(a, b) { return a + Math.random() * (b - a); }
+
+  function diffAt(height) { return clamp(height / 3500, 0, 1); }
+  function platWidthAt(d) { return lerp(150, 60, d); }
+  function gapAt(d) { return clamp(lerp(70, 190, d) * rand(0.85, 1.05), 60, 195); }
+  function maxSafeOffsetForGap(gap) {
+    const vzBare = Math.sqrt(2 * GRAVITY * gap);
+    const vzUsed = Math.min(vzBare * 1.15, MAX_JUMP_VZ);
+    const disc = vzUsed * vzUsed - 2 * GRAVITY * gap;
+    if (disc < 0) return 0;
+    const tDown = (vzUsed + Math.sqrt(disc)) / GRAVITY;
+    const tAccel = MOVE_MAX_SPEED / MOVE_ACCEL;
+    const reach = tDown <= tAccel ? 0.5 * MOVE_ACCEL * tDown * tDown : 0.5 * MOVE_ACCEL * tAccel * tAccel + MOVE_MAX_SPEED * (tDown - tAccel);
+    return reach * 0.65;
+  }
+
+  // ---------- Game state ----------
+  let state = "idle"; // idle | playing | gameover
+  let paused = false;
+  let platforms = [];
+  let particles = [];
+  let floatingTexts = [];
+  let player, cameraY, camAnchorScreenY, maxHeight, netCharges, nextMilestone;
+  let lastT = 0;
+
+  let moveLeft = false, moveRight = false;
+  let charging = false, chargeStart = 0, chargeAmount = 0;
+
+  function screenY(worldY) { return camAnchorScreenY - (worldY - cameraY); }
+
+  function makeStartPlatforms() {
+    platforms = [];
+    const startW = Math.min(220, W - PLAT_PAD * 2);
+    platforms.push({ x: W / 2, y: 0, w: startW, moving: false });
+    // first few platforms extra generous (safety onboarding) regardless of formula
+    let px = W / 2, py = 0;
+    for (let i = 1; i < 3; i++) {
+      const w = lerp(180, 150, i / 3);
+      const gap = 65 + i * 5;
+      let nx = px + rand(-40, 40);
+      nx = clamp(nx, PLAT_PAD + w / 2, W - PLAT_PAD - w / 2);
+      py += gap;
+      platforms.push({ x: nx, y: py, w, moving: false });
+      px = nx;
+    }
+    genUpTo(py + 1200);
+  }
+
+  function genUpTo(targetHeight) {
+    let last = platforms[platforms.length - 1];
+    let px = last.x, py = last.y;
+    let guard = 0;
+    while (py < targetHeight && guard < 500) {
+      guard++;
+      const d = diffAt(py);
+      let gap = gapAt(d);
+      const w = platWidthAt(d);
+      const movingChance = d > 0.55 ? clamp((d - 0.55) / 0.45, 0, 1) * 0.35 : 0;
+      const moving = Math.random() < movingChance;
+      if (moving) gap *= 0.85; // compensate added horizontal difficulty with an easier vertical gap
+      const limit = maxSafeOffsetForGap(gap);
+      let off = rand(limit * 0.2, limit) * (Math.random() < 0.5 ? -1 : 1);
+      let nx = px + off;
+      const lo = PLAT_PAD + w / 2, hi = W - PLAT_PAD - w / 2;
+      if (nx < lo) nx = lo + (lo - nx);
+      if (nx > hi) nx = hi - (nx - hi);
+      nx = clamp(nx, lo, hi);
+      py += gap;
+      platforms.push({
+        x: nx, y: py, w, moving,
+        moveAmp: moving ? clamp(20 + d * 25, 20, 45) : 0,
+        moveSpeed: moving ? rand(0.8, 1.4) : 0,
+        movePhase: rand(0, Math.PI * 2),
+        baseX: nx
+      });
+      px = nx;
+    }
+  }
+
+  function pruneBelow(cutoffY) {
+    platforms = platforms.filter(p => p.y > cutoffY);
+  }
+
+  function resetGame() {
+    makeStartPlatforms();
+    player = { x: W / 2, y: platforms[0].y, vx: 0, vy: 0, squash: 0, facing: 1, onGround: true, standingPlatform: platforms[0] };
+    cameraY = 0;
+    camAnchorScreenY = H * 0.62;
+    maxHeight = 0;
+    netCharges = 1;
+    nextMilestone = 1000;
+    updateNetHud();
+    heightEl.textContent = "0m";
+    charging = false; chargeAmount = 0;
+    moveLeft = false; moveRight = false;
+    banner.style.display = "none";
+  }
+
+  function updateNetHud() {
+    const dots = netEl.querySelectorAll(".net-dot");
+    for (let i = 0; i < dots.length; i++) dots[i].classList.toggle("active", i < netCharges);
+  }
+
+  let best = parseInt(localStorage.getItem("skyClimberBest") || "0", 10);
+  bestEl.textContent = "BEST: " + best + "m";
+
+  function beginGame() {
+    resetGame();
+    state = "playing";
+  }
+
+  // ---------- Input ----------
+  // Single-finger touch control: press-and-hold on jumpZone starts the charge, dragging the
+  // SAME finger left/right while held sets the aim (drives moveLeft/moveRight), and lifting
+  // the finger releases the jump. This replaces the old 3-button layout that needed one
+  // finger on a left/right button plus a second finger on the jump button held at the same
+  // time to get an angled jump.
+  const AIM_DRAG_RANGE = 70; // px of horizontal drag to reach full-strength aim
+  const AIM_DEAD_ZONE = 10;  // px of drag before aim registers, avoids jitter on a plain tap
+  let dragPointerId = null, dragStartX = 0;
+
+  function updateAimFromDrag(dx) {
+    const clamped = clamp(dx, -AIM_DRAG_RANGE, AIM_DRAG_RANGE);
+    jumpIndicator.style.transform = `scale(0.92) translateX(${clamped}px)`;
+    if (clamped < -AIM_DEAD_ZONE) { moveLeft = true; moveRight = false; }
+    else if (clamped > AIM_DEAD_ZONE) { moveRight = true; moveLeft = false; }
+    else { moveLeft = false; moveRight = false; }
+  }
+  function endDrag(e) {
+    if (dragPointerId === null || e.pointerId !== dragPointerId) return;
+    dragPointerId = null;
+    jumpIndicator.classList.remove("pressed");
+    jumpIndicator.style.transform = "";
+    moveLeft = false; moveRight = false;
+    releaseCharge();
+  }
+  jumpZone.addEventListener("pointerdown", (e) => {
+    e.preventDefault();
+    dragPointerId = e.pointerId;
+    dragStartX = e.clientX;
+    jumpZone.setPointerCapture(e.pointerId);
+    jumpIndicator.classList.add("pressed");
+    startCharge();
+  });
+  jumpZone.addEventListener("pointermove", (e) => {
+    if (dragPointerId === null || e.pointerId !== dragPointerId) return;
+    updateAimFromDrag(e.clientX - dragStartX);
+  });
+  jumpZone.addEventListener("pointerup", endDrag);
+  jumpZone.addEventListener("pointercancel", endDrag);
+
+  window.addEventListener("keydown", (e) => {
+    if (e.code === "ArrowLeft" || e.code === "KeyA") moveLeft = true;
+    else if (e.code === "ArrowRight" || e.code === "KeyD") moveRight = true;
+    else if ((e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyW") && !e.repeat) { e.preventDefault(); startCharge(); }
+  });
+  window.addEventListener("keyup", (e) => {
+    if (e.code === "ArrowLeft" || e.code === "KeyA") moveLeft = false;
+    else if (e.code === "ArrowRight" || e.code === "KeyD") moveRight = false;
+    else if (e.code === "Space" || e.code === "ArrowUp" || e.code === "KeyW") releaseCharge();
+  });
+
+  function startCharge() {
+    if (state !== "playing" || paused || !player.onGround) return;
+    charging = true;
+    chargeStart = performance.now();
+    chargeAmount = 0;
+    jumpIndicator.classList.add("charging");
+    chargeRing.style.display = "block";
+    initAudio();
+    playSound("chargeStart");
+  }
+  function releaseCharge() {
+    if (!charging) return;
+    charging = false;
+    jumpIndicator.classList.remove("charging");
+    chargeRing.style.display = "none";
+    if (state !== "playing" || paused) return;
+    const frac = clamp(chargeAmount, 0, 1);
+    const vz = lerp(MIN_JUMP_VZ, MAX_JUMP_VZ, frac);
+    player.vy = vz;
+    player.onGround = false;
+    player.standingPlatform = null;
+    player.squash = -0.3;
+    playSound("launch", 0.9 + frac * 0.3);
+    addParticle(worldToScreenPt(player.x, player.y), "#38bdf8", 8 + Math.floor(frac * 8));
+  }
+
+  function worldToScreenPt(x, y) { return { x, y: screenY(y) }; }
+
+  // ---------- Update ----------
+  function updatePlayerHorizontal(dt) {
+    // On a touchscreen you can only hold one control comfortably at a time, so the natural
+    // flow is "aim left/right, let go, then hold jump to charge, then release." While
+    // grounded and charging, we still track vx (so directional input dialed in during the
+    // charge biases the launch) but freeze actual x movement — the player plants their feet
+    // and winds up rather than sliding, so they can never drift off the platform edge purely
+    // from a stale velocity decaying (or not decaying) during the hold. Full momentum is
+    // released the instant they jump.
+    const groundedCharge = charging && player.onGround;
+    if (moveLeft && !moveRight) { player.vx -= MOVE_ACCEL * dt; player.facing = -1; }
+    else if (moveRight && !moveLeft) { player.vx += MOVE_ACCEL * dt; player.facing = 1; }
+    else if (!groundedCharge) {
+      if (player.vx > 0) player.vx = Math.max(0, player.vx - MOVE_FRICTION * dt);
+      else if (player.vx < 0) player.vx = Math.min(0, player.vx + MOVE_FRICTION * dt);
+    }
+    player.vx = clamp(player.vx, -MOVE_MAX_SPEED, MOVE_MAX_SPEED);
+    if (!groundedCharge) {
+      player.x += player.vx * dt;
+      player.x = clamp(player.x, PLAYER_HALF_W, W - PLAYER_HALF_W);
+    }
+  }
+
+  function updateMovingPlatforms(dt, tNow) {
+    for (const p of platforms) {
+      if (p.moving) p.x = p.baseX + Math.sin(tNow * p.moveSpeed + p.movePhase) * p.moveAmp;
+    }
+  }
+
+  function checkGroundEdge() {
+    // Player only stays "onGround" while horizontally over their standing platform
+    // (which may itself have drifted if it's a moving platform). Walk past either
+    // edge and gravity should immediately take over instead of leaving the player
+    // frozen in mid-air with onGround still true.
+    if (!player.onGround || !player.standingPlatform) return;
+    const p = player.standingPlatform;
+    if (player.x < p.x - p.w / 2 || player.x > p.x + p.w / 2) {
+      player.onGround = false;
+      player.standingPlatform = null;
+    }
+  }
+
+  function updatePlayerVertical(dt) {
+    if (player.onGround) return;
+    player.vy -= GRAVITY * dt;
+    player.y += player.vy * dt;
+    if (player.y > maxHeight) {
+      maxHeight = player.y;
+      if (maxHeight >= nextMilestone) {
+        nextMilestone += 1000;
+        if (netCharges < MAX_NET_CHARGES) { netCharges++; updateNetHud(); playSound("milestone"); }
+      }
+    }
+    // landing check: only while falling
+    if (player.vy <= 0) {
+      for (const p of platforms) {
+        if (Math.abs(p.y - player.y) < 14 && player.x > p.x - p.w / 2 - PLAYER_HALF_W * 0.3 && player.x < p.x + p.w / 2 + PLAYER_HALF_W * 0.3) {
+          player.y = p.y;
+          player.vy = 0;
+          player.onGround = true;
+          player.standingPlatform = p;
+          player.squash = 0.32;
+          playSound("land");
+          addParticle(worldToScreenPt(player.x, player.y), "#a78bfa", 6);
+          break;
+        }
+      }
+    }
+    // fall death / net save check
+    const sy = screenY(player.y);
+    if (sy > H + DEATH_MARGIN) {
+      if (netCharges > 0) {
+        netCharges--;
+        updateNetHud();
+        // find nearest platform not too far below current fall point to bounce back onto
+        let target = null, bestDist = Infinity;
+        for (const p of platforms) {
+          if (p.y <= player.y + 10) {
+            const dist = player.y - p.y;
+            if (dist < bestDist) { bestDist = dist; target = p; }
+          }
+        }
+        if (!target) target = platforms[0];
+        player.x = clamp(target.x, PLAYER_HALF_W, W - PLAYER_HALF_W);
+        player.y = target.y;
+        player.vy = 0; player.vx = 0;
+        player.onGround = true;
+        player.standingPlatform = target;
+        playSound("netSave");
+        banner.textContent = "安全网救了你一命！";
+        banner.style.display = "block";
+        setTimeout(() => { banner.style.display = "none"; }, 1200);
+      } else {
+        gameOver();
+      }
+    }
+  }
+
+  function gameOver() {
+    state = "gameover";
+    playSound("gameover");
+    const meters = Math.floor(maxHeight / 20);
+    if (meters > best) { best = meters; localStorage.setItem("skyClimberBest", String(best)); bestEl.textContent = "BEST: " + best + "m"; }
+    resultTitle.textContent = "跌落谷底";
+    resultSub.textContent = "攀爬高度 " + meters + "m";
+    overlay.classList.add("show");
+  }
+
+  function updateCamera(dt) {
+    // Camera is monotonic: it only ever moves up, tracking the player's world-y once
+    // they climb above the anchor line. It never scrolls back down when the player falls,
+    // which is what makes falling below the visible screen (DEATH_MARGIN) meaningful.
+    const desiredCam = Math.max(cameraY, player.y);
+    cameraY += (desiredCam - cameraY) * Math.min(dt * 6, 1);
+  }
+
+  function update(dt, tNow) {
+    if (state !== "playing" || paused) return;
+    if (charging) chargeAmount = clamp((performance.now() - chargeStart) / CHARGE_MS, 0, 1);
+    updatePlayerHorizontal(dt);
+    updateMovingPlatforms(dt, tNow);
+    checkGroundEdge();
+    updatePlayerVertical(dt);
+    updateCamera(dt);
+    genUpTo(cameraY + H + 800);
+    pruneBelow(cameraY - H - 400);
+    if (player.squash !== 0) {
+      if (player.squash < 0) player.squash = Math.min(0, player.squash + dt * 3.2);
+      else player.squash = Math.max(0, player.squash - dt * 3.2);
+    }
+    heightEl.textContent = Math.floor(maxHeight / 20) + "m";
+    updateParticles(dt);
+    updateFloatingTexts(dt);
+  }
+
+  // ---------- Particles ----------
+  function addParticle(pos, color, count) {
+    for (let i = 0; i < count; i++) {
+      particles.push({ x: pos.x, y: pos.y, vx: rand(-90, 90), vy: rand(-120, -10), color, size: rand(2.5, 5), life: 1, decay: rand(1.3, 2.2) });
+    }
+  }
+  function updateParticles(dt) {
+    for (let i = particles.length - 1; i >= 0; i--) {
+      const p = particles[i];
+      p.life -= p.decay * dt;
+      if (p.life <= 0) { particles.splice(i, 1); continue; }
+      p.x += p.vx * dt; p.y += p.vy * dt; p.vy += 260 * dt;
+    }
+  }
+  function drawParticles() {
+    for (const p of particles) {
+      ctx.save(); ctx.globalAlpha = Math.max(0, p.life); ctx.fillStyle = p.color;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    }
+  }
+  function addFloatingText(text, pos, color) { floatingTexts.push({ text, color, x: pos.x, y: pos.y, vy: -50, alpha: 1 }); }
+  function updateFloatingTexts(dt) {
+    for (let i = floatingTexts.length - 1; i >= 0; i--) {
+      const ft = floatingTexts[i];
+      ft.y += ft.vy * dt; ft.alpha -= 1.2 * dt;
+      if (ft.alpha <= 0) floatingTexts.splice(i, 1);
+    }
+  }
+  function drawFloatingTexts() {
+    for (const ft of floatingTexts) {
+      ctx.save(); ctx.globalAlpha = Math.max(0, ft.alpha); ctx.fillStyle = ft.color;
+      ctx.font = "bold 18px 'Outfit', sans-serif"; ctx.textAlign = "center";
+      ctx.fillText(ft.text, ft.x, ft.y); ctx.restore();
+    }
+  }
+
+  // ---------- Drawing ----------
+  function drawBackground() {
+    const g = ctx.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, "#1e1b4b"); g.addColorStop(0.5, "#312e81"); g.addColorStop(1, "#4c1d95");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    // starfield parallax (fixed pattern, slow drift with camera)
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+    for (let i = 0; i < 40; i++) {
+      const sx = (i * 97) % W;
+      const sy = ((i * 53 - cameraY * 0.05) % (H + 100) + (H + 100)) % (H + 100);
+      ctx.globalAlpha = 0.15 + (i % 5) * 0.12;
+      ctx.beginPath(); ctx.arc(sx, sy, (i % 3) + 1, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function drawPlatforms() {
+    for (const p of platforms) {
+      const sy = screenY(p.y);
+      if (sy < -40 || sy > H + 40) continue;
+      const x0 = p.x - p.w / 2, x1 = p.x + p.w / 2;
+      const grad = ctx.createLinearGradient(x0, sy, x1, sy);
+      if (p.moving) { grad.addColorStop(0, "#f472b6"); grad.addColorStop(1, "#c026d3"); }
+      else { grad.addColorStop(0, "#38bdf8"); grad.addColorStop(1, "#818cf8"); }
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.roundRect ? ctx.roundRect(x0, sy - 8, p.w, 14, 7) : ctx.rect(x0, sy - 8, p.w, 14);
+      ctx.fill();
+      ctx.shadowColor = p.moving ? "rgba(244,114,182,0.5)" : "rgba(56,189,248,0.5)";
+      ctx.shadowBlur = 10;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  function drawChargeGuide() {
+    if (!guideEnabled || !charging || !player.onGround) return;
+    const vz = lerp(MIN_JUMP_VZ, MAX_JUMP_VZ, chargeAmount);
+    const dt = 0.02;
+    let x = player.x, y = player.y, vx = player.vx, vy = vz;
+    ctx.save();
+    ctx.setLineDash([5, 5]);
+    ctx.strokeStyle = "rgba(255,255,255,0.75)";
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.moveTo(x, screenY(y));
+    for (let i = 0; i < 80; i++) {
+      vy -= GRAVITY * dt;
+      x += vx * dt; y += vy * dt;
+      ctx.lineTo(x, screenY(y));
+      if (vy < 0 && y < player.y - 4) break;
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  function drawChargeRing() {
+    chargeCtx.clearRect(0, 0, 96, 96);
+    if (!charging) return;
+    chargeCtx.strokeStyle = "rgba(255,255,255,0.25)";
+    chargeCtx.lineWidth = 6;
+    chargeCtx.beginPath(); chargeCtx.arc(48, 48, 40, 0, Math.PI * 2); chargeCtx.stroke();
+    chargeCtx.strokeStyle = "#38bdf8";
+    chargeCtx.lineWidth = 6; chargeCtx.lineCap = "round";
+    chargeCtx.beginPath();
+    chargeCtx.arc(48, 48, 40, -Math.PI / 2, -Math.PI / 2 + chargeAmount * Math.PI * 2);
+    chargeCtx.stroke();
+  }
+
+  function drawPlayer() {
+    const sy = screenY(player.y);
+    const sx = player.x;
+    let bodyW = 15, bodyH = 44;
+    const squash = player.squash || 0;
+    bodyW *= (1 + squash * 0.3); bodyH *= (1 - squash * 0.3);
+
+    // shadow on standing platform
+    if (player.onGround) {
+      ctx.beginPath();
+      ctx.ellipse(sx, sy + 3, 15, 5, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0,0,0,0.25)"; ctx.fill();
+    }
+
+    ctx.save();
+    ctx.translate(sx, sy);
+    ctx.scale(player.facing, 1);
+    if (!player.onGround) ctx.rotate(clamp(-player.vy / 3000, -0.25, 0.25));
+
+    const r = bodyW, h = bodyH;
+    ctx.beginPath();
+    ctx.moveTo(-r, 0);
+    ctx.lineTo(-r, -h + r);
+    ctx.quadraticCurveTo(-r, -h, 0, -h);
+    ctx.quadraticCurveTo(r, -h, r, -h + r);
+    ctx.lineTo(r, 0);
+    ctx.quadraticCurveTo(r, r * 0.6, 0, r * 0.6);
+    ctx.quadraticCurveTo(-r, r * 0.6, -r, 0);
+    ctx.closePath();
+    const grad = ctx.createLinearGradient(0, -h, 0, 0);
+    grad.addColorStop(0, "#c4b5fd"); grad.addColorStop(1, "#818cf8");
+    ctx.fillStyle = grad; ctx.fill();
+    ctx.strokeStyle = "rgba(0,0,0,0.15)"; ctx.lineWidth = 1; ctx.stroke();
+
+    ctx.fillStyle = "#1e1b4b";
+    const eyeSize = 2.6, eyeOffset = 4.4;
+    ctx.beginPath();
+    ctx.arc(eyeOffset - 2, -h * 0.82, eyeSize, 0, Math.PI * 2);
+    ctx.arc(eyeOffset + 3.4, -h * 0.82, eyeSize, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.ellipse(-r * 0.3, -h + r * 0.9, r * 0.35, r * 0.28, -0.4, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,255,255,0.38)"; ctx.fill();
+    ctx.restore();
+  }
+
+  function draw() {
+    drawBackground();
+    if (!player) return; // idle screen: nothing spawned yet
+    drawPlatforms();
+    drawChargeGuide();
+    drawPlayer();
+    drawParticles();
+    drawFloatingTexts();
+    drawChargeRing();
+  }
+
+  function loop(t) {
+    if (!lastT) lastT = t;
+    const dt = Math.min((t - lastT) / 1000, 0.033);
+    lastT = t;
+    update(dt, t / 1000);
+    draw();
+    requestAnimationFrame(loop);
+  }
+
+  startBtn.addEventListener("click", () => {
+    initAudio();
+    startScreen.style.display = "none";
+    beginGame();
+  });
+  restartBtn.addEventListener("click", () => {
+    overlay.classList.remove("show");
+    beginGame();
+  });
+
+  state = "idle";
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>

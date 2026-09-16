@@ -1,0 +1,2685 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>統計検定＆DSクエスト · 知識の冒険者 (StatQuest: Data Frontier)</title>
+  <meta name="description" content="統計検定4級・3級・2級からデータサイエンス(DS)基礎・発展・準1級までをRPG風に段階制覇する本格学習ゲームアプリ。直感的な確率分布・仮説検定・混同行列シミュレーター搭載。">
+  <meta name="theme-color" content="#0284c7">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800;900&family=Outfit:wght@600;700;800;900&family=Fira+Code:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-main: #f0f7fc;
+      --surface: #ffffff;
+      --surface-glass: rgba(255, 255, 255, 0.92);
+      --border-subtle: #dbeafe;
+      --border-strong: #93c5fd;
+
+      --text-main: #0f172a;
+      --text-sub: #334155;
+      --text-muted: #64748b;
+
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --primary-light: #e0f2fe;
+
+      --accent-cyan: #06b6d4;
+      --accent-purple: #8b5cf6;
+      --accent-amber: #f59e0b;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+
+      --radius-xl: 24px;
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-pill: 9999px;
+
+      --shadow-sm: 0 2px 6px rgba(2, 132, 199, 0.06);
+      --shadow-card: 0 10px 28px -6px rgba(15, 23, 42, 0.08), 0 2px 6px -1px rgba(15, 23, 42, 0.04);
+      --shadow-glow: 0 0 24px rgba(2, 132, 199, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'M PLUS Rounded 1c', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.55;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 12% 14%, rgba(2, 132, 199, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 88% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.07) 0%, transparent 45%);
+      background-attachment: fixed;
+    }
+
+    /* 顶部导航 */
+    header.site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--surface-glass);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 2px solid var(--border-subtle);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .brand-icon {
+      font-size: 32px;
+      line-height: 1;
+      filter: drop-shadow(0 2px 8px rgba(2, 132, 199, 0.3));
+      animation: floatBadge 3s ease-in-out infinite;
+    }
+
+    @keyframes floatBadge {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .brand-title {
+      font-size: 19px;
+      font-weight: 900;
+      color: var(--primary);
+      letter-spacing: -0.4px;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .header-stats {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .stat-pill {
+      background: var(--primary-light);
+      border: 1px solid var(--border-strong);
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-pill.hp {
+      background: #ffe4e6;
+      border-color: #fca5a5;
+      color: var(--accent-rose);
+    }
+
+    .stat-pill.sp {
+      background: #e0e7ff;
+      border-color: #a5b4fc;
+      color: var(--accent-purple);
+    }
+
+    .btn-sound {
+      background: #f1f5f9;
+      border: 1.5px solid #cbd5e1;
+      border-radius: var(--radius-pill);
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-sub);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .btn-sound:hover {
+      background: #e2e8f0;
+      transform: scale(1.04);
+    }
+
+    /* 主容器 */
+    main.main-content {
+      max-width: 1240px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+      flex: 1;
+    }
+
+    /* 模式切换导航 */
+    .mode-nav {
+      display: flex;
+      gap: 8px;
+      background: #ffffff;
+      padding: 6px;
+      border-radius: var(--radius-pill);
+      border: 2px solid var(--border-subtle);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+      overflow-x: auto;
+    }
+
+    .nav-tab {
+      flex: 1;
+      min-width: 130px;
+      border: none;
+      background: transparent;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--text-sub);
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      white-space: nowrap;
+    }
+
+    .nav-tab:hover {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .nav-tab.active {
+      background: linear-gradient(135deg, var(--primary) 0%, #0ea5e9 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
+      transform: scale(1.02);
+    }
+
+    /* 英雄横幅与段位展示 */
+    .hero-banner {
+      background: linear-gradient(135deg, #ffffff 0%, #eff6ff 60%, #f0fdf4 100%);
+      border: 3px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-card);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .hero-banner::after {
+      content: "📊";
+      position: absolute;
+      right: -10px;
+      bottom: -20px;
+      font-size: 110px;
+      opacity: 0.12;
+      pointer-events: none;
+    }
+
+    .hero-info {
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fef3c7;
+      color: #92400e;
+      font-size: 12px;
+      font-weight: 900;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 8px;
+    }
+
+    .hero-title {
+      font-size: 24px;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+
+    .hero-desc {
+      font-size: 14px;
+      color: var(--text-sub);
+      font-weight: 600;
+      max-width: 680px;
+    }
+
+    .hero-level-box {
+      background: #ffffff;
+      border: 2px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
+      min-width: 220px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .level-label {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .level-rank {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .exp-bar-wrap {
+      width: 100%;
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .exp-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #38bdf8 0%, #0284c7 100%);
+      width: 20%;
+      transition: width 0.4s ease;
+    }
+
+    /* 5个大阶梯领域选择卡片 */
+    .tier-selector {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .tier-card {
+      background: #ffffff;
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+    }
+
+    .tier-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-card);
+    }
+
+    .tier-card.active {
+      border-color: var(--primary);
+      background: linear-gradient(180deg, #ffffff 0%, var(--primary-light) 100%);
+      box-shadow: 0 8px 20px rgba(2, 132, 199, 0.22);
+      transform: translateY(-2px);
+    }
+
+    .tier-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tier-icon {
+      font-size: 26px;
+    }
+
+    .tier-badge {
+      font-size: 11px;
+      font-weight: 900;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .tier-card.active .tier-badge {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .tier-name {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--text-main);
+    }
+
+    .tier-sub {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    .tier-progress {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-top: auto;
+    }
+
+    /* 题目挑战区域 */
+    .quest-arena {
+      background: #ffffff;
+      border: 3px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .arena-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #f1f5f9;
+    }
+
+    .arena-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .arena-badge {
+      background: #0284c7;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 900;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+    }
+
+    .arena-index {
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--text-muted);
+    }
+
+    .arena-skills {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-skill {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: var(--radius-pill);
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text-sub);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .btn-skill:hover:not(:disabled) {
+      background: #e0f2fe;
+      border-color: #7dd3fc;
+      color: #0369a1;
+      transform: translateY(-1px);
+    }
+
+    .btn-skill:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* 题干内容 */
+    .question-box {
+      margin-bottom: 24px;
+    }
+
+    .q-text {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    /* 嵌入式数据表或图表容器 */
+    .q-data-snippet {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      margin-bottom: 16px;
+      font-family: 'Fira Code', monospace;
+      font-size: 14px;
+      color: #1e293b;
+      overflow-x: auto;
+    }
+
+    .q-data-snippet table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+    }
+
+    .q-data-snippet th, .q-data-snippet td {
+      border: 1px solid #cbd5e1;
+      padding: 6px 12px;
+    }
+
+    .q-data-snippet th {
+      background: #e2e8f0;
+      font-weight: 700;
+    }
+
+    /* 选项网格 */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .opt-btn {
+      background: #ffffff;
+      border: 2px solid #e2e8f0;
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
+      text-align: left;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      color: var(--text-main);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+    }
+
+    .opt-btn:hover:not(.locked) {
+      border-color: var(--primary);
+      background: #f0f9ff;
+      transform: translateX(4px);
+    }
+
+    .opt-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #f1f5f9;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 900;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .opt-btn:hover:not(.locked) .opt-num {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .opt-btn.correct {
+      border-color: var(--accent-emerald);
+      background: #ecfdf5;
+      color: #065f46;
+    }
+
+    .opt-btn.correct .opt-num {
+      background: var(--accent-emerald);
+      color: #ffffff;
+    }
+
+    .opt-btn.wrong {
+      border-color: var(--accent-rose);
+      background: #fff1f2;
+      color: #9f1239;
+    }
+
+    .opt-btn.wrong .opt-num {
+      background: var(--accent-rose);
+      color: #ffffff;
+    }
+
+    .opt-btn.dimmed {
+      opacity: 0.35;
+      pointer-events: none;
+    }
+
+    /* 详细解题反馈区 */
+    .solution-drawer {
+      display: none;
+      background: #f8fafc;
+      border: 2px solid #cbd5e1;
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-top: 20px;
+      animation: slideUp 0.3s ease-out forwards;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .sol-header {
+      font-size: 16px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .sol-header.correct { color: #059669; }
+    .sol-header.wrong { color: #e11d48; }
+
+    .sol-text {
+      font-size: 15px;
+      color: #334155;
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+
+    .sol-formula {
+      background: #ffffff;
+      border-left: 4px solid var(--primary);
+      padding: 10px 16px;
+      font-family: 'Fira Code', monospace;
+      font-size: 14px;
+      color: #0369a1;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      margin-bottom: 16px;
+    }
+
+    .arena-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .btn-next {
+      background: linear-gradient(135deg, var(--primary) 0%, #0ea5e9 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 12px 28px;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
+      transition: all 0.2s;
+    }
+
+    .btn-next:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(2, 132, 199, 0.4);
+    }
+
+    /* 交互式实验中心 (LABS) */
+    .lab-panel {
+      display: none;
+    }
+
+    .lab-card {
+      background: #ffffff;
+      border: 3px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 24px;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 24px;
+    }
+
+    .lab-title {
+      font-size: 20px;
+      font-weight: 900;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+
+    .lab-desc {
+      font-size: 14px;
+      color: var(--text-sub);
+      margin-bottom: 20px;
+    }
+
+    .canvas-container {
+      position: relative;
+      background: #0f172a;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+      margin-bottom: 18px;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 280px;
+    }
+
+    .lab-controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      background: #f8fafc;
+      padding: 16px;
+      border-radius: var(--radius-lg);
+      border: 1.5px solid #e2e8f0;
+    }
+
+    .control-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .control-label {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-sub);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .control-item input[type="range"] {
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .lab-metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .metric-card {
+      background: #ffffff;
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      text-align: center;
+    }
+
+    .metric-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .metric-val {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--primary);
+      font-family: 'Fira Code', monospace;
+    }
+
+    /* 模拟考试考场 (CBT EXAM) */
+    .exam-panel {
+      display: none;
+    }
+
+    .exam-setup-box {
+      background: #ffffff;
+      border: 3px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: var(--shadow-card);
+    }
+
+    .exam-badge-icon {
+      font-size: 56px;
+      margin-bottom: 12px;
+    }
+
+    .exam-setup-title {
+      font-size: 24px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .exam-setup-desc {
+      font-size: 15px;
+      color: var(--text-sub);
+      max-width: 600px;
+      margin: 0 auto 24px;
+    }
+
+    .exam-config-grid {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .exam-grade-pill {
+      background: #f1f5f9;
+      border: 2px solid #cbd5e1;
+      padding: 8px 18px;
+      border-radius: var(--radius-pill);
+      font-weight: 800;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
+    }
+
+    .exam-grade-pill.selected {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-start-exam {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 14px 40px;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(245, 158, 11, 0.35);
+      transition: all 0.2s;
+    }
+
+    .btn-start-exam:hover {
+      transform: scale(1.04);
+    }
+
+    /* 知识图谱图鉴 (CODEX) */
+    .codex-panel {
+      display: none;
+    }
+
+    .codex-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .codex-card {
+      background: #ffffff;
+      border: 2px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .codex-title {
+      font-size: 17px;
+      font-weight: 900;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1.5px solid #f1f5f9;
+    }
+
+    .codex-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .codex-item {
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .codex-term {
+      font-weight: 900;
+      color: #0f172a;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .codex-def {
+      color: #475569;
+    }
+
+    .codex-math {
+      font-family: 'Fira Code', monospace;
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #0369a1;
+      display: inline-block;
+      margin-top: 3px;
+    }
+
+    /* 底部通用导航 */
+    footer.site-footer {
+      background: #ffffff;
+      border-top: 2px solid var(--border-subtle);
+      padding: 20px 16px;
+      text-align: center;
+      margin-top: auto;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .footer-links a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .footer-links a:hover {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+      .header-inner { padding: 10px 14px; }
+      .brand-title { font-size: 17px; }
+      .brand-icon { font-size: 26px; }
+      .hero-banner { padding: 18px; }
+      .hero-title { font-size: 20px; }
+      .quest-arena { padding: 18px; }
+      .q-text { font-size: 16px; }
+      .opt-btn { padding: 12px 16px; font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部导航栏 -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand-logo" onclick="switchTab('quest')">
+        <span class="brand-icon">📈</span>
+        <div class="brand-title">
+          <span>StatQuest · 統計検定</span>
+          <span class="brand-sub">4級〜2級・準1級・データサイエンス完全踏破</span>
+        </div>
+      </div>
+
+      <div class="header-stats">
+        <div class="stat-pill hp" title="体力 (HP)">
+          <span>❤️</span>
+          <span id="hpVal">100</span>
+        </div>
+        <div class="stat-pill sp" title="スキルポイント (SP)">
+          <span>⚡</span>
+          <span id="spVal">50</span>
+        </div>
+        <div class="stat-pill" title="累計獲得スコア">
+          <span>🏆</span>
+          <span id="scoreVal">0</span>
+        </div>
+        <button class="btn-sound" id="soundToggle" onclick="toggleSound()">
+          <span id="soundIcon">🔊</span>
+          <span class="hide-sm">効果音</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主体容器 -->
+  <main class="main-content">
+
+    <!-- 顶部四维导航标签 -->
+    <nav class="mode-nav">
+      <button class="nav-tab active" id="tabQuest" onclick="switchTab('quest')">
+        <span>🗺️</span> 冒険モード (クエスト)
+      </button>
+      <button class="nav-tab" id="tabLab" onclick="switchTab('lab')">
+        <span>🧪</span> 直感実験室 (Labs)
+      </button>
+      <button class="nav-tab" id="tabExam" onclick="switchTab('exam')">
+        <span>⏱️</span> CBT模擬考場
+      </button>
+      <button class="nav-tab" id="tabCodex" onclick="switchTab('codex')">
+        <span>📖</span> 公式・知識図鑑
+      </button>
+    </nav>
+
+    <!-- 英雄横幅 -->
+    <section class="hero-banner">
+      <div class="hero-info">
+        <div class="hero-tag">✨ 日本統計学会公式認定 · 統計検定対応</div>
+        <h1 class="hero-title" id="bannerTitle">統計と思考のフロンティアへ</h1>
+        <p class="hero-desc">
+          初級のグラフ読解から、推定・仮説検定、データサイエンス（DS基礎/発展/エキスパート）、そして多変量解析・機械学習までをRPG形式で完全網羅。
+        </p>
+      </div>
+
+      <div class="hero-level-box">
+        <div class="level-label">
+          <span>冒険者ランク</span>
+          <span id="rankExpText">EXP: 0 / 100</span>
+        </div>
+        <div class="level-rank" id="rankName">
+          <span>🌱</span> データ見習い (Lv.1)
+        </div>
+        <div class="exp-bar-wrap">
+          <div class="exp-bar-fill" id="expFill" style="width: 0%;"></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:11px; color:#64748b; font-weight:700;">
+          <span>連続正解: <strong id="streakCount" style="color:#0284c7">0</strong></span>
+          <span>踏破問題: <strong id="solvedCount">0</strong>/25</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 1. 冒険モード (QUEST) ==================== -->
+    <div id="panelQuest">
+      <!-- 5大階梯領域セレクター -->
+      <div class="tier-selector">
+        <div class="tier-card active" onclick="selectTier(0)" id="tierCard0">
+          <div class="tier-top">
+            <span class="tier-icon">🌱</span>
+            <span class="tier-badge">4級 基礎</span>
+          </div>
+          <div class="tier-name">始源の平原</div>
+          <div class="tier-sub">データの種類・ヒストグラム・代表値の直感理解</div>
+          <div class="tier-progress" id="tierProg0">0/5 クリア</div>
+        </div>
+
+        <div class="tier-card" onclick="selectTier(1)" id="tierCard1">
+          <div class="tier-top">
+            <span class="tier-icon">🌲</span>
+            <span class="tier-badge">3級 要約</span>
+          </div>
+          <div class="tier-name">記述統計の森</div>
+          <div class="tier-sub">分散・標準偏差・箱ひげ図・相関係数と確率基礎</div>
+          <div class="tier-progress" id="tierProg1">0/5 クリア</div>
+        </div>
+
+        <div class="tier-card" onclick="selectTier(2)" id="tierCard2">
+          <div class="tier-top">
+            <span class="tier-icon">🏛️</span>
+            <span class="tier-badge">2級 推測</span>
+          </div>
+          <div class="tier-name">推測の神殿</div>
+          <div class="tier-sub">確率分布・中心極限定理・区間推定・仮説検定</div>
+          <div class="tier-progress" id="tierProg2">0/5 クリア</div>
+        </div>
+
+        <div class="tier-card" onclick="selectTier(3)" id="tierCard3">
+          <div class="tier-top">
+            <span class="tier-icon">⚙️</span>
+            <span class="tier-badge">DS 基礎/発展</span>
+          </div>
+          <div class="tier-name">機械学習の工房</div>
+          <div class="tier-sub">前処理・混同行列・ROC/AUC・過学習と正則化</div>
+          <div class="tier-progress" id="tierProg3">0/5 クリア</div>
+        </div>
+
+        <div class="tier-card" onclick="selectTier(4)" id="tierCard4">
+          <div class="tier-top">
+            <span class="tier-icon">👑</span>
+            <span class="tier-badge">準1級/DSエキスパート</span>
+          </div>
+          <div class="tier-name">因果と多変量の頂</div>
+          <div class="tier-sub">PCA主成分分析・時系列・ベイズ・A/Bテスト因果推論</div>
+          <div class="tier-progress" id="tierProg4">0/5 クリア</div>
+        </div>
+      </div>
+
+      <!-- クエストアリーナ（問題エリア） -->
+      <section class="quest-arena" id="arenaBox">
+        <div class="arena-header">
+          <div class="arena-title-wrap">
+            <span class="arena-badge" id="arenaGradeBadge">統計検定 4級</span>
+            <span class="arena-index" id="arenaIndexText">Quest 1 / 5</span>
+          </div>
+
+          <div class="arena-skills">
+            <button class="btn-skill" id="skill5050" onclick="useSkill('5050')" title="消費 20 SP: 誤答を2つ消去">
+              <span>✂️</span> 50:50 二択除外 (-20 SP)
+            </button>
+            <button class="btn-skill" id="skillHint" onclick="useSkill('hint')" title="消費 15 SP: ヒントを表示">
+              <span>💡</span> 思考ヒント (-15 SP)
+            </button>
+          </div>
+        </div>
+
+        <div class="question-box">
+          <div class="q-text" id="qText">問題文を読み込み中...</div>
+          <div id="qSnippetBox"></div>
+        </div>
+
+        <div class="options-grid" id="optionsGrid">
+          <!-- JSで動的生成 -->
+        </div>
+
+        <!-- 解答後の解説引き出し -->
+        <div class="solution-drawer" id="solutionDrawer">
+          <div class="sol-header" id="solHeader">
+            <span id="solIcon">💡</span>
+            <span id="solTitle">解答と解説</span>
+          </div>
+          <div class="sol-text" id="solText">解説文がここに表示されます。</div>
+          <div class="sol-formula" id="solFormula">公式・ポイント</div>
+
+          <div class="arena-footer">
+            <button class="btn-next" onclick="nextQuestion()">
+              <span>次へ進む</span> ➔
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ==================== 2. 直感実験室 (LABS) ==================== -->
+    <div class="lab-panel" id="panelLab">
+      <!-- Lab 1: 仮説検定＆p値ビジュアライザー -->
+      <div class="lab-card">
+        <div class="lab-title">
+          <span>🔬</span> 実験室 1: 仮説検定と棄却域・p値シミュレーター
+        </div>
+        <p class="lab-desc">
+          帰無仮説 $H_0$ の正規分布のもとで、有意水準 $\alpha$ と検定統計量 $z$ を動かし、棄却域（赤）と $p$ 値（黄色）の直感的な関係を観察しましょう。
+        </p>
+
+        <div class="canvas-container">
+          <canvas id="canvasDist" width="800" height="280"></canvas>
+        </div>
+
+        <div class="lab-controls">
+          <div class="control-item">
+            <div class="control-label">
+              <span>検定統計量 (z値):</span>
+              <strong id="zValDisplay">1.96</strong>
+            </div>
+            <input type="range" id="zSlider" min="-3.5" max="3.5" step="0.05" value="1.96" oninput="updateDistLab()">
+          </div>
+
+          <div class="control-item">
+            <div class="control-label">
+              <span>有意水準 α (臨界値):</span>
+              <strong id="alphaDisplay">0.05 (両側: ±1.96)</strong>
+            </div>
+            <select id="alphaSelect" style="padding:6px; border-radius:6px; font-weight:700;" onchange="updateDistLab()">
+              <option value="0.05">α = 0.05 (5% 水準)</option>
+              <option value="0.01">α = 0.01 (1% 水準)</option>
+              <option value="0.10">α = 0.10 (10% 水準)</option>
+            </select>
+          </div>
+
+          <div class="control-item">
+            <div class="control-label">
+              <span>検定方式:</span>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:4px;">
+              <label style="font-weight:700; font-size:13px; cursor:pointer;">
+                <input type="radio" name="tailType" value="two" checked onchange="updateDistLab()"> 両側検定
+              </label>
+              <label style="font-weight:700; font-size:13px; cursor:pointer;">
+                <input type="radio" name="tailType" value="one" onchange="updateDistLab()"> 右側検定
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="lab-metrics">
+          <div class="metric-card">
+            <div class="metric-name">計算された p 値</div>
+            <div class="metric-val" id="metricPVal">0.0500</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-name">検定結果の判定</div>
+            <div class="metric-val" id="metricDecision" style="font-size:15px; color:#10b981;">帰無仮説を棄却</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-name">統計的解釈</div>
+            <div class="metric-val" id="metricMeaning" style="font-size:13px; font-weight:700; color:#334155;">有意差あり (p ≤ α)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lab 2: 混同行列＆閾値チューナー -->
+      <div class="lab-card">
+        <div class="lab-title">
+          <span>🎯</span> 実験室 2: 混同行列と分類閾値 (Threshold) トレードオフ
+        </div>
+        <p class="lab-desc">
+          機械学習の二値分類において、決定境界の閾値（Threshold）を変更した際に、適合率（Precision）と再現率（Recall）がどう相反するか体感できます。
+        </p>
+
+        <div class="canvas-container">
+          <canvas id="canvasConf" width="800" height="280"></canvas>
+        </div>
+
+        <div class="lab-controls">
+          <div class="control-item" style="grid-column: 1 / -1;">
+            <div class="control-label">
+              <span>分類スコア閾値 (Threshold):</span>
+              <strong id="threshDisplay">0.50</strong>
+            </div>
+            <input type="range" id="threshSlider" min="0.1" max="0.9" step="0.02" value="0.5" oninput="updateConfLab()">
+          </div>
+        </div>
+
+        <div class="lab-metrics">
+          <div class="metric-card">
+            <div class="metric-name">TP (真陽性) / FN</div>
+            <div class="metric-val" id="confTP">42 / 8</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-name">FP (偽陽性) / TN</div>
+            <div class="metric-val" id="confFP">10 / 40</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-name">適合率 (Precision)</div>
+            <div class="metric-val" id="confPrec">80.8%</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-name">再現率 (Recall)</div>
+            <div class="metric-val" id="confRecall">84.0%</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-name">F1 スコア</div>
+            <div class="metric-val" id="confF1" style="color:#f59e0b;">0.824</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 3. CBT模擬試験 (EXAM) ==================== -->
+    <div class="exam-panel" id="panelExam">
+      <div class="exam-setup-box" id="examIntroBox">
+        <div class="exam-badge-icon">⏱️</div>
+        <h2 class="exam-setup-title">統計検定 CBT総合模擬試験</h2>
+        <p class="exam-setup-desc">
+          本番のCBT試験を再現したランダム10問の総合テスト。1問あたり制限時間と合格ライン（70%以上）で真の実力を判定します。
+        </p>
+
+        <div style="font-weight:800; color:#334155; margin-bottom:12px;">出題対象とするグレードを選択:</div>
+        <div class="exam-config-grid">
+          <button class="exam-grade-pill selected" data-grade="4" onclick="toggleExamGrade(this)">4級 (基礎)</button>
+          <button class="exam-grade-pill selected" data-grade="3" onclick="toggleExamGrade(this)">3級 (要約)</button>
+          <button class="exam-grade-pill selected" data-grade="2" onclick="toggleExamGrade(this)">2級 (推測)</button>
+          <button class="exam-grade-pill selected" data-grade="ds" onclick="toggleExamGrade(this)">DS基礎・発展</button>
+          <button class="exam-grade-pill selected" data-grade="adv" onclick="toggleExamGrade(this)">準1級/エキスパート</button>
+        </div>
+
+        <button class="btn-start-exam" onclick="startExam()">
+          試験を開始する (10問 / 制限時間 10分) ➔
+        </button>
+      </div>
+
+      <!-- 進行中の試験UI -->
+      <section class="quest-arena" id="examArenaBox" style="display:none;">
+        <div class="arena-header">
+          <div class="arena-title-wrap">
+            <span class="arena-badge" id="examCurrentGrade">統計検定 2級</span>
+            <span class="arena-index" id="examIndex">Question 1 / 10</span>
+          </div>
+
+          <div class="stat-pill" style="background:#fee2e2; border-color:#fca5a5; color:#dc2626;">
+            <span>⏳ 残り時間:</span>
+            <strong id="examTimer">10:00</strong>
+          </div>
+        </div>
+
+        <div class="question-box">
+          <div class="q-text" id="examQText">問題文を読み込み中...</div>
+          <div id="examQSnippet"></div>
+        </div>
+
+        <div class="options-grid" id="examOptionsGrid">
+          <!-- 動的挿入 -->
+        </div>
+      </section>
+
+      <!-- 試験結果レポート -->
+      <div class="exam-setup-box" id="examResultBox" style="display:none;">
+        <div class="exam-badge-icon" id="examResultIcon">🎓</div>
+        <h2 class="exam-setup-title" id="examResultTitle">合格！おめでとうございます！</h2>
+        <p class="exam-setup-desc" id="examResultDesc">正解数: 8 / 10問 (正答率: 80%)</p>
+
+        <div class="lab-metrics" style="max-width:500px; margin:0 auto 24px;">
+          <div class="metric-card">
+            <div class="metric-name">総合判定</div>
+            <div class="metric-val" id="resPassFail" style="color:#10b981;">合格 (PASS)</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-name">所要時間</div>
+            <div class="metric-val" id="resTimeUsed">03:45</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-name">獲得 EXP</div>
+            <div class="metric-val" id="resExpGained">+240</div>
+          </div>
+        </div>
+
+        <button class="btn-start-exam" onclick="resetExamView()">
+          もう一度受験する ↺
+        </button>
+      </div>
+    </div>
+
+    <!-- ==================== 4. 公式・知識図鑑 (CODEX) ==================== -->
+    <div class="codex-panel" id="panelCodex">
+      <div class="codex-grid">
+        <!-- 4級・3級 -->
+        <div class="codex-card">
+          <div class="codex-title">
+            <span>🌱</span> 4級・3級 記述統計の基礎
+          </div>
+          <ul class="codex-list">
+            <li class="codex-item">
+              <span class="codex-term">代表値 (Mean / Median / Mode)</span>
+              <span class="codex-def">平均値は外れ値の影響を受けやすく、中央値はロバスト（頑健）。左右非対称な分布では最頻値・中央値・平均値の順に並ぶ。</span>
+            </li>
+            <li class="codex-item">
+              <span class="codex-term">分散と標準偏差</span>
+              <span class="codex-def">平均からの偏差平方和をデータ数で割ったもの。</span>
+              <span class="codex-math">s = √[ (1/n) Σ(xi - x̄)² ]</span>
+            </li>
+            <li class="codex-item">
+              <span class="codex-term">四分位範囲 (IQR) と箱ひげ図</span>
+              <span class="codex-def">第3四分位数 (Q3) - 第1四分位数 (Q1)。</span>
+              <span class="codex-math">外れ値判定境界: Q1 - 1.5×IQR 以下, Q3 + 1.5×IQR 以上</span>
+            </li>
+            <li class="codex-item">
+              <span class="codex-term">ピアソンの相関係数 (r)</span>
+              <span class="codex-def">-1 以上 +1 以下の値を取り、直線的な相関の強さを表す。外れ値に敏感。</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 2級 -->
+        <div class="codex-card">
+          <div class="codex-title">
+            <span>🏛️</span> 2級 推測統計と仮説検定の要点
+          </div>
+          <ul class="codex-list">
+            <li class="codex-item">
+              <span class="codex-term">中心極限定理 (CLT)</span>
+              <span class="codex-def">標本サイズ n が十分大きければ、母集団の分布に関わらず標本平均は正規分布に従う。</span>
+              <span class="codex-math">X̄ ~ N(μ, σ²/n)</span>
+            </li>
+            <li class="codex-item">
+              <span class="codex-term">95% 信頼区間 (母分散既知)</span>
+              <span class="codex-def">母平均 μ に対する標準的な区間推定。</span>
+              <span class="codex-math">[ x̄ - 1.96(σ/√n), x̄ + 1.96(σ/√n) ]</span>
+            </li>
+            <li class="codex-item">
+              <span class="codex-term">第1種の過誤 (α) と第2種の過誤 (β)</span>
+              <span class="codex-def">第1種の過誤: 真の帰無仮説を誤って棄却（偽陽性）。検出力は 1 - β。</span>
+            </li>
+            <li class="codex-item">
+              <span class="codex-term">カイ二乗 独立性の検定</span>
+              <span class="codex-def">分割表における期待度数 E と観測度数 O の乖離度合い。</span>
+              <span class="codex-math">χ² = Σ [ (O - E)² / E ]</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- DS基礎・発展 -->
+        <div class="codex-card">
+          <div class="codex-title">
+            <span>⚙️</span> データサイエンス (DS) と機械学習
+          </div>
+          <ul class="codex-list">
+            <li class="codex-item">
+              <span class="codex-term">混同行列の評価指標</span>
+              <span class="codex-def">適合率 = TP / (TP + FP), 再現率 = TP / (TP + FN)</span>
+              <span class="codex-math">F1-Score = 2 × (Prec × Recall) / (Prec + Recall)</span>
+            </li>
+            <li class="codex-item">
+              <span class="codex-term">正則化 (L1 Lasso / L2 Ridge)</span>
+              <span class="codex-def">L1正則化は不要な特徴量の係数をゼロにし疎化（特徴量選択）。L2正則化は極端な係数を縮小。</span>
+            </li>
+            <li class="codex-item">
+              <span class="codex-term">ROC曲線とAUC</span>
+              <span class="codex-def">縦軸: TPR (再現率), 横軸: FPR (1-特異度)。ランダム予測は AUC=0.5、理想は AUC=1.0。</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- 準1級・エキスパート -->
+        <div class="codex-card">
+          <div class="codex-title">
+            <span>👑</span> 準1級 / DSエキスパート 高度解析
+          </div>
+          <ul class="codex-list">
+            <li class="codex-item">
+              <span class="codex-term">主成分分析 (PCA)</span>
+              <span class="codex-def">共分散行列の固有値分解により、分散が最大となる直交軸を合成する次元削減法。</span>
+            </li>
+            <li class="codex-item">
+              <span class="codex-term">ベイズの定理と事後分布</span>
+              <span class="codex-def">データ D を得た後のパラメータ θ の確率分布。</span>
+              <span class="codex-math">P(θ | D) ∝ P(D | θ) × P(θ) (尤度 × 事前分布)</span>
+            </li>
+            <li class="codex-item">
+              <span class="codex-term">因果推論 (傾向スコアマッチング)</span>
+              <span class="codex-def">共変量による選択バイアス（交絡）を調整し、真の処置効果 (ATE) を推定。</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 底部页脚 -->
+  <footer class="site-footer">
+    <div class="footer-links">
+      <a href="index.html">🕹️ Hyperion Arcade トップ</a>
+      <a href="kids.html">🎈 奇趣益智乐园</a>
+      <a href="https://www.toukei-kentei.jp/" target="_blank" rel="noopener">🌐 統計検定 公式サイト</a>
+    </div>
+    <div class="footer-copy">
+      © 2026 StatQuest: Data Frontier · 統計検定学習支援システム
+    </div>
+  </footer>
+
+  <script>
+    /* ==========================================================================
+       1. 音声合成エンジン (Web Audio API - 完全自己完結型)
+       ========================================================================== */
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playTone(freq, type, duration, gainVal = 0.1) {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+        gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + duration);
+      }
+      correct() {
+        if (!this.enabled) return;
+        this.init();
+        const now = this.ctx.currentTime;
+        [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+          setTimeout(() => this.playTone(f, 'sine', 0.18, 0.12), i * 75);
+        });
+      }
+      wrong() {
+        if (!this.enabled) return;
+        this.init();
+        this.playTone(220, 'triangle', 0.3, 0.15);
+        setTimeout(() => this.playTone(185, 'sawtooth', 0.35, 0.12), 120);
+      }
+      click() {
+        this.playTone(880, 'sine', 0.05, 0.04);
+      }
+      levelUp() {
+        if (!this.enabled) return;
+        this.init();
+        [440, 554.37, 659.25, 880, 1108.73].forEach((f, i) => {
+          setTimeout(() => this.playTone(f, 'triangle', 0.25, 0.15), i * 90);
+        });
+      }
+    }
+    const sound = new SoundEngine();
+
+    function toggleSound() {
+      sound.enabled = !sound.enabled;
+      document.getElementById('soundIcon').innerText = sound.enabled ? '🔊' : '🔇';
+      if (sound.enabled) sound.click();
+    }
+
+    /* ==========================================================================
+       2. 問題データベース (5 Tier × 5問 = 計25問の本格統計検定データバンク)
+       ========================================================================== */
+    const QUESTION_BANK = [
+      // -------------------------------------------------------------
+      // Tier 0: 統計検定4級相当 (基礎データ分析)
+      // -------------------------------------------------------------
+      {
+        tier: 0,
+        gradeLabel: "統計検定 4級",
+        question: "次の変数のうち、「質的データ（カテゴリカルデータ）」に分類されるものはどれですか？",
+        snippet: null,
+        options: [
+          "各生徒の50m走のタイム（秒）",
+          "学校の教室内の気温（℃）",
+          "健康診断で記録された血液型（A, B, O, AB）",
+          "家庭で1か月に消費した水道使用量（m³）"
+        ],
+        answer: 2,
+        hint: "質的データとは、数値として意味のある四則計算（平均や差）ができない、分類や属性を表すデータです。",
+        solution: "血液型は分類を表す属性（質的変数）であり、足し引きなどの数値演算ができません。一方、タイム、気温、使用量は単位を持ち測定可能な「量的データ」です。",
+        formula: "データ分類: 質的データ (名義・順序) vs 量的データ (間隔・比率)"
+      },
+      {
+        tier: 0,
+        gradeLabel: "統計検定 4級",
+        question: "以下の5人のテスト得点データにおいて、「中央値（メディアン）」として正しいものはどれですか？",
+        snippet: "得点データ: [ 45点, 78点, 52点, 95点, 60点 ]",
+        options: [
+          "52点",
+          "60点",
+          "66点",
+          "78点"
+        ],
+        answer: 1,
+        hint: "データを小さい順に並べ替えたとき、ちょうど中央（真ん中）に位置する値を探しましょう。",
+        solution: "データを昇順にソートすると [45, 52, 60, 78, 95] となります。データ数が5個（奇数）なので、3番目の値である 60点 が中央値です。（平均値は 330÷5 = 66点）。",
+        formula: "中央値: 昇順ソート時、nが奇数の場合は (n+1)/2 番目"
+      },
+      {
+        tier: 0,
+        gradeLabel: "統計検定 4級",
+        question: "外れ値（極端に大きすぎる、または小さすぎる異常値）が混入した際、最も影響を「受けにくい」統計量はどれですか？",
+        snippet: null,
+        options: [
+          "算術平均値 (Mean)",
+          "最大値 (Maximum)",
+          "範囲 / レンジ (Range)",
+          "中央値 (Median)"
+        ],
+        answer: 3,
+        hint: "順位に基づき中央に位置する値は、端の極端な値に左右されません（ロバスト性）。",
+        solution: "平均値や範囲は極端な値に強く引っ張られて歪みますが、中央値は順位の中央位置を見るため外れ値に対して極めて頑健（ロバスト）です。",
+        formula: "ロバスト統計量: 中央値 (Median), 四分位範囲 (IQR)"
+      },
+      {
+        tier: 0,
+        gradeLabel: "統計検定 4級",
+        question: "ある商品の月別売上高の「推移やトレンド（時間的変化）」を可視化するのに最も適切なグラフはどれですか？",
+        snippet: null,
+        options: [
+          "円グラフ (Pie chart)",
+          "折れ線グラフ (Line chart)",
+          "ヒストグラム (Histogram)",
+          "箱ひげ図 (Box plot)"
+        ],
+        answer: 1,
+        hint: "横軸に時間経過を取り、数値の上下動を把握したい時の王道グラフです。",
+        solution: "時系列データの増減やトレンド変化を表現するには折れ線グラフが最も適しています。構成比率を見るなら円グラフ、分布の形状を見るならヒストグラムを用います。",
+        formula: "グラフ選択: 時系列推移 ➔ 折れ線グラフ / 分布 ➔ ヒストグラム"
+      },
+      {
+        tier: 0,
+        gradeLabel: "統計検定 4級",
+        question: "全校生徒200人のうち、通学時間が30分未満の生徒が50人いました。この階級の「相対度数」はいくつですか？",
+        snippet: null,
+        options: [
+          "0.15",
+          "0.25",
+          "0.40",
+          "0.50"
+        ],
+        answer: 1,
+        hint: "相対度数 ＝ 対象階級の度数 ÷ 全体の総度数",
+        solution: "相対度数は 50 ÷ 200 ＝ 0.25（25%）となります。すべての階級の相対度数の総和は必ず 1.0 になります。",
+        formula: "相対度数 = (該当階級の度数) / (度数の合計)"
+      },
+
+      // -------------------------------------------------------------
+      // Tier 1: 統計検定3級相当 (要約統計と確率の基礎)
+      // -------------------------------------------------------------
+      {
+        tier: 1,
+        gradeLabel: "統計検定 3級",
+        question: "2つの量的変数 X と Y のピアソンの積率相関係数 r について、正しい記述はどれですか？",
+        snippet: null,
+        options: [
+          "相関係数 r は 0 以上 1 以下の値しか取らない",
+          "r = 0 であるとき、X と Y の間には完全な因果関係が存在する",
+          "r が負の値をとる場合、X が増加すると Y は減少する傾向がある（負の相関）",
+          "すべてのデータ点に定数 10 を加算すると、相関係数 r の値は10倍になる"
+        ],
+        answer: 2,
+        hint: "相関係数は -1 から +1 の範囲をとり、データに定数を加減乗除しても不変です。",
+        solution: "相関係数は -1 ≦ r ≦ 1 の範囲です。r < 0 は負の直線的相関を表します。また、相関関係は因果関係を意味しません（擬似相関の可能性）。",
+        formula: "相関係数 r: -1 ≦ r ≦ 1 （標準化された共分散）"
+      },
+      {
+        tier: 1,
+        gradeLabel: "統計検定 3級",
+        question: "あるクラスの数学のテストで、平均値が60点、標準偏差が10点でした。80点を取った生徒の標準化得点（zスコア）はいくらですか？",
+        snippet: "z = (x - μ) / σ",
+        options: [
+          "+1.0",
+          "+1.5",
+          "+2.0",
+          "+2.5"
+        ],
+        answer: 2,
+        hint: "平均からの差（80 - 60）を、標準偏差（10）で割って計算します。",
+        solution: "z = (80 - 60) / 10 = 20 / 10 = +2.0。これは平均値より標準偏差の2倍分高い位置にあることを意味します。",
+        formula: "標準化 (zスコア): z = (x - x̄) / s"
+      },
+      {
+        tier: 1,
+        gradeLabel: "統計検定 3級",
+        question: "箱ひげ図において、第1四分位数 Q1 = 30、第3四分位数 Q3 = 50 であるとき、外れ値として判定される基準境界（上限）はどれですか？",
+        snippet: "四分位範囲 IQR = Q3 - Q1 = 20",
+        options: [
+          "60 以上",
+          "70 以上",
+          "80 以上",
+          "90 以上"
+        ],
+        answer: 2,
+        hint: "箱ひげ図の一般的な外れ値基準は、Q3 ＋ 1.5 × IQR です。",
+        solution: "IQR = 50 - 30 = 20 です。上限の境界は Q3 + 1.5 × IQR = 50 + (1.5 × 20) = 50 + 30 = 80 となります。80を超えるデータは外れ値としてプロットされます。",
+        formula: "外れ値判定境界: [ Q1 - 1.5×IQR, Q3 + 1.5×IQR ]"
+      },
+      {
+        tier: 1,
+        gradeLabel: "統計検定 3級",
+        question: "標本サイズ 4 のデータ [ 2, 4, 6, 8 ] の標本分散（データを n で割る定義）として正しい値はどれですか？",
+        snippet: "平均値 x̄ = (2+4+6+8)/4 = 5",
+        options: [
+          "3.0",
+          "4.0",
+          "5.0",
+          "6.67"
+        ],
+        answer: 2,
+        hint: "各データの平均との差（偏差）の2乗を足し合わせて、4で割ります。",
+        solution: "偏差: (2-5)=-3, (4-5)=-1, (6-5)=1, (8-5)=3。偏差の2乗: 9, 1, 1, 9。偏差平方和 = 9+1+1+9 = 20。分散 = 20 ÷ 4 = 5.0 です。",
+        formula: "分散 s² = (1/n) Σ(xi - x̄)²"
+      },
+      {
+        tier: 1,
+        gradeLabel: "統計検定 3級",
+        question: "2つの独立な事象 A と事象 B について、P(A) = 0.4、P(B) = 0.5 であるとき、両方が同時に起こる確率 P(A ∩ B) はいくつですか？",
+        snippet: null,
+        options: [
+          "0.10",
+          "0.20",
+          "0.70",
+          "0.90"
+        ],
+        answer: 1,
+        hint: "互いに独立な事象の同時確率は、それぞれの確率の掛け算（乗法定理）です。",
+        solution: "事象が独立である場合、P(A ∩ B) = P(A) × P(B) = 0.4 × 0.5 = 0.20 となります。",
+        formula: "独立事象の乗法定理: P(A ∩ B) = P(A) · P(B)"
+      },
+
+      // -------------------------------------------------------------
+      // Tier 2: 統計検定2級相当 (推測統計・検定・推定)
+      // -------------------------------------------------------------
+      {
+        tier: 2,
+        gradeLabel: "統計検定 2級",
+        question: "正規分布 N(μ, σ²) について、平均 μ から両側に標準偏差の1.96倍の範囲 [μ - 1.96σ, μ + 1.96σ] に含まれるデータの割合はおよそ何％ですか？",
+        snippet: null,
+        options: [
+          "約 68.3%",
+          "約 90.0%",
+          "約 95.0%",
+          "約 99.7%"
+        ],
+        answer: 2,
+        hint: "統計検定2級の区間推定で最も頻出する 95% 信頼区間の基準値です。",
+        solution: "標準正規分布において、P(-1.96 ≦ Z ≦ 1.96) ≒ 0.95 (95%) です。ちなみに ±1σ は約68.3%、±2.58σ は約99.0%、±3σ は約99.7% です。",
+        formula: "標準正規分布の面積: ±1.96σ ➔ 95% / ±2.58σ ➔ 99%"
+      },
+      {
+        tier: 2,
+        gradeLabel: "統計検定 2級",
+        question: "「中心極限定理（Central Limit Theorem）」の内容として最も正確なものはどれですか？",
+        snippet: null,
+        options: [
+          "どんな母集団でも、母集団自体の分布は標本サイズ n を増やすと必ず正規分布になる",
+          "平均 μ、分散 σ² の任意の母集団から抽出した標本平均 X̄ の分布は、n が十分大きければ近似的に正規分布 N(μ, σ²/n) に従う",
+          "標本サイズ n を大きくすると、標本平均の分散は n に比例して際限なく拡大する",
+          "t分布は自由度が無限大になっても、正規分布には近づかない"
+        ],
+        answer: 1,
+        hint: "母集団自体の形ではなく、「標本平均 X̄（平均値のばらつき）」の分布についての定理です。",
+        solution: "母集団が正規分布でなくても、標本サイズ n が十分大きければ標本平均 X̄ の分布は平均 μ、分散 σ²/n の正規分布に収束します。これが推測統計の礎です。",
+        formula: "中心極限定理: X̄ ~ N(μ, σ²/n) as n ➔ ∞"
+      },
+      {
+        tier: 2,
+        gradeLabel: "統計検定 2級",
+        question: "統計的仮説検定における「第1種の過誤（Type I Error）」の定義として正しいものはどれですか？",
+        snippet: null,
+        options: [
+          "帰無仮説 H0 が偽であるのに、誤って棄却しない（採択する）誤り",
+          "帰無仮説 H0 が真であるのに、誤って棄却してしまう誤り",
+          "対立仮説 H1 が真であるときに、正しく対立仮説を採択すること（検出力）",
+          "計算ミスによってp値が1を超える誤り"
+        ],
+        answer: 1,
+        hint: "有意水準 α（通常 0.05 など）として設定される「慌て者の誤り」です。",
+        solution: "第1種の過誤は「実際には差がない（H0が真）のに、誤って差があると結論づけて棄却する」誤りです。その確率上限を有意水準 α と呼びます。偽のH0を見逃すのは第2種の過誤（β）です。",
+        formula: "第1種の過誤 α: P(H0棄却 | H0真) / 第2種の過誤 β: P(H0採択 | H0偽)"
+      },
+      {
+        tier: 2,
+        gradeLabel: "統計検定 2級",
+        question: "2群の母平均の差を検定する際、2群の「母分散が等しいとは仮定できない（不等分散）」場合に用いるべき検定法はどれですか？",
+        snippet: null,
+        options: [
+          "対応のある t 検定 (Paired t-test)",
+          "スチューデントの t 検定 (Student's t-test)",
+          "ウェルチの t 検定 (Welch's t-test)",
+          "カイ二乗 適合度検定"
+        ],
+        answer: 2,
+        hint: "等分散性を仮定せず、自由度を修正して検定統計量を求める頑健な検定です。",
+        solution: "等分散性が仮定できる場合はスチューデントのt検定、母分散が等しいと仮定できない場合は自由度をSatterthwaiteの式で補正するウェルチ（Welch）のt検定を用います。",
+        formula: "2標本検定: 等分散仮定あり ➔ スチューデント / 等分散仮定なし ➔ ウェルチ"
+      },
+      {
+        tier: 2,
+        gradeLabel: "統計検定 2級",
+        question: "単回帰分析において、目的変数の全変動のうち回帰式によって説明される割合を表す統計量「決定係数 R²」の取りうる値の範囲はどれですか？",
+        snippet: null,
+        options: [
+          "-1 ≦ R² ≦ 1",
+          "0 ≦ R² ≦ 1",
+          "0 ≦ R² < ∞",
+          "-∞ < R² < ∞"
+        ],
+        answer: 1,
+        hint: "単回帰では相関係数 r の2乗（r²）に等しくなります。",
+        solution: "決定係数 R²（寄与率）は全平方和に対する回帰平方和の比率であり、0（全く説明できない）から 1（完全に予測できる）の範囲を取ります。",
+        formula: "決定係数 R² = SSR / SST = 1 - (SSE / SST)"
+      },
+
+      // -------------------------------------------------------------
+      // Tier 3: データサイエンス (DS基礎・発展)
+      // -------------------------------------------------------------
+      {
+        tier: 3,
+        gradeLabel: "DS 基礎/発展",
+        question: "機械学習の二値分類モデルの評価において、「陽性と予測したもののうち、実際に本当に陽性だった割合」を表す指標はどれですか？",
+        snippet: "混同行列: TP (真陽性), FP (偽陽性), FN (偽陰性), TN (真陰性)",
+        options: [
+          "再現率 / 感度 (Recall / Sensitivity)",
+          "適合率 / 精度 (Precision)",
+          "特異度 (Specificity)",
+          "正解率 (Accuracy)"
+        ],
+        answer: 1,
+        hint: "Precision = TP / (TP + FP) です。誤検知（偽陽性 FP）を減らしたい時に重視します。",
+        solution: "陽性予測の的中率は「適合率 (Precision = TP / (TP+FP))」です。一方、実際の陽性のうち見落とさず検出できた割合は「再現率 (Recall = TP / (TP+FN))」です。",
+        formula: "適合率 Precision = TP / (TP + FP) vs 再現率 Recall = TP / (TP + FN)"
+      },
+      {
+        tier: 3,
+        gradeLabel: "DS 基礎/発展",
+        question: "過学習（Overfitting）の対策手法として「適切でない」ものはどれですか？",
+        snippet: null,
+        options: [
+          "k-分割交差検証 (k-fold Cross Validation) を実施して汎化性能を測定する",
+          "正則化項（L1ノルムやL2ノルム）を損失関数に追加する",
+          "学習データのサンプル数を大幅に減らしてモデルを単純化する",
+          "決定木モデルにおいて木の最大深さ（max_depth）に制限を設けて枝刈りを行う"
+        ],
+        answer: 2,
+        hint: "学習データを減らすと、モデルはノイズに過剰適応しやすくなり逆効果です。",
+        solution: "学習データのサンプル数を減らすと過学習が悪化します（データ拡張 Data Augmentation が効果的）。正則化、交差検証、決定木の深さ制限は代表的な過学習防止策です。",
+        formula: "過学習対策: 正則化 (L1/L2), 早期終了, 枝刈り, データ数増加"
+      },
+      {
+        tier: 3,
+        gradeLabel: "DS 基礎/発展",
+        question: "Lasso回帰（L1正則化）がRidge回帰（L2正則化）と比較して持つ顕著な特徴はどれですか？",
+        snippet: "損失関数 + λ × 正則化項",
+        options: [
+          "すべての特徴量の係数を均等に縮小するが、0にはしない",
+          "一部の特徴量の重み（回帰係数）を完全に0にし、自動的に特徴量選択を行える",
+          "外れ値に対して非常に弱く、計算が必ず発散する",
+          "回帰タスクには使えず、分類タスク専用である"
+        ],
+        answer: 1,
+        hint: "L1正則化の制約領域はひし形（角がある）のため、解が軸上で0になりやすい（スパース性）。",
+        solution: "Lasso（L1正則化）は係数の絶対値和をペナルティとするため、重要でない特徴量の係数を厳密にゼロにし、疎（スパース）なモデルを生成（特徴量選択）します。",
+        formula: "L1正則化 (Lasso): Σ|wi| ➔ スパース解 / L2正則化 (Ridge): Σwi² ➔ 縮小解"
+      },
+      {
+        tier: 3,
+        gradeLabel: "DS 基礎/発展",
+        question: "ROC曲線（Receiver Operating Characteristic）の縦軸と横軸の組み合わせとして正しいものはどれですか？",
+        snippet: null,
+        options: [
+          "横軸: 適合率 (Precision) 、 縦軸: 再現率 (Recall)",
+          "横軸: 偽陽性率 (FPR = 1 - 特異度) 、 縦軸: 真陽性率 (TPR = 再現率)",
+          "横軸: 正解率 (Accuracy) 、 縦軸: 損失 (Loss)",
+          "横軸: 特異度 (Specificity) 、 縦軸: F1値"
+        ],
+        answer: 1,
+        hint: "分類閾値を変化させたときの FPR (偽陽性率) と TPR (真陽性率) の軌跡です。",
+        solution: "ROC曲線は、横軸に偽陽性率 FPR（1 - Specificity）、縦軸に真陽性率 TPR（Sensitivity / Recall）をとります。完全な分類器のAUCは 1.0、ランダム分類器は 0.5 です。",
+        formula: "ROC空間: 横軸 FPR (FP/N) vs 縦軸 TPR (TP/P) ➔ AUC面積評価"
+      },
+      {
+        tier: 3,
+        gradeLabel: "DS 基礎/発展",
+        question: "データの尺度水準（スティーヴンスの分類）のうち、「比率尺度（比例尺度）」に該当するものはどれですか？",
+        snippet: null,
+        options: [
+          "郵便番号や社員番号",
+          "製品の満足度アンケート（1:不満, 2:普通, 3:満足）",
+          "摂氏温度（0℃ は熱が全く存在しない絶対零度ではない）",
+          "商品の価格や人間の体重（絶対的な原点 0 が存在する）"
+        ],
+        answer: 3,
+        hint: "「0」が絶対的な無を意味し、「AはBの2倍」という比率の計算が成り立つ尺度です。",
+        solution: "価格や体重は絶対的な原点0を持ち、比率の計算（2倍など）が意味をなす「比率尺度」です。満足度は順序尺度、摂氏温度は間隔尺度、郵便番号は名義尺度です。",
+        formula: "尺度水準: 名義 ➔ 順序 ➔ 間隔 (比率無効) ➔ 比率 (四則演算すべて可能)"
+      },
+
+      // -------------------------------------------------------------
+      // Tier 4: 統計検定 準1級 / DSエキスパート相当
+      // -------------------------------------------------------------
+      {
+        tier: 4,
+        gradeLabel: "準1級/DSエキスパート",
+        question: "主成分分析（PCA）において、第1主成分（PC1）が満たす統計的性質として正しいものはどれですか？",
+        snippet: null,
+        options: [
+          "すべての変数の平均値をゼロではなく最大にする軸である",
+          "多次元データを射影したときの「分散が最大」となる線形結合の方向ベクトルである",
+          "第2主成分と必ず 45 度の角度で交差する",
+          "各変数の観測誤差の総和を最大化する"
+        ],
+        answer: 1,
+        hint: "データの情報量（ばらつき）を最もよく保存する直交軸を探す手法です。",
+        solution: "第1主成分は元の多変量データの分散を最大化する直交合成変数です。共分散行列（または相関行列）の最大固有値に対応する固有ベクトルがその主成分負荷量となります。",
+        formula: "PCA: 分散最大化 ➔ 共分散行列の固有値問題 Σv = λv"
+      },
+      {
+        tier: 4,
+        gradeLabel: "準1級/DSエキスパート",
+        question: "ベイズ統計学において、データ D が観測された後のパラメータ θ の確率を表す「事後分布 P(θ | D)」を求める式（ベイズの更新）の比例関係はどれですか？",
+        snippet: null,
+        options: [
+          "事後分布 ∝ 尤度 P(D | θ) × 事前分布 P(θ)",
+          "事後分布 ∝ 尤度 P(D | θ) ÷ 事前分布 P(θ)",
+          "事後分布 ∝ 周辺尤度 P(D) × 事前分布 P(θ)",
+          "事後分布 ＝ 尤度 P(D | θ) ＋ 事前分布 P(θ)"
+        ],
+        answer: 0,
+        hint: "ベイズの定理: P(θ|D) = [ P(D|θ) P(θ) ] / P(D)",
+        solution: "事後分布 P(θ|D) は「尤度 P(D|θ)」と「事前分布 P(θ)」の積に比例します。分母の P(D) は規格化定数（周辺尤度）です。",
+        formula: "ベイズの更新式: P(θ|D) ∝ P(D|θ) · P(θ) (Posterior ∝ Likelihood × Prior)"
+      },
+      {
+        tier: 4,
+        gradeLabel: "準1級/DSエキスパート",
+        question: "WebサービスのA/Bテストで「多重検定（Multiple Testing）の誤謬」を防ぐための代表的な補正法（Bonferroni補正など）の考え方はどれですか？",
+        snippet: null,
+        options: [
+          "テストする比較群の数が増えるほど、有意水準 α の値を大きく引き上げる",
+          "検定を m 回繰り返すとき、全体の第1種の過誤率（FWER）を抑えるため、各検定の有意水準を α/m に厳格化する",
+          "標本サイズ n を半分に減らして検出力を意図的に下げる",
+          "p値が最も小さい群だけを選び、他の群を分析から除外する"
+        ],
+        answer: 1,
+        hint: "検定回数が増えると「どれか1つでも偶然有意になる確率」が跳ね上がるため、個別検定の基準を厳しくします。",
+        solution: "複数回検定を繰り返すと偽陽性リスク（FWER）が増大します。ボンフェローニ補正では、全体の有意水準 α を検定回数 m で割った α/m を個別検定のしきい値とします。",
+        formula: "ボンフェローニ補正: 個別有意水準 α' = α / m"
+      },
+      {
+        tier: 4,
+        gradeLabel: "準1級/DSエキスパート",
+        question: "観察データから施策の効果を評価する因果推論において、「交絡因子（Confounder）」を調整するための手法として適切なものはどれですか？",
+        snippet: null,
+        options: [
+          "傾向スコアマッチング (Propensity Score Matching)",
+          "k-means クラスタリングによるラベル付け",
+          "主成分分析による次元削減のみの適用",
+          "目的変数の対数変換のみの適用"
+        ],
+        answer: 0,
+        hint: "処置群と対照群で共変量の分布を揃えるため、処置を受ける条件付き確率（傾向スコア）を用います。",
+        solution: "共変量から処置を受ける確率（傾向スコア e(X)）を推定し、スコアが近いサンプル同士をマッチングすることで、交絡バイアスを調整して因果効果（ATE/ATT）を推定します。",
+        formula: "傾向スコア: e(X) = P(Z=1 | X) （選択バイアスの低減）"
+      },
+      {
+        tier: 4,
+        gradeLabel: "準1級/DSエキスパート",
+        question: "時系列データが「弱定常（Weakly Stationary）」であるための条件に含まれないものはどれですか？",
+        snippet: null,
+        options: [
+          "期待値（平均）が時間に依存せず一定である",
+          "自己共分散が時点 t ではなく時間差（ラグ k）のみに依存する",
+          "分散が時間に依存せず有限で一定である",
+          "データが必ず正規分布に従い、自己相関がすべてのラグで厳密にゼロである"
+        ],
+        answer: 3,
+        hint: "弱定常性は「平均一定・分散一定・自己共分散がラグ依存」の3条件であり、自己相関がゼロである必要はありません。",
+        solution: "弱定常性は (1) 平均が一定、(2) 分散が有限かつ一定、(3) ラグkの自己共分散が時点tに無関係、を満たすことです。自己相関が存在しても構いません（ARモデルなど）。",
+        formula: "弱定常性の定義: E[Yt] = μ, Var(Yt) = σ², Cov(Yt, Yt-k) = γk"
+      }
+    ];
+
+    /* ==========================================================================
+       3. プレイヤー状態管理 (Progression & LocalStorage)
+       ========================================================================== */
+    const RANKS = [
+      { minExp: 0, name: "🌱 データ見習い (Lv.1)", icon: "🌱" },
+      { minExp: 100, name: "📊 記述統計アナリスト (Lv.2)", icon: "📊" },
+      { minExp: 250, name: "🏛️ 推測統計マスター (Lv.3)", icon: "🏛️" },
+      { minExp: 450, name: "⚙️ MLデータエンジニア (Lv.4)", icon: "⚙️" },
+      { minExp: 750, name: "👑 データサイエンス・マスター (Lv.5)", icon: "👑" },
+      { minExp: 1100, name: "🌟 統計大賢者・Grand Master", icon: "🌟" }
+    ];
+
+    let state = {
+      hp: 100,
+      sp: 50,
+      exp: 0,
+      score: 0,
+      streak: 0,
+      currentTier: 0,
+      currentQIndex: 0,
+      tierProgress: [0, 0, 0, 0, 0],
+      answeredHistory: {},
+      selectedExamGrades: ["4", "3", "2", "ds", "adv"]
+    };
+
+    function loadSavedState() {
+      try {
+        const raw = localStorage.getItem('stat_quest_save_v1');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          state = { ...state, ...parsed };
+        }
+      } catch (e) {
+        console.warn("Storage load error", e);
+      }
+      updateHeaderUI();
+      updateTierSelectorUI();
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem('stat_quest_save_v1', JSON.stringify(state));
+      } catch (e) {}
+    }
+
+    function updateHeaderUI() {
+      document.getElementById('hpVal').innerText = state.hp;
+      document.getElementById('spVal').innerText = state.sp;
+      document.getElementById('scoreVal').innerText = state.score;
+      document.getElementById('streakCount').innerText = state.streak;
+
+      // ランク判定
+      let currentRank = RANKS[0];
+      let nextRank = RANKS[1];
+      for (let i = 0; i < RANKS.length; i++) {
+        if (state.exp >= RANKS[i].minExp) {
+          currentRank = RANKS[i];
+          nextRank = RANKS[i+1] || null;
+        }
+      }
+
+      document.getElementById('rankName').innerHTML = `${currentRank.icon} ${currentRank.name}`;
+      if (nextRank) {
+        const range = nextRank.minExp - currentRank.minExp;
+        const current = state.exp - currentRank.minExp;
+        const pct = Math.min(100, Math.max(0, Math.round((current / range) * 100)));
+        document.getElementById('expFill').style.width = pct + '%';
+        document.getElementById('rankExpText').innerText = `EXP: ${state.exp} / ${nextRank.minExp}`;
+      } else {
+        document.getElementById('expFill').style.width = '100%';
+        document.getElementById('rankExpText').innerText = `EXP: ${state.exp} (MAX)`;
+      }
+
+      // 踏破問題数
+      let totalSolved = 0;
+      state.tierProgress.forEach(c => totalSolved += c);
+      document.getElementById('solvedCount').innerText = totalSolved;
+    }
+
+    function updateTierSelectorUI() {
+      for (let i = 0; i < 5; i++) {
+        const card = document.getElementById(`tierCard${i}`);
+        if (card) {
+          if (i === state.currentTier) {
+            card.classList.add('active');
+          } else {
+            card.classList.remove('active');
+          }
+        }
+        const prog = document.getElementById(`tierProg${i}`);
+        if (prog) {
+          prog.innerText = `${state.tierProgress[i]} / 5 クリア`;
+        }
+      }
+    }
+
+    /* ==========================================================================
+       4. クエスト進行エンジン (Quest Battle Logic)
+       ========================================================================== */
+    let currentTierQuestions = [];
+    let currentQ = null;
+    let isAnswered = false;
+
+    function selectTier(tierIndex) {
+      sound.click();
+      state.currentTier = tierIndex;
+      state.currentQIndex = 0;
+      updateTierSelectorUI();
+      loadTierQuestions();
+    }
+
+    function loadTierQuestions() {
+      currentTierQuestions = QUESTION_BANK.filter(q => q.tier === state.currentTier);
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      isAnswered = false;
+      document.getElementById('solutionDrawer').style.display = 'none';
+
+      if (state.currentQIndex >= currentTierQuestions.length) {
+        state.currentQIndex = 0; // ループまたは達成
+      }
+
+      currentQ = currentTierQuestions[state.currentQIndex];
+
+      document.getElementById('arenaGradeBadge').innerText = currentQ.gradeLabel;
+      document.getElementById('arenaIndexText').innerText = `Quest ${state.currentQIndex + 1} / ${currentTierQuestions.length}`;
+      document.getElementById('qText').innerText = currentQ.question;
+
+      const snippetBox = document.getElementById('qSnippetBox');
+      if (currentQ.snippet) {
+        snippetBox.innerHTML = `<div class="q-data-snippet">${currentQ.snippet}</div>`;
+      } else {
+        snippetBox.innerHTML = '';
+      }
+
+      const grid = document.getElementById('optionsGrid');
+      grid.innerHTML = '';
+
+      currentQ.options.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.id = `optBtn_${idx}`;
+        btn.innerHTML = `
+          <div class="opt-num">${['A', 'B', 'C', 'D'][idx]}</div>
+          <div style="flex:1;">${optText}</div>
+        `;
+        btn.onclick = () => chooseAnswer(idx);
+        grid.appendChild(btn);
+      });
+
+      // スキルボタン再有効化
+      document.getElementById('skill5050').disabled = state.sp < 20;
+      document.getElementById('skillHint').disabled = state.sp < 15;
+    }
+
+    function chooseAnswer(selectedIdx) {
+      if (isAnswered) return;
+      isAnswered = true;
+
+      const isCorrect = (selectedIdx === currentQ.answer);
+      const chosenBtn = document.getElementById(`optBtn_${selectedIdx}`);
+      const correctBtn = document.getElementById(`optBtn_${currentQ.answer}`);
+
+      // ロック
+      const allBtns = document.querySelectorAll('.opt-btn');
+      allBtns.forEach(b => b.classList.add('locked'));
+
+      const solDrawer = document.getElementById('solutionDrawer');
+      const solHeader = document.getElementById('solHeader');
+      const solIcon = document.getElementById('solIcon');
+      const solTitle = document.getElementById('solTitle');
+      const solText = document.getElementById('solText');
+      const solFormula = document.getElementById('solFormula');
+
+      if (isCorrect) {
+        sound.correct();
+        chosenBtn.classList.add('correct');
+        state.streak++;
+        const expGain = 20 + (state.streak * 5);
+        state.exp += expGain;
+        state.score += (100 * state.streak);
+        state.sp = Math.min(100, state.sp + 10);
+
+        if (state.tierProgress[state.currentTier] <= state.currentQIndex) {
+          state.tierProgress[state.currentTier] = Math.min(5, state.currentQIndex + 1);
+        }
+
+        solHeader.className = 'sol-header correct';
+        solIcon.innerText = '🎉';
+        solTitle.innerText = `正解！素晴らしい考察です (+${expGain} EXP)`;
+      } else {
+        sound.wrong();
+        chosenBtn.classList.add('wrong');
+        correctBtn.classList.add('correct');
+        state.streak = 0;
+        state.hp = Math.max(10, state.hp - 15);
+
+        solHeader.className = 'sol-header wrong';
+        solIcon.innerText = '❌';
+        solTitle.innerText = '残念、不正解です...';
+      }
+
+      solText.innerText = currentQ.solution;
+      solFormula.innerText = `💡 解法公式 / キーポイント: ${currentQ.formula}`;
+      solDrawer.style.display = 'block';
+
+      updateHeaderUI();
+      updateTierSelectorUI();
+      saveState();
+    }
+
+    function nextQuestion() {
+      sound.click();
+      state.currentQIndex++;
+      if (state.currentQIndex >= currentTierQuestions.length) {
+        sound.levelUp();
+        alert(`🏆 階梯【${document.getElementById(`tierCard${state.currentTier}`).querySelector('.tier-name').innerText}】の全クエストを踏破しました！`);
+        state.currentQIndex = 0;
+      }
+      renderQuestion();
+    }
+
+    // スキル使用
+    function useSkill(type) {
+      if (isAnswered) return;
+      if (type === '5050') {
+        if (state.sp < 20) return;
+        state.sp -= 20;
+        sound.click();
+        document.getElementById('skill5050').disabled = true;
+
+        // 誤答インデックスを2つ選んでdim
+        const wrongIndices = [0, 1, 2, 3].filter(i => i !== currentQ.answer);
+        wrongIndices.sort(() => Math.random() - 0.5);
+        document.getElementById(`optBtn_${wrongIndices[0]}`).classList.add('dimmed');
+        document.getElementById(`optBtn_${wrongIndices[1]}`).classList.add('dimmed');
+      } else if (type === 'hint') {
+        if (state.sp < 15) return;
+        state.sp -= 15;
+        sound.click();
+        document.getElementById('skillHint').disabled = true;
+        alert(`💡 思考のヒント:\n${currentQ.hint}`);
+      }
+      updateHeaderUI();
+      saveState();
+    }
+
+    /* ==========================================================================
+       5. 直感実験室 (Interactive Canvas Visualizers)
+       ========================================================================== */
+    // 標準正規分布の密度関数
+    function normalPDF(x) {
+      return (1 / Math.sqrt(2 * Math.PI)) * Math.exp(-0.5 * x * x);
+    }
+    // 標準正規累積分布関数 (近似)
+    function normalCDF(x) {
+      const t = 1 / (1 + 0.2316419 * Math.abs(x));
+      const d = 0.3989423 * Math.exp(-x * x / 2);
+      let p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274))));
+      if (x > 0) p = 1 - p;
+      return p;
+    }
+
+    function updateDistLab() {
+      const canvas = document.getElementById('canvasDist');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+
+      const z = parseFloat(document.getElementById('zSlider').value);
+      const alpha = parseFloat(document.getElementById('alphaSelect').value);
+      const tailType = document.querySelector('input[name="tailType"]:checked').value;
+
+      document.getElementById('zValDisplay').innerText = z.toFixed(2);
+
+      // 臨界値の決定
+      let critZ = 1.96;
+      if (tailType === 'two') {
+        if (alpha === 0.05) critZ = 1.96;
+        else if (alpha === 0.01) critZ = 2.576;
+        else if (alpha === 0.10) critZ = 1.645;
+        document.getElementById('alphaDisplay').innerText = `α = ${alpha} (両側臨界値: ±${critZ})`;
+      } else {
+        if (alpha === 0.05) critZ = 1.645;
+        else if (alpha === 0.01) critZ = 2.326;
+        else if (alpha === 0.10) critZ = 1.282;
+        document.getElementById('alphaDisplay').innerText = `α = ${alpha} (右側臨界値: +${critZ})`;
+      }
+
+      // p値の計算
+      let pVal = 0;
+      if (tailType === 'two') {
+        pVal = 2 * (1 - normalCDF(Math.abs(z)));
+      } else {
+        pVal = 1 - normalCDF(z);
+      }
+      document.getElementById('metricPVal').innerText = pVal.toFixed(4);
+
+      const isReject = (pVal <= alpha);
+      const decElem = document.getElementById('metricDecision');
+      const meanElem = document.getElementById('metricMeaning');
+      if (isReject) {
+        decElem.innerText = "帰無仮説 H0 を棄却";
+        decElem.style.color = "#10b981";
+        meanElem.innerText = "統計的有意差あり (p ≤ α)";
+      } else {
+        decElem.innerText = "帰無仮説 H0 を採択 (保留)";
+        decElem.style.color = "#f43f5e";
+        meanElem.innerText = "有意差なし (差は偶然の範囲内)";
+      }
+
+      // Canvas 描画
+      ctx.clearRect(0, 0, w, h);
+      const xMin = -4, xMax = 4;
+      const toCanvasX = (val) => ((val - xMin) / (xMax - xMin)) * w;
+      const toCanvasY = (val) => h - 35 - (val / 0.45) * (h - 70);
+
+      // 1. 棄却域 (赤) の塗りつぶし
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.4)';
+      if (tailType === 'two') {
+        // 左棄却域
+        ctx.beginPath();
+        ctx.moveTo(toCanvasX(xMin), toCanvasY(0));
+        for (let x = xMin; x <= -critZ; x += 0.05) {
+          ctx.lineTo(toCanvasX(x), toCanvasY(normalPDF(x)));
+        }
+        ctx.lineTo(toCanvasX(-critZ), toCanvasY(0));
+        ctx.closePath();
+        ctx.fill();
+
+        // 右棄却域
+        ctx.beginPath();
+        ctx.moveTo(toCanvasX(critZ), toCanvasY(0));
+        for (let x = critZ; x <= xMax; x += 0.05) {
+          ctx.lineTo(toCanvasX(x), toCanvasY(normalPDF(x)));
+        }
+        ctx.lineTo(toCanvasX(xMax), toCanvasY(0));
+        ctx.closePath();
+        ctx.fill();
+      } else {
+        // 右側のみ
+        ctx.beginPath();
+        ctx.moveTo(toCanvasX(critZ), toCanvasY(0));
+        for (let x = critZ; x <= xMax; x += 0.05) {
+          ctx.lineTo(toCanvasX(x), toCanvasY(normalPDF(x)));
+        }
+        ctx.lineTo(toCanvasX(xMax), toCanvasY(0));
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // 2. p値領域 (黄色ストライプ)
+      ctx.fillStyle = 'rgba(250, 204, 21, 0.45)';
+      if (tailType === 'two') {
+        const absZ = Math.abs(z);
+        // 右側
+        ctx.beginPath();
+        ctx.moveTo(toCanvasX(absZ), toCanvasY(0));
+        for (let x = absZ; x <= xMax; x += 0.05) {
+          ctx.lineTo(toCanvasX(x), toCanvasY(normalPDF(x)));
+        }
+        ctx.lineTo(toCanvasX(xMax), toCanvasY(0));
+        ctx.closePath();
+        ctx.fill();
+        // 左側
+        ctx.beginPath();
+        ctx.moveTo(toCanvasX(xMin), toCanvasY(0));
+        for (let x = xMin; x <= -absZ; x += 0.05) {
+          ctx.lineTo(toCanvasX(x), toCanvasY(normalPDF(x)));
+        }
+        ctx.lineTo(toCanvasX(-absZ), toCanvasY(0));
+        ctx.closePath();
+        ctx.fill();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(toCanvasX(z), toCanvasY(0));
+        for (let x = z; x <= xMax; x += 0.05) {
+          ctx.lineTo(toCanvasX(x), toCanvasY(normalPDF(x)));
+        }
+        ctx.lineTo(toCanvasX(xMax), toCanvasY(0));
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // 3. 正規分布の輪郭曲線
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (let x = xMin; x <= xMax; x += 0.04) {
+        const cx = toCanvasX(x);
+        const cy = toCanvasY(normalPDF(x));
+        if (x === xMin) ctx.moveTo(cx, cy);
+        else ctx.lineTo(cx, cy);
+      }
+      ctx.stroke();
+
+      // 4. 基準線と目盛り
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, toCanvasY(0));
+      ctx.lineTo(w, toCanvasY(0));
+      ctx.stroke();
+
+      // Z軸のラベル
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '11px monospace';
+      ctx.textAlign = 'center';
+      for (let mark = -3; mark <= 3; mark++) {
+        ctx.fillText(mark, toCanvasX(mark), toCanvasY(0) + 16);
+      }
+
+      // 5. 現在の z 統計量を示す縦線
+      const currX = toCanvasX(z);
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      ctx.moveTo(currX, toCanvasY(0));
+      ctx.lineTo(currX, toCanvasY(normalPDF(z)));
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // z ポインタピン
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.arc(currX, toCanvasY(normalPDF(z)), 6, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText(`z = ${z.toFixed(2)}`, currX, toCanvasY(normalPDF(z)) - 10);
+    }
+
+    // 混同行列ラボの描画
+    function updateConfLab() {
+      const canvas = document.getElementById('canvasConf');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const w = canvas.width;
+      const h = canvas.height;
+
+      const th = parseFloat(document.getElementById('threshSlider').value);
+      document.getElementById('threshDisplay').innerText = th.toFixed(2);
+
+      // シミュレーション用合成データ数 (陽性 50, 陰性 50)
+      // 陽性スコア ~ N(0.65, 0.15), 陰性スコア ~ N(0.35, 0.15)
+      let TP = 0, FN = 0, FP = 0, TN = 0;
+      const totalP = 50, totalN = 50;
+
+      // 累積分布を用いた理論計算
+      const cdfP = (x) => normalCDF((x - 0.65) / 0.15);
+      const cdfN = (x) => normalCDF((x - 0.35) / 0.15);
+
+      FN = Math.round(totalP * cdfP(th));
+      TP = totalP - FN;
+      TN = Math.round(totalN * cdfN(th));
+      FP = totalN - TN;
+
+      const precision = (TP + FP > 0) ? (TP / (TP + FP)) : 0;
+      const recall = (TP + FN > 0) ? (TP / (TP + FN)) : 0;
+      const f1 = (precision + recall > 0) ? (2 * precision * recall / (precision + recall)) : 0;
+
+      document.getElementById('confTP').innerText = `${TP} / ${FN}`;
+      document.getElementById('confFP').innerText = `${FP} / ${TN}`;
+      document.getElementById('confPrec').innerText = (precision * 100).toFixed(1) + '%';
+      document.getElementById('confRecall').innerText = (recall * 100).toFixed(1) + '%';
+      document.getElementById('confF1').innerText = f1.toFixed(3);
+
+      // Canvas描画
+      ctx.clearRect(0, 0, w, h);
+      const toX = (v) => v * w;
+      const toY = (v) => h - 35 - v * (h - 70);
+
+      // 陰性分布 (青)
+      ctx.fillStyle = 'rgba(56, 189, 248, 0.25)';
+      ctx.beginPath();
+      ctx.moveTo(toX(0), toY(0));
+      for (let x = 0; x <= 1; x += 0.02) {
+        const pdf = (1 / (0.15 * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - 0.35) / 0.15, 2)) / 3.0;
+        ctx.lineTo(toX(x), toY(pdf));
+      }
+      ctx.lineTo(toX(1), toY(0));
+      ctx.closePath();
+      ctx.fill();
+
+      // 陽性分布 (橙)
+      ctx.fillStyle = 'rgba(245, 158, 11, 0.25)';
+      ctx.beginPath();
+      ctx.moveTo(toX(0), toY(0));
+      for (let x = 0; x <= 1; x += 0.02) {
+        const pdf = (1 / (0.15 * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - 0.65) / 0.15, 2)) / 3.0;
+        ctx.lineTo(toX(x), toY(pdf));
+      }
+      ctx.lineTo(toX(1), toY(0));
+      ctx.closePath();
+      ctx.fill();
+
+      // 境界線
+      const lineX = toX(th);
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(lineX, 10);
+      ctx.lineTo(lineX, h - 35);
+      ctx.stroke();
+
+      // ラベル
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 13px sans-serif';
+      ctx.fillText("陰性データ分布 (Negative)", toX(0.12), 40);
+
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillText("陽性データ分布 (Positive)", toX(0.62), 40);
+
+      ctx.fillStyle = '#ef4444';
+      ctx.fillText(`閾値: ${th.toFixed(2)}`, lineX + 6, 25);
+
+      // 領域判定文字
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '12px sans-serif';
+      ctx.fillText("← 陰性と判定 (Negative)", lineX - 160, h - 14);
+      ctx.fillText("陽性と判定 (Positive) →", lineX + 20, h - 14);
+    }
+
+    /* ==========================================================================
+       6. CBT模擬試験エンジン (Timed Mock Exam)
+       ========================================================================== */
+    let examState = {
+      active: false,
+      timerInterval: null,
+      timeLeft: 600, // 10分
+      questions: [],
+      currentIndex: 0,
+      userAnswers: [],
+      startTime: 0
+    };
+
+    function toggleExamGrade(btn) {
+      sound.click();
+      btn.classList.toggle('selected');
+      const grade = btn.dataset.grade;
+      if (btn.classList.contains('selected')) {
+        if (!state.selectedExamGrades.includes(grade)) state.selectedExamGrades.push(grade);
+      } else {
+        state.selectedExamGrades = state.selectedExamGrades.filter(g => g !== grade);
+      }
+    }
+
+    function startExam() {
+      if (state.selectedExamGrades.length === 0) {
+        alert("少なくとも1つのグレードを選択してください！");
+        return;
+      }
+      sound.click();
+
+      // 対象グレードからランダム10問抽出
+      const gradeMap = { "4": 0, "3": 1, "2": 2, "ds": 3, "adv": 4 };
+      const targetTiers = state.selectedExamGrades.map(g => gradeMap[g]);
+      const pool = QUESTION_BANK.filter(q => targetTiers.includes(q.tier));
+
+      if (pool.length < 5) {
+        alert("問題数が足りません。もっと多くのグレードを選択してください。");
+        return;
+      }
+
+      // シャッフルして10問（または最大プール数）
+      pool.sort(() => Math.random() - 0.5);
+      examState.questions = pool.slice(0, Math.min(10, pool.length));
+      examState.currentIndex = 0;
+      examState.userAnswers = [];
+      examState.timeLeft = 600;
+      examState.active = true;
+      examState.startTime = Date.now();
+
+      document.getElementById('examIntroBox').style.display = 'none';
+      document.getElementById('examResultBox').style.display = 'none';
+      document.getElementById('examArenaBox').style.display = 'block';
+
+      if (examState.timerInterval) clearInterval(examState.timerInterval);
+      examState.timerInterval = setInterval(examTimerTick, 1000);
+
+      renderExamQuestion();
+    }
+
+    function examTimerTick() {
+      examState.timeLeft--;
+      const min = Math.floor(examState.timeLeft / 60);
+      const sec = examState.timeLeft % 60;
+      document.getElementById('examTimer').innerText = `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+
+      if (examState.timeLeft <= 0) {
+        finishExam();
+      }
+    }
+
+    function renderExamQuestion() {
+      const q = examState.questions[examState.currentIndex];
+      document.getElementById('examCurrentGrade').innerText = q.gradeLabel;
+      document.getElementById('examIndex').innerText = `Question ${examState.currentIndex + 1} / ${examState.questions.length}`;
+      document.getElementById('examQText').innerText = q.question;
+
+      const snippet = document.getElementById('examQSnippet');
+      if (q.snippet) {
+        snippet.innerHTML = `<div class="q-data-snippet">${q.snippet}</div>`;
+      } else {
+        snippet.innerHTML = '';
+      }
+
+      const grid = document.getElementById('examOptionsGrid');
+      grid.innerHTML = '';
+
+      q.options.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.innerHTML = `
+          <div class="opt-num">${['A', 'B', 'C', 'D'][idx]}</div>
+          <div style="flex:1;">${optText}</div>
+        `;
+        btn.onclick = () => submitExamAnswer(idx);
+        grid.appendChild(btn);
+      });
+    }
+
+    function submitExamAnswer(idx) {
+      sound.click();
+      examState.userAnswers.push(idx);
+      examState.currentIndex++;
+      if (examState.currentIndex >= examState.questions.length) {
+        finishExam();
+      } else {
+        renderExamQuestion();
+      }
+    }
+
+    function finishExam() {
+      if (examState.timerInterval) clearInterval(examState.timerInterval);
+      examState.active = false;
+
+      let correctCount = 0;
+      examState.questions.forEach((q, i) => {
+        if (examState.userAnswers[i] === q.answer) correctCount++;
+      });
+
+      const total = examState.questions.length;
+      const rate = Math.round((correctCount / total) * 100);
+      const isPass = rate >= 70;
+
+      const timeUsedSec = 600 - examState.timeLeft;
+      const uMin = Math.floor(timeUsedSec / 60);
+      const uSec = timeUsedSec % 60;
+
+      document.getElementById('examArenaBox').style.display = 'none';
+      document.getElementById('examResultBox').style.display = 'block';
+
+      const iconElem = document.getElementById('examResultIcon');
+      const titleElem = document.getElementById('examResultTitle');
+      const descElem = document.getElementById('examResultDesc');
+      const passElem = document.getElementById('resPassFail');
+      const timeElem = document.getElementById('resTimeUsed');
+      const expElem = document.getElementById('resExpGained');
+
+      timeElem.innerText = `${uMin.toString().padStart(2, '0')}:${uSec.toString().padStart(2, '0')}`;
+
+      if (isPass) {
+        sound.levelUp();
+        iconElem.innerText = '🏆';
+        titleElem.innerText = '合格！基準スコアをクリアしました！';
+        passElem.innerText = '合格 (PASS)';
+        passElem.style.color = '#10b981';
+        const expAdd = correctCount * 30 + 100;
+        state.exp += expAdd;
+        expElem.innerText = `+${expAdd}`;
+      } else {
+        sound.wrong();
+        iconElem.innerText = '📚';
+        titleElem.innerText = '惜しい！不合格です。復習しましょう';
+        passElem.innerText = '不合格 (FAIL)';
+        passElem.style.color = '#f43f5e';
+        const expAdd = correctCount * 15;
+        state.exp += expAdd;
+        expElem.innerText = `+${expAdd}`;
+      }
+
+      descElem.innerText = `正解数: ${correctCount} / ${total} 問 (正答率: ${rate}%) · 合格ライン: 70%`;
+
+      updateHeaderUI();
+      saveState();
+    }
+
+    function resetExamView() {
+      sound.click();
+      document.getElementById('examResultBox').style.display = 'none';
+      document.getElementById('examIntroBox').style.display = 'block';
+    }
+
+    /* ==========================================================================
+       7. タブ切り替え制御
+       ========================================================================== */
+    function switchTab(tabName) {
+      sound.click();
+      ['quest', 'lab', 'exam', 'codex'].forEach(t => {
+        const tabBtn = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        const panel = document.getElementById(`panel${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        if (t === tabName) {
+          tabBtn.classList.add('active');
+          panel.style.display = 'block';
+        } else {
+          tabBtn.classList.remove('active');
+          panel.style.display = 'none';
+        }
+      });
+
+      if (tabName === 'lab') {
+        setTimeout(() => {
+          updateDistLab();
+          updateConfLab();
+        }, 50);
+      }
+    }
+
+    /* ==========================================================================
+       8. 初期化エントリーポイント
+       ========================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSavedState();
+      loadTierQuestions();
+    });
+  </script>
+</body>
+</html>

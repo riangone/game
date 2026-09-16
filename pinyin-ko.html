@@ -1,0 +1,3182 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>신나는 병음 어드벤처 - 한국 어린이 중국어 병음 스도쿠 & 발음 백과</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #FCFBF7;
+    --bg-card: #FFFFFF;
+    --primary: #10B981;
+    --primary-hover: #059669;
+    --primary-light: #ECFDF5;
+    --primary-dark: #065F46;
+    --secondary: #F59E0B;
+    --secondary-light: #FEF3C7;
+    --accent-pink: #FF6B8B;
+    --accent-pink-light: #FFF0F3;
+    --accent-blue: #0EA5E9;
+    --accent-blue-light: #E0F2FE;
+    --accent-purple: #8B5CF6;
+    --accent-purple-light: #F3E8FF;
+    --accent-orange: #F97316;
+    --accent-orange-light: #FFF7ED;
+    --success: #10B981;
+    --error: #EF4444;
+    --error-light: #FEE2E2;
+    --text-main: #1F2937;
+    --text-sub: #4B5563;
+    --text-muted: #9CA3AF;
+    --border-soft: #E5E7EB;
+    --border-strong: #374151;
+    --shadow-sm: 0 4px 12px rgba(16, 185, 129, 0.08);
+    --shadow-md: 0 8px 24px rgba(31, 41, 55, 0.08);
+    --shadow-pop: 0 6px 0 rgba(0, 0, 0, 0.08);
+    --radius-xl: 24px;
+    --radius-lg: 18px;
+    --radius-md: 14px;
+    --radius-sm: 8px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-family: "Noto Sans KR", "Outfit", system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 10% 15%, #FDF4E6 0%, #FCFBF7 45%, #EBFBF5 100%);
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    min-height: 100vh;
+  }
+
+  /* Background decorative blobs */
+  .bg-decor {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.6;
+  }
+  .bg-blob-1 { top: -60px; right: -40px; width: 280px; height: 280px; background: radial-gradient(circle, #D1FAE5 0%, transparent 70%); }
+  .bg-blob-2 { bottom: -60px; left: -50px; width: 300px; height: 300px; background: radial-gradient(circle, #FEF3C7 0%, transparent 70%); }
+  .bg-blob-3 { top: 40%; left: -60px; width: 220px; height: 220px; background: radial-gradient(circle, #FFE4E8 0%, transparent 70%); }
+
+  #app {
+    width: 100%;
+    max-width: 550px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+    padding: 8px 14px 28px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 0 10px;
+    flex-shrink: 0;
+  }
+  .logo-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .panda-avatar {
+    font-size: 34px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.12));
+    animation: pandaBounce 2.6s infinite ease-in-out;
+  }
+  @keyframes pandaBounce {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-4px) rotate(4deg); }
+  }
+  .logo-title {
+    display: flex;
+    flex-direction: column;
+  }
+  .logo-title .main-title {
+    font-size: 17px;
+    font-weight: 900;
+    color: var(--text-main);
+    letter-spacing: -0.4px;
+    line-height: 1.15;
+  }
+  .logo-title .sub-title {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--primary);
+    letter-spacing: 0.2px;
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    color: var(--text-main);
+    text-decoration: none;
+  }
+  .icon-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+  .icon-btn:active { transform: translateY(1px); }
+
+  .stars-pill {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #FFFBEB;
+    border: 2px solid #FDE68A;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #D97706;
+  }
+
+  /* Navigation Tabs */
+  .nav-tabs {
+    display: flex;
+    background: #EDEAE2;
+    padding: 4px;
+    border-radius: 16px;
+    margin: 2px 0 10px;
+    flex-shrink: 0;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
+    overflow-x: auto;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 8px 4px;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-sub);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    white-space: nowrap;
+  }
+  .tab-btn.active {
+    background: #FFFFFF;
+    color: var(--primary-dark);
+    box-shadow: 0 3px 10px rgba(16, 185, 129, 0.22);
+    transform: scale(1.02);
+  }
+
+  /* Panda Speech Bubble (Tutor) */
+  .tutor-bubble {
+    background: #FFFFFF;
+    border: 2px solid #A7F3D0;
+    border-radius: var(--radius-lg);
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+  .tutor-bubble:hover { transform: translateY(-1px); }
+  .tutor-avatar {
+    font-size: 34px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .tutor-sound-wave {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    font-size: 11px;
+    background: var(--accent-pink);
+    color: white;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.2); opacity: 0.8; }
+  }
+  .tutor-content {
+    flex: 1;
+    overflow: hidden;
+  }
+  .tutor-name {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 2px;
+  }
+  .tutor-name-badge {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    padding: 2px 6px;
+    border-radius: 6px;
+    font-size: 9px;
+  }
+  .tutor-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-main);
+    line-height: 1.35;
+  }
+
+  /* Views */
+  .view {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    animation: fadeIn 0.22s ease-out;
+  }
+  .view.active {
+    display: flex;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ----------------------------------------------------
+     VIEW 1: ADVENTURE MODE (TIERS & STAGE SELECT)
+     ---------------------------------------------------- */
+  .tier-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .tier-card {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 10px 8px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    position: relative;
+    overflow: hidden;
+  }
+  .tier-card.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
+  }
+  .tier-badge {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--primary-dark);
+    background: #D1FAE5;
+    padding: 2px 6px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-bottom: 4px;
+  }
+  .tier-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-main);
+  }
+  .tier-sub {
+    font-size: 10px;
+    color: var(--text-sub);
+    margin-top: 2px;
+  }
+
+  .stage-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .stage-item {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    position: relative;
+  }
+  .stage-item:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary);
+    box-shadow: var(--shadow-sm);
+  }
+  .stage-item.locked {
+    opacity: 0.55;
+    background: #F3F4F6;
+    border-color: #E5E7EB;
+    cursor: not-allowed;
+  }
+  .stage-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .stage-num-badge {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    font-size: 11px;
+    font-weight: 900;
+    padding: 2px 8px;
+    border-radius: 12px;
+  }
+  .stage-stars {
+    font-size: 13px;
+    color: #F59E0B;
+  }
+  .stage-name {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text-main);
+    line-height: 1.25;
+  }
+  .stage-symbols {
+    font-size: 11px;
+    color: var(--text-sub);
+    font-weight: 600;
+    background: #F9FAFB;
+    padding: 4px 6px;
+    border-radius: 6px;
+    border: 1px dashed var(--border-soft);
+  }
+
+  /* ----------------------------------------------------
+     SUDOKU GAMEPLAY VIEW
+     ---------------------------------------------------- */
+  .gameplay-header {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .gp-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .gp-title {
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .gp-desc {
+    font-size: 11px;
+    color: var(--text-sub);
+    font-weight: 600;
+  }
+  .gp-stats {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .gp-stat-box {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-main);
+    background: #F3F4F6;
+    padding: 4px 8px;
+    border-radius: 10px;
+  }
+  .hearts-box {
+    color: #EF4444;
+  }
+
+  /* Sudoku Board Wrapper */
+  .board-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+  .sudoku-board {
+    background: #FFFFFF;
+    border: 3px solid var(--border-strong);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--shadow-pop);
+    display: grid;
+    touch-action: manipulation;
+  }
+  .sudoku-cell {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    cursor: pointer;
+    transition: background-color 0.12s ease;
+    user-select: none;
+  }
+  .sudoku-cell.fixed {
+    background: #F8FAFC;
+    color: #1E293B;
+    font-weight: 900;
+  }
+  .sudoku-cell.user-filled {
+    color: #0284C7;
+    font-weight: 800;
+  }
+  .sudoku-cell.selected {
+    background: #E0F2FE !important;
+  }
+  .sudoku-cell.highlight-peer {
+    background: #F0F9FF;
+  }
+  .sudoku-cell.highlight-same {
+    background: #BAE6FD;
+  }
+  .sudoku-cell.error {
+    background: #FEE2E2 !important;
+    color: #DC2626 !important;
+    animation: shake 0.3s;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+  }
+
+  /* Block Borders */
+  .border-right-thick { border-right: 3px solid var(--border-strong) !important; }
+  .border-bottom-thick { border-bottom: 3px solid var(--border-strong) !important; }
+
+  /* Cell Content */
+  .cell-glyph {
+    font-size: clamp(16px, 4.5vw, 24px);
+    font-weight: 900;
+    line-height: 1;
+    font-family: "Outfit", "Noto Sans KR", sans-serif;
+  }
+  .cell-hangul-sub {
+    font-size: clamp(8px, 2vw, 10px);
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-top: 1px;
+    line-height: 1;
+  }
+  .cell-notes-grid {
+    position: absolute;
+    inset: 2px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    pointer-events: none;
+  }
+  .note-num {
+    font-size: 8px;
+    font-weight: 700;
+    color: #64748B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+  }
+
+  /* Control Tools Bar */
+  .control-tools {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .tool-btn {
+    flex: 1;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 8px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+  }
+  .tool-btn:hover { border-color: var(--primary); transform: translateY(-1px); }
+  .tool-btn.active {
+    background: #ECFDF5;
+    border-color: var(--primary);
+    color: var(--primary-dark);
+  }
+  .tool-icon { font-size: 16px; }
+
+  /* Keypad Grid */
+  .keypad-grid {
+    display: grid;
+    gap: 8px;
+    width: 100%;
+  }
+  .key-btn {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 8px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.12s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 3px 0 #D1D5DB;
+    position: relative;
+  }
+  .key-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #D1D5DB;
+  }
+  .key-btn.completed {
+    opacity: 0.35;
+    pointer-events: none;
+    background: #F3F4F6;
+  }
+  .key-glyph {
+    font-size: clamp(16px, 4vw, 22px);
+    font-weight: 900;
+    color: var(--primary-dark);
+    font-family: "Outfit", sans-serif;
+    line-height: 1.1;
+  }
+  .key-hangul {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--text-sub);
+    margin-top: 1px;
+  }
+  .key-count {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--text-muted);
+  }
+
+  /* ----------------------------------------------------
+     VIEW 2: COMPLETE PINYIN MAP (도감)
+     ---------------------------------------------------- */
+  .chart-subtabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+  .chart-subtabs::-webkit-scrollbar { display: none; }
+  .c-tab {
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border-soft);
+    background: var(--bg-card);
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-sub);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+  }
+  .c-tab.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+  }
+
+  .chart-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .chart-group-title {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+  }
+  .chart-group-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: var(--secondary-light);
+    color: #B45309;
+  }
+  .pinyin-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+  }
+  .pinyin-card {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+  }
+  .pinyin-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+  }
+  .pc-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .pc-glyph {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--primary-dark);
+    font-family: "Outfit", sans-serif;
+  }
+  .pc-speak-audio {
+    font-size: 14px;
+    color: var(--primary);
+  }
+  .pc-hangul {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--accent-pink);
+  }
+  .pc-tip {
+    font-size: 10px;
+    color: var(--text-sub);
+    line-height: 1.35;
+    background: #F9FAFB;
+    padding: 4px 6px;
+    border-radius: 6px;
+  }
+  .pc-words {
+    font-size: 10px;
+    color: var(--text-muted);
+    border-top: 1px dashed var(--border-soft);
+    padding-top: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .pc-word-item {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ----------------------------------------------------
+     VIEW 3: TONE PLAYGROUND (사성조 놀이터)
+     ---------------------------------------------------- */
+  .tone-playground-card {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .tone-curve-container {
+    width: 100%;
+    height: 190px;
+    background: #111827;
+    border-radius: var(--radius-md);
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+  }
+  #toneCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .tone-selector-pills {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+  }
+  .tone-pill-btn {
+    border: 2px solid var(--border-soft);
+    background: #F9FAFB;
+    border-radius: 12px;
+    padding: 8px 2px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .tone-pill-btn.active {
+    background: #ECFDF5;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+  }
+  .tone-num { font-size: 11px; font-weight: 900; color: var(--text-sub); }
+  .tone-mark { font-size: 18px; font-weight: 900; color: var(--primary); line-height: 1; }
+  .tone-name { font-size: 9px; font-weight: 700; color: var(--text-muted); }
+
+  .tone-syl-picker {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .syl-btn {
+    padding: 4px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border-soft);
+    background: white;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .syl-btn.active {
+    background: var(--accent-blue);
+    color: white;
+    border-color: var(--accent-blue);
+  }
+
+  .tone-play-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .btn-audio-action {
+    padding: 10px;
+    border-radius: 12px;
+    border: none;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.15s ease;
+  }
+  .btn-synth {
+    background: #F3E8FF;
+    color: #7C3AED;
+  }
+  .btn-speech {
+    background: #ECFDF5;
+    color: #065F46;
+  }
+  .btn-audio-action:hover { transform: translateY(-1px); opacity: 0.95; }
+
+  .tone-guide-box {
+    background: #FFFBEB;
+    border: 1px solid #FDE68A;
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    font-size: 11px;
+    color: #92400E;
+    line-height: 1.45;
+  }
+
+  /* ----------------------------------------------------
+     VIEW 4: SINO-KOREAN COGNATES (한자어 짝꿍 탐험실)
+     ---------------------------------------------------- */
+  .cognate-intro {
+    background: #EFF6FF;
+    border: 1px solid #BFDBFE;
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    font-size: 11px;
+    color: #1E40AF;
+    line-height: 1.4;
+    margin-bottom: 12px;
+  }
+  .cognate-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .cognate-card {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+  }
+  .cognate-card:hover {
+    border-color: var(--accent-blue);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+  }
+  .cg-korean-word {
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .cg-chinese-word {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--primary-dark);
+  }
+  .cg-pinyin-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .cg-pinyin {
+    font-size: 12px;
+    font-weight: 800;
+    color: #2563EB;
+  }
+  .cg-hangul-sound {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent-pink);
+  }
+
+  /* ----------------------------------------------------
+     VIEW 5: LISTENING QUIZ (귀 쏙쏙 듣기 퀴즈)
+     ---------------------------------------------------- */
+  .quiz-container {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    box-shadow: var(--shadow-sm);
+  }
+  .quiz-header-bar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .quiz-modes-pill {
+    display: flex;
+    gap: 4px;
+    background: #F3F4F6;
+    padding: 3px;
+    border-radius: 12px;
+  }
+  .quiz-mode-btn {
+    padding: 4px 10px;
+    border-radius: 9px;
+    border: none;
+    background: transparent;
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-sub);
+    cursor: pointer;
+  }
+  .quiz-mode-btn.active {
+    background: white;
+    color: var(--primary-dark);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+  }
+  .quiz-score-badge {
+    font-size: 12px;
+    font-weight: 900;
+    color: #D97706;
+  }
+
+  .quiz-speaker-bubble {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+    transition: transform 0.15s ease;
+    animation: speakerPulse 2s infinite ease-in-out;
+  }
+  @keyframes speakerPulse {
+    0%, 100% { transform: scale(1); box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); }
+    50% { transform: scale(1.05); box-shadow: 0 12px 26px rgba(16, 185, 129, 0.45); }
+  }
+  .quiz-speaker-bubble:active { transform: scale(0.95); }
+  .quiz-speaker-sub { font-size: 10px; font-weight: 800; margin-top: 2px; }
+
+  .quiz-options-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .quiz-opt-btn {
+    background: #F9FAFB;
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    padding: 14px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: "Outfit", "Noto Sans KR", sans-serif;
+  }
+  .quiz-opt-btn:hover { border-color: var(--primary); transform: translateY(-1px); }
+  .quiz-opt-btn.correct {
+    background: #ECFDF5 !important;
+    border-color: #10B981 !important;
+    color: #065F46 !important;
+  }
+  .quiz-opt-btn.wrong {
+    background: #FEE2E2 !important;
+    border-color: #EF4444 !important;
+    color: #B91C1C !important;
+  }
+  .quiz-opt-glyph { font-size: 22px; font-weight: 900; }
+  .quiz-opt-hangul { font-size: 11px; font-weight: 700; color: var(--text-sub); }
+
+  /* ----------------------------------------------------
+     VIEW 6: FREE GENERATOR (자유 모드)
+     ---------------------------------------------------- */
+  .free-card {
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: var(--shadow-sm);
+  }
+  .free-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .free-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-main);
+  }
+  .free-options-row {
+    display: flex;
+    gap: 8px;
+  }
+  .free-opt-pill {
+    flex: 1;
+    padding: 8px 4px;
+    border: 2px solid var(--border-soft);
+    border-radius: 12px;
+    background: #F9FAFB;
+    font-size: 12px;
+    font-weight: 800;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .free-opt-pill.active {
+    background: #ECFDF5;
+    border-color: var(--primary);
+    color: var(--primary-dark);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+  }
+  .btn-start-free {
+    padding: 12px;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+    transition: transform 0.15s ease;
+  }
+  .btn-start-free:hover { transform: translateY(-1px); }
+
+  /* Modal overlay */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 16px;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-box {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes popIn {
+    from { transform: scale(0.85); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .modal-trophy { font-size: 52px; }
+  .modal-title { font-size: 20px; font-weight: 900; color: var(--text-main); }
+  .modal-stars { font-size: 26px; color: #F59E0B; }
+  .modal-desc { font-size: 13px; color: var(--text-sub); line-height: 1.4; }
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    margin-top: 6px;
+  }
+  .modal-btn {
+    flex: 1;
+    padding: 10px;
+    border-radius: 12px;
+    border: none;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .modal-btn-primary { background: var(--primary); color: white; }
+  .modal-btn-sub { background: #F3F4F6; color: var(--text-main); }
+
+  /* Confetti Canvas */
+  #confettiCanvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+  }
+</style>
+</head>
+<body>
+
+<!-- Decorative Blobs -->
+<div class="bg-decor bg-blob-1"></div>
+<div class="bg-decor bg-blob-2"></div>
+<div class="bg-decor bg-blob-3"></div>
+
+<canvas id="confettiCanvas"></canvas>
+
+<div id="app">
+  <!-- Header -->
+  <header class="header">
+    <div class="logo-group" onclick="switchView('adventure')">
+      <div class="panda-avatar">🐼</div>
+      <div class="logo-title">
+        <span class="main-title">신나는 병음 어드벤처</span>
+        <span class="sub-title">중국어 병음 스도쿠 & 발음 백과</span>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <div class="stars-pill" title="획득한 별">
+        <span>⭐</span>
+        <span id="totalStarsDisplay">0</span>
+      </div>
+      <button class="icon-btn" id="soundToggleBtn" onclick="toggleMute()" title="음향 켜기/끄기">🔊</button>
+      <a href="./index.html" class="icon-btn" title="아케이드 홈으로 이동">🏠</a>
+    </div>
+  </header>
+
+  <!-- Mascot Panda Tutor Bubble -->
+  <div class="tutor-bubble" onclick="tutorSpeakCurrentAdvice()">
+    <div class="tutor-avatar">
+      🐼
+      <div class="tutor-sound-wave">🔊</div>
+    </div>
+    <div class="tutor-content">
+      <div class="tutor-name">
+        <span>판다 선생님 핑핑이</span>
+        <span class="tutor-name-badge">터치하여 음성듣기</span>
+      </div>
+      <div class="tutor-text" id="tutorText">환영해 친구야! 핑핑이와 함께 재미있는 중국어 병음 스도쿠 모험을 떠나볼까?</div>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <nav class="nav-tabs">
+    <button class="tab-btn active" id="tab-adventure" onclick="switchView('adventure')">
+      <span>🧩</span><span>스도쿠 모험</span>
+    </button>
+    <button class="tab-btn" id="tab-chart" onclick="switchView('chart')">
+      <span>📖</span><span>병음 도감</span>
+    </button>
+    <button class="tab-btn" id="tab-tones" onclick="switchView('tones')">
+      <span>🎵</span><span>사성조 놀이터</span>
+    </button>
+    <button class="tab-btn" id="tab-cognate" onclick="switchView('cognate')">
+      <span>✨</span><span>한자어 짝꿍</span>
+    </button>
+    <button class="tab-btn" id="tab-quiz" onclick="switchView('quiz')">
+      <span>👂</span><span>듣기 퀴즈</span>
+    </button>
+    <button class="tab-btn" id="tab-free" onclick="switchView('free')">
+      <span>🎲</span><span>자유 모드</span>
+    </button>
+  </nav>
+
+  <!-- ====================================================
+       VIEW 1: ADVENTURE MODE (STAGE SELECTION)
+       ==================================================== -->
+  <section class="view active" id="view-adventure">
+    <div class="tier-selector">
+      <div class="tier-card active" onclick="selectTier(1)">
+        <span class="tier-badge">입문 4×4</span>
+        <div class="tier-title">새싹 탐험가</div>
+        <div class="tier-sub">6개 스테이지</div>
+      </div>
+      <div class="tier-card" onclick="selectTier(2)">
+        <span class="tier-badge">도전 6×6</span>
+        <div class="tier-title">쑥쑥 모험가</div>
+        <div class="tier-sub">6개 스테이지</div>
+      </div>
+      <div class="tier-card" onclick="selectTier(3)">
+        <span class="tier-badge">마스터 9×9</span>
+        <div class="tier-title">척척 마스터</div>
+        <div class="tier-sub">6개 스테이지</div>
+      </div>
+    </div>
+
+    <div class="stage-grid" id="stageGrid">
+      <!-- Generated via JS -->
+    </div>
+  </section>
+
+  <!-- ====================================================
+       VIEW: GAMEPLAY (SUDOKU BOARD)
+       ==================================================== -->
+  <section class="view" id="view-gameplay">
+    <div class="gameplay-header">
+      <div class="gp-info">
+        <div class="gp-title" id="gpStageTitle">Stage 1: 입술 팡팡 성모</div>
+        <div class="gp-desc" id="gpStageDesc">b, p, m, f (쌍순음)</div>
+      </div>
+      <div class="gp-stats">
+        <div class="gp-stat-box hearts-box" id="gpHearts">❤️❤️❤️</div>
+        <div class="gp-stat-box" id="gpTimer">⏱️ 00:00</div>
+      </div>
+    </div>
+
+    <!-- Sudoku Board Container -->
+    <div class="board-wrapper">
+      <div class="sudoku-board" id="sudokuBoard">
+        <!-- Cells generated via JS -->
+      </div>
+    </div>
+
+    <!-- Gameplay Controls Bar -->
+    <div class="control-tools">
+      <button class="tool-btn" id="toolUndo" onclick="handleUndo()">
+        <span class="tool-icon">↩️</span>
+        <span>되돌리기</span>
+      </button>
+      <button class="tool-btn" id="toolPencil" onclick="togglePencilMode()">
+        <span class="tool-icon">✏️</span>
+        <span>연필 메모</span>
+      </button>
+      <button class="tool-btn" id="toolErase" onclick="handleErase()">
+        <span class="tool-icon">🧹</span>
+        <span>지우기</span>
+      </button>
+      <button class="tool-btn" id="toolHint" onclick="handleHint()">
+        <span class="tool-icon">💡</span>
+        <span>힌트</span>
+      </button>
+      <button class="tool-btn" onclick="switchView('adventure')">
+        <span class="tool-icon">🚪</span>
+        <span>나가기</span>
+      </button>
+    </div>
+
+    <!-- Keypad -->
+    <div class="keypad-grid" id="keypadGrid">
+      <!-- Keys generated via JS -->
+    </div>
+  </section>
+
+  <!-- ====================================================
+       VIEW 2: COMPLETE PINYIN MAP (도감)
+       ==================================================== -->
+  <section class="view" id="view-chart">
+    <div class="chart-subtabs">
+      <button class="c-tab active" onclick="filterChartTab('initials', this)">성모 (23자)</button>
+      <button class="c-tab" onclick="filterChartTab('single', this)">단운모 (6자)</button>
+      <button class="c-tab" onclick="filterChartTab('compound', this)">복운모 (9자)</button>
+      <button class="c-tab" onclick="filterChartTab('nasal', this)">비운모 (16자)</button>
+      <button class="c-tab" onclick="filterChartTab('whole', this)">전체일체음절 (16자)</button>
+    </div>
+
+    <div id="chartContent" class="chart-section">
+      <!-- Generated via JS -->
+    </div>
+  </section>
+
+  <!-- ====================================================
+       VIEW 3: TONE PLAYGROUND (사성조 놀이터)
+       ==================================================== -->
+  <section class="view" id="view-tones">
+    <div class="tone-playground-card">
+      <div class="tone-syl-picker">
+        <span>음절 선택:</span>
+        <button class="syl-btn active" onclick="setToneBase('ma', this)">ma (마)</button>
+        <button class="syl-btn" onclick="setToneBase('ba', this)">ba (바)</button>
+        <button class="syl-btn" onclick="setToneBase('yi', this)">yi (이)</button>
+        <button class="syl-btn" onclick="setToneBase('da', this)">da (다)</button>
+        <button class="syl-btn" onclick="setToneBase('ni', this)">ni (니)</button>
+      </div>
+
+      <div class="tone-selector-pills">
+        <div class="tone-pill-btn active" onclick="selectTone(1)">
+          <span class="tone-num">1성</span>
+          <span class="tone-mark">ˉ</span>
+          <span class="tone-name">고평조 (55)</span>
+        </div>
+        <div class="tone-pill-btn" onclick="selectTone(2)">
+          <span class="tone-num">2성</span>
+          <span class="tone-mark">ˊ</span>
+          <span class="tone-name">상승조 (35)</span>
+        </div>
+        <div class="tone-pill-btn" onclick="selectTone(3)">
+          <span class="tone-num">3성</span>
+          <span class="tone-mark">ˇ</span>
+          <span class="tone-name">강하상승 (214)</span>
+        </div>
+        <div class="tone-pill-btn" onclick="selectTone(4)">
+          <span class="tone-num">4성</span>
+          <span class="tone-mark">ˋ</span>
+          <span class="tone-name">급강하 (51)</span>
+        </div>
+        <div class="tone-pill-btn" onclick="selectTone(0)">
+          <span class="tone-num">경성</span>
+          <span class="tone-mark">·</span>
+          <span class="tone-name">가볍게 톡</span>
+        </div>
+      </div>
+
+      <!-- Tone Pitch Canvas -->
+      <div class="tone-curve-container">
+        <canvas id="toneCanvas"></canvas>
+      </div>
+
+      <!-- Audio buttons -->
+      <div class="tone-play-actions">
+        <button class="btn-audio-action btn-synth" onclick="playCurrentToneSynth()">
+          <span>🎵</span><span>음높이 멜로디 듣기</span>
+        </button>
+        <button class="btn-audio-action btn-speech" onclick="playCurrentToneVoice()">
+          <span>🗣️</span><span>원어민 표준 발음</span>
+        </button>
+      </div>
+
+      <!-- Korean Kid-Friendly Explanation -->
+      <div class="tone-guide-box" id="toneGuideText">
+        <strong>💡 핑핑이의 사성조 비법:</strong> 1성은 솔(Sol) 음높이로 곧고 길게 쭉~ 소리내요! 노래하듯 흔들리지 않는 것이 핵심!
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================
+       VIEW 4: SINO-KOREAN COGNATES (한자어 짝꿍 탐험실)
+       ==================================================== -->
+  <section class="view" id="view-cognate">
+    <div class="cognate-intro">
+      <strong>✨ 한국 어린이만의 슈퍼 파워!</strong><br>
+      한국어 단어의 60% 이상은 한자어예요. 중국어 단어와 발음이 깜짝 놀랄 만큼 비슷하답니다! 소리를 들으며 공통점을 찾아보세요!
+    </div>
+
+    <div class="cognate-grid" id="cognateGrid">
+      <!-- Generated via JS -->
+    </div>
+  </section>
+
+  <!-- ====================================================
+       VIEW 5: LISTENING QUIZ (귀 쏙쏙 듣기 퀴즈)
+       ==================================================== -->
+  <section class="view" id="view-quiz">
+    <div class="quiz-container">
+      <div class="quiz-header-bar">
+        <div class="quiz-modes-pill">
+          <button class="quiz-mode-btn active" onclick="setQuizMode('tones', this)">사성조 맞히기</button>
+          <button class="quiz-mode-btn" onclick="setQuizMode('letters', this)">발음 짝꿍 맞히기</button>
+        </div>
+        <div class="quiz-score-badge">연속 정답: <span id="quizScoreText">0</span> 🔥</div>
+      </div>
+
+      <div class="quiz-speaker-bubble" onclick="playQuizTargetAudio()">
+        <span>🔊</span>
+        <span class="quiz-speaker-sub">터치하여 듣기</span>
+      </div>
+
+      <div style="font-size: 13px; font-weight: 800; color: var(--text-main);" id="quizPromptText">
+        방금 들린 발음의 성조는 무엇일까요?
+      </div>
+
+      <div class="quiz-options-grid" id="quizOptionsGrid">
+        <!-- Options generated via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================
+       VIEW 6: FREE GENERATOR (자유 모드)
+       ==================================================== -->
+  <section class="view" id="view-free">
+    <div class="free-card">
+      <div class="free-field-group">
+        <span class="free-label">1. 보드 크기 선택</span>
+        <div class="free-options-row" id="freeSizeOpts">
+          <div class="free-opt-pill active" onclick="setFreeSize(4, this)">4 × 4 (입문)</div>
+          <div class="free-opt-pill" onclick="setFreeSize(6, this)">6 × 6 (도전)</div>
+          <div class="free-opt-pill" onclick="setFreeSize(9, this)">9 × 9 (마스터)</div>
+        </div>
+      </div>
+
+      <div class="free-field-group">
+        <span class="free-label">2. 테마 선택</span>
+        <div class="free-options-row" id="freeTypeOpts">
+          <div class="free-opt-pill active" onclick="setFreeCategory('initials', this)">성모 (자음)</div>
+          <div class="free-opt-pill" onclick="setFreeCategory('finals', this)">운모 (모음)</div>
+          <div class="free-opt-pill" onclick="setFreeCategory('tones', this)">사성조</div>
+        </div>
+      </div>
+
+      <div class="free-field-group">
+        <span class="free-label">3. 난이도 선택</span>
+        <div class="free-options-row" id="freeDiffOpts">
+          <div class="free-opt-pill active" onclick="setFreeDiff('easy', this)">쉬움 (힌트 넉넉)</div>
+          <div class="free-opt-pill" onclick="setFreeDiff('normal', this)">보통</div>
+          <div class="free-opt-pill" onclick="setFreeDiff('hard', this)">어려움</div>
+        </div>
+      </div>
+
+      <button class="btn-start-free" onclick="startFreeGame()">
+        🎲 나만의 병음 스도쿠 시작하기!
+      </button>
+    </div>
+  </section>
+
+  <!-- Stage Clear Modal -->
+  <div class="modal-overlay" id="clearModal">
+    <div class="modal-box">
+      <div class="modal-trophy">🏆</div>
+      <div class="modal-title">스테이지 클리어!</div>
+      <div class="modal-stars" id="clearStars">⭐⭐⭐</div>
+      <div class="modal-desc" id="clearDesc">축하해! 모든 병음 칸을 완벽하게 맞혔어!</div>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-sub" onclick="switchView('adventure')">목록으로</button>
+        <button class="modal-btn modal-btn-primary" id="btnNextStage" onclick="goNextStage()">다음 스테이지 ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Over Modal -->
+  <div class="modal-overlay" id="gameOverModal">
+    <div class="modal-box">
+      <div class="modal-trophy">💔</div>
+      <div class="modal-title">다시 도전해볼까?</div>
+      <div class="modal-desc">하트 3개를 모두 소진했어. 차근차근 다시 풀어보자!</div>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-sub" onclick="switchView('adventure')">목록으로</button>
+        <button class="modal-btn modal-btn-primary" onclick="retryCurrentStage()">다시 도전 🔄</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ==========================================================
+   1. PINYIN KNOWLEDGE BASE & KOREAN PHONETICS DATA
+   ========================================================== */
+const PINYIN_KO_DATABASE = {
+  initials: [
+    { glyph: 'b', speak: '玻', pinyin: 'bō', hangul: '뽀', category: '쌍순음 (두 입술)', tip: '두 입술을 꼭 다물었다가 뽀! 터뜨려요. 한국어 된소리 [ㅃ]에 가깝고 숨을 거세게 뿜지 않아요.', words: [{ ch: '爸爸', py: 'bàba', ko: '아빠' }, { ch: '八', py: 'bā', ko: '8 (여덟)' }] },
+    { glyph: 'p', speak: '坡', pinyin: 'pō', hangul: '포', category: '쌍순음 (두 입술)', tip: '입술을 닫았다가 휴지가 펄럭일 정도로 강한 숨을 팍! 내뿜어요 (거센소리 [ㅍ]).', words: [{ ch: '苹果', py: 'píngguǒ', ko: '사과' }, { ch: '朋友', py: 'péngyou', ko: '친구' }] },
+    { glyph: 'm', speak: '摸', pinyin: 'mō', hangul: '모', category: '쌍순음 (두 입술)', tip: '두 입술을 다물고 코로 소리를 울려요. 한국어 [ㅁ]과 거의 같아요.', words: [{ ch: '妈妈', py: 'māma', ko: '엄마' }, { ch: '猫', py: 'māo', ko: '고양이' }] },
+    { glyph: 'f', speak: '佛', pinyin: 'fó', hangul: '포(입술깨물기)', category: '순치음 (입술과 치아)', tip: '윗니로 아랫입술을 살짝 깨물며 틈 사이로 바람을 슥- 스치며 내요 (영어 F소리).', words: [{ ch: '飞机', py: 'fēijī', ko: '비행기' }, { ch: '风', py: 'fēng', ko: '바람' }] },
+
+    { glyph: 'd', speak: '得', pinyin: 'dé', hangul: '뜨어', category: '설첨중음 (혀끝소리)', tip: '혀끝을 윗잇몸에 딱 붙였다가 떼며 [뜨어]! 숨을 뿜지 않는 맑은 무기음이에요.', words: [{ ch: '大', py: 'dà', ko: '크다' }, { ch: '弟弟', py: 'dìdi', ko: '남동생' }] },
+    { glyph: 't', speak: '特', pinyin: 'tè', hangul: '트어', category: '설첨중음 (혀끝소리)', tip: '혀끝 위치는 d와 같지만, 강한 바람을 훅! 내뿜어요 (한국어 [ㅌ]).', words: [{ ch: '天', py: 'tiān', ko: '하늘/날' }, { ch: '太阳', py: 'tàiyáng', ko: '태양' }] },
+    { glyph: 'n', speak: '讷', pinyin: 'nè', hangul: '느어', category: '설첨중음 (혀끝소리)', tip: '혀끝을 윗잇몸에 대고 콧소리로 울려요. 한국어 [ㄴ]과 같아요.', words: [{ ch: '你', py: 'nǐ', ko: '너' }, { ch: '鸟', py: 'niǎo', ko: '새' }] },
+    { glyph: 'l', speak: '勒', pinyin: 'lè', hangul: '러', category: '설첨중음 (혀끝소리)', tip: '혀끝을 윗잇몸에 대고 혀 양옆으로 부드럽게 소리를 흘려보내요. [ㄹ] 소리!', words: [{ ch: '老师', py: 'lǎoshī', ko: '선생님' }, { ch: '来', py: 'lái', ko: '오다' }] },
+
+    { glyph: 'g', speak: '哥', pinyin: 'gē', hangul: '끄어', category: '설근음 (목구멍소리)', tip: '혀 뒷부분을 목구멍 쪽(여린입천장)에 닿았다가 [끄어]! 숨을 안 뿜어요.', words: [{ ch: '哥哥', py: 'gēge', ko: '형/오빠' }, { ch: '狗', py: 'gǒu', ko: '강아지' }] },
+    { glyph: 'k', speak: '科', pinyin: 'kē', hangul: '크어', category: '설근음 (목구멍소리)', tip: '목구멍에서 거센 바람을 확! 터뜨려요 (한국어 [ㅋ]).', words: [{ ch: '看', py: 'kàn', ko: '보다' }, { ch: '渴', py: 'kě', ko: '목마르다' }] },
+    { glyph: 'h', speak: '喝', pinyin: 'hē', hangul: '흐어', category: '설근음 (목구멍소리)', tip: '겨울철 손에 입김을 불듯 목구멍을 긁으며 깊게 [흐어]~ 바람을 빼요.', words: [{ ch: '好', py: 'hǎo', ko: '좋다' }, { ch: '红', py: 'hóng', ko: '빨갛다' }] },
+
+    { glyph: 'j', speak: '鸡', pinyin: 'jī', hangul: '지', category: '설면음 (혓바닥소리)', tip: '입꼬리를 옆으로 활짝 당겨 미소 지으며 혓바닥을 입천장에 대고 [지]!', words: [{ ch: '家', py: 'jiā', ko: '집' }, { ch: '九', py: 'jiǔ', ko: '9 (아홉)' }] },
+    { glyph: 'q', speak: '七', pinyin: 'qī', hangul: '치', category: '설면음 (혓바닥소리)', tip: 'j와 입 모양은 같지만 강한 바람을 치익! 내뿜어요 (한국어 거센 [치]).', words: [{ ch: '七', py: 'qī', ko: '7 (일곱)' }, { ch: '汽车', py: 'qìchē', ko: '자동차' }] },
+    { glyph: 'x', speak: '西', pinyin: 'xī', hangul: '시', category: '설면음 (혓바닥소리)', tip: '혓바닥을 입천장에 가깝게 대고 틈 사이로 바람을 슥- 스치며 [시]!', words: [{ ch: '西瓜', py: 'xīguā', ko: '수박' }, { ch: '小', py: 'xiǎo', ko: '작다' }] },
+
+    { glyph: 'zh', speak: '知', pinyin: 'zhī', hangul: '즈(혀말기)', category: '권설음 (혀말림소리)', tip: '★한국 어린이 필수! 혀끝을 스푼처럼 위로 말아 입천장에 살짝 대고 [즈]!', words: [{ ch: '中国', py: 'zhōngguó', ko: '중국' }, { ch: '桌子', py: 'zhuōzi', ko: '책상' }] },
+    { glyph: 'ch', speak: '吃', pinyin: 'chī', hangul: '치(혀말기)', category: '권설음 (혀말림소리)', tip: '혀끝을 위로 만 채로 센 바람을 팍! 내뿜으며 [치]!', words: [{ ch: '吃饭', py: 'chīfàn', ko: '밥 먹다' }, { ch: '春', py: 'chūn', ko: '봄' }] },
+    { glyph: 'sh', speak: '狮', pinyin: 'shī', hangul: '스(혀말기)', category: '권설음 (혀말림소리)', tip: '혀끝을 위로 만 채로 틈새로 바람을 마찰시켜 [스]!', words: [{ ch: '书', py: 'shū', ko: '책' }, { ch: '水', py: 'shuǐ', ko: '물' }] },
+    { glyph: 'r', speak: '日', pinyin: 'rì', hangul: '르(혀말기)', category: '권설음 (혀말림소리)', tip: 'sh와 입 모양이 같고 목청(성대)을 부르르 떨어 울리는 유성음!', words: [{ ch: '热', py: 'rè', ko: '더운' }, { ch: '日', py: 'rì', ko: '날/해' }] },
+
+    { glyph: 'z', speak: '资', pinyin: 'zī', hangul: '쯔', category: '설치음 (혀끝 평평이)', tip: '혀끝을 윗니 뒤쪽에 평평하게 대고 숨을 안 뿜으며 [쯔]!', words: [{ ch: '早', py: 'zǎo', ko: '좋은 아침' }, { ch: '字', py: 'zì', ko: '글자' }] },
+    { glyph: 'c', speak: '刺', pinyin: 'cì', hangul: '츠', category: '설치음 (혀끝 평평이)', tip: '혀를 평평하게 펴고 거센 바람을 츠- 뿜어요!', words: [{ ch: '草', py: 'cǎo', ko: '풀' }, { ch: '菜', py: 'cài', ko: '채소/요리' }] },
+    { glyph: 's', speak: '丝', pinyin: 'sī', hangul: '쓰', category: '설치음 (혀끝 평평이)', tip: '혀를 평평하게 앞니 뒤에 대고 바람을 슥- 마찰시켜요.', words: [{ ch: '三', py: 'sān', ko: '3 (셋)' }, { ch: '四', py: 'sì', ko: '4 (넷)' }] },
+
+    { glyph: 'y', speak: '衣', pinyin: 'yī', hangul: '이', category: '반모음', tip: '모음 i가 단독으로 올 때 쓰는 표기예요. 한국어 [이]와 같아요.', words: [{ ch: '月亮', py: 'yuèliang', ko: '달' }, { ch: '雨', py: 'yǔ', ko: '비' }] },
+    { glyph: 'w', speak: '乌', pinyin: 'wū', hangul: '우', category: '반모음', tip: '모음 u가 단독으로 올 때 쓰는 표기예요. 입술을 둥글게 모으고 [우]!', words: [{ ch: '我', py: 'wǒ', ko: '나/저' }, { ch: '五', py: 'wǔ', ko: '5 (다섯)' }] }
+  ],
+
+  finalsSingle: [
+    { glyph: 'a', speak: '啊', pinyin: 'ā', hangul: '아', category: '단운모 (단모음)', tip: '의사 선생님 앞에서 입을 아- 크게 벌리고 시원하게 내요.', words: [{ ch: '阿姨', py: 'āyí', ko: '이모/아주머니' }] },
+    { glyph: 'o', speak: '喔', pinyin: 'ō', hangul: '오', category: '단운모 (단모음)', tip: '입술을 동그랗게 앞으로 내밀고 [오]~ 하고 소리내요.', words: [{ ch: '公鸡', py: 'gōngjī', ko: '수탉' }] },
+    { glyph: 'e', speak: '鹅', pinyin: 'é', hangul: '으어', category: '단운모 (단모음)', tip: '★[에]가 아니에요! 턱을 내리고 입술을 편 채 목구멍 깊은 곳에서 [으어]!', words: [{ ch: '白鹅', py: 'bái’é', ko: '거위' }] },
+    { glyph: 'i', speak: '衣', pinyin: 'yī', hangul: '이', category: '단운모 (단모음)', tip: '입꼬리를 양옆으로 활짝 당겨 활짝 웃으며 [이]!', words: [{ ch: '衣服', py: 'yīfu', ko: '옷' }, { ch: '一', py: 'yī', ko: '1 (하나)' }] },
+    { glyph: 'u', speak: '乌', pinyin: 'wū', hangul: '우', category: '단운모 (단모음)', tip: '입술을 촛불 끄듯 둥글게 모아서 쑥 내밀며 [우]!', words: [{ ch: '乌龟', py: 'wūguī', ko: '거북이' }] },
+    { glyph: 'ü', speak: '迂', pinyin: 'yū', hangul: '위(입술고정)', category: '단운모 (단모음)', tip: '★초특급 팁! 입술을 [우] 모양으로 동그랗게 모은 뒤, 입술을 절대 움직이지 않고 소리는 [이]를 내요!', words: [{ ch: '金鱼', py: 'jīnyú', ko: '금붕어' }, { ch: '下雨', py: 'xiàyǔ', ko: '비가 오다' }] }
+  ],
+
+  finalsCompound: [
+    { glyph: 'ai', speak: '哀', pinyin: 'āi', hangul: '아이', category: '복운모 (이중모음)', tip: 'a에서 i로 부드럽게 미끄러지듯 연결해요.', words: [{ ch: '爱', py: 'ài', ko: '사랑' }] },
+    { glyph: 'ei', speak: '诶', pinyin: 'ēi', hangul: '에이', category: '복운모 (이중모음)', tip: 'e에서 i로 이어져요. 한국어 [에이]와 비슷해요.', words: [{ ch: '北', py: 'běi', ko: '북쪽' }] },
+    { glyph: 'ui', speak: '微', pinyin: 'wēi', hangul: '웨이', category: '복운모 (이중모음)', tip: 'u에서 ei로 이동해요. 실제 발음은 [웨이]에 가까워요.', words: [{ ch: '水', py: 'shuǐ', ko: '물' }] },
+    { glyph: 'ao', speak: '熬', pinyin: 'áo', hangul: '아오', category: '복운모 (이중모음)', tip: 'a에서 o로 넘어가며 둥글게 입술을 닫아요.', words: [{ ch: '包子', py: 'bāozi', ko: '만두' }] },
+    { glyph: 'ou', speak: '欧', pinyin: 'ōu', hangul: '오우', category: '복운모 (이중모음)', tip: 'o에서 u로 미끄러져요.', words: [{ ch: '猴子', py: 'hóuzi', ko: '원숭이' }] },
+    { glyph: 'iu', speak: '优', pinyin: 'yōu', hangul: '이오우', category: '복운모 (이중모음)', tip: 'i와 ou의 결합이에요. [이오우]처럼 소리나요.', words: [{ ch: '六', py: 'liù', ko: '6 (여섯)' }] },
+    { glyph: 'ie', speak: '椰', pinyin: 'yē', hangul: '이에', category: '복운모 (이중모음)', tip: 'i에서 e로 부드럽게 넘어가요.', words: [{ ch: '树叶', py: 'shùyè', ko: '나뭇잎' }] },
+    { glyph: 'üe', speak: '约', pinyin: 'yuē', hangul: '위예', category: '복운모 (이중모음)', tip: '동그란 ü 입술에서 e로 넘어가요.', words: [{ ch: '月亮', py: 'yuèliang', ko: '달님' }] },
+    { glyph: 'er', speak: '儿', pinyin: 'ér', hangul: '얼(혀말기)', category: '특수운모', tip: 'e를 내면서 혀끝을 위로 둥글게 말아 올려요!', words: [{ ch: '耳朵', py: 'ěrduo', ko: '귀' }] }
+  ],
+
+  finalsNasal: [
+    { glyph: 'an', speak: '安', pinyin: 'ān', hangul: '안', category: '전설비음 (앞콧소리)', tip: '한국어 받침 [ㄴ]과 같아요! 혀끝을 윗니 뒤 잇몸에 닿으며 끝나요.', words: [{ ch: '天安门', py: 'tiān’ānmén', ko: '천안문' }] },
+    { glyph: 'en', speak: '恩', pinyin: 'ēn', hangul: '언/은', category: '전설비음 (앞콧소리)', tip: '으어 소리에서 혀끝을 윗잇몸에 붙여 [언]!', words: [{ ch: '门', py: 'mén', ko: '문' }] },
+    { glyph: 'in', speak: '因', pinyin: 'yīn', hangul: '인', category: '전설비음 (앞콧소리)', tip: '이 소리에서 혀끝을 잇몸에 대어 [인]!', words: [{ ch: '银', py: 'yín', ko: '은 (Silver)' }] },
+    { glyph: 'un', speak: '温', pinyin: 'wēn', hangul: '원', category: '전설비음 (앞콧소리)', tip: 'u+en 결합! [원]으로 소리나요.', words: [{ ch: '春', py: 'chūn', ko: '봄' }] },
+    { glyph: 'ün', speak: '晕', pinyin: 'yūn', hangul: '윈', category: '전설비음 (앞콧소리)', tip: '입술을 모으고 [윈]!', words: [{ ch: '白云', py: 'báiyún', ko: '흰구름' }] },
+    { glyph: 'ang', speak: '昂', pinyin: 'áng', hangul: '앙', category: '후설비음 (뒷콧소리)', tip: '한국어 받침 [ㅇ]과 같아요! 혀뿌리를 들어 목구멍과 코를 쩌렁쩌렁 울려요.', words: [{ ch: '羊', py: 'yáng', ko: '양' }] },
+    { glyph: 'eng', speak: '亨', pinyin: 'hēng', hangul: '엉/응', category: '후설비음 (뒷콧소리)', tip: '으어 소리에서 혀뿌리를 올려 코를 울려요.', words: [{ ch: '风', py: 'fēng', ko: '바람' }] },
+    { glyph: 'ing', speak: '英', pinyin: 'yīng', hangul: '잉', category: '후설비음 (뒷콧소리)', tip: '이 소리에서 코 안쪽을 울리는 [잉]!', words: [{ ch: '星星', py: 'xīngxing', ko: '별' }] },
+    { glyph: 'ong', speak: '轰', pinyin: 'hōng', hangul: '옹', category: '후설비음 (뒷콧소리)', tip: '입술을 모으고 코 깊은 곳에서 [옹]!', words: [{ ch: '红', py: 'hóng', ko: '빨강' }] }
+  ],
+
+  wholeSyllables: [
+    { glyph: 'zhi', speak: '知', pinyin: 'zhī', hangul: '즈(권설)', category: '전체일체음절', tip: '성모와 모음을 쪼개지 않고 단숨에 한 호흡으로 발음해요!', words: [{ ch: '蜘蛛', py: 'zhīzhū', ko: '거미' }] },
+    { glyph: 'chi', speak: '吃', pinyin: 'chī', hangul: '치(권설)', category: '전체일체음절', tip: '혀를 만 채로 단숨에 [치]!', words: [{ ch: '吃', py: 'chī', ko: '먹다' }] },
+    { glyph: 'shi', speak: '狮', pinyin: 'shī', hangul: '스(권설)', category: '전체일체음절', tip: '혀를 만 채로 단숨에 [스]!', words: [{ ch: '狮子', py: 'shīzi', ko: '사자' }] },
+    { glyph: 'ri', speak: '日', pinyin: 'rì', hangul: '르(권설)', category: '전체일체음절', tip: '목청을 떨어 단숨에 [르]!', words: [{ ch: '日子', py: 'rìzi', ko: '날들' }] },
+    { glyph: 'zi', speak: '资', pinyin: 'zī', hangul: '쯔', category: '전체일체음절', tip: '평평한 혀로 단숨에 [쯔]!', words: [{ ch: '字', py: 'zì', ko: '글자' }] },
+    { glyph: 'ci', speak: '刺', pinyin: 'cì', hangul: '츠', category: '전체일체음절', tip: '평평한 혀로 바람을 뿜으며 [츠]!', words: [{ ch: '刺猬', py: 'cìwei', ko: '고슴도치' }] },
+    { glyph: 'si', speak: '丝', pinyin: 'sī', hangul: '쓰', category: '전체일체음절', tip: '평평한 혀로 슥- [쓰]!', words: [{ ch: '司机', py: 'sījī', ko: '기사님' }] },
+    { glyph: 'yi', speak: '衣', pinyin: 'yī', hangul: '이', category: '전체일체음절', tip: '단숨에 [이]!', words: [{ ch: '衣服', py: 'yīfu', ko: '옷' }] },
+    { glyph: 'wu', speak: '乌', pinyin: 'wū', hangul: '우', category: '전체일체음절', tip: '입술을 모아 [우]!', words: [{ ch: '乌鸦', py: 'wūyā', ko: '까마귀' }] },
+    { glyph: 'yu', speak: '迂', pinyin: 'yū', hangul: '위', category: '전체일체음절', tip: '입술을 동그랗게 모으고 [위]!', words: [{ ch: '鱼', py: 'yú', ko: '물고기' }] },
+    { glyph: 'ye', speak: '椰', pinyin: 'yē', hangul: '이에', category: '전체일체음절', tip: '단숨에 [이에]!', words: [{ ch: '爷爷', py: 'yéye', ko: '할아버지' }] },
+    { glyph: 'yue', speak: '约', pinyin: 'yuē', hangul: '위예', category: '전체일체음절', tip: '단숨에 [위예]!', words: [{ ch: '月亮', py: 'yuèliang', ko: '달' }] },
+    { glyph: 'yuan', speak: '冤', pinyin: 'yuān', hangul: '위엔', category: '전체일체음절', tip: '단숨에 [위엔]!', words: [{ ch: '公园', py: 'gōngyuán', ko: '공원' }] },
+    { glyph: 'yin', speak: '因', pinyin: 'yīn', hangul: '인', category: '전체일체음절', tip: '앞콧소리로 [인]!', words: [{ ch: '音乐', py: 'yīnyuè', ko: '음악' }] },
+    { glyph: 'yun', speak: '晕', pinyin: 'yūn', hangul: '윈', category: '전체일체음절', tip: '단숨에 [윈]!', words: [{ ch: '白云', py: 'báiyún', ko: '흰구름' }] },
+    { glyph: 'ying', speak: '英', pinyin: 'yīng', hangul: '잉', category: '전체일체음절', tip: '뒷콧소리로 [잉]!', words: [{ ch: '老鹰', py: 'lǎoyīng', ko: '독수리' }] }
+  ]
+};
+
+// Global map for quick lookup
+const ALL_PINYIN_MAP = {};
+Object.values(PINYIN_KO_DATABASE).forEach(list => {
+  list.forEach(item => {
+    ALL_PINYIN_MAP[item.glyph] = item;
+  });
+});
+
+// Sino-Korean Cognate Words (한국어 한자어 짝꿍 데이터)
+const SINO_KOREAN_COGNATES = [
+  { ko: '학교 (學校)', ch: '学校', py: 'xuéxiào', hangulSound: '쉬에샤오' },
+  { ko: '학생 (學生)', ch: '学生', py: 'xuéshēng', hangulSound: '쉬에셩' },
+  { ko: '도서관 (圖書館)', ch: '图书馆', py: 'túshūguǎn', hangulSound: '투슈관' },
+  { ko: '선생님 (老師)', ch: '老师', py: 'lǎoshī', hangulSound: '라오스' },
+  { ko: '한국 (韓國)', ch: '韩国', py: 'Hánguó', hangulSound: '한궈' },
+  { ko: '중국 (中國)', ch: '中国', py: 'Zhōngguó', hangulSound: '중궈' },
+  { ko: '음악 (音樂)', ch: '音乐', py: 'yīnyuè', hangulSound: '인위에' },
+  { ko: '운동 (運動)', ch: '运动', py: 'yùndòng', hangulSound: '윈동' },
+  { ko: '시간 (時間)', ch: '时间', py: 'shíjiān', hangulSound: '스지엔' },
+  { ko: '태양 (太陽)', ch: '太阳', py: 'tàiyáng', hangulSound: '타이양' },
+  { ko: '친구 (親友)', ch: '亲友', py: 'qīnyǒu', hangulSound: '친요우' },
+  { ko: '감동 (感動)', ch: '感动', py: 'gǎndòng', hangulSound: '간동' }
+];
+
+/* ==========================================================
+   2. CURATED ADVENTURE STAGES (18 STAGES)
+   ========================================================== */
+const ADVENTURE_STAGES = [
+  // TIER 1: 4x4 (Stages 1-6)
+  {
+    id: 1, tier: 1, size: 4, boxR: 2, boxC: 2,
+    name: '입술 팡팡 성모', subtitle: '두 입술을 쓰는 소리 (b, p, m, f)',
+    symbols: ['b', 'p', 'm', 'f'],
+    clues: 8,
+    advice: '【b・p・m・f】는 두 입술을 쓰는 쌍순음이야! b는 숨을 안 뿜고(뽀), p는 세게 팍!(포) 소리내요!'
+  },
+  {
+    id: 2, tier: 1, size: 4, boxR: 2, boxC: 2,
+    name: '혀끝 톡톡 성모', subtitle: '혀끝을 윗잇몸에 튕겨요 (d, t, n, l)',
+    symbols: ['d', 't', 'n', 'l'],
+    clues: 8,
+    advice: '【d・t・n・l】은 혀끝을 윗잇몸에 톡! t는 거센 바람을 훅 뿜어보자!'
+  },
+  {
+    id: 3, tier: 1, size: 4, boxR: 2, boxC: 2,
+    name: '목구멍 시원 성모', subtitle: '목구멍과 혓바닥 소리 (g, k, h, j)',
+    symbols: ['g', 'k', 'h', 'j'],
+    clues: 8,
+    advice: '【g・k・h】는 목구멍 깊은 곳에서 시원하게! j는 미소 지으며 [지]!'
+  },
+  {
+    id: 4, tier: 1, size: 4, boxR: 2, boxC: 2,
+    name: '으뜸 기본 단운모', subtitle: '기초 4대 모음 (a, o, e, i)',
+    symbols: ['a', 'o', 'e', 'i'],
+    clues: 8,
+    advice: '【a・o・e・i】는 기초 모음! 특히 e는 [에]가 아니라 목구멍 속에서 [으어] 소리를 내요!'
+  },
+  {
+    id: 5, tier: 1, size: 4, boxR: 2, boxC: 2,
+    name: '마법의 사성조', subtitle: '4가지 음높이 (ā, á, ǎ, à)',
+    symbols: ['ā', 'á', 'ǎ', 'à'],
+    clues: 7,
+    advice: '★대인기 사성조 스도쿠! 1성은 평평하게, 2성은 쑥 올리고, 3성은 끄덕이며, 4성은 딱 끊어 내려요!'
+  },
+  {
+    id: 6, tier: 1, size: 4, boxR: 2, boxC: 2,
+    name: '4×4 팡팡 졸업전', subtitle: '설면음과 반모음 (j, q, x, y)',
+    symbols: ['j', 'q', 'x', 'y'],
+    clues: 7,
+    advice: '【j・q・x・y】 마스터! q는 [치] 소리를 강하게 내뿜어요! 클리어하면 6×6으로 전진!'
+  },
+
+  // TIER 2: 6x6 (Stages 7-12)
+  {
+    id: 7, tier: 2, size: 6, boxR: 2, boxC: 3,
+    name: '단운모 6총사 완전정복', subtitle: '6대 단모음 (a, o, e, i, u, ü)',
+    symbols: ['a', 'o', 'e', 'i', 'u', 'ü'],
+    clues: 18,
+    advice: '6개 모음 총출동! 【ü】는 입술을 동그랗게 모으고 절대 움직이지 않은 채 [이]라고 소리내요!'
+  },
+  {
+    id: 8, tier: 2, size: 6, boxR: 2, boxC: 3,
+    name: '다정한 기초 성모 6', subtitle: '입술과 혀끝 소리 (b, p, m, f, d, t)',
+    symbols: ['b', 'p', 'm', 'f', 'd', 't'],
+    clues: 18,
+    advice: '가로, 세로, 2×3 상자마다 6글자가 겹치지 않게 채워보자!'
+  },
+  {
+    id: 9, tier: 2, size: 6, boxR: 2, boxC: 3,
+    name: '달콤한 복운모 월드', subtitle: '이중모음 친구들 (ai, ei, ui, ao, ou, iu)',
+    symbols: ['ai', 'ei', 'ui', 'ao', 'ou', 'iu'],
+    clues: 17,
+    advice: '복운모는 모음 두 개가 매끄럽게 이어져요! 【ui】는 [웨이], 【iu】는 [이오우]!'
+  },
+  {
+    id: 10, tier: 2, size: 6, boxR: 2, boxC: 3,
+    name: '혀말림 vs 평평이 대결', subtitle: '권설음과 설치음 (zh, ch, sh, z, c, s)',
+    symbols: ['zh', 'ch', 'sh', 'z', 'c', 's'],
+    clues: 16,
+    advice: '★한국 어린이가 가장 헷갈려하는 혀말림 소리(zh, ch, sh)와 평평한 소리(z, c, s) 완벽 정복!'
+  },
+  {
+    id: 11, tier: 2, size: 6, boxR: 2, boxC: 3,
+    name: '콧소리 비운모 배틀', subtitle: '앞콧소리 vs 뒷콧소리 (an, en, in, ang, eng, ing)',
+    symbols: ['an', 'en', 'in', 'ang', 'eng', 'ing'],
+    clues: 17,
+    advice: '한국어 받침 슈퍼파워! an/en/in은 받침 [ㄴ], ang/eng/ing은 받침 [ㅇ]과 완벽히 통해요!'
+  },
+  {
+    id: 12, tier: 2, size: 6, boxR: 2, boxC: 3,
+    name: '음절 조합 대모험', subtitle: '기초 음절 (ba, ma, da, ta, ga, ha)',
+    symbols: ['ba', 'ma', 'da', 'ta', 'ga', 'ha'],
+    clues: 16,
+    advice: '성모+모음이 합체한 음절 스도쿠! 6×6을 정복했으니 이제 대망의 9×9 마스터로!'
+  },
+
+  // TIER 3: 9x9 (Stages 13-18)
+  {
+    id: 13, tier: 3, size: 9, boxR: 3, boxC: 3,
+    name: '성모 올스타 9', subtitle: '대표 성모 9자 (b, p, m, f, d, t, n, l, g)',
+    symbols: ['b', 'p', 'm', 'f', 'd', 't', 'n', 'l', 'g'],
+    clues: 40,
+    advice: '본격적인 9×9 마스터 코스! 3×3 블록과 행, 열을 꼼꼼히 살피며 소리를 귀로 느껴봐요.'
+  },
+  {
+    id: 14, tier: 3, size: 9, boxR: 3, boxC: 3,
+    name: '자음 종합 드림팀', subtitle: '설면음 & 권설음 & 설치음 (j, q, x, zh, ch, sh, z, c, s)',
+    symbols: ['j', 'q', 'x', 'zh', 'ch', 'sh', 'z', 'c', 's'],
+    clues: 39,
+    advice: '고난도 자음 종합 퍼즐! 메모 기능을 적극 활용해 후보 글자를 좁혀보자.'
+  },
+  {
+    id: 15, tier: 3, size: 9, boxR: 3, boxC: 3,
+    name: '운모 종합 드림팀', subtitle: '단운모와 주요 복운모 (a, o, e, i, u, ü, ai, ei, ao)',
+    symbols: ['a', 'o', 'e', 'i', 'u', 'ü', 'ai', 'ei', 'ao'],
+    clues: 39,
+    advice: '모음 총망라! 단운모 6자와 대표 복운모 3자가 어우러진 환상의 9×9 퍼즐이야!'
+  },
+  {
+    id: 16, tier: 3, size: 9, boxR: 3, boxC: 3,
+    name: '음절과 사성조 콤비', subtitle: '마(ma)의 사성조와 친구들 (mā, má, mǎ, mà, ba, da, ta, na, la)',
+    symbols: ['mā', 'má', 'mǎ', 'mà', 'ba', 'da', 'ta', 'na', 'la'],
+    clues: 38,
+    advice: '사성조와 주요 음절이 함께 등장하는 역대급 퍼즐! 눈으로 보고 귀로 들으며 채워가요!'
+  },
+  {
+    id: 17, tier: 3, size: 9, boxR: 3, boxC: 3,
+    name: '전체일체음절 마스터', subtitle: '한 호흡 음절 9자 (zhi, chi, shi, ri, zi, ci, si, yi, wu)',
+    symbols: ['zhi', 'chi', 'shi', 'ri', 'zi', 'ci', 'si', 'yi', 'wu'],
+    clues: 38,
+    advice: '쪼개지 않고 한 번에 소리내는 전체일체음절 9개! 완벽한 중국어 발음의 열쇠야.'
+  },
+  {
+    id: 18, tier: 3, size: 9, boxR: 3, boxC: 3,
+    name: '궁극의 한어병음 챔피언', subtitle: '한어병음 그랜드 파이널 (a, o, e, i, u, b, d, g, m)',
+    symbols: ['a', 'o', 'e', 'i', 'u', 'b', 'd', 'g', 'm'],
+    clues: 36,
+    advice: '마지막 챔피언십 스테이지! 최고의 논리력과 청음 실력으로 그랜드마스터가 되어보자!'
+  }
+];
+
+/* ==========================================================
+   3. DUAL-MODE AUDIO ENGINE (Web Speech + Web Audio Synth)
+   ========================================================== */
+class AudioEngine {
+  constructor() {
+    this.ctx = null;
+    this.muted = false;
+    this.zhVoice = null;
+    this.initSpeech();
+  }
+
+  initSpeech() {
+    if ('speechSynthesis' in window) {
+      const loadVoices = () => {
+        const voices = window.speechSynthesis.getVoices();
+        if (voices && voices.length > 0) {
+          this.zhVoice = voices.find(v => v.lang === 'zh-CN' || v.lang === 'zh_CN') ||
+                         voices.find(v => v.lang.startsWith('zh')) || null;
+        }
+      };
+      loadVoices();
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+    }
+  }
+
+  ensureContext() {
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) this.ctx = new AudioCtx();
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  }
+
+  speak(pinyin, spokenWord) {
+    if (this.muted) return;
+    this.ensureContext();
+
+    const key = String(pinyin || spokenWord || '').trim();
+    const altKey = String(spokenWord || pinyin || '').trim();
+    if (!key && !altKey) return;
+
+    const cleanKey = key.replace(/[\/\\:*?"<>|]/g, '').trim();
+    const cleanAlt = altKey.replace(/[\/\\:*?"<>|]/g, '').trim();
+
+    // 1. Tier 1: Try playing server-side studio-quality neural human audio (MP3)
+    if (this.currentAudio) {
+      try {
+        this.currentAudio.pause();
+        this.currentAudio.currentTime = 0;
+      } catch(e) {}
+    }
+
+    const tryPlayAudio = (targetKey, onFail) => {
+      if (!targetKey) { onFail(); return; }
+      const audioUrl = 'audio/zh/' + encodeURIComponent(targetKey) + '.mp3';
+      const sound = new Audio(audioUrl);
+      this.currentAudio = sound;
+      let played = false;
+      sound.onplay = () => { played = true; };
+      sound.play().then(() => {
+        // High-fidelity natural human voice played successfully
+      }).catch(() => {
+        if (!played) onFail();
+      });
+      sound.onerror = () => {
+        if (!played) onFail();
+      };
+    };
+
+    tryPlayAudio(cleanKey, () => {
+      if (cleanAlt && cleanAlt !== cleanKey) {
+        tryPlayAudio(cleanAlt, () => {
+          this.fallbackSpeak(pinyin, spokenWord);
+        });
+      } else {
+        this.fallbackSpeak(pinyin, spokenWord);
+      }
+    });
+  }
+
+  fallbackSpeak(pinyin, spokenWord) {
+    if ('speechSynthesis' in window) {
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+      window.speechSynthesis.cancel();
+
+      let textToSay = spokenWord;
+      if (!textToSay) {
+        const found = ALL_PINYIN_MAP[pinyin];
+        textToSay = (found && found.speak) ? found.speak : pinyin;
+      }
+
+      if (pinyin === 'ā') textToSay = '啊';
+      if (pinyin === 'á') textToSay = '阿';
+      if (pinyin === 'ǎ') textToSay = '啊';
+      if (pinyin === 'à') textToSay = '啊';
+
+      const utter = new SpeechSynthesisUtterance(textToSay);
+      utter.lang = 'zh-CN';
+      utter.rate = 0.85;
+      utter.pitch = 1.1;
+      if (!this.zhVoice) {
+        const voices = window.speechSynthesis.getVoices();
+        if (voices && voices.length > 0) {
+          this.zhVoice = voices.find(v => v.lang === 'zh-CN' || v.lang === 'zh_CN') ||
+                         voices.find(v => v.lang.startsWith('zh')) || null;
+        }
+      }
+      if (this.zhVoice) utter.voice = this.zhVoice;
+
+      window.speechSynthesis.speak(utter);
+    }
+  }
+
+  // Synthesize musical pitch contours for 4 Tones
+  playToneContour(toneNumber) {
+    if (this.muted) return;
+    this.ensureContext();
+    if (!this.ctx) return;
+
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    const now = this.ctx.currentTime;
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.linearRampToValueAtTime(0.2, now + 0.04);
+
+    if (toneNumber === 1) {
+      // 55: High flat
+      osc.frequency.setValueAtTime(440, now);
+      gain.gain.setValueAtTime(0.2, now + 0.35);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.45);
+      osc.start(now);
+      osc.stop(now + 0.45);
+    } else if (toneNumber === 2) {
+      // 35: Mid to high rising
+      osc.frequency.setValueAtTime(320, now);
+      osc.frequency.exponentialRampToValueAtTime(470, now + 0.38);
+      gain.gain.setValueAtTime(0.2, now + 0.3);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.42);
+      osc.start(now);
+      osc.stop(now + 0.42);
+    } else if (toneNumber === 3) {
+      // 214: Dip then rise
+      osc.frequency.setValueAtTime(330, now);
+      osc.frequency.exponentialRampToValueAtTime(230, now + 0.22);
+      osc.frequency.exponentialRampToValueAtTime(390, now + 0.5);
+      gain.gain.setValueAtTime(0.2, now + 0.4);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.55);
+      osc.start(now);
+      osc.stop(now + 0.55);
+    } else if (toneNumber === 4) {
+      // 51: High falling to low
+      osc.frequency.setValueAtTime(480, now);
+      osc.frequency.exponentialRampToValueAtTime(200, now + 0.32);
+      gain.gain.setValueAtTime(0.2, now + 0.24);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.36);
+      osc.start(now);
+      osc.stop(now + 0.36);
+    } else {
+      // Light tone (경성)
+      osc.frequency.setValueAtTime(350, now);
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.15);
+      osc.start(now);
+      osc.stop(now + 0.15);
+    }
+  }
+
+  // Cheerful UI sound effects
+  playSfx(type) {
+    if (this.muted) return;
+    this.ensureContext();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    if (type === 'pop') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(520, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.08);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.08);
+      osc.start(now);
+      osc.stop(now + 0.08);
+    } else if (type === 'success') {
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(440, now);
+      osc.frequency.setValueAtTime(554.37, now + 0.08);
+      osc.frequency.setValueAtTime(659.25, now + 0.16);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.35);
+      osc.start(now);
+      osc.stop(now + 0.35);
+    } else if (type === 'error') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(180, now);
+      osc.frequency.exponentialRampToValueAtTime(110, now + 0.2);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.2);
+      osc.start(now);
+      osc.stop(now + 0.2);
+    } else if (type === 'fanfare') {
+      const notes = [523.25, 659.25, 783.99, 1046.50];
+      notes.forEach((freq, idx) => {
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.type = 'triangle';
+        o.frequency.value = freq;
+        o.connect(g);
+        g.connect(this.ctx.destination);
+        const t = now + idx * 0.11;
+        g.gain.setValueAtTime(0.15, t);
+        g.gain.linearRampToValueAtTime(0.001, t + 0.22);
+        o.start(t);
+        o.stop(t + 0.22);
+      });
+    }
+  }
+}
+
+const audio = new AudioEngine();
+
+function toggleMute() {
+  audio.muted = !audio.muted;
+  const btn = document.getElementById('soundToggleBtn');
+  btn.textContent = audio.muted ? '🔇' : '🔊';
+}
+
+/* ==========================================================
+   4. SUDOKU GENERATOR & SOLVER ENGINE
+   ========================================================== */
+class SudokuGenerator {
+  static countSolutions(grid, n, br, bc, limit = 2) {
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        if (grid[r][c] === 0) {
+          let count = 0;
+          for (let num = 1; num <= n; num++) {
+            if (this.isValid(grid, n, br, bc, r, c, num)) {
+              grid[r][c] = num;
+              count += this.countSolutions(grid, n, br, bc, limit - count);
+              grid[r][c] = 0;
+              if (count >= limit) return count;
+            }
+          }
+          return count;
+        }
+      }
+    }
+    return 1;
+  }
+
+  static isValid(grid, n, br, bc, r, c, num) {
+    for (let i = 0; i < n; i++) {
+      if (grid[r][i] === num || grid[i][c] === num) return false;
+    }
+    const startR = Math.floor(r / br) * br;
+    const startC = Math.floor(c / bc) * bc;
+    for (let i = 0; i < br; i++) {
+      for (let j = 0; j < bc; j++) {
+        if (grid[startR + i][startC + j] === num) return false;
+      }
+    }
+    return true;
+  }
+
+  static fillBoard(grid, n, br, bc) {
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        if (grid[r][c] === 0) {
+          const nums = [];
+          for (let i = 1; i <= n; i++) nums.push(i);
+          nums.sort(() => Math.random() - 0.5);
+
+          for (const num of nums) {
+            if (this.isValid(grid, n, br, bc, r, c, num)) {
+              grid[r][c] = num;
+              if (this.fillBoard(grid, n, br, bc)) return true;
+              grid[r][c] = 0;
+            }
+          }
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  static generate(n, br, bc, targetClues) {
+    const grid = Array.from({ length: n }, () => Array(n).fill(0));
+    this.fillBoard(grid, n, br, bc);
+    const solution = grid.map(row => [...row]);
+
+    const cells = [];
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        cells.push({ r, c });
+      }
+    }
+    cells.sort(() => Math.random() - 0.5);
+
+    let clues = n * n;
+    for (const cell of cells) {
+      if (clues <= targetClues) break;
+      const backup = grid[cell.r][cell.c];
+      grid[cell.r][cell.c] = 0;
+
+      if (this.countSolutions(grid, n, br, bc, 2) !== 1) {
+        grid[cell.r][cell.c] = backup;
+      } else {
+        clues--;
+      }
+    }
+
+    return { solution, puzzle: grid, clues };
+  }
+}
+
+/* ==========================================================
+   5. GAME STATE & APPLICATION CONTROLLER
+   ========================================================== */
+const AppState = {
+  activeView: 'adventure',
+  activeTier: 1,
+  currentStage: null,
+  isFreeMode: false,
+  freeConfig: { size: 4, category: 'initials', diff: 'easy' },
+
+  // Sudoku Board State
+  size: 4,
+  boxR: 2,
+  boxC: 2,
+  symbols: [],
+  solutionGrid: [],
+  initialGrid: [],
+  userGrid: [],
+  notesGrid: [],
+  selectedCell: null,
+  pencilMode: false,
+  moveHistory: [],
+  mistakes: 0,
+  maxMistakes: 3,
+  timerSeconds: 0,
+  timerInterval: null,
+  isGameFinished: false,
+
+  // Stars & Progress
+  starsData: {},
+  unlockedStage: 1,
+
+  // Tone Playground State
+  toneBaseSyl: 'ma',
+  activeTone: 1,
+
+  // Quiz State
+  quizMode: 'tones',
+  quizScore: 0,
+  quizCurrentTarget: null
+};
+
+function loadSavedProgress() {
+  try {
+    const saved = localStorage.getItem('pinyin_ko_sudoku_progress');
+    if (saved) {
+      const data = JSON.parse(saved);
+      AppState.starsData = data.stars || {};
+      AppState.unlockedStage = data.unlocked || 1;
+    }
+  } catch (e) {}
+  updateTotalStarsDisplay();
+}
+
+function saveProgress() {
+  try {
+    localStorage.setItem('pinyin_ko_sudoku_progress', JSON.stringify({
+      stars: AppState.starsData,
+      unlocked: AppState.unlockedStage
+    }));
+  } catch (e) {}
+  updateTotalStarsDisplay();
+}
+
+function updateTotalStarsDisplay() {
+  let count = 0;
+  Object.values(AppState.starsData).forEach(s => count += s);
+  const el = document.getElementById('totalStarsDisplay');
+  if (el) el.textContent = count;
+}
+
+/* ==========================================================
+   6. VIEW ROUTING & INITIALIZATION
+   ========================================================== */
+function switchView(viewName) {
+  AppState.activeView = viewName;
+
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+  const targetView = document.getElementById(`view-${viewName}`);
+  const targetTab = document.getElementById(`tab-${viewName}`);
+
+  if (targetView) targetView.classList.add('active');
+  if (targetTab) targetTab.classList.add('active');
+
+  if (viewName === 'adventure') {
+    renderStageGrid();
+    setTutorMessage('도전하고 싶은 스테이지를 골라봐! 4×4부터 차근차근 시작해보자!');
+  } else if (viewName === 'chart') {
+    renderChartSections('initials');
+    setTutorMessage('중국어 병음 완전 도감이야! 카드를 터치하면 판다 핑핑이의 원어민 발음이 나와!');
+  } else if (viewName === 'tones') {
+    drawTonePitchCurve(AppState.activeTone);
+    setTutorMessage('사성조 놀이터에 온 걸 환영해! 1성, 2성, 3성, 4성의 높낮이 곡선을 눈과 귀로 느껴보자!');
+  } else if (viewName === 'cognate') {
+    renderCognateGrid();
+    setTutorMessage('한국어 한자어와 중국어 병음은 단짝 짝꿍! 터치해서 얼마나 발음이 비슷한지 들어봐!');
+  } else if (viewName === 'quiz') {
+    startNextQuizQuestion();
+    setTutorMessage('귀 쏙쏙 듣기 퀴즈! 스피커를 누르고 어떤 발음인지 맞춰보자!');
+  } else if (viewName === 'free') {
+    setTutorMessage('원하는 크기와 테마로 나만의 병음 스도쿠를 무제한으로 만들 수 있어!');
+  }
+}
+
+function setTutorMessage(text, soundText = null) {
+  const tutorTextEl = document.getElementById('tutorText');
+  if (tutorTextEl) tutorTextEl.textContent = text;
+  if (soundText) {
+    audio.speak(soundText);
+  }
+}
+
+function tutorSpeakCurrentAdvice() {
+  if (AppState.activeView === 'gameplay' && AppState.currentStage) {
+    audio.speak(AppState.currentStage.symbols[0]);
+    setTutorMessage(AppState.currentStage.advice);
+  } else {
+    audio.speak('你好', '你好');
+    setTutorMessage('Nǐ hǎo! 핑핑이와 함께 즐겁게 중국어 병음을 배워보자!');
+  }
+}
+
+/* ==========================================================
+   7. ADVENTURE MODE & TIERS
+   ========================================================== */
+function selectTier(tierNum) {
+  AppState.activeTier = tierNum;
+  document.querySelectorAll('.tier-card').forEach((el, idx) => {
+    el.classList.toggle('active', idx + 1 === tierNum);
+  });
+  renderStageGrid();
+}
+
+function renderStageGrid() {
+  const container = document.getElementById('stageGrid');
+  container.innerHTML = '';
+
+  const stagesInTier = ADVENTURE_STAGES.filter(s => s.tier === AppState.activeTier);
+
+  stagesInTier.forEach(st => {
+    const item = document.createElement('div');
+    const isUnlocked = st.id <= AppState.unlockedStage;
+    const stars = AppState.starsData[st.id] || 0;
+
+    item.className = `stage-item ${isUnlocked ? '' : 'locked'}`;
+
+    let starStr = '';
+    for (let i = 1; i <= 3; i++) {
+      starStr += (i <= stars) ? '⭐' : '☆';
+    }
+
+    item.innerHTML = `
+      <div class="stage-header-row">
+        <div class="stage-num-badge">${isUnlocked ? `Stage ${st.id}` : '🔒 잠김'}</div>
+        <div class="stage-stars">${starStr}</div>
+      </div>
+      <div class="stage-name">${st.name}</div>
+      <div class="stage-symbols">${st.symbols.slice(0, 4).join(' ')}${st.symbols.length > 4 ? '...' : ''}</div>
+    `;
+
+    if (isUnlocked) {
+      item.onclick = () => startAdventureStage(st);
+    }
+
+    container.appendChild(item);
+  });
+}
+
+function startAdventureStage(stage) {
+  AppState.currentStage = stage;
+  AppState.isFreeMode = false;
+  AppState.size = stage.size;
+  AppState.boxR = stage.boxR;
+  AppState.boxC = stage.boxC;
+  AppState.symbols = [...stage.symbols];
+
+  document.getElementById('gpStageTitle').textContent = `Stage ${stage.id}: ${stage.name} (${stage.size}×${stage.size})`;
+  document.getElementById('gpStageDesc').textContent = stage.subtitle;
+
+  const generated = SudokuGenerator.generate(stage.size, stage.boxR, stage.boxC, stage.clues);
+  initSudokuGame(generated.puzzle, generated.solution);
+
+  switchView('gameplay');
+  setTutorMessage(stage.advice, stage.symbols[0]);
+}
+
+/* ==========================================================
+   8. FREE GENERATOR MODE
+   ========================================================== */
+function setFreeSize(sz, el) {
+  AppState.freeConfig.size = sz;
+  document.querySelectorAll('#freeSizeOpts .free-opt-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function setFreeCategory(cat, el) {
+  AppState.freeConfig.category = cat;
+  document.querySelectorAll('#freeTypeOpts .free-opt-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function setFreeDiff(diff, el) {
+  AppState.freeConfig.diff = diff;
+  document.querySelectorAll('#freeDiffOpts .free-opt-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function startFreeGame() {
+  const sz = AppState.freeConfig.size;
+  AppState.size = sz;
+  AppState.boxR = (sz === 4) ? 2 : (sz === 6 ? 2 : 3);
+  AppState.boxC = (sz === 4) ? 2 : (sz === 6 ? 3 : 3);
+  AppState.isFreeMode = true;
+  AppState.currentStage = null;
+
+  let pool = [];
+  if (AppState.freeConfig.category === 'initials') {
+    pool = PINYIN_KO_DATABASE.initials.map(x => x.glyph);
+  } else if (AppState.freeConfig.category === 'finals') {
+    pool = [...PINYIN_KO_DATABASE.finalsSingle, ...PINYIN_KO_DATABASE.finalsCompound].map(x => x.glyph);
+  } else {
+    pool = ['ā', 'á', 'ǎ', 'à', 'ō', 'ó', 'ǒ', 'ò', 'ē'];
+  }
+
+  pool.sort(() => Math.random() - 0.5);
+  AppState.symbols = pool.slice(0, sz);
+
+  let targetClues = Math.floor(sz * sz * 0.45);
+  if (AppState.freeConfig.diff === 'easy') targetClues = Math.floor(sz * sz * 0.55);
+  if (AppState.freeConfig.diff === 'hard') targetClues = Math.floor(sz * sz * 0.38);
+
+  const generated = SudokuGenerator.generate(sz, AppState.boxR, AppState.boxC, targetClues);
+
+  document.getElementById('gpStageTitle').textContent = `자유 퍼즐 (${sz}×${sz})`;
+  document.getElementById('gpStageDesc').textContent = `테마: ${AppState.symbols.join(', ')}`;
+
+  initSudokuGame(generated.puzzle, generated.solution);
+  switchView('gameplay');
+  setTutorMessage('나만의 맞춤 병음 스도쿠가 완성되었어! 힘차게 모든 칸을 채워보자!', AppState.symbols[0]);
+}
+
+/* ==========================================================
+   9. SUDOKU CORE GAME ENGINE & BOARD RENDERING
+   ========================================================== */
+function initSudokuGame(puzzle, solution) {
+  AppState.solutionGrid = solution;
+  AppState.initialGrid = puzzle.map(r => [...r]);
+  AppState.userGrid = puzzle.map(r => [...r]);
+  AppState.notesGrid = Array.from({ length: AppState.size }, () =>
+    Array.from({ length: AppState.size }, () => new Set())
+  );
+  AppState.selectedCell = null;
+  AppState.pencilMode = false;
+  AppState.moveHistory = [];
+  AppState.mistakes = 0;
+  AppState.isGameFinished = false;
+
+  document.getElementById('toolPencil').classList.remove('active');
+  updateHeartsDisplay();
+
+  // Reset Timer
+  clearInterval(AppState.timerInterval);
+  AppState.timerSeconds = 0;
+  updateTimerDisplay();
+  AppState.timerInterval = setInterval(() => {
+    AppState.timerSeconds++;
+    updateTimerDisplay();
+  }, 1000);
+
+  renderBoard();
+  renderKeypad();
+}
+
+function updateHeartsDisplay() {
+  const left = AppState.maxMistakes - AppState.mistakes;
+  let str = '';
+  for (let i = 0; i < AppState.maxMistakes; i++) {
+    str += (i < left) ? '❤️' : '🤍';
+  }
+  document.getElementById('gpHearts').textContent = str;
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(AppState.timerSeconds / 60).toString().padStart(2, '0');
+  const s = (AppState.timerSeconds % 60).toString().padStart(2, '0');
+  document.getElementById('gpTimer').textContent = `⏱️ ${m}:${s}`;
+}
+
+function renderBoard() {
+  const boardEl = document.getElementById('sudokuBoard');
+  const n = AppState.size;
+  const br = AppState.boxR;
+  const bc = AppState.boxC;
+
+  boardEl.innerHTML = '';
+  boardEl.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+  boardEl.style.gridTemplateRows = `repeat(${n}, 1fr)`;
+
+  const cellSize = (n === 4) ? 74 : (n === 6 ? 52 : 36);
+  boardEl.style.width = `${cellSize * n}px`;
+  boardEl.style.height = `${cellSize * n}px`;
+
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'sudoku-cell';
+      cell.dataset.r = r;
+      cell.dataset.c = c;
+
+      if ((c + 1) % bc === 0 && (c + 1) !== n) cell.classList.add('border-right-thick');
+      if ((r + 1) % br === 0 && (r + 1) !== n) cell.classList.add('border-bottom-thick');
+
+      const val = AppState.userGrid[r][c];
+      const isFixed = AppState.initialGrid[r][c] !== 0;
+
+      if (isFixed) cell.classList.add('fixed');
+      else if (val !== 0) cell.classList.add('user-filled');
+
+      if (val !== 0) {
+        const symbol = AppState.symbols[val - 1];
+        const hangul = getHangulForSymbol(symbol);
+        cell.innerHTML = `
+          <div class="cell-glyph">${symbol}</div>
+          ${n <= 6 ? `<div class="cell-hangul-sub">${hangul}</div>` : ''}
+        `;
+      } else {
+        // Render notes if present
+        const notes = AppState.notesGrid[r][c];
+        if (notes && notes.size > 0) {
+          const notesGrid = document.createElement('div');
+          notesGrid.className = 'cell-notes-grid';
+          for (let i = 1; i <= n; i++) {
+            const span = document.createElement('span');
+            span.className = 'note-num';
+            if (notes.has(i)) span.textContent = AppState.symbols[i - 1];
+            notesGrid.appendChild(span);
+          }
+          cell.appendChild(notesGrid);
+        }
+      }
+
+      cell.onclick = () => handleCellClick(r, c);
+      boardEl.appendChild(cell);
+    }
+  }
+
+  highlightRelatedCells();
+}
+
+function getHangulForSymbol(symbol) {
+  const found = ALL_PINYIN_MAP[symbol];
+  if (found && found.hangul) return found.hangul;
+  if (symbol.includes('ā') || symbol.includes('bā') || symbol.includes('mā')) return '1성';
+  if (symbol.includes('á') || symbol.includes('bá') || symbol.includes('má')) return '2성';
+  if (symbol.includes('ǎ') || symbol.includes('bǎ') || symbol.includes('mǎ')) return '3성';
+  if (symbol.includes('à') || symbol.includes('bà') || symbol.includes('mà')) return '4성';
+  return '';
+}
+
+function handleCellClick(r, c) {
+  if (AppState.isGameFinished) return;
+  AppState.selectedCell = { r, c };
+  audio.playSfx('pop');
+
+  const val = AppState.userGrid[r][c];
+  if (val !== 0) {
+    const symbol = AppState.symbols[val - 1];
+    audio.speak(symbol);
+  }
+
+  highlightRelatedCells();
+}
+
+function highlightRelatedCells() {
+  const cells = document.querySelectorAll('.sudoku-cell');
+  cells.forEach(c => {
+    c.classList.remove('selected', 'highlight-peer', 'highlight-same', 'error');
+  });
+
+  if (!AppState.selectedCell) return;
+  const { r: selR, c: selC } = AppState.selectedCell;
+  const selVal = AppState.userGrid[selR][selC];
+  const n = AppState.size;
+  const br = AppState.boxR;
+  const bc = AppState.boxC;
+
+  const selBoxR = Math.floor(selR / br);
+  const selBoxC = Math.floor(selC / bc);
+
+  cells.forEach(cell => {
+    const r = parseInt(cell.dataset.r);
+    const c = parseInt(cell.dataset.c);
+    const val = AppState.userGrid[r][c];
+
+    if (r === selR && c === selC) {
+      cell.classList.add('selected');
+    } else if (r === selR || c === selC || (Math.floor(r / br) === selBoxR && Math.floor(c / bc) === selBoxC)) {
+      cell.classList.add('highlight-peer');
+    }
+
+    if (selVal !== 0 && val === selVal) {
+      cell.classList.add('highlight-same');
+    }
+  });
+}
+
+function renderKeypad() {
+  const keypad = document.getElementById('keypadGrid');
+  const n = AppState.size;
+  keypad.innerHTML = '';
+
+  const cols = (n <= 4) ? 4 : (n === 6 ? 6 : 9);
+  keypad.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+
+  AppState.symbols.forEach((sym, idx) => {
+    const val = idx + 1;
+    const btn = document.createElement('div');
+    btn.className = 'key-btn';
+    btn.dataset.val = val;
+
+    const hangul = getHangulForSymbol(sym);
+
+    let placedCount = 0;
+    for (let r = 0; r < n; r++) {
+      for (let c = 0; c < n; c++) {
+        if (AppState.userGrid[r][c] === val) placedCount++;
+      }
+    }
+
+    if (placedCount >= n) btn.classList.add('completed');
+
+    btn.innerHTML = `
+      <span class="key-glyph">${sym}</span>
+      <span class="key-hangul">${hangul}</span>
+      <span class="key-count">${n - placedCount}</span>
+    `;
+
+    btn.onclick = () => handleInputNumber(val);
+    keypad.appendChild(btn);
+  });
+}
+
+function handleInputNumber(num) {
+  if (AppState.isGameFinished || !AppState.selectedCell) return;
+  const { r, c } = AppState.selectedCell;
+
+  if (AppState.initialGrid[r][c] !== 0) return;
+
+  const symbol = AppState.symbols[num - 1];
+  audio.speak(symbol);
+
+  if (AppState.pencilMode) {
+    const notes = AppState.notesGrid[r][c];
+    if (notes.has(num)) notes.delete(num);
+    else notes.add(num);
+    renderBoard();
+    return;
+  }
+
+  const prevVal = AppState.userGrid[r][c];
+  if (prevVal === num) return;
+
+  const correctVal = AppState.solutionGrid[r][c];
+
+  if (num !== correctVal) {
+    // Mistake
+    AppState.mistakes++;
+    updateHeartsDisplay();
+    audio.playSfx('error');
+
+    const cellEl = document.querySelector(`.sudoku-cell[data-r="${r}"][data-c="${c}"]`);
+    if (cellEl) cellEl.classList.add('error');
+
+    setTutorMessage(`앗! 여기에 들어갈 글자가 아닌 것 같아. 다시 한번 생각해볼까?`);
+
+    if (AppState.mistakes >= AppState.maxMistakes) {
+      handleGameOver();
+    }
+    return;
+  }
+
+  // Correct Move
+  AppState.moveHistory.push({ r, c, prevVal, newVal: num });
+  AppState.userGrid[r][c] = num;
+  AppState.notesGrid[r][c].clear();
+
+  audio.playSfx('pop');
+  renderBoard();
+  renderKeypad();
+
+  checkGameCompletion();
+}
+
+function togglePencilMode() {
+  AppState.pencilMode = !AppState.pencilMode;
+  document.getElementById('toolPencil').classList.toggle('active', AppState.pencilMode);
+  audio.playSfx('pop');
+}
+
+function handleErase() {
+  if (AppState.isGameFinished || !AppState.selectedCell) return;
+  const { r, c } = AppState.selectedCell;
+  if (AppState.initialGrid[r][c] !== 0) return;
+
+  const prevVal = AppState.userGrid[r][c];
+  if (prevVal !== 0 || AppState.notesGrid[r][c].size > 0) {
+    AppState.moveHistory.push({ r, c, prevVal, newVal: 0 });
+    AppState.userGrid[r][c] = 0;
+    AppState.notesGrid[r][c].clear();
+    audio.playSfx('pop');
+    renderBoard();
+    renderKeypad();
+  }
+}
+
+function handleUndo() {
+  if (AppState.isGameFinished || AppState.moveHistory.length === 0) return;
+  const lastMove = AppState.moveHistory.pop();
+  AppState.userGrid[lastMove.r][lastMove.c] = lastMove.prevVal;
+  AppState.selectedCell = { r: lastMove.r, c: lastMove.c };
+  audio.playSfx('pop');
+  renderBoard();
+  renderKeypad();
+}
+
+function handleHint() {
+  if (AppState.isGameFinished) return;
+  const n = AppState.size;
+  const emptyCells = [];
+
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      if (AppState.userGrid[r][c] === 0) {
+        emptyCells.push({ r, c });
+      }
+    }
+  }
+
+  if (emptyCells.length === 0) return;
+
+  const pick = emptyCells[Math.floor(Math.random() - 0.5 * 0 + Math.random() * emptyCells.length)];
+  const correctVal = AppState.solutionGrid[pick.r][pick.c];
+
+  AppState.userGrid[pick.r][pick.c] = correctVal;
+  AppState.selectedCell = { r: pick.r, c: pick.c };
+  AppState.notesGrid[pick.r][pick.c].clear();
+
+  const symbol = AppState.symbols[correctVal - 1];
+  audio.speak(symbol);
+  audio.playSfx('success');
+
+  renderBoard();
+  renderKeypad();
+  setTutorMessage(`힌트 요정 출동! [${symbol}] 글자를 쏙 넣어줬어!`);
+
+  checkGameCompletion();
+}
+
+function checkGameCompletion() {
+  const n = AppState.size;
+  for (let r = 0; r < n; r++) {
+    for (let c = 0; c < n; c++) {
+      if (AppState.userGrid[r][c] !== AppState.solutionGrid[r][c]) {
+        return;
+      }
+    }
+  }
+
+  // Game Cleared!
+  AppState.isGameFinished = true;
+  clearInterval(AppState.timerInterval);
+  audio.playSfx('fanfare');
+  launchConfetti();
+
+  let stars = 3;
+  if (AppState.mistakes === 1) stars = 2;
+  if (AppState.mistakes >= 2) stars = 1;
+
+  if (AppState.currentStage) {
+    const stId = AppState.currentStage.id;
+    if (!AppState.starsData[stId] || AppState.starsData[stId] < stars) {
+      AppState.starsData[stId] = stars;
+    }
+    if (stId === AppState.unlockedStage && stId < 18) {
+      AppState.unlockedStage = stId + 1;
+    }
+    saveProgress();
+  }
+
+  let starString = '';
+  for (let i = 1; i <= 3; i++) starString += (i <= stars) ? '⭐' : '☆';
+  document.getElementById('clearStars').textContent = starString;
+
+  const m = Math.floor(AppState.timerSeconds / 60);
+  const s = AppState.timerSeconds % 60;
+  document.getElementById('clearDesc').textContent =
+    `소요 시간: ${m}분 ${s}초 | 실수: ${AppState.mistakes}회\n대단해! 모든 병음 칸을 완벽하게 맞혔어!`;
+
+  const nextBtn = document.getElementById('btnNextStage');
+  if (AppState.currentStage && AppState.currentStage.id < 18) {
+    nextBtn.style.display = 'block';
+  } else {
+    nextBtn.style.display = 'none';
+  }
+
+  document.getElementById('clearModal').classList.add('active');
+}
+
+function goNextStage() {
+  document.getElementById('clearModal').classList.remove('active');
+  if (!AppState.currentStage) return;
+  const nextId = AppState.currentStage.id + 1;
+  const nextStage = ADVENTURE_STAGES.find(s => s.id === nextId);
+  if (nextStage) {
+    selectTier(nextStage.tier);
+    startAdventureStage(nextStage);
+  } else {
+    switchView('adventure');
+  }
+}
+
+function handleGameOver() {
+  AppState.isGameFinished = true;
+  clearInterval(AppState.timerInterval);
+  document.getElementById('gameOverModal').classList.add('active');
+}
+
+function retryCurrentStage() {
+  document.getElementById('gameOverModal').classList.remove('active');
+  if (AppState.currentStage) {
+    startAdventureStage(AppState.currentStage);
+  } else {
+    startFreeGame();
+  }
+}
+
+/* ==========================================================
+   10. COMPLETE PINYIN ENCYCLOPEDIA & AUDIO DICTIONARY
+   ========================================================== */
+function filterChartTab(type, btn) {
+  document.querySelectorAll('.c-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderChartSections(type);
+}
+
+function renderChartSections(type) {
+  const container = document.getElementById('chartContent');
+  container.innerHTML = '';
+
+  let list = [];
+  let title = '';
+  let badge = '';
+
+  if (type === 'initials') {
+    list = PINYIN_KO_DATABASE.initials;
+    title = '23개 성모 (자음표)';
+    badge = '자음';
+  } else if (type === 'single') {
+    list = PINYIN_KO_DATABASE.finalsSingle;
+    title = '6대 기본 단운모 (단모음)';
+    badge = '단모음';
+  } else if (type === 'compound') {
+    list = PINYIN_KO_DATABASE.finalsCompound;
+    title = '주요 복운모 (이중모음)';
+    badge = '이중모음';
+  } else if (type === 'nasal') {
+    list = PINYIN_KO_DATABASE.finalsNasal;
+    title = '콧소리 비운모 (비음)';
+    badge = '비음';
+  } else {
+    list = PINYIN_KO_DATABASE.wholeSyllables;
+    title = '16개 전체일체음절 (한 호흡 발음)';
+    badge = '일체음절';
+  }
+
+  const titleRow = document.createElement('div');
+  titleRow.className = 'chart-group-title';
+  titleRow.innerHTML = `<span>${title}</span><span class="chart-group-badge">${badge}</span>`;
+  container.appendChild(titleRow);
+
+  const grid = document.createElement('div');
+  grid.className = 'pinyin-cards-grid';
+
+  list.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'pinyin-card';
+
+    const wordsHtml = item.words ? item.words.map(w =>
+      `<div class="pc-word-item"><span>${w.ch} (${w.py})</span><span>${w.ko || ''}</span></div>`
+    ).join('') : '';
+
+    card.innerHTML = `
+      <div class="pc-top">
+        <span class="pc-glyph">${item.glyph}</span>
+        <span class="pc-speak-audio">🔊</span>
+      </div>
+      <div class="pc-hangul">${item.hangul} · ${item.category}</div>
+      <div class="pc-tip">${item.tip}</div>
+      ${wordsHtml ? `<div class="pc-words">${wordsHtml}</div>` : ''}
+    `;
+
+    card.onclick = () => {
+      audio.speak(item.glyph, item.speak);
+      setTutorMessage(`[${item.glyph}] 발음 팁: ${item.tip}`);
+    };
+
+    grid.appendChild(card);
+  });
+
+  container.appendChild(grid);
+}
+
+/* ==========================================================
+   11. TONE PLAYGROUND & CANVAS VISUALIZER
+   ========================================================== */
+function setToneBase(syl, btn) {
+  AppState.toneBaseSyl = syl;
+  document.querySelectorAll('.syl-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  drawTonePitchCurve(AppState.activeTone);
+}
+
+function selectTone(toneNum) {
+  AppState.activeTone = toneNum;
+  document.querySelectorAll('.tone-pill-btn').forEach((b, idx) => {
+    b.classList.toggle('active', idx === (toneNum === 0 ? 4 : toneNum - 1));
+  });
+
+  const guideBox = document.getElementById('toneGuideText');
+  if (toneNum === 1) {
+    guideBox.innerHTML = `<strong>💡 핑핑이의 사성조 비법 (1성 - ˉ 고평조 55):</strong> 솔(Sol) 음높이로 높고 길게 쭉~! 노래하듯 흔들리지 않는 것이 핵심이에요!`;
+  } else if (toneNum === 2) {
+    guideBox.innerHTML = `<strong>💡 핑핑이의 사성조 비법 (2성 - ˊ 상승조 35):</strong> '뭐?'라고 물어볼 때처럼 미에서 솔로 쑥 올라가요! 망설이지 말고 솟구쳐요!`;
+  } else if (toneNum === 3) {
+    guideBox.innerHTML = `<strong>💡 핑핑이의 사성조 비법 (3성 - ˇ 곡절조 214):</strong> 고개를 끄덕이듯 레에서 도로 내려갔다 파로 쏙 올라와요! 가장 낮게 긁어내리는 소리!`;
+  } else if (toneNum === 4) {
+    guideBox.innerHTML = `<strong>💡 핑핑이의 사성조 비법 (4성 - ˋ 급강하조 51):</strong> 높은 솔에서 도까지 뚝 떨어지기! 단호하고 씩씩하게 절도 있게 내려꽂아요!`;
+  } else {
+    guideBox.innerHTML = `<strong>💡 핑핑이의 사성조 비법 (경성 - · 가볍게 톡):</strong> 성조 표시가 없이 가볍고 짧게 톡! 솜사탕처럼 가볍게 얹어주는 소리예요.`;
+  }
+
+  drawTonePitchCurve(toneNum);
+  playCurrentToneVoice();
+}
+
+function playCurrentToneSynth() {
+  audio.playToneContour(AppState.activeTone);
+}
+
+function playCurrentToneVoice() {
+  const syl = AppState.toneBaseSyl;
+  const tone = AppState.activeTone;
+
+  const toneMap = {
+    ma: ['ma', 'mā', 'má', 'mǎ', 'mà'],
+    ba: ['ba', 'bā', 'bá', 'bǎ', 'bà'],
+    yi: ['yi', 'yī', 'yí', 'yǐ', 'yì'],
+    da: ['da', 'dā', 'dá', 'dǎ', 'dà'],
+    ni: ['ni', 'nī', 'ní', 'nǐ', 'nì']
+  };
+
+  const spoken = toneMap[syl] ? toneMap[syl][tone] : syl;
+  audio.speak(spoken, spoken);
+}
+
+let toneAnimId = null;
+function drawTonePitchCurve(toneNum) {
+  const canvas = document.getElementById('toneCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+
+  canvas.width = canvas.parentElement.clientWidth * dpr;
+  canvas.height = canvas.parentElement.clientHeight * dpr;
+  ctx.scale(dpr, dpr);
+
+  const w = canvas.parentElement.clientWidth;
+  const h = canvas.parentElement.clientHeight;
+
+  // Background Grid Lines (1..5 levels)
+  ctx.clearRect(0, 0, w, h);
+  ctx.strokeStyle = '#374151';
+  ctx.lineWidth = 1;
+
+  const levels = [
+    { label: '5 (솔 - 고)', y: h * 0.2 },
+    { label: '4 (파 - 중고)', y: h * 0.35 },
+    { label: '3 (미 - 중)', y: h * 0.5 },
+    { label: '2 (레 - 중저)', y: h * 0.65 },
+    { label: '1 (도 - 저)', y: h * 0.8 }
+  ];
+
+  ctx.font = '10px "Noto Sans KR", sans-serif';
+  ctx.fillStyle = '#6B7280';
+  levels.forEach(lv => {
+    ctx.beginPath();
+    ctx.moveTo(70, lv.y);
+    ctx.lineTo(w - 20, lv.y);
+    ctx.stroke();
+    ctx.fillText(lv.label, 10, lv.y + 3);
+  });
+
+  // Curve Definition
+  ctx.lineWidth = 5;
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#10B981';
+
+  let startX = 90;
+  let endX = w - 40;
+
+  ctx.beginPath();
+  if (toneNum === 1) {
+    // 55: High flat
+    ctx.moveTo(startX, levels[0].y);
+    ctx.lineTo(endX, levels[0].y);
+  } else if (toneNum === 2) {
+    // 35: Rise
+    ctx.moveTo(startX, levels[2].y);
+    ctx.quadraticCurveTo((startX + endX) / 2, levels[1].y + 10, endX, levels[0].y);
+  } else if (toneNum === 3) {
+    // 214: Dip and rise
+    ctx.moveTo(startX, levels[3].y);
+    ctx.quadraticCurveTo(startX + (endX - startX) * 0.45, levels[4].y + 10, endX, levels[1].y);
+  } else if (toneNum === 4) {
+    // 51: Fall
+    ctx.moveTo(startX, levels[0].y);
+    ctx.lineTo(endX, levels[4].y);
+  } else {
+    // Light dot
+    ctx.arc((startX + endX) / 2, levels[2].y, 8, 0, Math.PI * 2);
+    ctx.fillStyle = '#10B981';
+    ctx.fill();
+  }
+  ctx.stroke();
+
+  // Bouncing Ball Animation along curve
+  if (toneAnimId) cancelAnimationFrame(toneAnimId);
+  let startTime = performance.now();
+
+  function animate(now) {
+    const elapsed = (now - startTime) % 1500;
+    const progress = Math.min(1, elapsed / 1000);
+
+    // Redraw base
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = '#374151';
+    ctx.lineWidth = 1;
+    levels.forEach(lv => {
+      ctx.beginPath();
+      ctx.moveTo(70, lv.y);
+      ctx.lineTo(w - 20, lv.y);
+      ctx.stroke();
+      ctx.fillText(lv.label, 10, lv.y + 3);
+    });
+
+    // Stroke curve
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = '#10B981';
+    ctx.beginPath();
+    if (toneNum === 1) {
+      ctx.moveTo(startX, levels[0].y);
+      ctx.lineTo(endX, levels[0].y);
+    } else if (toneNum === 2) {
+      ctx.moveTo(startX, levels[2].y);
+      ctx.quadraticCurveTo((startX + endX) / 2, levels[1].y + 10, endX, levels[0].y);
+    } else if (toneNum === 3) {
+      ctx.moveTo(startX, levels[3].y);
+      ctx.quadraticCurveTo(startX + (endX - startX) * 0.45, levels[4].y + 10, endX, levels[1].y);
+    } else if (toneNum === 4) {
+      ctx.moveTo(startX, levels[0].y);
+      ctx.lineTo(endX, levels[4].y);
+    } else {
+      ctx.arc((startX + endX) / 2, levels[2].y, 8, 0, Math.PI * 2);
+      ctx.fillStyle = '#10B981';
+      ctx.fill();
+    }
+    ctx.stroke();
+
+    // Calculate ball pos
+    let ballX = startX + (endX - startX) * progress;
+    let ballY = levels[0].y;
+
+    if (toneNum === 1) {
+      ballY = levels[0].y;
+    } else if (toneNum === 2) {
+      const t = progress;
+      ballY = (1 - t) * (1 - t) * levels[2].y + 2 * (1 - t) * t * (levels[1].y + 10) + t * t * levels[0].y;
+    } else if (toneNum === 3) {
+      const t = progress;
+      ballY = (1 - t) * (1 - t) * levels[3].y + 2 * (1 - t) * t * (levels[4].y + 10) + t * t * levels[1].y;
+    } else if (toneNum === 4) {
+      ballY = levels[0].y + (levels[4].y - levels[0].y) * progress;
+    } else {
+      ballX = (startX + endX) / 2;
+      ballY = levels[2].y;
+    }
+
+    // Draw ball
+    ctx.beginPath();
+    ctx.arc(ballX, ballY, 9, 0, Math.PI * 2);
+    ctx.fillStyle = '#FF6B8B';
+    ctx.shadowColor = '#FF6B8B';
+    ctx.shadowBlur = 10;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    toneAnimId = requestAnimationFrame(animate);
+  }
+
+  toneAnimId = requestAnimationFrame(animate);
+}
+
+/* ==========================================================
+   12. SINO-KOREAN COGNATES (한자어 짝꿍)
+   ========================================================== */
+function renderCognateGrid() {
+  const container = document.getElementById('cognateGrid');
+  container.innerHTML = '';
+
+  SINO_KOREAN_COGNATES.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'cognate-card';
+    card.innerHTML = `
+      <div class="cg-korean-word">
+        <span>${item.ko}</span>
+        <span style="font-size: 14px;">🔊</span>
+      </div>
+      <div class="cg-chinese-word">${item.ch}</div>
+      <div class="cg-pinyin-row">
+        <span class="cg-pinyin">${item.py}</span>
+        <span class="cg-hangul-sound">[${item.hangulSound}]</span>
+      </div>
+    `;
+
+    card.onclick = () => {
+      audio.speak(item.ch, item.ch);
+      setTutorMessage(`한국어 '${item.ko}'와 중국어 '${item.ch}'(${item.py})는 거의 발음이 똑같지? 한자어 짝꿍 파워!`);
+    };
+
+    container.appendChild(card);
+  });
+}
+
+/* ==========================================================
+   13. LISTENING QUIZ CHALLENGE (듣기 퀴즈)
+   ========================================================== */
+function setQuizMode(mode, btn) {
+  AppState.quizMode = mode;
+  document.querySelectorAll('.quiz-mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  startNextQuizQuestion();
+}
+
+function startNextQuizQuestion() {
+  const optsContainer = document.getElementById('quizOptionsGrid');
+  const promptText = document.getElementById('quizPromptText');
+  optsContainer.innerHTML = '';
+
+  if (AppState.quizMode === 'tones') {
+    promptText.textContent = '방금 들린 발음의 성조는 무엇일까요?';
+
+    const baseSyls = ['ma', 'ba', 'da', 'ni', 'hao'];
+    const syl = baseSyls[Math.floor(Math.random() * baseSyls.length)];
+    const correctTone = Math.floor(Math.random() * 4) + 1; // 1..4
+
+    const toneLetters = {
+      ma: ['', 'mā', 'má', 'mǎ', 'mà'],
+      ba: ['', 'bā', 'bá', 'bǎ', 'bà'],
+      da: ['', 'dā', 'dá', 'dǎ', 'dà'],
+      ni: ['', 'nī', 'ní', 'nǐ', 'nì'],
+      hao: ['', 'hāo', 'háo', 'hǎo', 'hào']
+    };
+
+    const targetSpoken = toneLetters[syl][correctTone];
+    AppState.quizCurrentTarget = { pinyin: targetSpoken, speak: targetSpoken, correctIdx: correctTone };
+
+    // 4 tone options
+    for (let t = 1; t <= 4; t++) {
+      const btn = document.createElement('div');
+      btn.className = 'quiz-opt-btn';
+      const markMap = ['', 'ˉ 1성 (고평조)', 'ˊ 2성 (상승조)', 'ˇ 3성 (곡절조)', 'ˋ 4성 (급강하조)'];
+      btn.innerHTML = `
+        <span class="quiz-opt-glyph">${toneLetters[syl][t]}</span>
+        <span class="quiz-opt-hangul">${markMap[t]}</span>
+      `;
+
+      btn.onclick = () => handleQuizAnswer(t, correctTone, btn);
+      optsContainer.appendChild(btn);
+    }
+  } else {
+    // Letters & Confusing pairs
+    promptText.textContent = '스피커에서 어떤 발음이 들렸나요?';
+
+    const pairs = [
+      { a: 'b', b: 'p', nameA: 'b (뽀-무기음)', nameB: 'p (포-유기음)' },
+      { a: 'd', b: 't', nameA: 'd (뜨어)', nameB: 't (트어)' },
+      { a: 'g', b: 'k', nameA: 'g (끄어)', nameB: 'k (크어)' },
+      { a: 'zh', b: 'z', nameA: 'zh (즈-혀말림)', nameB: 'z (쯔-평평이)' },
+      { a: 'ch', b: 'c', nameA: 'ch (치-혀말림)', nameB: 'c (츠-평평이)' },
+      { a: 'sh', b: 's', nameA: 'sh (스-혀말림)', nameB: 's (쓰-평평이)' },
+      { a: 'an', b: 'ang', nameA: 'an (안-앞콧소리)', nameB: 'ang (앙-뒷콧소리)' },
+      { a: 'u', b: 'ü', nameA: 'u (우)', nameB: 'ü (위-입술고정)' }
+    ];
+
+    const pickPair = pairs[Math.floor(Math.random() * pairs.length)];
+    const isA = Math.random() > 0.5;
+    const targetGlyph = isA ? pickPair.a : pickPair.b;
+    const correctIdx = isA ? 0 : 1;
+
+    AppState.quizCurrentTarget = { pinyin: targetGlyph, speak: targetGlyph, correctIdx };
+
+    const optA = document.createElement('div');
+    optA.className = 'quiz-opt-btn';
+    optA.innerHTML = `<span class="quiz-opt-glyph">${pickPair.a}</span><span class="quiz-opt-hangul">${pickPair.nameA}</span>`;
+    optA.onclick = () => handleQuizAnswer(0, correctIdx, optA);
+
+    const optB = document.createElement('div');
+    optB.className = 'quiz-opt-btn';
+    optB.innerHTML = `<span class="quiz-opt-glyph">${pickPair.b}</span><span class="quiz-opt-hangul">${pickPair.nameB}</span>`;
+    optB.onclick = () => handleQuizAnswer(1, correctIdx, optB);
+
+    optsContainer.appendChild(optA);
+    optsContainer.appendChild(optB);
+  }
+
+  setTimeout(() => playQuizTargetAudio(), 200);
+}
+
+function playQuizTargetAudio() {
+  if (AppState.quizCurrentTarget) {
+    audio.speak(AppState.quizCurrentTarget.pinyin, AppState.quizCurrentTarget.speak);
+  }
+}
+
+function handleQuizAnswer(selected, correct, btn) {
+  const allBtns = document.querySelectorAll('.quiz-opt-btn');
+  allBtns.forEach(b => b.style.pointerEvents = 'none');
+
+  if (selected === correct) {
+    btn.classList.add('correct');
+    AppState.quizScore++;
+    document.getElementById('quizScoreText').textContent = AppState.quizScore;
+    audio.playSfx('success');
+    setTutorMessage('정답이야! 귀가 아주 밝은걸? 다음 문제도 도전해볼까!');
+    setTimeout(() => startNextQuizQuestion(), 1100);
+  } else {
+    btn.classList.add('wrong');
+    AppState.quizScore = 0;
+    document.getElementById('quizScoreText').textContent = AppState.quizScore;
+    audio.playSfx('error');
+    setTutorMessage('아쉽게 틀렸어! 스피커를 다시 한번 눌러 귀를 기울여봐.');
+    setTimeout(() => {
+      allBtns.forEach(b => {
+        b.style.pointerEvents = 'auto';
+        b.classList.remove('wrong');
+      });
+    }, 1000);
+  }
+}
+
+/* ==========================================================
+   14. CONFETTI CELEBRATION
+   ========================================================== */
+function launchConfetti() {
+  const canvas = document.getElementById('confettiCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const particles = [];
+  const colors = ['#10B981', '#F59E0B', '#FF6B8B', '#0EA5E9', '#8B5CF6'];
+
+  for (let i = 0; i < 90; i++) {
+    particles.push({
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      vx: (Math.random() - 0.5) * 14,
+      vy: (Math.random() - 0.7) * 16,
+      size: Math.random() * 8 + 4,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      alpha: 1
+    });
+  }
+
+  let animId;
+  function update() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = 0;
+
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.4;
+      p.alpha -= 0.015;
+
+      if (p.alpha > 0) {
+        alive++;
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+
+    ctx.globalAlpha = 1;
+    if (alive > 0) {
+      animId = requestAnimationFrame(update);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  }
+
+  animId = requestAnimationFrame(update);
+}
+
+// Window load init
+window.addEventListener('DOMContentLoaded', () => {
+  loadSavedProgress();
+  switchView('adventure');
+});
+</script>
+</body>
+</html>

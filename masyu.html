@@ -1,0 +1,4172 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>わくわくましゅアドベンチャー - 萌趣数回小天才 · Masyu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-main: #FFFDF7;
+    --bg-card: #FFFFFF;
+    --primary: #4F46E5;
+    --primary-hover: #4338CA;
+    --primary-light: #EEF2FF;
+    --secondary: #06B6D4;
+    --secondary-light: #ECFEFF;
+    --accent: #F59E0B;
+    --accent-light: #FFFBEB;
+    --success: #10B981;
+    --success-light: #ECFDF5;
+    --error: #EF4444;
+    --error-light: #FEE2E2;
+    --text-main: #1E293B;
+    --text-sub: #64748B;
+    --border-soft: #E2E8F0;
+    --border-bold: #94A3B8;
+    --grid-dot: #94A3B8;
+    --grid-line: #E2E8F0;
+    --loop-line: #4F46E5;
+    --loop-line-glow: rgba(79, 70, 229, 0.25);
+    --pearl-white-fill: #FFFFFF;
+    --pearl-white-stroke: #1E293B;
+    --pearl-black-fill: #1E293B;
+    --pearl-black-stroke: #1E293B;
+    --cross-color: #EF4444;
+    --shadow-sm: 0 3px 10px rgba(100, 110, 140, 0.07);
+    --shadow-md: 0 8px 20px rgba(100, 110, 140, 0.12);
+    --shadow-lg: 0 14px 30px rgba(100, 110, 140, 0.18);
+    --radius-xl: 24px;
+    --radius-lg: 18px;
+    --radius-md: 14px;
+    --radius-sm: 8px;
+  }
+
+  /* Theme: Classic Dark */
+  body[data-theme="classic"] {
+    --bg-main: #0F172A;
+    --bg-card: #1E293B;
+    --primary: #38BDF8;
+    --primary-hover: #0284C7;
+    --primary-light: #1E3A5F;
+    --secondary: #818CF8;
+    --secondary-light: #2D3748;
+    --text-main: #F8FAFC;
+    --text-sub: #94A3B8;
+    --border-soft: #334155;
+    --border-bold: #64748B;
+    --grid-dot: #64748B;
+    --grid-line: #334155;
+    --loop-line: #38BDF8;
+    --loop-line-glow: rgba(56, 189, 248, 0.35);
+    --pearl-white-fill: #F8FAFC;
+    --pearl-white-stroke: #38BDF8;
+    --pearl-black-fill: #0284C7;
+    --pearl-black-stroke: #38BDF8;
+    --cross-color: #F87171;
+  }
+
+  /* Theme: Forest Nature */
+  body[data-theme="forest"] {
+    --bg-main: #F4F8F3;
+    --bg-card: #FFFFFF;
+    --primary: #059669;
+    --primary-hover: #047857;
+    --primary-light: #ECFDF5;
+    --secondary: #D97706;
+    --secondary-light: #FEF3C7;
+    --text-main: #14532D;
+    --text-sub: #4B7A5C;
+    --border-soft: #D1E7DD;
+    --border-bold: #86B89A;
+    --grid-dot: #86B89A;
+    --grid-line: #D1E7DD;
+    --loop-line: #059669;
+    --loop-line-glow: rgba(5, 150, 105, 0.25);
+    --pearl-white-fill: #FFFFFF;
+    --pearl-white-stroke: #14532D;
+    --pearl-black-fill: #14532D;
+    --pearl-black-stroke: #14532D;
+    --cross-color: #DC2626;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+  }
+
+  body {
+    font-family: "M PLUS Rounded 1c", "Outfit", system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 15% 15%, #FEF9C3 0%, var(--bg-main) 55%, #E0F2FE 100%);
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  body[data-theme="classic"] {
+    background: radial-gradient(circle at 20% 20%, #1E293B 0%, #0F172A 70%, #020617 100%);
+  }
+
+  body[data-theme="forest"] {
+    background: radial-gradient(circle at 15% 15%, #FEF3C7 0%, #F4F8F3 50%, #DCFCE7 100%);
+  }
+
+  .bg-decor {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.55;
+  }
+  .bg-blob-1 { top: -60px; right: -50px; width: 300px; height: 300px; background: radial-gradient(circle, #E0E7FF 0%, transparent 70%); }
+  .bg-blob-2 { bottom: -80px; left: -60px; width: 340px; height: 340px; background: radial-gradient(circle, #FEF3C7 0%, transparent 70%); }
+
+  #confetti-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  #app {
+    width: 100%;
+    max-width: 500px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+    padding: 8px 12px 20px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 4px 12px;
+  }
+  .logo-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+  .logo-icon {
+    font-size: 28px;
+    line-height: 1;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+  }
+  .logo-titles h1 {
+    font-size: 16px;
+    font-weight: 900;
+    color: var(--primary);
+    line-height: 1.2;
+    letter-spacing: -0.2px;
+  }
+  .logo-titles span {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--text-sub);
+  }
+  .header-actions {
+    display: flex;
+    gap: 6px;
+  }
+  .round-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: var(--bg-card);
+    color: var(--text-main);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.15s, background 0.2s;
+  }
+  .round-btn:active {
+    transform: scale(0.9);
+  }
+
+  /* Mode Navigation Tabs */
+  .mode-tabs {
+    display: flex;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-lg);
+    padding: 4px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 12px;
+    border: 1px solid var(--border-soft);
+  }
+  body[data-theme="classic"] .mode-tabs {
+    background: rgba(30, 41, 59, 0.7);
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 9px 8px;
+    border: none;
+    background: transparent;
+    color: var(--text-sub);
+    font-size: 13.5px;
+    font-weight: 800;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .tab-btn.active {
+    background: var(--primary);
+    color: #FFFFFF;
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Views */
+  .view {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    animation: fadeIn 0.25s ease;
+  }
+  .view.active {
+    display: flex;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Adventure Map View */
+  .adventure-banner {
+    background: linear-gradient(135deg, var(--primary) 0%, #6366F1 100%);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow-md);
+  }
+  .banner-left h2 {
+    font-size: 15px;
+    font-weight: 900;
+    margin-bottom: 2px;
+  }
+  .banner-left p {
+    font-size: 11.5px;
+    opacity: 0.9;
+    font-weight: 600;
+  }
+  .banner-stars {
+    background: rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(4px);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+  }
+
+  .tier-selector {
+    display: flex;
+    gap: 8px;
+  }
+  .tier-pill {
+    flex: 1;
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    padding: 8px 6px;
+    text-align: center;
+    border: 2px solid transparent;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+  }
+  .tier-pill.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+  }
+  .pill-title {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-main);
+  }
+  .tier-pill.active .pill-title {
+    color: var(--primary);
+  }
+  .pill-sub {
+    font-size: 9.5px;
+    color: var(--text-sub);
+    margin-top: 1px;
+  }
+
+  .stage-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .stage-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 12px 8px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    border: 2px solid transparent;
+    position: relative;
+    transition: transform 0.15s, border-color 0.2s;
+  }
+  .stage-card:active {
+    transform: scale(0.95);
+  }
+  .stage-card.locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .stage-card.cleared {
+    border-color: var(--accent);
+  }
+  .stage-num {
+    font-size: 18px;
+    font-weight: 900;
+    color: var(--primary);
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .stage-name {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--text-main);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    margin-bottom: 4px;
+  }
+  .stage-stars {
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 2px;
+  }
+  .stage-lock {
+    font-size: 16px;
+    margin-top: 2px;
+  }
+
+  /* Free Play View */
+  .free-play-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    padding: 18px 16px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .config-section h3 {
+    font-size: 13.5px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 8px;
+  }
+  .opt-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .opt-btn {
+    background: var(--primary-light);
+    color: var(--primary);
+    padding: 10px 8px;
+    border-radius: var(--radius-md);
+    border: 2px solid transparent;
+    font-size: 13px;
+    font-weight: 800;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .opt-btn.active {
+    background: var(--primary);
+    color: #FFFFFF;
+    border-color: var(--primary-hover);
+  }
+  .start-btn {
+    background: linear-gradient(135deg, var(--primary) 0%, #6366F1 100%);
+    color: #FFFFFF;
+    border: none;
+    padding: 14px;
+    border-radius: var(--radius-lg);
+    font-size: 15px;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.15s;
+  }
+  .start-btn:active {
+    transform: scale(0.97);
+  }
+
+  /* Gameplay View */
+  .game-hud {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 8px 12px;
+    box-shadow: var(--shadow-sm);
+  }
+  .hud-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .back-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: var(--primary-light);
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .hud-title {
+    display: flex;
+    flex-direction: column;
+  }
+  .hud-stage-badge {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--primary);
+  }
+  .hud-stage-name {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-sub);
+  }
+  .hud-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hud-timer {
+    font-size: 13px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--text-main);
+  }
+  .hud-par {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-sub);
+  }
+
+  /* Mascot Bubble */
+  .mascot-bubble {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 8px 12px;
+    box-shadow: var(--shadow-sm);
+    border-left: 4px solid var(--accent);
+  }
+  .mascot-avatar {
+    font-size: 26px;
+    flex-shrink: 0;
+  }
+  .mascot-text {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.35;
+  }
+
+  /* Board Area */
+  .board-container {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    padding: 10px;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    touch-action: none;
+  }
+  #masyuSvg {
+    width: 100%;
+    max-width: 440px;
+    height: auto;
+    display: block;
+    user-select: none;
+    touch-action: none;
+  }
+
+  /* SVG Elements styling */
+  .grid-bg-cell {
+    fill: transparent;
+    stroke: var(--grid-line);
+    stroke-width: 1;
+  }
+  .grid-dot {
+    fill: var(--grid-dot);
+  }
+  .edge-hit {
+    stroke: transparent;
+    stroke-width: 24;
+    cursor: pointer;
+    stroke-linecap: round;
+  }
+  .edge-line {
+    stroke: var(--loop-line);
+    stroke-width: 5.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    pointer-events: none;
+    transition: stroke 0.15s ease, opacity 0.15s ease;
+  }
+  .edge-line.glow {
+    filter: drop-shadow(0 0 6px var(--loop-line-glow));
+  }
+  .edge-line.hint {
+    stroke: var(--accent);
+    stroke-width: 7;
+    animation: pulseHint 0.8s infinite alternate;
+  }
+  @keyframes pulseHint {
+    from { stroke-width: 5.5; }
+    to { stroke-width: 8.5; filter: drop-shadow(0 0 8px #F59E0B); }
+  }
+  .edge-cross {
+    stroke: var(--cross-color);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    pointer-events: none;
+  }
+
+  /* Pearls */
+  .pearl-halo {
+    fill: none;
+    stroke-width: 3;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .pearl-halo.satisfied {
+    stroke: var(--success);
+    opacity: 0.8;
+  }
+  .pearl-halo.violated {
+    stroke: var(--error);
+    opacity: 0.9;
+    animation: shake 0.3s;
+  }
+
+  .pearl-circle {
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+  .pearl-circle.white {
+    fill: var(--pearl-white-fill);
+    stroke: var(--pearl-white-stroke);
+    stroke-width: 3.5;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));
+  }
+  .pearl-circle.black {
+    fill: var(--pearl-black-fill);
+    stroke: var(--pearl-black-stroke);
+    stroke-width: 3.5;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  }
+  .pearl-specular {
+    fill: rgba(255, 255, 255, 0.6);
+    pointer-events: none;
+  }
+
+  /* Controls & Action Toolbar */
+  .tools-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .tool-mode-row {
+    display: flex;
+    gap: 8px;
+  }
+  .mode-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 9px 8px;
+    background: var(--bg-card);
+    border: 2px solid var(--border-soft);
+    border-radius: var(--radius-md);
+    color: var(--text-sub);
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s;
+  }
+  .mode-btn.active {
+    background: var(--primary-light);
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  .actions-row {
+    display: flex;
+    gap: 8px;
+  }
+  .act-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 4px;
+    background: var(--bg-card);
+    border: none;
+    border-radius: var(--radius-md);
+    color: var(--text-main);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 800;
+    transition: transform 0.15s, background 0.2s;
+  }
+  .act-btn:active {
+    transform: scale(0.92);
+  }
+  .act-btn .icon {
+    font-size: 17px;
+  }
+
+  /* Modals */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(5px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 16px;
+  }
+  .modal-overlay.active {
+    display: flex;
+    animation: fadeIn 0.25s ease;
+  }
+  .modal-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 440px;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding: 20px;
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-header h2 {
+    font-size: 17px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .modal-close-btn {
+    background: var(--primary-light);
+    color: var(--primary);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: 900;
+  }
+
+  /* Tutorial Cards */
+  .tut-card {
+    background: var(--primary-light);
+    border-radius: var(--radius-lg);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .tut-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    background: var(--primary);
+    color: #FFFFFF;
+    font-size: 11px;
+    font-weight: 800;
+    width: fit-content;
+  }
+  .tut-title {
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .tut-desc {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-sub);
+    line-height: 1.4;
+  }
+  .tut-svg {
+    width: 100%;
+    height: 90px;
+    background: #FFFFFF;
+    border-radius: var(--radius-md);
+    box-shadow: inset 0 0 0 1px var(--border-soft);
+  }
+
+  /* Victory Modal specifics */
+  .victory-content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .victory-stars {
+    font-size: 34px;
+    letter-spacing: 4px;
+    color: #E2E8F0;
+  }
+  .victory-stars .star-active {
+    color: #F59E0B;
+    animation: starPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  }
+  @keyframes starPop {
+    0% { transform: scale(0); opacity: 0; }
+    70% { transform: scale(1.3); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .victory-title {
+    font-size: 20px;
+    font-weight: 900;
+    color: var(--text-main);
+  }
+  .victory-stats {
+    display: flex;
+    gap: 16px;
+    background: var(--primary-light);
+    border-radius: var(--radius-md);
+    padding: 10px 16px;
+  }
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .stat-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--text-sub);
+  }
+  .stat-val {
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--primary);
+  }
+  .victory-actions {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    margin-top: 6px;
+  }
+  .modal-btn {
+    flex: 1;
+    padding: 12px 8px;
+    border-radius: var(--radius-lg);
+    font-size: 14px;
+    font-weight: 800;
+    border: none;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+  }
+  .modal-btn.primary {
+    background: linear-gradient(135deg, var(--primary), #6366F1);
+    color: #FFFFFF;
+  }
+  .modal-btn.secondary {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+  }
+</style>
+</head>
+<body>
+<div class="bg-decor bg-blob-1"></div>
+<div class="bg-decor bg-blob-2"></div>
+<canvas id="confetti-canvas"></canvas>
+
+<div id="app">
+  <!-- Header -->
+  <header class="header">
+    <div class="logo-wrap" id="logoWrap">
+      <div class="logo-icon">⚪</div>
+      <div class="logo-titles">
+        <h1>わくわくましゅ</h1>
+        <span>萌趣数回小天才 · Masyu</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="round-btn" id="themeBtn" title="テーマ変更">🎨</button>
+      <button class="round-btn" id="soundBtn" title="サウンド切替">🔊</button>
+      <button class="round-btn" id="tutorialBtn" title="あそびかた">❓</button>
+    </div>
+  </header>
+
+  <!-- Navigation Mode Tabs -->
+  <nav class="mode-tabs">
+    <button class="tab-btn active" id="tabAdventure">🗺️ 冒険マップ</button>
+    <button class="tab-btn" id="tabFree">🎲 フリーモード</button>
+  </nav>
+
+  <!-- View 1: Adventure Map -->
+  <section class="view active" id="viewAdventure">
+    <div class="adventure-banner">
+      <div class="banner-left">
+        <h2>白黒真珠の環状大冒険</h2>
+        <p>18の謎めく真珠ループを完成させよう！</p>
+      </div>
+      <div class="banner-stars" id="totalStarsBadge">⭐ 0 / 54</div>
+    </div>
+
+    <div class="tier-selector">
+      <div class="tier-pill active" data-tier="1">
+        <div class="pill-title">⚪ 5×5 白黒入門</div>
+        <div class="pill-sub">Stage 1〜6</div>
+      </div>
+      <div class="tier-pill" data-tier="2">
+        <div class="pill-title">🚀 6×6 推理進階</div>
+        <div class="pill-sub">Stage 7〜12</div>
+      </div>
+      <div class="tier-pill" data-tier="3">
+        <div class="pill-title">👑 7×7 真珠大師</div>
+        <div class="pill-sub">Stage 13〜18</div>
+      </div>
+    </div>
+
+    <div class="stage-grid" id="stageGrid"></div>
+  </section>
+
+  <!-- View 2: Free Play Config -->
+  <section class="view" id="viewFree">
+    <div class="free-play-card">
+      <div class="config-section">
+        <h3>📐 盤面サイズ (グリッド選択)</h3>
+        <div class="opt-grid" id="freeSizeOptions">
+          <div class="opt-btn active" data-size="5">5×5 (入門)</div>
+          <div class="opt-btn" data-size="6">6×6 (ふつう)</div>
+          <div class="opt-btn" data-size="7">7×7 (上級)</div>
+          <div class="opt-btn" data-size="8">8×8 (マスター)</div>
+        </div>
+      </div>
+      <div class="config-section">
+        <h3>⚡ 難易度</h3>
+        <div class="opt-grid" id="freeDiffOptions">
+          <div class="opt-btn active" data-diff="easy">🌱 かんたん</div>
+          <div class="opt-btn" data-diff="normal">⭐ ふつう</div>
+        </div>
+      </div>
+      <button class="start-btn" id="startFreeBtn">✨ あたらしい迷宮を生成</button>
+    </div>
+  </section>
+
+  <!-- View 3: Gameplay View -->
+  <section class="view" id="viewGame">
+    <div class="game-hud">
+      <div class="hud-left">
+        <button class="back-btn" id="backToMapBtn" title="戻る">◀</button>
+        <div class="hud-title">
+          <span class="hud-stage-badge" id="hudStageBadge">STAGE 1</span>
+          <span class="hud-stage-name" id="hudStageName">白真珠のきほん</span>
+        </div>
+      </div>
+      <div class="hud-right">
+        <div class="hud-timer">⏱️ <span id="gameTimer">00:00</span></div>
+        <div class="hud-par" id="gamePar">目標: 45秒</div>
+      </div>
+    </div>
+
+    <div class="mascot-bubble">
+      <div class="mascot-avatar" id="mascotAvatar">🐱</div>
+      <div class="mascot-text" id="mascotText">白丸は直進！前後のどちらかのマスで直角に曲がろう！</div>
+    </div>
+
+    <div class="board-container" id="boardContainer">
+      <svg id="masyuSvg" viewBox="0 0 400 400"></svg>
+    </div>
+
+    <div class="tools-panel">
+      <div class="tool-mode-row">
+        <button class="mode-btn active" id="toolLineBtn">
+          <span>✏️</span> 結線 (線を引く)
+        </button>
+        <button class="mode-btn" id="toolCrossBtn">
+          <span>✕</span> マーク (通過不能)
+        </button>
+      </div>
+      <div class="actions-row">
+        <button class="act-btn" id="undoBtn">
+          <span class="icon">↩️</span>
+          <span>もどす</span>
+        </button>
+        <button class="act-btn" id="resetBtn">
+          <span class="icon">🔄</span>
+          <span>リセット</span>
+        </button>
+        <button class="act-btn" id="hintBtn">
+          <span class="icon">💡</span>
+          <span>ヒント</span>
+        </button>
+        <button class="act-btn" id="checkBtn">
+          <span class="icon">🔍</span>
+          <span>チェック</span>
+        </button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Tutorial Modal -->
+<div class="modal-overlay" id="tutorialModal">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2>📖 ましゅ（Masyu）のあそびかた</h2>
+      <button class="modal-close-btn" id="closeTutorialBtn">✕</button>
+    </div>
+
+    <div class="tut-card">
+      <span class="tut-badge">ルール 1</span>
+      <div class="tut-title">ひとつの閉じた輪っか（ループ）を作る</div>
+      <div class="tut-desc">
+        白丸や黒丸を通って、盤面に<strong>途切れない1本の輪っか</strong>を描きます。線が枝分かれしたり、交差したり、小さな輪っかが2つできるのは禁止です！
+      </div>
+    </div>
+
+    <div class="tut-card">
+      <span class="tut-badge">ルール 2</span>
+      <div class="tut-title">⚪ 白丸（White Pearl）のルール</div>
+      <div class="tut-desc">
+        白丸のあるマスは<strong>必ずまっすぐ突き抜けます（直進）</strong>。そして、その<strong>前か後ろ（または両方）の隣のマスで直角に曲がる</strong>必要があります！
+      </div>
+    </div>
+
+    <div class="tut-card">
+      <span class="tut-badge">ルール 3</span>
+      <div class="tut-title">⚫ 黒丸（Black Pearl）のルール</div>
+      <div class="tut-desc">
+        黒丸のあるマスでは<strong>必ず直角に曲がります（ターン）</strong>。そして、曲がった<strong>両腕はそれぞれ次のマスまでまっすぐ直進</strong>（曲がらず直進）しなければなりません！
+      </div>
+    </div>
+
+    <div class="tut-card">
+      <span class="tut-badge">💡 攻略のコツ</span>
+      <div class="tut-title">カド・端っこの真珠に注目！</div>
+      <div class="tut-desc">
+        盤面の端にある黒丸は盤の外へ出られないため、必然的に内側へ向かう直角ターンが決定します！決まっている場所から線を伸ばしていきましょう！
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Victory Modal -->
+<div class="modal-overlay" id="victoryModal">
+  <div class="modal-card victory-content">
+    <div class="victory-stars" id="winStars">⭐⭐⭐</div>
+    <h2 class="victory-title">🎉 ステージクリア！</h2>
+    <div class="victory-stats">
+      <div class="stat-item">
+        <span class="stat-label">クリアタイム</span>
+        <span class="stat-val" id="winTime">00:24</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">目標タイム</span>
+        <span class="stat-val" id="winPar">45秒</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">獲得スター</span>
+        <span class="stat-val" id="winStarsCount">3 / 3</span>
+      </div>
+    </div>
+    <div class="victory-actions">
+      <button class="modal-btn secondary" id="winMapBtn">🗺️ マップへ</button>
+      <button class="modal-btn secondary" id="winRestartBtn">🔄 再挑戦</button>
+      <button class="modal-btn primary" id="winNextBtn">✨ つぎのステージ</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================= Embedded Masyu Core Algorithms ================= */
+"use strict";
+/* ===================== Masyu Core Logic (generator + solver) =====================
+ * Designed to be embedded verbatim inside masyu.html's <script> block.
+ * Also loadable via require() in Node for automated performance/correctness testing
+ * (see the module.exports guard at the bottom).
+ * ================================================================================ */
+
+function shuffle(arr, rng) {
+  rng = rng || Math.random;
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    const t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+  }
+  return arr;
+}
+function randInt(rng, lo, hi) { return lo + Math.floor(rng() * (hi - lo + 1)); }
+
+/* ---------- Grid / edge helpers -----------
+ * Points (r,c) for r,c in [0,N-1].
+ * Horizontal edge H:r:c connects (r,c)-(r,c+1), c in [0,N-2]
+ * Vertical edge   V:r:c connects (r,c)-(r+1,c), r in [0,N-2]
+ */
+function hKey(r, c) { return 'H:' + r + ':' + c; }
+function vKey(r, c) { return 'V:' + r + ':' + c; }
+
+function pointEdges(r, c, N) {
+  return {
+    up: r > 0 ? vKey(r - 1, c) : null,
+    down: r < N - 1 ? vKey(r, c) : null,
+    left: c > 0 ? hKey(r, c - 1) : null,
+    right: c < N - 1 ? hKey(r, c) : null
+  };
+}
+function neighborPoint(r, c, dir) {
+  if (dir === 'up') return [r - 1, c];
+  if (dir === 'down') return [r + 1, c];
+  if (dir === 'left') return [r, c - 1];
+  return [r, c + 1];
+}
+function allEdgeKeys(N) {
+  const list = [];
+  for (let r = 0; r < N; r++) for (let c = 0; c < N - 1; c++) list.push(hKey(r, c));
+  for (let r = 0; r < N - 1; r++) for (let c = 0; c < N; c++) list.push(vKey(r, c));
+  return list;
+}
+function edgeEndpoints(e) {
+  const parts = e.split(':');
+  const type = parts[0], r = +parts[1], c = +parts[2];
+  return type === 'H' ? [[r, c], [r, c + 1]] : [[r, c], [r + 1, c]];
+}
+
+/* ================= Loop generation (reverse strategy) =================
+ * 1. Start from the perimeter rectangle -- a trivially valid single simple loop.
+ * 2. Repeatedly XOR the 4 edges of a random unit square ("square flip"). This
+ *    operation always preserves "every vertex degree is even" (0/2/4), so we only
+ *    need to check for degree-4 (self crossing) and single-connectivity after each
+ *    flip; if broken we simply reject that flip and keep the previous loop.
+ * This avoids ANY combinatorial search for the loop itself -- it is always valid
+ * by construction, so there is no risk of runaway backtracking here.
+ */
+function isValidSingleLoop(edgeSet, N) {
+  const deg = new Map();
+  let count = 0;
+  for (const e of edgeSet) {
+    const [p1, p2] = edgeEndpoints(e);
+    const k1 = p1[0] + ',' + p1[1], k2 = p2[0] + ',' + p2[1];
+    deg.set(k1, (deg.get(k1) || 0) + 1);
+    deg.set(k2, (deg.get(k2) || 0) + 1);
+    count++;
+  }
+  if (count === 0) return false;
+  for (const v of deg.values()) if (v !== 2) return false;
+  // connectivity: BFS from one point through edgeSet, must reach exactly `count` edges
+  const start = edgeEndpoints(edgeSet.values().next().value)[0];
+  const visitedPts = new Set([start[0] + ',' + start[1]]);
+  const stack = [start];
+  let visitedEdges = 0;
+  const edgeSeen = new Set();
+  while (stack.length) {
+    const [r, c] = stack.pop();
+    const pe = pointEdges(r, c, N);
+    for (const dir of ['up', 'down', 'left', 'right']) {
+      const e = pe[dir];
+      if (!e || !edgeSet.has(e) || edgeSeen.has(e)) continue;
+      edgeSeen.add(e); visitedEdges++;
+      const [nr, nc] = neighborPoint(r, c, dir);
+      const k = nr + ',' + nc;
+      if (!visitedPts.has(k)) { visitedPts.add(k); stack.push([nr, nc]); }
+    }
+  }
+  return visitedEdges === count;
+}
+
+function buildRandomLoop(N, flips, rng) {
+  rng = rng || Math.random;
+  let edges = new Set();
+  for (let c = 0; c < N - 1; c++) { edges.add(hKey(0, c)); edges.add(hKey(N - 1, c)); }
+  for (let r = 0; r < N - 1; r++) { edges.add(vKey(r, 0)); edges.add(vKey(r, N - 1)); }
+  for (let i = 0; i < flips; i++) {
+    const r = randInt(rng, 0, N - 2), c = randInt(rng, 0, N - 2);
+    const e1 = hKey(r, c), e2 = vKey(r, c + 1), e3 = hKey(r + 1, c), e4 = vKey(r, c);
+    const trial = new Set(edges);
+    for (const e of [e1, e2, e3, e4]) { if (trial.has(e)) trial.delete(e); else trial.add(e); }
+    if (isValidSingleLoop(trial, N)) edges = trial;
+  }
+  return edges;
+}
+
+/* ================= Derive pearl candidates from a concrete loop ================= */
+function onDirsAt(r, c, edgeSet, N) {
+  const pe = pointEdges(r, c, N);
+  const on = [];
+  for (const dir of ['up', 'down', 'left', 'right']) if (pe[dir] && edgeSet.has(pe[dir])) on.push(dir);
+  return on;
+}
+function isTurnAt(r, c, edgeSet, N) {
+  const on = onDirsAt(r, c, edgeSet, N);
+  if (on.length !== 2) return null;
+  const straight = (on[0] === 'up' && on[1] === 'down') || (on[0] === 'down' && on[1] === 'up') ||
+    (on[0] === 'left' && on[1] === 'right') || (on[0] === 'right' && on[1] === 'left');
+  return !straight;
+}
+function deriveCandidates(edgeSet, N) {
+  const out = [];
+  for (let r = 0; r < N; r++) {
+    for (let c = 0; c < N; c++) {
+      const on = onDirsAt(r, c, edgeSet, N);
+      if (on.length !== 2) continue;
+      const turnP = isTurnAt(r, c, edgeSet, N);
+      const [dA, dB] = on;
+      const [ar, ac] = neighborPoint(r, c, dA);
+      const [br, bc] = neighborPoint(r, c, dB);
+      const turnA = isTurnAt(ar, ac, edgeSet, N);
+      const turnB = isTurnAt(br, bc, edgeSet, N);
+      if (!turnP) { if (turnA || turnB) out.push({ r, c, type: 'white' }); }
+      else { if (!turnA && !turnB) out.push({ r, c, type: 'black' }); }
+    }
+  }
+  return out;
+}
+
+/* ================= Solver =================
+ * Verifies whether a given pearl-clue set has 0 / 1 / >=2 loop solutions, with a
+ * hard node budget so it can never hang. Uses:
+ *  - degree propagation (0/2 per point)
+ *  - pearl-local edge-pattern propagation (white: 2 straight configs; black: up to
+ *    4 turn configs, each immediately forcing "continue straight" at both neighbors)
+ *  - "loop closure = terminal state" handling: whenever an edge would connect two
+ *    points already connected via on-edges, that is treated as an attempt to
+ *    complete the ENTIRE solution right there (every other edge forced off and the
+ *    whole board validated) rather than as an ordinary edge -- this is what
+ *    prevents runaway search on premature sub-loops.
+ */
+function solveMasyu(N, pearls, opts) {
+  opts = opts || {};
+  const nodeBudget = opts.nodeBudget || 400000;
+  const limit = opts.limit || 2;
+  const rng = opts.rng || Math.random;
+
+  const pearlMap = new Map();
+  for (const p of pearls) pearlMap.set(p.r + ',' + p.c, p.type);
+  const EDGES = allEdgeKeys(N);
+  const EDGE_INDEX = new Map(EDGES.map((e, i) => [e, i]));
+  const state = new Int8Array(EDGES.length); // 0 unknown, 1 on, -1 off
+  const log = [];
+  let nodes = 0, solutions = 0, aborted = false, foundSample = null;
+
+  function idx(e) { return EDGE_INDEX.get(e); }
+  function getState(e) { return state[idx(e)]; }
+
+  function rawSet(e, val) { // val 1 or -1; assumes currently unknown
+    state[idx(e)] = val;
+    log.push(idx(e));
+  }
+  function markPoint(logStart) { return logStart; }
+
+  function edgesAtPoint(r, c) {
+    const pe = pointEdges(r, c, N);
+    const arr = [];
+    for (const dir of ['up', 'down', 'left', 'right']) if (pe[dir]) arr.push({ dir, e: pe[dir] });
+    return arr;
+  }
+
+  function connectedByOn(p1, p2) {
+    if (p1[0] === p2[0] && p1[1] === p2[1]) return true;
+    const targetKey = p2[0] + ',' + p2[1];
+    const visited = new Set([p1[0] + ',' + p1[1]]);
+    const stack = [p1];
+    while (stack.length) {
+      const [r, c] = stack.pop();
+      const pe = pointEdges(r, c, N);
+      for (const dir of ['up', 'down', 'left', 'right']) {
+        const e = pe[dir];
+        if (!e || getState(e) !== 1) continue;
+        const [nr, nc] = neighborPoint(r, c, dir);
+        const k = nr + ',' + nc;
+        if (k === targetKey) return true;
+        if (!visited.has(k)) { visited.add(k); stack.push([nr, nc]); }
+      }
+    }
+    return false;
+  }
+
+  // Returns 'ok' | 'contradiction' | 'solution'
+  function setEdge(e, val) {
+    const cur = getState(e);
+    if (cur !== 0) return cur === val ? 'ok' : 'contradiction';
+    if (val === -1) { rawSet(e, -1); return 'ok'; }
+    // val === 1 (turning it on)
+    const [p1, p2] = edgeEndpoints(e);
+    const closes = connectedByOn(p1, p2);
+    if (!closes) { rawSet(e, 1); return 'ok'; }
+    // Closing move: force EVERYTHING else, then fully validate as a terminal state.
+    const mark = log.length;
+    rawSet(e, 1);
+    for (const other of EDGES) {
+      if (getState(other) === 0) rawSet(other, -1);
+    }
+    if (validateFullyDetermined()) return 'solution';
+    undoTo(mark);
+    return 'contradiction';
+  }
+
+  function undoTo(mark) {
+    while (log.length > mark) { const i = log.pop(); state[i] = 0; }
+  }
+
+  // White pearl valid configs (each config: which of up/down/left/right are ON)
+  function pearlConfigs(r, c, type) {
+    const pe = pointEdges(r, c, N);
+    const configs = [];
+    if (type === 'white') {
+      if (pe.up && pe.down) configs.push(['up', 'down']);
+      if (pe.left && pe.right) configs.push(['left', 'right']);
+    } else {
+      const pairs = [['up', 'left'], ['up', 'right'], ['down', 'left'], ['down', 'right']];
+      for (const [a, b] of pairs) if (pe[a] && pe[b]) configs.push([a, b]);
+    }
+    return configs;
+  }
+
+  function propagatePearl(r, c, type) {
+    const pe = pointEdges(r, c, N);
+    const configs = pearlConfigs(r, c, type);
+    const dirsAll = ['up', 'down', 'left', 'right'].filter(d => pe[d]);
+    // filter configs consistent with current state
+    const alive = configs.filter(cfg => {
+      for (const d of dirsAll) {
+        const want = cfg.includes(d) ? 1 : -1;
+        const cur = getState(pe[d]);
+        if (cur !== 0 && cur !== want) return false;
+      }
+      return true;
+    });
+    if (alive.length === 0) return 'contradiction';
+    let madeChange = false;
+    if (alive.length === 1) {
+      const cfg = alive[0];
+      for (const d of dirsAll) {
+        const want = cfg.includes(d) ? 1 : -1;
+        if (getState(pe[d]) === 0) {
+          madeChange = true;
+          const res = setEdge(pe[d], want);
+          if (res === 'contradiction') return 'contradiction';
+          if (res === 'solution') return 'solution';
+        }
+      }
+      if (type === 'black') {
+        // Force straight-through at both neighbors along the two ON directions.
+        for (const d of cfg) {
+          const [nr, nc] = neighborPoint(r, c, d);
+          const npe = pointEdges(nr, nc, N);
+          const continueDir = d; // same direction continues outward
+          if (!npe[continueDir]) return 'contradiction'; // no room to go straight -> impossible
+          if (getState(npe[continueDir]) === 0) {
+            madeChange = true;
+            const res = setEdge(npe[continueDir], 1);
+            if (res === 'contradiction') return 'contradiction';
+            if (res === 'solution') return 'solution';
+          }
+          // perpendicular edges at neighbor must be off
+          const perp = (continueDir === 'up' || continueDir === 'down') ? ['left', 'right'] : ['up', 'down'];
+          for (const pd of perp) {
+            if (npe[pd] && getState(npe[pd]) === 0) {
+              madeChange = true;
+              const res = setEdge(npe[pd], -1);
+              if (res === 'contradiction') return 'contradiction';
+              if (res === 'solution') return 'solution';
+            }
+          }
+        }
+      }
+      return madeChange ? 'changed' : 'stable';
+    }
+    return 'stable';
+  }
+
+  function whiteNeighborContradiction(r, c) {
+    // If white pearl's straight direction already known, and BOTH neighbors already
+    // forced fully straight through (their continuation edge is ON), that's invalid.
+    const pe = pointEdges(r, c, N);
+    let dirs = null;
+    if (pe.up && getState(pe.up) === 1) dirs = ['up', 'down'];
+    else if (pe.down && getState(pe.down) === 1) dirs = ['up', 'down'];
+    else if (pe.left && getState(pe.left) === 1) dirs = ['left', 'right'];
+    else if (pe.right && getState(pe.right) === 1) dirs = ['left', 'right'];
+    if (!dirs) return false;
+    let bothStraight = true;
+    for (const d of dirs) {
+      if (!pe[d]) { bothStraight = false; break; }
+      const [nr, nc] = neighborPoint(r, c, d);
+      const npe = pointEdges(nr, nc, N);
+      const cont = npe[d];
+      if (!cont || getState(cont) !== 1) { bothStraight = false; break; }
+    }
+    return bothStraight;
+  }
+
+  function propagateAll() {
+    let changed = true;
+    let guard = 0;
+    const guardMax = EDGES.length * 8 + 50; // defensive hard cap: propagation is monotonic
+    // and must converge in at most O(#edges) passes; this guard exists purely so a
+    // latent bug can never turn into an infinite loop instead of a bounded no-op.
+    while (changed) {
+      if (++guard > guardMax) return 'stable';
+      changed = false;
+      for (let r = 0; r < N; r++) {
+        for (let c = 0; c < N; c++) {
+          const list = edgesAtPoint(r, c);
+          let onCount = 0, unknown = [];
+          for (const { dir, e } of list) {
+            const s = getState(e);
+            if (s === 1) onCount++; else if (s === 0) unknown.push(e);
+          }
+          if (onCount > 2) return 'contradiction';
+          const key = r + ',' + c;
+          if (pearlMap.has(key)) {
+            const res = propagatePearl(r, c, pearlMap.get(key));
+            if (res === 'contradiction') return 'contradiction';
+            if (res === 'solution') return 'solution';
+            if (res === 'changed') changed = true;
+            if (whiteNeighborContradiction(r, c) === true && pearlMap.get(key) === 'white') {
+              // handled below generically too, but double check impossible state
+            }
+          } else {
+            if (onCount === 2 && unknown.length > 0) {
+              for (const e of unknown) { const res = setEdge(e, -1); if (res === 'contradiction') return 'contradiction'; }
+              changed = true;
+            } else if (onCount === 1 && unknown.length === 1) {
+              const res = setEdge(unknown[0], 1);
+              if (res === 'contradiction') return 'contradiction';
+              if (res === 'solution') return 'solution';
+              changed = true;
+            } else if (onCount === 0 && unknown.length === 1) {
+              const res = setEdge(unknown[0], -1);
+              if (res === 'contradiction') return 'contradiction';
+              changed = true;
+            } else if (onCount === 1 && unknown.length === 0) {
+              return 'contradiction';
+            }
+          }
+        }
+      }
+      // global check for white-pearl neighbor contradictions
+      for (const [key, type] of pearlMap) {
+        if (type !== 'white') continue;
+        const [r, c] = key.split(',').map(Number);
+        if (whiteNeighborContradiction(r, c)) return 'contradiction';
+      }
+    }
+    return 'stable';
+  }
+
+  function validateFullyDetermined() {
+    // every edge must now be decided; check degree + pearl semantics + single loop
+    const deg = new Map();
+    let onEdges = [];
+    for (const e of EDGES) {
+      if (getState(e) === 1) onEdges.push(e);
+    }
+    if (onEdges.length === 0) return pearlMap.size === 0 ? false : false; // a masyu puzzle always needs a nonempty loop
+    for (const e of onEdges) {
+      const [p1, p2] = edgeEndpoints(e);
+      const k1 = p1[0] + ',' + p1[1], k2 = p2[0] + ',' + p2[1];
+      deg.set(k1, (deg.get(k1) || 0) + 1);
+      deg.set(k2, (deg.get(k2) || 0) + 1);
+    }
+    for (const v of deg.values()) if (v !== 2) return false;
+    // every pearl must be on the loop
+    for (const key of pearlMap.keys()) {
+      const [r, c] = key.split(',').map(Number);
+      if ((deg.get(key) || 0) !== 2) return false;
+    }
+    // single connected component
+    const start = edgeEndpoints(onEdges[0])[0];
+    const visited = new Set([start[0] + ',' + start[1]]);
+    const stack = [start];
+    let visitedEdgeCount = 0;
+    const seenE = new Set();
+    while (stack.length) {
+      const [r, c] = stack.pop();
+      const pe = pointEdges(r, c, N);
+      for (const dir of ['up', 'down', 'left', 'right']) {
+        const e = pe[dir];
+        if (!e || getState(e) !== 1 || seenE.has(e)) continue;
+        seenE.add(e); visitedEdgeCount++;
+        const [nr, nc] = neighborPoint(r, c, dir);
+        const k = nr + ',' + nc;
+        if (!visited.has(k)) { visited.add(k); stack.push([nr, nc]); }
+      }
+    }
+    if (visitedEdgeCount !== onEdges.length) return false;
+    // pearl straight/turn semantics
+    for (const [key, type] of pearlMap) {
+      const [r, c] = key.split(',').map(Number);
+      const on = onDirsAt(r, c, new Set(onEdges), N);
+      if (on.length !== 2) return false;
+      const turnP = !((on[0] === 'up' && on[1] === 'down') || (on[0] === 'down' && on[1] === 'up') ||
+        (on[0] === 'left' && on[1] === 'right') || (on[0] === 'right' && on[1] === 'left'));
+      if (type === 'black' && !turnP) return false;
+      if (type === 'white' && turnP) return false;
+      const [ar, ac] = neighborPoint(r, c, on[0]);
+      const [br, bc] = neighborPoint(r, c, on[1]);
+      const turnA = isTurnAt(ar, ac, new Set(onEdges), N);
+      const turnB = isTurnAt(br, bc, new Set(onEdges), N);
+      if (type === 'white' && !(turnA || turnB)) return false;
+      if (type === 'black' && !(turnA === false && turnB === false)) return false;
+    }
+    return true;
+  }
+
+  function pickUnknownEdge() {
+    // Heuristic: prefer edges touching a pearl point, then edges touching a point
+    // that already has exactly one ON edge (most constrained).
+    let best = null, bestScore = -1;
+    for (const e of EDGES) {
+      if (getState(e) !== 0) continue;
+      const [p1, p2] = edgeEndpoints(e);
+      let score = 0;
+      for (const p of [p1, p2]) {
+        const key = p[0] + ',' + p[1];
+        if (pearlMap.has(key)) score += 5;
+        const list = edgesAtPoint(p[0], p[1]);
+        let onCount = 0;
+        for (const { e: ee } of list) if (getState(ee) === 1) onCount++;
+        if (onCount === 1) score += 3;
+      }
+      if (score > bestScore) { bestScore = score; best = e; if (score >= 10) break; }
+    }
+    return best;
+  }
+
+  function dfs() {
+    if (aborted || solutions >= limit) return;
+    nodes++;
+    if (nodes > nodeBudget) { aborted = true; return; }
+    const pr = propagateAll();
+    if (pr === 'contradiction') return;
+    if (pr === 'solution') {
+      solutions++;
+      if (!foundSample) foundSample = snapshotOn();
+      return;
+    }
+    const e = pickUnknownEdge();
+    if (!e) {
+      if (validateFullyDetermined()) { solutions++; if (!foundSample) foundSample = snapshotOn(); }
+      return;
+    }
+    const mark = log.length;
+    const r1 = setEdge(e, 1);
+    if (r1 === 'solution') { solutions++; if (!foundSample) foundSample = snapshotOn(); }
+    else if (r1 === 'ok') { dfs(); }
+    undoTo(mark);
+    if (aborted || solutions >= limit) return;
+    const mark2 = log.length;
+    const r2 = setEdge(e, -1);
+    if (r2 === 'ok') { dfs(); }
+    undoTo(mark2);
+  }
+
+  function snapshotOn() {
+    const s = new Set();
+    for (const e of EDGES) if (getState(e) === 1) s.add(e);
+    return s;
+  }
+
+  dfs();
+  return { count: aborted ? -1 : solutions, aborted, nodes, sample: foundSample };
+}
+
+/* ================= Puzzle generation with uniqueness + simplification ================= */
+function generateMasyuPuzzle(N, opts) {
+  opts = opts || {};
+  const rng = opts.rng || Math.random;
+  const maxLoopAttempts = opts.maxLoopAttempts || 25;
+  const nodeBudget = opts.nodeBudget || 400000;
+  const simplifyBudgetMs = opts.simplifyBudgetMs || 400;
+  const simplifyNodeBudget = opts.simplifyNodeBudget || 60000;
+  const baseFlips = opts.flips || Math.round(N * N * 2.2);
+
+  let best = null;
+  for (let attempt = 0; attempt < maxLoopAttempts; attempt++) {
+    const flips = baseFlips + attempt * Math.round(N * 0.8);
+    const loop = buildRandomLoop(N, flips, rng);
+    const candidates = deriveCandidates(loop, N);
+    if (candidates.length < opts.minPearls ? candidates.length < opts.minPearls : candidates.length < 3) continue;
+    const check = solveMasyu(N, candidates, { nodeBudget, limit: 2, rng });
+    if (check.aborted) continue; // budget exceeded verifying maximal clue set -- try a fresh loop
+    if (check.count === 1) { best = { loop, candidates }; break; }
+    // not unique with the maximal candidate set -> a different loop shape is needed
+  }
+  if (!best) {
+    // Fallback: accept the last attempt's maximal candidate set even if uniqueness
+    // could not be confirmed within budget, rather than hang. This should be rare.
+    const loop = buildRandomLoop(N, baseFlips + maxLoopAttempts * Math.round(N * 0.8), rng);
+    const candidates = deriveCandidates(loop, N);
+    best = { loop, candidates };
+  }
+
+  // Simplification: try to drop redundant clues, bounded by node AND time budget.
+  const t0 = Date.now();
+  let clues = best.candidates.slice();
+  shuffle(clues, rng);
+  const kept = [];
+  let remaining = clues.slice();
+  for (let i = 0; i < remaining.length; i++) {
+    if (Date.now() - t0 > simplifyBudgetMs) { kept.push(...remaining.slice(i)); break; }
+    const trial = kept.concat(remaining.slice(i + 1));
+    const res = solveMasyu(N, trial, { nodeBudget: simplifyNodeBudget, limit: 2, rng });
+    if (!res.aborted && res.count === 1) {
+      // this clue is redundant, drop it (do not push to kept)
+    } else {
+      kept.push(remaining[i]);
+    }
+  }
+  const finalClues = kept.length ? kept : best.candidates;
+  return { size: N, loop: best.loop, pearls: finalClues, allCandidates: best.candidates };
+}
+
+/* ================= Player-side loop validation (no solver needed at runtime) ================= */
+function validatePlayerLoop(N, pearls, playerEdges) {
+  // playerEdges: Set of edge keys the player has drawn
+  const deg = new Map();
+  for (const e of playerEdges) {
+    const [p1, p2] = edgeEndpoints(e);
+    const k1 = p1[0] + ',' + p1[1], k2 = p2[0] + ',' + p2[1];
+    deg.set(k1, (deg.get(k1) || 0) + 1);
+    deg.set(k2, (deg.get(k2) || 0) + 1);
+  }
+  for (const v of deg.values()) if (v > 2) return { valid: false, reason: 'branch' };
+  for (const p of pearls) {
+    const key = p.r + ',' + p.c;
+    if ((deg.get(key) || 0) !== 2) return { valid: false, reason: 'pearl-not-on-loop' };
+  }
+  if (playerEdges.size === 0) return { valid: false, reason: 'empty' };
+  // must have zero degree-1 points (every touched point closed)
+  for (const v of deg.values()) if (v === 1) return { valid: false, reason: 'open-end' };
+  // single connected component covering all on edges
+  const start = edgeEndpoints(playerEdges.values().next().value)[0];
+  const visited = new Set([start[0] + ',' + start[1]]);
+  const stack = [start];
+  let visitedEdges = 0;
+  const seenE = new Set();
+  while (stack.length) {
+    const [r, c] = stack.pop();
+    const pe = pointEdges(r, c, N);
+    for (const dir of ['up', 'down', 'left', 'right']) {
+      const e = pe[dir];
+      if (!e || !playerEdges.has(e) || seenE.has(e)) continue;
+      seenE.add(e); visitedEdges++;
+      const [nr, nc] = neighborPoint(r, c, dir);
+      const k = nr + ',' + nc;
+      if (!visited.has(k)) { visited.add(k); stack.push([nr, nc]); }
+    }
+  }
+  if (visitedEdges !== playerEdges.size) return { valid: false, reason: 'multiple-loops' };
+  // pearl semantics
+  for (const p of pearls) {
+    const on = onDirsAt(p.r, p.c, playerEdges, N);
+    if (on.length !== 2) return { valid: false, reason: 'pearl-degree' };
+    const turnP = isTurnAt(p.r, p.c, playerEdges, N);
+    if (p.type === 'black' && !turnP) return { valid: false, reason: 'black-not-turn' };
+    if (p.type === 'white' && turnP) return { valid: false, reason: 'white-not-straight' };
+    const [ar, ac] = neighborPoint(p.r, p.c, on[0]);
+    const [br, bc] = neighborPoint(p.r, p.c, on[1]);
+    const turnA = isTurnAt(ar, ac, playerEdges, N);
+    const turnB = isTurnAt(br, bc, playerEdges, N);
+    if (p.type === 'white' && !(turnA || turnB)) return { valid: false, reason: 'white-no-turn-neighbor' };
+    if (p.type === 'black' && !(turnA === false && turnB === false)) return { valid: false, reason: 'black-neighbor-not-straight' };
+  }
+  return { valid: true };
+}
+
+
+
+/* ================= 18 Pre-verified Stages ================= */
+const STAGES_DATA = [
+  {
+    "id": 1,
+    "tier": 1,
+    "size": 5,
+    "title": "白真珠のきほん",
+    "subtitle": "直進と隣接マスの転回",
+    "badge": "⚪",
+    "mascot": "白丸はまっすぐ突き抜けるよ！そして前か後ろのどちらかで曲がろう！",
+    "parSeconds": 45,
+    "pearls": [
+      {
+        "r": 0,
+        "c": 1,
+        "type": "white"
+      },
+      {
+        "r": 1,
+        "c": 0,
+        "type": "white"
+      },
+      {
+        "r": 1,
+        "c": 3,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 1,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 4,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 1,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 4,
+        "type": "white"
+      },
+      {
+        "r": 4,
+        "c": 1,
+        "type": "white"
+      },
+      {
+        "r": 4,
+        "c": 3,
+        "type": "white"
+      }
+    ],
+    "solution": [
+      "H:0:0",
+      "H:4:0",
+      "H:0:1",
+      "H:4:1",
+      "H:4:2",
+      "H:4:3",
+      "V:0:0",
+      "V:1:0",
+      "V:1:4",
+      "V:2:4",
+      "V:3:0",
+      "V:3:4",
+      "H:1:2",
+      "V:0:2",
+      "H:2:0",
+      "H:3:0",
+      "H:2:1",
+      "H:3:1",
+      "H:1:3",
+      "H:2:2",
+      "V:2:3",
+      "H:3:2"
+    ]
+  },
+  {
+    "id": 2,
+    "tier": 1,
+    "size": 5,
+    "title": "黒真珠のきほん",
+    "subtitle": "直角ターンと2マス直進",
+    "badge": "⚫",
+    "mascot": "黒丸は必ずカクッと90度曲がるよ！両隣のマスはまっすぐ直進してね！",
+    "parSeconds": 50,
+    "pearls": [
+      {
+        "r": 0,
+        "c": 0,
+        "type": "black"
+      },
+      {
+        "r": 1,
+        "c": 4,
+        "type": "black"
+      },
+      {
+        "r": 2,
+        "c": 1,
+        "type": "black"
+      },
+      {
+        "r": 2,
+        "c": 3,
+        "type": "black"
+      }
+    ],
+    "solution": [
+      "H:0:0",
+      "H:4:0",
+      "H:0:1",
+      "V:0:0",
+      "V:1:0",
+      "V:1:4",
+      "V:2:4",
+      "V:3:0",
+      "H:1:3",
+      "V:2:0",
+      "V:3:1",
+      "H:1:2",
+      "V:0:2",
+      "V:3:4",
+      "H:4:3",
+      "V:3:3",
+      "H:2:1",
+      "V:2:1",
+      "H:2:2",
+      "V:2:3"
+    ]
+  },
+  {
+    "id": 3,
+    "tier": 1,
+    "size": 5,
+    "title": "白と黒のハーモニー",
+    "subtitle": "2種類のルールを組み合わせ",
+    "badge": "🌱",
+    "mascot": "白丸と黒丸が両方あるよ！角（カド）のマスに注目してみよう！",
+    "parSeconds": 60,
+    "pearls": [
+      {
+        "r": 4,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 1,
+        "c": 0,
+        "type": "black"
+      },
+      {
+        "r": 2,
+        "c": 4,
+        "type": "black"
+      },
+      {
+        "r": 4,
+        "c": 4,
+        "type": "black"
+      }
+    ],
+    "solution": [
+      "V:2:0",
+      "H:4:1",
+      "V:2:4",
+      "H:4:2",
+      "V:1:0",
+      "H:2:3",
+      "H:2:2",
+      "H:3:0",
+      "V:3:1",
+      "H:1:1",
+      "V:1:2",
+      "V:3:4",
+      "H:4:3",
+      "H:1:0"
+    ]
+  },
+  {
+    "id": 4,
+    "tier": 1,
+    "size": 5,
+    "title": "端っこの法則",
+    "subtitle": "盤面のフチを活かした推理",
+    "badge": "🍀",
+    "mascot": "端っこにある黒丸は外にはみ出せないから、曲がる向きがすぐ決まるよ！",
+    "parSeconds": 65,
+    "pearls": [
+      {
+        "r": 1,
+        "c": 3,
+        "type": "white"
+      },
+      {
+        "r": 1,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 2,
+        "type": "black"
+      },
+      {
+        "r": 2,
+        "c": 0,
+        "type": "white"
+      }
+    ],
+    "solution": [
+      "V:1:4",
+      "V:2:0",
+      "H:1:2",
+      "H:2:3",
+      "H:2:2",
+      "V:2:2",
+      "H:3:0",
+      "V:1:0",
+      "V:3:2",
+      "H:4:1",
+      "V:3:1",
+      "H:1:1",
+      "H:1:3",
+      "H:0:0",
+      "V:0:1",
+      "V:0:0"
+    ]
+  },
+  {
+    "id": 5,
+    "tier": 1,
+    "size": 5,
+    "title": "ループをつなげよう",
+    "subtitle": "1つの輪っかを完成させる",
+    "badge": "⭐",
+    "mascot": "線が枝分かれしたり、小さな輪っかが2つできたりしないように注意！",
+    "parSeconds": 70,
+    "pearls": [
+      {
+        "r": 1,
+        "c": 2,
+        "type": "black"
+      },
+      {
+        "r": 4,
+        "c": 3,
+        "type": "black"
+      },
+      {
+        "r": 0,
+        "c": 3,
+        "type": "black"
+      },
+      {
+        "r": 3,
+        "c": 0,
+        "type": "white"
+      }
+    ],
+    "solution": [
+      "H:4:1",
+      "H:0:2",
+      "H:4:2",
+      "V:2:0",
+      "H:2:0",
+      "V:1:2",
+      "V:0:3",
+      "H:0:1",
+      "H:1:1",
+      "H:0:0",
+      "H:1:0",
+      "V:0:0",
+      "H:4:0",
+      "V:3:0",
+      "V:2:3",
+      "V:2:2",
+      "H:3:1",
+      "V:2:1",
+      "V:3:3",
+      "V:1:3"
+    ]
+  },
+  {
+    "id": 6,
+    "tier": 1,
+    "size": 5,
+    "title": "5×5 卒業検定",
+    "subtitle": "白黒ループのマスターへ",
+    "badge": "🏆",
+    "mascot": "これで5×5の基本はカンペキ！次は広い6×6のステージに挑戦だ！",
+    "parSeconds": 80,
+    "pearls": [
+      {
+        "r": 3,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 1,
+        "c": 3,
+        "type": "white"
+      },
+      {
+        "r": 4,
+        "c": 0,
+        "type": "black"
+      },
+      {
+        "r": 2,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 3,
+        "type": "white"
+      },
+      {
+        "r": 0,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 0,
+        "type": "white"
+      }
+    ],
+    "solution": [
+      "H:4:1",
+      "V:1:0",
+      "H:2:2",
+      "V:2:0",
+      "H:3:2",
+      "H:4:2",
+      "H:0:1",
+      "H:4:0",
+      "V:3:0",
+      "H:3:3",
+      "V:3:4",
+      "H:4:3",
+      "H:2:1",
+      "H:3:1",
+      "V:2:1",
+      "V:0:1",
+      "H:1:0",
+      "V:1:3",
+      "H:0:2",
+      "V:0:3"
+    ]
+  },
+  {
+    "id": 7,
+    "tier": 2,
+    "size": 6,
+    "title": "6×6 新たな旅立ち",
+    "subtitle": "広がる盤面と推理の糸口",
+    "badge": "🚀",
+    "mascot": "盤面が6×6に広がったよ！まずは制約の強い黒丸から線を伸ばそう！",
+    "parSeconds": 85,
+    "pearls": [
+      {
+        "r": 1,
+        "c": 5,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 4,
+        "type": "white"
+      },
+      {
+        "r": 1,
+        "c": 0,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 3,
+        "type": "white"
+      },
+      {
+        "r": 4,
+        "c": 5,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 4,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 1,
+        "type": "white"
+      },
+      {
+        "r": 4,
+        "c": 0,
+        "type": "white"
+      },
+      {
+        "r": 5,
+        "c": 1,
+        "type": "white"
+      }
+    ],
+    "solution": [
+      "H:0:0",
+      "H:5:0",
+      "H:5:1",
+      "V:0:0",
+      "V:1:0",
+      "V:2:5",
+      "V:3:0",
+      "V:3:5",
+      "V:4:0",
+      "V:1:5",
+      "V:2:0",
+      "H:5:2",
+      "H:0:1",
+      "V:0:2",
+      "V:2:4",
+      "H:1:1",
+      "V:1:1",
+      "V:1:4",
+      "H:2:2",
+      "V:2:3",
+      "V:4:5",
+      "H:5:4",
+      "V:2:2",
+      "V:2:1",
+      "H:5:3",
+      "V:3:4",
+      "H:4:3",
+      "V:3:3",
+      "V:3:2",
+      "H:4:1",
+      "V:3:1",
+      "H:0:4",
+      "V:0:5",
+      "H:0:3",
+      "H:1:3",
+      "V:0:3"
+    ]
+  },
+  {
+    "id": 8,
+    "tier": 2,
+    "size": 6,
+    "title": "黒真珠の防壁",
+    "subtitle": "2マスの直進を確保する",
+    "badge": "🛡️",
+    "mascot": "黒丸から2マスまっすぐ進むと壁にぶつからないかチェックしよう！",
+    "parSeconds": 90,
+    "pearls": [
+      {
+        "r": 0,
+        "c": 3,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 4,
+        "type": "black"
+      },
+      {
+        "r": 5,
+        "c": 1,
+        "type": "black"
+      },
+      {
+        "r": 4,
+        "c": 3,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 1,
+        "type": "white"
+      },
+      {
+        "r": 4,
+        "c": 4,
+        "type": "white"
+      },
+      {
+        "r": 0,
+        "c": 5,
+        "type": "black"
+      },
+      {
+        "r": 1,
+        "c": 0,
+        "type": "white"
+      }
+    ],
+    "solution": [
+      "H:5:1",
+      "H:0:2",
+      "H:0:4",
+      "V:0:5",
+      "V:1:5",
+      "V:2:5",
+      "V:3:5",
+      "H:2:2",
+      "V:2:2",
+      "H:0:3",
+      "V:1:0",
+      "V:3:1",
+      "H:2:3",
+      "V:2:4",
+      "V:3:4",
+      "H:2:0",
+      "V:2:1",
+      "H:0:0",
+      "V:0:0",
+      "V:4:1",
+      "V:4:5",
+      "H:5:4",
+      "V:4:4",
+      "V:4:3",
+      "H:5:2",
+      "H:3:2",
+      "V:3:3",
+      "V:0:2",
+      "H:1:1",
+      "V:0:1"
+    ]
+  },
+  {
+    "id": 9,
+    "tier": 2,
+    "size": 6,
+    "title": "白真珠の連続",
+    "subtitle": "平行線と直進の制約",
+    "badge": "⚡",
+    "mascot": "白丸が並んでいるときは、線の進む向きが限定される大チャンス！",
+    "parSeconds": 100,
+    "pearls": [
+      {
+        "r": 0,
+        "c": 4,
+        "type": "white"
+      },
+      {
+        "r": 4,
+        "c": 1,
+        "type": "white"
+      },
+      {
+        "r": 1,
+        "c": 4,
+        "type": "white"
+      },
+      {
+        "r": 4,
+        "c": 0,
+        "type": "white"
+      },
+      {
+        "r": 0,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 1,
+        "type": "white"
+      },
+      {
+        "r": 4,
+        "c": 4,
+        "type": "black"
+      }
+    ],
+    "solution": [
+      "V:3:0",
+      "V:2:0",
+      "H:3:1",
+      "V:3:2",
+      "V:3:1",
+      "H:0:2",
+      "V:1:3",
+      "V:1:2",
+      "H:2:1",
+      "H:2:0",
+      "H:0:1",
+      "H:1:1",
+      "V:0:1",
+      "V:4:1",
+      "H:5:0",
+      "V:4:0",
+      "H:4:2",
+      "H:0:3",
+      "H:1:3",
+      "V:3:4",
+      "H:4:3",
+      "H:0:4",
+      "V:0:5",
+      "H:1:4",
+      "H:2:3",
+      "V:2:4"
+    ]
+  },
+  {
+    "id": 10,
+    "tier": 2,
+    "size": 6,
+    "title": "交錯するループ",
+    "subtitle": "枝分かれのない美しい輪",
+    "badge": "🔍",
+    "mascot": "すでにつながった端っこ同士を早まって結ばないように気をつけて！",
+    "parSeconds": 110,
+    "pearls": [
+      {
+        "r": 4,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 3,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 5,
+        "type": "white"
+      },
+      {
+        "r": 0,
+        "c": 1,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 1,
+        "c": 1,
+        "type": "white"
+      },
+      {
+        "r": 4,
+        "c": 0,
+        "type": "black"
+      },
+      {
+        "r": 2,
+        "c": 5,
+        "type": "white"
+      }
+    ],
+    "solution": [
+      "V:3:0",
+      "H:0:2",
+      "V:3:5",
+      "V:2:5",
+      "H:0:1",
+      "V:1:3",
+      "H:1:1",
+      "V:1:2",
+      "V:0:3",
+      "H:0:0",
+      "H:1:0",
+      "V:0:0",
+      "V:2:2",
+      "H:3:1",
+      "H:4:0",
+      "V:1:5",
+      "V:1:4",
+      "H:5:3",
+      "H:4:2",
+      "V:4:3",
+      "V:2:4",
+      "H:3:3",
+      "V:2:3",
+      "H:2:0",
+      "V:2:1",
+      "V:2:0",
+      "H:1:4",
+      "H:4:1",
+      "H:4:4",
+      "V:4:4"
+    ]
+  },
+  {
+    "id": 11,
+    "tier": 2,
+    "size": 6,
+    "title": "角の真珠たち",
+    "subtitle": "カドから始まる連鎖推理",
+    "badge": "🔥",
+    "mascot": "カドに近い真珠は方向がギュッと縛られるから一気に解き進められるよ！",
+    "parSeconds": 120,
+    "pearls": [
+      {
+        "r": 3,
+        "c": 4,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 0,
+        "type": "white"
+      },
+      {
+        "r": 1,
+        "c": 2,
+        "type": "black"
+      },
+      {
+        "r": 4,
+        "c": 0,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 1,
+        "c": 4,
+        "type": "black"
+      },
+      {
+        "r": 4,
+        "c": 5,
+        "type": "white"
+      }
+    ],
+    "solution": [
+      "V:1:5",
+      "V:2:5",
+      "V:3:5",
+      "V:2:4",
+      "V:3:2",
+      "V:3:0",
+      "H:0:3",
+      "V:2:0",
+      "V:4:5",
+      "H:5:4",
+      "V:1:0",
+      "H:0:1",
+      "H:0:2",
+      "H:5:3",
+      "V:4:3",
+      "H:5:0",
+      "V:4:0",
+      "H:4:1",
+      "V:4:1",
+      "H:0:4",
+      "V:0:5",
+      "V:0:1",
+      "H:1:0",
+      "V:2:2",
+      "V:3:4",
+      "H:4:3",
+      "H:1:2",
+      "V:1:2",
+      "H:1:3",
+      "V:1:4"
+    ]
+  },
+  {
+    "id": 12,
+    "tier": 2,
+    "size": 6,
+    "title": "6×6 マスター試練",
+    "subtitle": "論理のひらめきで一筆描き",
+    "badge": "👑",
+    "mascot": "見事！6×6を制覇したね！いよいよ最高難易度7×7の迷宮へ！",
+    "parSeconds": 130,
+    "pearls": [
+      {
+        "r": 5,
+        "c": 4,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 0,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 3,
+        "type": "black"
+      },
+      {
+        "r": 5,
+        "c": 3,
+        "type": "black"
+      },
+      {
+        "r": 1,
+        "c": 5,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 0,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 4,
+        "type": "white"
+      },
+      {
+        "r": 0,
+        "c": 3,
+        "type": "white"
+      },
+      {
+        "r": 1,
+        "c": 1,
+        "type": "white"
+      }
+    ],
+    "solution": [
+      "H:5:3",
+      "V:4:3",
+      "V:3:0",
+      "V:2:0",
+      "H:4:0",
+      "V:1:0",
+      "H:1:1",
+      "H:1:0",
+      "V:3:3",
+      "V:3:4",
+      "H:4:4",
+      "V:4:5",
+      "H:5:4",
+      "H:3:2",
+      "V:2:4",
+      "H:3:1",
+      "V:3:1",
+      "H:0:2",
+      "V:0:2",
+      "H:0:3",
+      "H:0:4",
+      "V:0:5",
+      "V:1:5",
+      "H:2:4"
+    ]
+  },
+  {
+    "id": 13,
+    "tier": 3,
+    "size": 7,
+    "title": "7×7 真珠の大迷宮",
+    "subtitle": "雄大な盤面への挑戦",
+    "badge": "🌟",
+    "mascot": "7×7の大ステージ！全体を見渡して、決まっている線からコツコツ引こう！",
+    "parSeconds": 140,
+    "pearls": [
+      {
+        "r": 3,
+        "c": 6,
+        "type": "white"
+      },
+      {
+        "r": 1,
+        "c": 3,
+        "type": "white"
+      },
+      {
+        "r": 4,
+        "c": 6,
+        "type": "white"
+      },
+      {
+        "r": 4,
+        "c": 3,
+        "type": "black"
+      },
+      {
+        "r": 3,
+        "c": 3,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 5,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 1,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 0,
+        "type": "white"
+      },
+      {
+        "r": 6,
+        "c": 0,
+        "type": "black"
+      },
+      {
+        "r": 6,
+        "c": 2,
+        "type": "black"
+      }
+    ],
+    "solution": [
+      "V:3:0",
+      "V:3:3",
+      "V:4:0",
+      "V:3:6",
+      "V:1:1",
+      "H:2:2",
+      "V:2:3",
+      "V:2:2",
+      "H:2:0",
+      "V:2:0",
+      "H:1:3",
+      "V:5:2",
+      "H:6:1",
+      "H:4:4",
+      "V:4:2",
+      "H:1:2",
+      "H:6:0",
+      "V:5:0",
+      "V:3:2",
+      "H:1:1",
+      "V:4:6",
+      "H:5:5",
+      "V:4:5",
+      "H:2:4",
+      "V:1:4",
+      "H:2:5",
+      "V:2:6",
+      "H:4:3"
+    ]
+  },
+  {
+    "id": 14,
+    "tier": 3,
+    "size": 7,
+    "title": "白黒ツインストリート",
+    "subtitle": "真珠が織りなす幾何学",
+    "badge": "💎",
+    "mascot": "白丸と黒丸が隣り合っている場所は、お互いの進行方向を決定づけるよ！",
+    "parSeconds": 150,
+    "pearls": [
+      {
+        "r": 4,
+        "c": 6,
+        "type": "white"
+      },
+      {
+        "r": 4,
+        "c": 3,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 4,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 0,
+        "type": "white"
+      },
+      {
+        "r": 4,
+        "c": 0,
+        "type": "white"
+      },
+      {
+        "r": 1,
+        "c": 6,
+        "type": "white"
+      },
+      {
+        "r": 4,
+        "c": 1,
+        "type": "white"
+      },
+      {
+        "r": 5,
+        "c": 4,
+        "type": "white"
+      },
+      {
+        "r": 1,
+        "c": 4,
+        "type": "white"
+      },
+      {
+        "r": 1,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 3,
+        "type": "white"
+      },
+      {
+        "r": 6,
+        "c": 3,
+        "type": "white"
+      },
+      {
+        "r": 1,
+        "c": 5,
+        "type": "white"
+      }
+    ],
+    "solution": [
+      "V:1:6",
+      "V:2:6",
+      "V:3:0",
+      "H:6:3",
+      "H:0:3",
+      "V:0:4",
+      "V:2:0",
+      "V:4:6",
+      "H:6:2",
+      "V:5:4",
+      "H:3:1",
+      "V:3:1",
+      "V:1:1",
+      "H:2:0",
+      "V:3:3",
+      "V:1:5",
+      "V:1:4",
+      "H:2:2",
+      "V:2:3",
+      "V:2:2",
+      "V:3:6",
+      "H:4:4",
+      "V:4:5",
+      "V:4:4",
+      "V:5:2",
+      "V:4:1",
+      "V:4:0",
+      "V:0:3",
+      "H:1:2",
+      "H:5:5",
+      "H:1:1",
+      "V:2:5",
+      "H:3:4",
+      "V:2:4",
+      "H:0:5",
+      "V:0:6",
+      "V:0:5",
+      "H:5:0",
+      "V:4:3",
+      "H:5:2"
+    ]
+  },
+  {
+    "id": 15,
+    "tier": 3,
+    "size": 7,
+    "title": "外周のセオリー",
+    "subtitle": "盤面の端を巡る大推理",
+    "badge": "🎪",
+    "mascot": "外周をなぞる線は内側へ曲がれる場所が限られているよ！",
+    "parSeconds": 160,
+    "pearls": [
+      {
+        "r": 1,
+        "c": 4,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 2,
+        "type": "black"
+      },
+      {
+        "r": 5,
+        "c": 4,
+        "type": "black"
+      },
+      {
+        "r": 1,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 5,
+        "c": 6,
+        "type": "black"
+      },
+      {
+        "r": 6,
+        "c": 0,
+        "type": "black"
+      },
+      {
+        "r": 6,
+        "c": 3,
+        "type": "black"
+      },
+      {
+        "r": 2,
+        "c": 4,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 0,
+        "type": "white"
+      }
+    ],
+    "solution": [
+      "H:6:0",
+      "H:6:2",
+      "V:5:0",
+      "V:5:3",
+      "H:6:1",
+      "V:4:0",
+      "H:4:0",
+      "V:4:3",
+      "V:3:2",
+      "H:3:1",
+      "V:4:2",
+      "H:5:1",
+      "V:4:1",
+      "V:1:0",
+      "H:2:3",
+      "H:0:1",
+      "H:0:0",
+      "V:0:0",
+      "H:2:2",
+      "H:2:4",
+      "H:3:0",
+      "V:2:0",
+      "V:3:6",
+      "H:3:5",
+      "V:2:5",
+      "H:0:2",
+      "H:1:2",
+      "H:0:3",
+      "H:1:3",
+      "H:0:4",
+      "V:0:5",
+      "H:1:4",
+      "H:1:1",
+      "H:2:1",
+      "V:1:1",
+      "H:3:3",
+      "V:3:4",
+      "V:3:3",
+      "V:4:6",
+      "H:5:5",
+      "H:5:4",
+      "V:4:4"
+    ]
+  },
+  {
+    "id": 16,
+    "tier": 3,
+    "size": 7,
+    "title": "環状ネットワーク",
+    "subtitle": "小ループ防止の高度推理",
+    "badge": "🌲",
+    "mascot": "部分的な輪っかが閉じてしまわないか、線の両端を常に意識してね！",
+    "parSeconds": 170,
+    "pearls": [
+      {
+        "r": 6,
+        "c": 5,
+        "type": "white"
+      },
+      {
+        "r": 6,
+        "c": 4,
+        "type": "white"
+      },
+      {
+        "r": 4,
+        "c": 3,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 3,
+        "type": "white"
+      },
+      {
+        "r": 0,
+        "c": 4,
+        "type": "white"
+      },
+      {
+        "r": 4,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 0,
+        "type": "white"
+      },
+      {
+        "r": 0,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 6,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 6,
+        "type": "white"
+      },
+      {
+        "r": 6,
+        "c": 1,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 3,
+        "type": "white"
+      }
+    ],
+    "solution": [
+      "V:3:6",
+      "V:4:0",
+      "V:1:6",
+      "V:3:0",
+      "H:6:1",
+      "V:1:2",
+      "V:5:2",
+      "H:6:0",
+      "V:5:0",
+      "H:4:3",
+      "H:1:5",
+      "H:3:1",
+      "H:0:2",
+      "H:2:2",
+      "H:3:2",
+      "V:2:1",
+      "V:2:0",
+      "V:4:4",
+      "H:6:4",
+      "H:4:5",
+      "V:4:5",
+      "H:2:0",
+      "H:5:5",
+      "V:5:6",
+      "H:6:5",
+      "H:0:3",
+      "H:4:2",
+      "H:4:1",
+      "H:5:1",
+      "V:4:1",
+      "H:0:1",
+      "H:1:1",
+      "V:0:1",
+      "V:2:6",
+      "H:2:3",
+      "V:2:4",
+      "H:3:3",
+      "H:5:3",
+      "H:6:3",
+      "V:5:3",
+      "H:0:4",
+      "V:0:5"
+    ]
+  },
+  {
+    "id": 17,
+    "tier": 3,
+    "size": 7,
+    "title": "賢者の回廊",
+    "subtitle": "全ての真珠を通り抜けて",
+    "badge": "🌀",
+    "mascot": "真珠のないマスもループが通るよ！線の出口が1つしかないマスを探そう！",
+    "parSeconds": 180,
+    "pearls": [
+      {
+        "r": 4,
+        "c": 0,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 5,
+        "type": "black"
+      },
+      {
+        "r": 6,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 5,
+        "type": "white"
+      },
+      {
+        "r": 3,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 0,
+        "c": 4,
+        "type": "white"
+      },
+      {
+        "r": 6,
+        "c": 6,
+        "type": "black"
+      },
+      {
+        "r": 2,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 0,
+        "type": "white"
+      },
+      {
+        "r": 5,
+        "c": 3,
+        "type": "white"
+      },
+      {
+        "r": 0,
+        "c": 2,
+        "type": "white"
+      }
+    ],
+    "solution": [
+      "H:6:1",
+      "H:0:2",
+      "H:0:3",
+      "H:0:4",
+      "H:6:4",
+      "V:3:0",
+      "V:5:4",
+      "V:5:6",
+      "H:6:5",
+      "V:2:2",
+      "V:3:6",
+      "V:4:6",
+      "V:2:6",
+      "H:3:4",
+      "V:3:5",
+      "V:4:5",
+      "H:5:4",
+      "H:2:5",
+      "V:4:0",
+      "H:0:1",
+      "V:2:0",
+      "H:1:2",
+      "V:1:3",
+      "V:1:2",
+      "H:3:3",
+      "V:2:3",
+      "V:0:1",
+      "H:1:4",
+      "H:2:4",
+      "V:1:4",
+      "H:5:0",
+      "V:5:1",
+      "V:3:2",
+      "H:4:2",
+      "V:4:3",
+      "V:5:3",
+      "H:6:2",
+      "H:1:0",
+      "V:1:0",
+      "V:0:5"
+    ]
+  },
+  {
+    "id": 18,
+    "tier": 3,
+    "size": 7,
+    "title": "ましゅ・レジェンド",
+    "subtitle": "唯一無二の光のリング",
+    "badge": "🌈",
+    "mascot": "最終ステージ！すべての真珠の謎を解き明かし、伝説のリングを完成させよう！",
+    "parSeconds": 200,
+    "pearls": [
+      {
+        "r": 6,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 1,
+        "c": 4,
+        "type": "white"
+      },
+      {
+        "r": 4,
+        "c": 1,
+        "type": "white"
+      },
+      {
+        "r": 1,
+        "c": 5,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 2,
+        "type": "black"
+      },
+      {
+        "r": 4,
+        "c": 4,
+        "type": "black"
+      },
+      {
+        "r": 5,
+        "c": 2,
+        "type": "white"
+      },
+      {
+        "r": 6,
+        "c": 4,
+        "type": "white"
+      },
+      {
+        "r": 4,
+        "c": 3,
+        "type": "white"
+      },
+      {
+        "r": 2,
+        "c": 5,
+        "type": "white"
+      }
+    ],
+    "solution": [
+      "H:6:1",
+      "H:6:2",
+      "H:6:3",
+      "V:1:6",
+      "V:2:0",
+      "V:4:6",
+      "H:1:4",
+      "H:2:5",
+      "H:4:0",
+      "V:3:0",
+      "H:5:1",
+      "H:2:4",
+      "V:2:4",
+      "V:4:3",
+      "H:5:2",
+      "H:4:4",
+      "V:3:4",
+      "H:5:5",
+      "V:5:1",
+      "H:1:5",
+      "H:3:2",
+      "V:3:3",
+      "H:2:0",
+      "V:1:2",
+      "H:2:1",
+      "V:5:5",
+      "H:6:4",
+      "H:0:2",
+      "V:0:2",
+      "H:1:3",
+      "V:0:3",
+      "V:3:2",
+      "H:4:1",
+      "H:4:5"
+    ]
+  }
+];
+
+/* ================= SoundFX (Web Audio API) ================= */
+class SoundFX {
+  constructor() {
+    this.ctx = null;
+    this.muted = localStorage.getItem('masyu_muted') === 'true';
+  }
+  init() {
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) this.ctx = new AudioCtx();
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  }
+  playTone(freq, type = 'sine', duration = 0.12, gainVal = 0.12) {
+    if (this.muted) return;
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+      gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + duration);
+    } catch(e) {}
+  }
+  tap() { this.playTone(520, 'sine', 0.08, 0.1); }
+  drawLine() { this.playTone(680, 'triangle', 0.1, 0.12); }
+  crossLine() { this.playTone(340, 'sine', 0.09, 0.08); }
+  erase() { this.playTone(280, 'sine', 0.08, 0.08); }
+  clueSatisfied() {
+    [523.25, 659.25, 783.99].forEach((f, idx) => {
+      setTimeout(() => this.playTone(f, 'sine', 0.12, 0.1), idx * 60);
+    });
+  }
+  error() {
+    if (this.muted) return;
+    this.init();
+    if (!this.ctx) return;
+    try {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(160, this.ctx.currentTime);
+      osc.frequency.linearRampToValueAtTime(100, this.ctx.currentTime + 0.2);
+      gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.2);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.2);
+    } catch(e) {}
+  }
+  victory() {
+    const fanfare = [
+      { f: 523.25, d: 0.12 },
+      { f: 659.25, d: 0.12 },
+      { f: 783.99, d: 0.12 },
+      { f: 1046.50, d: 0.35 },
+      { f: 880.00, d: 0.15 },
+      { f: 1046.50, d: 0.6 }
+    ];
+    let time = 0;
+    fanfare.forEach(item => {
+      setTimeout(() => this.playTone(item.f, 'triangle', item.d, 0.18), time * 1000);
+      time += item.d + 0.04;
+    });
+  }
+}
+
+/* ================= Confetti Engine ================= */
+function runConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const particles = [];
+  const colors = ['#4F46E5', '#06B6D4', '#F59E0B', '#10B981', '#EC4899', '#8B5CF6'];
+
+  for (let i = 0; i < 90; i++) {
+    particles.push({
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      vx: (Math.random() - 0.5) * 16,
+      vy: (Math.random() - 0.7) * 18,
+      size: Math.random() * 8 + 5,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      rotation: Math.random() * 360,
+      vr: (Math.random() - 0.5) * 12,
+      gravity: 0.35,
+      opacity: 1
+    });
+  }
+
+  function render() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let alive = false;
+    particles.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += p.gravity;
+      p.rotation += p.vr;
+      p.opacity -= 0.012;
+      if (p.opacity > 0) {
+        alive = true;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate((p.rotation * Math.PI) / 180);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(0, p.opacity);
+        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        ctx.restore();
+      }
+    });
+    if (alive) requestAnimationFrame(render);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  requestAnimationFrame(render);
+}
+
+/* ================= Main Game Controller ================= */
+class MasyuGame {
+  constructor() {
+    this.sfx = new SoundFX();
+    this.currentMode = 'adventure'; // 'adventure' | 'free'
+    this.currentTier = 1;
+    this.currentStage = null;
+    this.size = 5;
+    this.pearls = [];
+    this.solution = [];
+    this.playerEdges = new Set();
+    this.playerCrosses = new Set();
+    this.undoStack = [];
+    this.activeTool = 'line'; // 'line' | 'cross'
+    this.timer = null;
+    this.timerSeconds = 0;
+    this.isVictory = false;
+    this.progress = this.loadProgress();
+
+    // Drag tracking
+    this.isPointerDown = false;
+    this.lastCell = null;
+    this.dragStroke = [];
+
+    this.initDom();
+    this.bindEvents();
+    this.initTheme();
+    this.renderStageMap();
+  }
+
+  loadProgress() {
+    try {
+      const data = localStorage.getItem('masyu_progress');
+      return data ? JSON.parse(data) : { 1: { cleared: false, stars: 0, time: 0 } };
+    } catch(e) {
+      return { 1: { cleared: false, stars: 0, time: 0 } };
+    }
+  }
+
+  saveProgress() {
+    try {
+      localStorage.setItem('masyu_progress', JSON.stringify(this.progress));
+    } catch(e) {}
+  }
+
+  initTheme() {
+    const saved = localStorage.getItem('masyu_theme') || 'pastel';
+    document.body.dataset.theme = saved;
+    const soundBtn = document.getElementById('soundBtn');
+    if (soundBtn) soundBtn.textContent = this.sfx.muted ? '🔇' : '🔊';
+  }
+
+  initDom() {
+    this.dom = {
+      tabAdventure: document.getElementById('tabAdventure'),
+      tabFree: document.getElementById('tabFree'),
+      viewAdventure: document.getElementById('viewAdventure'),
+      viewFree: document.getElementById('viewFree'),
+      viewGame: document.getElementById('viewGame'),
+      stageGrid: document.getElementById('stageGrid'),
+      totalStarsBadge: document.getElementById('totalStarsBadge'),
+      freeSizeOptions: document.getElementById('freeSizeOptions'),
+      freeDiffOptions: document.getElementById('freeDiffOptions'),
+      startFreeBtn: document.getElementById('startFreeBtn'),
+      backToMapBtn: document.getElementById('backToMapBtn'),
+      hudStageBadge: document.getElementById('hudStageBadge'),
+      hudStageName: document.getElementById('hudStageName'),
+      gameTimer: document.getElementById('gameTimer'),
+      gamePar: document.getElementById('gamePar'),
+      mascotText: document.getElementById('mascotText'),
+      mascotAvatar: document.getElementById('mascotAvatar'),
+      masyuSvg: document.getElementById('masyuSvg'),
+      toolLineBtn: document.getElementById('toolLineBtn'),
+      toolCrossBtn: document.getElementById('toolCrossBtn'),
+      undoBtn: document.getElementById('undoBtn'),
+      resetBtn: document.getElementById('resetBtn'),
+      hintBtn: document.getElementById('hintBtn'),
+      checkBtn: document.getElementById('checkBtn'),
+      tutorialBtn: document.getElementById('tutorialBtn'),
+      tutorialModal: document.getElementById('tutorialModal'),
+      closeTutorialBtn: document.getElementById('closeTutorialBtn'),
+      victoryModal: document.getElementById('victoryModal'),
+      winStars: document.getElementById('winStars'),
+      winTime: document.getElementById('winTime'),
+      winPar: document.getElementById('winPar'),
+      winStarsCount: document.getElementById('winStarsCount'),
+      winNextBtn: document.getElementById('winNextBtn'),
+      winRestartBtn: document.getElementById('winRestartBtn'),
+      winMapBtn: document.getElementById('winMapBtn'),
+      themeBtn: document.getElementById('themeBtn'),
+      soundBtn: document.getElementById('soundBtn')
+    };
+  }
+
+  bindEvents() {
+    // Navigation tabs
+    this.dom.tabAdventure.addEventListener('click', () => this.switchView('adventure'));
+    this.dom.tabFree.addEventListener('click', () => this.switchView('free'));
+    this.dom.backToMapBtn.addEventListener('click', () => this.switchView(this.currentMode));
+
+    // Tier pills
+    document.querySelectorAll('.tier-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.tier-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        this.currentTier = parseInt(pill.dataset.tier, 10);
+        this.renderStageMap();
+        this.sfx.tap();
+      });
+    });
+
+    // Theme Switcher
+    const themes = ['pastel', 'classic', 'forest'];
+    this.dom.themeBtn.addEventListener('click', () => {
+      const cur = document.body.dataset.theme || 'pastel';
+      const next = themes[(themes.indexOf(cur) + 1) % themes.length];
+      document.body.dataset.theme = next;
+      localStorage.setItem('masyu_theme', next);
+      this.sfx.tap();
+    });
+
+    // Sound toggle
+    this.dom.soundBtn.addEventListener('click', () => {
+      this.sfx.muted = !this.sfx.muted;
+      localStorage.setItem('masyu_muted', this.sfx.muted);
+      this.dom.soundBtn.textContent = this.sfx.muted ? '🔇' : '🔊';
+      if (!this.sfx.muted) this.sfx.tap();
+    });
+
+    // Tutorial modal
+    this.dom.tutorialBtn.addEventListener('click', () => {
+      this.dom.tutorialModal.classList.add('active');
+      this.sfx.tap();
+    });
+    this.dom.closeTutorialBtn.addEventListener('click', () => {
+      this.dom.tutorialModal.classList.remove('active');
+    });
+
+    // Tools
+    this.dom.toolLineBtn.addEventListener('click', () => this.setTool('line'));
+    this.dom.toolCrossBtn.addEventListener('click', () => this.setTool('cross'));
+
+    // Actions
+    this.dom.undoBtn.addEventListener('click', () => this.undo());
+    this.dom.resetBtn.addEventListener('click', () => this.resetBoard());
+    this.dom.hintBtn.addEventListener('click', () => this.smartHint());
+    this.dom.checkBtn.addEventListener('click', () => this.manualCheck());
+
+    // Free play options
+    this.dom.freeSizeOptions.querySelectorAll('.opt-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.dom.freeSizeOptions.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.sfx.tap();
+      });
+    });
+    this.dom.freeDiffOptions.querySelectorAll('.opt-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        this.dom.freeDiffOptions.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        this.sfx.tap();
+      });
+    });
+    this.dom.startFreeBtn.addEventListener('click', () => this.startFreeGame());
+
+    // Victory buttons
+    this.dom.winNextBtn.addEventListener('click', () => this.nextStage());
+    this.dom.winRestartBtn.addEventListener('click', () => {
+      this.dom.victoryModal.classList.remove('active');
+      this.loadStage(this.currentStage ? this.currentStage.id : 1);
+    });
+    this.dom.winMapBtn.addEventListener('click', () => {
+      this.dom.victoryModal.classList.remove('active');
+      this.switchView('adventure');
+    });
+
+    // Keyboard shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'z' || e.key === 'Z') {
+        if (e.ctrlKey || e.metaKey) this.undo();
+      } else if (e.key === 'r' || e.key === 'R') {
+        this.resetBoard();
+      } else if (e.key === 'h' || e.key === 'H') {
+        this.smartHint();
+      } else if (e.key === '1') {
+        this.setTool('line');
+      } else if (e.key === '2') {
+        this.setTool('cross');
+      }
+    });
+
+    // SVG Pointer interaction
+    const svg = this.dom.masyuSvg;
+    svg.addEventListener('pointerdown', (e) => this.handlePointerDown(e));
+    svg.addEventListener('pointermove', (e) => this.handlePointerMove(e));
+    window.addEventListener('pointerup', () => this.handlePointerUp());
+    window.addEventListener('pointercancel', () => this.handlePointerUp());
+  }
+
+  setTool(tool) {
+    this.activeTool = tool;
+    this.dom.toolLineBtn.classList.toggle('active', tool === 'line');
+    this.dom.toolCrossBtn.classList.toggle('active', tool === 'cross');
+    this.sfx.tap();
+  }
+
+  switchView(viewName) {
+    this.dom.viewAdventure.classList.remove('active');
+    this.dom.viewFree.classList.remove('active');
+    this.dom.viewGame.classList.remove('active');
+    this.dom.tabAdventure.classList.remove('active');
+    this.dom.tabFree.classList.remove('active');
+
+    if (viewName === 'adventure') {
+      this.currentMode = 'adventure';
+      this.dom.tabAdventure.classList.add('active');
+      this.dom.viewAdventure.classList.add('active');
+      this.renderStageMap();
+      this.stopTimer();
+    } else if (viewName === 'free') {
+      this.currentMode = 'free';
+      this.dom.tabFree.classList.add('active');
+      this.dom.viewFree.classList.add('active');
+      this.stopTimer();
+    } else if (viewName === 'game') {
+      this.dom.viewGame.classList.add('active');
+    }
+  }
+
+  renderStageMap() {
+    const grid = this.dom.stageGrid;
+    grid.innerHTML = '';
+    const tierStages = STAGES_DATA.filter(s => s.tier === this.currentTier);
+
+    let totalStars = 0;
+    for (let id = 1; id <= 18; id++) {
+      if (this.progress[id] && this.progress[id].stars) {
+        totalStars += this.progress[id].stars;
+      }
+    }
+    this.dom.totalStarsBadge.textContent = `⭐ ${totalStars} / 54`;
+
+    tierStages.forEach(s => {
+      const p = this.progress[s.id] || {};
+      const isUnlocked = s.id === 1 || (this.progress[s.id - 1] && this.progress[s.id - 1].cleared);
+      const card = document.createElement('div');
+      card.className = `stage-card ${isUnlocked ? '' : 'locked'} ${p.cleared ? 'cleared' : ''}`;
+
+      const num = document.createElement('div');
+      num.className = 'stage-num';
+      num.textContent = s.id;
+
+      const name = document.createElement('div');
+      name.className = 'stage-name';
+      name.textContent = s.title;
+
+      card.appendChild(num);
+      card.appendChild(name);
+
+      if (isUnlocked) {
+        const starsWrap = document.createElement('div');
+        starsWrap.className = 'stage-stars';
+        const st = p.stars || 0;
+        starsWrap.textContent = '★'.repeat(st) + '☆'.repeat(3 - st);
+        card.appendChild(starsWrap);
+
+        card.addEventListener('click', () => {
+          this.sfx.tap();
+          this.loadStage(s.id);
+        });
+      } else {
+        const lock = document.createElement('div');
+        lock.className = 'stage-lock';
+        lock.textContent = '🔒';
+        card.appendChild(lock);
+      }
+
+      grid.appendChild(card);
+    });
+  }
+
+  loadStage(stageId) {
+    const stage = STAGES_DATA.find(s => s.id === stageId) || STAGES_DATA[0];
+    this.currentMode = 'adventure';
+    this.currentStage = stage;
+    this.size = stage.size;
+    this.pearls = JSON.parse(JSON.stringify(stage.pearls));
+    this.solution = stage.solution ? stage.solution.slice() : [];
+    this.playerEdges.clear();
+    this.playerCrosses.clear();
+    this.undoStack = [];
+    this.isVictory = false;
+
+    this.dom.hudStageBadge.textContent = `STAGE ${stage.id}`;
+    this.dom.hudStageName.textContent = stage.title;
+    this.dom.gamePar.textContent = `目標: ${stage.parSeconds}秒`;
+    this.dom.mascotText.textContent = stage.mascot;
+
+    this.startTimer();
+    this.renderBoard();
+    this.switchView('game');
+  }
+
+  startFreeGame() {
+    const sizeBtn = this.dom.freeSizeOptions.querySelector('.opt-btn.active');
+    const N = parseInt(sizeBtn.dataset.size, 10);
+    this.currentMode = 'free';
+    this.currentStage = null;
+    this.size = N;
+
+    // Procedural generation using embedded generator
+    const puzzle = generateMasyuPuzzle(N, { flips: Math.round(N * N * 2.2) });
+    this.pearls = puzzle.pearls;
+    this.solution = Array.from(puzzle.loop);
+    this.playerEdges.clear();
+    this.playerCrosses.clear();
+    this.undoStack = [];
+    this.isVictory = false;
+
+    this.dom.hudStageBadge.textContent = `FREE ${N}×${N}`;
+    this.dom.hudStageName.textContent = `自由対戦 (${this.pearls.length}真珠)`;
+    this.dom.gamePar.textContent = `目標: ${N * 15}秒`;
+    this.dom.mascotText.textContent = '自動生成された完全一意解パズル！慎重にループを紡ぎ出そう！';
+
+    this.startTimer();
+    this.renderBoard();
+    this.switchView('game');
+  }
+
+  startTimer() {
+    this.stopTimer();
+    this.timerSeconds = 0;
+    this.dom.gameTimer.textContent = '00:00';
+    this.timer = setInterval(() => {
+      this.timerSeconds++;
+      const m = String(Math.floor(this.timerSeconds / 60)).padStart(2, '0');
+      const s = String(this.timerSeconds % 60).padStart(2, '0');
+      this.dom.gameTimer.textContent = `${m}:${s}`;
+    }, 1000);
+  }
+
+  stopTimer() {
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+  }
+
+  /* ================= SVG Board Rendering ================= */
+  renderBoard() {
+    const svg = this.dom.masyuSvg;
+    svg.innerHTML = '';
+    const N = this.size;
+    const pad = 36;
+    const step = (400 - pad * 2) / (N - 1);
+    this.step = step;
+    this.pad = pad;
+
+    // 1. Cell background rectangles
+    const bgGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    for (let r = 0; r < N - 1; r++) {
+      for (let c = 0; c < N - 1; c++) {
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('class', 'grid-bg-cell');
+        rect.setAttribute('x', pad + c * step);
+        rect.setAttribute('y', pad + r * step);
+        rect.setAttribute('width', step);
+        rect.setAttribute('height', step);
+        bgGroup.appendChild(rect);
+      }
+    }
+    svg.appendChild(bgGroup);
+
+    // 2. Edge groups
+    const edgesGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    edgesGroup.setAttribute('id', 'edgesGroup');
+
+    // Horizontal edges
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N - 1; c++) {
+        const key = hKey(r, c);
+        const x1 = pad + c * step, y1 = pad + r * step;
+        const x2 = pad + (c + 1) * step, y2 = pad + r * step;
+        edgesGroup.appendChild(this.createEdgeSvg(key, x1, y1, x2, y2));
+      }
+    }
+    // Vertical edges
+    for (let r = 0; r < N - 1; r++) {
+      for (let c = 0; c < N; c++) {
+        const key = vKey(r, c);
+        const x1 = pad + c * step, y1 = pad + r * step;
+        const x2 = pad + c * step, y2 = pad + (r + 1) * step;
+        edgesGroup.appendChild(this.createEdgeSvg(key, x1, y1, x2, y2));
+      }
+    }
+    svg.appendChild(edgesGroup);
+
+    // 3. Grid dots
+    const dotsGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    for (let r = 0; r < N; r++) {
+      for (let c = 0; c < N; c++) {
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('class', 'grid-dot');
+        circle.setAttribute('cx', pad + c * step);
+        circle.setAttribute('cy', pad + r * step);
+        circle.setAttribute('r', 3);
+        dotsGroup.appendChild(circle);
+      }
+    }
+    svg.appendChild(dotsGroup);
+
+    // 4. Pearls
+    const pearlsGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    pearlsGroup.setAttribute('id', 'pearlsGroup');
+    this.pearls.forEach(p => {
+      const cx = pad + p.c * step;
+      const cy = pad + p.r * step;
+      const rSize = Math.max(12, Math.min(17, step * 0.28));
+
+      // Halo for satisfaction / violation feedback
+      const halo = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      halo.setAttribute('class', 'pearl-halo');
+      halo.setAttribute('id', `halo_${p.r}_${p.c}`);
+      halo.setAttribute('cx', cx);
+      halo.setAttribute('cy', cy);
+      halo.setAttribute('r', rSize + 6);
+      pearlsGroup.appendChild(halo);
+
+      // Pearl circle
+      const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      circle.setAttribute('class', `pearl-circle ${p.type}`);
+      circle.setAttribute('cx', cx);
+      circle.setAttribute('cy', cy);
+      circle.setAttribute('r', rSize);
+      pearlsGroup.appendChild(circle);
+
+      // Specular highlight dot
+      if (p.type === 'black') {
+        const spec = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        spec.setAttribute('class', 'pearl-specular');
+        spec.setAttribute('cx', cx - rSize * 0.35);
+        spec.setAttribute('cy', cy - rSize * 0.35);
+        spec.setAttribute('r', rSize * 0.22);
+        pearlsGroup.appendChild(spec);
+      }
+    });
+    svg.appendChild(pearlsGroup);
+
+    this.updateBoardVisuals();
+  }
+
+  createEdgeSvg(key, x1, y1, x2, y2) {
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('data-edge', key);
+
+    // Visual loop line
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('class', 'edge-line');
+    line.setAttribute('id', `line_${key}`);
+    line.setAttribute('x1', x1);
+    line.setAttribute('y1', y1);
+    line.setAttribute('x2', x2);
+    line.setAttribute('y2', y2);
+    line.style.opacity = '0';
+    g.appendChild(line);
+
+    // Cross markers (two small crossing diagonal lines at midpoint)
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+    const cr = 5;
+    const crossGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    crossGroup.setAttribute('id', `cross_${key}`);
+    crossGroup.style.display = 'none';
+
+    const c1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    c1.setAttribute('class', 'edge-cross');
+    c1.setAttribute('x1', mx - cr);
+    c1.setAttribute('y1', my - cr);
+    c1.setAttribute('x2', mx + cr);
+    c1.setAttribute('y2', my + cr);
+
+    const c2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    c2.setAttribute('class', 'edge-cross');
+    c2.setAttribute('x1', mx - cr);
+    c2.setAttribute('y1', my + cr);
+    c2.setAttribute('x2', mx + cr);
+    c2.setAttribute('y2', my - cr);
+
+    crossGroup.appendChild(c1);
+    crossGroup.appendChild(c2);
+    g.appendChild(crossGroup);
+
+    // Transparent wide hit zone
+    const hit = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    hit.setAttribute('class', 'edge-hit');
+    hit.setAttribute('x1', x1);
+    hit.setAttribute('y1', y1);
+    hit.setAttribute('x2', x2);
+    hit.setAttribute('y2', y2);
+    g.appendChild(hit);
+
+    return g;
+  }
+
+  updateBoardVisuals() {
+    const N = this.size;
+    allEdgeKeys(N).forEach(key => {
+      const lineEl = document.getElementById(`line_${key}`);
+      const crossEl = document.getElementById(`cross_${key}`);
+      if (lineEl) {
+        lineEl.style.opacity = this.playerEdges.has(key) ? '1' : '0';
+      }
+      if (crossEl) {
+        crossEl.style.display = this.playerCrosses.has(key) ? 'inline' : 'none';
+      }
+    });
+
+    // Update pearl satisfaction indicators
+    this.pearls.forEach(p => {
+      const halo = document.getElementById(`halo_${p.r}_${p.c}`);
+      if (!halo) return;
+      const on = onDirsAt(p.r, p.c, this.playerEdges, N);
+      if (on.length === 2) {
+        const turnP = isTurnAt(p.r, p.c, this.playerEdges, N);
+        const [ar, ac] = neighborPoint(p.r, p.c, on[0]);
+        const [br, bc] = neighborPoint(p.r, p.c, on[1]);
+        const turnA = isTurnAt(ar, ac, this.playerEdges, N);
+        const turnB = isTurnAt(br, bc, this.playerEdges, N);
+
+        if (p.type === 'white') {
+          if (!turnP && (turnA === true || turnB === true)) {
+            halo.className.baseVal = 'pearl-halo satisfied';
+          } else if (turnP) {
+            halo.className.baseVal = 'pearl-halo violated';
+          } else {
+            halo.className.baseVal = 'pearl-halo';
+          }
+        } else {
+          // black
+          if (turnP && turnA === false && turnB === false) {
+            halo.className.baseVal = 'pearl-halo satisfied';
+          } else if (!turnP) {
+            halo.className.baseVal = 'pearl-halo violated';
+          } else {
+            halo.className.baseVal = 'pearl-halo';
+          }
+        }
+      } else if (on.length > 2) {
+        halo.className.baseVal = 'pearl-halo violated';
+      } else {
+        halo.className.baseVal = 'pearl-halo';
+      }
+    });
+  }
+
+  /* ================= Pointer Gestures & Drawing ================= */
+  coordsToPoint(x, y) {
+    const pad = this.pad, step = this.step, N = this.size;
+    const c = Math.round((x - pad) / step);
+    const r = Math.round((y - pad) / step);
+    if (r >= 0 && r < N && c >= 0 && c < N) {
+      const dist = Math.hypot(x - (pad + c * step), y - (pad + r * step));
+      if (dist < step * 0.48) return { r, c };
+    }
+    return null;
+  }
+
+  getSvgPoint(e) {
+    const svg = this.dom.masyuSvg;
+    const pt = svg.createSVGPoint();
+    pt.x = e.clientX;
+    pt.y = e.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
+
+  handlePointerDown(e) {
+    if (this.isVictory) return;
+    this.isPointerDown = true;
+    this.dragStroke = [];
+    const pt = this.getSvgPoint(e);
+    const cell = this.coordsToPoint(pt.x, pt.y);
+
+    if (cell) {
+      this.lastCell = cell;
+    } else {
+      // Check if directly clicked an edge hit line
+      const target = e.target.closest('[data-edge]');
+      if (target) {
+        const edgeKey = target.getAttribute('data-edge');
+        this.toggleEdge(edgeKey, this.activeTool === 'cross' || e.button === 2);
+      }
+    }
+  }
+
+  handlePointerMove(e) {
+    if (!this.isPointerDown || this.isVictory) return;
+    const pt = this.getSvgPoint(e);
+    const cell = this.coordsToPoint(pt.x, pt.y);
+    if (!cell) return;
+
+    if (this.lastCell && (cell.r !== this.lastCell.r || cell.c !== this.lastCell.c)) {
+      const dr = Math.abs(cell.r - this.lastCell.r);
+      const dc = Math.abs(cell.c - this.lastCell.c);
+      if ((dr === 1 && dc === 0) || (dr === 0 && dc === 1)) {
+        // Orthogonal adjacent step!
+        let edgeKey;
+        if (dr === 0) {
+          const minC = Math.min(this.lastCell.c, cell.c);
+          edgeKey = hKey(cell.r, minC);
+        } else {
+          const minR = Math.min(this.lastCell.r, cell.r);
+          edgeKey = vKey(minR, cell.c);
+        }
+        this.toggleEdge(edgeKey, this.activeTool === 'cross');
+        this.lastCell = cell;
+      }
+    } else if (!this.lastCell) {
+      this.lastCell = cell;
+    }
+  }
+
+  handlePointerUp() {
+    if (!this.isPointerDown) return;
+    this.isPointerDown = false;
+    this.lastCell = null;
+    if (this.dragStroke.length > 0) {
+      this.undoStack.push(this.dragStroke);
+      this.dragStroke = [];
+    }
+    this.checkVictory();
+  }
+
+  toggleEdge(key, isCross = false) {
+    const strokeEntry = {
+      key,
+      prevEdge: this.playerEdges.has(key),
+      prevCross: this.playerCrosses.has(key)
+    };
+
+    if (isCross) {
+      this.playerEdges.delete(key);
+      if (this.playerCrosses.has(key)) {
+        this.playerCrosses.delete(key);
+        this.sfx.erase();
+      } else {
+        this.playerCrosses.add(key);
+        this.sfx.crossLine();
+      }
+    } else {
+      this.playerCrosses.delete(key);
+      if (this.playerEdges.has(key)) {
+        this.playerEdges.delete(key);
+        this.sfx.erase();
+      } else {
+        this.playerEdges.add(key);
+        this.sfx.drawLine();
+      }
+    }
+
+    strokeEntry.newEdge = this.playerEdges.has(key);
+    strokeEntry.newCross = this.playerCrosses.has(key);
+    this.dragStroke.push(strokeEntry);
+
+    this.updateBoardVisuals();
+  }
+
+  undo() {
+    if (this.undoStack.length === 0 || this.isVictory) return;
+    const stroke = this.undoStack.pop();
+    for (let i = stroke.length - 1; i >= 0; i--) {
+      const { key, prevEdge, prevCross } = stroke[i];
+      if (prevEdge) this.playerEdges.add(key); else this.playerEdges.delete(key);
+      if (prevCross) this.playerCrosses.add(key); else this.playerCrosses.delete(key);
+    }
+    this.sfx.tap();
+    this.updateBoardVisuals();
+  }
+
+  resetBoard() {
+    if (this.isVictory) return;
+    this.playerEdges.clear();
+    this.playerCrosses.clear();
+    this.undoStack = [];
+    this.sfx.erase();
+    this.updateBoardVisuals();
+  }
+
+  smartHint() {
+    if (this.isVictory) return;
+    const N = this.size;
+
+    // 1. Check for mistakes: player drew an edge that is NOT in solution
+    if (this.solution.length > 0) {
+      const solSet = new Set(this.solution);
+      for (const e of this.playerEdges) {
+        if (!solSet.has(e)) {
+          // Highlight mistake!
+          this.sfx.error();
+          const lineEl = document.getElementById(`line_${e}`);
+          if (lineEl) {
+            lineEl.classList.add('hint');
+            setTimeout(() => lineEl.classList.remove('hint'), 1500);
+          }
+          this.dom.mascotText.textContent = '⚠️ この線は正解のループに含まれていないよ。消してみてね！';
+          return;
+        }
+      }
+    }
+
+    // 2. Find next helpful solution edge
+    if (this.solution.length > 0) {
+      const solSet = new Set(this.solution);
+      const unplaced = this.solution.filter(e => !this.playerEdges.has(e));
+      if (unplaced.length > 0) {
+        // Pick edge touching a pearl first
+        let targetEdge = unplaced[0];
+        for (const e of unplaced) {
+          const [p1, p2] = edgeEndpoints(e);
+          const hasP1 = this.pearls.some(p => p.r === p1[0] && p.c === p1[1]);
+          const hasP2 = this.pearls.some(p => p.r === p2[0] && p.c === p2[1]);
+          if (hasP1 || hasP2) {
+            targetEdge = e;
+            break;
+          }
+        }
+
+        this.playerEdges.add(targetEdge);
+        this.playerCrosses.delete(targetEdge);
+        this.undoStack.push([{
+          key: targetEdge,
+          prevEdge: false,
+          prevCross: false,
+          newEdge: true,
+          newCross: false
+        }]);
+        this.sfx.clueSatisfied();
+        this.updateBoardVisuals();
+
+        const lineEl = document.getElementById(`line_${targetEdge}`);
+        if (lineEl) {
+          lineEl.classList.add('hint');
+          setTimeout(() => lineEl.classList.remove('hint'), 1200);
+        }
+        this.dom.mascotText.textContent = '💡 ヒントの線を引いたよ！真珠のルールに従ってさらに伸ばそう！';
+        this.checkVictory();
+        return;
+      }
+    }
+
+    this.dom.mascotText.textContent = '全ての線が正しく引かれているよ！輪っかが閉じているか確認してね！';
+  }
+
+  manualCheck() {
+    const res = validatePlayerLoop(this.size, this.pearls, this.playerEdges);
+    if (res.valid) {
+      this.triggerVictory();
+    } else {
+      this.sfx.error();
+      if (res.reason === 'branch') {
+        this.dom.mascotText.textContent = '❌ 線が枝分かれ（3本以上交差）している箇所があるよ！';
+      } else if (res.reason === 'pearl-not-on-loop') {
+        this.dom.mascotText.textContent = '❌ まだループが通っていない真珠があるよ！すべての真珠を通そう！';
+      } else if (res.reason === 'open-end') {
+        this.dom.mascotText.textContent = '❌ 線の端っこが途切れているよ！ひとつの閉じた輪っかにしてね！';
+      } else if (res.reason === 'multiple-loops') {
+        this.dom.mascotText.textContent = '❌ 小さな輪っかが複数できているよ！全体の大きな1本の輪っかにしよう！';
+      } else if (res.reason === 'black-not-turn') {
+        this.dom.mascotText.textContent = '❌ 黒丸のマスは必ず直角に曲がらなければならないよ！';
+      } else if (res.reason === 'white-not-straight') {
+        this.dom.mascotText.textContent = '❌ 白丸のマスは曲がらずにまっすぐ突き抜けなければならないよ！';
+      } else if (res.reason === 'white-no-turn-neighbor') {
+        this.dom.mascotText.textContent = '❌ 白丸の直前か直後のどちらかのマスで必ず直角に曲がってね！';
+      } else if (res.reason === 'black-neighbor-not-straight') {
+        this.dom.mascotText.textContent = '❌ 黒丸の両腕は、曲がったあとの両隣のマスでまっすぐ直進してね！';
+      } else {
+        this.dom.mascotText.textContent = '❌ ルールをもう一度確認してみよう！';
+      }
+    }
+  }
+
+  checkVictory() {
+    if (this.isVictory || this.playerEdges.size === 0) return;
+    const res = validatePlayerLoop(this.size, this.pearls, this.playerEdges);
+    if (res.valid) {
+      this.triggerVictory();
+    }
+  }
+
+  triggerVictory() {
+    this.isVictory = true;
+    this.stopTimer();
+    this.sfx.victory();
+    runConfetti();
+
+    // Calculate stars
+    let stars = 3;
+    const par = this.currentStage ? this.currentStage.parSeconds : this.size * 15;
+    if (this.timerSeconds > par * 1.5) stars = 2;
+    if (this.timerSeconds > par * 2.2) stars = 1;
+
+    // Save progress
+    if (this.currentStage) {
+      const id = this.currentStage.id;
+      const prev = this.progress[id] || {};
+      this.progress[id] = {
+        cleared: true,
+        stars: Math.max(prev.stars || 0, stars),
+        bestTime: prev.bestTime ? Math.min(prev.bestTime, this.timerSeconds) : this.timerSeconds
+      };
+      if (id + 1 <= 18 && !this.progress[id + 1]) {
+        this.progress[id + 1] = { cleared: false, stars: 0, bestTime: 0 };
+      }
+      this.saveProgress();
+    }
+
+    // Populate modal
+    const m = String(Math.floor(this.timerSeconds / 60)).padStart(2, '0');
+    const s = String(this.timerSeconds % 60).padStart(2, '0');
+    this.dom.winTime.textContent = `${m}:${s}`;
+    this.dom.winPar.textContent = `${par}秒`;
+    this.dom.winStarsCount.textContent = `${stars} / 3`;
+
+    const starIcons = this.dom.winStars;
+    starIcons.innerHTML = '';
+    for (let i = 0; i < 3; i++) {
+      const sp = document.createElement('span');
+      sp.textContent = '★';
+      if (i < stars) {
+        sp.className = 'star-active';
+        sp.style.animationDelay = `${i * 0.15}s`;
+      }
+      starIcons.appendChild(sp);
+    }
+
+    if (this.currentStage && this.currentStage.id >= 18) {
+      this.dom.winNextBtn.textContent = '🏆 全制覇おめでとう！';
+    } else {
+      this.dom.winNextBtn.textContent = '✨ つぎのステージ';
+    }
+
+    setTimeout(() => {
+      this.dom.victoryModal.classList.add('active');
+    }, 400);
+  }
+
+  nextStage() {
+    this.dom.victoryModal.classList.remove('active');
+    if (this.currentStage && this.currentStage.id < 18) {
+      this.loadStage(this.currentStage.id + 1);
+    } else {
+      this.switchView('adventure');
+    }
+  }
+
+  // Automation / Playwright verification helper
+  applySolution() {
+    this.playerEdges.clear();
+    this.playerCrosses.clear();
+    this.solution.forEach(e => this.playerEdges.add(e));
+    this.updateBoardVisuals();
+    this.checkVictory();
+  }
+}
+
+// Instantiate and expose to window for testing
+window.addEventListener('DOMContentLoaded', () => {
+  window.game = new MasyuGame();
+});
+</script>
+</body>
+</html>
