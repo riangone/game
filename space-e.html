@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Space-E 金型CAD/CAM クエスト · 匠のエンジニアリング道 (Space-E Quest: Mold Frontier)</title>
-  <meta name="description" content="ハイブリッド3D CAD/CAMシステム「Space-E」をゼロから極める本格チュートリアル＆シミュレーション学習ゲーム。曲面モデリング、金型割、電極放電、5軸切削シミュレータ完備。">
+  <meta name="description" content="3D CAD/CAMの基礎工学（幾何表現・切削力学）から「Space-E」ハイブリッドモデリング・金型割・放電・5軸まで極める本格学習シミュレータ。曲面モデリング、金型割、電極放電、5軸切削シミュレータ完備。">
   <meta name="theme-color" content="#0284c7">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1428,8 +1428,8 @@
           <div class="exp-bar-fill" id="expFill" style="width: 0%;"></div>
         </div>
         <div style="display:flex; justify-content:space-between; font-size:11px; color:#94a3b8; font-weight:700;">
-          <span>学堂修了: <strong id="academySolvedCount" style="color:#10b981">0</strong> / <strong>20</strong> 講</span>
-          <span>実戦踏破: <strong id="solvedCount">0</strong> / <strong id="totalQuestCount">20</strong> 問</span>
+          <span>学堂修了: <strong id="academySolvedCount" style="color:#10b981">0</strong> / <strong id="totalAcademyCount">28</strong> 講</span>
+          <span>実戦踏破: <strong id="solvedCount">0</strong> / <strong id="totalQuestCount">28</strong> 問</span>
         </div>
       </div>
     </section>
@@ -1487,7 +1487,7 @@
           <button class="btn-nav-lesson" id="btnPrevLesson" onclick="stepLesson(-1)">
             <span>◀</span> 前の講へ
           </button>
-          <span style="font-size:13px; color:var(--text-muted);" id="lessonNavCounter">講 1 / 20</span>
+          <span style="font-size:13px; color:var(--text-muted);" id="lessonNavCounter">講 1 / 4</span>
           <button class="btn-nav-lesson" id="btnNextLesson" onclick="stepLesson(1)">
             次の講へ <span>▶</span>
           </button>
@@ -1808,1315 +1808,1587 @@
     /* ==========================================================================
        3. 核心数据仓库: 课程 (Academy)、问答 (Quest)、辞典 (Codex)
        ========================================================================== */
+    /* ==========================================================================
+       3. 核心数据仓库: 课程 (7章28講)、问答 (Quest 28題)、辞典 (Codex 20項)
+       ========================================================================== */
     const CHAPTERS_DATA = [
       {
-        id: 0,
-        icon: "📐",
-        titleJa: "第1章：Space-E 入門とハイブリッドモデリング",
-        titleZh: "第1章：Space-E 入门与三维混合建模基础",
-        descJa: "自由曲面とソリッドの融合。座標系設定、トレランス縫合、面貼り基礎。",
-        descZh: "自由曲面与实体的融合。坐标系设定、公差缝合与修补成型。"
+            "id": 0,
+            "icon": "📐",
+            "titleJa": "第1章：3D CAD幾何モデリング＆エンジニアリング基礎",
+            "titleZh": "第1章：3D CAD 几何造型与数字化工程基础",
+            "descJa": "線郭・曲面・B-Repソリッド・メッシュの幾何表現、NURBS数学理論、データ交換標準。",
+            "descZh": "线框/曲面/B-Rep实体/网格拓扑表示、NURBS自由曲面数学理论与工业交换标准。"
       },
       {
-        id: 1,
-        icon: "🔍",
-        titleJa: "第2章：金型設計・勾配解析とPL型割",
-        titleZh: "第2章：模具设计·拔模斜度分析与分型面(PL)提取",
-        descJa: "抜き勾配の合否判定、アンダーカット箇所の特定、キャビ・コア面分割。",
-        descZh: "脱模拔模角合格判定、倒扣位置识别与前后模（型腔/型芯）分模。"
+            "id": 1,
+            "icon": "⚙️",
+            "titleJa": "第2章：3D CAM＆マシニング切削力学基礎",
+            "titleZh": "第2章：3D CAM 与数控切削物理学基础",
+            "descJa": "切削3要素（回転数/周速/送り）、工具幾何学、MCS/WCS座標系、切削パス近似幾何。",
+            "descZh": "切削运动三要素(转速/线速度/每齿进给)、铣刀几何分类、MCS/WCS与走刀轨迹公差原理。"
       },
       {
-        id: 2,
-        icon: "⚡",
-        titleJa: "第3章：EDM 放電加工と電極自動設計",
-        titleZh: "第3章：EDM 放电加工与电极自动设计模块",
-        descJa: "深リブ電極の自動抽出、放電クリアランス（火花位）オフセット、基準台生成。",
-        descZh: "深筋条电极自动提取、放电火花间隙补偿与定位基准台构建。"
+            "id": 2,
+            "icon": "💎",
+            "titleJa": "第3章：Space-E 入門とハイブリッドモデリング",
+            "titleZh": "第3章：Space-E 入门与三维混合建模体系",
+            "descJa": "自由曲面とソリッドの融合。座標系設定、トレランス縫合、面貼り基礎。",
+            "descZh": "自由曲面与实体的融合。坐标系设定、公差缝合与修补成型。"
       },
       {
-        id: 3,
-        icon: "⚙️",
-        titleJa: "第4章：Space-E/CAM 高速高精度切削パス",
-        titleZh: "第4章：Space-E/CAM 高速高精刀具路径规划",
-        descJa: "等高線荒加工、ストック残肉認識、ペンシル清角、アプローチ円弧平滑化。",
-        descZh: "等高粗加工、工件残料识别、清根精加工与进退刀平滑圆弧过渡。"
+            "id": 3,
+            "icon": "🔍",
+            "titleJa": "第4章：金型設計・勾配解析とPL型割",
+            "titleZh": "第4章：模具设计·拔模斜度分析与分型面(PL)提取",
+            "descJa": "抜き勾配の合否判定、アンダーカット箇所の特定、キャビ・コア面分割。",
+            "descZh": "脱模拔模角合格判定、倒扣位置识别与前后模（型腔/型芯）分模。"
       },
       {
-        id: 4,
-        icon: "🚀",
-        titleJa: "第5章：5軸マシニング・干渉回避とポスト処理",
-        titleZh: "第5章：五轴加工·刀具防干涉倾角与机床后置处理",
-        descJa: "5軸傾斜ヘッド制御、ホルダー干渉回避、機械シミュレーションとGコード出力。",
-        descZh: "五轴刀轴倾角智能防干涉、机床实机仿真与专用后置G代码校验。"
+            "id": 4,
+            "icon": "⚡",
+            "titleJa": "第5章：EDM 放電加工と電極自動設計",
+            "titleZh": "第5章：EDM 放电加工与电极自动设计模块",
+            "descJa": "深リブ電極の自動抽出、放電クリアランス（火花位）オフセット、基準台生成。",
+            "descZh": "深筋条电极自动提取、放电火花间隙补偿与定位基准台构建。"
+      },
+      {
+            "id": 5,
+            "icon": "🌀",
+            "titleJa": "第6章：Space-E/CAM 高速高精度切削パス",
+            "titleZh": "第6章：Space-E/CAM 高速高精刀具路径规划",
+            "descJa": "等高線荒加工、ストック残肉認識、ペンシル清角、アプローチ円弧平滑化。",
+            "descZh": "等高粗加工、工件残料识别、清根精加工与进退刀平滑圆弧过渡。"
+      },
+      {
+            "id": 6,
+            "icon": "🚀",
+            "titleJa": "第7章：5軸マシニング・干渉回避とポスト処理",
+            "titleZh": "第7章：五轴加工·刀具防干涉倾角与机床后置处理",
+            "descJa": "5軸傾斜ヘッド制御、ホルダー干渉回避、機械シミュレーションとGコード出力。",
+            "descZh": "五轴刀轴倾角智能防干涉、机床实机仿真与专用后置G代码校验。"
       }
-    ];
+];
 
     const LESSONS_DATA = [
-      // 第1章
       {
-        chap: 0,
-        subIndex: 0,
-        titleJa: "1-1 Space-Eの基本理念とハイブリッドモデリング",
-        titleZh: "1-1 Space-E 核心理念与混合建模体系",
-        tag: "CAD基盤",
-        bodyJa: `
-          <p><strong>Space-E</strong> は、日本の金型産業向けに特化した最高峰のCAD/CAMシステムです。その最大の特徴は、数学的に完全な閉空間を定義する<strong>「ソリッド（Solid）」</strong>と、柔軟で複雑な形状を扱える<strong>「サーフェス（Surface / 自由曲面）」</strong>を同一環境で境界なく扱う<strong>「ハイブリッドモデリング」</strong>にあります。</p>
-          <div class="lesson-callout">
-            <strong>💡 なぜハイブリッドが必要なのか？</strong><br>
-            海外製ソリッドCADからインポートしたIGES/STEPデータは、トレランス（許容公差）の差異により曲面間に微小隙間（0.001〜0.05mm）が生じ、ソリッド化エラーを起こしがちです。Space-Eはサーフェスのまま加工パスを即座に計算でき、モデル修復に膨大な時間を取られません。
-          </div>
-          <div class="lesson-workflow-grid">
-            <div class="workflow-step">
-              <span class="workflow-step-num">Step 01</span>
-              <span class="workflow-step-title">モデルインポート</span>
-              <span class="workflow-step-desc">STEP/IGES/Parasolidを取り込み</span>
-            </div>
-            <div class="workflow-step">
-              <span class="workflow-step-num">Step 02</span>
-              <span class="workflow-step-title">隙間トレランス診断</span>
-              <span class="workflow-step-desc">面間のギャップをハイライト検知</span>
-            </div>
-            <div class="workflow-step">
-              <span class="workflow-step-num">Step 03</span>
-              <span class="workflow-step-title">自動トレランス縫合</span>
-              <span class="workflow-step-desc">[曲面]→[縫合]でワンクリックソリッド化</span>
-            </div>
-          </div>
-        `,
-        bodyZh: `
-          <p><strong>Space-E</strong> 是专为模具工业打造的高精度 CAD/CAM 软件。其核心基石在于将严密的<strong>“实体 (Solid)”</strong>与处理复杂自由造型的<strong>“曲面 (Surface)”</strong>无缝融合的<strong>“混合建模 (Hybrid Modeling)”</strong>。</p>
-          <div class="lesson-callout">
-            <strong>💡 为什么模具设计极度依赖混合建模？</strong><br>
-            从上游导入的 STEP/IGES 格式常因公差精度不一致产生微小裂缝（0.001~0.05mm），纯实体 CAD 会报错拒绝操作。而 Space-E 允许直接在未缝合曲面上生成 CAM 刀路，也可通过“公差缝合”轻松修补封体。
-          </div>
-        `,
-        quiz: {
-          qJa: "Space-Eのハイブリッドモデリングが模具設計現場で圧倒的に支持される理由は？",
-          qZh: "Space-E 的混合建模技术在模具加工中最关键的实用价值是什么？",
-          optionsJa: [
-            "完全なソリッドでなくても、開いた曲面のままCAM切削パスを計算・加工できるため",
-            "3Dモデルを自動的に2D図面だけに変換してくれるため",
-            "一切の公差設定を廃止して処理を高速化するため",
-            "NC工作機械を直接手動操作できるようになるため"
-          ],
-          optionsZh: [
-            "即便存在曲面微小间隙或未完全封体，也能直接在曲面上规划刀路进行数控切削",
-            "能自动将所有 3D 模型降维转换成 2D 平面工程图",
-            "彻底废除了精度公差体系从而提升显卡刷新率",
-            "可以让操作者无需任何数控程序直接摇动手柄加工"
-          ],
-          ans: 0,
-          explainJa: "正解！インポート形状にわずかな破綻があっても、面貼り修正を待たずに即座に加工パス計算へと移行できるのがSpace-Eの金型現場における強力な武器です。",
-          explainZh: "正确！模具现场分秒必争，面对破损曲面不必耗费数小时修补缝合，即可直接进行 CAM 切削路径生成，这就是混合建模的核心优势。"
-        }
+            "chap": 0,
+            "subIndex": 0,
+            "titleJa": "1-1 3D CADの幾何表現とモデリング手法の変遷",
+            "titleZh": "1-1 3D CAD 几何拓扑表达与建模理论变迁",
+            "tag": "CAD基礎",
+            "bodyJa": "\n          <p>ものづくりにおける3D CADの進化は、製品の形状表現能力と製造データの厳密性を追求してきた歴史です。</p>\n          <div class=\"lesson-workflow-grid\">\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">第1世代</span>\n              <span class=\"workflow-step-title\">ワイヤーフレーム (Wireframe)</span>\n              <span class=\"workflow-step-desc\">稜線のみで構成。面や体積の概念がなく、視線方向によって表裏が反転する「あまい反転」の錯視が生じる。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">第2世代</span>\n              <span class=\"workflow-step-title\">サーフェスモデル (Surface)</span>\n              <span class=\"workflow-step-desc\">中空の「皮（面）」を定義。複雑な自由曲面を表現可能だが、内部が詰まっているかの判定（体積や質量）が不可。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">第3世代</span>\n              <span class=\"workflow-step-title\">ソリッドモデル (Solid / B-Rep)</span>\n              <span class=\"workflow-step-desc\">境界表現（B-Rep）により内外空間を完全分離。体積・質量・干渉・微小公差計算を厳密に保証する現代金型設計の基盤。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">ポリゴン</span>\n              <span class=\"workflow-step-title\">ポリゴンメッシュ (Mesh / STL)</span>\n              <span class=\"workflow-step-desc\">小平面（三角形）の集合。3DプリンタやCGには好適だが、曲面が折れ線に近似され金型の高精度切削パスには不適。</span>\n            </div>\n          </div>\n          <div class=\"lesson-callout\">\n            <strong>💡 B-Rep（境界表現：Boundary Representation）のトポロジー構造</strong><br>\n            B-Repは幾何形状（Geometry: 点の座標、曲面の数式）と位相構造（Topology: 頂点 Vertex・稜線 Edge・面ループ Loop・面 Face・殻 Shellの接続関係）を分離して管理します。この厳密な位相関係があるからこそ、金型CADにおいてミクロン単位の抜き勾配やR面フィレット、ブーリアン演算が可能になります。\n          </div>\n        ",
+            "bodyZh": "\n          <p>现代制造业中 3D CAD 的演进史，是一部不断追求更高几何表达精度与拓扑严密性的工程史：</p>\n          <div class=\"lesson-workflow-grid\">\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">第 1 阶段</span>\n              <span class=\"workflow-step-title\">线框模型 (Wireframe)</span>\n              <span class=\"workflow-step-desc\">仅有三维空间棱边与端点。无表面也无实体，容易产生视线反转歧义（看不出前后遮挡）。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">第 2 阶段</span>\n              <span class=\"workflow-step-title\">表面模型 (Surface)</span>\n              <span class=\"workflow-step-desc\">定义零厚度的“外皮”。能雕刻极其复杂的汽车车身自由曲面，但内部为空心，无法判定质量与体积。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">第 3 阶段</span>\n              <span class=\"workflow-step-title\">实体模型 (Solid / B-Rep)</span>\n              <span class=\"workflow-step-desc\">通过边界表示（B-Rep）严密区分内外空间。支持质量属性、实体布尔运算与微米级金型加工。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">网格表示</span>\n              <span class=\"workflow-step-title\">三角多边形网格 (Mesh/STL)</span>\n              <span class=\"workflow-step-desc\">离散三角形面片集合。适合 3D 打印与逆向工程点云，但曲面被折线化，丢失了解析导数，无法用于模具高精切削。</span>\n            </div>\n          </div>\n          <div class=\"lesson-callout\">\n            <strong>💡 B-Rep（边界表示法）核心拓扑流形：</strong><br>\n            B-Rep 实体将“几何数学方程”（曲面方程、线段方程）与“拓扑拓扑邻接图”（顶点 Vertex、边界 Edge、闭合环 Loop、面 Face、闭合壳 Shell）分离严密表达。正是这种严密数学拓扑，才使得模具制造中的微米级拔模斜度分析、分型面布尔切割与 CAM 高精刀路计算成为可能。\n          </div>\n        ",
+            "quiz": {
+                  "qJa": "射出成形金型や精密機械設計において、ポリゴンメッシュ（STL等）ではなくB-Rep（境界表現）ソリッドCADが必須とされる根本的な理由は？",
+                  "qZh": "在注塑模具与精密机械工程设计中，为什么必须采用基于 B-Rep（边界表示）的实体 CAD，而不能直接用多边形网格（如 STL）进行模具设计与 CAM 编程？",
+                  "optionsJa": [
+                        "B-Repは頂点・稜線・面の厳密な幾何数学式と位相（トポロジー）を保持し、微小な抜き勾配やR面編集、ミクロン単位の公差計算が可能なため",
+                        "ポリゴンメッシュはファイルサイズが大きすぎて最新のPCでも開けないため",
+                        "B-Repは2次元の紙図面しか印刷できない制限があるため",
+                        "工作機械のNC制御装置が三角ポリゴンしか理解できないため"
+                  ],
+                  "optionsZh": [
+                        "B-Rep 完整保存了顶点、边界棱线与曲面的严密数学解析方程和拓扑邻接关系，支持微米级拔模角、圆角倒角与公差缝合计算",
+                        "多边形网格文件体积过于庞大导致现代计算机完全无法读取",
+                        "B-Rep 是一种仅能输出二维纸质工程图纸的古老格式",
+                        "现代数控机床系统只能直接读取并执行三角网格"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！STLメッシュは平面小三角形の集合にすぎず、本来滑らかな円柱や自由曲面が折れ線に近似され、金型に必要な勾配解析や高精度切削パス生成が破綻します。B-Repの厳密な数学曲面表現が金型の命です。",
+                  "explainZh": "正确！网格（Mesh/STL）是由离散小平面组成的拟合体，丢失了原始解析曲面与法向导数，无法进行精确的拔模斜度分析与微米级 CAM 刀位点生成。B-Rep 才是现代工业 CAD/CAM 的数学基石。"
+            }
       },
       {
-        chap: 0,
-        subIndex: 1,
-        titleJa: "1-2 空間座標系(WCS)と作業平面の配置",
-        titleZh: "1-2 空间工作坐标系 (WCS) 与基准平面建立",
-        tag: "基本操作",
-        bodyJa: `
-          <p>金型加工では、<strong>「成形品の抜き方向（Z軸）」</strong>と<strong>「工作機械の原点（治具基準角）」</strong>を正確に一致させることが最重要課題です。</p>
-          <div class="lesson-code-block">[メニュー] -> [座標系] -> [WCS作成] -> [3点指定 / 3面交点]</div>
-          <p>Space-Eでは、製品モデルの特定のエッジや金型ベースの基準ピン位置（デート面）をピックするだけで、瞬時に新しい作業座標系を定義できます。</p>
-        `,
-        bodyZh: `
-          <p>模具数控加工的前提，是保证<strong>产品出模方向（Z轴矢量）</strong>与<strong>机床工作台基准角（对刀原点）</strong>完全吻合。</p>
-          <div class="lesson-code-block">[菜单] -> [坐标系] -> [新建WCS] -> [3点定位 / 基准面三面交点]</div>
-        `,
-        quiz: {
-          qJa: "金型CAMプログラミングにおいて、Z軸プラス方向は通常どのように設定すべきですか？",
-          qZh: "在模具 CAM 编程中，Z轴正方向通常必须如何设定？",
-          optionsJa: [
-            "金型の型開き方向（工具がアプローチしてくる上方向）",
-            "金型の底面に向かう下方向",
-            "水平右方向（X軸と平行）",
-            "成形品の最も長い稜線方向"
-          ],
-          optionsZh: [
-            "模具开模方向（主轴刀具从上方进刀的切削方向）",
-            "朝向模具底板的下沉方向",
-            "水平朝右方向（与机床工作台X轴平行）",
-            "沿着产品最长的轮廓边界方向"
-          ],
-          ans: 0,
-          explainJa: "正解！CAMにおいて主軸工具は+Z側からワークに向かって降下するため、抜き方向（成形品が抜ける上方向）を+Zに揃えるのが鉄則です。",
-          explainZh: "正确！CAM 切削的主轴刀具是从 +Z 轴上方垂直向下接近工件切削，必须将脱模方向定为 +Z。"
-        }
+            "chap": 0,
+            "subIndex": 1,
+            "titleJa": "1-2 自由曲面の数学基礎：ベジェからNURBSへ",
+            "titleZh": "1-2 自由曲面数学理论：从 Bézier 到 NURBS 参数化表达",
+            "tag": "幾何数学",
+            "bodyJa": "\n          <p>自動車ボディや家電製品の美しい流線型をコンピュータ上で正確に表現するために、曲線の数学理論が発展してきました。</p>\n          <div class=\"lesson-workflow-grid\">\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">ベジェ曲線</span>\n              <span class=\"workflow-step-title\">Bézier Curve</span>\n              <span class=\"workflow-step-desc\">フランス・ルノー社のピエール・ベジェが考案。制御点で形状を直感制御するが、1つの制御点を動かすと曲線全体が変形してしまう大域的性質を持つ。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">B-スプライン</span>\n              <span class=\"workflow-step-title\">B-Spline</span>\n              <span class=\"workflow-step-desc\">区分多項式スプライン基底関数を導入。局所支持性（Local Support）を獲得し、特定の制御点のみで部分的な曲面修正が可能になった。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">NURBS</span>\n              <span class=\"workflow-step-title\">Non-Uniform Rational B-Spline</span>\n              <span class=\"workflow-step-desc\">非一様・有理Bスプライン。制御点に「重み（Weight）」を導入し、円・楕円・放物線等の二次解析曲面と自由曲面を唯一無二の同一数式で厳密表現。</span>\n            </div>\n          </div>\n          <div class=\"lesson-callout tip\">\n            <strong>💡 NURBS曲面の4大数学パラメータ：</strong><br>\n            1. <strong>制御点網 (Control Points: P_ij)</strong>：空間上の制御ポリゴン網。<br>\n            2. <strong>重み (Weights: w_ij)</strong>：有理（Rational）特性を司る。重みを変えることで曲面を引き寄せる。円弧の完全表現に必須。<br>\n            3. <strong>ノットベクトル (Knot Vectors: U, V)</strong>：パラメータ空間の非一様（Non-Uniform）分割点列。変曲点や鋭角エッジの挿入を可能にする。<br>\n            4. <strong>次数 (Degree: p, q)</strong>：通常工業デザインでは3次（4階）曲面が最も滑らかで反転のない標準として採用される。\n          </div>\n        ",
+            "bodyZh": "\n          <p>为了在计算机中严密刻画汽车车身面板与高光塑料件的流线曲面，工程数学经历了一场伟大的演进：</p>\n          <div class=\"lesson-workflow-grid\">\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">贝塞尔曲线</span>\n              <span class=\"workflow-step-title\">Bézier Curve</span>\n              <span class=\"workflow-step-desc\">由法国雷诺汽车工程师 Pierre Bézier 提出。通过控制多边形直观调控曲线，但改变一个控制点会波及整条曲线（全局性）。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">B-样条</span>\n              <span class=\"workflow-step-title\">B-Spline</span>\n              <span class=\"workflow-step-desc\">引入分段基函数与节点向量，获得“局部支撑性（Local Support）”，拖动某个控制点只影响曲面的局部区域。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">NURBS</span>\n              <span class=\"workflow-step-title\">非均匀有理B样条</span>\n              <span class=\"workflow-step-desc\">在 B-样条基础上赋予控制点“权重 (Weight)”。首次实现了用一套数学表达同时 100% 精确表示二次解析曲面（圆、球）与自由雕塑曲面。</span>\n            </div>\n          </div>\n          <div class=\"lesson-callout tip\">\n            <strong>💡 现代 CAD 工业标准 NURBS 曲面四要素：</strong><br>\n            1. <strong>控制网格 (Control Points)</strong>：三维空间的控制多边形顶点阵列。<br>\n            2. <strong>权重因子 (Weights)</strong>：有理特性核心。圆锥曲线必须通过特定权重精确定义，普通多项式样条永远无法精确表达圆。<br>\n            3. <strong>节点向量 (Knot Vectors: U, V)</strong>：参数域的非均匀划分，赋予工程师在曲面任意局部插入微细特征的自由。<br>\n            4. <strong>阶数 (Degree)</strong>：工业 CAD 默认采用 3 次（4 阶）曲面，既保证了 G2/G3 的极高光洁度，又避免了高次多项式的 Runge 震荡。\n          </div>\n        ",
+            "quiz": {
+                  "qJa": "現代の産業用3D CADにおいて、従来の多項式スプラインではなく「有理（Rational）」特性を持つNURBSが世界標準となった決定的な理由は？",
+                  "qZh": "在现代工业 3D CAD 中，具有“有理 (Rational)”特性的 NURBS 为何能成为全行业公认的几何造型数学标准？",
+                  "optionsJa": [
+                        "円・円弧・球・円錐などの二次解析曲線を、自由曲面と全く同一の数学形式で「近似誤差ゼロ」で厳密に表現できるため",
+                        "コンピュータのCPU計算能力を一切消費しないため",
+                        "マウスを使わずにキーボードだけで直感的にモデリングできるため",
+                        "3Dモデルを自動的に金属材料へと実体化できるため"
+                  ],
+                  "optionsZh": [
+                        "能够用同一套通用的数学表达框架，严密无误差地精确表达圆、圆弧、圆柱、球面等二次解析几何与任意自由复杂曲面",
+                        "计算该数学公式时完全不需要计算机 CPU 参与浮点运算",
+                        "允许工程师彻底脱离鼠标、仅凭纯文本键盘输入完成复杂设计",
+                        "能让三维数字模型在屏幕中自动凝结成真实的金属实体"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！非有理（普通の多項式）スプラインでは円や円弧を厳密に表すことができず近似誤差が出ます。NURBSは重み（Weight）を導入することで、幾何プリミティブと自由曲面を統合した唯一の万能規格です。",
+                  "explainZh": "正确！普通多项式样条在数学上永远无法严密表达圆或圆弧（只能无限微段拟合），而引入有理权重的 NURBS 实现了二次解析几何与自由雕塑曲面的大一统。"
+            }
       },
       {
-        chap: 0,
-        subIndex: 2,
-        titleJa: "1-3 自由曲面の作成とトレランス縫合",
-        titleZh: "1-3 自由曲面生成与公差缝合 (Tolerance Stitching)",
-        tag: "曲面修復",
-        bodyJa: `
-          <p>隣接する複数のサーフェスを選択し、指定した許容公差（例：0.01mm）以内の隙間を自動補間して1つのソリッドにまとめるのが<strong>「縫合（Stitch）」</strong>機能です。</p>
-          <div class="lesson-callout tip">
-            <strong>💡 プロのTips:</strong> トレランスを最初から0.1mmなどの大きな値に設定すると、微細なフィレット（R面）が潰れて形状が変形する恐れがあります。まずは 0.005mm から段階的に広げるのがSpace-Eの定石です。
-          </div>
-        `,
-        bodyZh: `
-          <p>通过选择多块相邻曲面，并在设定公差（如 0.01mm）内自动拟合微缝、合并为封闭实体，这就是<strong>“缝合 (Stitch)”</strong>。</p>
-          <div class="lesson-callout tip">
-            <strong>💡 架构师技巧:</strong> 严禁初始就直接把公差放宽到 0.1mm，这会导致细小圆角（R面）被错误合并折叠。规范做法是从 0.005mm 逐级微调。
-          </div>
-        `,
-        quiz: {
-          qJa: "トレランス縫合時、許容値を過大（0.2mm等）に設定しすぎた場合に起こりうる不具合は？",
-          qZh: "在进行公差缝合时，如果一开始将容差设得过大（如 0.2mm），可能引发什么严重后果？",
-          optionsJa: [
-            "小さなフィレット面（微小R）が消滅・変形し、製品寸法精度が狂う",
-            "モデルのファイルサイズが100倍に肥大化する",
-            "画面の背景色が反転してしまう",
-            "NC工作機械のモーターが過負荷停止する"
-          ],
-          optionsZh: [
-            "细微特征和微小倒角（R面）发生扭曲甚至被直接融合丢失，丧失尺寸公差",
-            "模型文件体积会几何倍数暴增 100 倍",
-            "三维视口的背景渲染色被反相反转",
-            "会导致现场机床主轴电机直接烧毁"
-          ],
-          ans: 0,
-          explainJa: "正解！過大なトレランスは近接する別々のエッジを同一と誤認し、形状を破壊します。段階的な値の適用が重要です。",
-          explainZh: "正确！过大公差会导致相邻的细微棱边被算法强行粘合，破坏原有模具曲面的精细倒角几何。"
-        }
+            "chap": 0,
+            "subIndex": 2,
+            "titleJa": "1-3 曲面の幾何連続性（G0/G1/G2/G3）と光彩ゼブラ診断",
+            "titleZh": "1-3 曲面几何连续性 (G0~G3) 理论与斑马线高光检验",
+            "tag": "曲面品位",
+            "bodyJa": "\n          <p>成形品や金型の表面に映り込む光のハイライトが美しく自然に流れるかどうかは、隣り合う2つの曲面がどのレベルで接続されているか（<strong>幾何学的連続性</strong>）によって決まります。</p>\n          <div class=\"lesson-workflow-grid\">\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">G0 連続</span>\n              <span class=\"workflow-step-title\">位置連続 (Point)</span>\n              <span class=\"workflow-step-desc\">端点座標のみが一致。稜線に明らかな「角（エッジ）」があり、光は完全に折れ曲がって断裂する。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">G1 連続</span>\n              <span class=\"workflow-step-title\">接線連続 (Tangent)</span>\n              <span class=\"workflow-step-desc\">接線ベクトル（1階微分）の向きが一致。角は取れるが曲率半径が急変するため、光の映り込みに折れ線が現れる。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">G2 連続</span>\n              <span class=\"workflow-step-title\">曲率連続 (Curvature)</span>\n              <span class=\"workflow-step-desc\">曲率（2階微分）が連続。ハイライトが歪みなく滑らかに流れ、自動車外装や高級家電金型の必須条件。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">G3 連続</span>\n              <span class=\"workflow-step-title\">トーション連続 (Torsion)</span>\n              <span class=\"workflow-step-desc\">曲率の変化率（3階微分）まで連続。航空宇宙や超高級スポーツカーのClass-A曲面に求められる究極品位。</span>\n            </div>\n          </div>\n          <div class=\"lesson-callout\">\n            <strong>🦓 ゼブラ縞（Zebra Reflection Lines）による曲面診断：</strong><br>\n            曲面に仮想のストライプ平行光を反射させて連続性を瞬時に見極める標準検査機能です。<br>\n            • <strong>G0</strong>：ゼブラの縞模様が境界エッジで完全に<strong>ズレて切断</strong>される。<br>\n            • <strong>G1</strong>：ゼブラの縞模様は繋がるが、境界で<strong>鋭角に折れ曲がる</strong>。<br>\n            • <strong>G2</strong>：ゼブラの縞模様が境界をまたいで<strong>滑らかな円弧状に美しく連続</strong>する。\n          </div>\n        ",
+            "bodyZh": "\n          <p>模具与塑料外壳反光高光流线的顺畅程度，完全由相邻自由曲面相交处的<strong>几何连续性阶梯（Geometric Continuity）</strong>决定：</p>\n          <div class=\"lesson-workflow-grid\">\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">G0 连续</span>\n              <span class=\"workflow-step-title\">位置连续 (Point)</span>\n              <span class=\"workflow-step-desc\">两曲面仅在边界线处坐标重合。存在明显的锐利棱角，反射光线在接缝处断开。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">G1 连续</span>\n              <span class=\"workflow-step-title\">相切连续 (Tangent)</span>\n              <span class=\"workflow-step-desc\">一阶导数切线方向完全一致。棱角被圆滑抹平，但曲率半径存在突变，反光条纹呈现锐利拐角。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">G2 连续</span>\n              <span class=\"workflow-step-title\">曲率连续 (Curvature)</span>\n              <span class=\"workflow-step-desc\">二阶导数曲率半径完全相同且平滑渐变。光斑流畅无痕，是汽车面板与精密模具标配。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">G3 连续</span>\n              <span class=\"workflow-step-title\">扭率连续 (Torsion)</span>\n              <span class=\"workflow-step-desc\">三阶导数（曲率变化加速度）连续。航空航天气动外形与顶级超跑 Class-A 级曲面标准。</span>\n            </div>\n          </div>\n          <div class=\"lesson-callout\">\n            <strong>🦓 斑马线高光检测 (Zebra Stripes Diagnostics)：</strong><br>\n            在 3D CAD 中投射虚拟黑白平行反光条纹诊断曲面流线质量：<br>\n            • <strong>G0 界面</strong>：斑马线条纹在交界处<strong>彻底断裂错位</strong>；<br>\n            • <strong>G1 界面</strong>：斑马线条纹彼此相接，但在交界处呈现<strong>尖锐的 V 字拐角</strong>；<br>\n            • <strong>G2 界面</strong>：斑马线条纹在两曲面之间呈现<strong>光滑流线相切流动</strong>，无任何折痕。\n          </div>\n        ",
+            "quiz": {
+                  "qJa": "自動車のヘッドランプレンズやドアパネルの金型曲面をゼブラ縞（反射縞）で診断した際、縞模様が「境界で繋がっているが鋭角に折れ曲がっている」場合、その境界の連続性はどれですか？",
+                  "qZh": "在汽车大灯透镜或车身面板模具曲面的斑马线 (Zebra Stripes) 检验中，若观察到高光条纹在跨越两曲面相交边界时“彼此相连但呈现尖锐的折角”，该边界的连续性等级是？",
+                  "optionsJa": [
+                        "G1 連続（接線連続：接線は揃っているが曲率が不連続なため光が折れる）",
+                        "G0 連続（位置連続のみで面が段差になっている）",
+                        "G2 連続（曲率連続で光が滑らかに繋がっている）",
+                        "G3 連続（光学的に完全な最高水準）"
+                  ],
+                  "optionsZh": [
+                        "G1 连续（相切连续：曲面切线一致，但曲率半径突变导致反射光条纹折断成锐角）",
+                        "G0 连续（仅位置接触，存在明显实体台阶错位）",
+                        "G2 连续（曲率完全连续，光影流畅过渡无折角）",
+                        "G3 连续（航空光学最高等级流线连续）"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！G1連続では接線方向は同一ですが、曲率半径が境界でジャンプするため、光の反射（ゼブラ縞）に折れ曲がりが生じます。滑らかな映り込みを得るにはG2曲率連続が必要です。",
+                  "explainZh": "正确！G1 连续虽然保证了曲面相切无棱角，但由于曲率二阶导数不连续，反射光线的法线产生突变，导致斑马线条纹折角。高级注塑模必须达到 G2 曲率连续。"
+            }
       },
       {
-        chap: 0,
-        subIndex: 3,
-        titleJa: "1-4 トリム曲面と曲率連続性（G0/G1/G2）の診断",
-        titleZh: "1-4 修剪曲面与曲率连续性 (G0/G1/G2) 检验",
-        tag: "形状品位",
-        bodyJa: `
-          <p>自動車外装や家電の金型では、光の反射（ハイライトライン）が滑らかに繋がることが求められます。</p>
-          <ul style="padding-left:20px;">
-            <li><strong>G0（位置連続）</strong>：端点が繋がっているが角（エッジ）がある状態。</li>
-            <li><strong>G1（接線連続）</strong>：接線方向が一致し、境目が滑らか。</li>
-            <li><strong>G2（曲率連続）</strong>：曲率の変化率が連続しており、映り込みに歪みがない最高品位。</li>
-          </ul>
-        `,
-        bodyZh: `
-          <p>汽车车灯、车身面板等注塑模具，对光影高光反射线（Zebra Lines）有极高要求：</p>
-          <ul style="padding-left:20px;">
-            <li><strong>G0 (位置连续)</strong>：点相连，但有明显折角接缝。</li>
-            <li><strong>G1 (相切连续)</strong>：切线一致，过渡圆滑。</li>
-            <li><strong>G2 (曲率连续)</strong>：曲率半径连续渐变，消除光影突变斑马线，金型光学级表面。</li>
-          </ul>
-        `,
-        quiz: {
-          qJa: "高級車のランプカバーやボディパネル金型で求められる、映り込みに歪みが生じない曲面連続性はどれですか？",
-          qZh: "对于高级汽车大灯透镜或车身外观模具，为确保反光映象毫无折痕扭曲，必须达到的曲面连续性等级是？",
-          optionsJa: [
-            "G2 連続（曲率連続）",
-            "G0 連続（位置連続のみ）",
-            "G1 連続（接線連続のみ）",
-            "非連続（オープンエッジ）"
-          ],
-          optionsZh: [
-            "G2 连续（曲率连续）",
-            "G0 连续（仅位置接触）",
-            "G1 连续（仅切线相切）",
-            "非连续（断开敞口边）"
-          ],
-          ans: 0,
-          explainJa: "正解！G2連続は曲率変化が滑らかに推移するため、成形品の表面にハイライトの不連続（光の折れ）が出ません。",
-          explainZh: "正确！G2 曲率连续能保证表面反射光斑在经过连接缝时平滑流动，绝不出现断光或折光现象。"
-        }
-      },
-
-      // 第2章
-      {
-        chap: 1,
-        subIndex: 0,
-        titleJa: "2-1 抜き勾配解析（Draft Angle Analysis）の鉄則",
-        titleZh: "2-1 拔模斜度分析 (Draft Angle Analysis) 核心原理",
-        tag: "金型設計",
-        bodyJa: `
-          <p>プラスチック射出成形品が冷却固化すると収縮し、金型キャビティ・コアに密着します。製品を取り出す際、側面に角度がついていないと摩擦で傷（かじり）が発生したり抜けなくなります。この傾斜が<strong>「抜き勾配（拔模角）」</strong>です。</p>
-          <div class="lesson-callout">
-            Space-Eの<strong>[金型] -> [勾配解析]</strong>を実行すると、指定した抜き方向ベクトルに基づき、曲面の角度がカラーコンター表示（緑：合格、赤：アンダーカット/逆勾配、青：垂直面）されます。
-          </div>
-        `,
-        bodyZh: `
-          <p>塑料注塑件冷却固化后发生收缩，紧包在型芯与型腔上。若壁面完全垂直（0度），脱模摩擦力会划伤甚至拉裂塑件，因此必须施加<strong>拔模斜度（脱模角）</strong>。</p>
-          <div class="lesson-callout">
-            Space-E 的<strong>[模具] -> [拔模分析]</strong>模块会以假彩色云图实时着色：绿色为合格面，红色为倒拔模（严重倒扣），蓝色为危险垂直面。
-          </div>
-        `,
-        quiz: {
-          qJa: "Space-Eの勾配解析において「アンダーカット（逆勾配）」と診断された領域をそのまま成形した場合、何が起こりますか？",
-          qZh: "如果在 Space-E 拔模分析中检测出“倒扣/倒拔模 (Undercut)”区域而未作结构处理，注塑生产时将发生什么？",
-          optionsJa: [
-            "金型が開いた瞬間に成形品が金型に引っかかり、脱型不能または破損する",
-            "成形品の冷却速度が早くなりすぎる",
-            "材料の樹脂粘度が低下する",
-            "CAMのツールパスの行数が倍増する"
-          ],
-          optionsZh: [
-            "开模顶出时制品被钢材结构死死勾住，导致塑件撕裂报废或顶针顶穿",
-            "注塑件的冷却固化速度会无故变快",
-            "塑料熔融料的流动粘度大幅降低",
-            "CAM 生成的 G 代码行数翻倍"
-          ],
-          ans: 0,
-          explainJa: "正解！アンダーカット部は物理的に直進脱型できないため、スライドコアや傾斜ピン（置き駒）などの機構設計が必須となります。",
-          explainZh: "正确！倒扣部位在主开模方向存在物理阻挡，必须通过增设侧向抽芯（滑块 Slider）或斜顶机构解决。"
-        }
+            "chap": 0,
+            "subIndex": 3,
+            "titleJa": "1-4 産業用3Dデータ交換規格と幾何トレランス",
+            "titleZh": "1-4 工业 3D 数据交换标准与几何公差缝合机制",
+            "tag": "データ連携",
+            "bodyJa": "\n          <p>金型開発では、自動車メーカーや製品設計元から多種多様なCADデータを受領します。これらを正確に読み解く<strong>データインターフェースとトレランス管理</strong>が工程の成否を握ります。</p>\n          <div class=\"lesson-workflow-grid\">\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">STEP (ISO 10303)</span>\n              <span class=\"workflow-step-title\">国際標準フォーマット</span>\n              <span class=\"workflow-step-desc\">AP203（基礎ソリッド）、AP214（自動車設計・色・アセンブリ）、AP242（最新MBD/PMI 3D公差注記対応）の体系を持つ業界標準。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">IGES</span>\n              <span class=\"workflow-step-title\">初期グラフィックス規格</span>\n              <span class=\"workflow-step-desc\">サーフェス主体の古参フォーマット。トリム境界のカーブ定義が崩れやすく、金型現場では「破面」トラブルの最大の原因。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">Parasolid (.x_t)</span>\n              <span class=\"workflow-step-title\">カーネル直結フォーマット</span>\n              <span class=\"workflow-step-desc\">世界シェア首位のモデリングカーネル標準。中立規格を介さないため、幾何精度の劣化や微小隙間の発生が極めて少ない。</span>\n            </div>\n          </div>\n          <div class=\"lesson-callout\">\n            <strong>⚠️ なぜインポートデータはソリッド化エラーを起こすのか？（トレランスの衝突）</strong><br>\n            CADカーネルごとに「同一エッジ」と判定するモデリング許容公差（Tolerance）が異なります（例：上流CADは0.01mm、受取側CAMは0.001mm）。この公差のズレによって、元は閉じていたはずの曲面間に 0.005mm の微小ギャップが生じ、ソリッド化が失敗します。<br>\n            この隙間を段階的に埋め合わせて単一のトポロジーに統合する技術が<strong>「トレランス縫合（Stitch）」</strong>です。\n          </div>\n        ",
+            "bodyZh": "\n          <p>在模具供应链中，加工厂每天需要接收来自各大主机厂不同软件的三维数据。掌握<strong>工业数据交换标准与几何公差机制</strong>是技术人员的看家本领：</p>\n          <div class=\"lesson-workflow-grid\">\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">STEP (ISO 10303)</span>\n              <span class=\"workflow-step-title\">国际工业通用标准</span>\n              <span class=\"workflow-step-desc\">AP203（纯几何实体）、AP214（汽车装配图层、材质颜色）、AP242（现代基于模型的定义 MBD 与 3D 尺寸公差 PMI 标注）。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">IGES</span>\n              <span class=\"workflow-step-title\">传统曲面交换标准</span>\n              <span class=\"workflow-step-desc\">以独立曲面集合为主。极易丢失修剪边界（Trim Boundary），是模具车间导入模型发生破面、缺面报警的重灾区。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">Parasolid (.x_t)</span>\n              <span class=\"workflow-step-title\">工业建模内核格式</span>\n              <span class=\"workflow-step-desc\">全球主流 CAD/CAM 底层几何内核的原生交换格式。无需中立层解析转换，几何保真度极高。</span>\n            </div>\n          </div>\n          <div class=\"lesson-callout\">\n            <strong>⚠️ 为什么跨系统导入模型总会出现破面断裂？（建模容差冲突）</strong><br>\n            每个 CAD 几何内核底层对“两点/两边重合”的判定阈值不同（例如原系统容差为 0.01mm，目标 CAM 系统精度为 0.001mm）。跨系统解析时，这 0.005mm 的微观误差就会被放大为“未封闭的物理裂缝”，导致无法形成实体。<br>\n            通过设置微米级合理阈值执行<strong>“公差缝合 (Tolerance Stitching)”</strong>，消除微小漏缝重铸水密拓扑，是 CAM 编程前的必经工艺。\n          </div>\n        ",
+            "quiz": {
+                  "qJa": "上流工程のCADからエクスポートしたSTEP/IGESデータを金型CAMシステムに取り込んだ際、面間に0.005mm程度の微小隙間が生じてソリッド化できない根本原因は？",
+                  "qZh": "将上游 CAD 设计的 STEP/IGES 模具工件导入下游 CAM 系统时，曲面边缘经常出现约 0.005mm 的微小缝隙导致无法闭合为实体的根本原因在于？",
+                  "optionsJa": [
+                        "異なるCADシステム間で幾何モデリングカーネルが採用している許容公差（Tolerance）や曲線近似アルゴリズムに微細な差異があるため",
+                        "インターネット通信のパケットロスでデータの一部が消滅したため",
+                        "STEP規格では曲面データを保存することが禁止されているため",
+                        "PCのストレージ容量が不足しているため"
+                  ],
+                  "optionsZh": [
+                        "不同 CAD 软件底层的几何建模内核（Geometry Kernel）所设定的公差阈值（Tolerance）与曲线逼近算法存在微米级差异",
+                        "网络传输过程中发生了丢包导致曲面像素点丢失",
+                        "国际 ISO STEP 协议标准中明令禁止包含三维自由曲面",
+                        "电脑硬盘的空余存储空间不足导致的显示异常"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！カーネル間のトレランス定義（例：0.001mmと0.01mm）の不一致が原因です。この隙間を段階的トレランス縫合によって修復・ソリッド化するのがCAM前処理の鉄則です。",
+                  "explainZh": "正确！各 CAD 内核的建模公差阈值差异是导致跨软件交换产生破缝的本质原因。CAM 工程师必须熟练掌握公差缝合技术以重建合格的几何模型。"
+            }
       },
       {
-        chap: 1,
-        subIndex: 1,
-        titleJa: "2-2 パーティングライン（PL面）の抽出と作成",
-        titleZh: "2-2 分型线 (Parting Line) 与分模面 (PL) 构建",
-        tag: "型割技術",
-        bodyJa: `
-          <p>金型を「固定側（キャビティ）」と「可動側（コア）」に二分する境界線を<strong>パーティングライン（PL）</strong>と呼びます。</p>
-          <p>Space-Eは、勾配の正負境界（0度変曲点）を探索し、閉じた連続PLループを半自動抽出する専用アルゴリズムを備えています。抽出したループから外側へ面を延伸（リバースサーフェス）させることで、バリ（Burr）の出ない強固なPLシーリング面を生成します。</p>
-        `,
-        bodyZh: `
-          <p>将模具分为“前模/定模（型腔 Cavity）”与“后模/动模（型芯 Core）”的闭合分界线被称为<strong>分型线 (PL)</strong>。</p>
-          <p>Space-E 能自动沿着拔模角正负反转的 0 度临界曲线提取闭合环路，并沿外法线方向延伸出光滑平整的封胶分型面，防止注塑跑披锋（毛边）。</p>
-        `,
-        quiz: {
-          qJa: "Space-EでPL面（パーティング面）を設計する際、金型耐久性とバリ防止のために最も推奨される形状は？",
-          qZh: "在 Space-E 中构建分型面 (PL 面) 时，为提高模具寿命并防止披锋毛边，最佳的曲面延伸原则是？",
-          optionsJa: [
-            "成形品外形エッジから滑らかに外側へ接線または垂直に伸びるフラット・スムーズ面",
-            "波打つような激しいジグザグ曲面",
-            "肉厚0.01mmの薄いナイフエッジ形状",
-            "成形品内部に向かって潜り込む逆傾斜面"
-          ],
-          optionsZh: [
-            "沿产品外轮廓向外切向或法向平滑延伸、受力均匀的平滑封胶面",
-            "波浪状剧烈起伏的折线曲面",
-            "刃口厚度仅 0.01mm 的锐角尖刃形状",
-            "朝向塑料制品内侧倒扣凹陷的逆向曲面"
-          ],
-          ans: 0,
-          explainJa: "正解！PL面は高圧の射出成形圧力で型締めされるため、滑らかで剛性が高く、段差のないシンプルな面構成が理想です。",
-          explainZh: "正确！分模封胶面承受数吨合模锁紧压力，必须平缓、顺滑、刚性强，避免产生应力集中的尖角薄刃。"
-        }
+            "chap": 1,
+            "subIndex": 0,
+            "titleJa": "2-1 切削運動の3要素と加工物理学",
+            "titleZh": "2-1 数控切削运动三要素与切削物理量计算",
+            "tag": "切削力学",
+            "bodyJa": "\n          <p>CAMプログラミングの本質は、コンピュータ上の3Dモデルを物理的な金属切削運動へと変換することです。その根底を支えるのが<strong>切削の3要素</strong>です。</p>\n          <div class=\"lesson-workflow-grid\">\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">切削速度 Vc</span>\n              <span class=\"workflow-step-title\">周速 (m/min)</span>\n              <span class=\"workflow-step-desc\">工具最外周の刃が被削材を削る瞬間の周速。<br><code>Vc = (π × D × n) / 1000</code><br>（D:工具径mm, n:主軸回転数RPM）</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">送り速度 Vf</span>\n              <span class=\"workflow-step-title\">テーブル送り (mm/min)</span>\n              <span class=\"workflow-step-desc\">テーブルの直進速度。刃数 z と1刃送り fz から決定。<br><code>Vf = n × z × fz</code><br>（fz: mm/tooth）</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">切込み量 ap / ae</span>\n              <span class=\"workflow-step-title\">軸深さ / 径幅 (mm)</span>\n              <span class=\"workflow-step-desc\">ap: Z軸方向の切込み深さ。<br>ae: X-Y方向のピック幅（ステップオーバー）。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">除去能率 MRR</span>\n              <span class=\"workflow-step-title\">金属除去率 (cm³/min)</span>\n              <span class=\"workflow-step-desc\">単位時間当たりの切除体積。<br><code>MRR = (ap × ae × Vf) / 1000</code><br>スピンドル負荷トルクを支配。</span>\n            </div>\n          </div>\n          <div class=\"lesson-callout tip\">\n            <strong>🔥 高速切削（HSM）における切削熱の科学：</strong><br>\n            切削によって発生する熱の約80%は、高温の「切りくず（チップ）」によって瞬間的に機外へ運び出されるのが理想です。切削速度を適切に引き上げる（HSM領域）と、切りくずが赤熱して熱を持ち去り、金型母材への熱伝導が激減してワークの熱膨張や焼き戻し（硬度低下）を防ぐことができます。\n          </div>\n        ",
+            "bodyZh": "\n          <p>CAM 数控编程的本质，是将电脑视口中的 3D 几何转化为高速运转机床上的物理金属切削。其物理学底层是<strong>切削运动三要素</strong>：</p>\n          <div class=\"lesson-workflow-grid\">\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">切削速度 Vc</span>\n              <span class=\"workflow-step-title\">线速度 (m/min)</span>\n              <span class=\"workflow-step-desc\">铣刀最外刃切削金属材料的瞬时线速度：<br><code>Vc = (π × D × n) / 1000</code><br>（D: 刀具直径 mm, n: 主轴转速 RPM）</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">进给速度 Vf</span>\n              <span class=\"workflow-step-title\">工作台进给 (mm/min)</span>\n              <span class=\"workflow-step-desc\">机床移动切削进给速度。由齿数 z 与每齿进给 fz 确定：<br><code>Vf = n × z × fz</code><br>（fz: mm/齿）</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">切削深度 ap / ae</span>\n              <span class=\"workflow-step-title\">轴向深度 / 径向步距</span>\n              <span class=\"workflow-step-desc\">ap: 沿主轴 Z 轴方向的下刀吃刀深度。<br>ae: X-Y 平面的侧向切削步距（Stepover）。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">材料切除率 MRR</span>\n              <span class=\"workflow-step-title\">金属去除效率 (cm³/min)</span>\n              <span class=\"workflow-step-desc\">单位时间切削金属体积：<br><code>MRR = (ap × ae × Vf) / 1000</code><br>直接决定切削机床主轴功率与扭矩占用。</span>\n            </div>\n          </div>\n          <div class=\"lesson-callout tip\">\n            <strong>🔥 高速切削 (HSM) 切削热传递机理：</strong><br>\n            理想的高速切削状态下，80% 以上的切削剧烈摩擦热应被高旋转飞出的“热切屑”瞬间带走。当切削线速度提高到 HSM 最佳区间时，金属局部发生塑性软化，切削热来不及传导入模具工件本体，有效防止了淬火模具钢发生热变形或表面退火降硬度。\n          </div>\n        ",
+            "quiz": {
+                  "qJa": "外径 Φ10mm の4枚刃超硬エンドミルを用いて、推奨切削速度 Vc = 150 m/min、1刃送り fz = 0.05 mm/tooth で金型鋼を切削する場合、CAMに入力すべき理論主軸回転数 n とテーブル送り速度 Vf の組み合わせとして正しいものは？",
+                  "qZh": "使用外径 Φ10mm 的四刃硬质合金立铣刀，在推荐切削线速度 Vc = 150 m/min、每齿进给量 fz = 0.05 mm/tooth 的工艺条件下切削模具钢，CAM 理论设定的主轴转速 n 与进给速度 Vf 是？",
+                  "optionsJa": [
+                        "主軸回転数 n ≒ 4,775 RPM ／ 送り速度 Vf ≒ 955 mm/min",
+                        "主軸回転数 n ≒ 1,500 RPM ／ 送り速度 Vf ≒ 150 mm/min",
+                        "主軸回転数 n ≒ 15,000 RPM ／ 送り速度 Vf ≒ 5,000 mm/min",
+                        "主軸回転数 n ≒ 500 RPM ／ 送り速度 Vf ≒ 50 mm/min"
+                  ],
+                  "optionsZh": [
+                        "主轴转速 n 约为 4775 RPM / 进给速度 Vf 约为 955 mm/min",
+                        "主轴转速 n 约为 1500 RPM / 进给速度 Vf 约为 150 mm/min",
+                        "主轴转速 n 约为 15000 RPM / 进给速度 Vf 约为 5000 mm/min",
+                        "主轴转速 n 约为 500 RPM / 进给速度 Vf 约为 50 mm/min"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！n = (1000 × 150) / (π × 10) ≒ 4,775 RPM。Vf = 4,775 × 4 × 0.05 ≒ 955 mm/min となります。切削3要素の基礎計算はCAMオペレーターの必須スキルです。",
+                  "explainZh": "正确！根据公式 n = (1000 × 150) / (π × 10) ≈ 4775 RPM；进给率 Vf = 4775 × 4 × 0.05 ≈ 955 mm/min。切削三要素计算是数控编程的绝对基石。"
+            }
       },
       {
-        chap: 1,
-        subIndex: 2,
-        titleJa: "2-3 キャビティ・コアの分割（型割）処理",
-        titleZh: "2-3 前后模型腔/型芯一键分模 (Core/Cavity Split)",
-        tag: "型割技術",
-        bodyJa: `
-          <p>製品モデルとPL面が揃ったら、<strong>[型割]コマンド</strong>によって金型ブロック素材（直方体ブロック）からキャビティ駒とコア駒を完全に二分割します。</p>
-          <p>Space-Eの型割エンジンは、微小な隙間があっても自動的に直近の面と連結させてブーリアン演算を完遂させる強靭なアルゴリズムを誇ります。</p>
-        `,
-        bodyZh: `
-          <p>在完善分型面与封堵孔洞后，执行<strong>[分模 (Split)]指令</strong>，系统将对毛坯钢料执行实体布尔分割，一键分离出前模腔与后模芯。</p>
-        `,
-        quiz: {
-          qJa: "型割処理を実行する前に、製品モデル内部の「貫通穴（リブ穴やボタン穴）」に対して行わなければならない作業は？",
-          qZh: "在执行前后模一键分模运算前，对塑件上的“通孔（如螺丝孔、按键孔）”必须预先做什么处理？",
-          optionsJa: [
-            "穴埋め面（パッチサーフェス）を作成して穴を完全に塞いでおく",
-            "穴の直径を2倍に拡大しておく",
-            "穴の周りのメッシュをすべて削除する",
-            "モデル全体を透明化する"
-          ],
-          optionsZh: [
-            "通过[贴面/补孔 (Patch)]功能将所有贯通孔洞密封，形成完整隔离面",
-            "把所有的孔径强行放大 2 倍以防卡死",
-            "把孔洞周围的所有几何曲面全部强行删除",
-            "将整个零件模型透明度设为 100%"
-          ],
-          ans: 0,
-          explainJa: "正解！貫通穴が開いたままだとキャビティ側とコア側の空間が繋がり、型割境界が閉ループを形成できずエラーになります。",
-          explainZh: "正确！通孔若不打补丁密封，前后模空间将相互联通，导致分模算法无法判断隔离边界而失败。"
-        }
+            "chap": 1,
+            "subIndex": 1,
+            "titleJa": "2-2 ミーリング切削工具の幾何学分類と剛性法則",
+            "titleZh": "2-2 铣削刀具几何学分类、应用场景与悬伸刚度法则",
+            "tag": "切削工具",
+            "bodyJa": "\n          <p>金型加工で使用される切削エンドミルは、先端幾何学によって特性と用途が明確に分かれています。</p>\n          <div class=\"lesson-workflow-grid\">\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">スクエア</span>\n              <span class=\"workflow-step-title\">平刃エンドミル</span>\n              <span class=\"workflow-step-desc\">底刃と側刃が直角90度。平面出しや垂直立ち壁の仕上げに不可欠。ただし角が尖っているためチッピング（欠け）に弱く、曲面加工には不向き。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">ボール</span>\n              <span class=\"workflow-step-title\">球頭エンドミル</span>\n              <span class=\"workflow-step-desc\">先端が完全な半球形状。自由曲面の仕上げに万能。ただし最先端（中心軸）の周速が数学的に「ゼロ」になるため、垂直ダイブ下刀は刃具摩耗を招く。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">ラジアス</span>\n              <span class=\"workflow-step-title\">ブルノーズ (牛鼻工具)</span>\n              <span class=\"workflow-step-desc\">平刃のコーナに丸みR（例: Φ20R2）を付加。コーナRが切削衝撃を分散し刃先強度が最強。金型等高線荒加工の圧倒的主力。</span>\n            </div>\n          </div>\n          <div class=\"lesson-callout\">\n            <strong>📏 工具突き出し長（Overhang）と曲げ剛性の「3乗反比例の法則」：</strong><br>\n            工具ホルダから突き出た刃物の突き出し長さを $L$、工具径を $D$ とした時、工具のたわみ剛性は <strong>$1/L^3$</strong> に比例します。<br>\n            つまり、突き出し長さを <strong>2倍</strong> に伸ばすと、工具の剛性は <strong>1/8（12.5%）</strong> にまで激減し、ビビり振動（Chatter）の発生確率は8倍に跳ね上がります。深彫り金型では、可能な限りシャンク径を太くし、最短の突き出しでツールパスを組むのがCAMプログラミングの鉄則です。\n          </div>\n        ",
+            "bodyZh": "\n          <p>模具数控铣削中采用的立铣刀，因刀尖几何学构型的不同而具备截然不同的力学性能与加工应用域：</p>\n          <div class=\"lesson-workflow-grid\">\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">平底铣刀</span>\n              <span class=\"workflow-step-title\">Square End Mill</span>\n              <span class=\"workflow-step-desc\">底刃与侧刃呈 90° 直角。主要用于平面精光、垂直侧壁轮廓切削。但刀尖应力高度集中易崩刃，不可用于三维曲面开粗。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">球头铣刀</span>\n              <span class=\"workflow-step-title\">Ball Nose End Mill</span>\n              <span class=\"workflow-step-desc\">刀尖为完整半球。三维自由曲面半精与精光加工核心刀具。但刀具正轴心处切削线速度为零 (Dead Center)，严禁垂直正切下压。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">圆角牛鼻刀</span>\n              <span class=\"workflow-step-title\">Bull Nose / Radius</span>\n              <span class=\"workflow-step-desc\">平底刀尖带有抗冲击圆角 R（如 Φ20R2）。圆角消除了应力集中，底刃切削排屑面积巨大，是模具型腔等高开粗的绝对统治者。</span>\n            </div>\n          </div>\n          <div class=\"lesson-callout\">\n            <strong>📏 刀具悬伸长度 (Overhang) 与抗弯刚度的“立方反比定律”：</strong><br>\n            若刀具悬伸出刀柄的自由长度为 $L$，刀具有效直径为 $D$，则根据材料力学悬臂梁方程，刀具抗弯刚度与 <strong>$1/L^3$</strong> 成正比。<br>\n            这意味着：刀具悬伸长度仅仅增加 <strong>1 倍</strong>，刀杆的抗弯抗振刚度就会断崖式暴跌为原本的 <strong>1/8（仅剩 12.5%）</strong>！深腔模具中，必须采用锥度避空刀杆或 3+2 轴倾斜，以绝对最短的悬伸实现高刚性切削。\n          </div>\n        ",
+            "quiz": {
+                  "qJa": "深彫り金型の等高線荒加工において、鋭利な角を持つスクエアエンドミルではなく「ラジアスエンドミル（牛鼻工具）」が圧倒的に推奨される最大の理由は？",
+                  "qZh": "在大型深腔模具的等高粗加工中，为什么普遍选用带有圆角的“牛鼻刀（圆角立铣刀）”而非尖角平底铣刀？",
+                  "optionsJa": [
+                        "コーナR形状が切削衝撃を分散して刃先欠損（チッピング）を防ぎ、大切り込み・高能率な金属除去が可能になるため",
+                        "ラジアスエンドミルは工作機械の電気を一切消費しないため",
+                        "内角R0の鋭角ピン角を一度で削り落とせるため",
+                        "ラジアス工具は研磨寿命が無限であるため"
+                  ],
+                  "optionsZh": [
+                        "刀尖过渡圆角能有效分散剧烈的切削冲击应力、防止崩刃，且能承受大进给、大切深实现海量钢料高效切除",
+                        "牛鼻刀在机床高速主轴切削时完全不需要消耗电能",
+                        "能一次性将型腔内角绝对直角 (R0) 清光到位",
+                        "牛鼻刀由超导材料制成具备无限使用寿命"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！スクエア工具の尖った先端は応力集中で真っ先に欠損します。ラジアス工具はコーナRで衝撃を受け止め、底刃で広く削れるため、金型荒加工に最適な剛性を誇ります。",
+                  "explainZh": "正确！平底刀尖角缺乏实体支撑极易崩刃，而牛鼻刀圆角消除了应力集中，能以极高抗冲击刚度执行大进给重切削开粗。"
+            }
       },
       {
-        chap: 1,
-        subIndex: 3,
-        titleJa: "2-4 スライドコア（置き駒）と傾斜ピンの干渉設計",
-        titleZh: "2-4 滑块机构 (Slide Core) 与斜顶机构设计",
-        tag: "金型機構",
-        bodyJa: `
-          <p>アンダーカットを回避するために、型開き動作と連動して横方向に退避する<strong>「スライドコア」</strong>や、突き出し動作で斜めに逃げる<strong>「傾斜ピン（リフター）」</strong>を配置します。</p>
-          <p>Space-Eでは、スライドのストローク量と抜き角度（アンギュラピン角度：通常15〜25度）の幾何干渉を3Dアニメーションで事前検証可能です。</p>
-        `,
-        bodyZh: `
-          <p>对于存在外侧或内侧倒扣的特征，必须利用开模动力驱动横向抽芯的<strong>滑块机构 (Slider)</strong>，或随顶针板斜向滑移的<strong>斜顶机构 (Lifter)</strong>。</p>
-          <p>Space-E 提供斜导柱抽芯距离干涉校核功能，避免滑块撞击后模仁。</p>
-        `,
-        quiz: {
-          qJa: "一般的な射出成形金型において、スライド機構の「アンギュラピン（斜めピン）」の傾斜角度として推奨される安全範囲は？",
-          qZh: "在常见注塑模具滑块结构中，驱动滑块的“斜导柱”倾角通常推荐控制在多大范围内？",
-          optionsJa: [
-            "15度 〜 25度（過度な曲げ応力を防ぎ、十分なストロークを確保）",
-            "45度 〜 60度（急激に開かせるため）",
-            "0度（垂直）",
-            "85度（ほぼ水平）"
-          ],
-          optionsZh: [
-            "15° ~ 25°（既保证足够抽芯行程，又避免斜导柱承受过大剪切弯曲应力）",
-            "45° ~ 60°（为了追求极速抽芯）",
-            "0°（垂直向下）",
-            "85°（几乎水平）"
-          ],
-          ans: 0,
-          explainJa: "正解！25度を超えると斜ピンに過大な曲げ荷重がかかり破損の危険が高まります。一般には20度前後が多用されます。",
-          explainZh: "正确！斜导柱角度若大于 25°，开模时受到的横向弯曲剪应力会急剧攀升，极易折断；通常取 18°~22°。"
-        }
-      },
-
-      // 第3章
-      {
-        chap: 2,
-        subIndex: 0,
-        titleJa: "3-1 放電加工（EDM）の仕組みと電極設計の必要性",
-        titleZh: "3-1 电火花放电加工 (EDM) 机制与电极设计基础",
-        tag: "放電加工",
-        bodyJa: `
-          <p>回転工具（エンドミル）では、刃物の半径があるため<strong>「ピン角（R0の内角）」</strong>や<strong>「極めて深い細リブ（溝）」</strong>を切削することが物理的に不可能です。</p>
-          <p>そこで、銅（Cu）やグラファイト（黒鉛）の<strong>電極</strong>を反転形状として製作し、電気火花のアーク放電によって鋼材を微小溶融・除去する<strong>「形彫り放電加工（EDM）」</strong>を行います。</p>
-        `,
-        bodyZh: `
-          <p>铣刀切削必然存在刀具半径，无法直接加工出<strong>“绝对直角内尖角 (R0)”</strong>或<strong>“深窄肋条槽”</strong>。此时必须通过数控加工出紫铜或石墨<strong>电极 (铜公)</strong>，利用电火花脉冲放电熔融蚀除模具钢材。</p>
-        `,
-        quiz: {
-          qJa: "切削エンドミルでは加工できず、EDM（形彫り放電加工）が不可欠となる代表的な金型形状は？",
-          qZh: "数控铣削刀具无法直接切削、必须依靠 EDM 放电加工的典型模具特征是？",
-          optionsJa: [
-            "細くて深いリブ溝や、内角の隅Rが極めて小さいピン角形状",
-            "平坦で広大なパーティング面",
-            "緩やかな大半径の球状曲面",
-            "直径20mmの貫通ボルト穴"
-          ],
-          optionsZh: [
-            "狭窄深槽（筋条）以及内角几乎无 R 角的锐利清角结构",
-            "大面积平坦光滑的分型面",
-            "平缓大半径的球面曲面",
-            "直径 20mm 的穿丝螺栓孔"
-          ],
-          ans: 0,
-          explainJa: "正解！回転工具はどうしても刃具半径（R）が残るため、シャープな内隅角や深リブは電極による放電でしか成形できません。",
-          explainZh: "正确！旋转刀具必然受限于刀具半径 R，深沟槽与清角必须依靠负极放电电极逐步蚀除加工。"
-        }
+            "chap": 1,
+            "subIndex": 2,
+            "titleJa": "2-3 工作機械座標系（MCS/WCS）と切削力学",
+            "titleZh": "2-3 机床坐标系 (MCS/WCS) 与顺铣/逆铣力学分析",
+            "tag": "座標と力学",
+            "bodyJa": "\n          <p>加工プログラムを走らせる前に、実機の座標系構造とミリング切削力学を理解していなければ、即座に重大な衝突事故やワーク破損を招きます。</p>\n          <div class=\"lesson-workflow-grid\">\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">MCS (G53)</span>\n              <span class=\"workflow-step-title\">機械座標系 (Machine)</span>\n              <span class=\"workflow-step-desc\">工作機械の原点復帰で決定される機械固有の物理的絶対座標。リミットスイッチやスケール原点で固定。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">WCS (G54-G59)</span>\n              <span class=\"workflow-step-title\">ワーク座標系 (Work)</span>\n              <span class=\"workflow-step-desc\">金型素材の特定位置（例：左上角上面Z0やセンタピン）に設定する加工基準点。CAMプログラムの基準原点と一致させる。</span>\n            </div>\n          </div>\n          <div class=\"lesson-callout\">\n            <strong>⚔️ ダウンカット（順ミル） vs アップカット（逆ミル）の切削力学：</strong><br>\n            • <strong>ダウンカット（Climb / Down Milling）</strong>：工具回転方向と送り方向が一致。刃物が食い込む瞬間に切りくず厚さが最大で、抜ける瞬間にゼロになる。切削力の垂直分力がワークをテーブルに強く押し付けるため、固定が安定し、びびりが少なく面粗度が極めて良好。<strong>現代のマシニング加工では原則100%ダウンカットを指定する。</strong><br>\n            • <strong>アップカット（Conventional / Up Milling）</strong>：切りくず厚さゼロから擦りながら食い込み、抜ける瞬間に最大になる。刃先が金属表面を滑るため激しい摩擦熱と摩耗（Rubbing）を生じ、切削分力がワークを上方に引き剥がそうとするため、びびりが発生しやすい。\n          </div>\n        ",
+            "bodyZh": "\n          <p>在机床启动前，彻底理清机床数控坐标系映射以及铣削切削分力的物理学规律，是防撞机与保证加工品质的命脉：</p>\n          <div class=\"lesson-workflow-grid\">\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">MCS (G53)</span>\n              <span class=\"workflow-step-title\">机床机械坐标系 (Machine)</span>\n              <span class=\"workflow-step-desc\">机床回零后锁定的出厂固有绝对物理零点。由机床行程限位挡块或光栅尺绝对零位决定。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">WCS (G54-G59)</span>\n              <span class=\"workflow-step-title\">工件坐标系 (Workpiece)</span>\n              <span class=\"workflow-step-desc\">模具毛坯上的工艺对刀原点（如毛坯上表面左上角或中心定位孔）。CAM 程序中的 WCS 必须与此 1:1 吻合。</span>\n            </div>\n          </div>\n          <div class=\"lesson-callout\">\n            <strong>⚔️ 顺铣 (Climb Milling) vs 逆铣 (Conventional Milling) 物理受力解析：</strong><br>\n            • <strong>顺铣 (Down/Climb Milling)</strong>：刀具旋转切削方向与工件进给方向一致。刀刃切入瞬时切屑厚度最大，切出时平滑降至零。垂直切削分力将模具工件向下牢牢压死在机床工作台上，无摩擦滑移，振颤极小，表面粗糙度优异。<strong>现代数控加工强制 100% 首选顺铣！</strong><br>\n            • <strong>逆铣 (Up/Conventional Milling)</strong>：切屑厚度由零逐渐变厚。刀刃初期在工件表面剧烈摩擦打滑（Rubbing），产生大量有害摩擦热并急剧磨损后刀面；且切削分力向上拉拽工件，极易诱发震刀波纹。\n          </div>\n        ",
+            "quiz": {
+                  "qJa": "現代のCNCマシニングセンタにおいて、鋳物の硬化黒皮を除去する場合を除き、切削加工で「ダウンカット（順ミル）」が絶対的に推奨される力学的理由は？",
+                  "qZh": "在现代精密数控机床加工中，只要消除传动丝杠间隙且无铸件硬化黑皮，为什么全行业强制首选采用“顺铣 (Climb Milling)”？",
+                  "optionsJa": [
+                        "切りくず厚さが最大からゼロへと推移し摩擦擦れがなく、切削力が工作物をテーブルに押し付けるため剛性・面品位・工具寿命が大幅に優れるから",
+                        "アップカットではNCコードが文字化けしてしまうから",
+                        "ダウンカットを使うと機械の主軸モーターの回転数が自動的に2倍になるから",
+                        "切削油（クーラント）を一切使わずに加工できるから"
+                  ],
+                  "optionsZh": [
+                        "切屑厚度由最大渐变为零消除打滑摩擦，且垂直切削分力向下压紧工件消除振颤，显著提高表面光洁度与刀具使用寿命",
+                        "逆铣加工会导致机床操作系统无法识别 G 代码",
+                        "顺铣加工能让普通电机的额定转速自动翻倍",
+                        "顺铣全过程完全不需要喷射任何切削润滑冷却液"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！ダウンカットは刃先が滑らず確実に金属を食い込み、下向きの切削分力でワークを安定させます。アップカット特有の初期の「擦れ（Rubbing）」による摩擦熱と刃先摩耗を回避できます。",
+                  "explainZh": "正确！顺铣避免了逆铣初期刀刃在金属表面的打滑摩擦擦伤（Rubbing），且垂直切削力牢牢将工件压紧在工作台上，是保证精密光洁度和刀具长寿命的力学规律。"
+            }
       },
       {
-        chap: 2,
-        subIndex: 1,
-        titleJa: "3-2 Space-E/Electrode による電極形状の自動抽出",
-        titleZh: "3-2 Space-E/Electrode 电极自动提取与延伸",
-        tag: "電極モジュール",
-        bodyJa: `
-          <p>Space-Eの<strong>電極専用モジュール</strong>は、キャビティ内の放電したいリブ底面をクリックするだけで、放電領域の周囲境界を自動認識し、上方向へ滑らかに逃げ面を<strong>「電極立ち上げ延伸」</strong>します。</p>
-          <div class="lesson-code-block">[電極] -> [リブ電極自動抽出] -> [逃げクリアランス面自動作成]</div>
-          <p>手動モデリングに比べて設計時間を約80%短縮し、反転抜けミスを完全に防止します。</p>
-        `,
-        bodyZh: `
-          <p>Space-E 拥有独步业界的<strong>电极设计专用模块</strong>。只需点击型腔内的筋位底面，系统即可自动追踪深槽边界，并沿法向生成电极避空防干涉曲面。</p>
-          <div class="lesson-code-block">[电极] -> [肋条电极自动提取] -> [延伸避空面构建]</div>
-        `,
-        quiz: {
-          qJa: "Space-Eの電極自動作成時、放電部以外の金型面に電極が接触して破損するのを防ぐために設ける面は？",
-          qZh: "在 Space-E 自动创建电极时，为防止放电有效区之外的电极本体碰撞模具工件，必须生成的结构是？",
-          optionsJa: [
-            "逃げ面（リリーフ・クリアランス面）",
-            "吸着面",
-            "反射面",
-            "鏡面研磨面"
-          ],
-          optionsZh: [
-            "避空面 (Relief / Clearance Surface)",
-            "真空吸附面",
-            "激光反射面",
-            "镜面抛光面"
-          ],
-          ans: 0,
-          explainJa: "正解！放電したいターゲット形状以外は、0.5〜1mm以上離れるよう逃げ面を自動延伸することで、不要な二次放電や干渉を防ぎます。",
-          explainZh: "正确！避空面能让非放电区域退后 0.5~1mm 以上，防止无效区域发生二次侧面打火拉弧。"
-        }
+            "chap": 1,
+            "subIndex": 3,
+            "titleJa": "2-4 3Dツールパス生成理論と幾何公差近似",
+            "titleZh": "2-4 3D 刀轨生成几何算法、刀位点与弦截逼近公差",
+            "tag": "CAM幾何",
+            "bodyJa": "\n          <p>CAMソフトウェアが自由曲面からNCプログラム（Gコード）を計算する際、幾何学的な離散化アルゴリズムが働いています。</p>\n          <div class=\"lesson-workflow-grid\">\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">Step 01</span>\n              <span class=\"workflow-step-title\">接触点 (CC Point)</span>\n              <span class=\"workflow-step-desc\">曲面 S(u,v) 上で工具とワークが接触する数学的接点を計算。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">Step 02</span>\n              <span class=\"workflow-step-title\">カッター位置 (CL Point)</span>\n              <span class=\"workflow-step-desc\">CC点の法線ベクトルに基づき、工具半径分オフセットした中心点・先端点座標を算出。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">Step 03</span>\n              <span class=\"workflow-step-title\">トレランス近似 (Chordal)</span>\n              <span class=\"workflow-step-desc\">連続曲線をNC機が理解できる微小直線（G01）の集合に弦截近似。許容誤差内に収める。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">Step 04</span>\n              <span class=\"workflow-step-title\">Gコード出力 (Post)</span>\n              <span class=\"workflow-step-desc\">工作機械コントローラ仕様に合わせたNC構文（X, Y, Z, F, S）に変換。</span>\n            </div>\n          </div>\n          <div class=\"lesson-callout tip\">\n            <strong>📐 カスプハイト（Cusp Height / Scallop）幾何計算式：</strong><br>\n            ボールエンドミル（刃先半径 $R$）を用いてピック幅（送りピッチ $ae$）で走査した時に残る山（削り残し）の高さ $h$ は、ピタゴラスの定理より次の近似式で表されます：<br>\n            <code>h ≈ ae² / (8 × R)</code><br>\n            例えば、Φ10のボールエンドミル（R=5mm）でカスプハイトを鏡面磨き基準の <strong>0.003mm (3μm)</strong> に抑えたい場合、ピック幅 ae は最大でも約 <strong>0.35mm</strong> に設定しなければなりません。\n          </div>\n        ",
+            "bodyZh": "\n          <p>CAM 软件将三维光滑曲面转化为数控机床所能执行的 G 代码轨迹，底层依赖精密的几何离散化流水线：</p>\n          <div class=\"lesson-workflow-grid\">\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">第 1 步</span>\n              <span class=\"workflow-step-title\">切削接触点 (CC Point)</span>\n              <span class=\"workflow-step-desc\">在理想参数曲面 S(u, v) 上计算刀具切削刃与材料碰撞接触的空间点。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">第 2 步</span>\n              <span class=\"workflow-step-title\">刀位数据点 (CL Point)</span>\n              <span class=\"workflow-step-desc\">沿 CC 点曲面外法线矢量方向偏移刀具有效半径，推导出球心或刀尖的刀位轨迹点。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">第 3 步</span>\n              <span class=\"workflow-step-title\">弦截公差拟合 (Tolerance)</span>\n              <span class=\"workflow-step-desc\">将连续光滑曲线以微小折线段 G01 进行多边形逼近，控制最大离散误差在公差阈值内。</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">第 4 步</span>\n              <span class=\"workflow-step-title\">后置 G 代码 (Post)</span>\n              <span class=\"workflow-step-desc\">将 CL 坐标翻译为发那科、牧野等机床能直接执行的标准数控程序。</span>\n            </div>\n          </div>\n          <div class=\"lesson-callout tip\">\n            <strong>📐 残留高度 (Scallop/Cusp Height) 经典几何方程：</strong><br>\n            使用半径为 $R$ 的球头铣刀，以步距行距 $ae$ 往复切削时光刀表面残留微小峰高 $h$ 的经典近似计算公式为：<br>\n            <code>h ≈ ae² / (8 × R)</code><br>\n            例如：使用 Φ10 球刀（R=5mm），若要将残留高度严格控制在镜面免打磨级的 <strong>0.003mm (3μm)</strong> 以内，行距步距 $ae$ 绝不能超过 <strong>0.35mm</strong>。\n          </div>\n        ",
+            "quiz": {
+                  "qJa": "3D曲面のCAM仕上げ計算において、弦誤差トレランス（Tolerance）の設定値を 0.05mm から 0.002mm へと極小にした場合、生成されるNCプログラムに生じる物理的な変化は？",
+                  "qZh": "在 3D 自由曲面 CAM 精加工计算中，如果将曲面弦截逼近公差 (Tolerance) 从 0.05mm 缩窄至 0.002mm，系统生成的 NC 加工程序文件将发生什么物理变化？",
+                  "optionsJa": [
+                        "曲面を近似する微小直線ブロック（G01）の数が激増し、ファイルサイズが数十倍に肥大化するが、加工面の理論形状再現度が極めて高くなる",
+                        "NC工作機械の主軸モーター出力が自動的に2倍にパワーアップする",
+                        "ボールエンドミルの刃先半径が自動的に小さくなる",
+                        "切削加工時間が100分の1に短縮される"
+                  ],
+                  "optionsZh": [
+                        "逼近拟合自由曲面的 G01 微细折线段数量几何级数暴增、代码体积扩大数十倍，但切削工件对理想数学曲面的贴合保真度极大提高",
+                        "数控机床主轴电机的输出马力自动翻倍",
+                        "球头铣刀的几何半径被代码强制缩小",
+                        "切削加工耗费的总工时直接缩短为原本的百分之一"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！トレランスを厳しくするほど微小な線分で曲面を再現するため、Gコードの行数が跳ね上がります。これを滞りなく高速実行するためにNC装置の「先行先読み補正」が必要になります。",
+                  "explainZh": "正确！逼近公差越严苛，微小折线段越密集，代码行数成倍激增，对工件曲面保真度极高，同时也对机床系统的高速前瞻预读纳米插补能力提出更高要求。"
+            }
       },
       {
-        chap: 2,
-        subIndex: 2,
-        titleJa: "3-3 放電クリアランス（火花ギャップ）と揺動補正",
-        titleZh: "3-3 放电间隙 (Spark Gap) 补偿与平动摇动量计算",
-        tag: "加工パラメータ",
-        bodyJa: `
-          <p>放電加工時、電極と鋼材の間には常に微小な<strong>放電ギャップ（Spark Gap：火花隙間）</strong>が存在します。そのため、電極は製品寸法よりそのギャップ分だけ<strong>小さく（縮小オフセット）</strong>製作しなければなりません。</p>
-          <ul style="padding-left:20px;">
-            <li><strong>粗放電電極</strong>：ギャップ片肉 0.15mm 〜 0.30mm（高速除去）</li>
-            <li><strong>中仕上げ電極</strong>：ギャップ片肉 0.08mm 〜 0.12mm</li>
-            <li><strong>精仕上げ電極</strong>：ギャップ片肉 0.02mm 〜 0.05mm（精密仕上げ）</li>
-          </ul>
-        `,
-        bodyZh: `
-          <p>放电蚀除是在微小火花距离内发生的，因此电极必须按照<strong>放电间隙（火花位）</strong>进行<strong>等距均匀缩小负公差加工</strong>：</p>
-          <ul style="padding-left:20px;">
-            <li><strong>粗公 (Roughing)</strong>：火花位单边 0.15mm ~ 0.25mm（追求快速去除金属）</li>
-            <li><strong>精公 (Finishing)</strong>：火花位单边 0.02mm ~ 0.05mm（极高尺寸精度与表面光洁度）</li>
-          </ul>
-        `,
-        quiz: {
-          qJa: "製品図面通りの深リブを放電加工する場合、精仕上げ電極の3Dモデルは製品寸法に対してどうオフセットすべきですか？",
-          qZh: "欲加工出符合图纸精度的模具深槽，精加工电极在 3D 几何建模时应对标准模型做何种补偿？",
-          optionsJa: [
-            "火花放電ギャップ分（例：片肉0.03mm）だけ全周マイナス縮小オフセットする",
-            "火花放電ギャップ分だけ大きく拡大オフセットする",
-            "オフセットは一切行わず、1対1寸法のままで加工する",
-            "高さ方向（Z軸）だけを10mm縮める"
-          ],
-          optionsZh: [
-            "根据火花放电间隙（如单边 0.03mm）做全方向的三维均匀负向缩小偏移 (Minus Offset)",
-            "将电极模型按照放电间隙做放大偏移",
-            "不做任何偏移，保持 1:1 原尺寸加工",
-            "仅将高度方向（Z轴）强行压缩 10mm"
-          ],
-          ans: 0,
-          explainJa: "正解！電極の周りに火花（ギャップ）が飛んで削れるため、ギャップ分だけ小さく作らないと目標寸法より削りすぎてしまいます。",
-          explainZh: "正确！电极周围由电火花击穿放电蚀除，若不预留单边缩水负间隙，成型腔槽宽度必然超差过大。"
-        }
+            "chap": 2,
+            "subIndex": 0,
+            "titleJa": "3-1 Space-Eの基本理念とハイブリッドモデリング",
+            "titleZh": "3-1 Space-E 核心理念与混合建模体系",
+            "tag": "CAD基盤",
+            "bodyJa": "\n          <p><strong>Space-E</strong> は、日本の金型産業向けに特化した最高峰のCAD/CAMシステムです。その最大の特徴は、数学的に完全な閉空間を定義する<strong>「ソリッド（Solid）」</strong>と、柔軟で複雑な形状を扱える<strong>「サーフェス（Surface / 自由曲面）」</strong>を同一環境で境界なく扱う<strong>「ハイブリッドモデリング」</strong>にあります。</p>\n          <div class=\"lesson-callout\">\n            <strong>💡 なぜハイブリッドが必要なのか？</strong><br>\n            海外製ソリッドCADからインポートしたIGES/STEPデータは、トレランス（許容公差）の差異により曲面間に微小隙間（0.001〜0.05mm）が生じ、ソリッド化エラーを起こしがちです。Space-Eはサーフェスのまま加工パスを即座に計算でき、モデル修復に膨大な時間を取られません。\n          </div>\n          <div class=\"lesson-workflow-grid\">\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">Step 01</span>\n              <span class=\"workflow-step-title\">モデルインポート</span>\n              <span class=\"workflow-step-desc\">STEP/IGES/Parasolidを取り込み</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">Step 02</span>\n              <span class=\"workflow-step-title\">隙間トレランス診断</span>\n              <span class=\"workflow-step-desc\">面間のギャップをハイライト検知</span>\n            </div>\n            <div class=\"workflow-step\">\n              <span class=\"workflow-step-num\">Step 03</span>\n              <span class=\"workflow-step-title\">自動トレランス縫合</span>\n              <span class=\"workflow-step-desc\">[曲面]→[縫合]でワンクリックソリッド化</span>\n            </div>\n          </div>\n        ",
+            "bodyZh": "\n          <p><strong>Space-E</strong> 是专为模具工业打造的高精度 CAD/CAM 软件。其核心基石在于将严密的<strong>“实体 (Solid)”</strong>与处理复杂自由造型的<strong>“曲面 (Surface)”</strong>无缝融合的<strong>“混合建模 (Hybrid Modeling)”</strong>。</p>\n          <div class=\"lesson-callout\">\n            <strong>💡 为什么模具设计极度依赖混合建模？</strong><br>\n            从上游导入的 STEP/IGES 格式常因公差精度不一致产生微小裂缝（0.001~0.05mm），纯实体 CAD 会报错拒绝操作。而 Space-E 允许直接在未缝合曲面上生成 CAM 刀路，也可通过“公差缝合”轻松修补封体。\n          </div>\n        ",
+            "quiz": {
+                  "qJa": "Space-Eのハイブリッドモデリングが模具設計現場で圧倒的に支持される理由は？",
+                  "qZh": "Space-E 的混合建模技术在模具加工中最关键的实用价值是什么？",
+                  "optionsJa": [
+                        "完全なソリッドでなくても、開いた曲面のままCAM切削パスを計算・加工できるため",
+                        "3Dモデルを自動的に2D図面だけに変換してくれるため",
+                        "一切の公差設定を廃止して処理を高速化するため",
+                        "NC工作機械を直接手動操作できるようになるため"
+                  ],
+                  "optionsZh": [
+                        "即便存在曲面微小间隙或未完全封体，也能直接在曲面上规划刀路进行数控切削",
+                        "能自动将所有 3D 模型降维转换成 2D 平面工程图",
+                        "彻底废除了精度公差体系从而提升显卡刷新率",
+                        "可以让操作者无需任何数控程序直接摇动手柄加工"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！インポート形状にわずかな破綻があっても、面貼り修正を待たずに即座に加工パス計算へと移行できるのがSpace-Eの金型現場における強力な武器です。",
+                  "explainZh": "正确！模具现场分秒必争，面对破损曲面不必耗费数小时修补缝合，即可直接进行 CAM 切削路径生成，这就是混合建模的核心优势。"
+            }
       },
       {
-        chap: 2,
-        subIndex: 3,
-        titleJa: "3-4 基準台（ホルダーベース）とポカよけ（C面）",
-        titleZh: "3-4 电极基准台座与防呆倒角 (C角) 工业规范",
-        tag: "現場実務",
-        bodyJa: `
-          <p>加工された電極はEDM機のアリ溝ホルダーに固定されます。機上で正確に原点出し（芯出し）を行うため、四角い<strong>基準台（ベースブロック）</strong>を付加します。</p>
-          <p>さらに、電極をホルダーに取り付ける際、90度や180度向きを間違えてセットする重大ミス（方向違い加工事故）を防ぐため、基準角の1箇所だけに<strong>「ポカよけC面（面取り）」</strong>を施します。</p>
-        `,
-        bodyZh: `
-          <p>电极切削完成后需要安装在放电夹头中。为快速打表分中，底部必须连带铣出高精度的<strong>基准台 (Datum Base)</strong>。</p>
-          <p>为彻底避免作业员将电极旋转 90° 或 180° 装反而导致整套模具报废，工业标准是在基准台特定一角倒<strong>“防呆 C 角”</strong>。</p>
-        `,
-        quiz: {
-          qJa: "電極の基準台において、1箇所だけ非対称に「C面（面取り）」を設ける最大の目的は？",
-          qZh: "在放电电极基准台上，仅在单一角落切出不对称 C 倒角的核心目的是？",
-          optionsJa: [
-            "電極を放電盤にセットする際の方向誤り（ポカミス・反転取り付け）を防止するため",
-            "電極の重量を軽くして加工速度を上げるため",
-            "火花放電の電圧を高めるため",
-            "電極の美観・デザイン性を向上させるため"
-          ],
-          optionsZh: [
-            "防呆识别：防止工人在机床上装夹电极时角度方向装反造成整模报废",
-            "减轻紫铜电极重量以降低材料采购成本",
-            "汇聚电场提高电火花击穿电压",
-            "增强电极工业设计的美观度"
-          ],
-          ans: 0,
-          explainJa: "正解！ポカよけC面によって、作業者や画像検査装置が「基準角」をひと目で識別でき、誤方向での放電事故をゼロにします。",
-          explainZh: "正确！防呆角（Poka-yoke Chamfer）是工业工程的强制规范，确保机床探头与操作人员绝无装反可能。"
-        }
-      },
-
-      // 第4章
-      {
-        chap: 3,
-        subIndex: 0,
-        titleJa: "4-1 Space-E/CAM の切削哲学と等高線荒加工",
-        titleZh: "4-1 Space-E/CAM 切削理念与等高线粗加工 (Constant Z Roughing)",
-        tag: "CAM基礎",
-        bodyJa: `
-          <p>金型切削の効率と工具寿命は、<strong>「荒加工（ラフィング）」</strong>で8割が決まります。Space-E/CAMの真骨頂は、素材ブロックから効率よく大量の金属を取り除く<strong>「等高線荒加工」</strong>です。</p>
-          <div class="lesson-callout">
-            Space-Eは、各Z深さレベルにおいて工具負荷が一定になるよう、コーナ部で自動的に減速・トロコイド円弧補間を挿入し、刃物のチッピング（欠け）を防止します。
-          </div>
-        `,
-        bodyZh: `
-          <p>模具加工 80% 的切除量在<strong>粗加工 (Roughing)</strong> 阶段完成。Space-E/CAM 的核心算法是<strong>等高粗加工</strong>。</p>
-          <div class="lesson-callout">
-            Space-E 能实时监控各 Z 层深度的切削负载，在遇到直角转角时自动平滑过渡或插入摆线切削，避免刀具瞬间受力过载崩刃。
-          </div>
-        `,
-        quiz: {
-          qJa: "金型の等高線荒加工において、大径ラジアスエンドミル（例：Φ32R5）を使用する主なメリットは？",
-          qZh: "在模具型腔等高粗加工中，优先采用大直径牛鼻刀/圆角刀（如 Φ32R5）的核心优势是？",
-          optionsJa: [
-            "刃先チップの強度が高く、大送り・大切り込みで高能率に金属母材を除去できる",
-            "内角R0のシャープな隅角を一度に仕上げられる",
-            "工作機械の回転数を10万回転まで上げられる",
-            "切削油（クーラント）が一切不要になる"
-          ],
-          optionsZh: [
-            "刀尖圆角处强度高、抗冲击力强，可承受大进给、大切深实现海量金属高效切除",
-            "能一次性将内凹 R0 锐角直接精光到位",
-            "可使普通机床主轴瞬间飙升到 10 万转",
-            "切削全过程无需使用任何切削液冷却"
-          ],
-          ans: 0,
-          explainJa: "正解！ラジアス工具はコーナRが衝撃を分散するため刃先剛性が抜群で、金型の荒取り加工において圧倒的な高能率を発揮します。",
-          explainZh: "正确！圆角刀/牛鼻刀圆角强度远高于平底刀尖，可承受粗加工强烈震颤冲击，是型腔开粗首选。"
-        }
+            "chap": 2,
+            "subIndex": 1,
+            "titleJa": "3-2 空間座標系(WCS)と作業平面の配置",
+            "titleZh": "3-2 空间工作坐标系 (WCS) 与基准平面建立",
+            "tag": "基本操作",
+            "bodyJa": "\n          <p>金型加工では、<strong>「成形品の抜き方向（Z軸）」</strong>と<strong>「工作機械の原点（治具基準角）」</strong>を正確に一致させることが最重要課題です。</p>\n          <div class=\"lesson-code-block\">[メニュー] -> [座標系] -> [WCS作成] -> [3点指定 / 3面交点]</div>\n          <p>Space-Eでは、製品モデルの特定のエッジや金型ベースの基準ピン位置（デート面）をピックするだけで、瞬時に新しい作業座標系を定義できます。</p>\n        ",
+            "bodyZh": "\n          <p>模具数控加工的前提，是保证<strong>产品出模方向（Z轴矢量）</strong>与<strong>机床工作台基准角（对刀原点）</strong>完全吻合。</p>\n          <div class=\"lesson-code-block\">[菜单] -> [坐标系] -> [新建WCS] -> [3点定位 / 基准面三面交点]</div>\n        ",
+            "quiz": {
+                  "qJa": "金型CAMプログラミングにおいて、Z軸プラス方向は通常どのように設定すべきですか？",
+                  "qZh": "在模具 CAM 编程中，Z轴正方向通常必须如何设定？",
+                  "optionsJa": [
+                        "金型の型開き方向（工具がアプローチしてくる上方向）",
+                        "金型の底面に向かう下方向",
+                        "水平右方向（X軸と平行）",
+                        "成形品の最も長い稜線方向"
+                  ],
+                  "optionsZh": [
+                        "模具开模方向（主轴刀具从上方进刀的切削方向）",
+                        "朝向模具底板的下沉方向",
+                        "水平朝右方向（与机床工作台X轴平行）",
+                        "沿着产品最长的轮廓边界方向"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！CAMにおいて主軸工具は+Z側からワークに向かって降下するため、抜き方向（成形品が抜ける上方向）を+Zに揃えるのが鉄則です。",
+                  "explainZh": "正确！CAM 切削的主轴刀具是从 +Z 轴上方垂直向下接近工件切削，必须将脱模方向定为 +Z。"
+            }
       },
       {
-        chap: 3,
-        subIndex: 1,
-        titleJa: "4-2 ストック残肉認識（Rest Machining）の自動化",
-        titleZh: "4-2 工件残料模型实时识别 (Rest Machining)",
-        tag: "高能率CAM",
-        bodyJa: `
-          <p>大径工具で荒加工を行った後、狭い溝やコーナーには工具が入れなかった<strong>「削り残し（残肉）」</strong>が大量に残ります。</p>
-          <p>Space-Eは、前工程の加工結果を<strong>3Dストックモデル</strong>として正確に記憶。次工程の小径工具は、<strong>「残肉が存在する箇所だけ」</strong>を自動認識して無駄な空切削（エアーカット）を一切行わずに中荒加工を行います。</p>
-        `,
-        bodyZh: `
-          <p>大刀开粗后，在深腔或转角处必然残留大量未切除的厚钢料。若下一道小刀盲目切削，会在转角遭遇暴增数倍的残料而直接断刀。</p>
-          <p>Space-E 会实时动态计算 3D 剩余毛坯（Stock），小刀切削时<strong>只切削有残料的局部区域</strong>，完全消除空刀走道时间。"</p>
-        `,
-        quiz: {
-          qJa: "Space-Eのストック残肉認識加工を適用しない場合、現場で発生する最も危険なトラブルは？",
-          qZh: "若在 CAM 中不启用残料识别而直接调用小刀加工，模具车间最易发生的严重工艺故障是？",
-          optionsJa: [
-            "大径工具が入れなかったコーナー残肉に小径工具が突然突っ込み、過大負荷で工具破損・スピンドル停止する",
-            "金型の表面が錆びてしまう",
-            "Gコードの文字化けが発生する",
-            "切削粉がすべて気化してしまう"
-          ],
-          optionsZh: [
-            "大刀留下的巨量台阶残料突然迎头撞击细小刀具，瞬间发生崩刀断刀乃至机床主轴过载停机",
-            "导致模具钢件表面瞬间严重氧化生锈",
-            "会导致数控系统读取 G 代码乱码",
-            "使切屑铁屑全部升华气化"
-          ],
-          ans: 0,
-          explainJa: "正解！残肉認識がないと小径工具が急激な削り代の変化に耐えられず破損します。Space-Eの残肉追従は安全と時短の要です。",
-          explainZh: "正确！残料突变会导致刀具承受额定负荷数十倍的瞬时切削抗力，残料识别是保障无人值守安全加工的底线。"
-        }
+            "chap": 2,
+            "subIndex": 2,
+            "titleJa": "3-3 自由曲面の作成とトレランス縫合",
+            "titleZh": "3-3 自由曲面生成与公差缝合 (Tolerance Stitching)",
+            "tag": "曲面修復",
+            "bodyJa": "\n          <p>隣接する複数のサーフェスを選択し、指定した許容公差（例：0.01mm）以内の隙間を自動補間して1つのソリッドにまとめるのが<strong>「縫合（Stitch）」</strong>機能です。</p>\n          <div class=\"lesson-callout tip\">\n            <strong>💡 プロのTips:</strong> トレランスを最初から0.1mmなどの大きな値に設定すると、微細なフィレット（R面）が潰れて形状が変形する恐れがあります。まずは 0.005mm から段階的に広げるのがSpace-Eの定石です。\n          </div>\n        ",
+            "bodyZh": "\n          <p>通过选择多块相邻曲面，并在设定公差（如 0.01mm）内自动拟合微缝、合并为封闭实体，这就是<strong>“缝合 (Stitch)”</strong>。</p>\n          <div class=\"lesson-callout tip\">\n            <strong>💡 架构师技巧:</strong> 严禁初始就直接把公差放宽到 0.1mm，这会导致细小圆角（R面）被错误合并折叠。规范做法是从 0.005mm 逐级微调。\n          </div>\n        ",
+            "quiz": {
+                  "qJa": "トレランス縫合時、許容値を過大（0.2mm等）に設定しすぎた場合に起こりうる不具合は？",
+                  "qZh": "在进行公差缝合时，如果一开始将容差设得过大（如 0.2mm），可能引发什么严重后果？",
+                  "optionsJa": [
+                        "小さなフィレット面（微小R）が消滅・変形し、製品寸法精度が狂う",
+                        "モデルのファイルサイズが100倍に肥大化する",
+                        "画面の背景色が反転してしまう",
+                        "NC工作機械のモーターが過負荷停止する"
+                  ],
+                  "optionsZh": [
+                        "细微特征和微小倒角（R面）发生扭曲甚至被直接融合丢失，丧失尺寸公差",
+                        "模型文件体积会几何倍数暴增 100 倍",
+                        "三维视口的背景渲染色被反相反转",
+                        "会导致现场机床主轴电机直接烧毁"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！過大なトレランスは近接する別々のエッジを同一と誤認し、形状を破壊します。段階的な値の適用が重要です。",
+                  "explainZh": "正确！过大公差会导致相邻的细微棱边被算法强行粘合，破坏原有模具曲面的精细倒角几何。"
+            }
       },
       {
-        chap: 3,
-        subIndex: 2,
-        titleJa: "4-3 ペンシル加工（隅部清角）とカスプハイト制御",
-        titleZh: "4-3 隅部清根 (Pencil Machining) 与残留高度 (Cusp/Scallop)",
-        tag: "曲面仕上",
-        bodyJa: `
-          <p>曲面仕上げにおいて、ボールエンドミルで走査した際に生じる隣接パス間の山（微小な削り残し）を<strong>「カスプハイト（Cusp Height / Scallop）」</strong>と呼びます。</p>
-          <p>Space-Eは、設定した許容カスプハイト（例：0.002mm）に応じてピック幅（送りピッチ）を自動計算。さらに、2面が交わる谷底の稜線に沿って1本〜数本のパスを通す<strong>「ペンシル加工」</strong>で隅角の肉を極限まで除去します。</p>
-        `,
-        bodyZh: `
-          <p>球头刀在平缓曲面上往复步进时，刀轨行距之间会残留隆起的小山脊，称为<strong>残留高度（Scallop/Cusp Height）</strong>。</p>
-          <p>Space-E 根据工艺设定的微米级残留高度（如 0.003mm）自动反算自适应行距，并使用<strong>清根加工 (Pencil Machining)</strong> 精准沿着曲面交线谷底单轨光刀。"</p>
-        `,
-        quiz: {
-          qJa: "鏡面磨き（磨き工程の短縮）を目指すプラスチック金型の精仕上げにおいて、目標とすべきカスプハイトの目安は？",
-          qZh: "为了最大程度减少人工模具省模/抛光工时，注塑模精光曲面的残留高度 (Scallop Height) 通常应严格控制在？",
-          optionsJa: [
-            "0.002mm 〜 0.005mm（手磨きを最小限に抑える滑らかな表面）",
-            "0.5mm 〜 1.0mm（肉眼で階段状に見える粗さ）",
-            "5.0mm 以上",
-            "マイナス値（食い込み過切削）"
-          ],
-          optionsZh: [
-            "0.002mm ~ 0.005mm（微米级微小峰高，几乎无需人工打磨）",
-            "0.5mm ~ 1.0mm（肉眼可见严重阶梯刀痕）",
-            "5.0mm 以上",
-            "负数（代表严重过切报废）"
-          ],
-          ans: 0,
-          explainJa: "正解！カスプハイトを数ミクロン（μm）以内に制御することで、熟練工による手作業の金型磨き工程を劇的に省力化できます。",
-          explainZh: "正确！微米级的残留峰高使曲面光洁度接近镜面，大幅节省钳工繁重耗时的人工油石研磨抛光工序。"
-        }
+            "chap": 2,
+            "subIndex": 3,
+            "titleJa": "3-4 トリム曲面と曲率連続性（G0/G1/G2）の診断",
+            "titleZh": "3-4 修剪曲面与曲率连续性 (G0/G1/G2) 检验",
+            "tag": "形状品位",
+            "bodyJa": "\n          <p>自動車外装や家電の金型では、光の反射（ハイライトライン）が滑らかに繋がることが求められます。</p>\n          <ul style=\"padding-left:20px;\">\n            <li><strong>G0（位置連続）</strong>：端点が繋がっているが角（エッジ）がある状態。</li>\n            <li><strong>G1（接線連続）</strong>：接線方向が一致し、境目が滑らか。</li>\n            <li><strong>G2（曲率連続）</strong>：曲率の変化率が連続しており、映り込みに歪みがない最高品位。</li>\n          </ul>\n        ",
+            "bodyZh": "\n          <p>汽车车灯、车身面板等注塑模具，对光影高光反射线（Zebra Lines）有极高要求：</p>\n          <ul style=\"padding-left:20px;\">\n            <li><strong>G0 (位置连续)</strong>：点相连，但有明显折角接缝。</li>\n            <li><strong>G1 (相切连续)</strong>：切线一致，过渡圆滑。</li>\n            <li><strong>G2 (曲率连续)</strong>：曲率半径连续渐变，消除光影突变斑马线，金型光学级表面。</li>\n          </ul>\n        ",
+            "quiz": {
+                  "qJa": "高級車のランプカバーやボディパネル金型で求められる、映り込みに歪みが生じない曲面連続性はどれですか？",
+                  "qZh": "对于高级汽车大灯透镜或车身外观模具，为确保反光映象毫无折痕扭曲，必须达到的曲面连续性等级是？",
+                  "optionsJa": [
+                        "G2 連続（曲率連続）",
+                        "G0 連続（位置連続のみ）",
+                        "G1 連続（接線連続のみ）",
+                        "非連続（オープンエッジ）"
+                  ],
+                  "optionsZh": [
+                        "G2 连续（曲率连续）",
+                        "G0 连续（仅位置接触）",
+                        "G1 连续（仅切线相切）",
+                        "非连续（断开敞口边）"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！G2連続は曲率変化が滑らかに推移するため、成形品の表面にハイライトの不連続（光の折れ）が出ません。",
+                  "explainZh": "正确！G2 曲率连续能保证表面反射光斑在经过连接缝时平滑流动，绝不出现断光或折光现象。"
+            }
       },
       {
-        chap: 3,
-        subIndex: 3,
-        titleJa: "4-4 高速ミーリング（HSM）対応アプローチ・退避パス",
-        titleZh: "4-4 高速切削 (HSM) 平滑进退刀与圆弧过渡策略",
-        tag: "高速加工",
-        bodyJa: `
-          <p>高速切削において、工具がワークに垂直に急降下して食い込むと、刃先が瞬時に欠損します。</p>
-          <p>Space-E/CAMは、必ず<strong>「ヘリカル（螺旋）進入」</strong>や接線方向に沿った<strong>「円弧アプローチ（Tangential Arc）」</strong>で進入し、切削終了時も滑らかな円弧で離脱します。工作機械のサーボモーターへのショックを最小限に抑えます。</p>
-        `,
-        bodyZh: `
-          <p>在数万转的高速加工中，刀具若垂直直扎工件，极易发生打刀崩裂。</p>
-          <p>Space-E/CAM 强制实施切线相切<strong>圆弧进刀 (Arc Lead-in)</strong> 或<strong>螺旋下刀 (Helical Ramp)</strong>，消除进刀切入痕，极大保护主轴与刀具寿命。</p>
-        `,
-        quiz: {
-          qJa: "キャビティ底面など閉じた領域へ工具が進入する際、工具寿命と加工面品位の観点から最も推奨される進入方法は？",
-          qZh: "在封闭型腔深处下刀进给时，从保护刀具与表面质量角度，首选的进刀方式是？",
-          optionsJa: [
-            "ヘリカル（螺旋）傾斜進入、または円弧アプローチ",
-            "最高送り速度（F値最大）でのZ軸垂直直下ダイブ",
-            "ステップなしの真横からの全負荷突っ込み",
-            "加工途中で主軸を停止させての押し込み"
-          ],
-          optionsZh: [
-            "螺旋渐开渐进下刀 (Helical Ramp) 或切向平滑圆弧过渡",
-            "以最高快进速度 (G00) 垂直直接扎入",
-            "不做任何斜向缓冲直接侧向撞入工件",
-            "在切入瞬间停转主轴强行冲入"
-          ],
-          ans: 0,
-          explainJa: "正解！螺旋状に緩やかに金属を削りながら降りるヘリカル進入は、切削抵抗を均一に保ち工具寿命を大幅に延ばします。",
-          explainZh: "正确！螺旋进刀将垂直抗力转化为侧向切削，避免了底刃受力集中，确保高速平稳下刀。"
-        }
-      },
-
-      // 第5章
-      {
-        chap: 4,
-        subIndex: 0,
-        titleJa: "5-1 同時5軸加工と割出5軸加工（3+2軸）の使い分け",
-        titleZh: "5-1 定轴五轴 (3+2轴) 与连续联动五轴加工架构对比",
-        tag: "5軸CAM",
-        bodyJa: `
-          <p>5軸加工には大きく分けて2つのアプローチがあります：</p>
-          <ul style="padding-left:20px;">
-            <li><strong>割出5軸（3+2軸）</strong>：回転2軸で工具を特定角度に傾けて固定し、3軸（XYZ）で切削。突き出し長さの短い高剛性工具が使えるため、金型加工の8割はこれで対応可能。</li>
-            <li><strong>同時5軸（Simultaneous 5-Axis）</strong>：XYZBCの5軸が同時に協調動作。インペラーやアンダーカットの深い複雑曲面を切削。</li>
-          </ul>
-        `,
-        bodyZh: `
-          <p>高端模具五轴数控加工主要分为两种主流架构：</p>
-          <ul style="padding-left:20px;">
-            <li><strong>定面定位五轴 (3+2轴)</strong>：摆好角度锁紧，由 XYZ 3轴执行高速切削。刀具悬伸极短、刚性最高，占模具加工 80% 以上应用。</li>
-            <li><strong>连续五轴联动</strong>：五轴坐标协同连续光滑微调，专攻深腔变曲率侧壁防干涉。</li>
-          </ul>
-        `,
-        quiz: {
-          qJa: "深彫り金型において、従来の3軸加工と比べて割出5軸（3+2軸）加工を採用する最大の利点は？",
-          qZh: "在深腔精密模具中，与传统 3 轴相比，采用 3+2 定位五轴加工最显著的技术收益是？",
-          optionsJa: [
-            "工具を傾けることで、突き出し長さ（首下長）の短い高剛性シャンクが使え、ビビり振動を根絶できる",
-            "工具の価格が10分の1になる",
-            "機械の電気代が半分になる",
-            "CAMの計算が瞬時に終わる"
-          ],
-          optionsZh: [
-            "通过倾斜主轴，大幅缩短刀具悬伸长度（L/D比），极大提高刀柄刚性，彻底根除切削震颤",
-            "能使铣刀采购单价直接下降到十分之一",
-            "可使机床的整机耗电量减半",
-            "CAM 路径算法不需要任何算力即刻输出"
-          ],
-          ans: 0,
-          explainJa: "正解！工具が短いほどたわみ・ビビり（Chatter）が起きず、切削面品位が格段に向上し、加工送り速度も大幅に引き上げられます。",
-          explainZh: "正确！刀具悬伸每缩短一半，刀杆抗弯刚度提升 8 倍，彻底消除了深型腔加工中的震刀波纹。"
-        }
+            "chap": 3,
+            "subIndex": 0,
+            "titleJa": "4-1 抜き勾配解析（Draft Angle Analysis）の鉄則",
+            "titleZh": "4-1 拔模斜度分析 (Draft Angle Analysis) 核心原理",
+            "tag": "金型設計",
+            "bodyJa": "\n          <p>プラスチック射出成形品が冷却固化すると収縮し、金型キャビティ・コアに密着します。製品を取り出す際、側面に角度がついていないと摩擦で傷（かじり）が発生したり抜けなくなります。この傾斜が<strong>「抜き勾配（拔模角）」</strong>です。</p>\n          <div class=\"lesson-callout\">\n            Space-Eの<strong>[金型] -> [勾配解析]</strong>を実行すると、指定した抜き方向ベクトルに基づき、曲面の角度がカラーコンター表示（緑：合格、赤：アンダーカット/逆勾配、青：垂直面）されます。\n          </div>\n        ",
+            "bodyZh": "\n          <p>塑料注塑件冷却固化后发生收缩，紧包在型芯与型腔上。若壁面完全垂直（0度），脱模摩擦力会划伤甚至拉裂塑件，因此必须施加<strong>拔模斜度（脱模角）</strong>。</p>\n          <div class=\"lesson-callout\">\n            Space-E 的<strong>[模具] -> [拔模分析]</strong>模块会以假彩色云图实时着色：绿色为合格面，红色为倒拔模（严重倒扣），蓝色为危险垂直面。\n          </div>\n        ",
+            "quiz": {
+                  "qJa": "Space-Eの勾配解析において「アンダーカット（逆勾配）」と診断された領域をそのまま成形した場合、何が起こりますか？",
+                  "qZh": "如果在 Space-E 拔模分析中检测出“倒扣/倒拔模 (Undercut)”区域而未作结构处理，注塑生产时将发生什么？",
+                  "optionsJa": [
+                        "金型が開いた瞬間に成形品が金型に引っかかり、脱型不能または破損する",
+                        "成形品の冷却速度が早くなりすぎる",
+                        "材料の樹脂粘度が低下する",
+                        "CAMのツールパスの行数が倍増する"
+                  ],
+                  "optionsZh": [
+                        "开模顶出时制品被钢材结构死死勾住，导致塑件撕裂报废或顶针顶穿",
+                        "注塑件的冷却固化速度会无故变快",
+                        "塑料熔融料的流动粘度大幅降低",
+                        "CAM 生成的 G 代码行数翻倍"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！アンダーカット部は物理的に直進脱型できないため、スライドコアや傾斜ピン（置き駒）などの機構設計が必須となります。",
+                  "explainZh": "正确！倒扣部位在主开模方向存在物理阻挡，必须通过增设侧向抽芯（滑块 Slider）或斜顶机构解决。"
+            }
       },
       {
-        chap: 4,
-        subIndex: 1,
-        titleJa: "5-2 ツールホルダー干渉回避と刀軸自動傾斜",
-        titleZh: "5-2 刀柄碰撞自动干涉回避与刀轴倾角智能调整",
-        tag: "安全CAM",
-        bodyJa: `
-          <p>同時5軸切削時、ワーク深部にアプローチする工具ホルダーやスピンドルヘッドがワーク上部や治具に激突する事故は絶対に防がねばなりません。</p>
-          <p>Space-E/CAMは、シャンク（柄）、コレット、ツールホルダー、主軸頭の3D形状を精密に登録可能。干渉限界（セーフティクリアランス）に近づくと、<strong>自動的に刀軸を安全な側へチルト（傾斜）</strong>させてパスを再計算します。</p>
-        `,
-        bodyZh: `
-          <p>在深腔五轴加工中，刀柄 (Holder) 或机床主轴外壳与工件侧壁发生恶性碰撞是车间灾难性事故。</p>
-          <p>Space-E 支持装配体实体刀柄干涉检测，在间隙接近设定的安全余量时，<strong>自动将刀轴矢量平滑倾斜</strong>偏离干涉区。</p>
-        `,
-        quiz: {
-          qJa: "Space-Eの干渉チェック機能で「ツールホルダーがワークに接触」と判定された場合、システムが実行する最適アクションは？",
-          qZh: "在 Space-E 五轴干涉检测中，当检测到刀柄即将与模具上沿碰撞时，系统最优的自动化动作是？",
-          optionsJa: [
-            "刀軸の傾き角度（ティルト角）を動的に自動変更し、干渉しない安全な傾斜姿勢でパスを生成する",
-            "ワークのモデルデータを自動的に削り取って穴を開ける",
-            "警告を出さずにそのまま加工Gコードを出力する",
-            "CAMプログラム全体を強制削除する"
-          ],
-          optionsZh: [
-            "动态平滑调整刀轴倾角矢量 (Tilt Angle)，以倾斜防撞姿态安全生成无碰撞刀轨",
-            "直接自动把三维工件被碰撞区域削掉一个窟窿",
-            "忽略此干涉隐患、不加警告强行输出危险 G 代码",
-            "直接永久性强制格式化清空项目文件"
-          ],
-          ans: 0,
-          explainJa: "正解！自動チルト制御により、加工者は干渉を恐れることなく最短工具による高精度加工を自動生成できます。",
-          explainZh: "正确！智能摆角不仅彻底杜绝撞机事故，更保证了全行程始终使用最短刀柄高速高精切削。"
-        }
+            "chap": 3,
+            "subIndex": 1,
+            "titleJa": "4-2 パーティングライン（PL面）の抽出と作成",
+            "titleZh": "4-2 分型线 (Parting Line) 与分模面 (PL) 构建",
+            "tag": "型割技術",
+            "bodyJa": "\n          <p>金型を「固定側（キャビティ）」と「可動側（コア）」に二分する境界線を<strong>パーティングライン（PL）</strong>と呼びます。</p>\n          <p>Space-Eは、勾配の正負境界（0度変曲点）を探索し、閉じた連続PLループを半自動抽出する専用アルゴリズムを備えています。抽出したループから外側へ面を延伸（リバースサーフェス）させることで、バリ（Burr）の出ない強固なPLシーリング面を生成します。</p>\n        ",
+            "bodyZh": "\n          <p>将模具分为“前模/定模（型腔 Cavity）”与“后模/动模（型芯 Core）”的闭合分界线被称为<strong>分型线 (PL)</strong>。</p>\n          <p>Space-E 能自动沿着拔模角正负反转的 0 度临界曲线提取闭合环路，并沿外法线方向延伸出光滑平整的封胶分型面，防止注塑跑披锋（毛边）。</p>\n        ",
+            "quiz": {
+                  "qJa": "Space-EでPL面（パーティング面）を設計する際、金型耐久性とバリ防止のために最も推奨される形状は？",
+                  "qZh": "在 Space-E 中构建分型面 (PL 面) 时，为提高模具寿命并防止披锋毛边，最佳的曲面延伸原则是？",
+                  "optionsJa": [
+                        "成形品外形エッジから滑らかに外側へ接線または垂直に伸びるフラット・スムーズ面",
+                        "波打つような激しいジグザグ曲面",
+                        "肉厚0.01mmの薄いナイフエッジ形状",
+                        "成形品内部に向かって潜り込む逆傾斜面"
+                  ],
+                  "optionsZh": [
+                        "沿产品外轮廓向外切向或法向平滑延伸、受力均匀的平滑封胶面",
+                        "波浪状剧烈起伏的折线曲面",
+                        "刃口厚度仅 0.01mm 的锐角尖刃形状",
+                        "朝向塑料制品内侧倒扣凹陷的逆向曲面"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！PL面は高圧の射出成形圧力で型締めされるため、滑らかで剛性が高く、段差のないシンプルな面構成が理想です。",
+                  "explainZh": "正确！分模封胶面承受数吨合模锁紧压力，必须平缓、顺滑、刚性强，避免产生应力集中的尖角薄刃。"
+            }
       },
       {
-        chap: 4,
-        subIndex: 2,
-        titleJa: "5-3 専用ポストプロセッサとGコード最適化",
-        titleZh: "5-3 专用机床后置处理 (Post-Processor) 与 G 代码优化",
-        tag: "ポスト処理",
-        bodyJa: `
-          <p>CAMが計算したツールパス（CLデータ：内部座標データ）を、現場の工作機械（ファナック、マキノ、オークマ、安田工業、ハイデンハイン等）が理解できる<strong>「NCプログラム（Gコード）」</strong>に翻訳するのが<strong>ポストプロセッサ</strong>です。</p>
-          <p>Space-Eは各社マシニングセンタの高精度輪郭制御（例：FANUC AICC/ナノ補間、MAKINO SGIなど）に最適化した専用コード（G05.1 / G05 P10000等）を自動出力します。</p>
-        `,
-        bodyZh: `
-          <p>将 CAM 计算出的刀位轨迹 (CL Data) 翻译成机床数控系统（发那科 FANUC、牧野 MAKINO、大隈 OKUMA、安田 YASDA 等）识别执行的标准 <strong>NC 程序 (G-code)</strong>，依赖<strong>后置处理器 (Post-Processor)</strong>。</p>
-          <p>Space-E 完美匹配日本顶级机床的高速高精轮廓控制宏指令（如 G05.1 Q1 / G05 P10000）。</p>
-        `,
-        quiz: {
-          qJa: "金型の微小線分高速加工において、FANUC等のNC装置で「先行補正・ナノ補間モード（高精度輪郭制御）」を呼ぶGコードを挿入する目的は？",
-          qZh: "在模具三维微小线段高速切削中，在程序头调用数控系统“纳米插补/高精度轮廓预读控制 (如 G05.1 Q1)”的目的是？",
-          optionsJa: [
-            "数千ブロック先のパスを事前先読みし、急激な加減速による機械の振動や形状の角ダレ（追従遅れ）を防ぐため",
-            "NC画面の文字サイズを2倍にするため",
-            "主軸の回転数を強制的に半減させるため",
-            "機内照明を点灯させるため"
-          ],
-          optionsZh: [
-            "超前预读数千个后续运动微线段，提前平滑预规划加减速，彻底消除过冲震动与轮廓失真",
-            "将数控操作屏的显示字体放大 2 倍",
-            "将主轴电机的旋转转速强行降至一半",
-            "自动点亮机床内部的照明白炽灯"
-          ],
-          ans: 0,
-          explainJa: "正解！先行制御により、微小線分でも速度を落とさずに滑らかにコーナーを曲がることができ、金型の面品位と加工時間が劇的に改善します。",
-          explainZh: "正确！前瞻算法配合伺服纳米插补，能使刀尖在微小折线段间高速飞行而不产生尖锐加速度冲击。"
-        }
+            "chap": 3,
+            "subIndex": 2,
+            "titleJa": "4-3 キャビティ・コアの分割（型割）処理",
+            "titleZh": "4-3 前后模型腔/型芯一键分模 (Core/Cavity Split)",
+            "tag": "型割技術",
+            "bodyJa": "\n          <p>製品モデルとPL面が揃ったら、<strong>[型割]コマンド</strong>によって金型ブロック素材（直方体ブロック）からキャビティ駒とコア駒を完全に二分割します。</p>\n          <p>Space-Eの型割エンジンは、微小な隙間があっても自動的に直近の面と連結させてブーリアン演算を完遂させる強靭なアルゴリズムを誇ります。</p>\n        ",
+            "bodyZh": "\n          <p>在完善分型面与封堵孔洞后，执行<strong>[分模 (Split)]指令</strong>，系统将对毛坯钢料执行实体布尔分割，一键分离出前模腔与后模芯。</p>\n        ",
+            "quiz": {
+                  "qJa": "型割処理を実行する前に、製品モデル内部の「貫通穴（リブ穴やボタン穴）」に対して行わなければならない作業は？",
+                  "qZh": "在执行前后模一键分模运算前，对塑件上的“通孔（如螺丝孔、按键孔）”必须预先做什么处理？",
+                  "optionsJa": [
+                        "穴埋め面（パッチサーフェス）を作成して穴を完全に塞いでおく",
+                        "穴の直径を2倍に拡大しておく",
+                        "穴の周りのメッシュをすべて削除する",
+                        "モデル全体を透明化する"
+                  ],
+                  "optionsZh": [
+                        "通过[贴面/补孔 (Patch)]功能将所有贯通孔洞密封，形成完整隔离面",
+                        "把所有的孔径强行放大 2 倍以防卡死",
+                        "把孔洞周围的所有几何曲面全部强行删除",
+                        "将整个零件模型透明度设为 100%"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！貫通穴が開いたままだとキャビティ側とコア側の空間が繋がり、型割境界が閉ループを形成できずエラーになります。",
+                  "explainZh": "正确！通孔若不打补丁密封，前后模空间将相互联通，导致分模算法无法判断隔离边界而失败。"
+            }
       },
       {
-        chap: 4,
-        subIndex: 3,
-        titleJa: "5-4 マシンシミュレーションと実機バーチャル検証",
-        titleZh: "5-4 机床整机运动学仿真与防撞虚拟验证",
-        tag: "バーチャル検証",
-        bodyJa: `
-          <p>実機加工の前に、画面上でマシニングセンタのXYZテーブル、回転軸（A/B/C軸）、バイス、金型、工具の全干渉を忠実に再現・シミュレーションします。</p>
-          <p>Space-Eのシミュレータは、CAMの内部計算値ではなく<strong>「最終出力されたGコードそのもの」</strong>を逆読みしてキネマティクス（機構学）解析を行うため、実機との乖離がゼロです。</p>
-        `,
-        bodyZh: `
-          <p>在开动机床前，在软件视口中对立式/卧式五轴机床工作台、回转轴、虎钳夹具、毛坯进行 1:1 数字孪生仿真。</p>
-          <p>Space-E 基于<strong>“最终输出的 G 代码原文件驱动”</strong>仿真，与机床实跑无任何误差脱节。</p>
-        `,
-        quiz: {
-          qJa: "「Gコード駆動型」マシンシミュレータが、一般的なCAM内部パスシミュレータよりも安全性が高いとされる理由は？",
-          qZh: "基于“最终 G 代码驱动”的机床仿真，为何比普通 CAM 内部刀位轨迹仿真更具绝对安全性？",
-          optionsJa: [
-            "ポストプロセッサによる変換ミスや、機械固有の原点シフト・リトラクト動作の誤りまで完全に検出できるから",
-            "計算時間が1秒未満で終わるから",
-            "3Dグラフィックが映画のように綺麗だから",
-            "オペレータの資格が不要になるから"
-          ],
-          optionsZh: [
-            "能完整检测后置处理器可能存在的逻辑翻译缺陷，以及机床换刀安全退刀点、工件坐标系原点偏置指令的潜在错误",
-            "计算耗费的时间小于 1 秒钟",
-            "渲染出的 3D 阴影画面犹如好莱坞电影",
-            "可以让工厂完全不用雇佣持证操作工"
-          ],
-          ans: 0,
-          explainJa: "正解！CAMデータとNCデータには変換による差異が生じる可能性があります。Gコードそのものを検証することが究極の安全策です。",
-          explainZh: "正确！真正的车间风险往往发生在后置转换生成的辅助 G 代码上。代码级实真仿真是万无一失的防线。"
-        }
+            "chap": 3,
+            "subIndex": 3,
+            "titleJa": "4-4 スライドコア（置き駒）と傾斜ピンの干渉設計",
+            "titleZh": "4-4 滑块机构 (Slide Core) 与斜顶机构设计",
+            "tag": "金型機構",
+            "bodyJa": "\n          <p>アンダーカットを回避するために、型開き動作と連動して横方向に退避する<strong>「スライドコア」</strong>や、突き出し動作で斜めに逃げる<strong>「傾斜ピン（リフター）」</strong>を配置します。</p>\n          <p>Space-Eでは、スライドのストローク量と抜き角度（アンギュラピン角度：通常15〜25度）の幾何干渉を3Dアニメーションで事前検証可能です。</p>\n        ",
+            "bodyZh": "\n          <p>对于存在外侧或内侧倒扣的特征，必须利用开模动力驱动横向抽芯的<strong>滑块机构 (Slider)</strong>，或随顶针板斜向滑移的<strong>斜顶机构 (Lifter)</strong>。</p>\n          <p>Space-E 提供斜导柱抽芯距离干涉校核功能，避免滑块撞击后模仁。</p>\n        ",
+            "quiz": {
+                  "qJa": "一般的な射出成形金型において、スライド機構の「アンギュラピン（斜めピン）」の傾斜角度として推奨される安全範囲は？",
+                  "qZh": "在常见注塑模具滑块结构中，驱动滑块的“斜导柱”倾角通常推荐控制在多大范围内？",
+                  "optionsJa": [
+                        "15度 〜 25度（過度な曲げ応力を防ぎ、十分なストロークを確保）",
+                        "45度 〜 60度（急激に開かせるため）",
+                        "0度（垂直）",
+                        "85度（ほぼ水平）"
+                  ],
+                  "optionsZh": [
+                        "15° ~ 25°（既保证足够抽芯行程，又避免斜导柱承受过大剪切弯曲应力）",
+                        "45° ~ 60°（为了追求极速抽芯）",
+                        "0°（垂直向下）",
+                        "85°（几乎水平）"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！25度を超えると斜ピンに過大な曲げ荷重がかかり破損の危険が高まります。一般には20度前後が多用されます。",
+                  "explainZh": "正确！斜导柱角度若大于 25°，开模时受到的横向弯曲剪应力会急剧攀升，极易折断；通常取 18°~22°。"
+            }
+      },
+      {
+            "chap": 4,
+            "subIndex": 0,
+            "titleJa": "5-1 放電加工（EDM）の仕組みと電極設計の必要性",
+            "titleZh": "5-1 电火花放电加工 (EDM) 机制与电极设计基础",
+            "tag": "放電加工",
+            "bodyJa": "\n          <p>回転工具（エンドミル）では、刃物の半径があるため<strong>「ピン角（R0の内角）」</strong>や<strong>「極めて深い細リブ（溝）」</strong>を切削することが物理的に不可能です。</p>\n          <p>そこで、銅（Cu）やグラファイト（黒鉛）の<strong>電極</strong>を反転形状として製作し、電気火花のアーク放電によって鋼材を微小溶融・除去する<strong>「形彫り放電加工（EDM）」</strong>を行います。</p>\n        ",
+            "bodyZh": "\n          <p>铣刀切削必然存在刀具半径，无法直接加工出<strong>“绝对直角内尖角 (R0)”</strong>或<strong>“深窄肋条槽”</strong>。此时必须通过数控加工出紫铜或石墨<strong>电极 (铜公)</strong>，利用电火花脉冲放电熔融蚀除模具钢材。</p>\n        ",
+            "quiz": {
+                  "qJa": "切削エンドミルでは加工できず、EDM（形彫り放電加工）が不可欠となる代表的な金型形状は？",
+                  "qZh": "数控铣削刀具无法直接切削、必须依靠 EDM 放电加工的典型模具特征是？",
+                  "optionsJa": [
+                        "細くて深いリブ溝や、内角の隅Rが極めて小さいピン角形状",
+                        "平坦で広大なパーティング面",
+                        "緩やかな大半径の球状曲面",
+                        "直径20mmの貫通ボルト穴"
+                  ],
+                  "optionsZh": [
+                        "狭窄深槽（筋条）以及内角几乎无 R 角的锐利清角结构",
+                        "大面积平坦光滑的分型面",
+                        "平缓大半径的球面曲面",
+                        "直径 20mm 的穿丝螺栓孔"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！回転工具はどうしても刃具半径（R）が残るため、シャープな内隅角や深リブは電極による放電でしか成形できません。",
+                  "explainZh": "正确！旋转刀具必然受限于刀具半径 R，深沟槽与清角必须依靠负极放电电极逐步蚀除加工。"
+            }
+      },
+      {
+            "chap": 4,
+            "subIndex": 1,
+            "titleJa": "5-2 Space-E/Electrode による電極形状の自動抽出",
+            "titleZh": "5-2 Space-E/Electrode 电极自动提取与延伸",
+            "tag": "電極モジュール",
+            "bodyJa": "\n          <p>Space-Eの<strong>電極専用モジュール</strong>は、キャビティ内の放電したいリブ底面をクリックするだけで、放電領域の周囲境界を自動認識し、上方向へ滑らかに逃げ面を<strong>「電極立ち上げ延伸」</strong>します。</p>\n          <div class=\"lesson-code-block\">[電極] -> [リブ電極自動抽出] -> [逃げクリアランス面自動作成]</div>\n          <p>手動モデリングに比べて設計時間を約80%短縮し、反転抜けミスを完全に防止します。</p>\n        ",
+            "bodyZh": "\n          <p>Space-E 拥有独步业界的<strong>电极设计专用模块</strong>。只需点击型腔内的筋位底面，系统即可自动追踪深槽边界，并沿法向生成电极避空防干涉曲面。</p>\n          <div class=\"lesson-code-block\">[电极] -> [肋条电极自动提取] -> [延伸避空面构建]</div>\n        ",
+            "quiz": {
+                  "qJa": "Space-Eの電極自動作成時、放電部以外の金型面に電極が接触して破損するのを防ぐために設ける面は？",
+                  "qZh": "在 Space-E 自动创建电极时，为防止放电有效区之外的电极本体碰撞模具工件，必须生成的结构是？",
+                  "optionsJa": [
+                        "逃げ面（リリーフ・クリアランス面）",
+                        "吸着面",
+                        "反射面",
+                        "鏡面研磨面"
+                  ],
+                  "optionsZh": [
+                        "避空面 (Relief / Clearance Surface)",
+                        "真空吸附面",
+                        "激光反射面",
+                        "镜面抛光面"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！放電したいターゲット形状以外は、0.5〜1mm以上離れるよう逃げ面を自動延伸することで、不要な二次放電や干渉を防ぎます。",
+                  "explainZh": "正确！避空面能让非放电区域退后 0.5~1mm 以上，防止无效区域发生二次侧面打火拉弧。"
+            }
+      },
+      {
+            "chap": 4,
+            "subIndex": 2,
+            "titleJa": "5-3 放電クリアランス（火花ギャップ）と揺動補正",
+            "titleZh": "5-3 放电间隙 (Spark Gap) 补偿与平动摇动量计算",
+            "tag": "加工パラメータ",
+            "bodyJa": "\n          <p>放電加工時、電極と鋼材の間には常に微小な<strong>放電ギャップ（Spark Gap：火花隙間）</strong>が存在します。そのため、電極は製品寸法よりそのギャップ分だけ<strong>小さく（縮小オフセット）</strong>製作しなければなりません。</p>\n          <ul style=\"padding-left:20px;\">\n            <li><strong>粗放電電極</strong>：ギャップ片肉 0.15mm 〜 0.30mm（高速除去）</li>\n            <li><strong>中仕上げ電極</strong>：ギャップ片肉 0.08mm 〜 0.12mm</li>\n            <li><strong>精仕上げ電極</strong>：ギャップ片肉 0.02mm 〜 0.05mm（精密仕上げ）</li>\n          </ul>\n        ",
+            "bodyZh": "\n          <p>放电蚀除是在微小火花距离内发生的，因此电极必须按照<strong>放电间隙（火花位）</strong>进行<strong>等距均匀缩小负公差加工</strong>：</p>\n          <ul style=\"padding-left:20px;\">\n            <li><strong>粗公 (Roughing)</strong>：火花位单边 0.15mm ~ 0.25mm（追求快速去除金属）</li>\n            <li><strong>精公 (Finishing)</strong>：火花位单边 0.02mm ~ 0.05mm（极高尺寸精度与表面光洁度）</li>\n          </ul>\n        ",
+            "quiz": {
+                  "qJa": "製品図面通りの深リブを放電加工する場合、精仕上げ電極の3Dモデルは製品寸法に対してどうオフセットすべきですか？",
+                  "qZh": "欲加工出符合图纸精度的模具深槽，精加工电极在 3D 几何建模时应对标准模型做何种补偿？",
+                  "optionsJa": [
+                        "火花放電ギャップ分（例：片肉0.03mm）だけ全周マイナス縮小オフセットする",
+                        "火花放電ギャップ分だけ大きく拡大オフセットする",
+                        "オフセットは一切行わず、1対1寸法のままで加工する",
+                        "高さ方向（Z軸）だけを10mm縮める"
+                  ],
+                  "optionsZh": [
+                        "根据火花放电间隙（如单边 0.03mm）做全方向的三维均匀负向缩小偏移 (Minus Offset)",
+                        "将电极模型按照放电间隙做放大偏移",
+                        "不做任何偏移，保持 1:1 原尺寸加工",
+                        "仅将高度方向（Z轴）强行压缩 10mm"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！電極の周りに火花（ギャップ）が飛んで削れるため、ギャップ分だけ小さく作らないと目標寸法より削りすぎてしまいます。",
+                  "explainZh": "正确！电极周围由电火花击穿放电蚀除，若不预留单边缩水负间隙，成型腔槽宽度必然超差过大。"
+            }
+      },
+      {
+            "chap": 4,
+            "subIndex": 3,
+            "titleJa": "5-4 基準台（ホルダーベース）とポカよけ（C面）",
+            "titleZh": "5-4 电极基准台座与防呆倒角 (C角) 工业规范",
+            "tag": "現場実務",
+            "bodyJa": "\n          <p>加工された電極はEDM機のアリ溝ホルダーに固定されます。機上で正確に原点出し（芯出し）を行うため、四角い<strong>基準台（ベースブロック）</strong>を付加します。</p>\n          <p>さらに、電極をホルダーに取り付ける際、90度や180度向きを間違えてセットする重大ミス（方向違い加工事故）を防ぐため、基準角の1箇所だけに<strong>「ポカよけC面（面取り）」</strong>を施します。</p>\n        ",
+            "bodyZh": "\n          <p>电极切削完成后需要安装在放电夹头中。为快速打表分中，底部必须连带铣出高精度的<strong>基准台 (Datum Base)</strong>。</p>\n          <p>为彻底避免作业员将电极旋转 90° 或 180° 装反而导致整套模具报废，工业标准是在基准台特定一角倒<strong>“防呆 C 角”</strong>。</p>\n        ",
+            "quiz": {
+                  "qJa": "電極の基準台において、1箇所だけ非対称に「C面（面取り）」を設ける最大の目的は？",
+                  "qZh": "在放电电极基准台上，仅在单一角落切出不对称 C 倒角的核心目的是？",
+                  "optionsJa": [
+                        "電極を放電盤にセットする際の方向誤り（ポカミス・反転取り付け）を防止するため",
+                        "電極の重量を軽くして加工速度を上げるため",
+                        "火花放電の電圧を高めるため",
+                        "電極の美観・デザイン性を向上させるため"
+                  ],
+                  "optionsZh": [
+                        "防呆识别：防止工人在机床上装夹电极时角度方向装反造成整模报废",
+                        "减轻紫铜电极重量以降低材料采购成本",
+                        "汇聚电场提高电火花击穿电压",
+                        "增强电极工业设计的美观度"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！ポカよけC面によって、作業者や画像検査装置が「基準角」をひと目で識別でき、誤方向での放電事故をゼロにします。",
+                  "explainZh": "正确！防呆角（Poka-yoke Chamfer）是工业工程的强制规范，确保机床探头与操作人员绝无装反可能。"
+            }
+      },
+      {
+            "chap": 5,
+            "subIndex": 0,
+            "titleJa": "6-1 Space-E/CAM の切削哲学と等高線荒加工",
+            "titleZh": "6-1 Space-E/CAM 切削理念与等高线粗加工 (Constant Z Roughing)",
+            "tag": "CAM基礎",
+            "bodyJa": "\n          <p>金型切削の効率と工具寿命は、<strong>「荒加工（ラフィング）」</strong>で8割が決まります。Space-E/CAMの真骨頂は、素材ブロックから効率よく大量の金属を取り除く<strong>「等高線荒加工」</strong>です。</p>\n          <div class=\"lesson-callout\">\n            Space-Eは、各Z深さレベルにおいて工具負荷が一定になるよう、コーナ部で自動的に減速・トロコイド円弧補間を挿入し、刃物のチッピング（欠け）を防止します。\n          </div>\n        ",
+            "bodyZh": "\n          <p>模具加工 80% 的切除量在<strong>粗加工 (Roughing)</strong> 阶段完成。Space-E/CAM 的核心算法是<strong>等高粗加工</strong>。</p>\n          <div class=\"lesson-callout\">\n            Space-E 能实时监控各 Z 层深度的切削负载，在遇到直角转角时自动平滑过渡或插入摆线切削，避免刀具瞬间受力过载崩刃。\n          </div>\n        ",
+            "quiz": {
+                  "qJa": "金型の等高線荒加工において、大径ラジアスエンドミル（例：Φ32R5）を使用する主なメリットは？",
+                  "qZh": "在模具型腔等高粗加工中，优先采用大直径牛鼻刀/圆角刀（如 Φ32R5）的核心优势是？",
+                  "optionsJa": [
+                        "刃先チップの強度が高く、大送り・大切り込みで高能率に金属母材を除去できる",
+                        "内角R0のシャープな隅角を一度に仕上げられる",
+                        "工作機械の回転数を10万回転まで上げられる",
+                        "切削油（クーラント）が一切不要になる"
+                  ],
+                  "optionsZh": [
+                        "刀尖圆角处强度高、抗冲击力强，可承受大进给、大切深实现海量金属高效切除",
+                        "能一次性将内凹 R0 锐角直接精光到位",
+                        "可使普通机床主轴瞬间飙升到 10 万转",
+                        "切削全过程无需使用任何切削液冷却"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！ラジアス工具はコーナRが衝撃を分散するため刃先剛性が抜群で、金型の荒取り加工において圧倒的な高能率を発揮します。",
+                  "explainZh": "正确！圆角刀/牛鼻刀圆角强度远高于平底刀尖，可承受粗加工强烈震颤冲击，是型腔开粗首选。"
+            }
+      },
+      {
+            "chap": 5,
+            "subIndex": 1,
+            "titleJa": "6-2 ストック残肉認識（Rest Machining）の自動化",
+            "titleZh": "6-2 工件残料模型实时识别 (Rest Machining)",
+            "tag": "高能率CAM",
+            "bodyJa": "\n          <p>大径工具で荒加工を行った後、狭い溝やコーナーには工具が入れなかった<strong>「削り残し（残肉）」</strong>が大量に残ります。</p>\n          <p>Space-Eは、前工程の加工結果を<strong>3Dストックモデル</strong>として正確に記憶。次工程の小径工具は、<strong>「残肉が存在する箇所だけ」</strong>を自動認識して無駄な空切削（エアーカット）を一切行わずに中荒加工を行います。</p>\n        ",
+            "bodyZh": "\n          <p>大刀开粗后，在深腔或转角处必然残留大量未切除的厚钢料。若下一道小刀盲目切削，会在转角遭遇暴增数倍的残料而直接断刀。</p>\n          <p>Space-E 会实时动态计算 3D 剩余毛坯（Stock），小刀切削时<strong>只切削有残料的局部区域</strong>，完全消除空刀走道时间。\"</p>\n        ",
+            "quiz": {
+                  "qJa": "Space-Eのストック残肉認識加工を適用しない場合、現場で発生する最も危険なトラブルは？",
+                  "qZh": "若在 CAM 中不启用残料识别而直接调用小刀加工，模具车间最易发生的严重工艺故障是？",
+                  "optionsJa": [
+                        "大径工具が入れなかったコーナー残肉に小径工具が突然突っ込み、過大負荷で工具破損・スピンドル停止する",
+                        "金型の表面が錆びてしまう",
+                        "Gコードの文字化けが発生する",
+                        "切削粉がすべて気化してしまう"
+                  ],
+                  "optionsZh": [
+                        "大刀留下的巨量台阶残料突然迎头撞击细小刀具，瞬间发生崩刀断刀乃至机床主轴过载停机",
+                        "导致模具钢件表面瞬间严重氧化生锈",
+                        "会导致数控系统读取 G 代码乱码",
+                        "使切屑铁屑全部升华气化"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！残肉認識がないと小径工具が急激な削り代の変化に耐えられず破損します。Space-Eの残肉追従は安全と時短の要です。",
+                  "explainZh": "正确！残料突变会导致刀具承受额定负荷数十倍的瞬时切削抗力，残料识别是保障无人值守安全加工的底线。"
+            }
+      },
+      {
+            "chap": 5,
+            "subIndex": 2,
+            "titleJa": "6-3 ペンシル加工（隅部清角）とカスプハイト制御",
+            "titleZh": "6-3 隅部清根 (Pencil Machining) 与残留高度 (Cusp/Scallop)",
+            "tag": "曲面仕上",
+            "bodyJa": "\n          <p>曲面仕上げにおいて、ボールエンドミルで走査した際に生じる隣接パス間の山（微小な削り残し）を<strong>「カスプハイト（Cusp Height / Scallop）」</strong>と呼びます。</p>\n          <p>Space-Eは、設定した許容カスプハイト（例：0.002mm）に応じてピック幅（送りピッチ）を自動計算。さらに、2面が交わる谷底の稜線に沿って1本〜数本のパスを通す<strong>「ペンシル加工」</strong>で隅角の肉を極限まで除去します。</p>\n        ",
+            "bodyZh": "\n          <p>球头刀在平缓曲面上往复步进时，刀轨行距之间会残留隆起的小山脊，称为<strong>残留高度（Scallop/Cusp Height）</strong>。</p>\n          <p>Space-E 根据工艺设定的微米级残留高度（如 0.003mm）自动反算自适应行距，并使用<strong>清根加工 (Pencil Machining)</strong> 精准沿着曲面交线谷底单轨光刀。\"</p>\n        ",
+            "quiz": {
+                  "qJa": "鏡面磨き（磨き工程の短縮）を目指すプラスチック金型の精仕上げにおいて、目標とすべきカスプハイトの目安は？",
+                  "qZh": "为了最大程度减少人工模具省模/抛光工时，注塑模精光曲面的残留高度 (Scallop Height) 通常应严格控制在？",
+                  "optionsJa": [
+                        "0.002mm 〜 0.005mm（手磨きを最小限に抑える滑らかな表面）",
+                        "0.5mm 〜 1.0mm（肉眼で階段状に見える粗さ）",
+                        "5.0mm 以上",
+                        "マイナス値（食い込み過切削）"
+                  ],
+                  "optionsZh": [
+                        "0.002mm ~ 0.005mm（微米级微小峰高，几乎无需人工打磨）",
+                        "0.5mm ~ 1.0mm（肉眼可见严重阶梯刀痕）",
+                        "5.0mm 以上",
+                        "负数（代表严重过切报废）"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！カスプハイトを数ミクロン（μm）以内に制御することで、熟練工による手作業の金型磨き工程を劇的に省力化できます。",
+                  "explainZh": "正确！微米级的残留峰高使曲面光洁度接近镜面，大幅节省钳工繁重耗时的人工油石研磨抛光工序。"
+            }
+      },
+      {
+            "chap": 5,
+            "subIndex": 3,
+            "titleJa": "6-4 高速ミーリング（HSM）対応アプローチ・退避パス",
+            "titleZh": "6-4 高速切削 (HSM) 平滑进退刀与圆弧过渡策略",
+            "tag": "高速加工",
+            "bodyJa": "\n          <p>高速切削において、工具がワークに垂直に急降下して食い込むと、刃先が瞬時に欠損します。</p>\n          <p>Space-E/CAMは、必ず<strong>「ヘリカル（螺旋）進入」</strong>や接線方向に沿った<strong>「円弧アプローチ（Tangential Arc）」</strong>で進入し、切削終了時も滑らかな円弧で離脱します。工作機械のサーボモーターへのショックを最小限に抑えます。</p>\n        ",
+            "bodyZh": "\n          <p>在数万转的高速加工中，刀具若垂直直扎工件，极易发生打刀崩裂。</p>\n          <p>Space-E/CAM 强制实施切线相切<strong>圆弧进刀 (Arc Lead-in)</strong> 或<strong>螺旋下刀 (Helical Ramp)</strong>，消除进刀切入痕，极大保护主轴与刀具寿命。</p>\n        ",
+            "quiz": {
+                  "qJa": "キャビティ底面など閉じた領域へ工具が進入する際、工具寿命と加工面品位の観点から最も推奨される進入方法は？",
+                  "qZh": "在封闭型腔深处下刀进给时，从保护刀具与表面质量角度，首选的进刀方式是？",
+                  "optionsJa": [
+                        "ヘリカル（螺旋）傾斜進入、または円弧アプローチ",
+                        "最高送り速度（F値最大）でのZ軸垂直直下ダイブ",
+                        "ステップなしの真横からの全負荷突っ込み",
+                        "加工途中で主軸を停止させての押し込み"
+                  ],
+                  "optionsZh": [
+                        "螺旋渐开渐进下刀 (Helical Ramp) 或切向平滑圆弧过渡",
+                        "以最高快进速度 (G00) 垂直直接扎入",
+                        "不做任何斜向缓冲直接侧向撞入工件",
+                        "在切入瞬间停转主轴强行冲入"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！螺旋状に緩やかに金属を削りながら降りるヘリカル進入は、切削抵抗を均一に保ち工具寿命を大幅に延ばします。",
+                  "explainZh": "正确！螺旋进刀将垂直抗力转化为侧向切削，避免了底刃受力集中，确保高速平稳下刀。"
+            }
+      },
+      {
+            "chap": 6,
+            "subIndex": 0,
+            "titleJa": "7-1 同時5軸加工と割出5軸加工（3+2軸）の使い分け",
+            "titleZh": "7-1 定轴五轴 (3+2轴) 与连续联动五轴加工架构对比",
+            "tag": "5軸CAM",
+            "bodyJa": "\n          <p>5軸加工には大きく分けて2つのアプローチがあります：</p>\n          <ul style=\"padding-left:20px;\">\n            <li><strong>割出5軸（3+2軸）</strong>：回転2軸で工具を特定角度に傾けて固定し、3軸（XYZ）で切削。突き出し長さの短い高剛性工具が使えるため、金型加工の8割はこれで対応可能。</li>\n            <li><strong>同時5軸（Simultaneous 5-Axis）</strong>：XYZBCの5軸が同時に協調動作。インペラーやアンダーカットの深い複雑曲面を切削。</li>\n          </ul>\n        ",
+            "bodyZh": "\n          <p>高端模具五轴数控加工主要分为两种主流架构：</p>\n          <ul style=\"padding-left:20px;\">\n            <li><strong>定面定位五轴 (3+2轴)</strong>：摆好角度锁紧，由 XYZ 3轴执行高速切削。刀具悬伸极短、刚性最高，占模具加工 80% 以上应用。</li>\n            <li><strong>连续五轴联动</strong>：五轴坐标协同连续光滑微调，专攻深腔变曲率侧壁防干涉。</li>\n          </ul>\n        ",
+            "quiz": {
+                  "qJa": "深彫り金型において、従来の3軸加工と比べて割出5軸（3+2軸）加工を採用する最大の利点は？",
+                  "qZh": "在深腔精密模具中，与传统 3 轴相比，采用 3+2 定位五轴加工最显著的技术收益是？",
+                  "optionsJa": [
+                        "工具を傾けることで、突き出し長さ（首下長）の短い高剛性シャンクが使え、ビビり振動を根絶できる",
+                        "工具の価格が10分の1になる",
+                        "機械の電気代が半分になる",
+                        "CAMの計算が瞬時に終わる"
+                  ],
+                  "optionsZh": [
+                        "通过倾斜主轴，大幅缩短刀具悬伸长度（L/D比），极大提高刀柄刚性，彻底根除切削震颤",
+                        "能使铣刀采购单价直接下降到十分之一",
+                        "可使机床的整机耗电量减半",
+                        "CAM 路径算法不需要任何算力即刻输出"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！工具が短いほどたわみ・ビビり（Chatter）が起きず、切削面品位が格段に向上し、加工送り速度も大幅に引き上げられます。",
+                  "explainZh": "正确！刀具悬伸每缩短一半，刀杆抗弯刚度提升 8 倍，彻底消除了深型腔加工中的震刀波纹。"
+            }
+      },
+      {
+            "chap": 6,
+            "subIndex": 1,
+            "titleJa": "7-2 ツールホルダー干渉回避と刀軸自動傾斜",
+            "titleZh": "7-2 刀柄碰撞自动干涉回避与刀轴倾角智能调整",
+            "tag": "安全CAM",
+            "bodyJa": "\n          <p>同時5軸切削時、ワーク深部にアプローチする工具ホルダーやスピンドルヘッドがワーク上部や治具に激突する事故は絶対に防がねばなりません。</p>\n          <p>Space-E/CAMは、シャンク（柄）、コレット、ツールホルダー、主軸頭の3D形状を精密に登録可能。干渉限界（セーフティクリアランス）に近づくと、<strong>自動的に刀軸を安全な側へチルト（傾斜）</strong>させてパスを再計算します。</p>\n        ",
+            "bodyZh": "\n          <p>在深腔五轴加工中，刀柄 (Holder) 或机床主轴外壳与工件侧壁发生恶性碰撞是车间灾难性事故。</p>\n          <p>Space-E 支持装配体实体刀柄干涉检测，在间隙接近设定的安全余量时，<strong>自动将刀轴矢量平滑倾斜</strong>偏离干涉区。</p>\n        ",
+            "quiz": {
+                  "qJa": "Space-Eの干渉チェック機能で「ツールホルダーがワークに接触」と判定された場合、システムが実行する最適アクションは？",
+                  "qZh": "在 Space-E 五轴干涉检测中，当检测到刀柄即将与模具上沿碰撞时，系统最优的自动化动作是？",
+                  "optionsJa": [
+                        "刀軸の傾き角度（ティルト角）を動的に自動変更し、干渉しない安全な傾斜姿勢でパスを生成する",
+                        "ワークのモデルデータを自動的に削り取って穴を開ける",
+                        "警告を出さずにそのまま加工Gコードを出力する",
+                        "CAMプログラム全体を強制削除する"
+                  ],
+                  "optionsZh": [
+                        "动态平滑调整刀轴倾角矢量 (Tilt Angle)，以倾斜防撞姿态安全生成无碰撞刀轨",
+                        "直接自动把三维工件被碰撞区域削掉一个窟窿",
+                        "忽略此干涉隐患、不加警告强行输出危险 G 代码",
+                        "直接永久性强制格式化清空项目文件"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！自動チルト制御により、加工者は干渉を恐れることなく最短工具による高精度加工を自動生成できます。",
+                  "explainZh": "正确！智能摆角不仅彻底杜绝撞机事故，更保证了全行程始终使用最短刀柄高速高精切削。"
+            }
+      },
+      {
+            "chap": 6,
+            "subIndex": 2,
+            "titleJa": "7-3 専用ポストプロセッサとGコード最適化",
+            "titleZh": "7-3 专用机床后置处理 (Post-Processor) 与 G 代码优化",
+            "tag": "ポスト処理",
+            "bodyJa": "\n          <p>CAMが計算したツールパス（CLデータ：内部座標データ）を、現場の工作機械（ファナック、マキノ、オークマ、安田工業、ハイデンハイン等）が理解できる<strong>「NCプログラム（Gコード）」</strong>に翻訳するのが<strong>ポストプロセッサ</strong>です。</p>\n          <p>Space-Eは各社マシニングセンタの高精度輪郭制御（例：FANUC AICC/ナノ補間、MAKINO SGIなど）に最適化した専用コード（G05.1 / G05 P10000等）を自動出力します。</p>\n        ",
+            "bodyZh": "\n          <p>将 CAM 计算出的刀位轨迹 (CL Data) 翻译成机床数控系统（发那科 FANUC、牧野 MAKINO、大隈 OKUMA、安田 YASDA 等）识别执行的标准 <strong>NC 程序 (G-code)</strong>，依赖<strong>后置处理器 (Post-Processor)</strong>。</p>\n          <p>Space-E 完美匹配日本顶级机床的高速高精轮廓控制宏指令（如 G05.1 Q1 / G05 P10000）。</p>\n        ",
+            "quiz": {
+                  "qJa": "金型の微小線分高速加工において、FANUC等のNC装置で「先行補正・ナノ補間モード（高精度輪郭制御）」を呼ぶGコードを挿入する目的は？",
+                  "qZh": "在模具三维微小线段高速切削中，在程序头调用数控系统“纳米插补/高精度轮廓预读控制 (如 G05.1 Q1)”的目的是？",
+                  "optionsJa": [
+                        "数千ブロック先のパスを事前先読みし、急激な加減速による機械の振動や形状の角ダレ（追従遅れ）を防ぐため",
+                        "NC画面の文字サイズを2倍にするため",
+                        "主軸の回転数を強制的に半減させるため",
+                        "機内照明を点灯させるため"
+                  ],
+                  "optionsZh": [
+                        "超前预读数千个后续运动微线段，提前平滑预规划加减速，彻底消除过冲震动与轮廓失真",
+                        "将数控操作屏的显示字体放大 2 倍",
+                        "将主轴电机的旋转转速强行降至一半",
+                        "自动点亮机床内部的照明白炽灯"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！先行制御により、微小線分でも速度を落とさずに滑らかにコーナーを曲がることができ、金型の面品位と加工時間が劇的に改善します。",
+                  "explainZh": "正确！前瞻算法配合伺服纳米插补，能使刀尖在微小折线段间高速飞行而不产生尖锐加速度冲击。"
+            }
+      },
+      {
+            "chap": 6,
+            "subIndex": 3,
+            "titleJa": "7-4 マシンシミュレーションと実機バーチャル検証",
+            "titleZh": "7-4 机床整机运动学仿真与防撞虚拟验证",
+            "tag": "バーチャル検証",
+            "bodyJa": "\n          <p>実機加工の前に、画面上でマシニングセンタのXYZテーブル、回転軸（A/B/C軸）、バイス、金型、工具の全干渉を忠実に再現・シミュレーションします。</p>\n          <p>Space-Eのシミュレータは、CAMの内部計算値ではなく<strong>「最終出力されたGコードそのもの」</strong>を逆読みしてキネマティクス（機構学）解析を行うため、実機との乖離がゼロです。</p>\n        ",
+            "bodyZh": "\n          <p>在开动机床前，在软件视口中对立式/卧式五轴机床工作台、回转轴、虎钳夹具、毛坯进行 1:1 数字孪生仿真。</p>\n          <p>Space-E 基于<strong>“最终输出的 G 代码原文件驱动”</strong>仿真，与机床实跑无任何误差脱节。</p>\n        ",
+            "quiz": {
+                  "qJa": "「Gコード駆動型」マシンシミュレータが、一般的なCAM内部パスシミュレータよりも安全性が高いとされる理由は？",
+                  "qZh": "基于“最终 G 代码驱动”的机床仿真，为何比普通 CAM 内部刀位轨迹仿真更具绝对安全性？",
+                  "optionsJa": [
+                        "ポストプロセッサによる変換ミスや、機械固有の原点シフト・リトラクト動作の誤りまで完全に検出できるから",
+                        "計算時間が1秒未満で終わるから",
+                        "3Dグラフィックが映画のように綺麗だから",
+                        "オペレータの資格が不要になるから"
+                  ],
+                  "optionsZh": [
+                        "能完整检测后置处理器可能存在的逻辑翻译缺陷，以及机床换刀安全退刀点、工件坐标系原点偏置指令的潜在错误",
+                        "计算耗费的时间小于 1 秒钟",
+                        "渲染出的 3D 阴影画面犹如好莱坞电影",
+                        "可以让工厂完全不用雇佣持证操作工"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！CAMデータとNCデータには変換による差異が生じる可能性があります。Gコードそのものを検証することが究極の安全策です。",
+                  "explainZh": "正确！真正的车间风险往往发生在后置转换生成的辅助 G 代码上。代码级实真仿真是万无一失的防线。"
+            }
       }
-    ];
+];
 
     /* ==========================================================================
-       4. 实战工坊 (Quest 题库: 4 Tier x 5 题 = 20 道高水准模具工程题目)
+       4. 实战工坊 (Quest 题库: 4 Tier x 7 题 = 28 道工业工程题目)
        ========================================================================== */
     const QUEST_BANK = [
-      // Lv.1 基础操作与CAD
       {
-        tier: 0,
-        gradeLabel: "Lv.1 基礎操作・CAD検定",
-        questionJa: "海外の取引先から受領した金型モデル（STEPファイル）をSpace-Eにインポートしたところ、面間に0.008mmのギャップがありソリッドになりませんでした。最も迅速かつ安全な処置はどれですか？",
-        questionZh: "从客户处接收的模具 STEP 文件导入 Space-E 后，发现曲面边缘存在 0.008mm 的微缝隙导致无法闭合为实体。最规范快捷的处理方案是？",
-        optionsJa: [
-          "[曲面] -> [縫合] を選択し、トレランスを 0.01mm に設定して自動縫合を実行する",
-          "隙間のある曲面をすべて削除して、平面で塞ぎ直す",
-          "モデルをあきらめて2D図面からゼロから引き直すよう顧客に要求する",
-          "トレランスを 1.0mm に引き上げて強制的に結合する"
-        ],
-        optionsZh: [
-          "使用 [曲面] -> [缝合] 功能，将容差参数设为 0.01mm 执行自动公差拓扑缝合",
-          "直接把存在缝隙的所有周边曲面粗暴删除并强行贴平",
-          "放弃该 3D 模型并勒令客户重新绘制 2D 图纸重新设计",
-          "直接将缝合容差粗暴放大到 1.0mm 强行压缩闭合"
-        ],
-        ans: 0,
-        explainJa: "Space-Eの[縫合]コマンドに0.01mm（実隙間0.008mmをカバーする最小値）を与えることで、微小Rやエッジ形状を変形させずに一瞬で完全なマニホールドソリッド化が完了します。"
+            "tier": 0,
+            "gradeLabel": "Lv.1 基礎操作・CAD検定",
+            "questionJa": "海外の取引先から受領した金型モデル（STEPファイル）をSpace-Eにインポートしたところ、面間に0.008mmのギャップがありソリッドになりませんでした。最も迅速かつ安全な処置はどれですか？",
+            "questionZh": "从客户处接收的模具 STEP 文件导入 Space-E 后，发现曲面边缘存在 0.008mm 的微缝隙导致无法闭合为实体。最规范快捷的处理方案是？",
+            "optionsJa": [
+                  "[曲面] -> [縫合] を選択し、トレランスを 0.01mm に設定して自動縫合を実行する",
+                  "隙間のある曲面をすべて削除して、平面で塞ぎ直す",
+                  "モデルをあきらめて2D図面からゼロから引き直すよう顧客に要求する",
+                  "トレランスを 1.0mm に引き上げて強制的に結合する"
+            ],
+            "optionsZh": [
+                  "使用 [曲面] -> [缝合] 功能，将容差参数设为 0.01mm 执行自动公差拓扑缝合",
+                  "直接把存在缝隙的所有周边曲面粗暴删除并强行贴平",
+                  "放弃该 3D 模型并勒令客户重新绘制 2D 图纸重新设计",
+                  "直接将缝合容差粗暴放大到 1.0mm 强行压缩闭合"
+            ],
+            "ans": 0,
+            "explainJa": "Space-Eの[縫合]コマンドに0.01mm（実隙間0.008mmをカバーする最小値）を与えることで、微小Rやエッジ形状を変形させずに一瞬で完全なマニホールドソリッド化が完了します。"
       },
       {
-        tier: 0,
-        gradeLabel: "Lv.1 基礎操作・CAD検定",
-        questionJa: "Space-Eにおいて、金型加工の原点を工作機械のセットアップ位置（ブロック左上角、上面Z0）に設定するための操作として正しいものは？",
-        questionZh: "在 Space-E 中，为了将加工工件坐标系原点设定在毛坯基准定位角（毛坯左上角、上表面 Z=0），最标准的步骤是？",
-        optionsJa: [
-          "WCS（作業座標系）定義で「ボックスバウンディングボックスの上面左上頂点」を指定し原点登録する",
-          "製品モデル全体をマウスドラッグで適当な位置へ移動する",
-          "Windowsの画面解像度を変更して原点をずらす",
-          "工作機械側のリミットスイッチを物理的に移動させる"
-        ],
-        optionsZh: [
-          "在 WCS（工作坐标系）管理器中拾取“毛坯包络盒 (Bounding Box) 的上表面左上角顶点”作为原点并对齐主轴 Z+",
-          "直接用鼠标在三维空间随意拖动模型凭感觉摆放",
-          "通过修改操作系统的屏幕显示分辨率来平移坐标系",
-          "要求维修工去机床上拆卸限位开关来将就软件模型"
-        ],
-        ans: 0,
-        explainJa: "加工座標系はCAD上の絶対位置とNC機の治具原点を一致させる生命線です。包絡枠（バウンディングボックス）の頂点や特定基準ピン穴をWCS原点として定義するのが基本です。"
+            "tier": 0,
+            "gradeLabel": "Lv.1 基礎操作・CAD検定",
+            "questionJa": "Space-Eにおいて、金型加工の原点を工作機械のセットアップ位置（ブロック左上角、上面Z0）に設定するための操作として正しいものは？",
+            "questionZh": "在 Space-E 中，为了将加工工件坐标系原点设定在毛坯基准定位角（毛坯左上角、上表面 Z=0），最标准的步骤是？",
+            "optionsJa": [
+                  "WCS（作業座標系）定義で「ボックスバウンディングボックスの上面左上頂点」を指定し原点登録する",
+                  "製品モデル全体をマウスドラッグで適当な位置へ移動する",
+                  "Windowsの画面解像度を変更して原点をずらす",
+                  "工作機械側のリミットスイッチを物理的に移動させる"
+            ],
+            "optionsZh": [
+                  "在 WCS（工作坐标系）管理器中拾取“毛坯包络盒 (Bounding Box) 的上表面左上角顶点”作为原点并对齐主轴 Z+",
+                  "直接用鼠标在三维空间随意拖动模型凭感觉摆放",
+                  "通过修改操作系统的屏幕显示分辨率来平移坐标系",
+                  "要求维修工去机床上拆卸限位开关来将就软件模型"
+            ],
+            "ans": 0,
+            "explainJa": "加工座標系はCAD上の絶対位置とNC機の治具原点を一致させる生命線です。包絡枠（バウンディングボックス）の頂点や特定基準ピン穴をWCS原点として定義するのが基本です。"
       },
       {
-        tier: 0,
-        gradeLabel: "Lv.1 基礎操作・CAD検定",
-        questionJa: "Space-Eの曲線作成機能で、2つの異なる曲面を滑らかに繋ぐフィレット面を作る際、境目が全く目立たない光沢品位を得るために指定すべき連続性条件は？",
-        questionZh: "在 Space-E 中创建两块连续过渡曲面时，为了在塑料成型后获得无反光折痕的光学级外观，必须指定的边界连续性是？",
-        optionsJa: [
-          "G2連続（曲率連続：Curvature Continuous）",
-          "G0連続（位置接続のみ）",
-          "G1連続（接線のみ）",
-          "C0不連続"
-        ],
-        optionsZh: [
-          "G2连续（曲率连续 Curvature Continuous）",
-          "G0连续（仅端点相碰）",
-          "G1连续（仅切线相切）",
-          "非连续断开状态"
-        ],
-        ans: 0,
-        explainJa: "G2連続は曲率半径が境目で連続して変化するため、ゼブラ解析（縞模様反射）を行っても光の筋が滑らかに繋がり、金型製品の最高品位を保証します。"
+            "tier": 0,
+            "gradeLabel": "Lv.1 基礎操作・CAD検定",
+            "questionJa": "Space-Eの曲線作成機能で、2つの異なる曲面を滑らかに繋ぐフィレット面を作る際、境目が全く目立たない光沢品位を得るために指定すべき連続性条件は？",
+            "questionZh": "在 Space-E 中创建两块连续过渡曲面时，为了在塑料成型后获得无反光折痕的光学级外观，必须指定的边界连续性是？",
+            "optionsJa": [
+                  "G2連続（曲率連続：Curvature Continuous）",
+                  "G0連続（位置接続のみ）",
+                  "G1連続（接線のみ）",
+                  "C0不連続"
+            ],
+            "optionsZh": [
+                  "G2连续（曲率连续 Curvature Continuous）",
+                  "G0连续（仅端点相碰）",
+                  "G1连续（仅切线相切）",
+                  "非连续断开状态"
+            ],
+            "ans": 0,
+            "explainJa": "G2連続は曲率半径が境目で連続して変化するため、ゼブラ解析（縞模様反射）を行っても光の筋が滑らかに繋がり、金型製品の最高品位を保証します。"
       },
       {
-        tier: 0,
-        gradeLabel: "Lv.1 基礎操作・CAD検定",
-        questionJa: "モデル形状の変更履歴を残さず、ダイレクトに面を引っ張ったりオフセットして修正する手法を何と呼びますか？",
-        questionZh: "在 Space-E 中直接拖动选定曲面、旋转或偏移指定距离完成改模，无需受制于繁琐历史特征树的方法被称为？",
-        optionsJa: [
-          "ダイレクトモデリング（ノンヒストリ編集）",
-          "パラメトリックフィーチャー拘束",
-          "ワイヤーフレーム手書きスケッチ",
-          "アセンブリ拘束"
-        ],
-        optionsZh: [
-          "直接建模 / 无历史特征编辑 (Direct Modeling)",
-          "全参数化严格历史草图约束",
-          "纯手工点线拓扑草绘",
-          "刚性装配约束"
-        ],
-        ans: 0,
-        explainJa: "金型現場では設計変更（設変）が頻繁に発生します。他社製CAD由来のヒストリが失われたモデルでも、面をダイレクトに移動・オフセットできるのがSpace-Eの強みです。"
+            "tier": 0,
+            "gradeLabel": "Lv.1 基礎操作・CAD検定",
+            "questionJa": "モデル形状の変更履歴を残さず、ダイレクトに面を引っ張ったりオフセットして修正する手法を何と呼びますか？",
+            "questionZh": "在 Space-E 中直接拖动选定曲面、旋转或偏移指定距离完成改模，无需受制于繁琐历史特征树的方法被称为？",
+            "optionsJa": [
+                  "ダイレクトモデリング（ノンヒストリ編集）",
+                  "パラメトリックフィーチャー拘束",
+                  "ワイヤーフレーム手書きスケッチ",
+                  "アセンブリ拘束"
+            ],
+            "optionsZh": [
+                  "直接建模 / 无历史特征编辑 (Direct Modeling)",
+                  "全参数化严格历史草图约束",
+                  "纯手工点线拓扑草绘",
+                  "刚性装配约束"
+            ],
+            "ans": 0,
+            "explainJa": "金型現場では設計変更（設変）が頻繁に発生します。他社製CAD由来のヒストリが失われたモデルでも、面をダイレクトに移動・オフセットできるのがSpace-Eの強みです。"
       },
       {
-        tier: 0,
-        gradeLabel: "Lv.1 基礎操作・CAD検定",
-        questionJa: "Space-Eの画面操作において、マウスの中ボタン（ホイール）ドラッグによって行われる標準的な視点制御はどれですか？",
-        questionZh: "在 Space-E 三维标准视口交互中，按住鼠标中键滚轮拖动通常执行的操作是？",
-        optionsJa: [
-          "3D空間のダイナミック回転（オービット回転）",
-          "モデルの強制削除",
-          "全画面のスクリーンショット保存",
-          "CADライセンスの切断"
-        ],
-        optionsZh: [
-          "三维动态自由旋转 (3D Orbit Rotation)",
-          "立即永久性物理删除当前模型",
-          "静默截取全屏桌面截图",
-          "断开本地网络浮动许可协议"
-        ],
-        ans: 0,
-        explainJa: "中ボタンドラッグで3D回転、Shift+中ボタンで平行移動（パン）、ホイール回転で拡大縮小（ズーム）がSpace-Eの直感的な標準操作です。"
-      },
-
-      // Lv.2 模具设计与分模
-      {
-        tier: 1,
-        gradeLabel: "Lv.2 金型設計・PL割検定",
-        questionJa: "Space-Eで「抜き勾配解析」を実行したところ、製品側面の特定ポケットが「赤色（マイナス角度）」で表示されました。この結果が意味することは？",
-        questionZh: "在 Space-E 执行拔模分析时，产品侧面某一局部凹槽曲面呈现鲜艳的“红色（负角度）”，这表明？",
-        optionsJa: [
-          "アンダーカット（逆勾配）であり、そのままでは金型が開いても製品が引っかかって脱型できない",
-          "その面が極めて高精度に仕上がっていることを表す合格サイン",
-          "プラスチック樹脂が注入されないエアポケット",
-          "その領域が自動的に研磨される推奨エリア"
-        ],
-        optionsZh: [
-          "存在严重倒扣/倒拔模 (Undercut)，若不修改造型或增设抽芯滑块/斜顶，开模时必然卡死拉伤",
-          "代表该表面几何尺寸极其完美的合格高光提示",
-          "代表注塑熔胶绝不可能流经的绝对真空区",
-          "代表后续工序无需打磨的高精度预留区"
-        ],
-        ans: 0,
-        explainJa: "赤色はアンダーカットを示します。製品肉厚や形状を見直し勾配を付加するか、スライドコア（引き抜き機構）を設計する必要があります。"
+            "tier": 0,
+            "gradeLabel": "Lv.1 基礎操作・CAD検定",
+            "questionJa": "Space-Eの画面操作において、マウスの中ボタン（ホイール）ドラッグによって行われる標準的な視点制御はどれですか？",
+            "questionZh": "在 Space-E 三维标准视口交互中，按住鼠标中键滚轮拖动通常执行的操作是？",
+            "optionsJa": [
+                  "3D空間のダイナミック回転（オービット回転）",
+                  "モデルの強制削除",
+                  "全画面のスクリーンショット保存",
+                  "CADライセンスの切断"
+            ],
+            "optionsZh": [
+                  "三维动态自由旋转 (3D Orbit Rotation)",
+                  "立即永久性物理删除当前模型",
+                  "静默截取全屏桌面截图",
+                  "断开本地网络浮动许可协议"
+            ],
+            "ans": 0,
+            "explainJa": "中ボタンドラッグで3D回転、Shift+中ボタンで平行移動（パン）、ホイール回転で拡大縮小（ズーム）がSpace-Eの直感的な標準操作です。"
       },
       {
-        tier: 1,
-        gradeLabel: "Lv.2 金型設計・PL割検定",
-        questionJa: "製品モデル内部にある複数のボルトボス貫通穴を塞ぐため、Space-Eで最も効率的なコマンドはどれですか？",
-        questionZh: "为了封闭塑料外壳内部的多个螺丝固定柱通孔以完成分模隔离，Space-E 中最高效的一键化指令是？",
-        optionsJa: [
-          "[金型] -> [穴埋め面自動作成（パッチサーフェス）]",
-          "1穴ずつ直線を引いて3次元メッシュを手動で編み込む",
-          "製品ごと穴の周囲を切り落とす",
-          "板金展開コマンドを無理やり適用する"
-        ],
-        optionsZh: [
-          "[模具] -> [一键自动创建补孔面 (Auto Patch Surfaces)]",
-          "手动在每个孔口拉伸几百条细线手动织网",
-          "直接把产品上所有带孔的实体部位整体切除",
-          "强行对注塑件调用钣金折弯冲压展开算法"
-        ],
-        ans: 0,
-        explainJa: "Space-Eの穴埋め機能は、閉じた内周エッジを自動認識して接線連続なパッチサーフェスを瞬時に一括生成します。"
+            "tier": 0,
+            "gradeLabel": "Lv.1 基礎操作・CAD検定",
+            "questionJa": "B-Rep（境界表現）ソリッドCADにおいて、面（Face）と曲面（Surface）の数学的・トポロジー的な関係として最も正確な説明はどれですか？",
+            "questionZh": "在 B-Rep（边界表示）实体 CAD 理论中，面 (Face) 与几何曲面 (Surface) 的拓扑数学关系最严密的表述是？",
+            "optionsJa": [
+                  "曲面（Surface）は無限に広がる数学的形状（幾何）であり、面（Face）はその曲面をトリム境界（Loop/Edge）で区切った有限の有界領域（位相）である",
+                  "曲面と面は全く同一の概念であり何の違いもない",
+                  "面は点群メッシュであり、曲面は2次元の図面である",
+                  "面は常に平面でなければならず、曲面はソリッドに含めることができない"
+            ],
+            "optionsZh": [
+                  "曲面 (Surface) 是三维空间无界的数学解析方程（几何底层），而面 (Face) 是由闭合边界环 (Loop/Edge) 修剪约束出的有限有界拓扑单元",
+                  "曲面与面是完全相同的一个代名词没有任何区别",
+                  "面指的是离散激光点云网格，而曲面是二维工程图纸",
+                  "面必须是绝对平整的平面，实体模型中绝不允许包含曲面"
+            ],
+            "ans": 0,
+            "explainJa": "正解！CADの幾何（Geometry）と位相（Topology）の基本です。Surfaceという無限の数学曲面を、閉じた稜線ループでトリムしたものがFace（面）であり、これが集まってB-Repソリッドを構成します。"
       },
       {
-        tier: 1,
-        gradeLabel: "Lv.2 金型設計・PL割検定",
-        questionJa: "パーティングライン（PL）が平面ではなく、製品形状に沿って激しく上下にうねる「段付きPL（3次元PL面）」を設計する際の注意点として正しいものは？",
-        questionZh: "当模具分型面不是简单平表面、而是随塑件轮廓高低起伏剧烈波动的“三维阶梯落差 PL 面”时，设计核心守则是？",
-        optionsJa: [
-          "段差部には必ず十分な抜き勾配（5〜10度以上）を設け、型締め時のカジリや摩耗を防止する",
-          "段差部は完全に直角（垂直90度）のナイフエッジで突き合わせる",
-          "PL面を波打つサインカーブにして接触面積を最大化する",
-          "バリ（樹脂漏れ）を許容して隙間を0.5mm空けておく"
-        ],
-        optionsZh: [
-          "在落差阶梯转折面处必须施加充足的侧向防擦斜度（通常 5°~10° 以上），防止合模时严重咬合研伤",
-          "所有阶梯交接处必须采用 90° 绝对直角的锋利刀刃口对插合模",
-          "将分型面做成剧烈波浪状以增加型腔受力面积",
-          "故意给分型面留出 0.5mm 的巨大空隙任由溢胶"
-        ],
-        ans: 0,
-        explainJa: "段付きPLの垂直面同士が擦れ合うと、金型の型締め圧力で瞬時にカジリ（焼き付き）が発生します。必ず逃げ勾配を設けるのが金型設計の鉄則です。"
+            "tier": 0,
+            "gradeLabel": "Lv.1 基礎操作・CAD検定",
+            "questionJa": "NURBS（非一様有理Bスプライン）において、制御点（Control Point）の「重み（Weight）」が持つ決定的な役割はどれですか？",
+            "questionZh": "在 NURBS（非均匀有理B样条）曲面数学体系中，控制顶点的“权重因子 (Weight)”所起的决定性作用是？",
+            "optionsJa": [
+                  "重み（有理特性）を制御することで、円・楕円・円柱などの円錐曲線を近似ではなく数学的に完全な真円として表現できる",
+                  "重みを重くするとコンピュータの画面の明るさが増加する",
+                  "重みはCADライセンスの有効期限を決定する数値である",
+                  "重みを変更するとGコードの行数が半分に削減される"
+            ],
+            "optionsZh": [
+                  "通过引入有理权重，能够打破多项式样条的局限，以 100% 精度无误差表达圆、椭圆、圆柱等二次解析曲线曲面",
+                  "调大控制点权重会使电脑显示器的背光亮度大幅增加",
+                  "权重是用于设定 CAD 软件网络浮动许可证有效天数的参数",
+                  "修改权重可以自动让导出的 G 代码行数减少一半"
+            ],
+            "ans": 0,
+            "explainJa": "正解！非有理な多項式スプラインでは真円を表現できず近似線になります。NURBSは有理（分母に重みを持つ）構造により、真円や円錐曲線を数学的に厳密に統合できます。"
       },
       {
-        tier: 1,
-        gradeLabel: "Lv.2 金型設計・PL割検定",
-        questionJa: "射出成形金型において、製品の「外観面（A面・意匠面）」は通常どちら側に配置すべきですか？",
-        questionZh: "在注塑模具设计规范中，塑件的高要求“外观面（A面/外表面）”在模具开模时通常安排在？",
-        optionsJa: [
-          "固定側（キャビティ側）：エジェクタピン（突き出しピン）の跡がつかないようにするため",
-          "可動側（コア側）：ピンで強く叩き出して光沢を出すため",
-          "どちらでも全く影響はない",
-          "金型ブロックの真横の側面"
-        ],
-        optionsZh: [
-          "前模/定模（型腔 Cavity 侧）：避免在其关键外观表面留下丑陋的顶针顶出白痕印记",
-          "后模/动模（型芯 Core 侧）：为了让多根顶针直接猛烈撞击制品外表面",
-          "放置在任何一侧对注塑外观品质毫无区别",
-          "雕刻在模具钢料的最外侧安装侧面"
-        ],
-        ans: 0,
-        explainJa: "成形品は収縮して可動側（コア）に抱きついた状態で金型が開き、裏面からエジェクタピンで突き出されます。意匠面であるA面は突き出しピンのない固定側（キャビティ）に配置します。"
+            "tier": 1,
+            "gradeLabel": "Lv.2 金型設計・PL割検定",
+            "questionJa": "Space-Eで「抜き勾配解析」を実行したところ、製品側面の特定ポケットが「赤色（マイナス角度）」で表示されました。この結果が意味することは？",
+            "questionZh": "在 Space-E 执行拔模分析时，产品侧面某一局部凹槽曲面呈现鲜艳的“红色（负角度）”，这表明？",
+            "optionsJa": [
+                  "アンダーカット（逆勾配）であり、そのままでは金型が開いても製品が引っかかって脱型できない",
+                  "その面が極めて高精度に仕上がっていることを表す合格サイン",
+                  "プラスチック樹脂が注入されないエアポケット",
+                  "その領域が自動的に研磨される推奨エリア"
+            ],
+            "optionsZh": [
+                  "存在严重倒扣/倒拔模 (Undercut)，若不修改造型或增设抽芯滑块/斜顶，开模时必然卡死拉伤",
+                  "代表该表面几何尺寸极其完美的合格高光提示",
+                  "代表注塑熔胶绝不可能流经的绝对真空区",
+                  "代表后续工序无需打磨的高精度预留区"
+            ],
+            "ans": 0,
+            "explainJa": "赤色はアンダーカットを示します。製品肉厚や形状を見直し勾配を付加するか、スライドコア（引き抜き機構）を設計する必要があります。"
       },
       {
-        tier: 1,
-        gradeLabel: "Lv.2 金型設計・PL割検定",
-        questionJa: "Space-Eで型割を実行した際、エラーで分割できない場合の最も典型的な原因はどれですか？",
-        questionZh: "在 Space-E 中执行前/后模实体分割 (Core/Cavity Split) 报错失败时，最常见的原因是？",
-        optionsJa: [
-          "PL面（パーティング面）の外周境界がモールドベース素材枠の外まで完全に抜け切っていない",
-          "PCの液晶モニターが小さすぎる",
-          "製品の曲面の色が青色になっている",
-          "マウスのクリック速度が遅すぎる"
-        ],
-        optionsZh: [
-          "分型面 (PL) 的外缘没有彻底延伸穿透毛坯钢料的四周侧壁，无法构成完全闭合的分割边界",
-          "电脑外接显示器的物理尺寸不够大",
-          "三维视口中零件曲面的默认漫反射着色刚好是天蓝色",
-          "操作员双击鼠标按键的速度比标准间隔慢了 0.1 秒"
-        ],
-        ans: 0,
-        explainJa: "型割はブーリアン分割演算です。PL面が素材ブロックの外側まで完全に貫通（オーバーラップ）していないと、内外の空間が分断できずエラーとなります。"
-      },
-
-      // Lv.3 CAM编程与粗加工
-      {
-        tier: 2,
-        gradeLabel: "Lv.3 CAM荒加工・残肉検定",
-        questionJa: "高硬度金型鋼（HRC50以上）の荒加工において、工具の寿命を最大化するための切削アプローチとして最適なものは？",
-        questionZh: "针对 HRC50 以上的高硬度预硬淬火模具钢开粗切削，为实现刀片寿命最大化，最科学的切削进刀工艺是？",
-        optionsJa: [
-          "小切込み・高送り（High Feed Milling）を採用し、ヘリカル進入で連続切削する",
-          "一気に深さ50mmを低速で垂直に突っ込んで削り落とす",
-          "切削油をかけずに超高速回転で摩擦熱で溶かしながら削る",
-          "木工用エンドミルを使用する"
-        ],
-        optionsZh: [
-          "采用“浅切深、大进给 (High Feed Milling)”高频轻切削策略，配合螺旋平滑切入保持恒定负载",
-          "采用低转速、一次性猛扎 50mm 垂直大切深强行死啃硬钢",
-          "完全停用冷却并在干摩擦起火冒烟状态下强力熔化钢材",
-          "采购廉价的木工开槽硬质合金刀具代用"
-        ],
-        ans: 0,
-        explainJa: "高硬度鋼では、切込み（Ap）を小さく（0.5〜1mm）、送り速度（Vf）を高く保つ高送り加工が有効です。切削熱が切りくずに逃げ、工具への熱衝撃・チッピングを激減させます。"
+            "tier": 1,
+            "gradeLabel": "Lv.2 金型設計・PL割検定",
+            "questionJa": "製品モデル内部にある複数のボルトボス貫通穴を塞ぐため、Space-Eで最も効率的なコマンドはどれですか？",
+            "questionZh": "为了封闭塑料外壳内部的多个螺丝固定柱通孔以完成分模隔离，Space-E 中最高效的一键化指令是？",
+            "optionsJa": [
+                  "[金型] -> [穴埋め面自動作成（パッチサーフェス）]",
+                  "1穴ずつ直線を引いて3次元メッシュを手動で編み込む",
+                  "製品ごと穴の周囲を切り落とす",
+                  "板金展開コマンドを無理やり適用する"
+            ],
+            "optionsZh": [
+                  "[模具] -> [一键自动创建补孔面 (Auto Patch Surfaces)]",
+                  "手动在每个孔口拉伸几百条细线手动织网",
+                  "直接把产品上所有带孔的实体部位整体切除",
+                  "强行对注塑件调用钣金折弯冲压展开算法"
+            ],
+            "ans": 0,
+            "explainJa": "Space-Eの穴埋め機能は、閉じた内周エッジを自動認識して接線連続なパッチサーフェスを瞬時に一括生成します。"
       },
       {
-        tier: 2,
-        gradeLabel: "Lv.3 CAM荒加工・残肉検定",
-        questionJa: "Space-E/CAMにおいて、「等高線荒加工」のパス間隔（Zステップ量）を決定する際の最も重要な指標は？",
-        questionZh: "在 Space-E/CAM 中，设定“等高粗加工”的轴向层切深度 (Z Step / Ap) 时，最关键的技术依据是？",
-        optionsJa: [
-          "使用するインサートチップの許容切込み深さと、荒加工後の階段状残肉の許容サイズ",
-          "NC工作機械のシリアル番号",
-          "工場の天井の高さ",
-          "製品のプラスチックの色合い"
-        ],
-        optionsZh: [
-          "数控刀片涂层允许的最大轴向大切深切削抗力，以及留给后道工序的阶梯台阶残料均匀度",
-          "数控立式加工中心的出厂序列编号",
-          "车间钢结构厂房房顶挑梁净空高度",
-          "最终注塑制品的色母粒色泽深浅"
-        ],
-        ans: 0,
-        explainJa: "Zステップが大きすぎると工具負荷オーバーになり、また残る階段状の残肉（スカラップ）が巨大化して次工程の中仕上げ工具が破損します。工具カタログ推奨値と取り代のバランスで決定します。"
+            "tier": 1,
+            "gradeLabel": "Lv.2 金型設計・PL割検定",
+            "questionJa": "パーティングライン（PL）が平面ではなく、製品形状に沿って激しく上下にうねる「段付きPL（3次元PL面）」を設計する際の注意点として正しいものは？",
+            "questionZh": "当模具分型面不是简单平表面、而是随塑件轮廓高低起伏剧烈波动的“三维阶梯落差 PL 面”时，设计核心守则是？",
+            "optionsJa": [
+                  "段差部には必ず十分な抜き勾配（5〜10度以上）を設け、型締め時のカジリや摩耗を防止する",
+                  "段差部は完全に直角（垂直90度）のナイフエッジで突き合わせる",
+                  "PL面を波打つサインカーブにして接触面積を最大化する",
+                  "バリ（樹脂漏れ）を許容して隙間を0.5mm空けておく"
+            ],
+            "optionsZh": [
+                  "在落差阶梯转折面处必须施加充足的侧向防擦斜度（通常 5°~10° 以上），防止合模时严重咬合研伤",
+                  "所有阶梯交接处必须采用 90° 绝对直角的锋利刀刃口对插合模",
+                  "将分型面做成剧烈波浪状以增加型腔受力面积",
+                  "故意给分型面留出 0.5mm 的巨大空隙任由溢胶"
+            ],
+            "ans": 0,
+            "explainJa": "段付きPLの垂直面同士が擦れ合うと、金型の型締め圧力で瞬時にカジリ（焼き付き）が発生します。必ず逃げ勾配を設けるのが金型設計の鉄則です。"
       },
       {
-        tier: 2,
-        gradeLabel: "Lv.3 CAM荒加工・残肉検定",
-        questionJa: "前工程で Φ20R1 の工具で荒加工を行ったポケットに対し、次工程で Φ8 の工具で「残肉加工（Rest Machining）」を設定しました。Space-Eが自動生成するパスはどこに限定されますか？",
-        questionZh: "上一道工序使用 Φ20R1 大刀开粗，后续使用 Φ8 刀具在 Space-E 启用“残料加工 (Rest Machining)”，系统生成的有效切削轨迹集中于？",
-        optionsJa: [
-          "Φ20R1工具の半径が入らなかった、コーナ隅部や微小幅リブの削り残し箇所のみ",
-          "ポケットの空間全体（空切削を含む全面）",
-          "工作機械のツールマガジン内",
-          "金型ブロックの底面"
-        ],
-        optionsZh: [
-          "仅精准分布在 Φ20R1 无法触及的凹角内拐弯处及小截面窄槽的残料台阶处",
-          "重新在空荡荡的型腔上空全面空走一遍",
-          "在机床外部的刀库链条上回转切削",
-          "在未装夹的模具底部死角来回铣削"
-        ],
-        ans: 0,
-        explainJa: "残肉加工は、前工具の加工ストック形状と現在工具の幾何差分を自動演算し、削り代が残っている危険な領域だけに安全なアプローチでパスを出力します。"
+            "tier": 1,
+            "gradeLabel": "Lv.2 金型設計・PL割検定",
+            "questionJa": "射出成形金型において、製品の「外観面（A面・意匠面）」は通常どちら側に配置すべきですか？",
+            "questionZh": "在注塑模具设计规范中，塑件的高要求“外观面（A面/外表面）”在模具开模时通常安排在？",
+            "optionsJa": [
+                  "固定側（キャビティ側）：エジェクタピン（突き出しピン）の跡がつかないようにするため",
+                  "可動側（コア側）：ピンで強く叩き出して光沢を出すため",
+                  "どちらでも全く影響はない",
+                  "金型ブロックの真横の側面"
+            ],
+            "optionsZh": [
+                  "前模/定模（型腔 Cavity 侧）：避免在其关键外观表面留下丑陋的顶针顶出白痕印记",
+                  "后模/动模（型芯 Core 侧）：为了让多根顶针直接猛烈撞击制品外表面",
+                  "放置在任何一侧对注塑外观品质毫无区别",
+                  "雕刻在模具钢料的最外侧安装侧面"
+            ],
+            "ans": 0,
+            "explainJa": "成形品は収縮して可動側（コア）に抱きついた状態で金型が開き、裏面からエジェクタピンで突き出されます。意匠面であるA面は突き出しピンのない固定側（キャビティ）に配置します。"
       },
       {
-        tier: 2,
-        gradeLabel: "Lv.3 CAM荒加工・残肉検定",
-        questionJa: "エンドミルのダウンカット（クライム切削）とアップカット（コンベンショナル切削）の比較において、金型CAMでダウンカットが標準とされる理由は？",
-        questionZh: "在顺铣 (Climb) 与逆铣 (Conventional) 的切削工艺对比中，模具高速 CNC 加工之所以 100% 默认采用顺铣的原因是？",
-        optionsJa: [
-          "切りくずの厚みが「最大からゼロ」へと薄くなり、刃物の摩擦摩耗が少なく加工面が綺麗になるため",
-          "工作機械のテーブルが逆回転するのを防ぐため",
-          "主軸の回転方向を左回転（逆転）にする必要があるため",
-          "切削粉が作業者の服に付着しないようにするため"
-        ],
-        optionsZh: [
-          "切屑厚度从最大切入点渐变为零流出，极大降低刀片初期挤压摩擦，大幅提高表面光洁度并延长寿命",
-          "防止加工中心工作台在伺服脉冲下倒转",
-          "为了要求主轴电机全行程必须反转切削",
-          "为了防止喷射的铁屑溅落到工人的工装裤上"
-        ],
-        ans: 0,
-        explainJa: "ダウンカット（順方向切削）は、刃先が食い込む瞬間が最も厚く、抜ける際にゼロとなるため、ワークをテーブルに押し付ける力となりビビりが抑えられ、最高の加工面品位が得られます。"
+            "tier": 1,
+            "gradeLabel": "Lv.2 金型設計・PL割検定",
+            "questionJa": "Space-Eで型割を実行した際、エラーで分割できない場合の最も典型的な原因はどれですか？",
+            "questionZh": "在 Space-E 中执行前/后模实体分割 (Core/Cavity Split) 报错失败时，最常见的原因是？",
+            "optionsJa": [
+                  "PL面（パーティング面）の外周境界がモールドベース素材枠の外まで完全に抜け切っていない",
+                  "PCの液晶モニターが小さすぎる",
+                  "製品の曲面の色が青色になっている",
+                  "マウスのクリック速度が遅すぎる"
+            ],
+            "optionsZh": [
+                  "分型面 (PL) 的外缘没有彻底延伸穿透毛坯钢料的四周侧壁，无法构成完全闭合的分割边界",
+                  "电脑外接显示器的物理尺寸不够大",
+                  "三维视口中零件曲面的默认漫反射着色刚好是天蓝色",
+                  "操作员双击鼠标按键的速度比标准间隔慢了 0.1 秒"
+            ],
+            "ans": 0,
+            "explainJa": "型割はブーリアン分割演算です。PL面が素材ブロックの外側まで完全に貫通（オーバーラップ）していないと、内外の空間が分断できずエラーとなります。"
       },
       {
-        tier: 2,
-        gradeLabel: "Lv.3 CAM荒加工・残肉検定",
-        questionJa: "仕上げ加工において、ボールエンドミルで急傾斜面（壁面）と緩傾斜面（底面）の両方を削る場合、パスピッチ（走査線ピッチ）を一定にした場合に起こる問題は？",
-        questionZh: "曲面精光阶段，若用球头刀走单一定距平行刀轨切削急陡壁与平缓底部，会造成什么致命的表面缺陷？",
-        optionsJa: [
-          "壁面の傾斜が急になるほどカスプハイト（削り残し山）が巨大化し、壁面がザラザラになる",
-          "底面だけが過剰に削れて大穴が開く",
-          "工具が高速回転できなくなる",
-          "クーラントが蒸発してなくなる"
-        ],
-        optionsZh: [
-          "越接近垂直陡壁，固定的平面投影行距对应的法向残留高度 (Scallop) 呈几何级数急剧暴增，导致侧壁粗糙不堪",
-          "平缓底面被球头刀无故削穿一个深坑",
-          "主轴变频器会自动强行锁定转速",
-          "机床水箱切削液在几秒钟内彻底挥发"
-        ],
-        ans: 0,
-        explainJa: "平面投影ピッチでは、垂直に近い壁面で実質的なパス間隔が極大化します。Space-Eでは「傾斜に応じた等カスプハイト制御」または「等高線仕上げと走査線仕上げのハイブリッド複合パス」を使用します。"
-      },
-
-      // Lv.4 五轴与放电电极
-      {
-        tier: 3,
-        gradeLabel: "Lv.4 高速・5軸・放電電極マスター",
-        questionJa: "深リブ電極を放電加工（EDM）機にセットする際、火花ギャップ（放電クリアランス）片肉0.05mmで製作した電極を「揺動（オービット運動）」させて加工する理由は？",
-        questionZh: "使用留有单边 0.05mm 火花位的紫铜电极在深槽中放电时，必须启动机床“伺服平动摇动 (Orbital Discharge)”的原因是？",
-        optionsJa: [
-          "電極を微小円運動（揺動）させることで、スラッジ（加工屑・カーボン）を排出し、異常アーク放電を防いで均一に仕上げるため",
-          "電極の形を削り直すため",
-          "金型鋼材を磁化させて硬化させるため",
-          "放電加工液の温度を沸騰させるため"
-        ],
-        optionsZh: [
-          "通过微米级圆形/球形摇动平动，极速排出电蚀碳黑渣滓 (Sludge)，消除集中拉弧打火并获得极致均一表面",
-          "通过摇摆摩擦在钢件上将紫铜电极自身研磨修复",
-          "通过剧烈电磁摇晃使模具钢材晶格磁化硬化",
-          "为了使放电加工油在油箱内迅速沸腾挥发"
-        ],
-        ans: 0,
-        explainJa: "深リブ放電では底にスラッジが溜まりやすく、異常放電（集中放電による電極と金型の溶着事故）が多発します。揺動運動によるポンピング作用でスラッジを強制排出するのが不可欠です。"
+            "tier": 1,
+            "gradeLabel": "Lv.2 金型設計・PL割検定",
+            "questionJa": "射出成形金型のPL面（パーティング面）設計において、射出時の樹脂バリ（フラッシュ）を防ぐ「食い切り部（合わせ面/シーリングランド）」の幅として一般的な基準値は？",
+            "questionZh": "在精密注塑模具分型面 (PL) 设计中，为了防止注塑高压跑披锋（毛边），紧贴制品外轮廓的“封胶位 (Seal Land / 贴合平面)”宽度通常应保证在？",
+            "optionsJa": [
+                  "製品輪郭の全周にわたり 15mm 〜 30mm 程度の確実な当たり幅を確保し、それより外側は逃げ（リリーフ 0.5〜1mm）を設ける",
+                  "製品輪郭から 0.01mm だけで十分である",
+                  "金型外枠まで全幅300mmを一切逃げずに完全密着研磨させる",
+                  "PL面の幅は常にゼロ（刃先ナイフエッジ）にする"
+            ],
+            "optionsZh": [
+                  "沿产品外轮廓保证 15mm ~ 30mm 左右严密贴合的封胶阻料带，封胶带以外区域做 0.5~1mm 的落空避空（Relief）",
+                  "只需保留 0.01mm 的微小封胶边即可防止熔胶溢出",
+                  "整个 300mm 见方的模胚外围全平面紧密贴合不留任何避空面",
+                  "分型面刃口必须做成 0 宽度的薄刃菜刀状"
+            ],
+            "ans": 0,
+            "explainJa": "正解！広すぎる合わせ面は型締め圧力が分散してバリが出やすくなり、狭すぎると鋼材がヘタリます。15〜30mmの封じ部（食い切り）を設け、外側を逃がすのが鉄則です。"
       },
       {
-        tier: 3,
-        gradeLabel: "Lv.4 高速・5軸・放電電極マスター",
-        questionJa: "5軸マシニングセンタにおける「工具先端点制御（TCP：Tool Center Point Control / RTCP）」の役割として正しいものは？",
-        questionZh: "在五轴联动数控系统中，核心黑科技“刀尖点跟随控制 (RTCP / Tool Center Point Control)”的核心功能是？",
-        optionsJa: [
-          "回転軸が傾いても、NC装置が回転中心と工具長さをリアルタイム補正し、刃先先端がプログラム指示座標を正確になぞり続ける",
-          "工具が折れた瞬間に新しい工具を自動合成する",
-          "工具の切削速度を光の速度まで加速する",
-          "主軸内部のベアリングを冷やす"
-        ],
-        optionsZh: [
-          "当机床转台或摆头剧烈旋转时，系统实时动态解算运动链偏置，使刀尖切削点始终恒速精准贴合编程轨迹点",
-          "在铣刀崩断的一瞬间由微纳米激光自动打印出新刀具",
-          "将机械切削线速度瞬间提升至光速",
-          "主要用于在数控后台监控主轴滚珠轴承的润滑油温"
-        ],
-        ans: 0,
-        explainJa: "TCP（RTCP）がないと、回転軸が1度傾くだけで工具先端が大きく空間をズレてしまいます。RTCPによってCAMは機械の回転軸中心を意識せず、純粋なワーク座標系で出力可能になります。"
+            "tier": 1,
+            "gradeLabel": "Lv.2 金型設計・PL割検定",
+            "questionJa": "成形品の内側にアンダーカット（引っかかり）がある場合、型開き後の製品突き出し動作を利用して斜めにスライド退避させる機構はどれですか？",
+            "questionZh": "当塑料制品内侧壁存在倒扣（卡勾/凹槽）特征时，利用顶针板顶出行程沿导向斜向运动脱模的模具机构被称为？",
+            "optionsJa": [
+                  "傾斜ピン機構（斜めエジェクタピン / リフター：Lifter）",
+                  "外側油圧シリンダースライド",
+                  "ホットランナーノズルゲート",
+                  "冷却水管バッフルプレート"
+            ],
+            "optionsZh": [
+                  "斜顶机构 (斜顶针 / 倾斜顶出销 / Lifter)",
+                  "外侧大行程液压抽芯油缸",
+                  "热流道注塑针阀射嘴",
+                  "模具冷却水隔水水桥隔片"
+            ],
+            "ans": 0,
+            "explainJa": "正解！成形品内部のアンダーカットは外側スライドが入らないため、エジェクタ動作と連動して斜め内側に逃げる「傾斜ピン（リフター）」が最も多用されます。"
       },
       {
-        tier: 3,
-        gradeLabel: "Lv.4 高速・5軸・放電電極マスター",
-        questionJa: "Space-E/CAMで5軸加工パスを計算する際、「リード角（進行方向の傾き角）」と「ティルト角（進行方向と直角の傾き角）」を制御する最大の目的は？",
-        questionZh: "在 Space-E 五轴刀路规划中，设置“前倾角 (Lead Angle)”与“侧倾角 (Tilt Angle)”的最核心工业目的是？",
-        optionsJa: [
-          "ボールエンドミルの先端回転中心（周速ゼロのデッドポイント）での接触を避け、かつホルダー干渉を回避するため",
-          "工具の磨耗を均等にするために故意に振動を起こすため",
-          "金型ブロックの重量を軽くするため",
-          "NCプログラムの行数を減らすため"
-        ],
-        optionsZh: [
-          "让刀具微倾，避开球头刀最顶端切削线速度为零的死点 (Dead Spot)，同时使刀柄避开深腔干涉",
-          "为了故意在机床主轴中激发出高频振动来震落铁屑",
-          "通过斜角切削有效减轻重型模具钢毛坯的吨位重量",
-          "为了将生成的数控程序文件体积极限压缩"
-        ],
-        ans: 0,
-        explainJa: "ボールエンドミルの真中心（頂点）は回転速度が0m/min（周速ゼロ）であり、金属を削れずむしり取って面品位を破壊します。刀軸を15度程度傾けて切削することで、周速の高い刃先を当てて鏡面仕上げを実現します。"
+            "tier": 2,
+            "gradeLabel": "Lv.3 CAM荒加工・残肉検定",
+            "questionJa": "高硬度金型鋼（HRC50以上）の荒加工において、工具の寿命を最大化するための切削アプローチとして最適なものは？",
+            "questionZh": "针对 HRC50 以上的高硬度预硬淬火模具钢开粗切削，为实现刀片寿命最大化，最科学的切削进刀工艺是？",
+            "optionsJa": [
+                  "小切込み・高送り（High Feed Milling）を採用し、ヘリカル進入で連続切削する",
+                  "一気に深さ50mmを低速で垂直に突っ込んで削り落とす",
+                  "切削油をかけずに超高速回転で摩擦熱で溶かしながら削る",
+                  "木工用エンドミルを使用する"
+            ],
+            "optionsZh": [
+                  "采用“浅切深、大进给 (High Feed Milling)”高频轻切削策略，配合螺旋平滑切入保持恒定负载",
+                  "采用低转速、一次性猛扎 50mm 垂直大切深强行死啃硬钢",
+                  "完全停用冷却并在干摩擦起火冒烟状态下强力熔化钢材",
+                  "采购廉价的木工开槽硬质合金刀具代用"
+            ],
+            "ans": 0,
+            "explainJa": "高硬度鋼では、切込み（Ap）を小さく（0.5〜1mm）、送り速度（Vf）を高く保つ高送り加工が有効です。切削熱が切りくずに逃げ、工具への熱衝撃・チッピングを激減させます。"
       },
       {
-        tier: 3,
-        gradeLabel: "Lv.4 高速・5軸・放電電極マスター",
-        questionJa: "Space-Eから出力されたNCプログラムを実機で実行する前に行う「実機Gコードシミュレーション」でしか防げない重大インシデントは？",
-        questionZh: "在启动五轴机床前，只有通过 Space-E“真实 G 代码驱动级机床仿真”才能彻底防范的致命车间重大事故是？",
-        optionsJa: [
-          "工具交換（M06）時の退避高さ不足によるマガジンアームやワークへの主軸頭激突、およびリミットオーバー",
-          "机内クーラント液の濃度低下",
-          "工場のブレーカー落ち",
-          "作業員の居眠り運転"
-        ],
-        optionsZh: [
-          "换刀回零 (G28/M06) 阶段由于退刀高度不足导致笨重的主轴头直接腰斩撞碎工件，以及行程超程撞硬限位",
-          "切削液油水分离器浓度轻度下降",
-          "车间动力配电总开关发生意外跳闸",
-          "夜班操作机床的工人疲劳打瞌睡"
-        ],
-        ans: 0,
-        explainJa: "CAM内部の軌跡表示では、換刀動作（ATC）やアプローチ開始前のG00早送り移動、機械のストロークリミット（限界点）が検証できません。Gコード駆動シミュレータだけがこれら全行程の物理干渉を保証します。"
+            "tier": 2,
+            "gradeLabel": "Lv.3 CAM荒加工・残肉検定",
+            "questionJa": "Space-E/CAMにおいて、「等高線荒加工」のパス間隔（Zステップ量）を決定する際の最も重要な指標は？",
+            "questionZh": "在 Space-E/CAM 中，设定“等高粗加工”的轴向层切深度 (Z Step / Ap) 时，最关键的技术依据是？",
+            "optionsJa": [
+                  "使用するインサートチップの許容切込み深さと、荒加工後の階段状残肉の許容サイズ",
+                  "NC工作機械のシリアル番号",
+                  "工場の天井の高さ",
+                  "製品のプラスチックの色合い"
+            ],
+            "optionsZh": [
+                  "数控刀片涂层允许的最大轴向大切深切削抗力，以及留给后道工序的阶梯台阶残料均匀度",
+                  "数控立式加工中心的出厂序列编号",
+                  "车间钢结构厂房房顶挑梁净空高度",
+                  "最终注塑制品的色母粒色泽深浅"
+            ],
+            "ans": 0,
+            "explainJa": "Zステップが大きすぎると工具負荷オーバーになり、また残る階段状の残肉（スカラップ）が巨大化して次工程の中仕上げ工具が破損します。工具カタログ推奨値と取り代のバランスで決定します。"
       },
       {
-        tier: 3,
-        gradeLabel: "Lv.4 高速・5軸・放電電極マスター",
-        questionJa: "自動車の大型バンパー射出成形金型など、超大型・長時間の直彫り加工において、工具摩耗による製品寸法の段差を防ぐためのCAM運用の極意は？",
-        questionZh: "在汽车大型保险杠注塑模具等长达数十小时的超大型模仁精雕中，为防止刀具渐进磨损在模具曲面上产生阶梯光刀接刀印，顶级的 CAM 策略是？",
-        optionsJa: [
-          "工具寿命予測に基づき、パスを同一工具の耐久限界内で自動分割し、機上タッチセンサーでの工具長自動計測・オフセット更新を組み込む",
-          "1本の工具が完全に折れて煙が出るまで限界を超えて削り続ける",
-          "夜間は無人で機械の主軸を停止させて休ませる",
-          "金型を半分ずつ別々の工作機械で削って後から溶接する"
-        ],
-        optionsZh: [
-          "基于刀具磨损寿命预测，在 CAM 中科学分段规划刀路，并在各段衔接处自动插入机床激光测刀仪执行动态长度补偿更新",
-          "任由一把刀具从头切到尾直到刀尖彻底磨损冒烟崩断",
-          "夜间下班后将主轴关停冷机、次日再继续启动硬切",
-          "将超大模具切成两半分别在两台机器切削、后期再手工补焊"
-        ],
-        ans: 0,
-        explainJa: "超大型金型では1本の工具で仕上げきれません。Space-Eの工程分割機能と機上測定マクロを連動させ、工具交換時の繋ぎ目段差（接刀痕）を0.002mm以内に抑えるのが匠の技です。"
+            "tier": 2,
+            "gradeLabel": "Lv.3 CAM荒加工・残肉検定",
+            "questionJa": "前工程で Φ20R1 の工具で荒加工を行ったポケットに対し、次工程で Φ8 の工具で「残肉加工（Rest Machining）」を設定しました。Space-Eが自動生成するパスはどこに限定されますか？",
+            "questionZh": "上一道工序使用 Φ20R1 大刀开粗，后续使用 Φ8 刀具在 Space-E 启用“残料加工 (Rest Machining)”，系统生成的有效切削轨迹集中于？",
+            "optionsJa": [
+                  "Φ20R1工具の半径が入らなかった、コーナ隅部や微小幅リブの削り残し箇所のみ",
+                  "ポケットの空間全体（空切削を含む全面）",
+                  "工作機械のツールマガジン内",
+                  "金型ブロックの底面"
+            ],
+            "optionsZh": [
+                  "仅精准分布在 Φ20R1 无法触及的凹角内拐弯处及小截面窄槽的残料台阶处",
+                  "重新在空荡荡的型腔上空全面空走一遍",
+                  "在机床外部的刀库链条上回转切削",
+                  "在未装夹的模具底部死角来回铣削"
+            ],
+            "ans": 0,
+            "explainJa": "残肉加工は、前工具の加工ストック形状と現在工具の幾何差分を自動演算し、削り代が残っている危険な領域だけに安全なアプローチでパスを出力します。"
+      },
+      {
+            "tier": 2,
+            "gradeLabel": "Lv.3 CAM荒加工・残肉検定",
+            "questionJa": "エンドミルのダウンカット（クライム切削）とアップカット（コンベンショナル切削）の比較において、金型CAMでダウンカットが標準とされる理由は？",
+            "questionZh": "在顺铣 (Climb) 与逆铣 (Conventional) 的切削工艺对比中，模具高速 CNC 加工之所以 100% 默认采用顺铣的原因是？",
+            "optionsJa": [
+                  "切りくずの厚みが「最大からゼロ」へと薄くなり、刃物の摩擦摩耗が少なく加工面が綺麗になるため",
+                  "工作機械のテーブルが逆回転するのを防ぐため",
+                  "主軸の回転方向を左回転（逆転）にする必要があるため",
+                  "切削粉が作業者の服に付着しないようにするため"
+            ],
+            "optionsZh": [
+                  "切屑厚度从最大切入点渐变为零流出，极大降低刀片初期挤压摩擦，大幅提高表面光洁度并延长寿命",
+                  "防止加工中心工作台在伺服脉冲下倒转",
+                  "为了要求主轴电机全行程必须反转切削",
+                  "为了防止喷射的铁屑溅落到工人的工装裤上"
+            ],
+            "ans": 0,
+            "explainJa": "ダウンカット（順方向切削）は、刃先が食い込む瞬間が最も厚く、抜ける際にゼロとなるため、ワークをテーブルに押し付ける力となりビビりが抑えられ、最高の加工面品位が得られます。"
+      },
+      {
+            "tier": 2,
+            "gradeLabel": "Lv.3 CAM荒加工・残肉検定",
+            "questionJa": "仕上げ加工において、ボールエンドミルで急傾斜面（壁面）と緩傾斜面（底面）の両方を削る場合、パスピッチ（走査線ピッチ）を一定にした場合に起こる問題は？",
+            "questionZh": "曲面精光阶段，若用球头刀走单一定距平行刀轨切削急陡壁与平缓底部，会造成什么致命的表面缺陷？",
+            "optionsJa": [
+                  "壁面の傾斜が急になるほどカスプハイト（削り残し山）が巨大化し、壁面がザラザラになる",
+                  "底面だけが過剰に削れて大穴が開く",
+                  "工具が高速回転できなくなる",
+                  "クーラントが蒸発してなくなる"
+            ],
+            "optionsZh": [
+                  "越接近垂直陡壁，固定的平面投影行距对应的法向残留高度 (Scallop) 呈几何级数急剧暴增，导致侧壁粗糙不堪",
+                  "平缓底面被球头刀无故削穿一个深坑",
+                  "主轴变频器会自动强行锁定转速",
+                  "机床水箱切削液在几秒钟内彻底挥发"
+            ],
+            "ans": 0,
+            "explainJa": "平面投影ピッチでは、垂直に近い壁面で実質的なパス間隔が極大化します。Space-Eでは「傾斜に応じた等カスプハイト制御」または「等高線仕上げと走査線仕上げのハイブリッド複合パス」を使用します。"
+      },
+      {
+            "tier": 2,
+            "gradeLabel": "Lv.3 CAM荒加工・残肉検定",
+            "questionJa": "ボールエンドミルで自由曲面を仕上げる際、送りピッチ（ピック幅 ae）を2倍に広げた場合、削り残しの山の高さ（カスプハイト h）は何倍になりますか？",
+            "questionZh": "使用同一规格球头铣刀精铣自由曲面时，如果将切削侧向步距（行距 ae）扩大为原本的 2 倍，表面残留峰高 (Scallop/Cusp Height h) 将变为原本的多少倍？",
+            "optionsJa": [
+                  "4 倍（カスプハイトはピック幅の2乗に比例するため：h ∝ ae²）",
+                  "2 倍（単純比例）",
+                  "半分（0.5倍）に減少する",
+                  "全く変化しない"
+            ],
+            "optionsZh": [
+                  "4 倍（根据抛光残留高度几何几何公式：h ∝ ae²，峰高与行距平方成正比）",
+                  "2 倍（呈一次线性比例变化）",
+                  "减少为原来的 0.5 倍",
+                  "完全没有任何物理变化"
+            ],
+            "ans": 0,
+            "explainJa": "正解！h ≒ ae² / (8R) の式より、ピッチを2倍にするとカスプハイトは 2² = 4倍に跳ね上がります。仕上げ面品位を維持するにはピッチの微小制御が極めて重要です。"
+      },
+      {
+            "tier": 2,
+            "gradeLabel": "Lv.3 CAM荒加工・残肉検定",
+            "questionJa": "NCマシニング加工において、切削工具の突き出し長さを L、シャンク径を D とした時、切削びびり（Chatter）を防ぐための「突き出し比（L/D比）」の一般的な推奨限界は？",
+            "questionZh": "在数控铣削中，刀具悬伸长度为 L，刀杆直径为 D，为彻底杜绝切削振颤与保证模具精度，通常推荐控制的刀具长径比 (L/D) 安全阈值是？",
+            "optionsJa": [
+                  "L/D ≦ 3 〜 5 倍以内（これを超えると剛性が劇的に低下し、防振シャンクや傾斜加工が必要）",
+                  "L/D ≧ 20 〜 30 倍以上（できるだけ細く長く伸ばす）",
+                  "L/D ＝ 0（突き出しゼロ）",
+                  "工具径Dの数値に関わらず常に500mm固定"
+            ],
+            "optionsZh": [
+                  "L/D ≤ 3 ~ 5 倍以内（超出该比例后抗弯刚度断崖式下跌，必须采用抗振合金杆或 3+2 轴摆角加工）",
+                  "L/D ≥ 20 ~ 30 倍以上（尽可能悬伸越长越细越好）",
+                  "L/D = 0（必须完全缩进刀柄内部无法露刃）",
+                  "无论刀具直径大小如何一律固定悬伸 500mm"
+            ],
+            "ans": 0,
+            "explainJa": "正解！L/Dが5倍を超えると工具剛性が急低下し、ビビりや寸法狂いが発生します。深い部位は短工具で割出5軸（3+2軸）傾斜させてアプローチするのが現代の定石です。"
+      },
+      {
+            "tier": 3,
+            "gradeLabel": "Lv.4 高速・5軸・放電電極マスター",
+            "questionJa": "深リブ電極を放電加工（EDM）機にセットする際、火花ギャップ（放電クリアランス）片肉0.05mmで製作した電極を「揺動（オービット運動）」させて加工する理由は？",
+            "questionZh": "使用留有单边 0.05mm 火花位的紫铜电极在深槽中放电时，必须启动机床“伺服平动摇动 (Orbital Discharge)”的原因是？",
+            "optionsJa": [
+                  "電極を微小円運動（揺動）させることで、スラッジ（加工屑・カーボン）を排出し、異常アーク放電を防いで均一に仕上げるため",
+                  "電極の形を削り直すため",
+                  "金型鋼材を磁化させて硬化させるため",
+                  "放電加工液の温度を沸騰させるため"
+            ],
+            "optionsZh": [
+                  "通过微米级圆形/球形摇动平动，极速排出电蚀碳黑渣滓 (Sludge)，消除集中拉弧打火并获得极致均一表面",
+                  "通过摇摆摩擦在钢件上将紫铜电极自身研磨修复",
+                  "通过剧烈电磁摇晃使模具钢材晶格磁化硬化",
+                  "为了使放电加工油在油箱内迅速沸腾挥发"
+            ],
+            "ans": 0,
+            "explainJa": "深リブ放電では底にスラッジが溜まりやすく、異常放電（集中放電による電極と金型の溶着事故）が多発します。揺動運動によるポンピング作用でスラッジを強制排出するのが不可欠です。"
+      },
+      {
+            "tier": 3,
+            "gradeLabel": "Lv.4 高速・5軸・放電電極マスター",
+            "questionJa": "5軸マシニングセンタにおける「工具先端点制御（TCP：Tool Center Point Control / RTCP）」の役割として正しいものは？",
+            "questionZh": "在五轴联动数控系统中，核心黑科技“刀尖点跟随控制 (RTCP / Tool Center Point Control)”的核心功能是？",
+            "optionsJa": [
+                  "回転軸が傾いても、NC装置が回転中心と工具長さをリアルタイム補正し、刃先先端がプログラム指示座標を正確になぞり続ける",
+                  "工具が折れた瞬間に新しい工具を自動合成する",
+                  "工具の切削速度を光の速度まで加速する",
+                  "主軸内部のベアリングを冷やす"
+            ],
+            "optionsZh": [
+                  "当机床转台或摆头剧烈旋转时，系统实时动态解算运动链偏置，使刀尖切削点始终恒速精准贴合编程轨迹点",
+                  "在铣刀崩断的一瞬间由微纳米激光自动打印出新刀具",
+                  "将机械切削线速度瞬间提升至光速",
+                  "主要用于在数控后台监控主轴滚珠轴承的润滑油温"
+            ],
+            "ans": 0,
+            "explainJa": "TCP（RTCP）がないと、回転軸が1度傾くだけで工具先端が大きく空間をズレてしまいます。RTCPによってCAMは機械の回転軸中心を意識せず、純粋なワーク座標系で出力可能になります。"
+      },
+      {
+            "tier": 3,
+            "gradeLabel": "Lv.4 高速・5軸・放電電極マスター",
+            "questionJa": "Space-E/CAMで5軸加工パスを計算する際、「リード角（進行方向の傾き角）」と「ティルト角（進行方向と直角の傾き角）」を制御する最大の目的は？",
+            "questionZh": "在 Space-E 五轴刀路规划中，设置“前倾角 (Lead Angle)”与“侧倾角 (Tilt Angle)”的最核心工业目的是？",
+            "optionsJa": [
+                  "ボールエンドミルの先端回転中心（周速ゼロのデッドポイント）での接触を避け、かつホルダー干渉を回避するため",
+                  "工具の磨耗を均等にするために故意に振動を起こすため",
+                  "金型ブロックの重量を軽くするため",
+                  "NCプログラムの行数を減らすため"
+            ],
+            "optionsZh": [
+                  "让刀具微倾，避开球头刀最顶端切削线速度为零的死点 (Dead Spot)，同时使刀柄避开深腔干涉",
+                  "为了故意在机床主轴中激发出高频振动来震落铁屑",
+                  "通过斜角切削有效减轻重型模具钢毛坯的吨位重量",
+                  "为了将生成的数控程序文件体积极限压缩"
+            ],
+            "ans": 0,
+            "explainJa": "ボールエンドミルの真中心（頂点）は回転速度が0m/min（周速ゼロ）であり、金属を削れずむしり取って面品位を破壊します。刀軸を15度程度傾けて切削することで、周速の高い刃先を当てて鏡面仕上げを実現します。"
+      },
+      {
+            "tier": 3,
+            "gradeLabel": "Lv.4 高速・5軸・放電電極マスター",
+            "questionJa": "Space-Eから出力されたNCプログラムを実機で実行する前に行う「実機Gコードシミュレーション」でしか防げない重大インシデントは？",
+            "questionZh": "在启动五轴机床前，只有通过 Space-E“真实 G 代码驱动级机床仿真”才能彻底防范的致命车间重大事故是？",
+            "optionsJa": [
+                  "工具交換（M06）時の退避高さ不足によるマガジンアームやワークへの主軸頭激突、およびリミットオーバー",
+                  "机内クーラント液の濃度低下",
+                  "工場のブレーカー落ち",
+                  "作業員の居眠り運転"
+            ],
+            "optionsZh": [
+                  "换刀回零 (G28/M06) 阶段由于退刀高度不足导致笨重的主轴头直接腰斩撞碎工件，以及行程超程撞硬限位",
+                  "切削液油水分离器浓度轻度下降",
+                  "车间动力配电总开关发生意外跳闸",
+                  "夜班操作机床的工人疲劳打瞌睡"
+            ],
+            "ans": 0,
+            "explainJa": "CAM内部の軌跡表示では、換刀動作（ATC）やアプローチ開始前のG00早送り移動、機械のストロークリミット（限界点）が検証できません。Gコード駆動シミュレータだけがこれら全行程の物理干渉を保証します。"
+      },
+      {
+            "tier": 3,
+            "gradeLabel": "Lv.4 高速・5軸・放電電極マスター",
+            "questionJa": "自動車の大型バンパー射出成形金型など、超大型・長時間の直彫り加工において、工具摩耗による製品寸法の段差を防ぐためのCAM運用の極意は？",
+            "questionZh": "在汽车大型保险杠注塑模具等长达数十小时的超大型模仁精雕中，为防止刀具渐进磨损在模具曲面上产生阶梯光刀接刀印，顶级的 CAM 策略是？",
+            "optionsJa": [
+                  "工具寿命予測に基づき、パスを同一工具の耐久限界内で自動分割し、機上タッチセンサーでの工具長自動計測・オフセット更新を組み込む",
+                  "1本の工具が完全に折れて煙が出るまで限界を超えて削り続ける",
+                  "夜間は無人で機械の主軸を停止させて休ませる",
+                  "金型を半分ずつ別々の工作機械で削って後から溶接する"
+            ],
+            "optionsZh": [
+                  "基于刀具磨损寿命预测，在 CAM 中科学分段规划刀路，并在各段衔接处自动插入机床激光测刀仪执行动态长度补偿更新",
+                  "任由一把刀具从头切到尾直到刀尖彻底磨损冒烟崩断",
+                  "夜间下班后将主轴关停冷机、次日再继续启动硬切",
+                  "将超大模具切成两半分别在两台机器切削、后期再手工补焊"
+            ],
+            "ans": 0,
+            "explainJa": "超大型金型では1本の工具で仕上げきれません。Space-Eの工程分割機能と機上測定マクロを連動させ、工具交換時の繋ぎ目段差（接刀痕）を0.002mm以内に抑えるのが匠の技です。"
+      },
+      {
+            "tier": 3,
+            "gradeLabel": "Lv.4 高速・5軸・放電電極マスター",
+            "questionJa": "同時5軸マシニングセンタにおいて、回転軸（A/B/C軸）が傾いても、工具の先端点（ツールチップ）がプログラムされた空間軌跡を忠実に維持するNC制御機能はどれですか？",
+            "questionZh": "在连续五轴联动加工中心中，不论双摆头或回转工作台如何倾斜旋转，数控系统均能实时动态补偿、确保刀尖始终处于理论编程轨迹的控制功能被称为？",
+            "optionsJa": [
+                  "RTCP（Rotation Tool Center Point / 工具先端点制御：FANUC G43.4等）",
+                  "G00（早送り位置決め）",
+                  "M03（主軸正転）",
+                  "G90（アブソリュート指令）"
+            ],
+            "optionsZh": [
+                  "RTCP / TCPM（Rotation Tool Center Point / 刀尖点跟随控制：如 FANUC G43.4、Heidenhain M128）",
+                  "G00（主轴快速定位）",
+                  "M03（主轴正向旋转）",
+                  "G90（绝对坐标编程模式）"
+            ],
+            "ans": 0,
+            "explainJa": "正解！RTCP機能により、機械の回転中心と工具先端の幾何オフセットをCNCがリアルタイム逆キネマティクス計算し、工具先端の指定速度と軌跡を完全に保持します。"
+      },
+      {
+            "tier": 3,
+            "gradeLabel": "Lv.4 高速・5軸・放電電極マスター",
+            "questionJa": "放電加工（EDM）において、電極消耗を抑えつつ高速に金型鋼を除去するために、電極と工作物の極性（プラス/マイナス）は通常どのように接続しますか？",
+            "questionZh": "在模具型腔电火花放电加工 (EDM) 中，为了将紫铜/石墨电极自身的损耗降至最低并实现高效蚀除模具钢，通常应采用何种放电极性？",
+            "optionsJa": [
+                  "電極を「プラス（陽極）」、被削材（金型鋼）を「マイナス（陰極）」に接続する（銅電極の標準正極性加工）",
+                  "電極を家庭用AC100Vコンセントに直結する",
+                  "極性は一切関係なくアース線も不要である",
+                  "電極と鋼材を物理的にショートさせたまま放置する"
+            ],
+            "optionsZh": [
+                  "通常采用正极性加工：电极接“正极 (+)”、模具钢工件接“负极 (-)”（利用电子流轰击工件实现低电极损耗高效蚀除）",
+                  "将电极直接插入车间墙壁的 220V 交流照明插座",
+                  "放电加工不需要区分任何正负极性也不需要接地",
+                  "直接将电极与钢材紧密短路硬碰并在断电下静置"
+            ],
+            "ans": 0,
+            "explainJa": "正解！鋼材の放電加工（銅電極）では、電子が被削材に衝突して材料を溶融し、重い陽イオンが電極側にカーボン被膜を形成して電極消耗を防ぐ「正極性（電極+）」が標準です。"
       }
-    ];
+];
 
     /* ==========================================================================
-       5. 知识大典 (Codex 词库)
+       5. 知识大典 (Codex 核心技术词典)
        ========================================================================== */
     const CODEX_DATA = [
       {
-        term: "ハイブリッドモデリング (Hybrid Modeling)",
-        cat: "cad",
-        catLabel: "CADモデリング",
-        path: "Space-E コアアーキテクチャ",
-        descJa: "ソリッド（完全閉空間）とサーフェス（開いた自由曲面）を共存させ、破綻したインポートデータでも即座にCAMパス計算や型割作業へ進めるSpace-E最大の特徴。",
-        descZh: "实体与自由曲面无缝共存体系。即使导入的数据曲面存在微细间隙未完全闭合，也能直接计算 CAM 刀轨与进行分模设计。"
+            "term": "B-Rep / 境界表現 (Boundary Representation)",
+            "cat": "cad",
+            "catLabel": "CAD基礎",
+            "path": "3D CAD トポロジー理論",
+            "descJa": "立体を頂点（Vertex）・稜線（Edge）・面ループ（Loop）・面（Face）の境界位相接続と幾何方程式で厳密に定義するモデリング手法。現代産業用3D CAD/CAMの基盤。",
+            "descZh": "通过边界顶点、棱边、封闭环与表面的拓扑连接关系严密定义三维实体的边界表示法。现代工业级 CAD/CAM 软件的绝对基石。"
       },
       {
-        term: "抜き勾配解析 (Draft Angle Inspector)",
-        cat: "mold",
-        catLabel: "金型設計",
-        path: "[金型] -> [勾配解析]",
-        descJa: "製品モデルを指定の型開き方向ベクトル（通常+Z軸）からカラーコンター診断。緑（合格）、赤（アンダーカット/逆勾配）、青（垂直警戒面）で直感表示する。",
-        descZh: "基于指定出模矢量（默认+Z轴）对产品实施伪彩色梯度检测：绿色合格、红色严重倒扣、蓝色警戒垂直面。"
+            "term": "NURBS (非一様有理Bスプライン)",
+            "cat": "cad",
+            "catLabel": "CAD幾何",
+            "path": "自由曲面数学モデル",
+            "descJa": "Non-Uniform Rational B-Splines。制御点、重み、ノットベクトルで曲面を生成。円錐曲線（真円・球）と自由曲面を唯一無二の共通数式で厳密表現できる世界標準。",
+            "descZh": "非均匀有理B样条。通过控制网格、权重因子与节点向量统一表达自由曲面与二次解析曲面（圆柱/球体）的世界通用数学标准。"
       },
       {
-        term: "パーティングライン (Parting Line / PL)",
-        cat: "mold",
-        catLabel: "金型設計",
-        path: "[金型] -> [PL自動抽出]",
-        descJa: "固定側（キャビ）と可動側（コア）を二分する境界稜線。Space-Eは0度勾配変曲点を自動追跡し、射出圧力に耐える滑らかな封じ面を生成する。",
-        descZh: "模具定模与动模的隔离分模分界线。Space-E 沿 0 度拔模反转曲率点自动追踪闭合环路并向外平滑延伸分模面。"
+            "term": "切削3要素 (Cutting Conditions: Vc / Vf / ap)",
+            "cat": "cam",
+            "catLabel": "切削力学",
+            "path": "マシニング加工条件",
+            "descJa": "切削速度（周速 Vc m/min）、送り速度（テーブル送り Vf mm/min / 一刃送り fz）、切込み量（軸切込み ap / 径ピック幅 ae）。切削抵抗と熱、加工能率MRRを支配する。",
+            "descZh": "切削线速度 (Vc)、进给率 (Vf / 每齿进给 fz) 与切削深度 (ap/ae)。直接主宰切削动力学、切削热平衡与材料去除率 (MRR)。"
       },
       {
-        term: "リブ電極自動抽出 (Rib Electrode Extraction)",
-        cat: "edm",
-        catLabel: "放電電極",
-        path: "[電極] -> [リブ電極自動抽出]",
-        descJa: "切削不能な狭深溝（リブ）の底面をクリックするだけで、放電有効部と逃げクリアランス面、基準台、ポカよけC面までを一括自動モデリングする専用機能。",
-        descZh: "针对无法铣削的深狭肋条槽，点击槽底即可全自动生成放电有效体、逃空避空面、定位基准台与防呆 C 角。"
+            "term": "ダウンカット / 順ミル (Climb / Down Milling)",
+            "cat": "cam",
+            "catLabel": "切削力学",
+            "path": "切削運動学",
+            "descJa": "工具回転と送りが同方向。食い込み時が最大切りくず厚さ、抜け時がゼロ厚さ。切削力がワークを下向きに押し付け固定が安定し、びびりが少なく面粗度が極めて優れる標準工法。",
+            "descZh": "刀刃旋转切入方向与工作台进给方向一致。最大切屑厚度切入、零厚度切出。切削分力垂直向下压紧工件，表面粗糙度极佳且刀具磨损慢。"
       },
       {
-        term: "火花ギャップ補正 (Spark Gap Offset)",
-        cat: "edm",
-        catLabel: "放電電極",
-        path: "[電極] -> [放電クリアランス設定]",
-        descJa: "放電加工で火花が飛ぶ隙間分（0.02〜0.2mm）だけ、電極モデルを3次元的に等距離マイナス縮小オフセットする補正機能。",
-        descZh: "电极放电火花间隙（0.02~0.25mm）补偿。将电极实体执行全向三维均匀负缩放，确保放电后模腔尺寸精准。"
+            "term": "アップカット / 逆ミル (Conventional / Up Milling)",
+            "cat": "cam",
+            "catLabel": "切削力学",
+            "path": "切削運動学",
+            "descJa": "ゼロ切りくず厚さから刃が滑りながら食い込む。ワークを引き上げる上向き分力が働きビビりやすいが、鋳物黒皮（硬化表面）を削る際に内部から刃を入れるために用いられる。",
+            "descZh": "切屑厚度由零逐渐变大。刀刃在工件表面剧烈打滑擦伤后切入，产生向上拉起工件的切削分力，仅在消除工件铸造硬化黑皮时特殊使用。"
       },
       {
-        term: "等高線荒加工 (Constant Z Roughing)",
-        cat: "cam",
-        catLabel: "CAM切削",
-        path: "[Space-E/CAM] -> [荒加工] -> [等高線]",
-        descJa: "Z方向の各深さレベルで水平スライス状に金属を削り取る基本荒加工。トロコイド制御やコーナR自動減速により工具負荷を均一化する。",
-        descZh: "沿 Z 轴等层水平分层切削海量钢材。配备转角摆线切削与速度前瞻自适应，保证大直径铣刀恒定切削负荷。"
+            "term": "剛性法則・突き出し比 (Tool Overhang & L/D Rule)",
+            "cat": "cam",
+            "catLabel": "工具力学",
+            "path": "工具剛性管理",
+            "descJa": "工具突き出し長さ L に対し、曲げ剛性は 1/L³ に反比例して激減する。突き出しが2倍になるとたわみ量は8倍に跳ね上がるため、深彫りでは割出5軸等で最短突き出しを保つのが鉄則。",
+            "descZh": "刀具抗弯刚度与悬伸长度 L 的立方成反比 (1/L³)。悬伸增加一倍，刚度暴跌为原本的 1/8（振颤倾向飙升 8 倍），必须通过 3+2 轴倾斜使用最短刀具。"
       },
       {
-        term: "ストック残肉認識 (Rest Machining)",
-        cat: "cam",
-        catLabel: "CAM切削",
-        path: "[Space-E/CAM] -> [中荒加工] -> [残肉参照]",
-        descJa: "前工程の加工済みストック形状を3Dモデルとして記憶し、次工程の小径工具が削り残しのある領域だけに安全かつ空切削なしでアプローチする技術。",
-        descZh: "动态记忆前道大刀加工后的三维残料毛坯，指导小刀只针对未切净的转角台阶局部走刀，杜绝空跑与崩刃。"
+            "term": "CLデータ / 刀位点 (Cutter Location Data)",
+            "cat": "cam",
+            "catLabel": "CAM幾何",
+            "path": "ツールパス中間ファイル",
+            "descJa": "CAM内部で計算されたカッター先端点・中心点および工具軸ベクトルの座標点列。ポストプロセッサを介して工作機械固有のGコードへと変換される。",
+            "descZh": "CAM 算法推导出的刀尖/刀心与刀轴矢量三维坐标轨迹流。是后置处理器翻译为各家数控机床 NC 代码的数据源泉。"
       },
       {
-        term: "ペンシル加工 (Pencil Machining)",
-        cat: "cam",
-        catLabel: "CAM切削",
-        path: "[Space-E/CAM] -> [仕上げ] -> [隅部ペンシル]",
-        descJa: "交差する2曲面の谷底稜線に沿って、ボールエンドミルをペンでなぞるように単線走査させてシャープな隅肉を除去する極上仕上げパス。",
-        descZh: "球头刀沿两曲面交接的狭窄凹槽底线单线划过，犹如铅笔描线般精准剔除微小死角残料。"
+            "term": "弦誤差トレランス (Chordal Tolerance)",
+            "cat": "cam",
+            "catLabel": "CAM幾何",
+            "path": "パス近似公差",
+            "descJa": "CADの理論自由曲面をNC微小直線（G01）で近似する際の最大許容誤差。精仕上げでは 0.002〜0.005mm に設定し、なめらかな鏡面品位を担保する。",
+            "descZh": "将光滑曲面离散逼近为微小直线段 G01 时的最大法向弦截公差。精光通常设为 0.002~0.005mm，直接决定工件曲面保真度与代码行数密度。"
       },
       {
-        term: "カスプハイト制御 (Scallop / Cusp Height)",
-        cat: "cam",
-        catLabel: "CAM切削",
-        path: "[Space-E/CAM] -> [曲面仕上げ設定]",
-        descJa: "ボールエンドミルの隣接走査線間に生じる削り残しの山の高さ。鏡面仕上げでは2〜5ミクロン（0.002〜0.005mm）以下に設定して手磨き工程を省力化する。",
-        descZh: "球头刀两相邻刀轨间的残留微小峰高。模具精光通常严格限制在 0.002~0.005mm 以内，大幅免除人工打磨省模。"
+            "term": "ハイブリッドモデリング (Hybrid Modeling)",
+            "cat": "cad",
+            "catLabel": "CADモデリング",
+            "path": "Space-E コアアーキテクチャ",
+            "descJa": "ソリッド（完全閉空間）とサーフェス（開いた自由曲面）を共存させ、破綻したインポートデータでも即座にCAMパス計算や型割作業へ進めるSpace-E最大の特徴。",
+            "descZh": "实体与自由曲面无缝共存体系。即使导入的数据曲面存在微细间隙未完全闭合，也能直接计算 CAM 刀轨与进行分模设计。"
       },
       {
-        term: "RTCP / 工具先端点制御 (Tool Center Point)",
-        cat: "gcode",
-        catLabel: "5軸NC制御",
-        path: "[NC制御] G43.4 / G43.5 (FANUC/Heidenhain)",
-        descJa: "同時5軸加工において、機械の回転軸が傾いても工具の刃先先端が空間上の指令パスから外れないよう、NC装置が実時間で座標補正をかける高度制御。",
-        descZh: "连续五轴联动加工时，不论刀头或摆台如何倾斜旋转，数控系统实时插补补偿，保证刀尖始终紧贴编程点。"
+            "term": "抜き勾配解析 (Draft Angle Inspector)",
+            "cat": "mold",
+            "catLabel": "金型設計",
+            "path": "[金型] -> [勾配解析]",
+            "descJa": "製品モデルを指定の型開き方向ベクトル（通常+Z軸）からカラーコンター診断。緑（合格）、赤（アンダーカット/逆勾配）、青（垂直警戒面）で直感表示する。",
+            "descZh": "基于指定出模矢量（默认+Z轴）对产品实施伪彩色梯度检测：绿色合格、红色严重倒扣、蓝色警戒垂直面。"
       },
       {
-        term: "高精度輪郭制御 / 先行補正 (AICC / SGI)",
-        cat: "gcode",
-        catLabel: "5軸NC制御",
-        path: "[NC制御] G05.1 Q1 / G05 P10000",
-        descJa: "金型の微小線分データを毎分数十メートルで高速送りする際、急なコーナーで脱調や振動が起きないよう数百ブロック先を先読みして加減速を最適化するGコード。",
-        descZh: "高速切削模具微小折线段时，预读数百乃至数千个程序段进行加速度圆滑优化，消除机床换向冲击失真。"
+            "term": "パーティングライン (Parting Line / PL)",
+            "cat": "mold",
+            "catLabel": "金型設計",
+            "path": "[金型] -> [PL自動抽出]",
+            "descJa": "固定側（キャビ）と可動側（コア）を二分する境界稜線。Space-Eは0度勾配変曲点を自動追跡し、射出圧力に耐える滑らかな封じ面を生成する。",
+            "descZh": "模具定模与动模的隔离分模分界线。Space-E 沿 0 度拔模反转曲率点自动追踪闭合环路并向外平滑延伸分模面。"
       },
       {
-        term: "ヘリカルアプローチ (Helical Ramp Lead-in)",
-        cat: "cam",
-        catLabel: "CAM切削",
-        path: "[Space-E/CAM] -> [アプローチ] -> [ヘリカル]",
-        descJa: "工具が金属素材に進入する際、垂直にダイブせず螺旋状に周回しながら緩やかに掘り下がる進入法。工具底刃の破損を防ぐ鉄則。",
-        descZh: "铣刀进入封闭型腔时，以立体螺旋渐开线姿态平缓下刀切入，将底刃垂直冲击转化为侧刃切削，极大保护刀具。"
+            "term": "リブ電極自動抽出 (Rib Electrode Extraction)",
+            "cat": "edm",
+            "catLabel": "放電電極",
+            "path": "[電極] -> [リブ電極自動抽出]",
+            "descJa": "切削不能な狭深溝（リブ）の底面をクリックするだけで、放電有効部と逃げクリアランス面、基準台、ポカよけC面までを一括自動モデリングする専用機能。",
+            "descZh": "针对无法铣削的深狭肋条槽，点击槽底即可全自动生成放电有效体、逃空避空面、定位基准台与防呆 C 角。"
+      },
+      {
+            "term": "火花ギャップ補正 (Spark Gap Offset)",
+            "cat": "edm",
+            "catLabel": "放電電極",
+            "path": "[電極] -> [放電クリアランス設定]",
+            "descJa": "放電加工で火花が飛ぶ隙間分（0.02〜0.2mm）だけ、電極モデルを3次元的に等距離マイナス縮小オフセットする補正機能。",
+            "descZh": "电极放电火花间隙（0.02~0.25mm）补偿。将电极实体执行全向三维均匀负缩放，确保放电后模腔尺寸精准。"
+      },
+      {
+            "term": "等高線荒加工 (Constant Z Roughing)",
+            "cat": "cam",
+            "catLabel": "CAM切削",
+            "path": "[Space-E/CAM] -> [荒加工] -> [等高線]",
+            "descJa": "Z方向の各深さレベルで水平スライス状に金属を削り取る基本荒加工。トロコイド制御やコーナR自動減速により工具負荷を均一化する。",
+            "descZh": "沿 Z 轴等层水平分层切削海量钢材。配备转角摆线切削与速度前瞻自适应，保证大直径铣刀恒定切削负荷。"
+      },
+      {
+            "term": "ストック残肉認識 (Rest Machining)",
+            "cat": "cam",
+            "catLabel": "CAM切削",
+            "path": "[Space-E/CAM] -> [中荒加工] -> [残肉参照]",
+            "descJa": "前工程の加工済みストック形状を3Dモデルとして記憶し、次工程の小径工具が削り残しのある領域だけに安全かつ空切削なしでアプローチする技術。",
+            "descZh": "动态记忆前道大刀加工后的三维残料毛坯，指导小刀只针对未切净的转角台阶局部走刀，杜绝空跑与崩刃。"
+      },
+      {
+            "term": "ペンシル加工 (Pencil Machining)",
+            "cat": "cam",
+            "catLabel": "CAM切削",
+            "path": "[Space-E/CAM] -> [仕上げ] -> [隅部ペンシル]",
+            "descJa": "交差する2曲面の谷底稜線に沿って、ボールエンドミルをペンでなぞるように単線走査させてシャープな隅肉を除去する極上仕上げパス。",
+            "descZh": "球头刀沿两曲面交接的狭窄凹槽底线单线划过，犹如铅笔描线般精准剔除微小死角残料。"
+      },
+      {
+            "term": "カスプハイト制御 (Scallop / Cusp Height)",
+            "cat": "cam",
+            "catLabel": "CAM切削",
+            "path": "[Space-E/CAM] -> [曲面仕上げ設定]",
+            "descJa": "ボールエンドミルの隣接走査線間に生じる削り残しの山の高さ。鏡面仕上げでは2〜5ミクロン（0.002〜0.005mm）以下に設定して手磨き工程を省力化する。",
+            "descZh": "球头刀两相邻刀轨间的残留微小峰高。模具精光通常严格限制在 0.002~0.005mm 以内，大幅免除人工打磨省模。"
+      },
+      {
+            "term": "RTCP / 工具先端点制御 (Tool Center Point)",
+            "cat": "gcode",
+            "catLabel": "5軸NC制御",
+            "path": "[NC制御] G43.4 / G43.5 (FANUC/Heidenhain)",
+            "descJa": "同時5軸加工において、機械の回転軸が傾いても工具の刃先先端が空間上の指令パスから外れないよう、NC装置が実時間で座標補正をかける高度制御。",
+            "descZh": "连续五轴联动加工时，不论刀头或摆台如何倾斜旋转，数控系统实时插补补偿，保证刀尖始终紧贴编程点。"
+      },
+      {
+            "term": "高精度輪郭制御 / 先行補正 (AICC / SGI)",
+            "cat": "gcode",
+            "catLabel": "5軸NC制御",
+            "path": "[NC制御] G05.1 Q1 / G05 P10000",
+            "descJa": "金型の微小線分データを毎分数十メートルで高速送りする際、急なコーナーで脱調や振動が起きないよう数百ブロック先を先読みして加減速を最適化するGコード。",
+            "descZh": "高速切削模具微小折线段时，预读数百乃至数千个程序段进行加速度圆滑优化，消除机床换向冲击失真。"
+      },
+      {
+            "term": "ヘリカルアプローチ (Helical Ramp Lead-in)",
+            "cat": "cam",
+            "catLabel": "CAM切削",
+            "path": "[Space-E/CAM] -> [アプローチ] -> [ヘリカル]",
+            "descJa": "工具が金属素材に進入する際、垂直にダイブせず螺旋状に周回しながら緩やかに掘り下がる進入法。工具底刃の破損を防ぐ鉄則。",
+            "descZh": "铣刀进入封闭型腔时，以立体螺旋渐开线姿态平缓下刀切入，将底刃垂直冲击转化为侧刃切削，极大保护刀具。"
       }
-    ];
+];
 
-    /* ==========================================================================
-       6. 应用程序状态机 (App State & Storage)
-       ========================================================================== */
     const State = {
       tab: 'academy',
       currentChap: 0,
@@ -3219,6 +3491,8 @@
 
       document.getElementById('academySolvedCount').innerText = State.solvedLessons.size;
       document.getElementById('solvedCount').innerText = State.solvedQuests.size;
+      if (document.getElementById('totalAcademyCount')) document.getElementById('totalAcademyCount').innerText = LESSONS_DATA.length;
+      if (document.getElementById('totalQuestCount')) document.getElementById('totalQuestCount').innerText = QUEST_BANK.length;
     }
 
     /* ==========================================================================
