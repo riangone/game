@@ -1,0 +1,4101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Space-E 金型CAD/CAM クエスト · 匠のエンジニアリング道 (Space-E Quest: Mold Frontier)</title>
+  <meta name="description" content="ハイブリッド3D CAD/CAMシステム「Space-E」をゼロから極める本格チュートリアル＆シミュレーション学習ゲーム。曲面モデリング、金型割、電極放電、5軸切削シミュレータ完備。">
+  <meta name="theme-color" content="#0284c7">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800;900&family=Outfit:wght@600;700;800;900&family=Fira+Code:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-main: #0b1329;
+      --bg-card: #152243;
+      --surface: #1e293b;
+      --surface-glass: rgba(21, 34, 67, 0.92);
+      --border-subtle: #2d3f6d;
+      --border-strong: #38bdf8;
+
+      --text-main: #f8fafc;
+      --text-sub: #cbd5e1;
+      --text-muted: #94a3b8;
+
+      --primary: #38bdf8;
+      --primary-hover: #0284c7;
+      --primary-light: rgba(56, 189, 248, 0.15);
+
+      --accent-cyan: #06b6d4;
+      --accent-purple: #a855f7;
+      --accent-amber: #fbbf24;
+      --accent-emerald: #10b981;
+      --accent-rose: #f43f5e;
+      --accent-orange: #f97316;
+
+      --radius-xl: 20px;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-pill: 9999px;
+
+      --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.25);
+      --shadow-card: 0 10px 28px -6px rgba(0, 0, 0, 0.45), 0 2px 6px -1px rgba(0, 0, 0, 0.3);
+      --shadow-glow: 0 0 24px rgba(56, 189, 248, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'M PLUS Rounded 1c', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.55;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+        radial-gradient(circle at 85% 25%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 45%);
+      background-attachment: fixed;
+    }
+
+    /* 顶部导航 */
+    header.site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--surface-glass);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 2px solid var(--border-subtle);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .brand-icon {
+      font-size: 32px;
+      line-height: 1;
+      filter: drop-shadow(0 2px 10px rgba(56, 189, 248, 0.5));
+      animation: floatBadge 3s ease-in-out infinite;
+    }
+
+    @keyframes floatBadge {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+
+    .brand-title {
+      font-size: 19px;
+      font-weight: 900;
+      color: var(--primary);
+      letter-spacing: -0.3px;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .brand-sub {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .header-stats {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .stat-pill {
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid var(--border-subtle);
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-pill.hp {
+      background: rgba(244, 63, 94, 0.15);
+      border-color: rgba(244, 63, 94, 0.4);
+      color: #fb7185;
+    }
+
+    .btn-header {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-sub);
+      padding: 6px 12px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-header:hover {
+      background: var(--border-subtle);
+      color: var(--text-main);
+      border-color: var(--primary);
+    }
+
+    /* 主体容器 */
+    .main-content {
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px 20px 60px;
+      flex: 1;
+    }
+
+    /* 五维导航标签 */
+    .mode-nav {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: thin;
+    }
+
+    .nav-tab {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-subtle);
+      color: var(--text-sub);
+      padding: 10px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      transition: all 0.25s ease;
+      user-select: none;
+    }
+
+    .nav-tab:hover {
+      border-color: var(--primary);
+      color: var(--text-main);
+      transform: translateY(-2px);
+    }
+
+    .nav-tab.active {
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      border-color: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 4px 16px rgba(2, 132, 199, 0.4);
+    }
+
+    /* 英雄横幅 */
+    .hero-banner {
+      background: linear-gradient(135deg, #152243 0%, #1e293b 100%);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 22px 28px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      box-shadow: var(--shadow-card);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-banner::after {
+      content: '';
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-info {
+      max-width: 680px;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 3px 10px;
+      border-radius: var(--radius-pill);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      margin-bottom: 8px;
+    }
+
+    .hero-title {
+      font-size: 24px;
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+
+    .hero-desc {
+      font-size: 13.5px;
+      color: var(--text-sub);
+      line-height: 1.6;
+    }
+
+    .hero-level-box {
+      min-width: 260px;
+      background: rgba(11, 19, 41, 0.7);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .level-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text-muted);
+    }
+
+    .level-rank {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--accent-amber);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .exp-bar-wrap {
+      width: 100%;
+      height: 8px;
+      background: #1e293b;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .exp-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #38bdf8, #10b981);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    /* ==========================================================================
+       模块 1: 匠の学堂 (ACADEMY)
+       ========================================================================== */
+    .academy-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .chap-nav-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 14px;
+    }
+
+    .chap-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .chap-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .chap-card.active {
+      border-color: var(--primary);
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.15) 0%, rgba(30, 41, 59, 0.9) 100%);
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+    }
+
+    .chap-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .chap-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .chap-icon {
+      font-size: 26px;
+    }
+
+    .chap-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.3;
+    }
+
+    .chap-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .chap-progress-mini {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-sub);
+    }
+
+    /* 课时胶囊选择器 */
+    .lesson-pills-bar {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 6px 2px;
+      scrollbar-width: thin;
+    }
+
+    .lesson-pill {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-sub);
+      padding: 8px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .lesson-pill:hover {
+      border-color: var(--primary);
+      color: var(--text-main);
+    }
+
+    .lesson-pill.active {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+      font-weight: 800;
+    }
+
+    .lesson-pill.completed::after {
+      content: '✓';
+      color: var(--accent-emerald);
+      font-weight: 900;
+      margin-left: 2px;
+    }
+
+    /* 课程主体视图 */
+    .lesson-view-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .lesson-meta-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 16px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .lesson-title-big {
+      font-size: 22px;
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+
+    .lesson-tags {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .lesson-tag {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      background: rgba(168, 85, 247, 0.15);
+      color: #c084fc;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+
+    /* 课程内容块 */
+    .lesson-content-body {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      line-height: 1.7;
+      color: var(--text-sub);
+      font-size: 14.5px;
+    }
+
+    .lesson-callout {
+      background: rgba(56, 189, 248, 0.08);
+      border-left: 4px solid var(--primary);
+      padding: 14px 18px;
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      color: var(--text-main);
+    }
+
+    .lesson-callout.danger {
+      background: rgba(244, 63, 94, 0.08);
+      border-left-color: var(--accent-rose);
+    }
+
+    .lesson-callout.tip {
+      background: rgba(16, 185, 129, 0.08);
+      border-left-color: var(--accent-emerald);
+    }
+
+    .lesson-code-block {
+      background: #0f172a;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      font-family: 'Fira Code', monospace;
+      font-size: 13px;
+      color: #38bdf8;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    .lesson-workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin: 10px 0;
+    }
+
+    .workflow-step {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .workflow-step-num {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .workflow-step-title {
+      font-size: 13.5px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+
+    .workflow-step-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* 课程直感ミニ試練 (Mini-Quiz) */
+    .mini-quiz-box {
+      background: #0d1730;
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-top: 10px;
+    }
+
+    .mini-quiz-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .mini-quiz-tag {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--accent-amber);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mini-quiz-question {
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .mini-quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .quiz-opt-btn {
+      background: var(--surface);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      text-align: left;
+      color: var(--text-main);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s;
+    }
+
+    .quiz-opt-btn:hover {
+      border-color: var(--primary);
+      background: rgba(56, 189, 248, 0.08);
+    }
+
+    .quiz-opt-btn.correct {
+      border-color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+    }
+
+    .quiz-opt-btn.wrong {
+      border-color: var(--accent-rose);
+      background: rgba(244, 63, 94, 0.15);
+      color: #fb7185;
+    }
+
+    .quiz-result-explain {
+      margin-top: 14px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      line-height: 1.6;
+      display: none;
+    }
+    .quiz-result-explain.show {
+      display: block;
+    }
+    .quiz-result-explain.success {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #a7f3d0;
+    }
+    .quiz-result-explain.fail {
+      background: rgba(244, 63, 94, 0.12);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      color: #fecdd3;
+    }
+
+    /* 底部课时切换栏 */
+    .lesson-footer-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 16px;
+    }
+
+    .btn-nav-lesson {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-sub);
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-nav-lesson:hover {
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    /* ==========================================================================
+       模块 2: 实战工坊 (QUEST)
+       ========================================================================== */
+    .quest-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .quest-tier-tabs {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .tier-tab {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-subtle);
+      color: var(--text-sub);
+      padding: 10px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 13.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .tier-tab:hover {
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .tier-tab.active {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.25);
+    }
+
+    .quest-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .quest-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 16px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .quest-question-text {
+      font-size: 17px;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.6;
+    }
+
+    .quest-options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .quest-opt-btn {
+      background: var(--surface);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      text-align: left;
+      color: var(--text-main);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      transition: all 0.2s;
+    }
+
+    .quest-opt-btn:hover {
+      border-color: var(--primary);
+      background: rgba(56, 189, 248, 0.06);
+    }
+
+    .quest-opt-btn.correct {
+      border-color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+    }
+
+    .quest-opt-btn.wrong {
+      border-color: var(--accent-rose);
+      background: rgba(244, 63, 94, 0.15);
+      color: #fb7185;
+    }
+
+    .quest-solution-box {
+      background: #0f172a;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      line-height: 1.6;
+    }
+
+    .quest-solution-box.show {
+      display: flex;
+    }
+
+    .quest-solution-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--accent-amber);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .quest-solution-body {
+      font-size: 13.5px;
+      color: var(--text-sub);
+    }
+
+    .quest-nav-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 16px;
+    }
+
+    /* ==========================================================================
+       模块 3: 虚拟工场 (LABS / 3D SIMULATORS)
+       ========================================================================== */
+    .lab-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .lab-selector-tabs {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .lab-tab {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-subtle);
+      color: var(--text-sub);
+      padding: 10px 18px;
+      border-radius: var(--radius-pill);
+      font-size: 13.5px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .lab-tab.active {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: var(--primary);
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.25);
+    }
+
+    .lab-workspace {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+    }
+
+    @media (max-width: 960px) {
+      .lab-workspace {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .lab-canvas-card {
+      background: #080e1e;
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      box-shadow: var(--shadow-card);
+    }
+
+    .lab-canvas-container {
+      width: 100%;
+      height: 480px;
+      background: radial-gradient(circle at 50% 50%, #0f1c3f 0%, #080e1e 100%);
+      border-radius: var(--radius-lg);
+      position: relative;
+      overflow: hidden;
+      cursor: grab;
+      border: 1px solid #1a2850;
+    }
+    .lab-canvas-container:active {
+      cursor: grabbing;
+    }
+
+    #labCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .canvas-hud-overlay {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(11, 19, 41, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-subtle);
+      padding: 8px 14px;
+      border-radius: var(--radius-md);
+      font-size: 12px;
+      font-family: 'Fira Code', monospace;
+      color: var(--primary);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      pointer-events: none;
+    }
+
+    .canvas-controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .canvas-btn-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-canvas {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-sub);
+      padding: 6px 12px;
+      border-radius: var(--radius-md);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-canvas:hover {
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+    .btn-canvas.active {
+      background: var(--primary);
+      color: #0b1329;
+      border-color: var(--primary);
+      font-weight: 800;
+    }
+
+    /* 实验参数控制侧栏 */
+    .lab-control-panel {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .control-label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-sub);
+    }
+
+    .control-val-badge {
+      color: var(--primary);
+      font-family: 'Fira Code', monospace;
+    }
+
+    .control-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #1e293b;
+      outline: none;
+      transition: background 0.2s;
+    }
+    .control-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
+    }
+
+    .control-desc {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .lab-status-card {
+      background: #0f172a;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    .status-item {
+      display: flex;
+      justify-content: space-between;
+      color: var(--text-sub);
+    }
+    .status-item strong {
+      color: #ffffff;
+    }
+
+    /* ==========================================================================
+       模块 4: CBT 模拟考场 (EXAM)
+       ========================================================================== */
+    .exam-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .exam-intro-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 28px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .exam-cert-icon {
+      font-size: 54px;
+      filter: drop-shadow(0 4px 16px rgba(251, 191, 36, 0.4));
+    }
+
+    .exam-grid-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      width: 100%;
+      max-width: 720px;
+      margin: 10px 0;
+    }
+
+    .exam-info-box {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .exam-info-num {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--primary);
+    }
+    .exam-info-lbl {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .btn-start-exam {
+      background: linear-gradient(135deg, #0284c7, #0369a1);
+      border: none;
+      color: #ffffff;
+      padding: 14px 36px;
+      border-radius: var(--radius-pill);
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 20px rgba(2, 132, 199, 0.4);
+      transition: all 0.25s;
+    }
+    .btn-start-exam:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(2, 132, 199, 0.6);
+    }
+
+    /* 考试中视窗 */
+    .exam-active-container {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .exam-header-bar {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .exam-timer-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: 900;
+      font-family: 'Fira Code', monospace;
+      color: var(--accent-amber);
+    }
+
+    .exam-progress-dots {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .exam-dot {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .exam-dot.answered {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .exam-dot.active {
+      background: var(--primary);
+      color: #0b1329;
+      border-color: var(--primary);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+    }
+
+    /* 考卷结果卡片 */
+    .exam-result-card {
+      display: none;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      text-align: center;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .result-score-badge {
+      font-size: 64px;
+      font-weight: 900;
+      font-family: 'Outfit', sans-serif;
+      color: var(--primary);
+      line-height: 1;
+      margin: 10px 0;
+    }
+
+    /* ==========================================================================
+       模块 5: 知识辞典 (CODEX)
+       ========================================================================== */
+    .codex-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .codex-search-bar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 10px 18px;
+    }
+
+    .codex-search-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #ffffff;
+      font-size: 15px;
+      font-family: inherit;
+    }
+
+    .codex-cats-bar {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .codex-cat-pill {
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-sub);
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .codex-cat-pill:hover, .codex-cat-pill.active {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .codex-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 16px;
+    }
+
+    .codex-entry-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+    .codex-entry-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .codex-entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .codex-term {
+      font-size: 16px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .codex-cat-tag {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+      white-space: nowrap;
+    }
+
+    .codex-path {
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      color: var(--accent-amber);
+      background: #0f172a;
+      padding: 4px 8px;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    .codex-desc {
+      font-size: 13px;
+      color: var(--text-sub);
+      line-height: 1.5;
+    }
+
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+      .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .hero-banner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .hero-level-box {
+        width: 100%;
+      }
+      .codex-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- 顶部导航 -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand-logo" onclick="switchTab('academy')">
+        <span class="brand-icon">📐</span>
+        <div>
+          <div class="brand-title">
+            <span>Space-E CAD/CAM 匠の道</span>
+          </div>
+          <div class="brand-sub">精密模具工程本格教程 · 3Dシミュレーション</div>
+        </div>
+      </div>
+
+      <div class="header-stats">
+        <div class="stat-pill" title="模具工匠熟练度 EXP">
+          <span>⚡</span>
+          <span id="headerExp">EXP: 0</span>
+        </div>
+        <div class="stat-pill" title="当前认证工匠等级">
+          <span>🏅</span>
+          <span id="headerRank">見習い操作員</span>
+        </div>
+        <button class="btn-header" onclick="toggleLanguage()" title="切换语言 (JA/ZH)">
+          <span>🌐</span>
+          <span id="langBtnText">日 / 中</span>
+        </button>
+        <button class="btn-header" onclick="toggleSound()" title="音效开关">
+          <span id="soundIcon">🔊</span>
+          <span>効果音</span>
+        </button>
+        <a href="index.html" class="btn-header" style="text-decoration:none;">
+          <span>🕹️</span>
+          <span>アーケードへ</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主体工作区 -->
+  <main class="main-content">
+    <!-- 顶部五维系统标签 -->
+    <nav class="mode-nav">
+      <button class="nav-tab active" id="tabAcademy" onclick="switchTab('academy')">
+        <span>🎓</span> <span data-i18n="nav_academy">金型学堂 (体系教程)</span>
+      </button>
+      <button class="nav-tab" id="tabQuest" onclick="switchTab('quest')">
+        <span>🗺️</span> <span data-i18n="nav_quest">実戦工坊 (クエスト)</span>
+      </button>
+      <button class="nav-tab" id="tabLab" onclick="switchTab('lab')">
+        <span>🧪</span> <span data-i18n="nav_lab">仮想工廠 (3Dシミュレータ)</span>
+      </button>
+      <button class="nav-tab" id="tabExam" onclick="switchTab('exam')">
+        <span>⏱️</span> <span data-i18n="nav_exam">CBT資格考場</span>
+      </button>
+      <button class="nav-tab" id="tabCodex" onclick="switchTab('codex')">
+        <span>📖</span> <span data-i18n="nav_codex">Space-E 知識大典</span>
+      </button>
+    </nav>
+
+    <!-- 英雄横幅 -->
+    <section class="hero-banner">
+      <div class="hero-info">
+        <div class="hero-tag">✨ Space-E 実務認定カリキュラム準拠</div>
+        <h1 class="hero-title" id="bannerTitle">日本のものづくりを支える 3D 金型設計・CAMの極致</h1>
+        <p class="hero-desc" id="bannerDesc">
+          自由曲面とソリッドのハイブリッドモデリング、金型割・勾配解析、EDM電極自動設計から、Space-E/CAM 高速高精度5軸マシニングまでを完全網羅。
+        </p>
+      </div>
+
+      <div class="hero-level-box">
+        <div class="level-label">
+          <span>金型技師ランク</span>
+          <span id="rankExpText">EXP: 0 / 100</span>
+        </div>
+        <div class="level-rank" id="rankName">
+          <span>🌱</span> 見習い操作員 (Lv.1)
+        </div>
+        <div class="exp-bar-wrap">
+          <div class="exp-bar-fill" id="expFill" style="width: 0%;"></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:11px; color:#94a3b8; font-weight:700;">
+          <span>学堂修了: <strong id="academySolvedCount" style="color:#10b981">0</strong> / <strong>20</strong> 講</span>
+          <span>実戦踏破: <strong id="solvedCount">0</strong> / <strong id="totalQuestCount">20</strong> 問</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== 1. 金型学堂 (ACADEMY) ==================== -->
+    <div class="academy-panel" id="panelAcademy">
+      <!-- 5大章节选择卡片 -->
+      <div class="chap-nav-grid" id="chapNavGrid">
+        <!-- 由JS动态生成 -->
+      </div>
+
+      <!-- 课时胶囊选择器 -->
+      <div class="lesson-pills-bar" id="lessonPillsBar">
+        <!-- 由JS动态生成 -->
+      </div>
+
+      <!-- 激活课时主体卡片 -->
+      <div class="lesson-view-card" id="lessonViewCard">
+        <div class="lesson-meta-header">
+          <div>
+            <h2 class="lesson-title-big" id="lessonTitle">1-1 Space-Eの基本理念とUI構造</h2>
+            <div class="lesson-tags">
+              <span class="lesson-tag" id="lessonChapterTag">第1章 · 基礎モデリング</span>
+              <span class="lesson-tag" id="lessonDifficultyTag">難易度: ★☆☆☆☆</span>
+            </div>
+          </div>
+          <div class="stat-pill" id="lessonStatusPill">
+            <span>⏳</span> <span>未修了</span>
+          </div>
+        </div>
+
+        <div class="lesson-content-body" id="lessonBody">
+          <!-- 动态载入课程内容 -->
+        </div>
+
+        <!-- 直感ミニ試練 (Mini-Quiz) -->
+        <div class="mini-quiz-box">
+          <div class="mini-quiz-header">
+            <span class="mini-quiz-tag">
+              <span>🎯</span> 直感ミニ試練（理解度チェック）
+            </span>
+            <span style="font-size:12px; color:var(--text-muted);">正解で +25 EXP</span>
+          </div>
+          <div class="mini-quiz-question" id="miniQuizQuestion">
+            Space-Eが誇る「ハイブリッドモデリング」の最大の強みは何ですか？
+          </div>
+          <div class="mini-quiz-options" id="miniQuizOptions">
+            <!-- 动态生成选项 -->
+          </div>
+          <div class="quiz-result-explain" id="miniQuizExplain"></div>
+        </div>
+
+        <!-- 课程翻页控制 -->
+        <div class="lesson-footer-nav">
+          <button class="btn-nav-lesson" id="btnPrevLesson" onclick="stepLesson(-1)">
+            <span>◀</span> 前の講へ
+          </button>
+          <span style="font-size:13px; color:var(--text-muted);" id="lessonNavCounter">講 1 / 20</span>
+          <button class="btn-nav-lesson" id="btnNextLesson" onclick="stepLesson(1)">
+            次の講へ <span>▶</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 2. 实战工坊 (QUEST) ==================== -->
+    <div class="quest-panel" id="panelQuest" style="display:none;">
+      <!-- 技能梯度 Tab -->
+      <div class="quest-tier-tabs" id="questTierTabs">
+        <button class="tier-tab active" onclick="switchQuestTier(0)">Lv.1 基礎操作・CAD検定</button>
+        <button class="tier-tab" onclick="switchQuestTier(1)">Lv.2 金型設計・PL割検定</button>
+        <button class="tier-tab" onclick="switchQuestTier(2)">Lv.3 CAM荒加工・残肉検定</button>
+        <button class="tier-tab" onclick="switchQuestTier(3)">Lv.4 高速・5軸・放電電極マスター</button>
+      </div>
+
+      <!-- 实战问答卡片 -->
+      <div class="quest-card">
+        <div class="quest-header">
+          <div>
+            <span class="chap-badge" id="questTierBadge">Lv.1 基礎操作</span>
+            <span style="font-size:13px; color:var(--text-muted); margin-left:10px;" id="questIndexText">第 1 問 / 全 5 問</span>
+          </div>
+          <div class="stat-pill" id="questStatusBadge">
+            <span>⭐</span> 獲得報酬: +50 EXP
+          </div>
+        </div>
+
+        <div class="quest-question-text" id="questQuestionText">
+          曲面データの取り込み時にサーフェス間に微小な隙間（ギャップ）が生じていました。Space-Eにおいてソリッド化するための最適な処理はどれですか？
+        </div>
+
+        <div class="quest-options-grid" id="questOptionsGrid">
+          <!-- 动态生成选项 -->
+        </div>
+
+        <div class="quest-solution-box" id="questSolutionBox">
+          <div class="quest-solution-title">
+            <span>💡</span> 匠の解説・Space-E 実務ノウハウ
+          </div>
+          <div class="quest-solution-body" id="questSolutionBody">
+            解説がここに表示されます。
+          </div>
+        </div>
+
+        <div class="quest-nav-footer">
+          <button class="btn-nav-lesson" onclick="stepQuest(-1)">◀ 前の問題</button>
+          <button class="btn-nav-lesson" style="background:var(--primary); color:#0b1329; font-weight:800;" onclick="stepQuest(1)">次の問題 ▶</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 3. 虚拟工场 (LABS) ==================== -->
+    <div class="lab-panel" id="panelLab" style="display:none;">
+      <div class="lab-selector-tabs">
+        <button class="lab-tab active" onclick="switchLab('draft')">
+          <span>📐</span> 勾配解析 (Draft Angle Inspector)
+        </button>
+        <button class="lab-tab" onclick="switchLab('cam')">
+          <span>⚙️</span> CAM刀具路径与残料 (Toolpath & Rest Machining)
+        </button>
+        <button class="lab-tab" onclick="switchLab('edm')">
+          <span>⚡</span> EDM放电电极提取 (Electrode Spark Gap)
+        </button>
+      </div>
+
+      <div class="lab-workspace">
+        <!-- 3D / 交互画布 -->
+        <div class="lab-canvas-card">
+          <div class="lab-canvas-container" id="canvasContainer">
+            <canvas id="labCanvas"></canvas>
+            <div class="canvas-hud-overlay" id="canvasHud">
+              <div>MODE: DRAFT ANGLE INSPECTOR</div>
+              <div id="hudInfo1">ROTATION: X=25° Y=35°</div>
+              <div id="hudInfo2">PULL DIRECTION: +Z (0, 0, 1)</div>
+            </div>
+          </div>
+
+          <div class="canvas-controls-bar">
+            <div class="canvas-btn-group">
+              <button class="btn-canvas" onclick="resetCamera()">🔄 視点リセット</button>
+              <button class="btn-canvas active" id="btnToggleWireframe" onclick="toggleWireframe()">🕸️ ワイヤフレーム</button>
+              <button class="btn-canvas" id="btnToggleAnim" onclick="toggleAnim()">▶ アニメーション</button>
+            </div>
+            <div style="font-size:12px; color:var(--text-muted);">
+              🖱️ マウスドラッグで3D回転・ホイールでズーム
+            </div>
+          </div>
+        </div>
+
+        <!-- 交互参数面板 -->
+        <div class="lab-control-panel" id="labControlPanel">
+          <!-- 动态由对应 Lab 注入 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 4. CBT 资格考场 (EXAM) ==================== -->
+    <div class="exam-panel" id="panelExam" style="display:none;">
+      <!-- 考试介绍视窗 -->
+      <div class="exam-intro-card" id="examIntroCard">
+        <div class="exam-cert-icon">🏆</div>
+        <h2 style="font-size:24px; font-weight:900; color:#ffffff;">Space-E 金型CAD/CAM 総合技術認定 CBT試験</h2>
+        <p style="max-width:600px; font-size:14px; color:var(--text-sub); line-height:1.6;">
+          本試験は、金型設計・放電加工・CAMマシニングプログラミングにおけるSpace-Eの実務能力を総合判定するCBT（Computer Based Testing）模擬試験です。
+        </p>
+
+        <div class="exam-grid-info">
+          <div class="exam-info-box">
+            <div class="exam-info-num">10 問</div>
+            <div class="exam-info-lbl">出題数 (ランダム抽出)</div>
+          </div>
+          <div class="exam-info-box">
+            <div class="exam-info-num">15 分</div>
+            <div class="exam-info-lbl">制限時間</div>
+          </div>
+          <div class="exam-info-box">
+            <div class="exam-info-num">80 %</div>
+            <div class="exam-info-lbl">合格ライン (8問以上)</div>
+          </div>
+        </div>
+
+        <button class="btn-start-exam" onclick="startCBTExam()">
+          <span>⏱️</span> CBT模擬試験を開始する
+        </button>
+      </div>
+
+      <!-- 考试进行中视窗 -->
+      <div class="exam-active-container" id="examActiveContainer">
+        <div class="exam-header-bar">
+          <div class="exam-timer-box">
+            <span>⏱️ 残り時間:</span>
+            <span id="examTimerText">15:00</span>
+          </div>
+          <div class="exam-progress-dots" id="examProgressDots">
+            <!-- 动态生成题号指示点 -->
+          </div>
+          <button class="btn-header" style="border-color:var(--accent-rose); color:#fb7185;" onclick="submitCBTExam(false)">
+            📝 採点・試験終了
+          </button>
+        </div>
+
+        <div class="quest-card" id="examQuestionCard">
+          <div class="quest-header">
+            <span class="chap-badge" id="examQuestionBadge">CBT 設問 1</span>
+            <span style="font-size:13px; color:var(--text-muted);" id="examRemainingInfo">配点: 10点</span>
+          </div>
+          <div class="quest-question-text" id="examQuestionText">
+            問題文がここに表示されます。
+          </div>
+          <div class="quest-options-grid" id="examOptionsGrid">
+            <!-- 动态选项 -->
+          </div>
+          <div class="quest-nav-footer">
+            <button class="btn-nav-lesson" onclick="stepExamQuestion(-1)">◀ 前の設問</button>
+            <button class="btn-nav-lesson" onclick="stepExamQuestion(1)">次の設問 ▶</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 考试结算视窗 -->
+      <div class="exam-result-card" id="examResultCard">
+        <div style="font-size:48px;" id="resultEmoji">🎉</div>
+        <h2 style="font-size:26px; font-weight:900; color:#ffffff;" id="resultTitle">合格判定結果</h2>
+        <div class="result-score-badge" id="resultScore">90点</div>
+        <p style="font-size:15px; color:var(--text-sub); max-width:560px;" id="resultFeedback">
+          素晴らしい！Space-E の金型設計から切削パスプランニングまで高い理解度に達しています。
+        </p>
+
+        <div style="display:flex; gap:12px; margin-top:10px;">
+          <button class="btn-start-exam" onclick="startCBTExam()">
+            <span>🔄</span> もう一度挑戦する
+          </button>
+          <button class="btn-header" onclick="switchTab('academy')">
+            <span>🎓</span> 学堂で復習する
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== 5. 知识大典 (CODEX) ==================== -->
+    <div class="codex-panel" id="panelCodex" style="display:none;">
+      <div class="codex-search-bar">
+        <span style="font-size:18px;">🔍</span>
+        <input type="text" class="codex-search-input" id="codexSearchInput" placeholder="コマンド名、用語、機能（例：勾配解析、等高線荒、放電ギャップ、PL面）を検索..." oninput="filterCodex()">
+      </div>
+
+      <div class="codex-cats-bar" id="codexCatsBar">
+        <button class="codex-cat-pill active" onclick="filterCodexCat('all')">全カテゴリ</button>
+        <button class="codex-cat-pill" onclick="filterCodexCat('cad')">CAD・ハイブリッドモデリング</button>
+        <button class="codex-cat-pill" onclick="filterCodexCat('mold')">金型設計・型割</button>
+        <button class="codex-cat-pill" onclick="filterCodexCat('cam')">CAM・切削パス</button>
+        <button class="codex-cat-pill" onclick="filterCodexCat('edm')">放電電極・EDM</button>
+        <button class="codex-cat-pill" onclick="filterCodexCat('gcode')">ポスト・NC制御</button>
+      </div>
+
+      <div class="codex-grid" id="codexGrid">
+        <!-- 动态生成辞典卡片 -->
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    /* ==========================================================================
+       1. 音频合成引擎 (Web Audio API Synthesizer)
+       ========================================================================== */
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.enabled = true;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playTone(freq, type, duration, gainVal = 0.1) {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        try {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          gain.gain.setValueAtTime(gainVal, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch (e) {}
+      }
+      correct() {
+        if (!this.enabled) return;
+        this.init();
+        [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
+          setTimeout(() => this.playTone(f, 'sine', 0.18, 0.12), i * 75);
+        });
+      }
+      wrong() {
+        if (!this.enabled) return;
+        this.init();
+        this.playTone(220, 'triangle', 0.3, 0.15);
+        setTimeout(() => this.playTone(185, 'sawtooth', 0.35, 0.12), 120);
+      }
+      click() {
+        this.playTone(880, 'sine', 0.05, 0.04);
+      }
+      levelUp() {
+        if (!this.enabled) return;
+        this.init();
+        [440, 554.37, 659.25, 880, 1108.73, 1318.5].forEach((f, i) => {
+          setTimeout(() => this.playTone(f, 'triangle', 0.25, 0.15), i * 80);
+        });
+      }
+      machineBeep() {
+        if (!this.enabled) return;
+        this.init();
+        this.playTone(1200, 'square', 0.08, 0.05);
+      }
+    }
+    const sound = new SoundEngine();
+
+    function toggleSound() {
+      sound.enabled = !sound.enabled;
+      document.getElementById('soundIcon').innerText = sound.enabled ? '🔊' : '🔇';
+      if (sound.enabled) sound.click();
+    }
+
+    /* ==========================================================================
+       2. 多语言支持系统 (JA / ZH)
+       ========================================================================== */
+    let currentLang = 'ja'; // 默认日文（亦可切换为中文）
+
+    const I18N = {
+      ja: {
+        nav_academy: "金型学堂 (体系教程)",
+        nav_quest: "実戦工坊 (クエスト)",
+        nav_lab: "仮想工廠 (3Dシミュレータ)",
+        nav_exam: "CBT資格考場",
+        nav_codex: "Space-E 知識大典"
+      },
+      zh: {
+        nav_academy: "金型学堂 (体系教程)",
+        nav_quest: "实战工坊 (闯关训练)",
+        nav_lab: "虚拟工场 (3D模拟器)",
+        nav_exam: "CBT认证考场",
+        nav_codex: "Space-E 知识大典"
+      }
+    };
+
+    function toggleLanguage() {
+      sound.click();
+      currentLang = currentLang === 'ja' ? 'zh' : 'ja';
+      document.getElementById('langBtnText').innerText = currentLang === 'ja' ? '日 / 中' : '中 / 日';
+      applyLanguage();
+    }
+
+    function applyLanguage() {
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (I18N[currentLang][key]) {
+          el.innerText = I18N[currentLang][key];
+        }
+      });
+      renderAcademyLesson();
+      renderQuestQuestion();
+      renderCodex();
+    }
+
+    /* ==========================================================================
+       3. 核心数据仓库: 课程 (Academy)、问答 (Quest)、辞典 (Codex)
+       ========================================================================== */
+    const CHAPTERS_DATA = [
+      {
+        id: 0,
+        icon: "📐",
+        titleJa: "第1章：Space-E 入門とハイブリッドモデリング",
+        titleZh: "第1章：Space-E 入门与三维混合建模基础",
+        descJa: "自由曲面とソリッドの融合。座標系設定、トレランス縫合、面貼り基礎。",
+        descZh: "自由曲面与实体的融合。坐标系设定、公差缝合与修补成型。"
+      },
+      {
+        id: 1,
+        icon: "🔍",
+        titleJa: "第2章：金型設計・勾配解析とPL型割",
+        titleZh: "第2章：模具设计·拔模斜度分析与分型面(PL)提取",
+        descJa: "抜き勾配の合否判定、アンダーカット箇所の特定、キャビ・コア面分割。",
+        descZh: "脱模拔模角合格判定、倒扣位置识别与前后模（型腔/型芯）分模。"
+      },
+      {
+        id: 2,
+        icon: "⚡",
+        titleJa: "第3章：EDM 放電加工と電極自動設計",
+        titleZh: "第3章：EDM 放电加工与电极自动设计模块",
+        descJa: "深リブ電極の自動抽出、放電クリアランス（火花位）オフセット、基準台生成。",
+        descZh: "深筋条电极自动提取、放电火花间隙补偿与定位基准台构建。"
+      },
+      {
+        id: 3,
+        icon: "⚙️",
+        titleJa: "第4章：Space-E/CAM 高速高精度切削パス",
+        titleZh: "第4章：Space-E/CAM 高速高精刀具路径规划",
+        descJa: "等高線荒加工、ストック残肉認識、ペンシル清角、アプローチ円弧平滑化。",
+        descZh: "等高粗加工、工件残料识别、清根精加工与进退刀平滑圆弧过渡。"
+      },
+      {
+        id: 4,
+        icon: "🚀",
+        titleJa: "第5章：5軸マシニング・干渉回避とポスト処理",
+        titleZh: "第5章：五轴加工·刀具防干涉倾角与机床后置处理",
+        descJa: "5軸傾斜ヘッド制御、ホルダー干渉回避、機械シミュレーションとGコード出力。",
+        descZh: "五轴刀轴倾角智能防干涉、机床实机仿真与专用后置G代码校验。"
+      }
+    ];
+
+    const LESSONS_DATA = [
+      // 第1章
+      {
+        chap: 0,
+        subIndex: 0,
+        titleJa: "1-1 Space-Eの基本理念とハイブリッドモデリング",
+        titleZh: "1-1 Space-E 核心理念与混合建模体系",
+        tag: "CAD基盤",
+        bodyJa: `
+          <p><strong>Space-E</strong> は、日本の金型産業向けに特化した最高峰のCAD/CAMシステムです。その最大の特徴は、数学的に完全な閉空間を定義する<strong>「ソリッド（Solid）」</strong>と、柔軟で複雑な形状を扱える<strong>「サーフェス（Surface / 自由曲面）」</strong>を同一環境で境界なく扱う<strong>「ハイブリッドモデリング」</strong>にあります。</p>
+          <div class="lesson-callout">
+            <strong>💡 なぜハイブリッドが必要なのか？</strong><br>
+            海外製ソリッドCADからインポートしたIGES/STEPデータは、トレランス（許容公差）の差異により曲面間に微小隙間（0.001〜0.05mm）が生じ、ソリッド化エラーを起こしがちです。Space-Eはサーフェスのまま加工パスを即座に計算でき、モデル修復に膨大な時間を取られません。
+          </div>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step 01</span>
+              <span class="workflow-step-title">モデルインポート</span>
+              <span class="workflow-step-desc">STEP/IGES/Parasolidを取り込み</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step 02</span>
+              <span class="workflow-step-title">隙間トレランス診断</span>
+              <span class="workflow-step-desc">面間のギャップをハイライト検知</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step 03</span>
+              <span class="workflow-step-title">自動トレランス縫合</span>
+              <span class="workflow-step-desc">[曲面]→[縫合]でワンクリックソリッド化</span>
+            </div>
+          </div>
+        `,
+        bodyZh: `
+          <p><strong>Space-E</strong> 是专为模具工业打造的高精度 CAD/CAM 软件。其核心基石在于将严密的<strong>“实体 (Solid)”</strong>与处理复杂自由造型的<strong>“曲面 (Surface)”</strong>无缝融合的<strong>“混合建模 (Hybrid Modeling)”</strong>。</p>
+          <div class="lesson-callout">
+            <strong>💡 为什么模具设计极度依赖混合建模？</strong><br>
+            从上游导入的 STEP/IGES 格式常因公差精度不一致产生微小裂缝（0.001~0.05mm），纯实体 CAD 会报错拒绝操作。而 Space-E 允许直接在未缝合曲面上生成 CAM 刀路，也可通过“公差缝合”轻松修补封体。
+          </div>
+        `,
+        quiz: {
+          qJa: "Space-Eのハイブリッドモデリングが模具設計現場で圧倒的に支持される理由は？",
+          qZh: "Space-E 的混合建模技术在模具加工中最关键的实用价值是什么？",
+          optionsJa: [
+            "完全なソリッドでなくても、開いた曲面のままCAM切削パスを計算・加工できるため",
+            "3Dモデルを自動的に2D図面だけに変換してくれるため",
+            "一切の公差設定を廃止して処理を高速化するため",
+            "NC工作機械を直接手動操作できるようになるため"
+          ],
+          optionsZh: [
+            "即便存在曲面微小间隙或未完全封体，也能直接在曲面上规划刀路进行数控切削",
+            "能自动将所有 3D 模型降维转换成 2D 平面工程图",
+            "彻底废除了精度公差体系从而提升显卡刷新率",
+            "可以让操作者无需任何数控程序直接摇动手柄加工"
+          ],
+          ans: 0,
+          explainJa: "正解！インポート形状にわずかな破綻があっても、面貼り修正を待たずに即座に加工パス計算へと移行できるのがSpace-Eの金型現場における強力な武器です。",
+          explainZh: "正确！模具现场分秒必争，面对破损曲面不必耗费数小时修补缝合，即可直接进行 CAM 切削路径生成，这就是混合建模的核心优势。"
+        }
+      },
+      {
+        chap: 0,
+        subIndex: 1,
+        titleJa: "1-2 空間座標系(WCS)と作業平面の配置",
+        titleZh: "1-2 空间工作坐标系 (WCS) 与基准平面建立",
+        tag: "基本操作",
+        bodyJa: `
+          <p>金型加工では、<strong>「成形品の抜き方向（Z軸）」</strong>と<strong>「工作機械の原点（治具基準角）」</strong>を正確に一致させることが最重要課題です。</p>
+          <div class="lesson-code-block">[メニュー] -> [座標系] -> [WCS作成] -> [3点指定 / 3面交点]</div>
+          <p>Space-Eでは、製品モデルの特定のエッジや金型ベースの基準ピン位置（デート面）をピックするだけで、瞬時に新しい作業座標系を定義できます。</p>
+        `,
+        bodyZh: `
+          <p>模具数控加工的前提，是保证<strong>产品出模方向（Z轴矢量）</strong>与<strong>机床工作台基准角（对刀原点）</strong>完全吻合。</p>
+          <div class="lesson-code-block">[菜单] -> [坐标系] -> [新建WCS] -> [3点定位 / 基准面三面交点]</div>
+        `,
+        quiz: {
+          qJa: "金型CAMプログラミングにおいて、Z軸プラス方向は通常どのように設定すべきですか？",
+          qZh: "在模具 CAM 编程中，Z轴正方向通常必须如何设定？",
+          optionsJa: [
+            "金型の型開き方向（工具がアプローチしてくる上方向）",
+            "金型の底面に向かう下方向",
+            "水平右方向（X軸と平行）",
+            "成形品の最も長い稜線方向"
+          ],
+          optionsZh: [
+            "模具开模方向（主轴刀具从上方进刀的切削方向）",
+            "朝向模具底板的下沉方向",
+            "水平朝右方向（与机床工作台X轴平行）",
+            "沿着产品最长的轮廓边界方向"
+          ],
+          ans: 0,
+          explainJa: "正解！CAMにおいて主軸工具は+Z側からワークに向かって降下するため、抜き方向（成形品が抜ける上方向）を+Zに揃えるのが鉄則です。",
+          explainZh: "正确！CAM 切削的主轴刀具是从 +Z 轴上方垂直向下接近工件切削，必须将脱模方向定为 +Z。"
+        }
+      },
+      {
+        chap: 0,
+        subIndex: 2,
+        titleJa: "1-3 自由曲面の作成とトレランス縫合",
+        titleZh: "1-3 自由曲面生成与公差缝合 (Tolerance Stitching)",
+        tag: "曲面修復",
+        bodyJa: `
+          <p>隣接する複数のサーフェスを選択し、指定した許容公差（例：0.01mm）以内の隙間を自動補間して1つのソリッドにまとめるのが<strong>「縫合（Stitch）」</strong>機能です。</p>
+          <div class="lesson-callout tip">
+            <strong>💡 プロのTips:</strong> トレランスを最初から0.1mmなどの大きな値に設定すると、微細なフィレット（R面）が潰れて形状が変形する恐れがあります。まずは 0.005mm から段階的に広げるのがSpace-Eの定石です。
+          </div>
+        `,
+        bodyZh: `
+          <p>通过选择多块相邻曲面，并在设定公差（如 0.01mm）内自动拟合微缝、合并为封闭实体，这就是<strong>“缝合 (Stitch)”</strong>。</p>
+          <div class="lesson-callout tip">
+            <strong>💡 架构师技巧:</strong> 严禁初始就直接把公差放宽到 0.1mm，这会导致细小圆角（R面）被错误合并折叠。规范做法是从 0.005mm 逐级微调。
+          </div>
+        `,
+        quiz: {
+          qJa: "トレランス縫合時、許容値を過大（0.2mm等）に設定しすぎた場合に起こりうる不具合は？",
+          qZh: "在进行公差缝合时，如果一开始将容差设得过大（如 0.2mm），可能引发什么严重后果？",
+          optionsJa: [
+            "小さなフィレット面（微小R）が消滅・変形し、製品寸法精度が狂う",
+            "モデルのファイルサイズが100倍に肥大化する",
+            "画面の背景色が反転してしまう",
+            "NC工作機械のモーターが過負荷停止する"
+          ],
+          optionsZh: [
+            "细微特征和微小倒角（R面）发生扭曲甚至被直接融合丢失，丧失尺寸公差",
+            "模型文件体积会几何倍数暴增 100 倍",
+            "三维视口的背景渲染色被反相反转",
+            "会导致现场机床主轴电机直接烧毁"
+          ],
+          ans: 0,
+          explainJa: "正解！過大なトレランスは近接する別々のエッジを同一と誤認し、形状を破壊します。段階的な値の適用が重要です。",
+          explainZh: "正确！过大公差会导致相邻的细微棱边被算法强行粘合，破坏原有模具曲面的精细倒角几何。"
+        }
+      },
+      {
+        chap: 0,
+        subIndex: 3,
+        titleJa: "1-4 トリム曲面と曲率連続性（G0/G1/G2）の診断",
+        titleZh: "1-4 修剪曲面与曲率连续性 (G0/G1/G2) 检验",
+        tag: "形状品位",
+        bodyJa: `
+          <p>自動車外装や家電の金型では、光の反射（ハイライトライン）が滑らかに繋がることが求められます。</p>
+          <ul style="padding-left:20px;">
+            <li><strong>G0（位置連続）</strong>：端点が繋がっているが角（エッジ）がある状態。</li>
+            <li><strong>G1（接線連続）</strong>：接線方向が一致し、境目が滑らか。</li>
+            <li><strong>G2（曲率連続）</strong>：曲率の変化率が連続しており、映り込みに歪みがない最高品位。</li>
+          </ul>
+        `,
+        bodyZh: `
+          <p>汽车车灯、车身面板等注塑模具，对光影高光反射线（Zebra Lines）有极高要求：</p>
+          <ul style="padding-left:20px;">
+            <li><strong>G0 (位置连续)</strong>：点相连，但有明显折角接缝。</li>
+            <li><strong>G1 (相切连续)</strong>：切线一致，过渡圆滑。</li>
+            <li><strong>G2 (曲率连续)</strong>：曲率半径连续渐变，消除光影突变斑马线，金型光学级表面。</li>
+          </ul>
+        `,
+        quiz: {
+          qJa: "高級車のランプカバーやボディパネル金型で求められる、映り込みに歪みが生じない曲面連続性はどれですか？",
+          qZh: "对于高级汽车大灯透镜或车身外观模具，为确保反光映象毫无折痕扭曲，必须达到的曲面连续性等级是？",
+          optionsJa: [
+            "G2 連続（曲率連続）",
+            "G0 連続（位置連続のみ）",
+            "G1 連続（接線連続のみ）",
+            "非連続（オープンエッジ）"
+          ],
+          optionsZh: [
+            "G2 连续（曲率连续）",
+            "G0 连续（仅位置接触）",
+            "G1 连续（仅切线相切）",
+            "非连续（断开敞口边）"
+          ],
+          ans: 0,
+          explainJa: "正解！G2連続は曲率変化が滑らかに推移するため、成形品の表面にハイライトの不連続（光の折れ）が出ません。",
+          explainZh: "正确！G2 曲率连续能保证表面反射光斑在经过连接缝时平滑流动，绝不出现断光或折光现象。"
+        }
+      },
+
+      // 第2章
+      {
+        chap: 1,
+        subIndex: 0,
+        titleJa: "2-1 抜き勾配解析（Draft Angle Analysis）の鉄則",
+        titleZh: "2-1 拔模斜度分析 (Draft Angle Analysis) 核心原理",
+        tag: "金型設計",
+        bodyJa: `
+          <p>プラスチック射出成形品が冷却固化すると収縮し、金型キャビティ・コアに密着します。製品を取り出す際、側面に角度がついていないと摩擦で傷（かじり）が発生したり抜けなくなります。この傾斜が<strong>「抜き勾配（拔模角）」</strong>です。</p>
+          <div class="lesson-callout">
+            Space-Eの<strong>[金型] -> [勾配解析]</strong>を実行すると、指定した抜き方向ベクトルに基づき、曲面の角度がカラーコンター表示（緑：合格、赤：アンダーカット/逆勾配、青：垂直面）されます。
+          </div>
+        `,
+        bodyZh: `
+          <p>塑料注塑件冷却固化后发生收缩，紧包在型芯与型腔上。若壁面完全垂直（0度），脱模摩擦力会划伤甚至拉裂塑件，因此必须施加<strong>拔模斜度（脱模角）</strong>。</p>
+          <div class="lesson-callout">
+            Space-E 的<strong>[模具] -> [拔模分析]</strong>模块会以假彩色云图实时着色：绿色为合格面，红色为倒拔模（严重倒扣），蓝色为危险垂直面。
+          </div>
+        `,
+        quiz: {
+          qJa: "Space-Eの勾配解析において「アンダーカット（逆勾配）」と診断された領域をそのまま成形した場合、何が起こりますか？",
+          qZh: "如果在 Space-E 拔模分析中检测出“倒扣/倒拔模 (Undercut)”区域而未作结构处理，注塑生产时将发生什么？",
+          optionsJa: [
+            "金型が開いた瞬間に成形品が金型に引っかかり、脱型不能または破損する",
+            "成形品の冷却速度が早くなりすぎる",
+            "材料の樹脂粘度が低下する",
+            "CAMのツールパスの行数が倍増する"
+          ],
+          optionsZh: [
+            "开模顶出时制品被钢材结构死死勾住，导致塑件撕裂报废或顶针顶穿",
+            "注塑件的冷却固化速度会无故变快",
+            "塑料熔融料的流动粘度大幅降低",
+            "CAM 生成的 G 代码行数翻倍"
+          ],
+          ans: 0,
+          explainJa: "正解！アンダーカット部は物理的に直進脱型できないため、スライドコアや傾斜ピン（置き駒）などの機構設計が必須となります。",
+          explainZh: "正确！倒扣部位在主开模方向存在物理阻挡，必须通过增设侧向抽芯（滑块 Slider）或斜顶机构解决。"
+        }
+      },
+      {
+        chap: 1,
+        subIndex: 1,
+        titleJa: "2-2 パーティングライン（PL面）の抽出と作成",
+        titleZh: "2-2 分型线 (Parting Line) 与分模面 (PL) 构建",
+        tag: "型割技術",
+        bodyJa: `
+          <p>金型を「固定側（キャビティ）」と「可動側（コア）」に二分する境界線を<strong>パーティングライン（PL）</strong>と呼びます。</p>
+          <p>Space-Eは、勾配の正負境界（0度変曲点）を探索し、閉じた連続PLループを半自動抽出する専用アルゴリズムを備えています。抽出したループから外側へ面を延伸（リバースサーフェス）させることで、バリ（Burr）の出ない強固なPLシーリング面を生成します。</p>
+        `,
+        bodyZh: `
+          <p>将模具分为“前模/定模（型腔 Cavity）”与“后模/动模（型芯 Core）”的闭合分界线被称为<strong>分型线 (PL)</strong>。</p>
+          <p>Space-E 能自动沿着拔模角正负反转的 0 度临界曲线提取闭合环路，并沿外法线方向延伸出光滑平整的封胶分型面，防止注塑跑披锋（毛边）。</p>
+        `,
+        quiz: {
+          qJa: "Space-EでPL面（パーティング面）を設計する際、金型耐久性とバリ防止のために最も推奨される形状は？",
+          qZh: "在 Space-E 中构建分型面 (PL 面) 时，为提高模具寿命并防止披锋毛边，最佳的曲面延伸原则是？",
+          optionsJa: [
+            "成形品外形エッジから滑らかに外側へ接線または垂直に伸びるフラット・スムーズ面",
+            "波打つような激しいジグザグ曲面",
+            "肉厚0.01mmの薄いナイフエッジ形状",
+            "成形品内部に向かって潜り込む逆傾斜面"
+          ],
+          optionsZh: [
+            "沿产品外轮廓向外切向或法向平滑延伸、受力均匀的平滑封胶面",
+            "波浪状剧烈起伏的折线曲面",
+            "刃口厚度仅 0.01mm 的锐角尖刃形状",
+            "朝向塑料制品内侧倒扣凹陷的逆向曲面"
+          ],
+          ans: 0,
+          explainJa: "正解！PL面は高圧の射出成形圧力で型締めされるため、滑らかで剛性が高く、段差のないシンプルな面構成が理想です。",
+          explainZh: "正确！分模封胶面承受数吨合模锁紧压力，必须平缓、顺滑、刚性强，避免产生应力集中的尖角薄刃。"
+        }
+      },
+      {
+        chap: 1,
+        subIndex: 2,
+        titleJa: "2-3 キャビティ・コアの分割（型割）処理",
+        titleZh: "2-3 前后模型腔/型芯一键分模 (Core/Cavity Split)",
+        tag: "型割技術",
+        bodyJa: `
+          <p>製品モデルとPL面が揃ったら、<strong>[型割]コマンド</strong>によって金型ブロック素材（直方体ブロック）からキャビティ駒とコア駒を完全に二分割します。</p>
+          <p>Space-Eの型割エンジンは、微小な隙間があっても自動的に直近の面と連結させてブーリアン演算を完遂させる強靭なアルゴリズムを誇ります。</p>
+        `,
+        bodyZh: `
+          <p>在完善分型面与封堵孔洞后，执行<strong>[分模 (Split)]指令</strong>，系统将对毛坯钢料执行实体布尔分割，一键分离出前模腔与后模芯。</p>
+        `,
+        quiz: {
+          qJa: "型割処理を実行する前に、製品モデル内部の「貫通穴（リブ穴やボタン穴）」に対して行わなければならない作業は？",
+          qZh: "在执行前后模一键分模运算前，对塑件上的“通孔（如螺丝孔、按键孔）”必须预先做什么处理？",
+          optionsJa: [
+            "穴埋め面（パッチサーフェス）を作成して穴を完全に塞いでおく",
+            "穴の直径を2倍に拡大しておく",
+            "穴の周りのメッシュをすべて削除する",
+            "モデル全体を透明化する"
+          ],
+          optionsZh: [
+            "通过[贴面/补孔 (Patch)]功能将所有贯通孔洞密封，形成完整隔离面",
+            "把所有的孔径强行放大 2 倍以防卡死",
+            "把孔洞周围的所有几何曲面全部强行删除",
+            "将整个零件模型透明度设为 100%"
+          ],
+          ans: 0,
+          explainJa: "正解！貫通穴が開いたままだとキャビティ側とコア側の空間が繋がり、型割境界が閉ループを形成できずエラーになります。",
+          explainZh: "正确！通孔若不打补丁密封，前后模空间将相互联通，导致分模算法无法判断隔离边界而失败。"
+        }
+      },
+      {
+        chap: 1,
+        subIndex: 3,
+        titleJa: "2-4 スライドコア（置き駒）と傾斜ピンの干渉設計",
+        titleZh: "2-4 滑块机构 (Slide Core) 与斜顶机构设计",
+        tag: "金型機構",
+        bodyJa: `
+          <p>アンダーカットを回避するために、型開き動作と連動して横方向に退避する<strong>「スライドコア」</strong>や、突き出し動作で斜めに逃げる<strong>「傾斜ピン（リフター）」</strong>を配置します。</p>
+          <p>Space-Eでは、スライドのストローク量と抜き角度（アンギュラピン角度：通常15〜25度）の幾何干渉を3Dアニメーションで事前検証可能です。</p>
+        `,
+        bodyZh: `
+          <p>对于存在外侧或内侧倒扣的特征，必须利用开模动力驱动横向抽芯的<strong>滑块机构 (Slider)</strong>，或随顶针板斜向滑移的<strong>斜顶机构 (Lifter)</strong>。</p>
+          <p>Space-E 提供斜导柱抽芯距离干涉校核功能，避免滑块撞击后模仁。</p>
+        `,
+        quiz: {
+          qJa: "一般的な射出成形金型において、スライド機構の「アンギュラピン（斜めピン）」の傾斜角度として推奨される安全範囲は？",
+          qZh: "在常见注塑模具滑块结构中，驱动滑块的“斜导柱”倾角通常推荐控制在多大范围内？",
+          optionsJa: [
+            "15度 〜 25度（過度な曲げ応力を防ぎ、十分なストロークを確保）",
+            "45度 〜 60度（急激に開かせるため）",
+            "0度（垂直）",
+            "85度（ほぼ水平）"
+          ],
+          optionsZh: [
+            "15° ~ 25°（既保证足够抽芯行程，又避免斜导柱承受过大剪切弯曲应力）",
+            "45° ~ 60°（为了追求极速抽芯）",
+            "0°（垂直向下）",
+            "85°（几乎水平）"
+          ],
+          ans: 0,
+          explainJa: "正解！25度を超えると斜ピンに過大な曲げ荷重がかかり破損の危険が高まります。一般には20度前後が多用されます。",
+          explainZh: "正确！斜导柱角度若大于 25°，开模时受到的横向弯曲剪应力会急剧攀升，极易折断；通常取 18°~22°。"
+        }
+      },
+
+      // 第3章
+      {
+        chap: 2,
+        subIndex: 0,
+        titleJa: "3-1 放電加工（EDM）の仕組みと電極設計の必要性",
+        titleZh: "3-1 电火花放电加工 (EDM) 机制与电极设计基础",
+        tag: "放電加工",
+        bodyJa: `
+          <p>回転工具（エンドミル）では、刃物の半径があるため<strong>「ピン角（R0の内角）」</strong>や<strong>「極めて深い細リブ（溝）」</strong>を切削することが物理的に不可能です。</p>
+          <p>そこで、銅（Cu）やグラファイト（黒鉛）の<strong>電極</strong>を反転形状として製作し、電気火花のアーク放電によって鋼材を微小溶融・除去する<strong>「形彫り放電加工（EDM）」</strong>を行います。</p>
+        `,
+        bodyZh: `
+          <p>铣刀切削必然存在刀具半径，无法直接加工出<strong>“绝对直角内尖角 (R0)”</strong>或<strong>“深窄肋条槽”</strong>。此时必须通过数控加工出紫铜或石墨<strong>电极 (铜公)</strong>，利用电火花脉冲放电熔融蚀除模具钢材。</p>
+        `,
+        quiz: {
+          qJa: "切削エンドミルでは加工できず、EDM（形彫り放電加工）が不可欠となる代表的な金型形状は？",
+          qZh: "数控铣削刀具无法直接切削、必须依靠 EDM 放电加工的典型模具特征是？",
+          optionsJa: [
+            "細くて深いリブ溝や、内角の隅Rが極めて小さいピン角形状",
+            "平坦で広大なパーティング面",
+            "緩やかな大半径の球状曲面",
+            "直径20mmの貫通ボルト穴"
+          ],
+          optionsZh: [
+            "狭窄深槽（筋条）以及内角几乎无 R 角的锐利清角结构",
+            "大面积平坦光滑的分型面",
+            "平缓大半径的球面曲面",
+            "直径 20mm 的穿丝螺栓孔"
+          ],
+          ans: 0,
+          explainJa: "正解！回転工具はどうしても刃具半径（R）が残るため、シャープな内隅角や深リブは電極による放電でしか成形できません。",
+          explainZh: "正确！旋转刀具必然受限于刀具半径 R，深沟槽与清角必须依靠负极放电电极逐步蚀除加工。"
+        }
+      },
+      {
+        chap: 2,
+        subIndex: 1,
+        titleJa: "3-2 Space-E/Electrode による電極形状の自動抽出",
+        titleZh: "3-2 Space-E/Electrode 电极自动提取与延伸",
+        tag: "電極モジュール",
+        bodyJa: `
+          <p>Space-Eの<strong>電極専用モジュール</strong>は、キャビティ内の放電したいリブ底面をクリックするだけで、放電領域の周囲境界を自動認識し、上方向へ滑らかに逃げ面を<strong>「電極立ち上げ延伸」</strong>します。</p>
+          <div class="lesson-code-block">[電極] -> [リブ電極自動抽出] -> [逃げクリアランス面自動作成]</div>
+          <p>手動モデリングに比べて設計時間を約80%短縮し、反転抜けミスを完全に防止します。</p>
+        `,
+        bodyZh: `
+          <p>Space-E 拥有独步业界的<strong>电极设计专用模块</strong>。只需点击型腔内的筋位底面，系统即可自动追踪深槽边界，并沿法向生成电极避空防干涉曲面。</p>
+          <div class="lesson-code-block">[电极] -> [肋条电极自动提取] -> [延伸避空面构建]</div>
+        `,
+        quiz: {
+          qJa: "Space-Eの電極自動作成時、放電部以外の金型面に電極が接触して破損するのを防ぐために設ける面は？",
+          qZh: "在 Space-E 自动创建电极时，为防止放电有效区之外的电极本体碰撞模具工件，必须生成的结构是？",
+          optionsJa: [
+            "逃げ面（リリーフ・クリアランス面）",
+            "吸着面",
+            "反射面",
+            "鏡面研磨面"
+          ],
+          optionsZh: [
+            "避空面 (Relief / Clearance Surface)",
+            "真空吸附面",
+            "激光反射面",
+            "镜面抛光面"
+          ],
+          ans: 0,
+          explainJa: "正解！放電したいターゲット形状以外は、0.5〜1mm以上離れるよう逃げ面を自動延伸することで、不要な二次放電や干渉を防ぎます。",
+          explainZh: "正确！避空面能让非放电区域退后 0.5~1mm 以上，防止无效区域发生二次侧面打火拉弧。"
+        }
+      },
+      {
+        chap: 2,
+        subIndex: 2,
+        titleJa: "3-3 放電クリアランス（火花ギャップ）と揺動補正",
+        titleZh: "3-3 放电间隙 (Spark Gap) 补偿与平动摇动量计算",
+        tag: "加工パラメータ",
+        bodyJa: `
+          <p>放電加工時、電極と鋼材の間には常に微小な<strong>放電ギャップ（Spark Gap：火花隙間）</strong>が存在します。そのため、電極は製品寸法よりそのギャップ分だけ<strong>小さく（縮小オフセット）</strong>製作しなければなりません。</p>
+          <ul style="padding-left:20px;">
+            <li><strong>粗放電電極</strong>：ギャップ片肉 0.15mm 〜 0.30mm（高速除去）</li>
+            <li><strong>中仕上げ電極</strong>：ギャップ片肉 0.08mm 〜 0.12mm</li>
+            <li><strong>精仕上げ電極</strong>：ギャップ片肉 0.02mm 〜 0.05mm（精密仕上げ）</li>
+          </ul>
+        `,
+        bodyZh: `
+          <p>放电蚀除是在微小火花距离内发生的，因此电极必须按照<strong>放电间隙（火花位）</strong>进行<strong>等距均匀缩小负公差加工</strong>：</p>
+          <ul style="padding-left:20px;">
+            <li><strong>粗公 (Roughing)</strong>：火花位单边 0.15mm ~ 0.25mm（追求快速去除金属）</li>
+            <li><strong>精公 (Finishing)</strong>：火花位单边 0.02mm ~ 0.05mm（极高尺寸精度与表面光洁度）</li>
+          </ul>
+        `,
+        quiz: {
+          qJa: "製品図面通りの深リブを放電加工する場合、精仕上げ電極の3Dモデルは製品寸法に対してどうオフセットすべきですか？",
+          qZh: "欲加工出符合图纸精度的模具深槽，精加工电极在 3D 几何建模时应对标准模型做何种补偿？",
+          optionsJa: [
+            "火花放電ギャップ分（例：片肉0.03mm）だけ全周マイナス縮小オフセットする",
+            "火花放電ギャップ分だけ大きく拡大オフセットする",
+            "オフセットは一切行わず、1対1寸法のままで加工する",
+            "高さ方向（Z軸）だけを10mm縮める"
+          ],
+          optionsZh: [
+            "根据火花放电间隙（如单边 0.03mm）做全方向的三维均匀负向缩小偏移 (Minus Offset)",
+            "将电极模型按照放电间隙做放大偏移",
+            "不做任何偏移，保持 1:1 原尺寸加工",
+            "仅将高度方向（Z轴）强行压缩 10mm"
+          ],
+          ans: 0,
+          explainJa: "正解！電極の周りに火花（ギャップ）が飛んで削れるため、ギャップ分だけ小さく作らないと目標寸法より削りすぎてしまいます。",
+          explainZh: "正确！电极周围由电火花击穿放电蚀除，若不预留单边缩水负间隙，成型腔槽宽度必然超差过大。"
+        }
+      },
+      {
+        chap: 2,
+        subIndex: 3,
+        titleJa: "3-4 基準台（ホルダーベース）とポカよけ（C面）",
+        titleZh: "3-4 电极基准台座与防呆倒角 (C角) 工业规范",
+        tag: "現場実務",
+        bodyJa: `
+          <p>加工された電極はEDM機のアリ溝ホルダーに固定されます。機上で正確に原点出し（芯出し）を行うため、四角い<strong>基準台（ベースブロック）</strong>を付加します。</p>
+          <p>さらに、電極をホルダーに取り付ける際、90度や180度向きを間違えてセットする重大ミス（方向違い加工事故）を防ぐため、基準角の1箇所だけに<strong>「ポカよけC面（面取り）」</strong>を施します。</p>
+        `,
+        bodyZh: `
+          <p>电极切削完成后需要安装在放电夹头中。为快速打表分中，底部必须连带铣出高精度的<strong>基准台 (Datum Base)</strong>。</p>
+          <p>为彻底避免作业员将电极旋转 90° 或 180° 装反而导致整套模具报废，工业标准是在基准台特定一角倒<strong>“防呆 C 角”</strong>。</p>
+        `,
+        quiz: {
+          qJa: "電極の基準台において、1箇所だけ非対称に「C面（面取り）」を設ける最大の目的は？",
+          qZh: "在放电电极基准台上，仅在单一角落切出不对称 C 倒角的核心目的是？",
+          optionsJa: [
+            "電極を放電盤にセットする際の方向誤り（ポカミス・反転取り付け）を防止するため",
+            "電極の重量を軽くして加工速度を上げるため",
+            "火花放電の電圧を高めるため",
+            "電極の美観・デザイン性を向上させるため"
+          ],
+          optionsZh: [
+            "防呆识别：防止工人在机床上装夹电极时角度方向装反造成整模报废",
+            "减轻紫铜电极重量以降低材料采购成本",
+            "汇聚电场提高电火花击穿电压",
+            "增强电极工业设计的美观度"
+          ],
+          ans: 0,
+          explainJa: "正解！ポカよけC面によって、作業者や画像検査装置が「基準角」をひと目で識別でき、誤方向での放電事故をゼロにします。",
+          explainZh: "正确！防呆角（Poka-yoke Chamfer）是工业工程的强制规范，确保机床探头与操作人员绝无装反可能。"
+        }
+      },
+
+      // 第4章
+      {
+        chap: 3,
+        subIndex: 0,
+        titleJa: "4-1 Space-E/CAM の切削哲学と等高線荒加工",
+        titleZh: "4-1 Space-E/CAM 切削理念与等高线粗加工 (Constant Z Roughing)",
+        tag: "CAM基礎",
+        bodyJa: `
+          <p>金型切削の効率と工具寿命は、<strong>「荒加工（ラフィング）」</strong>で8割が決まります。Space-E/CAMの真骨頂は、素材ブロックから効率よく大量の金属を取り除く<strong>「等高線荒加工」</strong>です。</p>
+          <div class="lesson-callout">
+            Space-Eは、各Z深さレベルにおいて工具負荷が一定になるよう、コーナ部で自動的に減速・トロコイド円弧補間を挿入し、刃物のチッピング（欠け）を防止します。
+          </div>
+        `,
+        bodyZh: `
+          <p>模具加工 80% 的切除量在<strong>粗加工 (Roughing)</strong> 阶段完成。Space-E/CAM 的核心算法是<strong>等高粗加工</strong>。</p>
+          <div class="lesson-callout">
+            Space-E 能实时监控各 Z 层深度的切削负载，在遇到直角转角时自动平滑过渡或插入摆线切削，避免刀具瞬间受力过载崩刃。
+          </div>
+        `,
+        quiz: {
+          qJa: "金型の等高線荒加工において、大径ラジアスエンドミル（例：Φ32R5）を使用する主なメリットは？",
+          qZh: "在模具型腔等高粗加工中，优先采用大直径牛鼻刀/圆角刀（如 Φ32R5）的核心优势是？",
+          optionsJa: [
+            "刃先チップの強度が高く、大送り・大切り込みで高能率に金属母材を除去できる",
+            "内角R0のシャープな隅角を一度に仕上げられる",
+            "工作機械の回転数を10万回転まで上げられる",
+            "切削油（クーラント）が一切不要になる"
+          ],
+          optionsZh: [
+            "刀尖圆角处强度高、抗冲击力强，可承受大进给、大切深实现海量金属高效切除",
+            "能一次性将内凹 R0 锐角直接精光到位",
+            "可使普通机床主轴瞬间飙升到 10 万转",
+            "切削全过程无需使用任何切削液冷却"
+          ],
+          ans: 0,
+          explainJa: "正解！ラジアス工具はコーナRが衝撃を分散するため刃先剛性が抜群で、金型の荒取り加工において圧倒的な高能率を発揮します。",
+          explainZh: "正确！圆角刀/牛鼻刀圆角强度远高于平底刀尖，可承受粗加工强烈震颤冲击，是型腔开粗首选。"
+        }
+      },
+      {
+        chap: 3,
+        subIndex: 1,
+        titleJa: "4-2 ストック残肉認識（Rest Machining）の自動化",
+        titleZh: "4-2 工件残料模型实时识别 (Rest Machining)",
+        tag: "高能率CAM",
+        bodyJa: `
+          <p>大径工具で荒加工を行った後、狭い溝やコーナーには工具が入れなかった<strong>「削り残し（残肉）」</strong>が大量に残ります。</p>
+          <p>Space-Eは、前工程の加工結果を<strong>3Dストックモデル</strong>として正確に記憶。次工程の小径工具は、<strong>「残肉が存在する箇所だけ」</strong>を自動認識して無駄な空切削（エアーカット）を一切行わずに中荒加工を行います。</p>
+        `,
+        bodyZh: `
+          <p>大刀开粗后，在深腔或转角处必然残留大量未切除的厚钢料。若下一道小刀盲目切削，会在转角遭遇暴增数倍的残料而直接断刀。</p>
+          <p>Space-E 会实时动态计算 3D 剩余毛坯（Stock），小刀切削时<strong>只切削有残料的局部区域</strong>，完全消除空刀走道时间。"</p>
+        `,
+        quiz: {
+          qJa: "Space-Eのストック残肉認識加工を適用しない場合、現場で発生する最も危険なトラブルは？",
+          qZh: "若在 CAM 中不启用残料识别而直接调用小刀加工，模具车间最易发生的严重工艺故障是？",
+          optionsJa: [
+            "大径工具が入れなかったコーナー残肉に小径工具が突然突っ込み、過大負荷で工具破損・スピンドル停止する",
+            "金型の表面が錆びてしまう",
+            "Gコードの文字化けが発生する",
+            "切削粉がすべて気化してしまう"
+          ],
+          optionsZh: [
+            "大刀留下的巨量台阶残料突然迎头撞击细小刀具，瞬间发生崩刀断刀乃至机床主轴过载停机",
+            "导致模具钢件表面瞬间严重氧化生锈",
+            "会导致数控系统读取 G 代码乱码",
+            "使切屑铁屑全部升华气化"
+          ],
+          ans: 0,
+          explainJa: "正解！残肉認識がないと小径工具が急激な削り代の変化に耐えられず破損します。Space-Eの残肉追従は安全と時短の要です。",
+          explainZh: "正确！残料突变会导致刀具承受额定负荷数十倍的瞬时切削抗力，残料识别是保障无人值守安全加工的底线。"
+        }
+      },
+      {
+        chap: 3,
+        subIndex: 2,
+        titleJa: "4-3 ペンシル加工（隅部清角）とカスプハイト制御",
+        titleZh: "4-3 隅部清根 (Pencil Machining) 与残留高度 (Cusp/Scallop)",
+        tag: "曲面仕上",
+        bodyJa: `
+          <p>曲面仕上げにおいて、ボールエンドミルで走査した際に生じる隣接パス間の山（微小な削り残し）を<strong>「カスプハイト（Cusp Height / Scallop）」</strong>と呼びます。</p>
+          <p>Space-Eは、設定した許容カスプハイト（例：0.002mm）に応じてピック幅（送りピッチ）を自動計算。さらに、2面が交わる谷底の稜線に沿って1本〜数本のパスを通す<strong>「ペンシル加工」</strong>で隅角の肉を極限まで除去します。</p>
+        `,
+        bodyZh: `
+          <p>球头刀在平缓曲面上往复步进时，刀轨行距之间会残留隆起的小山脊，称为<strong>残留高度（Scallop/Cusp Height）</strong>。</p>
+          <p>Space-E 根据工艺设定的微米级残留高度（如 0.003mm）自动反算自适应行距，并使用<strong>清根加工 (Pencil Machining)</strong> 精准沿着曲面交线谷底单轨光刀。"</p>
+        `,
+        quiz: {
+          qJa: "鏡面磨き（磨き工程の短縮）を目指すプラスチック金型の精仕上げにおいて、目標とすべきカスプハイトの目安は？",
+          qZh: "为了最大程度减少人工模具省模/抛光工时，注塑模精光曲面的残留高度 (Scallop Height) 通常应严格控制在？",
+          optionsJa: [
+            "0.002mm 〜 0.005mm（手磨きを最小限に抑える滑らかな表面）",
+            "0.5mm 〜 1.0mm（肉眼で階段状に見える粗さ）",
+            "5.0mm 以上",
+            "マイナス値（食い込み過切削）"
+          ],
+          optionsZh: [
+            "0.002mm ~ 0.005mm（微米级微小峰高，几乎无需人工打磨）",
+            "0.5mm ~ 1.0mm（肉眼可见严重阶梯刀痕）",
+            "5.0mm 以上",
+            "负数（代表严重过切报废）"
+          ],
+          ans: 0,
+          explainJa: "正解！カスプハイトを数ミクロン（μm）以内に制御することで、熟練工による手作業の金型磨き工程を劇的に省力化できます。",
+          explainZh: "正确！微米级的残留峰高使曲面光洁度接近镜面，大幅节省钳工繁重耗时的人工油石研磨抛光工序。"
+        }
+      },
+      {
+        chap: 3,
+        subIndex: 3,
+        titleJa: "4-4 高速ミーリング（HSM）対応アプローチ・退避パス",
+        titleZh: "4-4 高速切削 (HSM) 平滑进退刀与圆弧过渡策略",
+        tag: "高速加工",
+        bodyJa: `
+          <p>高速切削において、工具がワークに垂直に急降下して食い込むと、刃先が瞬時に欠損します。</p>
+          <p>Space-E/CAMは、必ず<strong>「ヘリカル（螺旋）進入」</strong>や接線方向に沿った<strong>「円弧アプローチ（Tangential Arc）」</strong>で進入し、切削終了時も滑らかな円弧で離脱します。工作機械のサーボモーターへのショックを最小限に抑えます。</p>
+        `,
+        bodyZh: `
+          <p>在数万转的高速加工中，刀具若垂直直扎工件，极易发生打刀崩裂。</p>
+          <p>Space-E/CAM 强制实施切线相切<strong>圆弧进刀 (Arc Lead-in)</strong> 或<strong>螺旋下刀 (Helical Ramp)</strong>，消除进刀切入痕，极大保护主轴与刀具寿命。</p>
+        `,
+        quiz: {
+          qJa: "キャビティ底面など閉じた領域へ工具が進入する際、工具寿命と加工面品位の観点から最も推奨される進入方法は？",
+          qZh: "在封闭型腔深处下刀进给时，从保护刀具与表面质量角度，首选的进刀方式是？",
+          optionsJa: [
+            "ヘリカル（螺旋）傾斜進入、または円弧アプローチ",
+            "最高送り速度（F値最大）でのZ軸垂直直下ダイブ",
+            "ステップなしの真横からの全負荷突っ込み",
+            "加工途中で主軸を停止させての押し込み"
+          ],
+          optionsZh: [
+            "螺旋渐开渐进下刀 (Helical Ramp) 或切向平滑圆弧过渡",
+            "以最高快进速度 (G00) 垂直直接扎入",
+            "不做任何斜向缓冲直接侧向撞入工件",
+            "在切入瞬间停转主轴强行冲入"
+          ],
+          ans: 0,
+          explainJa: "正解！螺旋状に緩やかに金属を削りながら降りるヘリカル進入は、切削抵抗を均一に保ち工具寿命を大幅に延ばします。",
+          explainZh: "正确！螺旋进刀将垂直抗力转化为侧向切削，避免了底刃受力集中，确保高速平稳下刀。"
+        }
+      },
+
+      // 第5章
+      {
+        chap: 4,
+        subIndex: 0,
+        titleJa: "5-1 同時5軸加工と割出5軸加工（3+2軸）の使い分け",
+        titleZh: "5-1 定轴五轴 (3+2轴) 与连续联动五轴加工架构对比",
+        tag: "5軸CAM",
+        bodyJa: `
+          <p>5軸加工には大きく分けて2つのアプローチがあります：</p>
+          <ul style="padding-left:20px;">
+            <li><strong>割出5軸（3+2軸）</strong>：回転2軸で工具を特定角度に傾けて固定し、3軸（XYZ）で切削。突き出し長さの短い高剛性工具が使えるため、金型加工の8割はこれで対応可能。</li>
+            <li><strong>同時5軸（Simultaneous 5-Axis）</strong>：XYZBCの5軸が同時に協調動作。インペラーやアンダーカットの深い複雑曲面を切削。</li>
+          </ul>
+        `,
+        bodyZh: `
+          <p>高端模具五轴数控加工主要分为两种主流架构：</p>
+          <ul style="padding-left:20px;">
+            <li><strong>定面定位五轴 (3+2轴)</strong>：摆好角度锁紧，由 XYZ 3轴执行高速切削。刀具悬伸极短、刚性最高，占模具加工 80% 以上应用。</li>
+            <li><strong>连续五轴联动</strong>：五轴坐标协同连续光滑微调，专攻深腔变曲率侧壁防干涉。</li>
+          </ul>
+        `,
+        quiz: {
+          qJa: "深彫り金型において、従来の3軸加工と比べて割出5軸（3+2軸）加工を採用する最大の利点は？",
+          qZh: "在深腔精密模具中，与传统 3 轴相比，采用 3+2 定位五轴加工最显著的技术收益是？",
+          optionsJa: [
+            "工具を傾けることで、突き出し長さ（首下長）の短い高剛性シャンクが使え、ビビり振動を根絶できる",
+            "工具の価格が10分の1になる",
+            "機械の電気代が半分になる",
+            "CAMの計算が瞬時に終わる"
+          ],
+          optionsZh: [
+            "通过倾斜主轴，大幅缩短刀具悬伸长度（L/D比），极大提高刀柄刚性，彻底根除切削震颤",
+            "能使铣刀采购单价直接下降到十分之一",
+            "可使机床的整机耗电量减半",
+            "CAM 路径算法不需要任何算力即刻输出"
+          ],
+          ans: 0,
+          explainJa: "正解！工具が短いほどたわみ・ビビり（Chatter）が起きず、切削面品位が格段に向上し、加工送り速度も大幅に引き上げられます。",
+          explainZh: "正确！刀具悬伸每缩短一半，刀杆抗弯刚度提升 8 倍，彻底消除了深型腔加工中的震刀波纹。"
+        }
+      },
+      {
+        chap: 4,
+        subIndex: 1,
+        titleJa: "5-2 ツールホルダー干渉回避と刀軸自動傾斜",
+        titleZh: "5-2 刀柄碰撞自动干涉回避与刀轴倾角智能调整",
+        tag: "安全CAM",
+        bodyJa: `
+          <p>同時5軸切削時、ワーク深部にアプローチする工具ホルダーやスピンドルヘッドがワーク上部や治具に激突する事故は絶対に防がねばなりません。</p>
+          <p>Space-E/CAMは、シャンク（柄）、コレット、ツールホルダー、主軸頭の3D形状を精密に登録可能。干渉限界（セーフティクリアランス）に近づくと、<strong>自動的に刀軸を安全な側へチルト（傾斜）</strong>させてパスを再計算します。</p>
+        `,
+        bodyZh: `
+          <p>在深腔五轴加工中，刀柄 (Holder) 或机床主轴外壳与工件侧壁发生恶性碰撞是车间灾难性事故。</p>
+          <p>Space-E 支持装配体实体刀柄干涉检测，在间隙接近设定的安全余量时，<strong>自动将刀轴矢量平滑倾斜</strong>偏离干涉区。</p>
+        `,
+        quiz: {
+          qJa: "Space-Eの干渉チェック機能で「ツールホルダーがワークに接触」と判定された場合、システムが実行する最適アクションは？",
+          qZh: "在 Space-E 五轴干涉检测中，当检测到刀柄即将与模具上沿碰撞时，系统最优的自动化动作是？",
+          optionsJa: [
+            "刀軸の傾き角度（ティルト角）を動的に自動変更し、干渉しない安全な傾斜姿勢でパスを生成する",
+            "ワークのモデルデータを自動的に削り取って穴を開ける",
+            "警告を出さずにそのまま加工Gコードを出力する",
+            "CAMプログラム全体を強制削除する"
+          ],
+          optionsZh: [
+            "动态平滑调整刀轴倾角矢量 (Tilt Angle)，以倾斜防撞姿态安全生成无碰撞刀轨",
+            "直接自动把三维工件被碰撞区域削掉一个窟窿",
+            "忽略此干涉隐患、不加警告强行输出危险 G 代码",
+            "直接永久性强制格式化清空项目文件"
+          ],
+          ans: 0,
+          explainJa: "正解！自動チルト制御により、加工者は干渉を恐れることなく最短工具による高精度加工を自動生成できます。",
+          explainZh: "正确！智能摆角不仅彻底杜绝撞机事故，更保证了全行程始终使用最短刀柄高速高精切削。"
+        }
+      },
+      {
+        chap: 4,
+        subIndex: 2,
+        titleJa: "5-3 専用ポストプロセッサとGコード最適化",
+        titleZh: "5-3 专用机床后置处理 (Post-Processor) 与 G 代码优化",
+        tag: "ポスト処理",
+        bodyJa: `
+          <p>CAMが計算したツールパス（CLデータ：内部座標データ）を、現場の工作機械（ファナック、マキノ、オークマ、安田工業、ハイデンハイン等）が理解できる<strong>「NCプログラム（Gコード）」</strong>に翻訳するのが<strong>ポストプロセッサ</strong>です。</p>
+          <p>Space-Eは各社マシニングセンタの高精度輪郭制御（例：FANUC AICC/ナノ補間、MAKINO SGIなど）に最適化した専用コード（G05.1 / G05 P10000等）を自動出力します。</p>
+        `,
+        bodyZh: `
+          <p>将 CAM 计算出的刀位轨迹 (CL Data) 翻译成机床数控系统（发那科 FANUC、牧野 MAKINO、大隈 OKUMA、安田 YASDA 等）识别执行的标准 <strong>NC 程序 (G-code)</strong>，依赖<strong>后置处理器 (Post-Processor)</strong>。</p>
+          <p>Space-E 完美匹配日本顶级机床的高速高精轮廓控制宏指令（如 G05.1 Q1 / G05 P10000）。</p>
+        `,
+        quiz: {
+          qJa: "金型の微小線分高速加工において、FANUC等のNC装置で「先行補正・ナノ補間モード（高精度輪郭制御）」を呼ぶGコードを挿入する目的は？",
+          qZh: "在模具三维微小线段高速切削中，在程序头调用数控系统“纳米插补/高精度轮廓预读控制 (如 G05.1 Q1)”的目的是？",
+          optionsJa: [
+            "数千ブロック先のパスを事前先読みし、急激な加減速による機械の振動や形状の角ダレ（追従遅れ）を防ぐため",
+            "NC画面の文字サイズを2倍にするため",
+            "主軸の回転数を強制的に半減させるため",
+            "機内照明を点灯させるため"
+          ],
+          optionsZh: [
+            "超前预读数千个后续运动微线段，提前平滑预规划加减速，彻底消除过冲震动与轮廓失真",
+            "将数控操作屏的显示字体放大 2 倍",
+            "将主轴电机的旋转转速强行降至一半",
+            "自动点亮机床内部的照明白炽灯"
+          ],
+          ans: 0,
+          explainJa: "正解！先行制御により、微小線分でも速度を落とさずに滑らかにコーナーを曲がることができ、金型の面品位と加工時間が劇的に改善します。",
+          explainZh: "正确！前瞻算法配合伺服纳米插补，能使刀尖在微小折线段间高速飞行而不产生尖锐加速度冲击。"
+        }
+      },
+      {
+        chap: 4,
+        subIndex: 3,
+        titleJa: "5-4 マシンシミュレーションと実機バーチャル検証",
+        titleZh: "5-4 机床整机运动学仿真与防撞虚拟验证",
+        tag: "バーチャル検証",
+        bodyJa: `
+          <p>実機加工の前に、画面上でマシニングセンタのXYZテーブル、回転軸（A/B/C軸）、バイス、金型、工具の全干渉を忠実に再現・シミュレーションします。</p>
+          <p>Space-Eのシミュレータは、CAMの内部計算値ではなく<strong>「最終出力されたGコードそのもの」</strong>を逆読みしてキネマティクス（機構学）解析を行うため、実機との乖離がゼロです。</p>
+        `,
+        bodyZh: `
+          <p>在开动机床前，在软件视口中对立式/卧式五轴机床工作台、回转轴、虎钳夹具、毛坯进行 1:1 数字孪生仿真。</p>
+          <p>Space-E 基于<strong>“最终输出的 G 代码原文件驱动”</strong>仿真，与机床实跑无任何误差脱节。</p>
+        `,
+        quiz: {
+          qJa: "「Gコード駆動型」マシンシミュレータが、一般的なCAM内部パスシミュレータよりも安全性が高いとされる理由は？",
+          qZh: "基于“最终 G 代码驱动”的机床仿真，为何比普通 CAM 内部刀位轨迹仿真更具绝对安全性？",
+          optionsJa: [
+            "ポストプロセッサによる変換ミスや、機械固有の原点シフト・リトラクト動作の誤りまで完全に検出できるから",
+            "計算時間が1秒未満で終わるから",
+            "3Dグラフィックが映画のように綺麗だから",
+            "オペレータの資格が不要になるから"
+          ],
+          optionsZh: [
+            "能完整检测后置处理器可能存在的逻辑翻译缺陷，以及机床换刀安全退刀点、工件坐标系原点偏置指令的潜在错误",
+            "计算耗费的时间小于 1 秒钟",
+            "渲染出的 3D 阴影画面犹如好莱坞电影",
+            "可以让工厂完全不用雇佣持证操作工"
+          ],
+          ans: 0,
+          explainJa: "正解！CAMデータとNCデータには変換による差異が生じる可能性があります。Gコードそのものを検証することが究極の安全策です。",
+          explainZh: "正确！真正的车间风险往往发生在后置转换生成的辅助 G 代码上。代码级实真仿真是万无一失的防线。"
+        }
+      }
+    ];
+
+    /* ==========================================================================
+       4. 实战工坊 (Quest 题库: 4 Tier x 5 题 = 20 道高水准模具工程题目)
+       ========================================================================== */
+    const QUEST_BANK = [
+      // Lv.1 基础操作与CAD
+      {
+        tier: 0,
+        gradeLabel: "Lv.1 基礎操作・CAD検定",
+        questionJa: "海外の取引先から受領した金型モデル（STEPファイル）をSpace-Eにインポートしたところ、面間に0.008mmのギャップがありソリッドになりませんでした。最も迅速かつ安全な処置はどれですか？",
+        questionZh: "从客户处接收的模具 STEP 文件导入 Space-E 后，发现曲面边缘存在 0.008mm 的微缝隙导致无法闭合为实体。最规范快捷的处理方案是？",
+        optionsJa: [
+          "[曲面] -> [縫合] を選択し、トレランスを 0.01mm に設定して自動縫合を実行する",
+          "隙間のある曲面をすべて削除して、平面で塞ぎ直す",
+          "モデルをあきらめて2D図面からゼロから引き直すよう顧客に要求する",
+          "トレランスを 1.0mm に引き上げて強制的に結合する"
+        ],
+        optionsZh: [
+          "使用 [曲面] -> [缝合] 功能，将容差参数设为 0.01mm 执行自动公差拓扑缝合",
+          "直接把存在缝隙的所有周边曲面粗暴删除并强行贴平",
+          "放弃该 3D 模型并勒令客户重新绘制 2D 图纸重新设计",
+          "直接将缝合容差粗暴放大到 1.0mm 强行压缩闭合"
+        ],
+        ans: 0,
+        explainJa: "Space-Eの[縫合]コマンドに0.01mm（実隙間0.008mmをカバーする最小値）を与えることで、微小Rやエッジ形状を変形させずに一瞬で完全なマニホールドソリッド化が完了します。"
+      },
+      {
+        tier: 0,
+        gradeLabel: "Lv.1 基礎操作・CAD検定",
+        questionJa: "Space-Eにおいて、金型加工の原点を工作機械のセットアップ位置（ブロック左上角、上面Z0）に設定するための操作として正しいものは？",
+        questionZh: "在 Space-E 中，为了将加工工件坐标系原点设定在毛坯基准定位角（毛坯左上角、上表面 Z=0），最标准的步骤是？",
+        optionsJa: [
+          "WCS（作業座標系）定義で「ボックスバウンディングボックスの上面左上頂点」を指定し原点登録する",
+          "製品モデル全体をマウスドラッグで適当な位置へ移動する",
+          "Windowsの画面解像度を変更して原点をずらす",
+          "工作機械側のリミットスイッチを物理的に移動させる"
+        ],
+        optionsZh: [
+          "在 WCS（工作坐标系）管理器中拾取“毛坯包络盒 (Bounding Box) 的上表面左上角顶点”作为原点并对齐主轴 Z+",
+          "直接用鼠标在三维空间随意拖动模型凭感觉摆放",
+          "通过修改操作系统的屏幕显示分辨率来平移坐标系",
+          "要求维修工去机床上拆卸限位开关来将就软件模型"
+        ],
+        ans: 0,
+        explainJa: "加工座標系はCAD上の絶対位置とNC機の治具原点を一致させる生命線です。包絡枠（バウンディングボックス）の頂点や特定基準ピン穴をWCS原点として定義するのが基本です。"
+      },
+      {
+        tier: 0,
+        gradeLabel: "Lv.1 基礎操作・CAD検定",
+        questionJa: "Space-Eの曲線作成機能で、2つの異なる曲面を滑らかに繋ぐフィレット面を作る際、境目が全く目立たない光沢品位を得るために指定すべき連続性条件は？",
+        questionZh: "在 Space-E 中创建两块连续过渡曲面时，为了在塑料成型后获得无反光折痕的光学级外观，必须指定的边界连续性是？",
+        optionsJa: [
+          "G2連続（曲率連続：Curvature Continuous）",
+          "G0連続（位置接続のみ）",
+          "G1連続（接線のみ）",
+          "C0不連続"
+        ],
+        optionsZh: [
+          "G2连续（曲率连续 Curvature Continuous）",
+          "G0连续（仅端点相碰）",
+          "G1连续（仅切线相切）",
+          "非连续断开状态"
+        ],
+        ans: 0,
+        explainJa: "G2連続は曲率半径が境目で連続して変化するため、ゼブラ解析（縞模様反射）を行っても光の筋が滑らかに繋がり、金型製品の最高品位を保証します。"
+      },
+      {
+        tier: 0,
+        gradeLabel: "Lv.1 基礎操作・CAD検定",
+        questionJa: "モデル形状の変更履歴を残さず、ダイレクトに面を引っ張ったりオフセットして修正する手法を何と呼びますか？",
+        questionZh: "在 Space-E 中直接拖动选定曲面、旋转或偏移指定距离完成改模，无需受制于繁琐历史特征树的方法被称为？",
+        optionsJa: [
+          "ダイレクトモデリング（ノンヒストリ編集）",
+          "パラメトリックフィーチャー拘束",
+          "ワイヤーフレーム手書きスケッチ",
+          "アセンブリ拘束"
+        ],
+        optionsZh: [
+          "直接建模 / 无历史特征编辑 (Direct Modeling)",
+          "全参数化严格历史草图约束",
+          "纯手工点线拓扑草绘",
+          "刚性装配约束"
+        ],
+        ans: 0,
+        explainJa: "金型現場では設計変更（設変）が頻繁に発生します。他社製CAD由来のヒストリが失われたモデルでも、面をダイレクトに移動・オフセットできるのがSpace-Eの強みです。"
+      },
+      {
+        tier: 0,
+        gradeLabel: "Lv.1 基礎操作・CAD検定",
+        questionJa: "Space-Eの画面操作において、マウスの中ボタン（ホイール）ドラッグによって行われる標準的な視点制御はどれですか？",
+        questionZh: "在 Space-E 三维标准视口交互中，按住鼠标中键滚轮拖动通常执行的操作是？",
+        optionsJa: [
+          "3D空間のダイナミック回転（オービット回転）",
+          "モデルの強制削除",
+          "全画面のスクリーンショット保存",
+          "CADライセンスの切断"
+        ],
+        optionsZh: [
+          "三维动态自由旋转 (3D Orbit Rotation)",
+          "立即永久性物理删除当前模型",
+          "静默截取全屏桌面截图",
+          "断开本地网络浮动许可协议"
+        ],
+        ans: 0,
+        explainJa: "中ボタンドラッグで3D回転、Shift+中ボタンで平行移動（パン）、ホイール回転で拡大縮小（ズーム）がSpace-Eの直感的な標準操作です。"
+      },
+
+      // Lv.2 模具设计与分模
+      {
+        tier: 1,
+        gradeLabel: "Lv.2 金型設計・PL割検定",
+        questionJa: "Space-Eで「抜き勾配解析」を実行したところ、製品側面の特定ポケットが「赤色（マイナス角度）」で表示されました。この結果が意味することは？",
+        questionZh: "在 Space-E 执行拔模分析时，产品侧面某一局部凹槽曲面呈现鲜艳的“红色（负角度）”，这表明？",
+        optionsJa: [
+          "アンダーカット（逆勾配）であり、そのままでは金型が開いても製品が引っかかって脱型できない",
+          "その面が極めて高精度に仕上がっていることを表す合格サイン",
+          "プラスチック樹脂が注入されないエアポケット",
+          "その領域が自動的に研磨される推奨エリア"
+        ],
+        optionsZh: [
+          "存在严重倒扣/倒拔模 (Undercut)，若不修改造型或增设抽芯滑块/斜顶，开模时必然卡死拉伤",
+          "代表该表面几何尺寸极其完美的合格高光提示",
+          "代表注塑熔胶绝不可能流经的绝对真空区",
+          "代表后续工序无需打磨的高精度预留区"
+        ],
+        ans: 0,
+        explainJa: "赤色はアンダーカットを示します。製品肉厚や形状を見直し勾配を付加するか、スライドコア（引き抜き機構）を設計する必要があります。"
+      },
+      {
+        tier: 1,
+        gradeLabel: "Lv.2 金型設計・PL割検定",
+        questionJa: "製品モデル内部にある複数のボルトボス貫通穴を塞ぐため、Space-Eで最も効率的なコマンドはどれですか？",
+        questionZh: "为了封闭塑料外壳内部的多个螺丝固定柱通孔以完成分模隔离，Space-E 中最高效的一键化指令是？",
+        optionsJa: [
+          "[金型] -> [穴埋め面自動作成（パッチサーフェス）]",
+          "1穴ずつ直線を引いて3次元メッシュを手動で編み込む",
+          "製品ごと穴の周囲を切り落とす",
+          "板金展開コマンドを無理やり適用する"
+        ],
+        optionsZh: [
+          "[模具] -> [一键自动创建补孔面 (Auto Patch Surfaces)]",
+          "手动在每个孔口拉伸几百条细线手动织网",
+          "直接把产品上所有带孔的实体部位整体切除",
+          "强行对注塑件调用钣金折弯冲压展开算法"
+        ],
+        ans: 0,
+        explainJa: "Space-Eの穴埋め機能は、閉じた内周エッジを自動認識して接線連続なパッチサーフェスを瞬時に一括生成します。"
+      },
+      {
+        tier: 1,
+        gradeLabel: "Lv.2 金型設計・PL割検定",
+        questionJa: "パーティングライン（PL）が平面ではなく、製品形状に沿って激しく上下にうねる「段付きPL（3次元PL面）」を設計する際の注意点として正しいものは？",
+        questionZh: "当模具分型面不是简单平表面、而是随塑件轮廓高低起伏剧烈波动的“三维阶梯落差 PL 面”时，设计核心守则是？",
+        optionsJa: [
+          "段差部には必ず十分な抜き勾配（5〜10度以上）を設け、型締め時のカジリや摩耗を防止する",
+          "段差部は完全に直角（垂直90度）のナイフエッジで突き合わせる",
+          "PL面を波打つサインカーブにして接触面積を最大化する",
+          "バリ（樹脂漏れ）を許容して隙間を0.5mm空けておく"
+        ],
+        optionsZh: [
+          "在落差阶梯转折面处必须施加充足的侧向防擦斜度（通常 5°~10° 以上），防止合模时严重咬合研伤",
+          "所有阶梯交接处必须采用 90° 绝对直角的锋利刀刃口对插合模",
+          "将分型面做成剧烈波浪状以增加型腔受力面积",
+          "故意给分型面留出 0.5mm 的巨大空隙任由溢胶"
+        ],
+        ans: 0,
+        explainJa: "段付きPLの垂直面同士が擦れ合うと、金型の型締め圧力で瞬時にカジリ（焼き付き）が発生します。必ず逃げ勾配を設けるのが金型設計の鉄則です。"
+      },
+      {
+        tier: 1,
+        gradeLabel: "Lv.2 金型設計・PL割検定",
+        questionJa: "射出成形金型において、製品の「外観面（A面・意匠面）」は通常どちら側に配置すべきですか？",
+        questionZh: "在注塑模具设计规范中，塑件的高要求“外观面（A面/外表面）”在模具开模时通常安排在？",
+        optionsJa: [
+          "固定側（キャビティ側）：エジェクタピン（突き出しピン）の跡がつかないようにするため",
+          "可動側（コア側）：ピンで強く叩き出して光沢を出すため",
+          "どちらでも全く影響はない",
+          "金型ブロックの真横の側面"
+        ],
+        optionsZh: [
+          "前模/定模（型腔 Cavity 侧）：避免在其关键外观表面留下丑陋的顶针顶出白痕印记",
+          "后模/动模（型芯 Core 侧）：为了让多根顶针直接猛烈撞击制品外表面",
+          "放置在任何一侧对注塑外观品质毫无区别",
+          "雕刻在模具钢料的最外侧安装侧面"
+        ],
+        ans: 0,
+        explainJa: "成形品は収縮して可動側（コア）に抱きついた状態で金型が開き、裏面からエジェクタピンで突き出されます。意匠面であるA面は突き出しピンのない固定側（キャビティ）に配置します。"
+      },
+      {
+        tier: 1,
+        gradeLabel: "Lv.2 金型設計・PL割検定",
+        questionJa: "Space-Eで型割を実行した際、エラーで分割できない場合の最も典型的な原因はどれですか？",
+        questionZh: "在 Space-E 中执行前/后模实体分割 (Core/Cavity Split) 报错失败时，最常见的原因是？",
+        optionsJa: [
+          "PL面（パーティング面）の外周境界がモールドベース素材枠の外まで完全に抜け切っていない",
+          "PCの液晶モニターが小さすぎる",
+          "製品の曲面の色が青色になっている",
+          "マウスのクリック速度が遅すぎる"
+        ],
+        optionsZh: [
+          "分型面 (PL) 的外缘没有彻底延伸穿透毛坯钢料的四周侧壁，无法构成完全闭合的分割边界",
+          "电脑外接显示器的物理尺寸不够大",
+          "三维视口中零件曲面的默认漫反射着色刚好是天蓝色",
+          "操作员双击鼠标按键的速度比标准间隔慢了 0.1 秒"
+        ],
+        ans: 0,
+        explainJa: "型割はブーリアン分割演算です。PL面が素材ブロックの外側まで完全に貫通（オーバーラップ）していないと、内外の空間が分断できずエラーとなります。"
+      },
+
+      // Lv.3 CAM编程与粗加工
+      {
+        tier: 2,
+        gradeLabel: "Lv.3 CAM荒加工・残肉検定",
+        questionJa: "高硬度金型鋼（HRC50以上）の荒加工において、工具の寿命を最大化するための切削アプローチとして最適なものは？",
+        questionZh: "针对 HRC50 以上的高硬度预硬淬火模具钢开粗切削，为实现刀片寿命最大化，最科学的切削进刀工艺是？",
+        optionsJa: [
+          "小切込み・高送り（High Feed Milling）を採用し、ヘリカル進入で連続切削する",
+          "一気に深さ50mmを低速で垂直に突っ込んで削り落とす",
+          "切削油をかけずに超高速回転で摩擦熱で溶かしながら削る",
+          "木工用エンドミルを使用する"
+        ],
+        optionsZh: [
+          "采用“浅切深、大进给 (High Feed Milling)”高频轻切削策略，配合螺旋平滑切入保持恒定负载",
+          "采用低转速、一次性猛扎 50mm 垂直大切深强行死啃硬钢",
+          "完全停用冷却并在干摩擦起火冒烟状态下强力熔化钢材",
+          "采购廉价的木工开槽硬质合金刀具代用"
+        ],
+        ans: 0,
+        explainJa: "高硬度鋼では、切込み（Ap）を小さく（0.5〜1mm）、送り速度（Vf）を高く保つ高送り加工が有効です。切削熱が切りくずに逃げ、工具への熱衝撃・チッピングを激減させます。"
+      },
+      {
+        tier: 2,
+        gradeLabel: "Lv.3 CAM荒加工・残肉検定",
+        questionJa: "Space-E/CAMにおいて、「等高線荒加工」のパス間隔（Zステップ量）を決定する際の最も重要な指標は？",
+        questionZh: "在 Space-E/CAM 中，设定“等高粗加工”的轴向层切深度 (Z Step / Ap) 时，最关键的技术依据是？",
+        optionsJa: [
+          "使用するインサートチップの許容切込み深さと、荒加工後の階段状残肉の許容サイズ",
+          "NC工作機械のシリアル番号",
+          "工場の天井の高さ",
+          "製品のプラスチックの色合い"
+        ],
+        optionsZh: [
+          "数控刀片涂层允许的最大轴向大切深切削抗力，以及留给后道工序的阶梯台阶残料均匀度",
+          "数控立式加工中心的出厂序列编号",
+          "车间钢结构厂房房顶挑梁净空高度",
+          "最终注塑制品的色母粒色泽深浅"
+        ],
+        ans: 0,
+        explainJa: "Zステップが大きすぎると工具負荷オーバーになり、また残る階段状の残肉（スカラップ）が巨大化して次工程の中仕上げ工具が破損します。工具カタログ推奨値と取り代のバランスで決定します。"
+      },
+      {
+        tier: 2,
+        gradeLabel: "Lv.3 CAM荒加工・残肉検定",
+        questionJa: "前工程で Φ20R1 の工具で荒加工を行ったポケットに対し、次工程で Φ8 の工具で「残肉加工（Rest Machining）」を設定しました。Space-Eが自動生成するパスはどこに限定されますか？",
+        questionZh: "上一道工序使用 Φ20R1 大刀开粗，后续使用 Φ8 刀具在 Space-E 启用“残料加工 (Rest Machining)”，系统生成的有效切削轨迹集中于？",
+        optionsJa: [
+          "Φ20R1工具の半径が入らなかった、コーナ隅部や微小幅リブの削り残し箇所のみ",
+          "ポケットの空間全体（空切削を含む全面）",
+          "工作機械のツールマガジン内",
+          "金型ブロックの底面"
+        ],
+        optionsZh: [
+          "仅精准分布在 Φ20R1 无法触及的凹角内拐弯处及小截面窄槽的残料台阶处",
+          "重新在空荡荡的型腔上空全面空走一遍",
+          "在机床外部的刀库链条上回转切削",
+          "在未装夹的模具底部死角来回铣削"
+        ],
+        ans: 0,
+        explainJa: "残肉加工は、前工具の加工ストック形状と現在工具の幾何差分を自動演算し、削り代が残っている危険な領域だけに安全なアプローチでパスを出力します。"
+      },
+      {
+        tier: 2,
+        gradeLabel: "Lv.3 CAM荒加工・残肉検定",
+        questionJa: "エンドミルのダウンカット（クライム切削）とアップカット（コンベンショナル切削）の比較において、金型CAMでダウンカットが標準とされる理由は？",
+        questionZh: "在顺铣 (Climb) 与逆铣 (Conventional) 的切削工艺对比中，模具高速 CNC 加工之所以 100% 默认采用顺铣的原因是？",
+        optionsJa: [
+          "切りくずの厚みが「最大からゼロ」へと薄くなり、刃物の摩擦摩耗が少なく加工面が綺麗になるため",
+          "工作機械のテーブルが逆回転するのを防ぐため",
+          "主軸の回転方向を左回転（逆転）にする必要があるため",
+          "切削粉が作業者の服に付着しないようにするため"
+        ],
+        optionsZh: [
+          "切屑厚度从最大切入点渐变为零流出，极大降低刀片初期挤压摩擦，大幅提高表面光洁度并延长寿命",
+          "防止加工中心工作台在伺服脉冲下倒转",
+          "为了要求主轴电机全行程必须反转切削",
+          "为了防止喷射的铁屑溅落到工人的工装裤上"
+        ],
+        ans: 0,
+        explainJa: "ダウンカット（順方向切削）は、刃先が食い込む瞬間が最も厚く、抜ける際にゼロとなるため、ワークをテーブルに押し付ける力となりビビりが抑えられ、最高の加工面品位が得られます。"
+      },
+      {
+        tier: 2,
+        gradeLabel: "Lv.3 CAM荒加工・残肉検定",
+        questionJa: "仕上げ加工において、ボールエンドミルで急傾斜面（壁面）と緩傾斜面（底面）の両方を削る場合、パスピッチ（走査線ピッチ）を一定にした場合に起こる問題は？",
+        questionZh: "曲面精光阶段，若用球头刀走单一定距平行刀轨切削急陡壁与平缓底部，会造成什么致命的表面缺陷？",
+        optionsJa: [
+          "壁面の傾斜が急になるほどカスプハイト（削り残し山）が巨大化し、壁面がザラザラになる",
+          "底面だけが過剰に削れて大穴が開く",
+          "工具が高速回転できなくなる",
+          "クーラントが蒸発してなくなる"
+        ],
+        optionsZh: [
+          "越接近垂直陡壁，固定的平面投影行距对应的法向残留高度 (Scallop) 呈几何级数急剧暴增，导致侧壁粗糙不堪",
+          "平缓底面被球头刀无故削穿一个深坑",
+          "主轴变频器会自动强行锁定转速",
+          "机床水箱切削液在几秒钟内彻底挥发"
+        ],
+        ans: 0,
+        explainJa: "平面投影ピッチでは、垂直に近い壁面で実質的なパス間隔が極大化します。Space-Eでは「傾斜に応じた等カスプハイト制御」または「等高線仕上げと走査線仕上げのハイブリッド複合パス」を使用します。"
+      },
+
+      // Lv.4 五轴与放电电极
+      {
+        tier: 3,
+        gradeLabel: "Lv.4 高速・5軸・放電電極マスター",
+        questionJa: "深リブ電極を放電加工（EDM）機にセットする際、火花ギャップ（放電クリアランス）片肉0.05mmで製作した電極を「揺動（オービット運動）」させて加工する理由は？",
+        questionZh: "使用留有单边 0.05mm 火花位的紫铜电极在深槽中放电时，必须启动机床“伺服平动摇动 (Orbital Discharge)”的原因是？",
+        optionsJa: [
+          "電極を微小円運動（揺動）させることで、スラッジ（加工屑・カーボン）を排出し、異常アーク放電を防いで均一に仕上げるため",
+          "電極の形を削り直すため",
+          "金型鋼材を磁化させて硬化させるため",
+          "放電加工液の温度を沸騰させるため"
+        ],
+        optionsZh: [
+          "通过微米级圆形/球形摇动平动，极速排出电蚀碳黑渣滓 (Sludge)，消除集中拉弧打火并获得极致均一表面",
+          "通过摇摆摩擦在钢件上将紫铜电极自身研磨修复",
+          "通过剧烈电磁摇晃使模具钢材晶格磁化硬化",
+          "为了使放电加工油在油箱内迅速沸腾挥发"
+        ],
+        ans: 0,
+        explainJa: "深リブ放電では底にスラッジが溜まりやすく、異常放電（集中放電による電極と金型の溶着事故）が多発します。揺動運動によるポンピング作用でスラッジを強制排出するのが不可欠です。"
+      },
+      {
+        tier: 3,
+        gradeLabel: "Lv.4 高速・5軸・放電電極マスター",
+        questionJa: "5軸マシニングセンタにおける「工具先端点制御（TCP：Tool Center Point Control / RTCP）」の役割として正しいものは？",
+        questionZh: "在五轴联动数控系统中，核心黑科技“刀尖点跟随控制 (RTCP / Tool Center Point Control)”的核心功能是？",
+        optionsJa: [
+          "回転軸が傾いても、NC装置が回転中心と工具長さをリアルタイム補正し、刃先先端がプログラム指示座標を正確になぞり続ける",
+          "工具が折れた瞬間に新しい工具を自動合成する",
+          "工具の切削速度を光の速度まで加速する",
+          "主軸内部のベアリングを冷やす"
+        ],
+        optionsZh: [
+          "当机床转台或摆头剧烈旋转时，系统实时动态解算运动链偏置，使刀尖切削点始终恒速精准贴合编程轨迹点",
+          "在铣刀崩断的一瞬间由微纳米激光自动打印出新刀具",
+          "将机械切削线速度瞬间提升至光速",
+          "主要用于在数控后台监控主轴滚珠轴承的润滑油温"
+        ],
+        ans: 0,
+        explainJa: "TCP（RTCP）がないと、回転軸が1度傾くだけで工具先端が大きく空間をズレてしまいます。RTCPによってCAMは機械の回転軸中心を意識せず、純粋なワーク座標系で出力可能になります。"
+      },
+      {
+        tier: 3,
+        gradeLabel: "Lv.4 高速・5軸・放電電極マスター",
+        questionJa: "Space-E/CAMで5軸加工パスを計算する際、「リード角（進行方向の傾き角）」と「ティルト角（進行方向と直角の傾き角）」を制御する最大の目的は？",
+        questionZh: "在 Space-E 五轴刀路规划中，设置“前倾角 (Lead Angle)”与“侧倾角 (Tilt Angle)”的最核心工业目的是？",
+        optionsJa: [
+          "ボールエンドミルの先端回転中心（周速ゼロのデッドポイント）での接触を避け、かつホルダー干渉を回避するため",
+          "工具の磨耗を均等にするために故意に振動を起こすため",
+          "金型ブロックの重量を軽くするため",
+          "NCプログラムの行数を減らすため"
+        ],
+        optionsZh: [
+          "让刀具微倾，避开球头刀最顶端切削线速度为零的死点 (Dead Spot)，同时使刀柄避开深腔干涉",
+          "为了故意在机床主轴中激发出高频振动来震落铁屑",
+          "通过斜角切削有效减轻重型模具钢毛坯的吨位重量",
+          "为了将生成的数控程序文件体积极限压缩"
+        ],
+        ans: 0,
+        explainJa: "ボールエンドミルの真中心（頂点）は回転速度が0m/min（周速ゼロ）であり、金属を削れずむしり取って面品位を破壊します。刀軸を15度程度傾けて切削することで、周速の高い刃先を当てて鏡面仕上げを実現します。"
+      },
+      {
+        tier: 3,
+        gradeLabel: "Lv.4 高速・5軸・放電電極マスター",
+        questionJa: "Space-Eから出力されたNCプログラムを実機で実行する前に行う「実機Gコードシミュレーション」でしか防げない重大インシデントは？",
+        questionZh: "在启动五轴机床前，只有通过 Space-E“真实 G 代码驱动级机床仿真”才能彻底防范的致命车间重大事故是？",
+        optionsJa: [
+          "工具交換（M06）時の退避高さ不足によるマガジンアームやワークへの主軸頭激突、およびリミットオーバー",
+          "机内クーラント液の濃度低下",
+          "工場のブレーカー落ち",
+          "作業員の居眠り運転"
+        ],
+        optionsZh: [
+          "换刀回零 (G28/M06) 阶段由于退刀高度不足导致笨重的主轴头直接腰斩撞碎工件，以及行程超程撞硬限位",
+          "切削液油水分离器浓度轻度下降",
+          "车间动力配电总开关发生意外跳闸",
+          "夜班操作机床的工人疲劳打瞌睡"
+        ],
+        ans: 0,
+        explainJa: "CAM内部の軌跡表示では、換刀動作（ATC）やアプローチ開始前のG00早送り移動、機械のストロークリミット（限界点）が検証できません。Gコード駆動シミュレータだけがこれら全行程の物理干渉を保証します。"
+      },
+      {
+        tier: 3,
+        gradeLabel: "Lv.4 高速・5軸・放電電極マスター",
+        questionJa: "自動車の大型バンパー射出成形金型など、超大型・長時間の直彫り加工において、工具摩耗による製品寸法の段差を防ぐためのCAM運用の極意は？",
+        questionZh: "在汽车大型保险杠注塑模具等长达数十小时的超大型模仁精雕中，为防止刀具渐进磨损在模具曲面上产生阶梯光刀接刀印，顶级的 CAM 策略是？",
+        optionsJa: [
+          "工具寿命予測に基づき、パスを同一工具の耐久限界内で自動分割し、機上タッチセンサーでの工具長自動計測・オフセット更新を組み込む",
+          "1本の工具が完全に折れて煙が出るまで限界を超えて削り続ける",
+          "夜間は無人で機械の主軸を停止させて休ませる",
+          "金型を半分ずつ別々の工作機械で削って後から溶接する"
+        ],
+        optionsZh: [
+          "基于刀具磨损寿命预测，在 CAM 中科学分段规划刀路，并在各段衔接处自动插入机床激光测刀仪执行动态长度补偿更新",
+          "任由一把刀具从头切到尾直到刀尖彻底磨损冒烟崩断",
+          "夜间下班后将主轴关停冷机、次日再继续启动硬切",
+          "将超大模具切成两半分别在两台机器切削、后期再手工补焊"
+        ],
+        ans: 0,
+        explainJa: "超大型金型では1本の工具で仕上げきれません。Space-Eの工程分割機能と機上測定マクロを連動させ、工具交換時の繋ぎ目段差（接刀痕）を0.002mm以内に抑えるのが匠の技です。"
+      }
+    ];
+
+    /* ==========================================================================
+       5. 知识大典 (Codex 词库)
+       ========================================================================== */
+    const CODEX_DATA = [
+      {
+        term: "ハイブリッドモデリング (Hybrid Modeling)",
+        cat: "cad",
+        catLabel: "CADモデリング",
+        path: "Space-E コアアーキテクチャ",
+        descJa: "ソリッド（完全閉空間）とサーフェス（開いた自由曲面）を共存させ、破綻したインポートデータでも即座にCAMパス計算や型割作業へ進めるSpace-E最大の特徴。",
+        descZh: "实体与自由曲面无缝共存体系。即使导入的数据曲面存在微细间隙未完全闭合，也能直接计算 CAM 刀轨与进行分模设计。"
+      },
+      {
+        term: "抜き勾配解析 (Draft Angle Inspector)",
+        cat: "mold",
+        catLabel: "金型設計",
+        path: "[金型] -> [勾配解析]",
+        descJa: "製品モデルを指定の型開き方向ベクトル（通常+Z軸）からカラーコンター診断。緑（合格）、赤（アンダーカット/逆勾配）、青（垂直警戒面）で直感表示する。",
+        descZh: "基于指定出模矢量（默认+Z轴）对产品实施伪彩色梯度检测：绿色合格、红色严重倒扣、蓝色警戒垂直面。"
+      },
+      {
+        term: "パーティングライン (Parting Line / PL)",
+        cat: "mold",
+        catLabel: "金型設計",
+        path: "[金型] -> [PL自動抽出]",
+        descJa: "固定側（キャビ）と可動側（コア）を二分する境界稜線。Space-Eは0度勾配変曲点を自動追跡し、射出圧力に耐える滑らかな封じ面を生成する。",
+        descZh: "模具定模与动模的隔离分模分界线。Space-E 沿 0 度拔模反转曲率点自动追踪闭合环路并向外平滑延伸分模面。"
+      },
+      {
+        term: "リブ電極自動抽出 (Rib Electrode Extraction)",
+        cat: "edm",
+        catLabel: "放電電極",
+        path: "[電極] -> [リブ電極自動抽出]",
+        descJa: "切削不能な狭深溝（リブ）の底面をクリックするだけで、放電有効部と逃げクリアランス面、基準台、ポカよけC面までを一括自動モデリングする専用機能。",
+        descZh: "针对无法铣削的深狭肋条槽，点击槽底即可全自动生成放电有效体、逃空避空面、定位基准台与防呆 C 角。"
+      },
+      {
+        term: "火花ギャップ補正 (Spark Gap Offset)",
+        cat: "edm",
+        catLabel: "放電電極",
+        path: "[電極] -> [放電クリアランス設定]",
+        descJa: "放電加工で火花が飛ぶ隙間分（0.02〜0.2mm）だけ、電極モデルを3次元的に等距離マイナス縮小オフセットする補正機能。",
+        descZh: "电极放电火花间隙（0.02~0.25mm）补偿。将电极实体执行全向三维均匀负缩放，确保放电后模腔尺寸精准。"
+      },
+      {
+        term: "等高線荒加工 (Constant Z Roughing)",
+        cat: "cam",
+        catLabel: "CAM切削",
+        path: "[Space-E/CAM] -> [荒加工] -> [等高線]",
+        descJa: "Z方向の各深さレベルで水平スライス状に金属を削り取る基本荒加工。トロコイド制御やコーナR自動減速により工具負荷を均一化する。",
+        descZh: "沿 Z 轴等层水平分层切削海量钢材。配备转角摆线切削与速度前瞻自适应，保证大直径铣刀恒定切削负荷。"
+      },
+      {
+        term: "ストック残肉認識 (Rest Machining)",
+        cat: "cam",
+        catLabel: "CAM切削",
+        path: "[Space-E/CAM] -> [中荒加工] -> [残肉参照]",
+        descJa: "前工程の加工済みストック形状を3Dモデルとして記憶し、次工程の小径工具が削り残しのある領域だけに安全かつ空切削なしでアプローチする技術。",
+        descZh: "动态记忆前道大刀加工后的三维残料毛坯，指导小刀只针对未切净的转角台阶局部走刀，杜绝空跑与崩刃。"
+      },
+      {
+        term: "ペンシル加工 (Pencil Machining)",
+        cat: "cam",
+        catLabel: "CAM切削",
+        path: "[Space-E/CAM] -> [仕上げ] -> [隅部ペンシル]",
+        descJa: "交差する2曲面の谷底稜線に沿って、ボールエンドミルをペンでなぞるように単線走査させてシャープな隅肉を除去する極上仕上げパス。",
+        descZh: "球头刀沿两曲面交接的狭窄凹槽底线单线划过，犹如铅笔描线般精准剔除微小死角残料。"
+      },
+      {
+        term: "カスプハイト制御 (Scallop / Cusp Height)",
+        cat: "cam",
+        catLabel: "CAM切削",
+        path: "[Space-E/CAM] -> [曲面仕上げ設定]",
+        descJa: "ボールエンドミルの隣接走査線間に生じる削り残しの山の高さ。鏡面仕上げでは2〜5ミクロン（0.002〜0.005mm）以下に設定して手磨き工程を省力化する。",
+        descZh: "球头刀两相邻刀轨间的残留微小峰高。模具精光通常严格限制在 0.002~0.005mm 以内，大幅免除人工打磨省模。"
+      },
+      {
+        term: "RTCP / 工具先端点制御 (Tool Center Point)",
+        cat: "gcode",
+        catLabel: "5軸NC制御",
+        path: "[NC制御] G43.4 / G43.5 (FANUC/Heidenhain)",
+        descJa: "同時5軸加工において、機械の回転軸が傾いても工具の刃先先端が空間上の指令パスから外れないよう、NC装置が実時間で座標補正をかける高度制御。",
+        descZh: "连续五轴联动加工时，不论刀头或摆台如何倾斜旋转，数控系统实时插补补偿，保证刀尖始终紧贴编程点。"
+      },
+      {
+        term: "高精度輪郭制御 / 先行補正 (AICC / SGI)",
+        cat: "gcode",
+        catLabel: "5軸NC制御",
+        path: "[NC制御] G05.1 Q1 / G05 P10000",
+        descJa: "金型の微小線分データを毎分数十メートルで高速送りする際、急なコーナーで脱調や振動が起きないよう数百ブロック先を先読みして加減速を最適化するGコード。",
+        descZh: "高速切削模具微小折线段时，预读数百乃至数千个程序段进行加速度圆滑优化，消除机床换向冲击失真。"
+      },
+      {
+        term: "ヘリカルアプローチ (Helical Ramp Lead-in)",
+        cat: "cam",
+        catLabel: "CAM切削",
+        path: "[Space-E/CAM] -> [アプローチ] -> [ヘリカル]",
+        descJa: "工具が金属素材に進入する際、垂直にダイブせず螺旋状に周回しながら緩やかに掘り下がる進入法。工具底刃の破損を防ぐ鉄則。",
+        descZh: "铣刀进入封闭型腔时，以立体螺旋渐开线姿态平缓下刀切入，将底刃垂直冲击转化为侧刃切削，极大保护刀具。"
+      }
+    ];
+
+    /* ==========================================================================
+       6. 应用程序状态机 (App State & Storage)
+       ========================================================================== */
+    const State = {
+      tab: 'academy',
+      currentChap: 0,
+      currentLessonSub: 0,
+      solvedLessons: new Set(),
+      
+      currentQuestTier: 0,
+      currentQuestIndex: 0,
+      solvedQuests: new Set(),
+
+      exp: 0,
+      rank: "見習い操作員 (Lv.1)",
+
+      // CBT 考试状态
+      examActive: false,
+      examQuestions: [],
+      examCurrentIndex: 0,
+      examAnswers: {},
+      examTimer: null,
+      examSecondsLeft: 900, // 15分钟
+
+      // 实验模式
+      currentLab: 'draft',
+      draftAngle: 3.0,
+      pullDirZ: 1.0,
+      toolRadius: 6.0,
+      scallopHeight: 0.005,
+      sparkGap: 0.05,
+      showWireframe: true,
+      animating: false
+    };
+
+    function loadSavedState() {
+      try {
+        const saved = localStorage.getItem('space_e_quest_state');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          State.exp = parsed.exp || 0;
+          if (parsed.solvedLessons) State.solvedLessons = new Set(parsed.solvedLessons);
+          if (parsed.solvedQuests) State.solvedQuests = new Set(parsed.solvedQuests);
+        }
+      } catch (e) {}
+      updateHeaderStats();
+    }
+
+    function saveState() {
+      try {
+        const data = {
+          exp: State.exp,
+          solvedLessons: Array.from(State.solvedLessons),
+          solvedQuests: Array.from(State.solvedQuests)
+        };
+        localStorage.setItem('space_e_quest_state', JSON.stringify(data));
+      } catch (e) {}
+    }
+
+    function addExp(amount) {
+      State.exp += amount;
+      updateHeaderStats();
+      saveState();
+    }
+
+    function updateHeaderStats() {
+      document.getElementById('headerExp').innerText = `EXP: ${State.exp}`;
+      
+      let rankName = "見習い操作員 (Lv.1)";
+      let nextExp = 100;
+      let prevExp = 0;
+      let rankIcon = "🌱";
+
+      if (State.exp >= 800) {
+        rankName = "金型名匠·特級エンジニア (Lv.5)";
+        rankIcon = "👑";
+        nextExp = 1500;
+        prevExp = 800;
+      } else if (State.exp >= 450) {
+        rankName = "CAMマシニング主任 (Lv.4)";
+        rankIcon = "⚡";
+        nextExp = 800;
+        prevExp = 450;
+      } else if (State.exp >= 250) {
+        rankName = "金型モールド設計技師 (Lv.3)";
+        rankIcon = "📐";
+        nextExp = 450;
+        prevExp = 250;
+      } else if (State.exp >= 100) {
+        rankName = "Space-E 正操作員 (Lv.2)";
+        rankIcon = "🛠️";
+        nextExp = 250;
+        prevExp = 100;
+      }
+
+      State.rank = rankName;
+      document.getElementById('headerRank').innerText = rankName.split(' ')[0];
+      document.getElementById('rankName').innerHTML = `<span>${rankIcon}</span> ${rankName}`;
+      document.getElementById('rankExpText').innerText = `EXP: ${State.exp} / ${nextExp}`;
+
+      const pct = Math.min(100, Math.max(0, Math.round(((State.exp - prevExp) / (nextExp - prevExp)) * 100)));
+      document.getElementById('expFill').style.width = `${pct}%`;
+
+      document.getElementById('academySolvedCount').innerText = State.solvedLessons.size;
+      document.getElementById('solvedCount').innerText = State.solvedQuests.size;
+    }
+
+    /* ==========================================================================
+       7. 标签切换引擎 (Tab Switcher)
+       ========================================================================== */
+    function switchTab(tabId) {
+      sound.click();
+      State.tab = tabId;
+
+      ['academy', 'quest', 'lab', 'exam', 'codex'].forEach(t => {
+        const btn = document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        const panel = document.getElementById(`panel${t.charAt(0).toUpperCase() + t.slice(1)}`);
+        if (btn) btn.classList.toggle('active', t === tabId);
+        if (panel) panel.style.display = (t === tabId) ? (t === 'academy' ? 'flex' : 'flex') : 'none';
+      });
+
+      if (tabId === 'lab') {
+        initLab3D();
+      }
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    }
+
+    /* ==========================================================================
+       8. 模块 1: 金型学堂渲染器 (Academy Engine)
+       ========================================================================== */
+    function renderAcademy() {
+      // 渲染5大章节导航卡
+      const grid = document.getElementById('chapNavGrid');
+      grid.innerHTML = '';
+      CHAPTERS_DATA.forEach(chap => {
+        const card = document.createElement('div');
+        card.className = `chap-card ${State.currentChap === chap.id ? 'active' : ''}`;
+        card.onclick = () => selectAcademyChapter(chap.id);
+
+        const chapLessons = LESSONS_DATA.filter(l => l.chap === chap.id);
+        const solvedInChap = chapLessons.filter(l => State.solvedLessons.has(`${l.chap}-${l.subIndex}`)).length;
+
+        card.innerHTML = `
+          <div class="chap-card-header">
+            <span class="chap-badge">CHAPTER ${chap.id + 1}</span>
+            <span class="chap-icon">${chap.icon}</span>
+          </div>
+          <div class="chap-title">${currentLang === 'ja' ? chap.titleJa : chap.titleZh}</div>
+          <div class="chap-desc">${currentLang === 'ja' ? chap.descJa : chap.descZh}</div>
+          <div class="chap-progress-mini">
+            <span>修了: ${solvedInChap} / ${chapLessons.length}</span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      renderLessonPills();
+      renderAcademyLesson();
+    }
+
+    function selectAcademyChapter(chapId) {
+      sound.click();
+      State.currentChap = chapId;
+      State.currentLessonSub = 0;
+      renderAcademy();
+    }
+
+    function renderLessonPills() {
+      const pillsBar = document.getElementById('lessonPillsBar');
+      pillsBar.innerHTML = '';
+      const lessons = LESSONS_DATA.filter(l => l.chap === State.currentChap);
+
+      lessons.forEach((l, idx) => {
+        const pill = document.createElement('div');
+        const key = `${l.chap}-${l.subIndex}`;
+        const isCompleted = State.solvedLessons.has(key);
+        pill.className = `lesson-pill ${State.currentLessonSub === idx ? 'active' : ''} ${isCompleted ? 'completed' : ''}`;
+        pill.onclick = () => {
+          sound.click();
+          State.currentLessonSub = idx;
+          renderLessonPills();
+          renderAcademyLesson();
+        };
+        pill.innerText = `講 ${idx + 1}: ${currentLang === 'ja' ? l.titleJa.split(' ')[1] || l.titleJa : l.titleZh.split(' ')[1] || l.titleZh}`;
+        pillsBar.appendChild(pill);
+      });
+    }
+
+    function renderAcademyLesson() {
+      const lessons = LESSONS_DATA.filter(l => l.chap === State.currentChap);
+      const lesson = lessons[State.currentLessonSub] || lessons[0];
+      if (!lesson) return;
+
+      document.getElementById('lessonTitle').innerText = currentLang === 'ja' ? lesson.titleJa : lesson.titleZh;
+      document.getElementById('lessonChapterTag').innerText = `第 ${lesson.chap + 1} 章 · ${lesson.tag}`;
+      document.getElementById('lessonBody').innerHTML = currentLang === 'ja' ? lesson.bodyJa : lesson.bodyZh;
+
+      const key = `${lesson.chap}-${lesson.subIndex}`;
+      const isCompleted = State.solvedLessons.has(key);
+      const statusPill = document.getElementById('lessonStatusPill');
+      if (isCompleted) {
+        statusPill.innerHTML = `<span>✓</span> <span style="color:#10b981;">修了済</span>`;
+      } else {
+        statusPill.innerHTML = `<span>⏳</span> <span>未修了</span>`;
+      }
+
+      // 渲染直感ミニ試練
+      const quiz = lesson.quiz;
+      document.getElementById('miniQuizQuestion').innerText = currentLang === 'ja' ? quiz.qJa : quiz.qZh;
+      const optContainer = document.getElementById('miniQuizOptions');
+      optContainer.innerHTML = '';
+
+      const opts = currentLang === 'ja' ? quiz.optionsJa : quiz.optionsZh;
+      opts.forEach((optText, optIdx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quiz-opt-btn';
+        btn.innerHTML = `<span style="font-weight:900; color:var(--primary);">${String.fromCharCode(65 + optIdx)}.</span> ${optText}`;
+        btn.onclick = () => checkMiniQuiz(optIdx, quiz.ans, currentLang === 'ja' ? quiz.explainJa : quiz.explainZh, btn);
+        optContainer.appendChild(btn);
+      });
+
+      const explainBox = document.getElementById('miniQuizExplain');
+      explainBox.className = 'quiz-result-explain';
+      explainBox.style.display = 'none';
+
+      document.getElementById('lessonNavCounter').innerText = `第 ${State.currentChap + 1} 章 講 ${State.currentLessonSub + 1} / ${lessons.length}`;
+      document.getElementById('btnPrevLesson').disabled = (State.currentChap === 0 && State.currentLessonSub === 0);
+      document.getElementById('btnNextLesson').disabled = (State.currentChap === CHAPTERS_DATA.length - 1 && State.currentLessonSub === lessons.length - 1);
+    }
+
+    function checkMiniQuiz(selectedIdx, correctIdx, explanation, btnEl) {
+      const explainBox = document.getElementById('miniQuizExplain');
+      const allBtns = document.querySelectorAll('#miniQuizOptions .quiz-opt-btn');
+      allBtns.forEach(b => b.disabled = true);
+
+      if (selectedIdx === correctIdx) {
+        sound.correct();
+        btnEl.classList.add('correct');
+        explainBox.className = 'quiz-result-explain show success';
+        explainBox.innerHTML = `<strong>🎉 正解！</strong> ${explanation}`;
+
+        const key = `${State.currentChap}-${State.currentLessonSub}`;
+        if (!State.solvedLessons.has(key)) {
+          State.solvedLessons.add(key);
+          addExp(25);
+          sound.levelUp();
+          renderAcademy();
+        }
+      } else {
+        sound.wrong();
+        btnEl.classList.add('wrong');
+        allBtns[correctIdx].classList.add('correct');
+        explainBox.className = 'quiz-result-explain show fail';
+        explainBox.innerHTML = `<strong>❌ 不正解...</strong> もう一度復習してみましょう。<br>${explanation}`;
+      }
+    }
+
+    function stepLesson(delta) {
+      sound.click();
+      const lessons = LESSONS_DATA.filter(l => l.chap === State.currentChap);
+      let nextSub = State.currentLessonSub + delta;
+
+      if (nextSub >= 0 && nextSub < lessons.length) {
+        State.currentLessonSub = nextSub;
+      } else if (nextSub < 0 && State.currentChap > 0) {
+        State.currentChap--;
+        const prevLessons = LESSONS_DATA.filter(l => l.chap === State.currentChap);
+        State.currentLessonSub = prevLessons.length - 1;
+      } else if (nextSub >= lessons.length && State.currentChap < CHAPTERS_DATA.length - 1) {
+        State.currentChap++;
+        State.currentLessonSub = 0;
+      }
+      renderAcademy();
+    }
+
+    /* ==========================================================================
+       9. 模块 2: 实战工坊渲染器 (Quest Engine)
+       ========================================================================== */
+    function switchQuestTier(tierIdx) {
+      sound.click();
+      State.currentQuestTier = tierIdx;
+      State.currentQuestIndex = 0;
+
+      const tabs = document.querySelectorAll('#questTierTabs .tier-tab');
+      tabs.forEach((t, i) => t.classList.toggle('active', i === tierIdx));
+      renderQuestQuestion();
+    }
+
+    function renderQuestQuestion() {
+      const tierQuestions = QUEST_BANK.filter(q => q.tier === State.currentQuestTier);
+      const q = tierQuestions[State.currentQuestIndex] || tierQuestions[0];
+      if (!q) return;
+
+      document.getElementById('questTierBadge').innerText = q.gradeLabel;
+      document.getElementById('questIndexText').innerText = `第 ${State.currentQuestIndex + 1} 問 / 全 ${tierQuestions.length} 問`;
+      document.getElementById('questQuestionText').innerText = currentLang === 'ja' ? q.questionJa : q.questionZh;
+
+      const key = `quest-${State.currentQuestTier}-${State.currentQuestIndex}`;
+      const isSolved = State.solvedQuests.has(key);
+      document.getElementById('questStatusBadge').innerHTML = isSolved 
+        ? `<span style="color:#10b981;">✓ 踏破完了 (+50 EXP)</span>` 
+        : `<span>⭐</span> 獲得報酬: +50 EXP`;
+
+      const grid = document.getElementById('questOptionsGrid');
+      grid.innerHTML = '';
+      const opts = currentLang === 'ja' ? q.optionsJa : q.optionsZh;
+
+      opts.forEach((optText, optIdx) => {
+        const btn = document.createElement('button');
+        btn.className = 'quest-opt-btn';
+        btn.innerHTML = `<span style="font-weight:900; color:var(--primary); font-size:16px;">${String.fromCharCode(65 + optIdx)}</span> <span>${optText}</span>`;
+        btn.onclick = () => checkQuestAnswer(optIdx, q.ans, q.explainJa, btn, key);
+        grid.appendChild(btn);
+      });
+
+      const solBox = document.getElementById('questSolutionBox');
+      solBox.className = 'quest-solution-box';
+      solBox.style.display = 'none';
+    }
+
+    function checkQuestAnswer(selectedIdx, correctIdx, explanation, btnEl, questKey) {
+      const solBox = document.getElementById('questSolutionBox');
+      const solBody = document.getElementById('questSolutionBody');
+      const allBtns = document.querySelectorAll('#questOptionsGrid .quest-opt-btn');
+      allBtns.forEach(b => b.disabled = true);
+
+      if (selectedIdx === correctIdx) {
+        sound.correct();
+        btnEl.classList.add('correct');
+        solBox.className = 'quest-solution-box show';
+        solBody.innerHTML = `<strong>【正解】</strong> ${explanation}`;
+
+        if (!State.solvedQuests.has(questKey)) {
+          State.solvedQuests.add(questKey);
+          addExp(50);
+          sound.levelUp();
+          renderQuestQuestion();
+        }
+      } else {
+        sound.wrong();
+        btnEl.classList.add('wrong');
+        allBtns[correctIdx].classList.add('correct');
+        solBox.className = 'quest-solution-box show';
+        solBody.innerHTML = `<strong>【解説】</strong> ${explanation}`;
+      }
+    }
+
+    function stepQuest(delta) {
+      sound.click();
+      const tierQuestions = QUEST_BANK.filter(q => q.tier === State.currentQuestTier);
+      let nextIdx = State.currentQuestIndex + delta;
+      if (nextIdx >= 0 && nextIdx < tierQuestions.length) {
+        State.currentQuestIndex = nextIdx;
+        renderQuestQuestion();
+      }
+    }
+
+    /* ==========================================================================
+       10. 模块 3: 虚拟工场 3D 模拟器 (Interactive WebGL/Canvas Engine)
+       ========================================================================== */
+    let canvas, ctx;
+    let rotX = 25 * Math.PI / 180;
+    let rotY = 35 * Math.PI / 180;
+    let zoom = 1.0;
+    let isDragging = false;
+    let lastMouseX = 0, lastMouseY = 0;
+    let animFrame = null;
+    let animAngle = 0;
+
+    function switchLab(labType) {
+      sound.click();
+      State.currentLab = labType;
+      const tabs = document.querySelectorAll('.lab-tab');
+      tabs.forEach(t => t.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+
+      renderLabControls();
+      drawLabFrame();
+    }
+
+    function initLab3D() {
+      canvas = document.getElementById('labCanvas');
+      if (!canvas) return;
+      ctx = canvas.getContext('2d');
+
+      function resize() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width * (window.devicePixelRatio || 1);
+        canvas.height = rect.height * (window.devicePixelRatio || 1);
+        drawLabFrame();
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      // 鼠标拖拽控制 3D 视角
+      canvas.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+      });
+      window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const dx = e.clientX - lastMouseX;
+        const dy = e.clientY - lastMouseY;
+        lastMouseX = e.clientX;
+        lastMouseY = e.clientY;
+
+        rotY += dx * 0.008;
+        rotX += dy * 0.008;
+        rotX = Math.max(-Math.PI / 2 + 0.1, Math.min(Math.PI / 2 - 0.1, rotX));
+
+        document.getElementById('hudInfo1').innerText = `ROT: X=${Math.round(rotX * 180 / Math.PI)}° Y=${Math.round(rotY * 180 / Math.PI)}°`;
+        drawLabFrame();
+      });
+      window.addEventListener('mouseup', () => { isDragging = false; });
+
+      // 滚轮缩放
+      canvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        zoom *= (e.deltaY > 0 ? 0.92 : 1.08);
+        zoom = Math.max(0.4, Math.min(3.0, zoom));
+        drawLabFrame();
+      });
+
+      renderLabControls();
+      drawLabFrame();
+    }
+
+    function resetCamera() {
+      sound.click();
+      rotX = 25 * Math.PI / 180;
+      rotY = 35 * Math.PI / 180;
+      zoom = 1.0;
+      drawLabFrame();
+    }
+
+    function toggleWireframe() {
+      sound.click();
+      State.showWireframe = !State.showWireframe;
+      document.getElementById('btnToggleWireframe').classList.toggle('active', State.showWireframe);
+      drawLabFrame();
+    }
+
+    function toggleAnim() {
+      sound.click();
+      State.animating = !State.animating;
+      document.getElementById('btnToggleAnim').classList.toggle('active', State.animating);
+      if (State.animating) loopAnim();
+    }
+
+    function loopAnim() {
+      if (!State.animating) return;
+      animAngle += 0.02;
+      rotY += 0.006;
+      drawLabFrame();
+      requestAnimationFrame(loopAnim);
+    }
+
+    /* 3D 投影核心函数 */
+    function project3D(x, y, z, cx, cy, scale) {
+      // Y轴旋转
+      const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
+      const x1 = x * cosY + z * sinY;
+      const z1 = -x * sinY + z * cosY;
+
+      // X轴旋转
+      const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
+      const y2 = y * cosX - z1 * sinX;
+      const z2 = y * sinX + z1 * cosX;
+
+      // 透视投影
+      const dist = 320;
+      const fov = dist / (dist + z2);
+      return {
+        px: cx + x1 * fov * scale * zoom,
+        py: cy - y2 * fov * scale * zoom,
+        z: z2
+      };
+    }
+
+    function drawLabFrame() {
+      if (!ctx || !canvas) return;
+      const w = canvas.width;
+      const h = canvas.height;
+      ctx.clearRect(0, 0, w, h);
+
+      const cx = w / 2;
+      const cy = h / 2;
+      const scale = Math.min(w, h) * 0.0028;
+
+      if (State.currentLab === 'draft') {
+        drawDraftAngleLab(cx, cy, scale);
+      } else if (State.currentLab === 'cam') {
+        drawCamToolpathLab(cx, cy, scale);
+      } else if (State.currentLab === 'edm') {
+        drawEdmElectrodeLab(cx, cy, scale);
+      }
+    }
+
+    /* 1. 勾配解析 3D 渲染 (Draft Angle Inspector) */
+    function drawDraftAngleLab(cx, cy, scale) {
+      // 绘制一个带阶梯型腔与拔模坡度的金型模型
+      const draftVal = State.draftAngle; // 设定目标抜き勾配 (例: 3度)
+      
+      // 生成模具截面与多面体网格
+      const faces = [
+        // 顶部分型面 (合格 90° 水平面 -> 绿色)
+        { pts: [[-60, 40, -60], [60, 40, -60], [60, 40, 60], [-60, 40, 60]], angle: 90, type: 'pl' },
+        // 型腔前壁 (拔模角 = draftVal度 -> 绿色)
+        { pts: [[-40, 40, 30], [40, 40, 30], [30, -30, 20], [-30, -30, 20]], angle: draftVal, type: 'draft' },
+        // 型腔后壁 (逆拔模 = -1.5度 -> 倒扣红色！)
+        { pts: [[40, 40, -30], [-40, 40, -30], [-30, -30, -38], [30, -30, -38]], angle: -1.5, type: 'undercut' },
+        // 型腔左壁 (拔模角 = draftVal度)
+        { pts: [[-40, 40, -30], [-40, 40, 30], [-30, -30, 20], [-30, -30, -38]], angle: draftVal, type: 'draft' },
+        // 型腔右壁 (直壁 90度垂直 -> 蓝色警戒)
+        { pts: [[40, 40, 30], [40, 40, -30], [40, -30, -38], [40, -30, 20]], angle: 0.0, type: 'vertical' },
+        // 底面
+        { pts: [[-30, -30, 20], [30, -30, 20], [30, -30, -38], [-30, -30, -38]], angle: 90, type: 'pl' }
+      ];
+
+      // 按 Z 深度排序绘制多边形
+      faces.forEach(face => {
+        const projs = face.pts.map(p => project3D(p[0], p[1], p[2], cx, cy, scale));
+        face.avgZ = projs.reduce((acc, p) => acc + p.z, 0) / projs.length;
+        face.projs = projs;
+      });
+      faces.sort((a, b) => b.avgZ - a.avgZ);
+
+      faces.forEach(face => {
+        ctx.beginPath();
+        face.projs.forEach((p, idx) => {
+          if (idx === 0) ctx.moveTo(p.px, p.py);
+          else ctx.lineTo(p.px, p.py);
+        });
+        ctx.closePath();
+
+        // 颜色映射算法 (Space-E 勾配解析假色图谱)
+        if (face.type === 'undercut' || face.angle < 0) {
+          ctx.fillStyle = 'rgba(244, 63, 94, 0.85)'; // 倒拔模红色报警！
+        } else if (face.type === 'vertical' || face.angle === 0) {
+          ctx.fillStyle = 'rgba(56, 189, 248, 0.85)'; // 垂直面蓝色警戒
+        } else {
+          ctx.fillStyle = 'rgba(16, 185, 129, 0.85)'; // 合格拔模绿色
+        }
+        ctx.fill();
+
+        if (State.showWireframe) {
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+        }
+      });
+
+      // 绘制脱模矢量箭头 (+Z 抽芯方向)
+      const pStart = project3D(0, 0, 0, cx, cy, scale);
+      const pEnd = project3D(0, 80 * State.pullDirZ, 0, cx, cy, scale);
+      ctx.beginPath();
+      ctx.moveTo(pStart.px, pStart.py);
+      ctx.lineTo(pEnd.px, pEnd.py);
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = 'bold 13px Fira Code';
+      ctx.fillText('PULL (+Z)', pEnd.px + 8, pEnd.py);
+    }
+
+    /* 2. CAM 切削刀具路径与残料模拟 (Toolpath & Rest Machining) */
+    function drawCamToolpathLab(cx, cy, scale) {
+      // 绘制型腔外框
+      const basePts = [
+        [-50, 20, -50], [50, 20, -50], [50, 20, 50], [-50, 20, 50],
+        [-50, -30, -50], [50, -30, -50], [50, -30, 50], [-50, -30, 50]
+      ].map(p => project3D(p[0], p[1], p[2], cx, cy, scale));
+
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.4)';
+      ctx.lineWidth = 1;
+      // 绘制底部线框
+      ctx.strokeRect(basePts[0].px - 60, basePts[0].py - 40, 120, 80);
+
+      // 绘制等高粗加工切削刀轨 (Constant Z Toolpaths - Cyan)
+      for (let zLevel = 15; zLevel >= -25; zLevel -= 8) {
+        ctx.beginPath();
+        for (let a = 0; a <= Math.PI * 2 + 0.1; a += 0.2) {
+          const r = 35 + Math.sin(a * 4) * 4;
+          const px = Math.cos(a) * r;
+          const pz = Math.sin(a) * r;
+          const p = project3D(px, zLevel, pz, cx, cy, scale);
+          if (a === 0) ctx.moveTo(p.px, p.py);
+          else ctx.lineTo(p.px, p.py);
+        }
+        ctx.strokeStyle = '#38bdf8';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+
+      // 绘制动态切削刀具模型 (Endmill)
+      const toolX = Math.cos(animAngle * 3) * 28;
+      const toolZ = Math.sin(animAngle * 3) * 28;
+      const toolY = -5;
+      const tTip = project3D(toolX, toolY, toolZ, cx, cy, scale);
+      const tTop = project3D(toolX, toolY + 45, toolZ, cx, cy, scale);
+
+      ctx.beginPath();
+      ctx.moveTo(tTip.px, tTip.py);
+      ctx.lineTo(tTop.px, tTop.py);
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = State.toolRadius * 2 * (scale * zoom * 0.15);
+      ctx.lineCap = 'round';
+      ctx.stroke();
+
+      // 绘制刀具圆弧进刀轨迹 (Tangential Lead-in Arc - Emerald)
+      ctx.beginPath();
+      for (let theta = 0; theta <= Math.PI; theta += 0.2) {
+        const ax = toolX + Math.cos(theta) * 12;
+        const az = toolZ + Math.sin(theta) * 12;
+        const ap = project3D(ax, toolY + Math.sin(theta) * 6, az, cx, cy, scale);
+        if (theta === 0) ctx.moveTo(ap.px, ap.py);
+        else ctx.lineTo(ap.px, ap.py);
+      }
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 1.8;
+      ctx.stroke();
+
+      // 绘制角落残料凸显 (Rest Material - Purple)
+      const restCorner = project3D(38, -25, 38, cx, cy, scale);
+      ctx.fillStyle = 'rgba(168, 85, 247, 0.8)';
+      ctx.beginPath();
+      ctx.arc(restCorner.px, restCorner.py, 12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '10px Fira Code';
+      ctx.fillText('REST', restCorner.px - 14, restCorner.py - 16);
+    }
+
+    /* 3. EDM 放电加工电极提取 (Electrode Spark Gap) */
+    function drawEdmElectrodeLab(cx, cy, scale) {
+      const gap = State.sparkGap; // 火花放电间隙 (例: 0.05mm)
+      const offsetScale = 1.0 - (gap * 0.8);
+
+      // 绘制基准台 (Datum Base Block - Copper Color)
+      const basePoints = [
+        [-35, 45, -35], [35, 45, -35], [35, 45, 35], [-35, 45, 35],
+        [-35, 20, -35], [35, 20, -35], [35, 20, 35], [-35, 20, 35]
+      ].map(p => project3D(p[0], p[1], p[2], cx, cy, scale));
+
+      // 绘制细筋条电极本体 (Rib Blade)
+      const ribPts = [
+        [-6 * offsetScale, 20, -25 * offsetScale], [6 * offsetScale, 20, -25 * offsetScale],
+        [6 * offsetScale, 20, 25 * offsetScale], [-6 * offsetScale, 20, 25 * offsetScale],
+        [-4 * offsetScale, -30, -20 * offsetScale], [4 * offsetScale, -30, -20 * offsetScale],
+        [4 * offsetScale, -30, 20 * offsetScale], [-4 * offsetScale, -30, 20 * offsetScale]
+      ].map(p => project3D(p[0], p[1], p[2], cx, cy, scale));
+
+      // 绘制电极实体（紫铜色 Copper #d97706）
+      ctx.fillStyle = 'rgba(217, 119, 6, 0.85)';
+      ctx.beginPath();
+      ctx.moveTo(ribPts[4].px, ribPts[4].py);
+      ctx.lineTo(ribPts[5].px, ribPts[5].py);
+      ctx.lineTo(ribPts[6].px, ribPts[6].py);
+      ctx.lineTo(ribPts[7].px, ribPts[7].py);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      // 绘制防呆 C 倒角 (Poka-yoke Chamfer)
+      const cCorner = project3D(35, 45, 35, cx, cy, scale);
+      ctx.fillStyle = '#fbbf24';
+      ctx.beginPath();
+      ctx.arc(cCorner.px, cCorner.py, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '11px Fira Code';
+      ctx.fillText('C面基準角', cCorner.px + 8, cCorner.py + 4);
+
+      // 绘制火花放电微粒子效果 (Spark Particles)
+      if (State.animating) {
+        for (let i = 0; i < 8; i++) {
+          const spark = project3D((Math.random() - 0.5) * 10, -32 + Math.random() * 4, (Math.random() - 0.5) * 40, cx, cy, scale);
+          ctx.fillStyle = Math.random() > 0.5 ? '#38bdf8' : '#fbbf24';
+          ctx.beginPath();
+          ctx.arc(spark.px, spark.py, 2.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+
+    function renderLabControls() {
+      const panel = document.getElementById('labControlPanel');
+      if (State.currentLab === 'draft') {
+        panel.innerHTML = `
+          <h3 style="font-size:16px; font-weight:900; color:#fff;">📐 勾配解析パラメータ</h3>
+          <div class="control-group">
+            <div class="control-label-row">
+              <span>脱模合格角度閾値</span>
+              <span class="control-val-badge" id="lblDraftVal">${State.draftAngle.toFixed(1)}°</span>
+            </div>
+            <input type="range" class="control-slider" min="0.5" max="5.0" step="0.5" value="${State.draftAngle}" oninput="updateDraftVal(this.value)">
+            <span class="control-desc">日本工業規格（JIS）推奨の抜き勾配：通常 1.0°〜3.0°</span>
+          </div>
+
+          <div class="control-group">
+            <div class="control-label-row">
+              <span>型開き方向ベクトル (Pull Vector)</span>
+              <span class="control-val-badge" id="lblPullVal">${State.pullDirZ > 0 ? '+Z (上向き)' : '-Z (下向き)'}</span>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn-header ${State.pullDirZ > 0 ? 'active' : ''}" onclick="setPullDir(1)">+Z 抜き</button>
+              <button class="btn-header ${State.pullDirZ < 0 ? 'active' : ''}" onclick="setPullDir(-1)">-Z 抜き</button>
+            </div>
+          </div>
+
+          <div class="lab-status-card">
+            <div class="status-item"><span>🟢 合格拔模面 (Draft OK):</span> <strong>良好 (&gt;${State.draftAngle}°)</strong></div>
+            <div class="status-item"><span>🔴 倒拔模区域 (Undercut):</span> <strong style="color:#fb7185;">1箇所検出 (要スライド)</strong></div>
+            <div class="status-item"><span>🔵 垂直警戒面 (Vertical):</span> <strong style="color:#38bdf8;">0.0° (カジリ注意)</strong></div>
+          </div>
+        `;
+      } else if (State.currentLab === 'cam') {
+        panel.innerHTML = `
+          <h3 style="font-size:16px; font-weight:900; color:#fff;">⚙️ 切削・刀具パス設定</h3>
+          <div class="control-group">
+            <div class="control-label-row">
+              <span>切削工具径 (Tool Radius)</span>
+              <span class="control-val-badge" id="lblToolR">R ${State.toolRadius.toFixed(1)} mm</span>
+            </div>
+            <input type="range" class="control-slider" min="2.0" max="16.0" step="1.0" value="${State.toolRadius}" oninput="updateToolRadius(this.value)">
+            <span class="control-desc">大径工具は開粗高能率、小径工具は細部清角に適合</span>
+          </div>
+
+          <div class="control-group">
+            <div class="control-label-row">
+              <span>カスプハイト (Scallop Height)</span>
+              <span class="control-val-badge">${(State.scallopHeight * 1000).toFixed(0)} μm</span>
+            </div>
+            <input type="range" class="control-slider" min="0.001" max="0.020" step="0.001" value="${State.scallopHeight}" oninput="updateScallop(this.value)">
+            <span class="control-desc">鏡面仕上げ推奨値：2〜5μm (手作業研磨レス)</span>
+          </div>
+
+          <div class="lab-status-card">
+            <div class="status-item"><span>切削アプローチ:</span> <strong>ヘリカル螺旋円弧</strong></div>
+            <div class="status-item"><span>残肉追従 (Rest):</span> <strong style="color:#c084fc;">有効 (自動検知)</strong></div>
+            <div class="status-item"><span>切削方式:</span> <strong style="color:#34d399;">ダウンカット (順方向)</strong></div>
+          </div>
+        `;
+      } else if (State.currentLab === 'edm') {
+        panel.innerHTML = `
+          <h3 style="font-size:16px; font-weight:900; color:#fff;">⚡ EDM 放電電極パラメータ</h3>
+          <div class="control-group">
+            <div class="control-label-row">
+              <span>火花放電ギャップ (片肉)</span>
+              <span class="control-val-badge" id="lblSparkGap">${State.sparkGap.toFixed(3)} mm</span>
+            </div>
+            <input type="range" class="control-slider" min="0.020" max="0.200" step="0.010" value="${State.sparkGap}" oninput="updateSparkGap(this.value)">
+            <span class="control-desc">粗放電：0.15mm / 精仕上げ放電：0.03mm</span>
+          </div>
+
+          <div class="lab-status-card">
+            <div class="status-item"><span>電極材質:</span> <strong>タフピッチ銅 (Cu)</strong></div>
+            <div class="status-item"><span>ポカよけC面:</span> <strong style="color:#fbbf24;">C3 (基準角1箇所)</strong></div>
+            <div class="status-item"><span>逃げ面クリアランス:</span> <strong>0.80 mm (自動延伸)</strong></div>
+          </div>
+        `;
+      }
+    }
+
+    function updateDraftVal(val) {
+      State.draftAngle = parseFloat(val);
+      document.getElementById('lblDraftVal').innerText = `${State.draftAngle.toFixed(1)}°`;
+      drawLabFrame();
+    }
+    function setPullDir(dir) {
+      sound.click();
+      State.pullDirZ = dir;
+      renderLabControls();
+      drawLabFrame();
+    }
+    function updateToolRadius(val) {
+      State.toolRadius = parseFloat(val);
+      document.getElementById('lblToolR').innerText = `R ${State.toolRadius.toFixed(1)} mm`;
+      drawLabFrame();
+    }
+    function updateScallop(val) {
+      State.scallopHeight = parseFloat(val);
+      renderLabControls();
+      drawLabFrame();
+    }
+    function updateSparkGap(val) {
+      State.sparkGap = parseFloat(val);
+      document.getElementById('lblSparkGap').innerText = `${State.sparkGap.toFixed(3)} mm`;
+      drawLabFrame();
+    }
+
+    /* ==========================================================================
+       11. 模块 4: CBT 模拟考场 (CBT Exam Simulator)
+       ========================================================================== */
+    function startCBTExam() {
+      sound.click();
+      State.examActive = true;
+      State.examAnswers = {};
+      State.examCurrentIndex = 0;
+      State.examSecondsLeft = 900; // 15分钟
+
+      // 从题库随机抽取 10 道题目
+      const shuffled = [...QUEST_BANK].sort(() => 0.5 - Math.random());
+      State.examQuestions = shuffled.slice(0, 10);
+
+      document.getElementById('examIntroCard').style.display = 'none';
+      document.getElementById('examResultCard').style.display = 'none';
+      document.getElementById('examActiveContainer').style.display = 'flex';
+
+      // 倒计时器
+      if (State.examTimer) clearInterval(State.examTimer);
+      State.examTimer = setInterval(() => {
+        State.examSecondsLeft--;
+        const mins = Math.floor(State.examSecondsLeft / 60);
+        const secs = State.examSecondsLeft % 60;
+        document.getElementById('examTimerText').innerText = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        if (State.examSecondsLeft <= 0) {
+          submitCBTExam(true);
+        }
+      }, 1000);
+
+      renderCBTExamProgressDots();
+      renderCBTQuestion();
+    }
+
+    function renderCBTExamProgressDots() {
+      const dotsWrap = document.getElementById('examProgressDots');
+      dotsWrap.innerHTML = '';
+      State.examQuestions.forEach((_, idx) => {
+        const dot = document.createElement('div');
+        const isAnswered = State.examAnswers[idx] !== undefined;
+        const isActive = State.examCurrentIndex === idx;
+        dot.className = `exam-dot ${isActive ? 'active' : ''} ${isAnswered ? 'answered' : ''}`;
+        dot.innerText = idx + 1;
+        dot.onclick = () => {
+          sound.click();
+          State.examCurrentIndex = idx;
+          renderCBTExamProgressDots();
+          renderCBTQuestion();
+        };
+        dotsWrap.appendChild(dot);
+      });
+    }
+
+    function renderCBTQuestion() {
+      const q = State.examQuestions[State.examCurrentIndex];
+      if (!q) return;
+
+      document.getElementById('examQuestionBadge').innerText = `CBT 設問 ${State.examCurrentIndex + 1} / 10`;
+      document.getElementById('examQuestionText').innerText = currentLang === 'ja' ? q.questionJa : q.questionZh;
+
+      const grid = document.getElementById('examOptionsGrid');
+      grid.innerHTML = '';
+      const opts = currentLang === 'ja' ? q.optionsJa : q.optionsZh;
+      const currentAns = State.examAnswers[State.examCurrentIndex];
+
+      opts.forEach((optText, optIdx) => {
+        const btn = document.createElement('button');
+        btn.className = `quest-opt-btn ${currentAns === optIdx ? 'correct' : ''}`;
+        btn.innerHTML = `<span style="font-weight:900; color:var(--primary); font-size:16px;">${String.fromCharCode(65 + optIdx)}</span> <span>${optText}</span>`;
+        btn.onclick = () => {
+          sound.click();
+          State.examAnswers[State.examCurrentIndex] = optIdx;
+          renderCBTExamProgressDots();
+          renderCBTQuestion();
+        };
+        grid.appendChild(btn);
+      });
+    }
+
+    function stepExamQuestion(delta) {
+      sound.click();
+      const nextIdx = State.examCurrentIndex + delta;
+      if (nextIdx >= 0 && nextIdx < State.examQuestions.length) {
+        State.examCurrentIndex = nextIdx;
+        renderCBTExamProgressDots();
+        renderCBTQuestion();
+      }
+    }
+
+    function submitCBTExam(isTimeUp = false) {
+      sound.click();
+      if (!isTimeUp) {
+        const answeredCount = Object.keys(State.examAnswers).length;
+        if (answeredCount < State.examQuestions.length) {
+          if (!confirm(`未回答の設問が ${State.examQuestions.length - answeredCount} 問あります。採点して終了しますか？`)) {
+            return;
+          }
+        }
+      }
+
+      if (State.examTimer) clearInterval(State.examTimer);
+      State.examActive = false;
+
+      // 计分
+      let score = 0;
+      State.examQuestions.forEach((q, idx) => {
+        if (State.examAnswers[idx] === q.ans) {
+          score += 10;
+        }
+      });
+
+      document.getElementById('examActiveContainer').style.display = 'none';
+      const resultCard = document.getElementById('examResultCard');
+      resultCard.style.display = 'flex';
+
+      document.getElementById('resultScore').innerText = `${score} 点`;
+      if (score >= 80) {
+        sound.levelUp();
+        document.getElementById('resultEmoji').innerText = '🏆';
+        document.getElementById('resultTitle').innerText = '合格！Space-E 金型技術者認定';
+        document.getElementById('resultFeedback').innerText = `おめでとうございます！得点率 ${score}% で合格基準をクリアしました。日本のハイエンド金型設計・5軸CAM切削に対応できる確かな実践力が証明されました。`;
+        addExp(150);
+      } else {
+        sound.wrong();
+        document.getElementById('resultEmoji').innerText = '📉';
+        document.getElementById('resultTitle').innerText = '不合格（再挑戦推奨）';
+        document.getElementById('resultFeedback').innerText = `得点は ${score} 点でした（合格ラインは80点）。学堂の各レッスンや直感実験室で勾配解析・残肉清角のノウハウを復習し、再度チャレンジしましょう。`;
+      }
+    }
+
+    /* ==========================================================================
+       12. 模块 5: 知识大典与检索 (Codex Engine)
+       ========================================================================== */
+    let currentCodexCat = 'all';
+
+    function renderCodex() {
+      const grid = document.getElementById('codexGrid');
+      grid.innerHTML = '';
+      const query = (document.getElementById('codexSearchInput').value || '').trim().toLowerCase();
+
+      const filtered = CODEX_DATA.filter(item => {
+        if (currentCodexCat !== 'all' && item.cat !== currentCodexCat) return false;
+        if (query) {
+          const matchTerm = item.term.toLowerCase().includes(query);
+          const matchDesc = (item.descJa + item.descZh).toLowerCase().includes(query);
+          const matchPath = item.path.toLowerCase().includes(query);
+          return matchTerm || matchDesc || matchPath;
+        }
+        return true;
+      });
+
+      filtered.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'codex-entry-card';
+        card.innerHTML = `
+          <div class="codex-entry-header">
+            <div class="codex-term">${item.term}</div>
+            <span class="codex-cat-tag">${item.catLabel}</span>
+          </div>
+          <div><span class="codex-path">${item.path}</span></div>
+          <div class="codex-desc">${currentLang === 'ja' ? item.descJa : item.descZh}</div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterCodexCat(catId) {
+      sound.click();
+      currentCodexCat = catId;
+      const pills = document.querySelectorAll('#codexCatsBar .codex-cat-pill');
+      pills.forEach(p => p.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      renderCodex();
+    }
+
+    function filterCodex() {
+      renderCodex();
+    }
+
+    /* ==========================================================================
+       页面初始化引导 (App Initialization)
+       ========================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSavedState();
+      renderAcademy();
+      renderQuestQuestion();
+      renderCodex();
+    });
+  </script>
+</body>
+</html>
