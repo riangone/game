@@ -171,6 +171,31 @@
   .full-sentence .sentence-py{font-size:13px;text-align:left;}
   .full-sentence .sentence-en{font-size:12px;text-align:left;}
   .full-sentence.playing{background:var(--gold-soft);border-color:var(--imperial-gold);}
+
+  /* audio challenge */
+  .audio-card{width:100%;max-width:560px;background:var(--paper);border:2px solid #fbd38d;border-radius:var(--radius-lg);padding:18px;
+    box-shadow:var(--shadow-card);display:flex;flex-direction:column;align-items:center;gap:14px;}
+  .audio-speaker-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;}
+  .audio-speaker-btn{width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,var(--imperial-gold),#f59e0b);
+    border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:36px;color:#fff;
+    box-shadow:0 8px 20px rgba(217,119,6,0.35);transition:transform .15s, box-shadow .15s;}
+  .audio-speaker-btn:active{transform:scale(0.92);}
+  .audio-speaker-btn.playing{animation:speakerPulse 1s infinite alternate;}
+  @keyframes speakerPulse{0%{transform:scale(1);box-shadow:0 0 0 0 rgba(217,119,6,0.5);}100%{transform:scale(1.08);box-shadow:0 0 0 14px rgba(217,119,6,0);}}
+  .audio-speaker-tip{font-size:12px;font-weight:700;color:var(--muted);}
+  .audio-opts{width:100%;display:grid;gap:10px;}
+  .audio-opts.grid-layout{grid-template-columns:1fr 1fr;}
+  .audio-opts.sentence-layout{grid-template-columns:1fr;}
+  .audio-opt-btn{background:#fff;border:2px solid #fbd38d;border-radius:var(--radius-md);padding:12px 14px;
+    cursor:pointer;box-shadow:var(--shadow-pop);display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:4px;transition:background .15s, border-color .15s, transform .08s;}
+  .audio-opt-btn:active{transform:translateY(2px);}
+  .audio-opt-btn .opt-main{font-size:22px;font-weight:900;color:var(--ink);text-align:center;}
+  .audio-opts.sentence-layout .audio-opt-btn .opt-main{font-size:16px;text-align:left;line-height:1.5;}
+  .audio-opt-btn .opt-sub{font-size:12px;color:var(--blue);font-weight:700;text-align:center;}
+  .audio-opt-btn.correct{background:var(--green-soft);border-color:var(--green);}
+  .audio-opt-btn.wrong{background:var(--red-soft);border-color:var(--imperial-red);animation:shake .3s;}
+  .streak-pill{background:#fee2e2;color:#dc2626;font-size:12px;font-weight:800;padding:3px 10px;border-radius:12px;border:1px solid #fca5a5;}
 </style>
 </head>
 <body>
@@ -222,7 +247,13 @@
           <div class="desc">拼出课文重点句子</div>
           <div class="badge" id="badgeScramble" style="display:none;"></div>
         </div>
-        <div class="menu-card full" onclick="goQuiz()">
+        <div class="menu-card" onclick="goAudioChallenge()">
+          <div class="ico">🎧</div>
+          <div class="name">听音辨字</div>
+          <div class="desc">盲听挑战 · 听音选字词句</div>
+          <div class="badge" id="badgeAudio" style="display:none;"></div>
+        </div>
+        <div class="menu-card" onclick="goQuiz()">
           <div class="ico">❓</div>
           <div class="name">故事问答</div>
           <div class="desc">字词与课文理解小测验</div>
@@ -383,6 +414,30 @@
       <button class="btn ghost" onclick="goHome()">返回菜单</button>
     </section>
 
+    <!-- AUDIO CHALLENGE -->
+    <section class="screen" id="screen-audio">
+      <h2 class="title">🎧 听音辨字 (Audio Challenge)</h2>
+      <div class="toggle-row">
+        <div class="chip active" id="chipAudioAll" onclick="setAudioMode('all')">🎲 全部混合</div>
+        <div class="chip" id="chipAudioChars" onclick="setAudioMode('chars')">✍️ 听生字</div>
+        <div class="chip" id="chipAudioWords" onclick="setAudioMode('words')">🀄 听生词</div>
+        <div class="chip" id="chipAudioSentences" onclick="setAudioMode('sentences')">📜 听句子</div>
+      </div>
+      <div class="hud-row" style="justify-content:space-between;width:100%;max-width:560px;">
+        <span class="story-progress" id="audioProgress">1 / 10</span>
+        <span class="streak-pill" id="audioStreak">🔥 连对 0</span>
+      </div>
+      <div class="audio-card">
+        <div class="audio-speaker-wrap" onclick="playCurrentAudio()">
+          <div class="audio-speaker-btn" id="audioSpeakerBtn">🔊</div>
+          <div class="audio-speaker-tip">点击再次播放语音 ↺</div>
+        </div>
+        <div class="quiz-q" id="audioPrompt" style="font-size:15px;color:var(--muted);">请仔细听发音，选择正确的选项：</div>
+        <div class="audio-opts" id="audioOpts"></div>
+      </div>
+      <button class="btn ghost" onclick="stopClip(); goHome();">返回菜单</button>
+    </section>
+
     <!-- RESULT -->
     <section class="screen" id="screen-result">
       <div class="palace-ico">🎉</div>
@@ -515,15 +570,15 @@ let lastGame = null;
 const progress = JSON.parse(localStorage.getItem('gugong_progress') || '{}');
 function saveProgress(){ localStorage.setItem('gugong_progress', JSON.stringify(progress)); updateStarTotal(); refreshBadges(); }
 function updateStarTotal(){
-  const t = (progress.match||0) + (progress.scramble||0) + (progress.quiz||0);
+  const t = (progress.match||0) + (progress.scramble||0) + (progress.quiz||0) + (progress.audio||0);
   document.getElementById('starTotal').textContent = '⭐ ' + t;
 }
 function refreshBadges(){
   document.getElementById('badgeChars').style.display = progress.chars ? 'block' : 'none';
   document.getElementById('badgeFlash').style.display = progress.flash ? 'block' : 'none';
-  ['match','scramble','quiz'].forEach(k=>{
+  ['match','scramble','quiz','audio'].forEach(k=>{
     const el = document.getElementById('badge'+k.charAt(0).toUpperCase()+k.slice(1));
-    if(progress[k]) { el.style.display='block'; el.textContent = '⭐'.repeat(progress[k]); }
+    if(el && progress[k]) { el.style.display='block'; el.textContent = '⭐'.repeat(progress[k]); }
   });
 }
 
@@ -540,6 +595,7 @@ function goFlash(){ flashIdx = 0; setVocabFilter('all'); showScreen('screen-flas
 function goMatch(){ setupMatch(); showScreen('screen-match'); }
 function goScramble(){ scrambleState.idx = 0; setupScrambleRound(); showScreen('screen-scramble'); }
 function goQuiz(){ quizState.idx = 0; quizState.correct = 0; renderQuiz(); showScreen('screen-quiz'); }
+function goAudioChallenge(){ setAudioMode('all'); showScreen('screen-audio'); }
 
 /* ---------------- AUDIO (real MP3 files, TTS as fallback only) ---------------- */
 const AUDIO_DIR = 'audio/gugong/';
@@ -953,6 +1009,174 @@ function answerQuiz(i, el){
   setTimeout(()=>{ quizState.idx++; renderQuiz(); }, 700);
 }
 
+/* ---------------- AUDIO CHALLENGE (听音辨字 / 盲听挑战) ---------------- */
+let audioChallengeMode = 'all'; // chars, words, sentences, all
+let audioChallengeState = {
+  questions: [],
+  idx: 0,
+  correct: 0,
+  streak: 0,
+  maxStreak: 0,
+  answered: false
+};
+
+function setAudioMode(mode){
+  audioChallengeMode = mode;
+  ['Chars','Words','Sentences','All'].forEach(k=>{
+    const el = document.getElementById('chipAudio'+k);
+    if(el) el.classList.remove('active');
+  });
+  const map = { chars:'Chars', words:'Words', sentences:'Sentences', all:'All' };
+  if(document.getElementById('chipAudio'+map[mode])){
+    document.getElementById('chipAudio'+map[mode]).classList.add('active');
+  }
+  setupAudioChallenge();
+}
+
+function setupAudioChallenge(){
+  let pool = [];
+  if(audioChallengeMode === 'chars' || audioChallengeMode === 'all'){
+    CHARACTERS.forEach(c => {
+      const others = shuffle(CHARACTERS.filter(x=>x.id !== c.id)).slice(0, 3);
+      const opts = shuffle([c, ...others]).map(o => ({
+        text: o.zh,
+        sub: o.py,
+        isCorrect: o.id === c.id
+      }));
+      pool.push({
+        id: c.id,
+        zh: c.zh,
+        type: 'char',
+        hint: '请听发音，选择正确的生字：',
+        opts: opts
+      });
+    });
+  }
+  if(audioChallengeMode === 'words' || audioChallengeMode === 'all'){
+    ALL_VOCAB.forEach(v => {
+      const others = shuffle(ALL_VOCAB.filter(x=>x.id !== v.id)).slice(0, 3);
+      const opts = shuffle([v, ...others]).map(o => ({
+        text: o.zh,
+        sub: o.py + ' (' + o.meaning + ')',
+        isCorrect: o.id === v.id
+      }));
+      pool.push({
+        id: v.id,
+        zh: v.zh,
+        type: 'word',
+        hint: '请听发音，选择正确的词语：',
+        opts: opts
+      });
+    });
+  }
+  if(audioChallengeMode === 'sentences' || audioChallengeMode === 'all'){
+    STORY.forEach(s => {
+      const others = shuffle(STORY.filter(x=>x.id !== s.id)).slice(0, 3);
+      const opts = shuffle([s, ...others]).map(o => ({
+        text: o.zh,
+        sub: o.en,
+        isCorrect: o.id === s.id
+      }));
+      pool.push({
+        id: s.id,
+        zh: s.zh,
+        type: 'sentence',
+        hint: '请听录音，选择听到的完整句子：',
+        opts: opts
+      });
+    });
+  }
+
+  const count = Math.min(10, pool.length);
+  audioChallengeState = {
+    questions: shuffle(pool).slice(0, count),
+    idx: 0,
+    correct: 0,
+    streak: 0,
+    maxStreak: 0,
+    answered: false
+  };
+
+  renderAudioQuestion();
+}
+
+function renderAudioQuestion(){
+  if(audioChallengeState.idx >= audioChallengeState.questions.length){
+    const total = audioChallengeState.questions.length;
+    const correct = audioChallengeState.correct;
+    const stars = correct >= total ? 3 : correct >= Math.ceil(total * 0.7) ? 2 : 1;
+    showResult('audio', stars, correct + ' / ' + total + ' 答对 · 最高连对 ' + audioChallengeState.maxStreak + ' 题');
+    return;
+  }
+
+  audioChallengeState.answered = false;
+  const q = audioChallengeState.questions[audioChallengeState.idx];
+  document.getElementById('audioProgress').textContent = (audioChallengeState.idx + 1) + ' / ' + audioChallengeState.questions.length;
+  document.getElementById('audioStreak').textContent = '🔥 连对 ' + audioChallengeState.streak;
+  document.getElementById('audioPrompt').textContent = q.hint;
+
+  const optsContainer = document.getElementById('audioOpts');
+  optsContainer.innerHTML = '';
+  optsContainer.className = 'audio-opts ' + (q.type === 'sentence' ? 'sentence-layout' : 'grid-layout');
+
+  q.opts.forEach((opt) => {
+    const btn = document.createElement('div');
+    btn.className = 'audio-opt-btn';
+    btn.innerHTML = `<div class="opt-main">${opt.text}</div><div class="opt-sub" style="display:none;">${opt.sub}</div>`;
+    btn.onclick = () => answerAudioQuestion(opt, btn);
+    optsContainer.appendChild(btn);
+  });
+
+  setTimeout(() => {
+    playCurrentAudio();
+  }, 300);
+}
+
+function playCurrentAudio(){
+  const q = audioChallengeState.questions[audioChallengeState.idx];
+  if(!q) return;
+  const speaker = document.getElementById('audioSpeakerBtn');
+  if(speaker) speaker.classList.add('playing');
+  playClip(q.id, q.zh, () => {
+    if(speaker) speaker.classList.remove('playing');
+  });
+}
+
+function answerAudioQuestion(opt, btn){
+  if(audioChallengeState.answered) return;
+  audioChallengeState.answered = true;
+
+  const q = audioChallengeState.questions[audioChallengeState.idx];
+  const allBtns = document.querySelectorAll('#audioOpts .audio-opt-btn');
+
+  document.querySelectorAll('#audioOpts .opt-sub').forEach(el => el.style.display = 'block');
+
+  if(opt.isCorrect){
+    btn.classList.add('correct');
+    audioChallengeState.correct++;
+    audioChallengeState.streak++;
+    if(audioChallengeState.streak > audioChallengeState.maxStreak){
+      audioChallengeState.maxStreak = audioChallengeState.streak;
+    }
+    toast('🎉 太棒了！答对了！');
+  } else {
+    btn.classList.add('wrong');
+    audioChallengeState.streak = 0;
+    q.opts.forEach((o, i) => {
+      if(o.isCorrect && allBtns[i]) allBtns[i].classList.add('correct');
+    });
+    toast('听错啦，仔细听听正确发音～');
+    playClip(q.id, q.zh);
+  }
+
+  document.getElementById('audioStreak').textContent = '🔥 连对 ' + audioChallengeState.streak;
+
+  setTimeout(() => {
+    audioChallengeState.idx++;
+    renderAudioQuestion();
+  }, 1200);
+}
+
 /* ---------------- RESULT ---------------- */
 function showResult(game, stars, note){
   lastGame = game;
@@ -963,7 +1187,7 @@ function showResult(game, stars, note){
   document.getElementById('resultScore').textContent = note;
   const badges = document.getElementById('resultBadges');
   badges.innerHTML = '';
-  const map = { match:'🧩 拼音配对', scramble:'🔤 句子排序', quiz:'❓ 故事问答' };
+  const map = { match:'🧩 拼音配对', scramble:'🔤 句子排序', quiz:'❓ 故事问答', audio:'🎧 听音辨字' };
   const b = document.createElement('div');
   b.className = 'mini-badge';
   b.textContent = map[game] + ' ' + '⭐'.repeat(stars);
@@ -974,6 +1198,7 @@ function retryCurrent(){
   if(lastGame === 'match') goMatch();
   else if(lastGame === 'scramble') goScramble();
   else if(lastGame === 'quiz') goQuiz();
+  else if(lastGame === 'audio') goAudioChallenge();
   else goHome();
 }
 
