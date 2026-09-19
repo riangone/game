@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>故宫 - 游览紫禁城识字闯关 (The Forbidden City)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=M+PLUS+Rounded+1c:wght@600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#c2410c; --red-dark:#9a3412; --red-soft:#ffedd5;
+    --imperial-red:#b91c1c; --imperial-gold:#d97706; --gold-soft:#fef3c7;
+    --green:#059669; --green-soft:#d1fae5;
+    --blue:#0284c7; --blue-soft:#e0f2fe;
+    --ink:#1c1917; --muted:#78716c;
+    --card:#fffbf0; --paper:#fff9ea;
+    --radius-xl:28px; --radius-lg:20px; --radius-md:14px; --radius-sm:10px;
+    --shadow-card:0 14px 30px rgba(120,50,20,0.14);
+    --shadow-pop:0 6px 0 rgba(0,0,0,0.14);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;}
+  html,body{width:100%;height:100%;overflow:hidden;background:linear-gradient(160deg,#fff4e6,#ffedd5 60%,#fed7aa);
+    font-family:"M PLUS Rounded 1c","ZCOOL KuaiLe","PingFang SC",system-ui,sans-serif;color:var(--ink);touch-action:manipulation;}
+  #app{width:100%;height:100%;display:flex;flex-direction:column;position:relative;}
+
+  /* top bar */
+  header{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.85);backdrop-filter:blur(6px);
+    border-bottom:2px solid #fbd38d;flex-shrink:0;z-index:20;}
+  .nav-btn{width:40px;height:40px;border-radius:50%;background:#fff;border:2px solid #fbd38d;display:flex;align-items:center;justify-content:center;
+    font-size:18px;text-decoration:none;color:var(--ink);cursor:pointer;box-shadow:var(--shadow-pop);}
+  header h1{font-size:16px;font-weight:800;flex:1;text-align:center;color:var(--imperial-red);}
+  header .stars{font-size:13px;font-weight:800;color:var(--imperial-gold);background:#fff;border:2px solid var(--imperial-gold);border-radius:20px;padding:5px 10px;white-space:nowrap;}
+
+  main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;position:relative;}
+  .screen{display:none;min-height:100%;padding:18px 16px 32px;flex-direction:column;align-items:center;gap:14px;}
+  .screen.active{display:flex;}
+
+  h2.title{font-size:22px;font-weight:900;color:var(--imperial-red);text-align:center;}
+  p.sub{font-size:13px;color:var(--muted);text-align:center;max-width:520px;line-height:1.6;}
+
+  /* home menu */
+  .palace-ico{font-size:50px;filter:drop-shadow(0 6px 8px rgba(0,0,0,0.15));}
+  .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:520px;margin-top:4px;}
+  .menu-card{background:var(--card);border:2px solid #fbd38d;border-radius:var(--radius-lg);padding:14px 10px;text-align:center;
+    box-shadow:var(--shadow-card);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;}
+  .menu-card .ico{font-size:30px;}
+  .menu-card .name{font-size:14px;font-weight:800;}
+  .menu-card .desc{font-size:11px;color:var(--muted);}
+  .menu-card .badge{position:absolute;top:6px;right:6px;font-size:11px;background:var(--green);color:#fff;border-radius:10px;padding:1px 7px;font-weight:700;}
+  .menu-card:active{transform:scale(0.97);}
+  .menu-card.full{grid-column:1/3;}
+
+  .btn{border:none;border-radius:16px;padding:13px 26px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:var(--shadow-pop);
+    color:#fff;background:var(--imperial-red);transition:transform .08s;}
+  .btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,0.14);}
+  .btn.gold{background:var(--imperial-gold);}
+  .btn.green{background:var(--green);}
+  .btn.ghost{background:#fff;color:var(--ink);border:2px solid #e2c08d;box-shadow:none;}
+  .btn.small{padding:8px 16px;font-size:13px;}
+
+  /* story reader */
+  .story-card{background:var(--paper);border:2px solid #fbd38d;border-radius:var(--radius-lg);padding:18px;width:100%;max-width:560px;
+    box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:10px;}
+  .story-progress{font-size:12px;color:var(--muted);text-align:center;}
+  .sentence-zh{font-size:24px;font-weight:700;line-height:1.9;text-align:center;}
+  .sentence-py{font-size:15px;color:var(--blue);text-align:center;font-weight:700;min-height:20px;}
+  .sentence-en{font-size:13px;color:var(--muted);text-align:center;}
+  .story-nav{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;max-width:560px;}
+  .icon-btn{width:44px;height:44px;border-radius:50%;border:2px solid #fbd38d;background:#fff;font-size:18px;cursor:pointer;box-shadow:var(--shadow-pop);}
+  .icon-btn:active{transform:translateY(2px);}
+  .toggle-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+  .chip{font-size:12px;font-weight:700;padding:6px 12px;border-radius:20px;border:2px solid #fbd38d;background:#fff;cursor:pointer;}
+  .chip.active{background:var(--imperial-gold);color:#fff;border-color:var(--imperial-gold);}
+
+  /* character tian-zi-ge card */
+  .char-wrap{width:100%;max-width:340px;perspective:1000px;}
+  .char-card{width:100%;aspect-ratio:4/5;position:relative;transform-style:preserve-3d;transition:transform .5s;cursor:pointer;}
+  .char-card.flipped{transform:rotateY(180deg);}
+  .char-face{position:absolute;inset:0;border-radius:var(--radius-lg);backface-visibility:hidden;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:8px;box-shadow:var(--shadow-card);border:2px solid #fbd38d;padding:16px;}
+  .char-front{background:var(--card);}
+  .char-back{background:var(--red-soft);transform:rotateY(180deg);}
+
+  .tian-grid{
+    width:130px;height:130px;position:relative;background:#fffdf8;
+    border:2.5px solid #ea580c;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(234,88,12,0.15);
+  }
+  .tian-grid::before{
+    content:'';position:absolute;left:0;right:0;top:50%;border-top:1.5px dashed #fdba74;
+  }
+  .tian-grid::after{
+    content:'';position:absolute;top:0;bottom:0;left:50%;border-left:1.5px dashed #fdba74;
+  }
+  .tian-char{
+    font-size:82px;font-weight:900;z-index:2;color:#7c2d12;
+    font-family:"PingFang SC","Kaiti","STKaiti",serif;line-height:1;
+  }
+  .radical-badge{
+    display:inline-flex;align-items:center;gap:6px;background:#0284c7;color:#fff;
+    font-weight:800;font-size:13px;padding:3px 12px;border-radius:14px;box-shadow:var(--shadow-pop);
+  }
+  .char-pills{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;max-width:480px;margin-top:6px;}
+  .char-pill{
+    width:34px;height:34px;border-radius:10px;border:2px solid #fbd38d;background:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;cursor:pointer;
+  }
+  .char-pill.active{background:var(--imperial-gold);color:#fff;border-color:var(--imperial-gold);}
+
+  /* flashcards (words) */
+  .flash-wrap{width:100%;max-width:340px;perspective:1000px;}
+  .flash-card{width:100%;aspect-ratio:4/5;position:relative;transform-style:preserve-3d;transition:transform .5s;cursor:pointer;}
+  .flash-card.flipped{transform:rotateY(180deg);}
+  .flash-face{position:absolute;inset:0;border-radius:var(--radius-lg);backface-visibility:hidden;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:8px;box-shadow:var(--shadow-card);border:2px solid #fbd38d;padding:14px;}
+  .flash-front{background:var(--card);}
+  .flash-back{background:var(--red-soft);transform:rotateY(180deg);}
+  .flash-face .emoji{font-size:52px;}
+  .flash-face .zh{font-size:36px;font-weight:800;text-align:center;}
+  .flash-face .py{font-size:17px;color:var(--blue);font-weight:800;}
+  .flash-face .meaning{font-size:14px;color:var(--muted);text-align:center;}
+  .flash-controls{display:flex;gap:10px;align-items:center;}
+  .flash-counter{font-size:13px;font-weight:700;color:var(--muted);}
+
+  /* matching game */
+  .match-wrap{display:flex;gap:16px;width:100%;max-width:520px;justify-content:center;}
+  .match-col{flex:1;display:flex;flex-direction:column;gap:10px;}
+  .match-tile{background:#fff;border:2px solid #fbd38d;border-radius:var(--radius-md);padding:12px 8px;text-align:center;font-weight:800;
+    cursor:pointer;box-shadow:var(--shadow-pop);font-size:16px;}
+  .match-tile.zh-tile{font-size:19px;}
+  .match-tile.selected{border-color:var(--imperial-gold);background:var(--gold-soft);}
+  .match-tile.correct{border-color:var(--green);background:var(--green-soft);cursor:default;opacity:0.75;}
+  .match-tile.wrong{animation:shake .3s;border-color:var(--imperial-red);background:var(--red-soft);}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .hud-row{display:flex;gap:16px;font-size:13px;font-weight:800;color:var(--muted);}
+
+  /* sentence scramble */
+  .scramble-target{min-height:64px;width:100%;max-width:560px;background:#fff;border:2px dashed #d97706;border-radius:var(--radius-md);
+    display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;padding:10px;}
+  .scramble-pool{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;width:100%;max-width:560px;}
+  .word-chip{background:var(--card);border:2px solid #fbd38d;border-radius:12px;padding:8px 14px;font-size:17px;font-weight:800;
+    cursor:pointer;box-shadow:var(--shadow-pop);}
+  .word-chip.placed{opacity:0.35;pointer-events:none;}
+  .word-chip.in-target{background:var(--gold-soft);border-color:var(--imperial-gold);}
+
+  /* quiz */
+  .quiz-card{width:100%;max-width:560px;background:var(--paper);border:2px solid #fbd38d;border-radius:var(--radius-lg);padding:18px;
+    box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:12px;}
+  .quiz-q{font-size:17px;font-weight:800;text-align:center;line-height:1.6;}
+  .quiz-opts{display:flex;flex-direction:column;gap:10px;}
+  .opt-btn{background:#fff;border:2px solid #fbd38d;border-radius:var(--radius-md);padding:12px 14px;font-size:15px;font-weight:700;
+    text-align:left;cursor:pointer;box-shadow:var(--shadow-pop);}
+  .opt-btn.correct{background:var(--green-soft);border-color:var(--green);}
+  .opt-btn.wrong{background:var(--red-soft);border-color:var(--imperial-red);}
+
+  /* result */
+  .result-stars{font-size:46px;letter-spacing:6px;}
+  .result-score{font-size:32px;font-weight:900;color:var(--imperial-red);}
+  .badge-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+  .mini-badge{background:#fff;border:2px solid #fbd38d;border-radius:14px;padding:8px 12px;font-size:13px;font-weight:800;display:flex;gap:6px;align-items:center;}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:20px;
+    font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;z-index:50;}
+  .toast.show{opacity:0.95;transform:translateX(-50%) translateY(-6px);}
+
+  /* full text screen */
+  .full-sentence{border:2px solid #fbd38d;border-radius:var(--radius-md);padding:12px 14px;background:#fff;cursor:pointer;
+    display:flex;flex-direction:column;gap:4px;transition:background .25s, border-color .25s;}
+  .full-sentence .sentence-zh{font-size:20px;text-align:left;line-height:1.6;}
+  .full-sentence .sentence-py{font-size:13px;text-align:left;}
+  .full-sentence .sentence-en{font-size:12px;text-align:left;}
+  .full-sentence.playing{background:var(--gold-soft);border-color:var(--imperial-gold);}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <a href="index.html" class="nav-btn" title="返回大厅 (Return to Arcade)">🏠</a>
+    <h1 id="headerTitle">故宫 · 探索紫禁城</h1>
+    <span class="stars" id="starTotal">⭐ 0</span>
+  </header>
+
+  <main>
+    <!-- HOME -->
+    <section class="screen active" id="screen-home">
+      <div class="palace-ico">🏯</div>
+      <h2 class="title">故宫 (The Forbidden City)</h2>
+      <p class="sub">跟随课文游览中国明清皇宫，领略六百年古代建筑艺术，学习课后生字、词语与专有名词！</p>
+      <div class="menu-grid">
+        <div class="menu-card full" onclick="goStory()">
+          <div class="ico">📖</div>
+          <div class="name">读课文</div>
+          <div class="desc">带拼音朗读 · 点击单句发音</div>
+        </div>
+        <div class="menu-card full" onclick="goFull()">
+          <div class="ico">📜</div>
+          <div class="name">查看/朗读全文</div>
+          <div class="desc">显示完整课文 · 一键连续朗读全文</div>
+        </div>
+        <div class="menu-card" onclick="goChars()">
+          <div class="ico">✍️</div>
+          <div class="name">认生字</div>
+          <div class="desc">12个生字 · 偏旁部首</div>
+          <div class="badge" id="badgeChars" style="display:none;">✓</div>
+        </div>
+        <div class="menu-card" onclick="goFlash()">
+          <div class="ico">🀄</div>
+          <div class="name">学生词</div>
+          <div class="desc">18个词语与专名</div>
+          <div class="badge" id="badgeFlash" style="display:none;">✓</div>
+        </div>
+        <div class="menu-card" onclick="goMatch()">
+          <div class="ico">🧩</div>
+          <div class="name">拼音配对</div>
+          <div class="desc">汉字连拼音 · 多分类挑战</div>
+          <div class="badge" id="badgeMatch" style="display:none;"></div>
+        </div>
+        <div class="menu-card" onclick="goScramble()">
+          <div class="ico">🔤</div>
+          <div class="name">句子排序</div>
+          <div class="desc">拼出课文重点句子</div>
+          <div class="badge" id="badgeScramble" style="display:none;"></div>
+        </div>
+        <div class="menu-card full" onclick="goQuiz()">
+          <div class="ico">❓</div>
+          <div class="name">故事问答</div>
+          <div class="desc">字词与课文理解小测验</div>
+          <div class="badge" id="badgeQuiz" style="display:none;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STORY -->
+    <section class="screen" id="screen-story">
+      <h2 class="title">📖 故宫 (The Forbidden City)</h2>
+      <div class="toggle-row">
+        <div class="chip active" id="chipPy" onclick="toggleStoryPy()">拼音</div>
+        <div class="chip active" id="chipEn" onclick="toggleStoryEn()">English</div>
+        <div class="chip" onclick="goFull()">📜 全文朗读</div>
+      </div>
+      <div class="story-card">
+        <div class="story-progress" id="storyProgress">1 / 8</div>
+        <div class="sentence-py" id="storyPy"></div>
+        <div class="sentence-zh" id="storyZh"></div>
+        <div class="sentence-en" id="storyEn"></div>
+      </div>
+      <div class="story-nav">
+        <button class="icon-btn" onclick="storyPrev()">⬅️</button>
+        <button class="icon-btn" onclick="playClip(STORY[storyIdx].id, STORY[storyIdx].zh)">🔊</button>
+        <button class="icon-btn" onclick="storyNext()">➡️</button>
+      </div>
+      <button class="btn ghost" onclick="goHome()">返回菜单</button>
+    </section>
+
+    <!-- FULL TEXT -->
+    <section class="screen" id="screen-full">
+      <h2 class="title">📜 故宫 · 全文</h2>
+      <p class="sub">显示完整课文，可点击单句发音，或用下方按钮连续朗读全文。</p>
+      <div class="toggle-row">
+        <div class="chip active" id="chipFullPy" onclick="toggleFullPy()">拼音</div>
+        <div class="chip active" id="chipFullEn" onclick="toggleFullEn()">English</div>
+      </div>
+      <div class="story-card" style="align-items:stretch;gap:12px;">
+        <div id="fullTextList" style="display:flex;flex-direction:column;gap:12px;"></div>
+      </div>
+      <div class="story-nav" style="justify-content:center;gap:14px;">
+        <button class="btn gold" id="fullPlayBtn" onclick="toggleFullPlay()">▶️ 播放全文</button>
+      </div>
+      <button class="btn ghost" onclick="stopFullPlay(); goHome();">返回菜单</button>
+    </section>
+
+    <!-- CHARACTERS (生字) -->
+    <section class="screen" id="screen-chars">
+      <h2 class="title">✍️ 课后生字 (Characters)</h2>
+      <p class="sub">田字格标准识字 · 点击卡片翻面看部首与组词，点喇叭听真人发音。</p>
+      <div class="char-wrap">
+        <div class="char-card" id="charCard" onclick="flipChar()">
+          <!-- FRONT -->
+          <div class="char-face char-front">
+            <div style="font-size:22px;color:var(--blue);font-weight:800;" id="charPy"></div>
+            <div class="tian-grid">
+              <span class="tian-char" id="charZh"></span>
+            </div>
+            <div id="charRadicalBadgeContainer"></div>
+            <div style="font-size:13px;color:var(--muted);margin-top:2px;">点击卡片翻面查看部首与组词 ↩️</div>
+          </div>
+          <!-- BACK -->
+          <div class="char-face char-back">
+            <div style="font-size:32px;font-weight:900;color:var(--imperial-red);" id="charZhBack"></div>
+            <div style="font-size:16px;color:var(--blue);font-weight:800;" id="charPyBack"></div>
+            <div style="font-size:14px;font-weight:800;color:var(--ink);background:#fff;padding:4px 12px;border-radius:12px;border:1px solid #fbd38d;" id="charRadical"></div>
+            <div style="font-size:14px;color:var(--ink);text-align:center;line-height:1.6;" id="charWords"></div>
+            <div style="font-size:13px;color:var(--muted);text-align:center;" id="charMeaning"></div>
+          </div>
+        </div>
+      </div>
+      <div class="flash-controls">
+        <button class="icon-btn" onclick="charPrev()">⬅️</button>
+        <button class="icon-btn" onclick="playClip(CHARACTERS[charIdx].id, CHARACTERS[charIdx].zh)">🔊</button>
+        <button class="icon-btn" onclick="charNext()">➡️</button>
+      </div>
+      <div class="flash-counter" id="charCounter">1 / 12</div>
+      <div class="char-pills" id="charPills"></div>
+      <button class="btn ghost" onclick="goHome()">返回菜单</button>
+    </section>
+
+    <!-- FLASHCARDS (生词 / 词语 & 专有名词) -->
+    <section class="screen" id="screen-flash">
+      <h2 class="title">🀄 课后生词 (Words)</h2>
+      <p class="sub">点击卡片翻面看拼音和意思，再点喇叭听发音。</p>
+      <div class="toggle-row">
+        <div class="chip active" id="chipVocabAll" onclick="setVocabFilter('all')">全部 (18)</div>
+        <div class="chip" id="chipVocabWords" onclick="setVocabFilter('words')">词语 (12)</div>
+        <div class="chip" id="chipVocabProper" onclick="setVocabFilter('proper')">专有名词 (6)</div>
+      </div>
+      <div class="flash-wrap">
+        <div class="flash-card" id="flashCard" onclick="flipFlash()">
+          <div class="flash-face flash-front">
+            <div class="emoji" id="flashEmoji"></div>
+            <div class="zh" id="flashZh"></div>
+            <div style="font-size:12px;color:var(--muted);" id="flashTag"></div>
+          </div>
+          <div class="flash-face flash-back">
+            <div class="py" id="flashPy"></div>
+            <div class="zh" id="flashZhBack" style="font-size:26px;"></div>
+            <div class="meaning" id="flashMeaning"></div>
+            <div style="font-size:12px;color:var(--red-dark);background:#fff;padding:4px 8px;border-radius:10px;margin-top:4px;" id="flashContext"></div>
+          </div>
+        </div>
+      </div>
+      <div class="flash-controls">
+        <button class="icon-btn" onclick="flashPrev()">⬅️</button>
+        <button class="icon-btn" onclick="playClip(currentVocabList[flashIdx].id, currentVocabList[flashIdx].zh)">🔊</button>
+        <button class="icon-btn" onclick="flashNext()">➡️</button>
+      </div>
+      <div class="flash-counter" id="flashCounter">1 / 18</div>
+      <button class="btn ghost" onclick="goHome()">返回菜单</button>
+    </section>
+
+    <!-- MATCHING -->
+    <section class="screen" id="screen-match">
+      <h2 class="title">🧩 拼音配对</h2>
+      <div class="toggle-row">
+        <div class="chip active" id="chipMatchChars" onclick="setMatchMode('chars')">✍️ 生字 (12)</div>
+        <div class="chip" id="chipMatchWords" onclick="setMatchMode('words')">📝 词语 (12)</div>
+        <div class="chip" id="chipMatchProper" onclick="setMatchMode('proper')">🏛️ 专有名词 (6)</div>
+        <div class="chip" id="chipMatchAll" onclick="setMatchMode('all')">🎲 全部混合</div>
+      </div>
+      <div class="hud-row">
+        <span>剩余：<span id="matchLeft">0</span></span>
+        <span>错误：<span id="matchWrong">0</span></span>
+      </div>
+      <div class="match-wrap">
+        <div class="match-col" id="matchColZh"></div>
+        <div class="match-col" id="matchColPy"></div>
+      </div>
+      <button class="btn ghost" onclick="goHome()">返回菜单</button>
+    </section>
+
+    <!-- SCRAMBLE -->
+    <section class="screen" id="screen-scramble">
+      <h2 class="title">🔤 句子排序</h2>
+      <p class="sub" id="scrambleHint">按顺序点击词语，拼出课文与课后的重点句子。</p>
+      <div class="story-progress" id="scrambleProgress">1 / 5</div>
+      <div class="scramble-target" id="scrambleTarget"></div>
+      <div class="scramble-pool" id="scramblePool"></div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn ghost small" onclick="scrambleUndo()">撤销</button>
+        <button class="btn gold small" onclick="scrambleCheck()">对一对</button>
+      </div>
+      <button class="btn ghost" onclick="goHome()">返回菜单</button>
+    </section>
+
+    <!-- QUIZ -->
+    <section class="screen" id="screen-quiz">
+      <h2 class="title">❓ 故事与字词问答</h2>
+      <div class="story-progress" id="quizProgress">1 / 8</div>
+      <div class="quiz-card">
+        <div class="quiz-q" id="quizQ"></div>
+        <div class="quiz-opts" id="quizOpts"></div>
+      </div>
+      <button class="btn ghost" onclick="goHome()">返回菜单</button>
+    </section>
+
+    <!-- RESULT -->
+    <section class="screen" id="screen-result">
+      <div class="palace-ico">🎉</div>
+      <h2 class="title" id="resultTitle">太棒了！</h2>
+      <div class="result-stars" id="resultStars">⭐⭐⭐</div>
+      <div class="result-score" id="resultScore">100%</div>
+      <div class="badge-row" id="resultBadges"></div>
+      <div style="display:flex;gap:12px;">
+        <button class="btn gold" id="resultRetry" onclick="retryCurrent()">再玩一次</button>
+        <button class="btn green" onclick="goHome()">返回菜单</button>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------- DATA ---------------- */
+// 1. 课文《故宫》（教材原版逐字转写）
+const STORY = [
+  {id:"st1", zh:"今天妈妈带我去游故宫。", py:"Jīntiān māma dài wǒ qù yóu Gùgōng.", en:"Today Mom took me to tour the Forbidden City."},
+  {id:"st2", zh:"故宫是中国明朝和清朝的皇宫，又叫紫禁城，一共有二十四位皇帝在这里居住过。", py:"Gùgōng shì Zhōngguó Míngcháo hé Qīngcháo de huánggōng, yòu jiào Zǐjìnchéng, yígòng yǒu èrshísì wèi huángdì zài zhèlǐ jūzhù guo.", en:"The Forbidden City was the imperial palace of China's Ming and Qing dynasties, also known as the Forbidden City; 24 emperors in total lived here."},
+  {id:"st3", zh:"故宫已经有六百多年的历史了，是中国最大的古代宫殿，也是世界上最大的古代宫殿。", py:"Gùgōng yǐjīng yǒu liùbǎi duō nián de lìshǐ le, shì Zhōngguó zuìdà de gǔdài gōngdiàn, yě shì shìjiè shang zuìdà de gǔdài gōngdiàn.", en:"The Forbidden City already has over 600 years of history; it is the largest ancient palace in China, and also the largest ancient palace in the world."},
+  {id:"st4", zh:"我们以天安门为起点，一路向北，从午门进入故宫。", py:"Wǒmen yǐ Tiān'ānmén wéi qǐdiǎn, yílù xiàng běi, cóng Wǔmén jìnrù Gùgōng.", en:"Starting from Tiananmen, we headed north all the way and entered the Forbidden City through the Meridian Gate."},
+  {id:"st5", zh:"故宫一共有九千多间房屋，都是用木头建造的，是中国古代建筑艺术的代表。", py:"Gùgōng yígòng yǒu jiǔqiān duō jiān fángwū, dōu shì yòng mùtou jiànzào de, shì Zhōngguó gǔdài jiànzhù yìshù de dàibiǎo.", en:"The Forbidden City has over 9,000 rooms in total, all built of wood, and is a masterpiece of ancient Chinese architectural art."},
+  {id:"st6", zh:"故宫里收藏了许多珍贵的历史文物，有许多展览，吸引了许多国内外的游客前去参观。", py:"Gùgōng lǐ shōucángle xǔduō zhēnguì de lìshǐ wénwù, yǒu hěnduō zhǎnlǎn, xīyǐnle xǔduō guónèiwài de yóukè qiánqù cānguān.", en:"The Forbidden City houses many precious historical relics and has many exhibitions, attracting many domestic and international tourists to visit."},
+  {id:"st7", zh:"故宫真的很大，今天我们只参观了它最著名的三座大殿：太和殿、中和殿和保和殿。", py:"Gùgōng zhēn de hěn dà, jīntiān wǒmen zhǐ cānguānle tā zuì zhùmíng de sān zuò dàdiàn: Tàihédiàn, Zhōnghédiàn hé Bǎohédiàn.", en:"The Forbidden City is truly huge; today we only visited its three most famous great halls: the Hall of Supreme Harmony, the Hall of Central Harmony, and the Hall of Preserving Harmony."},
+  {id:"st8", zh:"我对妈妈说，以后有机会我还要来故宫逛逛。", py:"Wǒ duì māma shuō, yǐhòu yǒu jīhuì wǒ hái yào lái Gùgōng guàngguang.", en:"I said to Mom that if there is a chance in the future, I want to come stroll around the Forbidden City again."}
+];
+
+// 2. 课后生字表 (12 Characters - 课本原图)
+const CHARACTERS = [
+  {id:"zi1", zh:"朝", py:"cháo", radical:"月 / 𠦝", radicalBadge:null, words:"明朝、清朝、朝代", meaning:"dynasty / imperial court", context:"中国明朝和清朝的皇宫"},
+  {id:"zi2", zh:"清", py:"qīng", radical:"氵 (三点水)", radicalBadge:null, words:"清朝、清代、清楚", meaning:"clear / Qing Dynasty", context:"中国明朝和清朝的皇宫"},
+  {id:"zi3", zh:"皇", py:"huáng", radical:"白 (白字头)", radicalBadge:null, words:"皇帝、皇宫、皇家", meaning:"imperial / emperor", context:"明朝和清朝的皇宫"},
+  {id:"zi4", zh:"位", py:"wèi", radical:"亻 (单人旁)", radicalBadge:null, words:"二十四位皇帝、位子", meaning:"position / measure word for people", context:"二十四位皇帝"},
+  {id:"zi5", zh:"帝", py:"dì", radical:"巾 (巾字底)", radicalBadge:null, words:"皇帝、帝王、帝国", meaning:"emperor / monarch", context:"二十四位皇帝"},
+  {id:"zi6", zh:"居", py:"jū", radical:"尸 (尸字头)", radicalBadge:"尸 —— 居", words:"居住、定居、居民", meaning:"reside / live", context:"在这里居住过"},
+  {id:"zi7", zh:"殿", py:"diàn", radical:"殳 (殳字旁)", radicalBadge:"殳 —— 殿", words:"大殿、太和殿、保和殿", meaning:"palace hall", context:"最著名的三座大殿"},
+  {id:"zi8", zh:"间", py:"jiān", radical:"门 (门字框)", radicalBadge:null, words:"九千多间、房间、中间", meaning:"room / measure word for rooms", context:"九千多间房屋"},
+  {id:"zi9", zh:"筑", py:"zhù", radical:"竹 (竹字头)", radicalBadge:null, words:"建筑、建筑艺术、建造", meaning:"build / construct", context:"古代建筑艺术的代表"},
+  {id:"zi10", zh:"藏", py:"cáng", radical:"艹 (草字头)", radicalBadge:null, words:"收藏、珍藏、宝藏", meaning:"store / collect", context:"收藏了许多珍贵文物"},
+  {id:"zi11", zh:"内", py:"nèi", radical:"冂 (同字框)", radicalBadge:null, words:"国内、国内外、内部", meaning:"inside / domestic", context:"吸引了许多国内外的游客"},
+  {id:"zi12", zh:"外", py:"wài", radical:"夕 (夕字旁)", radicalBadge:null, words:"国外、国内外、外部", meaning:"outside / international", context:"吸引了许多国内外的游客"}
+];
+
+// 3. 课后词语表 (12 Words - 课本原图)
+const WORDS = [
+  {id:"ci1", zh:"这里", py:"zhèlǐ", meaning:"here", emoji:"📍", context:"二十四位皇帝在这里居住过", tag:"词语"},
+  {id:"ci2", zh:"居住", py:"jūzhù", meaning:"reside / live", emoji:"🏡", context:"二十四位皇帝在这里居住过", tag:"词语"},
+  {id:"ci3", zh:"世界", py:"shìjiè", meaning:"world", emoji:"🌍", context:"也是世界上最大的古代宫殿", tag:"词语"},
+  {id:"ci4", zh:"艺术", py:"yìshù", meaning:"art", emoji:"🎨", context:"是中国古代建筑艺术的代表", tag:"词语"},
+  {id:"ci5", zh:"代表", py:"dàibiǎo", meaning:"representative / masterpiece", emoji:"🌟", context:"中国古代建筑艺术的代表", tag:"词语"},
+  {id:"ci6", zh:"珍贵", py:"zhēnguì", meaning:"precious / valuable", emoji:"💎", context:"收藏了许多珍贵的历史文物", tag:"词语"},
+  {id:"ci7", zh:"展览", py:"zhǎnlǎn", meaning:"exhibition", emoji:"🖼️", context:"有许多展览，吸引了游客", tag:"词语"},
+  {id:"ci8", zh:"吸引", py:"xīyǐn", meaning:"attract", emoji:"🧲", context:"吸引了许多国内外的游客", tag:"词语"},
+  {id:"ci9", zh:"游客", py:"yóukè", meaning:"tourist / visitor", emoji:"🧳", context:"吸引了许多国内外的游客", tag:"词语"},
+  {id:"ci10", zh:"参观", py:"cānguān", meaning:"visit / tour", emoji:"🚶", context:"前去参观 / 参观了三座大殿", tag:"词语"},
+  {id:"ci11", zh:"著名", py:"zhùmíng", meaning:"famous / renowned", emoji:"⭐", context:"它最著名的三座大殿", tag:"词语"},
+  {id:"ci12", zh:"机会", py:"jīhuì", meaning:"opportunity / chance", emoji:"🎯", context:"以后有机会我还要来故宫逛逛", tag:"词语"}
+];
+
+// 4. 课后专有名词表 (6 Proper Nouns - 课本原图)
+const PROPER_NOUNS = [
+  {id:"pn1", zh:"明朝", py:"Míngcháo", meaning:"Ming Dynasty (1368–1644)", emoji:"📜", context:"中国明朝和清朝的皇宫", tag:"专有名词"},
+  {id:"pn2", zh:"清朝", py:"Qīngcháo", meaning:"Qing Dynasty (1644–1912)", emoji:"🏮", context:"中国明朝和清朝的皇宫", tag:"专有名词"},
+  {id:"pn3", zh:"紫禁城", py:"Zǐjìnchéng", meaning:"the Forbidden City", emoji:"🏯", context:"又叫紫禁城", tag:"专有名词"},
+  {id:"pn4", zh:"太和殿", py:"Tàihé Diàn", meaning:"Hall of Supreme Harmony", emoji:"⛩️", context:"最著名的三座大殿之一", tag:"专有名词"},
+  {id:"pn5", zh:"中和殿", py:"Zhōnghé Diàn", meaning:"Hall of Central Harmony", emoji:"⛩️", context:"最著名的三座大殿之一", tag:"专有名词"},
+  {id:"pn6", zh:"保和殿", py:"Bǎohé Diàn", meaning:"Hall of Preserving Harmony", emoji:"⛩️", context:"最著名的三座大殿之一", tag:"专有名词"}
+];
+
+// 合并生词表 (18项)
+const ALL_VOCAB = [...WORDS, ...PROPER_NOUNS];
+
+// 5. 课后重点句子与排序 (5 Sentences)
+const SCRAMBLE_SENTENCES = [
+  {
+    id: "sent1",
+    zh: "以后有机会我还要来故宫逛逛。",
+    tokens: ["以后", "有机会", "我还要来", "故宫逛逛。"],
+    isKey: true
+  },
+  {
+    id: "st1",
+    zh: "今天妈妈带我去游故宫。",
+    tokens: ["今天", "妈妈带我", "去游", "故宫。"]
+  },
+  {
+    id: "st4",
+    zh: "我们以天安门为起点，一路向北，从午门进入故宫。",
+    tokens: ["我们", "以天安门为起点，", "一路向北，", "从午门", "进入故宫。"]
+  },
+  {
+    id: "st5",
+    zh: "故宫一共有九千多间房屋，都是用木头建造的，是中国古代建筑艺术的代表。",
+    tokens: ["故宫一共有", "九千多间房屋，", "都是用木头建造的，", "是中国古代", "建筑艺术的代表。"]
+  },
+  {
+    id: "st7",
+    zh: "故宫真的很大，今天我们只参观了它最著名的三座大殿：太和殿、中和殿和保和殿。",
+    tokens: ["故宫真的很大，", "今天我们只参观了", "它最著名的三座大殿：", "太和殿、中和殿", "和保和殿。"]
+  }
+];
+
+// 6. 故事与字词问答 (8 Questions)
+const QUIZ = [
+  {q:"故宫是中国哪两个朝代的皇宫？", opts:["明朝和清朝","唐朝和宋朝","汉朝和唐朝","秦朝和汉朝"], a:0},
+  {q:"生字「居」的偏旁部首是什么？", opts:["尸字头 (尸)","门字框 (门)","竹字头 (竹)","夕字旁 (夕)"], a:0},
+  {q:"生字「殿」的偏旁部首是什么？", opts:["殳字旁 (殳)","月字旁 (月)","草字头 (艹)","单人旁 (亻)"], a:0},
+  {q:"故宫又叫什么名字？", opts:["颐和园","圆明园","紫禁城","白宫"], a:2},
+  {q:"一共有多少位皇帝在故宫居住过？", opts:["12位","18位","24位","36位"], a:2},
+  {q:"课文中今天他们参观了哪三座最著名的大殿？", opts:["太和殿、中和殿和保和殿","乾清宫、交泰殿和坤宁宫","养心殿、慈宁宫和寿康宫","文华殿、武英殿和奉先殿"], a:0},
+  {q:"故宫一共有多少间房屋？是用什么建造的？", opts:["三千多间，石头","五千多间，砖头","九千多间，木头","一万多间，钢铁"], a:2},
+  {q:"课文最后，作者对妈妈说了什么？", opts:["以后有机会我还要来故宫逛逛。","故宫太大了，我不想再来了。","我想去爬长城看日出。","明天我们要去颐和园划船。"], a:0}
+];
+
+/* ---------------- STATE ---------------- */
+let storyIdx = 0, showPy = true, showEn = true;
+let charIdx = 0;
+let vocabFilter = 'all'; // all, words, proper
+let currentVocabList = ALL_VOCAB;
+let flashIdx = 0;
+let matchMode = 'chars'; // chars, words, proper, all
+let matchState = { pairs: [], selectedZh: null, selectedPy: null, wrong: 0, remaining: 0 };
+let scrambleState = { idx: 0, placed: [], pool: [] };
+let quizState = { idx: 0, correct: 0, answered: false };
+let lastGame = null;
+
+const progress = JSON.parse(localStorage.getItem('gugong_progress') || '{}');
+function saveProgress(){ localStorage.setItem('gugong_progress', JSON.stringify(progress)); updateStarTotal(); refreshBadges(); }
+function updateStarTotal(){
+  const t = (progress.match||0) + (progress.scramble||0) + (progress.quiz||0);
+  document.getElementById('starTotal').textContent = '⭐ ' + t;
+}
+function refreshBadges(){
+  document.getElementById('badgeChars').style.display = progress.chars ? 'block' : 'none';
+  document.getElementById('badgeFlash').style.display = progress.flash ? 'block' : 'none';
+  ['match','scramble','quiz'].forEach(k=>{
+    const el = document.getElementById('badge'+k.charAt(0).toUpperCase()+k.slice(1));
+    if(progress[k]) { el.style.display='block'; el.textContent = '⭐'.repeat(progress[k]); }
+  });
+}
+
+/* ---------------- NAV ---------------- */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function goHome(){ showScreen('screen-home'); }
+function goStory(){ storyIdx = 0; renderStory(); showScreen('screen-story'); }
+function goFull(){ renderFullText(); showScreen('screen-full'); }
+function goChars(){ charIdx = 0; renderCharPills(); renderChar(); showScreen('screen-chars'); progress.chars = true; saveProgress(); }
+function goFlash(){ flashIdx = 0; setVocabFilter('all'); showScreen('screen-flash'); progress.flash = true; saveProgress(); }
+function goMatch(){ setupMatch(); showScreen('screen-match'); }
+function goScramble(){ scrambleState.idx = 0; setupScrambleRound(); showScreen('screen-scramble'); }
+function goQuiz(){ quizState.idx = 0; quizState.correct = 0; renderQuiz(); showScreen('screen-quiz'); }
+
+/* ---------------- AUDIO (real MP3 files, TTS as fallback only) ---------------- */
+const AUDIO_DIR = 'audio/gugong/';
+const audioCache = {};
+let currentClip = null;
+
+function playClip(id, text, onend){
+  stopClip();
+  if(!id){ speak(text, onend); return; }
+  let a = audioCache[id];
+  if(!a){ a = new Audio(AUDIO_DIR + id + '.mp3'); audioCache[id] = a; }
+  a.currentTime = 0;
+  let done = false;
+  const finish = ()=>{ if(done) return; done = true; if(currentClip === a) currentClip = null; if(onend) onend(); };
+  a.onended = finish;
+  a.onerror = ()=>{ if(done) return; done = true; if(currentClip === a) currentClip = null; speak(text, onend); };
+  currentClip = a;
+  const p = a.play();
+  if(p && typeof p.catch === 'function'){
+    p.catch(()=>{ if(done) return; done = true; currentClip = null; speak(text, onend); });
+  }
+}
+function stopClip(){
+  if(currentClip){ try{ currentClip.pause(); currentClip.currentTime = 0; }catch(e){} currentClip = null; }
+}
+
+/* ---------------- TTS FALLBACK ---------------- */
+let zhVoice = null;
+let currentUtterance = null;
+let resumeWatchdog = null;
+function pickVoice(){
+  if(!('speechSynthesis' in window)) return;
+  const voices = speechSynthesis.getVoices();
+  zhVoice = voices.find(v=>/^zh/i.test(v.lang||'') && /cn|hans|mandarin/i.test((v.lang+v.name).toLowerCase()))
+    || voices.find(v=>/^zh/i.test(v.lang||''))
+    || null;
+}
+if('speechSynthesis' in window){
+  pickVoice();
+  speechSynthesis.onvoiceschanged = pickVoice;
+  let voicePolls = 0;
+  const voicePollTimer = setInterval(()=>{
+    pickVoice();
+    voicePolls++;
+    if(zhVoice || voicePolls > 8) clearInterval(voicePollTimer);
+  }, 400);
+
+  const unlockSpeech = ()=>{
+    try{
+      const u = new SpeechSynthesisUtterance(' ');
+      u.volume = 0;
+      speechSynthesis.speak(u);
+    }catch(e){}
+    document.removeEventListener('touchend', unlockSpeech);
+    document.removeEventListener('click', unlockSpeech);
+  };
+  document.addEventListener('touchend', unlockSpeech, {once:true, passive:true});
+  document.addEventListener('click', unlockSpeech, {once:true});
+}
+function speak(text, onend){
+  if(!('speechSynthesis' in window)) { toast('设备不支持语音朗读'); if(onend) onend(); return; }
+  try{
+    if(resumeWatchdog){ clearInterval(resumeWatchdog); resumeWatchdog = null; }
+    speechSynthesis.cancel();
+    if(!zhVoice) pickVoice();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'zh-CN';
+    if(zhVoice) u.voice = zhVoice;
+    u.rate = 0.85;
+    let finished = false;
+    const finish = ()=>{
+      if(finished) return;
+      finished = true;
+      if(resumeWatchdog){ clearInterval(resumeWatchdog); resumeWatchdog = null; }
+      if(onend) onend();
+    };
+    u.onend = finish;
+    u.onerror = ()=>{ toast('语音播放失败，请重试'); finish(); };
+    currentUtterance = u;
+    setTimeout(()=>{
+      speechSynthesis.speak(u);
+      resumeWatchdog = setInterval(()=>{
+        if(speechSynthesis.speaking) speechSynthesis.resume();
+        else { clearInterval(resumeWatchdog); resumeWatchdog = null; }
+      }, 4000);
+      setTimeout(()=>{ if(!finished && !speechSynthesis.speaking) finish(); }, 6000);
+    }, 30);
+  }catch(e){
+    toast('语音播放出错');
+    if(onend) onend();
+  }
+}
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toast._tm);
+  toast._tm = setTimeout(()=>t.classList.remove('show'), 1400);
+}
+
+/* ---------------- STORY ---------------- */
+function renderStory(){
+  const s = STORY[storyIdx];
+  document.getElementById('storyProgress').textContent = (storyIdx+1) + ' / ' + STORY.length;
+  document.getElementById('storyZh').textContent = s.zh;
+  document.getElementById('storyPy').textContent = showPy ? s.py : '';
+  document.getElementById('storyEn').textContent = showEn ? s.en : '';
+}
+function storyNext(){ storyIdx = (storyIdx+1) % STORY.length; renderStory(); }
+function storyPrev(){ storyIdx = (storyIdx-1+STORY.length) % STORY.length; renderStory(); }
+function toggleStoryPy(){ showPy = !showPy; document.getElementById('chipPy').classList.toggle('active', showPy); renderStory(); }
+function toggleStoryEn(){ showEn = !showEn; document.getElementById('chipEn').classList.toggle('active', showEn); renderStory(); }
+
+/* ---------------- FULL TEXT (view + continuous read-aloud) ---------------- */
+let fullPy = true, fullEn = true;
+let fullPlaying = false, fullPlayIdx = 0;
+function renderFullText(){
+  const list = document.getElementById('fullTextList');
+  list.innerHTML = '';
+  STORY.forEach((s, i)=>{
+    const row = document.createElement('div');
+    row.className = 'full-sentence';
+    row.id = 'full-sent-' + i;
+    row.onclick = ()=>{ stopFullPlay(); playClip(s.id, s.zh); };
+    row.innerHTML =
+      (fullPy ? '<div class="sentence-py">'+s.py+'</div>' : '') +
+      '<div class="sentence-zh">'+s.zh+'</div>' +
+      (fullEn ? '<div class="sentence-en">'+s.en+'</div>' : '');
+    list.appendChild(row);
+  });
+}
+function toggleFullPy(){ fullPy = !fullPy; document.getElementById('chipFullPy').classList.toggle('active', fullPy); renderFullText(); }
+function toggleFullEn(){ fullEn = !fullEn; document.getElementById('chipFullEn').classList.toggle('active', fullEn); renderFullText(); }
+function toggleFullPlay(){ if(fullPlaying) stopFullPlay(); else startFullPlay(); }
+function startFullPlay(){
+  if(!('speechSynthesis' in window) && !audioCache['st1']) { toast('设备不支持语音朗读'); return; }
+  fullPlaying = true;
+  fullPlayIdx = 0;
+  document.getElementById('fullPlayBtn').textContent = '⏸️ 停止播放';
+  playFullStep();
+}
+function playFullStep(){
+  if(!fullPlaying || fullPlayIdx >= STORY.length){ stopFullPlay(); return; }
+  document.querySelectorAll('.full-sentence').forEach(el=>el.classList.remove('playing'));
+  const row = document.getElementById('full-sent-' + fullPlayIdx);
+  if(row){ row.classList.add('playing'); row.scrollIntoView({behavior:'smooth', block:'center'}); }
+  playClip(STORY[fullPlayIdx].id, STORY[fullPlayIdx].zh, ()=>{
+    if(!fullPlaying) return;
+    fullPlayIdx++;
+    setTimeout(playFullStep, 400);
+  });
+}
+function stopFullPlay(){
+  fullPlaying = false;
+  const btn = document.getElementById('fullPlayBtn');
+  if(btn) btn.textContent = '▶️ 播放全文';
+  document.querySelectorAll('.full-sentence').forEach(el=>el.classList.remove('playing'));
+  stopClip();
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+}
+
+/* ---------------- CHARACTERS (生字) ---------------- */
+function renderCharPills(){
+  const p = document.getElementById('charPills');
+  p.innerHTML = '';
+  CHARACTERS.forEach((c, idx)=>{
+    const b = document.createElement('div');
+    b.className = 'char-pill' + (idx === charIdx ? ' active' : '');
+    b.textContent = c.zh;
+    b.onclick = ()=>{ charIdx = idx; renderChar(); };
+    p.appendChild(b);
+  });
+}
+function renderChar(){
+  const c = CHARACTERS[charIdx];
+  document.getElementById('charCard').classList.remove('flipped');
+  document.getElementById('charPy').textContent = c.py;
+  document.getElementById('charZh').textContent = c.zh;
+  document.getElementById('charZhBack').textContent = c.zh;
+  document.getElementById('charPyBack').textContent = c.py;
+  document.getElementById('charRadical').textContent = '偏旁部首: ' + c.radical;
+  document.getElementById('charWords').innerHTML = '<strong>组词:</strong> ' + c.words;
+  document.getElementById('charMeaning').textContent = c.meaning + ' · ' + c.context;
+  document.getElementById('charCounter').textContent = (charIdx+1) + ' / ' + CHARACTERS.length;
+
+  const badgeBox = document.getElementById('charRadicalBadgeContainer');
+  badgeBox.innerHTML = '';
+  if(c.radicalBadge){
+    const span = document.createElement('span');
+    span.className = 'radical-badge';
+    span.textContent = c.radicalBadge;
+    badgeBox.appendChild(span);
+  }
+
+  document.querySelectorAll('.char-pill').forEach((el, i)=>{
+    el.classList.toggle('active', i === charIdx);
+  });
+}
+function flipChar(){ document.getElementById('charCard').classList.toggle('flipped'); }
+function charNext(){ charIdx = (charIdx+1) % CHARACTERS.length; renderChar(); }
+function charPrev(){ charIdx = (charIdx-1+CHARACTERS.length) % CHARACTERS.length; renderChar(); }
+
+/* ---------------- VOCABULARY (生词) ---------------- */
+function setVocabFilter(mode){
+  vocabFilter = mode;
+  ['All','Words','Proper'].forEach(k=>{
+    const el = document.getElementById('chipVocab'+k);
+    if(el) el.classList.remove('active');
+  });
+  if(mode === 'all'){
+    currentVocabList = ALL_VOCAB;
+    document.getElementById('chipVocabAll').classList.add('active');
+  } else if(mode === 'words'){
+    currentVocabList = WORDS;
+    document.getElementById('chipVocabWords').classList.add('active');
+  } else if(mode === 'proper'){
+    currentVocabList = PROPER_NOUNS;
+    document.getElementById('chipVocabProper').classList.add('active');
+  }
+  flashIdx = 0;
+  renderFlash();
+}
+function renderFlash(){
+  if(!currentVocabList.length) return;
+  const v = currentVocabList[flashIdx];
+  document.getElementById('flashCard').classList.remove('flipped');
+  document.getElementById('flashEmoji').textContent = v.emoji;
+  document.getElementById('flashZh').textContent = v.zh;
+  document.getElementById('flashTag').textContent = v.tag;
+  document.getElementById('flashZhBack').textContent = v.zh;
+  document.getElementById('flashPy').textContent = v.py;
+  document.getElementById('flashMeaning').textContent = v.meaning;
+  document.getElementById('flashContext').textContent = '“' + v.context + '”';
+  document.getElementById('flashCounter').textContent = (flashIdx+1) + ' / ' + currentVocabList.length;
+}
+function flipFlash(){ document.getElementById('flashCard').classList.toggle('flipped'); }
+function flashNext(){ flashIdx = (flashIdx+1) % currentVocabList.length; renderFlash(); }
+function flashPrev(){ flashIdx = (flashIdx-1+currentVocabList.length) % currentVocabList.length; renderFlash(); }
+
+/* ---------------- MATCHING ---------------- */
+function shuffle(arr){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function setMatchMode(mode){
+  matchMode = mode;
+  ['Chars','Words','Proper','All'].forEach(k=>{
+    const el = document.getElementById('chipMatch'+k);
+    if(el) el.classList.remove('active');
+  });
+  const map = { chars:'Chars', words:'Words', proper:'Proper', all:'All' };
+  document.getElementById('chipMatch' + map[mode]).classList.add('active');
+  setupMatch();
+}
+
+function setupMatch(){
+  let pool = [];
+  if(matchMode === 'chars') pool = CHARACTERS;
+  else if(matchMode === 'words') pool = WORDS;
+  else if(matchMode === 'proper') pool = PROPER_NOUNS;
+  else pool = [...CHARACTERS, ...WORDS, ...PROPER_NOUNS];
+
+  const picks = shuffle(pool).slice(0, 6);
+  matchState = { pairs: picks, selectedZh: null, selectedPy: null, wrong: 0, remaining: picks.length };
+  document.getElementById('matchWrong').textContent = 0;
+  document.getElementById('matchLeft').textContent = picks.length;
+  const zhCol = document.getElementById('matchColZh');
+  const pyCol = document.getElementById('matchColPy');
+  zhCol.innerHTML = ''; pyCol.innerHTML = '';
+
+  shuffle(picks).forEach(v=>{
+    const t = document.createElement('div');
+    t.className = 'match-tile zh-tile'; t.textContent = v.zh; t.dataset.zh = v.zh;
+    t.onclick = ()=>selectMatch('zh', t, v.zh);
+    zhCol.appendChild(t);
+  });
+  shuffle(picks).forEach(v=>{
+    const t = document.createElement('div');
+    t.className = 'match-tile'; t.textContent = v.py; t.dataset.zh = v.zh;
+    t.onclick = ()=>selectMatch('py', t, v.zh);
+    pyCol.appendChild(t);
+  });
+}
+
+function selectMatch(side, el, zhKey){
+  if(el.classList.contains('correct')) return;
+  if(side === 'zh'){
+    if(matchState.selectedZh) matchState.selectedZh.el.classList.remove('selected');
+    matchState.selectedZh = { el, zhKey };
+    el.classList.add('selected');
+  } else {
+    if(matchState.selectedPy) matchState.selectedPy.el.classList.remove('selected');
+    matchState.selectedPy = { el, zhKey };
+    el.classList.add('selected');
+  }
+  if(matchState.selectedZh && matchState.selectedPy){
+    const zh = matchState.selectedZh, py = matchState.selectedPy;
+    if(zh.zhKey === py.zhKey){
+      zh.el.classList.remove('selected'); py.el.classList.remove('selected');
+      zh.el.classList.add('correct'); py.el.classList.add('correct');
+      const matched = matchState.pairs.find(v=>v.zh===zh.zhKey);
+      playClip(matched && matched.id, zh.zhKey);
+      matchState.remaining--;
+      document.getElementById('matchLeft').textContent = matchState.remaining;
+      matchState.selectedZh = null; matchState.selectedPy = null;
+      if(matchState.remaining === 0){
+        const stars = matchState.wrong === 0 ? 3 : matchState.wrong <= 2 ? 2 : 1;
+        setTimeout(()=>showResult('match', stars, '配对完成！'), 400);
+      }
+    } else {
+      matchState.wrong++;
+      document.getElementById('matchWrong').textContent = matchState.wrong;
+      zh.el.classList.add('wrong'); py.el.classList.add('wrong');
+      setTimeout(()=>{
+        zh.el.classList.remove('selected','wrong'); py.el.classList.remove('selected','wrong');
+        matchState.selectedZh = null; matchState.selectedPy = null;
+      }, 400);
+    }
+  }
+}
+
+/* ---------------- SCRAMBLE ---------------- */
+function setupScrambleRound(){
+  if(scrambleState.idx >= SCRAMBLE_SENTENCES.length){
+    setTimeout(()=>showResult('scramble', 3, '句子全部完成！'), 200);
+    return;
+  }
+  const round = SCRAMBLE_SENTENCES[scrambleState.idx];
+  scrambleState.placed = [];
+  scrambleState.pool = shuffle(round.tokens.map((t,i)=>({ text:t, id:i, used:false })));
+  document.getElementById('scrambleProgress').textContent = (scrambleState.idx+1) + ' / ' + SCRAMBLE_SENTENCES.length;
+  const hint = document.getElementById('scrambleHint');
+  if(round.isKey) hint.textContent = '🌟 课后重点句子：按顺序点击词语拼出句子！';
+  else hint.textContent = '按顺序点击词语，拼出课文里的句子。';
+  renderScramble();
+}
+function renderScramble(){
+  const target = document.getElementById('scrambleTarget');
+  const pool = document.getElementById('scramblePool');
+  target.innerHTML = '';
+  scrambleState.placed.forEach(p=>{
+    const c = document.createElement('div');
+    c.className = 'word-chip in-target';
+    c.textContent = p.text;
+    c.onclick = ()=>{ removeFromTarget(p); };
+    target.appendChild(c);
+  });
+  pool.innerHTML = '';
+  scrambleState.pool.forEach(p=>{
+    const c = document.createElement('div');
+    c.className = 'word-chip' + (p.used ? ' placed' : '');
+    c.textContent = p.text;
+    c.onclick = ()=>{ if(!p.used) placeToken(p); };
+    pool.appendChild(c);
+  });
+}
+function placeToken(p){ p.used = true; scrambleState.placed.push(p); renderScramble(); }
+function removeFromTarget(p){
+  p.used = false;
+  scrambleState.placed = scrambleState.placed.filter(x=>x.id !== p.id);
+  renderScramble();
+}
+function scrambleUndo(){
+  const last = scrambleState.placed.pop();
+  if(last){ last.used = false; renderScramble(); }
+}
+function scrambleCheck(){
+  const round = SCRAMBLE_SENTENCES[scrambleState.idx];
+  const built = scrambleState.placed.map(p=>p.text).join('');
+  if(built === round.zh){
+    playClip(round.id, round.zh);
+    toast('✅ 正确！');
+    scrambleState.idx++;
+    setTimeout(setupScrambleRound, 500);
+  } else {
+    toast('再试试看～');
+  }
+}
+
+/* ---------------- QUIZ ---------------- */
+function renderQuiz(){
+  if(quizState.idx >= QUIZ.length){
+    const stars = quizState.correct >= QUIZ.length ? 3 : quizState.correct >= Math.ceil(QUIZ.length*0.7) ? 2 : 1;
+    showResult('quiz', stars, quizState.correct + ' / ' + QUIZ.length + ' 答对');
+    return;
+  }
+  quizState.answered = false;
+  const item = QUIZ[quizState.idx];
+  document.getElementById('quizProgress').textContent = (quizState.idx+1) + ' / ' + QUIZ.length;
+  document.getElementById('quizQ').textContent = item.q;
+  const optsEl = document.getElementById('quizOpts');
+  optsEl.innerHTML = '';
+  item.opts.forEach((opt, i)=>{
+    const b = document.createElement('div');
+    b.className = 'opt-btn';
+    b.textContent = opt;
+    b.onclick = ()=>answerQuiz(i, b);
+    optsEl.appendChild(b);
+  });
+}
+function answerQuiz(i, el){
+  if(quizState.answered) return;
+  quizState.answered = true;
+  const item = QUIZ[quizState.idx];
+  const opts = document.querySelectorAll('#quizOpts .opt-btn');
+  if(i === item.a){
+    el.classList.add('correct');
+    quizState.correct++;
+  } else {
+    el.classList.add('wrong');
+    opts[item.a].classList.add('correct');
+  }
+  setTimeout(()=>{ quizState.idx++; renderQuiz(); }, 700);
+}
+
+/* ---------------- RESULT ---------------- */
+function showResult(game, stars, note){
+  lastGame = game;
+  progress[game] = Math.max(progress[game]||0, stars);
+  saveProgress();
+  document.getElementById('resultTitle').textContent = stars === 3 ? '太棒了！满分闯关！' : stars === 2 ? '真不错！继续加油！' : '完成啦，再练一练！';
+  document.getElementById('resultStars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3-stars);
+  document.getElementById('resultScore').textContent = note;
+  const badges = document.getElementById('resultBadges');
+  badges.innerHTML = '';
+  const map = { match:'🧩 拼音配对', scramble:'🔤 句子排序', quiz:'❓ 故事问答' };
+  const b = document.createElement('div');
+  b.className = 'mini-badge';
+  b.textContent = map[game] + ' ' + '⭐'.repeat(stars);
+  badges.appendChild(b);
+  showScreen('screen-result');
+}
+function retryCurrent(){
+  if(lastGame === 'match') goMatch();
+  else if(lastGame === 'scramble') goScramble();
+  else if(lastGame === 'quiz') goQuiz();
+  else goHome();
+}
+
+/* ---------------- INIT ---------------- */
+refreshBadges();
+updateStarTotal();
+renderStory();
+</script>
+</body>
+</html>

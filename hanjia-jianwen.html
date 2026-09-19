@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>寒假见闻 - 回北京过年识字闯关 (Winter Break Diary)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=M+PLUS+Rounded+1c:wght@600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#dc2626; --red-dark:#b91c1c; --red-soft:#fee2e2;
+    --gold:#f59e0b; --gold-soft:#fef3c7;
+    --green:#10b981; --green-soft:#d1fae5;
+    --blue:#0ea5e9; --blue-soft:#e0f2fe;
+    --ink:#1c1917; --muted:#78716c;
+    --card:#fffaf0; --paper:#fff7ed;
+    --radius-xl:28px; --radius-lg:20px; --radius-md:14px; --radius-sm:10px;
+    --shadow-card:0 14px 30px rgba(120,60,20,0.14);
+    --shadow-pop:0 6px 0 rgba(0,0,0,0.14);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;}
+  html,body{width:100%;height:100%;overflow:hidden;background:linear-gradient(160deg,#fff1e6,#ffe4c4 60%,#ffd9a8);
+    font-family:"M PLUS Rounded 1c","ZCOOL KuaiLe","PingFang SC",system-ui,sans-serif;color:var(--ink);touch-action:manipulation;}
+  #app{width:100%;height:100%;display:flex;flex-direction:column;position:relative;}
+
+  /* top bar */
+  header{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.75);backdrop-filter:blur(6px);
+    border-bottom:2px solid #f3d9ad;flex-shrink:0;z-index:20;}
+  .nav-btn{width:40px;height:40px;border-radius:50%;background:#fff;border:2px solid #f3d9ad;display:flex;align-items:center;justify-content:center;
+    font-size:18px;text-decoration:none;color:var(--ink);cursor:pointer;box-shadow:var(--shadow-pop);}
+  header h1{font-size:16px;font-weight:800;flex:1;text-align:center;color:var(--red-dark);}
+  header .stars{font-size:13px;font-weight:800;color:var(--gold);background:#fff;border:2px solid var(--gold);border-radius:20px;padding:5px 10px;white-space:nowrap;}
+
+  main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;position:relative;}
+  .screen{display:none;min-height:100%;padding:18px 16px 32px;flex-direction:column;align-items:center;gap:14px;}
+  .screen.active{display:flex;}
+
+  h2.title{font-size:22px;font-weight:900;color:var(--red-dark);text-align:center;}
+  p.sub{font-size:13px;color:var(--muted);text-align:center;max-width:520px;line-height:1.6;}
+
+  /* home menu */
+  .lantern{font-size:54px;filter:drop-shadow(0 6px 8px rgba(0,0,0,0.15));}
+  .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:520px;margin-top:6px;}
+  .menu-card{background:var(--card);border:2px solid #f3d9ad;border-radius:var(--radius-lg);padding:16px 10px;text-align:center;
+    box-shadow:var(--shadow-card);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;}
+  .menu-card .ico{font-size:32px;}
+  .menu-card .name{font-size:14px;font-weight:800;}
+  .menu-card .desc{font-size:11px;color:var(--muted);}
+  .menu-card .badge{position:absolute;top:6px;right:6px;font-size:11px;background:var(--green);color:#fff;border-radius:10px;padding:1px 7px;font-weight:700;}
+  .menu-card:active{transform:scale(0.97);}
+  .menu-card.full{grid-column:1/3;}
+
+  .btn{border:none;border-radius:16px;padding:13px 26px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:var(--shadow-pop);
+    color:#fff;background:var(--red);transition:transform .08s;}
+  .btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,0.14);}
+  .btn.gold{background:var(--gold);}
+  .btn.green{background:var(--green);}
+  .btn.ghost{background:#fff;color:var(--ink);border:2px solid #e7d3ab;box-shadow:none;}
+  .btn.small{padding:8px 16px;font-size:13px;}
+
+  /* story reader */
+  .story-card{background:var(--paper);border:2px solid #f3d9ad;border-radius:var(--radius-lg);padding:18px;width:100%;max-width:560px;
+    box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:10px;}
+  .story-progress{font-size:12px;color:var(--muted);text-align:center;}
+  .sentence-zh{font-size:26px;font-weight:700;line-height:1.9;text-align:center;}
+  .sentence-py{font-size:15px;color:var(--blue);text-align:center;font-weight:700;min-height:20px;}
+  .sentence-en{font-size:13px;color:var(--muted);text-align:center;}
+  .story-nav{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;max-width:560px;}
+  .icon-btn{width:44px;height:44px;border-radius:50%;border:2px solid #f3d9ad;background:#fff;font-size:18px;cursor:pointer;box-shadow:var(--shadow-pop);}
+  .icon-btn:active{transform:translateY(2px);}
+  .toggle-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+  .chip{font-size:12px;font-weight:700;padding:6px 12px;border-radius:20px;border:2px solid #f3d9ad;background:#fff;cursor:pointer;}
+  .chip.active{background:var(--gold);color:#fff;border-color:var(--gold);}
+
+  /* flashcards */
+  .flash-wrap{width:100%;max-width:340px;perspective:1000px;}
+  .flash-card{width:100%;aspect-ratio:4/5;position:relative;transform-style:preserve-3d;transition:transform .5s;cursor:pointer;}
+  .flash-card.flipped{transform:rotateY(180deg);}
+  .flash-face{position:absolute;inset:0;border-radius:var(--radius-lg);backface-visibility:hidden;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:8px;box-shadow:var(--shadow-card);border:2px solid #f3d9ad;padding:14px;}
+  .flash-front{background:var(--card);}
+  .flash-back{background:var(--red-soft);transform:rotateY(180deg);}
+  .flash-face .emoji{font-size:56px;}
+  .flash-face .zh{font-size:40px;font-weight:800;}
+  .flash-face .py{font-size:18px;color:var(--blue);font-weight:800;}
+  .flash-face .meaning{font-size:15px;color:var(--muted);}
+  .flash-controls{display:flex;gap:10px;align-items:center;}
+  .flash-counter{font-size:13px;font-weight:700;color:var(--muted);}
+
+  /* matching game */
+  .match-wrap{display:flex;gap:16px;width:100%;max-width:520px;justify-content:center;}
+  .match-col{flex:1;display:flex;flex-direction:column;gap:10px;}
+  .match-tile{background:#fff;border:2px solid #f3d9ad;border-radius:var(--radius-md);padding:12px 8px;text-align:center;font-weight:800;
+    cursor:pointer;box-shadow:var(--shadow-pop);font-size:16px;}
+  .match-tile.zh-tile{font-size:22px;}
+  .match-tile.selected{border-color:var(--gold);background:var(--gold-soft);}
+  .match-tile.correct{border-color:var(--green);background:var(--green-soft);cursor:default;opacity:0.75;}
+  .match-tile.wrong{animation:shake .3s;border-color:var(--red);background:var(--red-soft);}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+  .hud-row{display:flex;gap:16px;font-size:13px;font-weight:800;color:var(--muted);}
+
+  /* sentence scramble */
+  .scramble-target{min-height:64px;width:100%;max-width:560px;background:#fff;border:2px dashed #e7bf7a;border-radius:var(--radius-md);
+    display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;padding:10px;}
+  .scramble-pool{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;width:100%;max-width:560px;}
+  .word-chip{background:var(--card);border:2px solid #f3d9ad;border-radius:12px;padding:8px 14px;font-size:18px;font-weight:800;
+    cursor:pointer;box-shadow:var(--shadow-pop);}
+  .word-chip.placed{opacity:0.35;pointer-events:none;}
+  .word-chip.in-target{background:var(--gold-soft);border-color:var(--gold);}
+
+  /* quiz */
+  .quiz-card{width:100%;max-width:560px;background:var(--paper);border:2px solid #f3d9ad;border-radius:var(--radius-lg);padding:18px;
+    box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:12px;}
+  .quiz-q{font-size:17px;font-weight:800;text-align:center;line-height:1.6;}
+  .quiz-opts{display:flex;flex-direction:column;gap:10px;}
+  .opt-btn{background:#fff;border:2px solid #f3d9ad;border-radius:var(--radius-md);padding:12px 14px;font-size:15px;font-weight:700;
+    text-align:left;cursor:pointer;box-shadow:var(--shadow-pop);}
+  .opt-btn.correct{background:var(--green-soft);border-color:var(--green);}
+  .opt-btn.wrong{background:var(--red-soft);border-color:var(--red);}
+
+  /* result */
+  .result-stars{font-size:46px;letter-spacing:6px;}
+  .result-score{font-size:32px;font-weight:900;color:var(--red-dark);}
+  .badge-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+  .mini-badge{background:#fff;border:2px solid #f3d9ad;border-radius:14px;padding:8px 12px;font-size:13px;font-weight:800;display:flex;gap:6px;align-items:center;}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:20px;
+    font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;z-index:50;}
+  .toast.show{opacity:0.95;transform:translateX(-50%) translateY(-6px);}
+
+  /* full text screen */
+  .full-sentence{border:2px solid #f3d9ad;border-radius:var(--radius-md);padding:12px 14px;background:#fff;cursor:pointer;
+    display:flex;flex-direction:column;gap:4px;transition:background .25s, border-color .25s;}
+  .full-sentence .sentence-zh{font-size:20px;text-align:left;}
+  .full-sentence .sentence-py{font-size:13px;text-align:left;}
+  .full-sentence .sentence-en{font-size:12px;text-align:left;}
+  .full-sentence.playing{background:var(--gold-soft);border-color:var(--gold);}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <a href="index.html" class="nav-btn" title="返回大厅 (Return to Arcade)">🏠</a>
+    <h1 id="headerTitle">寒假见闻 · 回北京过年</h1>
+    <span class="stars" id="starTotal">⭐ 0</span>
+  </header>
+
+  <main>
+    <!-- HOME -->
+    <section class="screen active" id="screen-home">
+      <div class="lantern">🏮</div>
+      <h2 class="title">寒假见闻</h2>
+      <p class="sub">Winter Vacation Experiences · 跟着课文回北京，看望爷爷奶奶，逛四合院、坐人力车、体验现代北京！</p>
+      <div class="menu-grid">
+        <div class="menu-card full" onclick="goStory()">
+          <div class="ico">📖</div>
+          <div class="name">读课文</div>
+          <div class="desc">带拼音朗读 · 点击可发音</div>
+        </div>
+        <div class="menu-card full" onclick="goFull()">
+          <div class="ico">📜</div>
+          <div class="name">查看/朗读全文</div>
+          <div class="desc">显示完整课文 · 一键连续朗读全文</div>
+        </div>
+        <div class="menu-card" onclick="goFlash()">
+          <div class="ico">🀄</div>
+          <div class="name">生词卡片</div>
+          <div class="desc">翻卡认字</div>
+          <div class="badge" id="badgeFlash" style="display:none;">✓</div>
+        </div>
+        <div class="menu-card" onclick="goMatch()">
+          <div class="ico">🧩</div>
+          <div class="name">拼音配对</div>
+          <div class="desc">汉字连拼音</div>
+          <div class="badge" id="badgeMatch" style="display:none;"></div>
+        </div>
+        <div class="menu-card" onclick="goScramble()">
+          <div class="ico">🔤</div>
+          <div class="name">句子排序</div>
+          <div class="desc">拼出正确句子</div>
+          <div class="badge" id="badgeScramble" style="display:none;"></div>
+        </div>
+        <div class="menu-card" onclick="goQuiz()">
+          <div class="ico">❓</div>
+          <div class="name">故事问答</div>
+          <div class="desc">读懂课文小测验</div>
+          <div class="badge" id="badgeQuiz" style="display:none;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STORY -->
+    <section class="screen" id="screen-story">
+      <h2 class="title">📖 寒假见闻</h2>
+      <div class="toggle-row">
+        <div class="chip active" id="chipPy" onclick="toggleStoryPy()">拼音</div>
+        <div class="chip active" id="chipEn" onclick="toggleStoryEn()">English</div>
+        <div class="chip" onclick="goFull()">📜 全文朗读</div>
+      </div>
+      <div class="story-card">
+        <div class="story-progress" id="storyProgress">1 / 11</div>
+        <div class="sentence-py" id="storyPy"></div>
+        <div class="sentence-zh" id="storyZh"></div>
+        <div class="sentence-en" id="storyEn"></div>
+      </div>
+      <div class="story-nav">
+        <button class="icon-btn" onclick="storyPrev()">⬅️</button>
+        <button class="icon-btn" onclick="playClip(STORY[storyIdx].id, STORY[storyIdx].zh)">🔊</button>
+        <button class="icon-btn" onclick="storyNext()">➡️</button>
+      </div>
+      <button class="btn ghost" onclick="goHome()">返回菜单</button>
+    </section>
+
+    <!-- FULL TEXT -->
+    <section class="screen" id="screen-full">
+      <h2 class="title">📜 寒假见闻 · 全文</h2>
+      <p class="sub">显示完整课文，可点击单句发音，或用下方按钮连续朗读全文。</p>
+      <div class="toggle-row">
+        <div class="chip active" id="chipFullPy" onclick="toggleFullPy()">拼音</div>
+        <div class="chip active" id="chipFullEn" onclick="toggleFullEn()">English</div>
+      </div>
+      <div class="story-card" style="align-items:stretch;gap:12px;">
+        <div id="fullTextList" style="display:flex;flex-direction:column;gap:12px;"></div>
+      </div>
+      <div class="story-nav" style="justify-content:center;gap:14px;">
+        <button class="btn gold" id="fullPlayBtn" onclick="toggleFullPlay()">▶️ 播放全文</button>
+      </div>
+      <button class="btn ghost" onclick="stopFullPlay(); goHome();">返回菜单</button>
+    </section>
+
+    <!-- FLASHCARDS -->
+    <section class="screen" id="screen-flash">
+      <h2 class="title">🀄 生词卡片</h2>
+      <p class="sub">点击卡片翻面看拼音和意思，再点喇叭听发音。</p>
+      <div class="flash-wrap">
+        <div class="flash-card" id="flashCard" onclick="flipFlash()">
+          <div class="flash-face flash-front">
+            <div class="emoji" id="flashEmoji"></div>
+            <div class="zh" id="flashZh"></div>
+          </div>
+          <div class="flash-face flash-back">
+            <div class="py" id="flashPy"></div>
+            <div class="zh" id="flashZhBack" style="font-size:28px;"></div>
+            <div class="meaning" id="flashMeaning"></div>
+          </div>
+        </div>
+      </div>
+      <div class="flash-controls">
+        <button class="icon-btn" onclick="flashPrev()">⬅️</button>
+        <button class="icon-btn" onclick="playClip(VOCAB[flashIdx].id, VOCAB[flashIdx].zh)">🔊</button>
+        <button class="icon-btn" onclick="flashNext()">➡️</button>
+      </div>
+      <div class="flash-counter" id="flashCounter">1 / 16</div>
+      <button class="btn ghost" onclick="goHome()">返回菜单</button>
+    </section>
+
+    <!-- MATCHING -->
+    <section class="screen" id="screen-match">
+      <h2 class="title">🧩 拼音配对</h2>
+      <div class="hud-row">
+        <span>剩余：<span id="matchLeft">0</span></span>
+        <span>错误：<span id="matchWrong">0</span></span>
+      </div>
+      <div class="match-wrap">
+        <div class="match-col" id="matchColZh"></div>
+        <div class="match-col" id="matchColPy"></div>
+      </div>
+      <button class="btn ghost" onclick="goHome()">返回菜单</button>
+    </section>
+
+    <!-- SCRAMBLE -->
+    <section class="screen" id="screen-scramble">
+      <h2 class="title">🔤 句子排序</h2>
+      <p class="sub" id="scrambleHint">按顺序点击词语，拼出课文里的句子。</p>
+      <div class="story-progress" id="scrambleProgress">1 / 5</div>
+      <div class="scramble-target" id="scrambleTarget"></div>
+      <div class="scramble-pool" id="scramblePool"></div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn ghost small" onclick="scrambleUndo()">撤销</button>
+        <button class="btn gold small" onclick="scrambleCheck()">对一对</button>
+      </div>
+      <button class="btn ghost" onclick="goHome()">返回菜单</button>
+    </section>
+
+    <!-- QUIZ -->
+    <section class="screen" id="screen-quiz">
+      <h2 class="title">❓ 故事问答</h2>
+      <div class="story-progress" id="quizProgress">1 / 5</div>
+      <div class="quiz-card">
+        <div class="quiz-q" id="quizQ"></div>
+        <div class="quiz-opts" id="quizOpts"></div>
+      </div>
+      <button class="btn ghost" onclick="goHome()">返回菜单</button>
+    </section>
+
+    <!-- RESULT -->
+    <section class="screen" id="screen-result">
+      <div class="lantern">🎉</div>
+      <h2 class="title" id="resultTitle">太棒了！</h2>
+      <div class="result-stars" id="resultStars">⭐⭐⭐</div>
+      <div class="result-score" id="resultScore">100%</div>
+      <div class="badge-row" id="resultBadges"></div>
+      <div style="display:flex;gap:12px;">
+        <button class="btn gold" id="resultRetry" onclick="retryCurrent()">再玩一次</button>
+        <button class="btn green" onclick="goHome()">返回菜单</button>
+      </div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------- DATA ---------------- */
+// 课文《寒假见闻》（部编/统编语文课文，逐字转写与教材完全一致）
+const STORY = [
+  {id:"st1", zh:"今年寒假，我们全家回北京看望了爷爷奶奶。", py:"Jīnnián hánjià, wǒmen quánjiā huí Běijīng kànwàngle yéye nǎinai.", en:"This winter vacation, our whole family went back to Beijing to visit Grandpa and Grandma."},
+  {id:"st2", zh:"爷爷奶奶带着我们去了好多地方，天安门、故宫、长城……", py:"Yéye nǎinai dàizhe wǒmen qùle hǎoduō dìfang, Tiān'ānmén, Gùgōng, Chángchéng...", en:"Grandpa and Grandma took us to many places: Tiananmen, the Forbidden City, the Great Wall..."},
+  {id:"st3", zh:"让我感觉最亲切的还是北京的胡同，因为那是爸爸小时候住过的地方。", py:"Ràng wǒ gǎnjué zuì qīnqiè de hái shì Běijīng de hútòng, yīnwèi nà shì bàba xiǎoshíhou zhùguo de dìfang.", en:"What felt most endearing to me were Beijing's hutongs, because that was where Dad lived as a child."},
+  {id:"st4", zh:"那天，爷爷带我去逛胡同。", py:"Nà tiān, yéye dài wǒ qù guàng hútòng.", en:"That day, Grandpa took me to stroll through the hutongs."},
+  {id:"st5", zh:"我们坐在人力车上，爷爷给我介绍，这是他们住过的四合院，那是爸爸小时候爬过的老槐树……", py:"Wǒmen zuò zài rénlìchē shang, yéye gěi wǒ jièshào, zhè shì tāmen zhùguo de sìhéyuàn, nà shì bàba xiǎoshíhou páguo de lǎohuáishù...", en:"Sitting in a rickshaw, Grandpa introduced to me: this was the courtyard house they lived in, and that was the old locust tree Dad climbed when he was little..."},
+  {id:"st6", zh:"蓝蓝的天、暖暖的阳光、弯弯曲曲的胡同，成为我难忘的老北京印象。", py:"Lánlán de tiān, nuǎnnuǎn de yángguāng, wānwān-qūqū de hútòng, chéngwéi wǒ nánwàng de lǎo Běijīng yìnxiàng.", en:"Blue skies, warm sunshine, and winding hutongs became my unforgettable impression of old Beijing."},
+  {id:"st7", zh:"北京既古老又现代。", py:"Běijīng jì gǔlǎo yòu xiàndài.", en:"Beijing is both ancient and modern."},
+  {id:"st8", zh:"到处都有共享单车、共享汽车，交通非常方便。", py:"Dàochù dōu yǒu gòngxiǎng dānchē, gòngxiǎng qìchē, jiāotōng fēicháng fāngbiàn.", en:"Everywhere there are shared bicycles and shared cars; transportation is very convenient."},
+  {id:"st9", zh:"现在人们出门不用带现金，去哪儿都可以用手机付款。", py:"Xiànzài rénmen chūmén bú yòng dài xiànjīn, qù nǎr dōu kěyǐ yòng shǒujī fùkuǎn.", en:"Nowadays people don't need to carry cash when going out; anywhere you go, you can pay with your phone."},
+  {id:"st10", zh:"我最喜欢的是小区门口的自助图书馆，奶奶用手机扫一下，我就借到了想看的书！", py:"Wǒ zuì xǐhuan de shì xiǎoqū ménkǒu de zìzhù túshūguǎn, nǎinai yòng shǒujī sǎo yíxià, wǒ jiù jièdàole xiǎng kàn de shū!", en:"What I liked most was the self-service library at the community entrance; Grandma scanned with her phone, and I borrowed the book I wanted to read!"},
+  {id:"st11", zh:"我喜欢北京，以后还会经常回来住住、看看。", py:"Wǒ xǐhuan Běijīng, yǐhòu hái huì jīngcháng huílái zhùzhu, kànkan.", en:"I love Beijing, and in the future I will often come back to stay and visit."}
+];
+
+const VOCAB = [
+  {id:"vc1", zh:"寒假", py:"hánjià", meaning:"winter vacation", emoji:"⛄"},
+  {id:"vc2", zh:"爷爷奶奶", py:"yéye nǎinai", meaning:"grandpa and grandma", emoji:"👴👵"},
+  {id:"vc3", zh:"天安门", py:"Tiān'ānmén", meaning:"Tiananmen", emoji:"🏛️"},
+  {id:"vc4", zh:"故宫", py:"Gùgōng", meaning:"the Forbidden City", emoji:"🏯"},
+  {id:"vc5", zh:"长城", py:"Chángchéng", meaning:"the Great Wall", emoji:"🧱"},
+  {id:"vc6", zh:"胡同", py:"hútòng", meaning:"hutong alley", emoji:"🏘️"},
+  {id:"vc7", zh:"人力车", py:"rénlìchē", meaning:"rickshaw", emoji:"🛺"},
+  {id:"vc8", zh:"四合院", py:"sìhéyuàn", meaning:"courtyard house", emoji:"🏡"},
+  {id:"vc9", zh:"老槐树", py:"lǎohuáishù", meaning:"old locust tree", emoji:"🌳"},
+  {id:"vc10", zh:"印象", py:"yìnxiàng", meaning:"impression", emoji:"💭"},
+  {id:"vc11", zh:"共享单车", py:"gòngxiǎng dānchē", meaning:"shared bicycle", emoji:"🚲"},
+  {id:"vc12", zh:"方便", py:"fāngbiàn", meaning:"convenient", emoji:"👍"},
+  {id:"vc13", zh:"现金", py:"xiànjīn", meaning:"cash", emoji:"💵"},
+  {id:"vc14", zh:"自助图书馆", py:"zìzhù túshūguǎn", meaning:"self-service library", emoji:"📚"},
+  {id:"vc15", zh:"古老", py:"gǔlǎo", meaning:"ancient", emoji:"🏺"},
+  {id:"vc16", zh:"现代", py:"xiàndài", meaning:"modern", emoji:"🏙️"}
+];
+
+const QUIZ = [
+  {q:"课文里，孩子寒假全家回到了哪座城市？", opts:["上海","北京","广州","西安"], a:1},
+  {q:"爷爷奶奶带着他们去了哪些著名的地方？", opts:["天安门、故宫、长城","外滩、东方明珠","兵马俑、华清池","西湖、雷峰塔"], a:0},
+  {q:"逛胡同的时候，爷爷和孩子坐的是什么车？", opts:["出租车","人力车","公交车","地铁"], a:1},
+  {q:"爷爷给孩子介绍了他们住过的什么建筑？", opts:["四合院","高楼大厦","蒙古包","吊脚楼"], a:0},
+  {q:"文中提到爸爸小时候爬过什么树？", opts:["老槐树","大杨树","小柳树","银杏树"], a:0},
+  {q:"为什么现在人们出门不用带现金？", opts:["到处都免费","可以用手机付款","只能刷银行卡","别人帮忙买单"], a:1},
+  {q:"孩子最喜欢小区门口的什么设施？", opts:["游乐场","自助图书馆","游泳池","小卖部"], a:1}
+];
+
+const SCRAMBLE_SENTENCES = [
+  {
+    id: "st1",
+    zh: "今年寒假，我们全家回北京看望了爷爷奶奶。",
+    tokens: ["今年寒假，", "我们全家", "回北京", "看望了", "爷爷奶奶。"]
+  },
+  {
+    id: "st4",
+    zh: "那天，爷爷带我去逛胡同。",
+    tokens: ["那天，", "爷爷", "带我", "去逛胡同。"]
+  },
+  {
+    id: "st7",
+    zh: "北京既古老又现代。",
+    tokens: ["北京", "既古老", "又现代。"]
+  },
+  {
+    id: "st8",
+    zh: "到处都有共享单车、共享汽车，交通非常方便。",
+    tokens: ["到处都有", "共享单车、", "共享汽车，", "交通", "非常方便。"]
+  },
+  {
+    id: "st11",
+    zh: "我喜欢北京，以后还会经常回来住住、看看。",
+    tokens: ["我喜欢北京，", "以后", "还会经常", "回来住住、", "看看。"]
+  }
+];
+
+/* ---------------- STATE ---------------- */
+let storyIdx = 0, showPy = true, showEn = true;
+let flashIdx = 0;
+let matchState = { pairs: [], selectedZh: null, selectedPy: null, wrong: 0, remaining: 0 };
+let scrambleState = { idx: 0, placed: [], pool: [] };
+let quizState = { idx: 0, correct: 0, answered: false };
+let lastGame = null;
+
+const progress = JSON.parse(localStorage.getItem('hjjw_progress') || '{}');
+function saveProgress(){ localStorage.setItem('hjjw_progress', JSON.stringify(progress)); updateStarTotal(); refreshBadges(); }
+function updateStarTotal(){
+  const t = (progress.match||0) + (progress.scramble||0) + (progress.quiz||0);
+  document.getElementById('starTotal').textContent = '⭐ ' + t;
+}
+function refreshBadges(){
+  document.getElementById('badgeFlash').style.display = progress.flash ? 'block' : 'none';
+  ['match','scramble','quiz'].forEach(k=>{
+    const el = document.getElementById('badge'+k.charAt(0).toUpperCase()+k.slice(1));
+    if(progress[k]) { el.style.display='block'; el.textContent = '⭐'.repeat(progress[k]); }
+  });
+}
+
+/* ---------------- NAV ---------------- */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function goHome(){ showScreen('screen-home'); }
+function goStory(){ storyIdx = 0; renderStory(); showScreen('screen-story'); }
+function goFull(){ renderFullText(); showScreen('screen-full'); }
+function goFlash(){ flashIdx = 0; renderFlash(); showScreen('screen-flash'); progress.flash = true; saveProgress(); }
+function goMatch(){ setupMatch(); showScreen('screen-match'); }
+function goScramble(){ scrambleState.idx = 0; setupScrambleRound(); showScreen('screen-scramble'); }
+function goQuiz(){ quizState.idx = 0; quizState.correct = 0; renderQuiz(); showScreen('screen-quiz'); }
+
+/* ---------------- AUDIO (real MP3 files, TTS as fallback only) ---------------- */
+const AUDIO_DIR = 'audio/hanjia/';
+const audioCache = {};
+let currentClip = null;
+
+// Preferred path: play a pre-recorded MP3 (audio/hanjia/<id>.mp3, generated by
+// generate_hanjia_audio.py via edge-tts). Falls back to the browser's
+// speechSynthesis only if the file is missing or fails to play, so the game
+// still works even when opened somewhere the mp3 files weren't deployed.
+function playClip(id, text, onend){
+  stopClip();
+  if(!id){ speak(text, onend); return; }
+  let a = audioCache[id];
+  if(!a){ a = new Audio(AUDIO_DIR + id + '.mp3'); audioCache[id] = a; }
+  a.currentTime = 0;
+  let done = false;
+  const finish = ()=>{ if(done) return; done = true; if(currentClip === a) currentClip = null; if(onend) onend(); };
+  a.onended = finish;
+  a.onerror = ()=>{ if(done) return; done = true; if(currentClip === a) currentClip = null; speak(text, onend); };
+  currentClip = a;
+  const p = a.play();
+  if(p && typeof p.catch === 'function'){
+    p.catch(()=>{ if(done) return; done = true; currentClip = null; speak(text, onend); });
+  }
+}
+function stopClip(){
+  if(currentClip){ try{ currentClip.pause(); currentClip.currentTime = 0; }catch(e){} currentClip = null; }
+}
+
+/* ---------------- TTS (fallback when an mp3 clip is unavailable) ---------------- */
+let zhVoice = null;
+let currentUtterance = null; // keep a strong reference so some browsers don't GC it mid-speech (silent-fail bug)
+let resumeWatchdog = null;
+function pickVoice(){
+  if(!('speechSynthesis' in window)) return;
+  const voices = speechSynthesis.getVoices();
+  zhVoice = voices.find(v=>/^zh/i.test(v.lang||'') && /cn|hans|mandarin/i.test((v.lang+v.name).toLowerCase()))
+    || voices.find(v=>/^zh/i.test(v.lang||''))
+    || null;
+}
+if('speechSynthesis' in window){
+  pickVoice();
+  speechSynthesis.onvoiceschanged = pickVoice;
+  // Some browsers (esp. Chrome) load voices asynchronously and never fire onvoiceschanged
+  // reliably on first load — poll a few times just in case.
+  let voicePolls = 0;
+  const voicePollTimer = setInterval(()=>{
+    pickVoice();
+    voicePolls++;
+    if(zhVoice || voicePolls > 8) clearInterval(voicePollTimer);
+  }, 400);
+
+  // iOS Safari / some Android browsers only allow the speech engine to be "unlocked"
+  // by a real user gesture — do a silent zero-length speak on the first tap to unlock it,
+  // otherwise the very first real utterance can be silently dropped.
+  const unlockSpeech = ()=>{
+    try{
+      const u = new SpeechSynthesisUtterance(' ');
+      u.volume = 0;
+      speechSynthesis.speak(u);
+    }catch(e){}
+    document.removeEventListener('touchend', unlockSpeech);
+    document.removeEventListener('click', unlockSpeech);
+  };
+  document.addEventListener('touchend', unlockSpeech, {once:true, passive:true});
+  document.addEventListener('click', unlockSpeech, {once:true});
+}
+function speak(text, onend){
+  if(!('speechSynthesis' in window)) { toast('设备不支持语音朗读 (Speech not supported on this device)'); if(onend) onend(); return; }
+  try{
+    if(resumeWatchdog){ clearInterval(resumeWatchdog); resumeWatchdog = null; }
+    speechSynthesis.cancel();
+    if(!zhVoice) pickVoice();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = 'zh-CN';
+    if(zhVoice) u.voice = zhVoice;
+    u.rate = 0.85;
+    let finished = false;
+    const finish = ()=>{
+      if(finished) return;
+      finished = true;
+      if(resumeWatchdog){ clearInterval(resumeWatchdog); resumeWatchdog = null; }
+      if(onend) onend();
+    };
+    u.onend = finish;
+    u.onerror = ()=>{ toast('语音播放失败，请重试 (Playback failed)'); finish(); };
+    currentUtterance = u;
+    // Chrome/Android sometimes needs a beat after cancel() before speak() actually starts.
+    setTimeout(()=>{
+      speechSynthesis.speak(u);
+      // Chrome has a long-standing bug where speech auto-pauses after ~15s of continuous
+      // speaking; periodically nudge it to keep going for longer sentences/full-text playback.
+      resumeWatchdog = setInterval(()=>{
+        if(speechSynthesis.speaking) speechSynthesis.resume();
+        else { clearInterval(resumeWatchdog); resumeWatchdog = null; }
+      }, 4000);
+      // Safety fallback: if nothing fires within a few seconds (engine silently failed),
+      // don't leave chained playback (like "play full text") stuck forever.
+      setTimeout(()=>{ if(!finished && !speechSynthesis.speaking) finish(); }, 6000);
+    }, 30);
+  }catch(e){
+    toast('语音播放出错 (Speech error)');
+    if(onend) onend();
+  }
+}
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toast._tm);
+  toast._tm = setTimeout(()=>t.classList.remove('show'), 1400);
+}
+
+/* ---------------- STORY ---------------- */
+function renderStory(){
+  const s = STORY[storyIdx];
+  document.getElementById('storyProgress').textContent = (storyIdx+1) + ' / ' + STORY.length;
+  document.getElementById('storyZh').textContent = s.zh;
+  document.getElementById('storyPy').textContent = showPy ? s.py : '';
+  document.getElementById('storyEn').textContent = showEn ? s.en : '';
+}
+function storyNext(){ storyIdx = (storyIdx+1) % STORY.length; renderStory(); }
+function storyPrev(){ storyIdx = (storyIdx-1+STORY.length) % STORY.length; renderStory(); }
+function toggleStoryPy(){ showPy = !showPy; document.getElementById('chipPy').classList.toggle('active', showPy); renderStory(); }
+function toggleStoryEn(){ showEn = !showEn; document.getElementById('chipEn').classList.toggle('active', showEn); renderStory(); }
+
+/* ---------------- FULL TEXT (view + continuous read-aloud) ---------------- */
+let fullPy = true, fullEn = true;
+let fullPlaying = false, fullPlayIdx = 0;
+function renderFullText(){
+  const list = document.getElementById('fullTextList');
+  list.innerHTML = '';
+  STORY.forEach((s, i)=>{
+    const row = document.createElement('div');
+    row.className = 'full-sentence';
+    row.id = 'full-sent-' + i;
+    row.onclick = ()=>{ stopFullPlay(); playClip(s.id, s.zh); };
+    row.innerHTML =
+      (fullPy ? '<div class="sentence-py">'+s.py+'</div>' : '') +
+      '<div class="sentence-zh">'+s.zh+'</div>' +
+      (fullEn ? '<div class="sentence-en">'+s.en+'</div>' : '');
+    list.appendChild(row);
+  });
+}
+function toggleFullPy(){ fullPy = !fullPy; document.getElementById('chipFullPy').classList.toggle('active', fullPy); renderFullText(); }
+function toggleFullEn(){ fullEn = !fullEn; document.getElementById('chipFullEn').classList.toggle('active', fullEn); renderFullText(); }
+function toggleFullPlay(){ if(fullPlaying) stopFullPlay(); else startFullPlay(); }
+function startFullPlay(){
+  if(!('speechSynthesis' in window)) { toast('设备不支持语音朗读'); return; }
+  fullPlaying = true;
+  fullPlayIdx = 0;
+  document.getElementById('fullPlayBtn').textContent = '⏸️ 停止播放';
+  playFullStep();
+}
+function playFullStep(){
+  if(!fullPlaying || fullPlayIdx >= STORY.length){ stopFullPlay(); return; }
+  document.querySelectorAll('.full-sentence').forEach(el=>el.classList.remove('playing'));
+  const row = document.getElementById('full-sent-' + fullPlayIdx);
+  if(row){ row.classList.add('playing'); row.scrollIntoView({behavior:'smooth', block:'center'}); }
+  playClip(STORY[fullPlayIdx].id, STORY[fullPlayIdx].zh, ()=>{
+    if(!fullPlaying) return;
+    fullPlayIdx++;
+    setTimeout(playFullStep, 400);
+  });
+}
+function stopFullPlay(){
+  fullPlaying = false;
+  const btn = document.getElementById('fullPlayBtn');
+  if(btn) btn.textContent = '▶️ 播放全文';
+  document.querySelectorAll('.full-sentence').forEach(el=>el.classList.remove('playing'));
+  stopClip();
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+}
+
+/* ---------------- FLASHCARDS ---------------- */
+function renderFlash(){
+  const v = VOCAB[flashIdx];
+  document.getElementById('flashCard').classList.remove('flipped');
+  document.getElementById('flashEmoji').textContent = v.emoji;
+  document.getElementById('flashZh').textContent = v.zh;
+  document.getElementById('flashZhBack').textContent = v.zh;
+  document.getElementById('flashPy').textContent = v.py;
+  document.getElementById('flashMeaning').textContent = v.meaning;
+  document.getElementById('flashCounter').textContent = (flashIdx+1) + ' / ' + VOCAB.length;
+}
+function flipFlash(){ document.getElementById('flashCard').classList.toggle('flipped'); }
+function flashNext(){ flashIdx = (flashIdx+1) % VOCAB.length; renderFlash(); }
+function flashPrev(){ flashIdx = (flashIdx-1+VOCAB.length) % VOCAB.length; renderFlash(); }
+
+/* ---------------- MATCHING ---------------- */
+function shuffle(arr){ const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+function setupMatch(){
+  const picks = shuffle(VOCAB).slice(0, 6);
+  matchState = { pairs: picks, selectedZh: null, selectedPy: null, wrong: 0, remaining: picks.length };
+  document.getElementById('matchWrong').textContent = 0;
+  document.getElementById('matchLeft').textContent = picks.length;
+  const zhCol = document.getElementById('matchColZh');
+  const pyCol = document.getElementById('matchColPy');
+  zhCol.innerHTML = ''; pyCol.innerHTML = '';
+  shuffle(picks).forEach(v=>{
+    const t = document.createElement('div');
+    t.className = 'match-tile zh-tile'; t.textContent = v.zh; t.dataset.zh = v.zh;
+    t.onclick = ()=>selectMatch('zh', t, v.zh);
+    zhCol.appendChild(t);
+  });
+  shuffle(picks).forEach(v=>{
+    const t = document.createElement('div');
+    t.className = 'match-tile'; t.textContent = v.py; t.dataset.zh = v.zh;
+    t.onclick = ()=>selectMatch('py', t, v.zh);
+    pyCol.appendChild(t);
+  });
+}
+function selectMatch(side, el, zhKey){
+  if(el.classList.contains('correct')) return;
+  if(side === 'zh'){
+    if(matchState.selectedZh) matchState.selectedZh.el.classList.remove('selected');
+    matchState.selectedZh = { el, zhKey };
+    el.classList.add('selected');
+  } else {
+    if(matchState.selectedPy) matchState.selectedPy.el.classList.remove('selected');
+    matchState.selectedPy = { el, zhKey };
+    el.classList.add('selected');
+  }
+  if(matchState.selectedZh && matchState.selectedPy){
+    const zh = matchState.selectedZh, py = matchState.selectedPy;
+    if(zh.zhKey === py.zhKey){
+      zh.el.classList.remove('selected'); py.el.classList.remove('selected');
+      zh.el.classList.add('correct'); py.el.classList.add('correct');
+      const matchedVocab = VOCAB.find(v=>v.zh===zh.zhKey);
+      playClip(matchedVocab && matchedVocab.id, zh.zhKey);
+      matchState.remaining--;
+      document.getElementById('matchLeft').textContent = matchState.remaining;
+      matchState.selectedZh = null; matchState.selectedPy = null;
+      if(matchState.remaining === 0){
+        const stars = matchState.wrong === 0 ? 3 : matchState.wrong <= 2 ? 2 : 1;
+        setTimeout(()=>showResult('match', stars, '配对完成！'), 400);
+      }
+    } else {
+      matchState.wrong++;
+      document.getElementById('matchWrong').textContent = matchState.wrong;
+      zh.el.classList.add('wrong'); py.el.classList.add('wrong');
+      setTimeout(()=>{
+        zh.el.classList.remove('selected','wrong'); py.el.classList.remove('selected','wrong');
+        matchState.selectedZh = null; matchState.selectedPy = null;
+      }, 400);
+    }
+  }
+}
+
+/* ---------------- SCRAMBLE ---------------- */
+function setupScrambleRound(){
+  if(scrambleState.idx >= SCRAMBLE_SENTENCES.length){
+    setTimeout(()=>showResult('scramble', 3, '句子全部完成！'), 200);
+    return;
+  }
+  const round = SCRAMBLE_SENTENCES[scrambleState.idx];
+  scrambleState.placed = [];
+  scrambleState.pool = shuffle(round.tokens.map((t,i)=>({ text:t, id:i, used:false })));
+  document.getElementById('scrambleProgress').textContent = (scrambleState.idx+1) + ' / ' + SCRAMBLE_SENTENCES.length;
+  renderScramble();
+}
+function renderScramble(){
+  const target = document.getElementById('scrambleTarget');
+  const pool = document.getElementById('scramblePool');
+  target.innerHTML = '';
+  scrambleState.placed.forEach(p=>{
+    const c = document.createElement('div');
+    c.className = 'word-chip in-target';
+    c.textContent = p.text;
+    c.onclick = ()=>{ removeFromTarget(p); };
+    target.appendChild(c);
+  });
+  pool.innerHTML = '';
+  scrambleState.pool.forEach(p=>{
+    const c = document.createElement('div');
+    c.className = 'word-chip' + (p.used ? ' placed' : '');
+    c.textContent = p.text;
+    c.onclick = ()=>{ if(!p.used) placeToken(p); };
+    pool.appendChild(c);
+  });
+}
+function placeToken(p){ p.used = true; scrambleState.placed.push(p); renderScramble(); }
+function removeFromTarget(p){
+  p.used = false;
+  scrambleState.placed = scrambleState.placed.filter(x=>x.id !== p.id);
+  renderScramble();
+}
+function scrambleUndo(){
+  const last = scrambleState.placed.pop();
+  if(last){ last.used = false; renderScramble(); }
+}
+let scrambleMistakes = 0;
+function scrambleCheck(){
+  const round = SCRAMBLE_SENTENCES[scrambleState.idx];
+  const built = scrambleState.placed.map(p=>p.text).join('');
+  if(built === round.zh){
+    playClip(round.id, round.zh);
+    toast('✅ 正确！');
+    scrambleState.idx++;
+    setTimeout(setupScrambleRound, 500);
+  } else {
+    scrambleMistakes++;
+    toast('再试试看～');
+  }
+}
+
+/* ---------------- QUIZ ---------------- */
+function renderQuiz(){
+  if(quizState.idx >= QUIZ.length){
+    const stars = quizState.correct >= QUIZ.length ? 3 : quizState.correct >= Math.ceil(QUIZ.length*0.7) ? 2 : 1;
+    showResult('quiz', stars, quizState.correct + ' / ' + QUIZ.length + ' 答对');
+    return;
+  }
+  quizState.answered = false;
+  const item = QUIZ[quizState.idx];
+  document.getElementById('quizProgress').textContent = (quizState.idx+1) + ' / ' + QUIZ.length;
+  document.getElementById('quizQ').textContent = item.q;
+  const optsEl = document.getElementById('quizOpts');
+  optsEl.innerHTML = '';
+  item.opts.forEach((opt, i)=>{
+    const b = document.createElement('div');
+    b.className = 'opt-btn';
+    b.textContent = opt;
+    b.onclick = ()=>answerQuiz(i, b);
+    optsEl.appendChild(b);
+  });
+}
+function answerQuiz(i, el){
+  if(quizState.answered) return;
+  quizState.answered = true;
+  const item = QUIZ[quizState.idx];
+  const opts = document.querySelectorAll('#quizOpts .opt-btn');
+  if(i === item.a){
+    el.classList.add('correct');
+    quizState.correct++;
+  } else {
+    el.classList.add('wrong');
+    opts[item.a].classList.add('correct');
+  }
+  setTimeout(()=>{ quizState.idx++; renderQuiz(); }, 700);
+}
+
+/* ---------------- RESULT ---------------- */
+function showResult(game, stars, note){
+  lastGame = game;
+  progress[game] = Math.max(progress[game]||0, stars);
+  saveProgress();
+  document.getElementById('resultTitle').textContent = stars === 3 ? '太棒了！满分闯关！' : stars === 2 ? '真不错！继续加油！' : '完成啦，再练一练！';
+  document.getElementById('resultStars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3-stars);
+  document.getElementById('resultScore').textContent = note;
+  const badges = document.getElementById('resultBadges');
+  badges.innerHTML = '';
+  const map = { match:'🧩 拼音配对', scramble:'🔤 句子排序', quiz:'❓ 故事问答' };
+  const b = document.createElement('div');
+  b.className = 'mini-badge';
+  b.textContent = map[game] + ' ' + '⭐'.repeat(stars);
+  badges.appendChild(b);
+  showScreen('screen-result');
+}
+function retryCurrent(){
+  if(lastGame === 'match') goMatch();
+  else if(lastGame === 'scramble') goScramble();
+  else if(lastGame === 'quiz') goQuiz();
+  else goHome();
+}
+
+/* ---------------- INIT ---------------- */
+refreshBadges();
+updateStarTotal();
+renderStory();
+</script>
+</body>
+</html>
