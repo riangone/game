@@ -1280,7 +1280,7 @@
           <div class="exp-bar-fill" id="expFill" style="width: 0%;"></div>
         </div>
         <div style="display:flex; justify-content:space-between; font-size:11px; color:#94a3b8; font-weight:700;">
-          <span>学堂修了: <strong id="academySolvedCount" style="color:#10b981">0</strong> / <strong id="totalAcademyCount">28</strong> 講</span>
+          <span>学堂修了: <strong id="academySolvedCount" style="color:#10b981">0</strong> / <strong id="totalAcademyCount">18</strong> 講</span>
           <span>実戦踏破: <strong id="solvedCount">0</strong> / <strong id="totalQuestCount">28</strong> 問</span>
         </div>
       </div>
@@ -1288,16 +1288,16 @@
 
     <!-- ==================== 1. 金型学堂 (ACADEMY) ==================== -->
     <div class="academy-panel" id="panelAcademy">
-      <!-- 学习轨道切换（工艺工程师 / 软件开发者） -->
+      <!-- 学习轨道切换（软件开发者 / 工艺工程师） -->
       <div class="quest-tier-tabs" id="trackSwitchTabs">
-        <button class="tier-tab active" id="trackTabUser" onclick="switchTrack('user')" data-i18n="track_user">🏭 モールドエンジニア向け（操作・工艺习得）</button>
-        <button class="tier-tab" id="trackTabDev" onclick="switchTrack('dev')" data-i18n="track_dev">💻 ソフトウェア開発者向け（保守・拡張開発）</button>
+        <button class="tier-tab active" id="trackTabDev" onclick="switchTrack('dev')" data-i18n="track_dev">💻 ソフトウェア開発者向け（保守・拡張開発）</button>
+        <button class="tier-tab" id="trackTabUser" onclick="switchTrack('user')" data-i18n="track_user">🏭 モールドエンジニア向け（操作・工艺习得）</button>
       </div>
       <div class="lesson-callout tip" id="trackDescBox" style="margin:0;">
-        <span id="trackDescText">操作手順と工艺判断を学ぶ：モデリング・分模・電極・CAM切削のワークフロー全体を習得します。</span>
+        <span id="trackDescText">ソフトウェア開発者向け：操作は教えず、B-Rep/NURBSデータ構造・階層アーキテクチャ・数値の罠・API拡張・実戦デバッグまで、保守開発に必要な心智模型を身につけます。</span>
       </div>
 
-      <!-- 5大章节选择卡片 -->
+      <!-- 章节选择卡片 -->
       <div class="chap-nav-grid" id="chapNavGrid">
         <!-- 由JS动态生成 -->
       </div>
@@ -1311,9 +1311,9 @@
       <div class="lesson-view-card" id="lessonViewCard">
         <div class="lesson-meta-header">
           <div>
-            <h2 class="lesson-title-big" id="lessonTitle">1-1 Space-Eの基本理念とUI構造</h2>
+            <h2 class="lesson-title-big" id="lessonTitle">D1-1 B-Rep 拓撲データ構造と境界表現の深層</h2>
             <div class="lesson-tags">
-              <span class="lesson-tag" id="lessonChapterTag">第1章 · 基礎モデリング</span>
+              <span class="lesson-tag" id="lessonChapterTag">第 1 章 · B-Rep・トポロジー</span>
               <span class="lesson-tag" id="lessonDifficultyTag">難易度: ★☆☆☆☆</span>
             </div>
           </div>
@@ -4859,7 +4859,7 @@ tbb::parallel_for(size_t(0), zLevels.size(), [&](size_t i) {
 
     const State = {
       tab: 'academy',
-      track: 'user', // 'user' = モールドエンジニア向け, 'dev' = ソフトウェア開発者向け
+      track: 'dev', // 'dev' = ソフトウェア開発者向け (默认优先), 'user' = モールドエンジニア向け
       currentChap: 0,
       currentLessonSub: 0,
       solvedLessons: new Set(),
@@ -4912,11 +4912,14 @@ tbb::parallel_for(size_t(0), zLevels.size(), [&](size_t i) {
           State.exp = parsed.exp || 0;
           if (parsed.solvedLessons) State.solvedLessons = new Set(parsed.solvedLessons);
           if (parsed.solvedQuests) State.solvedQuests = new Set(parsed.solvedQuests);
-          if (parsed.track === 'dev' || parsed.track === 'user') {
+          if (parsed.trackMigratedToDev && (parsed.track === 'dev' || parsed.track === 'user')) {
             State.track = parsed.track;
-            document.getElementById('trackTabUser').classList.toggle('active', State.track === 'user');
-            document.getElementById('trackTabDev').classList.toggle('active', State.track === 'dev');
+          } else {
+            State.track = 'dev';
+            saveState();
           }
+          document.getElementById('trackTabUser').classList.toggle('active', State.track === 'user');
+          document.getElementById('trackTabDev').classList.toggle('active', State.track === 'dev');
         }
       } catch (e) {}
       updateHeaderStats();
@@ -4928,7 +4931,8 @@ tbb::parallel_for(size_t(0), zLevels.size(), [&](size_t i) {
           exp: State.exp,
           solvedLessons: Array.from(State.solvedLessons),
           solvedQuests: Array.from(State.solvedQuests),
-          track: State.track
+          track: State.track,
+          trackMigratedToDev: true
         };
         localStorage.setItem('space_e_quest_state', JSON.stringify(data));
       } catch (e) {}
