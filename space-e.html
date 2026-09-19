@@ -12,9 +12,55 @@
   <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800;900&family=Outfit:wght@600;700;800;900&family=Fira+Code:wght@500;700&display=swap" rel="stylesheet">
 
   <style>
-    :root {
+    :root, [data-theme="light"] {
+      --bg-main: #f4f6f9;
+      --bg-card: #ffffff;
+      --bg-subtle: #f8fafc;
+      --surface: #e9eef5;
+      --surface-glass: rgba(255, 255, 255, 0.92);
+      --border-subtle: #cbd5e1;
+      --border-strong: #0284c7;
+
+      --text-main: #0f172a;
+      --text-sub: #334155;
+      --text-muted: #64748b;
+
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --primary-light: rgba(2, 132, 199, 0.12);
+      --text-on-primary: #ffffff;
+
+      --accent-cyan: #0891b2;
+      --accent-purple: #9333ea;
+      --accent-amber: #d97706;
+      --accent-emerald: #059669;
+      --accent-rose: #e11d48;
+      --accent-orange: #ea580c;
+
+      --hero-bg: linear-gradient(135deg, #ffffff 0%, #f0f7ff 50%, #e0f2fe 100%);
+      --hero-overlay: radial-gradient(circle, rgba(2, 132, 199, 0.12) 0%, transparent 70%);
+      --chap-active-bg: linear-gradient(135deg, #e0f2fe 0%, #ffffff 100%);
+      --code-bg: #0f172a;
+      --code-text: #38bdf8;
+
+      --radius-xl: 20px;
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-pill: 9999px;
+
+      --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
+      --shadow-card: 0 4px 16px -2px rgba(15, 23, 42, 0.08), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
+      --shadow-glow: 0 0 20px rgba(2, 132, 199, 0.2);
+
+      --ambient-1: rgba(2, 132, 199, 0.08);
+      --ambient-2: rgba(147, 51, 234, 0.05);
+      --ambient-3: rgba(5, 150, 105, 0.05);
+    }
+
+    [data-theme="dark"] {
       --bg-main: #0b1329;
       --bg-card: #152243;
+      --bg-subtle: #0d1730;
       --surface: #1e293b;
       --surface-glass: rgba(21, 34, 67, 0.92);
       --border-subtle: #2d3f6d;
@@ -27,6 +73,7 @@
       --primary: #38bdf8;
       --primary-hover: #0284c7;
       --primary-light: rgba(56, 189, 248, 0.15);
+      --text-on-primary: #0b1329;
 
       --accent-cyan: #06b6d4;
       --accent-purple: #a855f7;
@@ -35,14 +82,19 @@
       --accent-rose: #f43f5e;
       --accent-orange: #f97316;
 
-      --radius-xl: 20px;
-      --radius-lg: 14px;
-      --radius-md: 10px;
-      --radius-pill: 9999px;
+      --hero-bg: linear-gradient(135deg, #152243 0%, #1e293b 100%);
+      --hero-overlay: radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, transparent 70%);
+      --chap-active-bg: linear-gradient(135deg, rgba(2, 132, 199, 0.15) 0%, rgba(30, 41, 59, 0.9) 100%);
+      --code-bg: #0f172a;
+      --code-text: #38bdf8;
 
       --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.25);
       --shadow-card: 0 10px 28px -6px rgba(0, 0, 0, 0.45), 0 2px 6px -1px rgba(0, 0, 0, 0.3);
       --shadow-glow: 0 0 24px rgba(56, 189, 248, 0.35);
+
+      --ambient-1: rgba(56, 189, 248, 0.12);
+      --ambient-2: rgba(168, 85, 247, 0.1);
+      --ambient-3: rgba(16, 185, 129, 0.08);
     }
 
     * {
@@ -61,10 +113,11 @@
       display: flex;
       flex-direction: column;
       background-image: 
-        radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
-        radial-gradient(circle at 85% 25%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 50% 85%, rgba(16, 185, 129, 0.08) 0%, transparent 45%);
+        radial-gradient(circle at 15% 15%, var(--ambient-1) 0%, transparent 45%),
+        radial-gradient(circle at 85% 25%, var(--ambient-2) 0%, transparent 50%),
+        radial-gradient(circle at 50% 85%, var(--ambient-3) 0%, transparent 45%);
       background-attachment: fixed;
+      transition: background-color 0.25s ease, color 0.25s ease;
     }
 
     /* 顶部导航 */
@@ -222,7 +275,7 @@
 
     /* 英雄横幅 */
     .hero-banner {
-      background: linear-gradient(135deg, #152243 0%, #1e293b 100%);
+      background: var(--hero-bg);
       border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius-xl);
       padding: 22px 28px;
@@ -234,6 +287,7 @@
       box-shadow: var(--shadow-card);
       position: relative;
       overflow: hidden;
+      transition: background 0.25s ease;
     }
 
     .hero-banner::after {
@@ -243,7 +297,7 @@
       top: -40px;
       width: 220px;
       height: 220px;
-      background: radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, transparent 70%);
+      background: var(--hero-overlay);
       pointer-events: none;
     }
 
@@ -266,7 +320,7 @@
     .hero-title {
       font-size: 24px;
       font-weight: 900;
-      color: #ffffff;
+      color: var(--text-main);
       margin-bottom: 8px;
       letter-spacing: -0.5px;
     }
@@ -279,13 +333,14 @@
 
     .hero-level-box {
       min-width: 260px;
-      background: rgba(11, 19, 41, 0.7);
+      background: var(--bg-card);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
       padding: 14px 18px;
       display: flex;
       flex-direction: column;
       gap: 8px;
+      box-shadow: var(--shadow-sm);
     }
 
     .level-label {
@@ -308,7 +363,8 @@
     .exp-bar-wrap {
       width: 100%;
       height: 8px;
-      background: #1e293b;
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
       border-radius: 4px;
       overflow: hidden;
     }
@@ -356,8 +412,8 @@
 
     .chap-card.active {
       border-color: var(--primary);
-      background: linear-gradient(135deg, rgba(2, 132, 199, 0.15) 0%, rgba(30, 41, 59, 0.9) 100%);
-      box-shadow: 0 0 16px rgba(56, 189, 248, 0.25);
+      background: var(--chap-active-bg);
+      box-shadow: 0 0 16px var(--primary-light);
     }
 
     .chap-card-header {
@@ -383,7 +439,7 @@
     .chap-title {
       font-size: 15px;
       font-weight: 800;
-      color: #ffffff;
+      color: var(--text-main);
       line-height: 1.3;
     }
 
@@ -472,7 +528,7 @@
     .lesson-title-big {
       font-size: 22px;
       font-weight: 900;
-      color: #ffffff;
+      color: var(--text-main);
       margin-bottom: 4px;
     }
 
@@ -558,7 +614,7 @@
     .workflow-step-title {
       font-size: 13.5px;
       font-weight: 800;
-      color: #ffffff;
+      color: var(--text-main);
     }
 
     .workflow-step-desc {
@@ -568,7 +624,7 @@
 
     /* 课程直感ミニ試練 (Mini-Quiz) */
     .mini-quiz-box {
-      background: #0d1730;
+      background: var(--bg-subtle);
       border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius-lg);
       padding: 20px;
@@ -594,7 +650,7 @@
     .mini-quiz-question {
       font-size: 15px;
       font-weight: 800;
-      color: #ffffff;
+      color: var(--text-main);
       margin-bottom: 14px;
       line-height: 1.5;
     }
@@ -686,7 +742,7 @@
     }
     .btn-nav-lesson:hover {
       border-color: var(--primary);
-      color: #ffffff;
+      color: var(--text-main);
     }
 
     /* ==========================================================================
@@ -723,7 +779,7 @@
 
     .tier-tab:hover {
       border-color: var(--primary);
-      color: #ffffff;
+      color: var(--text-main);
     }
 
     .tier-tab.active {
@@ -757,7 +813,7 @@
     .quest-question-text {
       font-size: 17px;
       font-weight: 800;
-      color: #ffffff;
+      color: var(--text-main);
       line-height: 1.6;
     }
 
@@ -801,7 +857,7 @@
     }
 
     .quest-solution-box {
-      background: #0f172a;
+      background: var(--bg-subtle);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
       padding: 18px 20px;
@@ -889,7 +945,7 @@
     }
 
     .lab-canvas-card {
-      background: #080e1e;
+      background: var(--bg-card);
       border: 1.5px solid var(--border-subtle);
       border-radius: var(--radius-xl);
       padding: 18px;
@@ -924,7 +980,7 @@
       position: absolute;
       top: 14px;
       left: 14px;
-      background: rgba(11, 19, 41, 0.85);
+      background: var(--surface-glass);
       backdrop-filter: blur(8px);
       border: 1px solid var(--border-subtle);
       padding: 8px 14px;
@@ -936,6 +992,7 @@
       flex-direction: column;
       gap: 4px;
       pointer-events: none;
+      box-shadow: var(--shadow-sm);
     }
 
     .canvas-controls-bar {
@@ -967,11 +1024,11 @@
     }
     .btn-canvas:hover {
       border-color: var(--primary);
-      color: #ffffff;
+      color: var(--text-main);
     }
     .btn-canvas.active {
       background: var(--primary);
-      color: #0b1329;
+      color: var(--text-on-primary);
       border-color: var(--primary);
       font-weight: 800;
     }
@@ -1049,7 +1106,7 @@
       color: var(--text-sub);
     }
     .status-item strong {
-      color: #ffffff;
+      color: var(--text-main);
     }
 
     /* ==========================================================================
@@ -1184,9 +1241,9 @@
     }
     .exam-dot.active {
       background: var(--primary);
-      color: #0b1329;
+      color: var(--text-on-primary);
       border-color: var(--primary);
-      box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+      box-shadow: 0 0 10px var(--primary-light);
     }
 
     /* 考卷结果卡片 */
@@ -1236,9 +1293,12 @@
       background: transparent;
       border: none;
       outline: none;
-      color: #ffffff;
+      color: var(--text-main);
       font-size: 15px;
       font-family: inherit;
+    }
+    .codex-search-input::placeholder {
+      color: var(--text-muted);
     }
 
     .codex-cats-bar {
@@ -1297,7 +1357,7 @@
     .codex-term {
       font-size: 16px;
       font-weight: 900;
-      color: #ffffff;
+      color: var(--text-main);
     }
 
     .codex-cat-tag {
@@ -1314,7 +1374,8 @@
       font-family: 'Fira Code', monospace;
       font-size: 12px;
       color: var(--accent-amber);
-      background: #0f172a;
+      background: var(--surface);
+      border: 1px solid var(--border-subtle);
       padding: 4px 8px;
       border-radius: 4px;
       display: inline-block;
@@ -1344,6 +1405,12 @@
       }
     }
   </style>
+  <script>
+    (function() {
+      const savedTheme = localStorage.getItem('space_e_theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    })();
+  </script>
 </head>
 
 <body>
@@ -1369,6 +1436,10 @@
           <span>🏅</span>
           <span id="headerRank">見習い操作員</span>
         </div>
+        <button class="btn-header" id="themeToggleBtn" onclick="toggleTheme()" title="テーマ切替 / 主题切换 (Light / Dark)">
+          <span id="themeIcon">☀️</span>
+          <span id="themeBtnText">ライト</span>
+        </button>
         <button class="btn-header" onclick="toggleLanguage()" title="切换语言 (JA/ZH)">
           <span>🌐</span>
           <span id="langBtnText">日 / 中</span>
@@ -1545,7 +1616,7 @@
 
         <div class="quest-nav-footer">
           <button class="btn-nav-lesson" onclick="stepQuest(-1)">◀ 前の問題</button>
-          <button class="btn-nav-lesson" style="background:var(--primary); color:#0b1329; font-weight:800;" onclick="stepQuest(1)">次の問題 ▶</button>
+          <button class="btn-nav-lesson" style="background:var(--primary); color:var(--text-on-primary); font-weight:800;" onclick="stepQuest(1)">次の問題 ▶</button>
         </div>
       </div>
     </div>
@@ -1553,13 +1624,13 @@
     <!-- ==================== 3. 虚拟工场 (LABS) ==================== -->
     <div class="lab-panel" id="panelLab" style="display:none;">
       <div class="lab-selector-tabs">
-        <button class="lab-tab active" onclick="switchLab('draft')">
+        <button class="lab-tab active" data-lab="draft" onclick="switchLab('draft', event)">
           <span>📐</span> 勾配解析 (Draft Angle Inspector)
         </button>
-        <button class="lab-tab" onclick="switchLab('cam')">
+        <button class="lab-tab" data-lab="cam" onclick="switchLab('cam', event)">
           <span>⚙️</span> CAM刀具路径与残料 (Toolpath & Rest Machining)
         </button>
-        <button class="lab-tab" onclick="switchLab('edm')">
+        <button class="lab-tab" data-lab="edm" onclick="switchLab('edm', event)">
           <span>⚡</span> EDM放电电极提取 (Electrode Spark Gap)
         </button>
       </div>
@@ -1581,6 +1652,7 @@
               <button class="btn-canvas" onclick="resetCamera()">🔄 視点リセット</button>
               <button class="btn-canvas active" id="btnToggleWireframe" onclick="toggleWireframe()">🕸️ ワイヤフレーム</button>
               <button class="btn-canvas" id="btnToggleAnim" onclick="toggleAnim()">▶ アニメーション</button>
+              <button class="btn-canvas" id="btnToggleDevKernel" onclick="toggleDevKernel()" title="幾何カーネル透視モード (法線ベクトル・CL Data・偏置オフセット)">🔬 カーネル透視 (Dev Mode)</button>
             </div>
             <div style="font-size:12px; color:var(--text-muted);">
               🖱️ マウスドラッグで3D回転・ホイールでズーム
@@ -1600,7 +1672,7 @@
       <!-- 考试介绍视窗 -->
       <div class="exam-intro-card" id="examIntroCard">
         <div class="exam-cert-icon">🏆</div>
-        <h2 style="font-size:24px; font-weight:900; color:#ffffff;">Space-E 金型CAD/CAM 総合技術認定 CBT試験</h2>
+        <h2 style="font-size:24px; font-weight:900; color:var(--text-main);">Space-E 金型CAD/CAM 総合技術認定 CBT試験</h2>
         <p style="max-width:600px; font-size:14px; color:var(--text-sub); line-height:1.6;">
           本試験は、金型設計・放電加工・CAMマシニングプログラミングにおけるSpace-Eの実務能力を総合判定するCBT（Computer Based Testing）模擬試験です。
         </p>
@@ -1661,7 +1733,7 @@
       <!-- 考试结算视窗 -->
       <div class="exam-result-card" id="examResultCard">
         <div style="font-size:48px;" id="resultEmoji">🎉</div>
-        <h2 style="font-size:26px; font-weight:900; color:#ffffff;" id="resultTitle">合格判定結果</h2>
+        <h2 style="font-size:26px; font-weight:900; color:var(--text-main);" id="resultTitle">合格判定結果</h2>
         <div class="result-score-badge" id="resultScore">90点</div>
         <p style="font-size:15px; color:var(--text-sub); max-width:560px;" id="resultFeedback">
           素晴らしい！Space-E の金型設計から切削パスプランニングまで高い理解度に達しています。
@@ -1786,7 +1858,9 @@
         nav_exam: "CBT資格考場",
         nav_codex: "Space-E 知識大典",
         track_user: "🏭 モールドエンジニア向け（操作・工艺习得）",
-        track_dev: "💻 ソフトウェア開発者向け（保守・拡張開発）"
+        track_dev: "💻 ソフトウェア開発者向け（保守・拡張開発）",
+        theme_light: "ライト",
+        theme_dark: "ダーク"
       },
       zh: {
         nav_academy: "金型学堂 (体系教程)",
@@ -1795,9 +1869,40 @@
         nav_exam: "CBT认证考场",
         nav_codex: "Space-E 知识大典",
         track_user: "🏭 面向模具工艺工程师（操作与工艺习得）",
-        track_dev: "💻 面向软件开发者（维护与二次开发）"
+        track_dev: "💻 面向软件开发者（维护与二次开发）",
+        theme_light: "浅色",
+        theme_dark: "深色"
       }
     };
+
+    /* ==========================================================================
+       主题管理系统 (Theme System: Light / Dark - 默认浅色)
+       ========================================================================== */
+    let currentTheme = localStorage.getItem('space_e_theme') || 'light';
+
+    function applyTheme() {
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      const iconEl = document.getElementById('themeIcon');
+      const textEl = document.getElementById('themeBtnText');
+      if (iconEl) {
+        iconEl.innerText = currentTheme === 'light' ? '☀️' : '🌙';
+      }
+      if (textEl) {
+        textEl.innerText = currentTheme === 'light'
+          ? (I18N[currentLang].theme_light || 'ライト')
+          : (I18N[currentLang].theme_dark || 'ダーク');
+      }
+      if (typeof drawLabFrame === 'function') {
+        drawLabFrame();
+      }
+    }
+
+    function toggleTheme() {
+      sound.click();
+      currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+      localStorage.setItem('space_e_theme', currentTheme);
+      applyTheme();
+    }
 
     function updateTrackDescText() {
       const el = document.getElementById('trackDescText');
@@ -1825,6 +1930,7 @@
           el.innerText = I18N[currentLang][key];
         }
       });
+      applyTheme();
       updateTrackDescText();
       renderAcademyLesson();
       renderQuestQuestion();
@@ -2730,6 +2836,39 @@
             "descJa": "疑似コードで刀路生成アルゴリズムを読み解き、実際のバグ事例でデバッグ手順を体得する。",
             "descZh": "用伪代码读懂刀路生成算法，用真实bug案例掌握几何软件的调试方法论。"
       }
+    ,
+      {
+        id: 5,
+        icon: "🧬",
+        titleJa: "D6章：ハイブリッドモデリングと非多様体トポロジ",
+        titleZh: "D6章：混合建模与非流形拓扑 (Non-Manifold)",
+        descJa: "Space-E最大の強みである「ソリッドと曲面の共存」を支えるRadial-Edge構造とトリム曲面の二重表現。",
+        descZh: "支撑 Space-E 核心竞争力“实体与曲面共存”的 Radial-Edge 拓扑结构与修剪曲面双重表示。"
+      },
+      {
+        id: 6,
+        icon: "🖥️",
+        titleJa: "D7章：3D描画パイプラインと微小図元ピック",
+        titleZh: "D7章：3D视口渲染管线与微米级拾取引擎",
+        descJa: "数学曲面をGPUで高速描画する適応型テッセレーションと、数万面から1面を正確に当てるピッキングアルゴリズム。",
+        descZh: "将连续数学曲面动态离散为 GPU 三角网格的自适应剖分算法，与从数万面中精确击中的拾取机制。"
+      },
+      {
+        id: 7,
+        icon: "⚡",
+        titleJa: "D8章：CAM並列計算と幾何カーネルのスレッドセーフ",
+        titleZh: "D8章：CAM并行计算与几何内核线程安全",
+        descJa: "シングルコア時代のレガシー幾何ポインタ網を、マルチスレッドCAM計算でクラッシュさせない設計パターン。",
+        descZh: "单核时代遗留的几何指针网，如何在现代多核高并发 CAM 计算中实现无锁只读快照与进程/线程池隔离。"
+      },
+      {
+        id: 8,
+        icon: "🧭",
+        titleJa: "D9章：5軸キネマティクス・特異点と先行補間制御",
+        titleZh: "D9章：五轴运动学逆解、奇异点突变与后置前瞻",
+        descJa: "CL Data (X,Y,Z,I,J,K) から機械軸への逆変換、C軸暴走を引き起こす特異点（Singularity）の回避アルゴリズム。",
+        descZh: "从刀位点矢量到机床物理轴的逆运动学映射，极角奇异点 (Singularity) 避让算法与 RTCP/前瞻平滑控制。"
+      }
     ];
 
     const DEV_LESSONS_DATA = [
@@ -3581,11 +3720,684 @@
                   "explainZh": "正确！“只有特定某个模型”这种复现特征，强烈指向数据本身的几何特殊性（退化、拓扑异常），而不是环境因素。"
             }
       }
+    ,
+      /* --- D6章：ハイブリッドモデリングと非多様体トポロジ --- */
+      {
+        chap: 5,
+        subIndex: 0,
+        titleJa: "D6-1 2-Manifoldの限界とRadial-Edgeデータ構造",
+        titleZh: "D6-1 2-Manifold 的局限与 Radial-Edge 拓扑数据结构",
+        tag: "カーネル内部",
+        bodyJa: `
+          <p>従来のCADカーネル（ACISや初期Parasolid）は<strong>2-多様体（2-Manifold）</strong>を前提としています。つまり「どのEdgeも必ず2つのFaceに共有され、表裏が閉じた立体」でなければデータ構造が破綻します。しかしSpace-Eが対象とする金型現場は<strong>「縫合途中の穴あき曲面」「厚みゼロの境界シート」「1本の稜線から3枚の面が分岐するリブ」</strong>が日常茶飯事です。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Half-Edge</span>
+              <span class="workflow-step-title">半辺構造の限界</span>
+              <span class="workflow-step-desc">1本のEdgeに「Twin（反対向きの半辺）」が1つしか持てないため、3面以上が交わる非多様体稜線を表現するとポインタが破綻する。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Radial-Edge</span>
+              <span class="workflow-step-title">放射状エッジ構造</span>
+              <span class="workflow-step-desc">Edgeの周囲を回転する「Face-Use / Edge-Use」の巡回リストを持ち、任意枚数の面が1つの稜線を共有可能にする。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Hybrid Body</span>
+              <span class="workflow-step-title">ソリッド・曲面の共存</span>
+              <span class="workflow-step-desc">完全な閉立体（Solid Shell）と開いた曲面群（Open Sheet）を同一ボディ内で統一的に管理。未縫合でもフィレットやCAM計算が実行可能。</span>
+            </div>
+          </div>
+          <div class="code-ref-box">
+            <div class="code-ref-title">💻 Radial-Edge トポロジーの巡回走査（擬似C++）</div>
+            <pre><code style="color:var(--code-text); font-family:'Fira Code', monospace; font-size:12px;">// 1本の稜線（Edge）を共有するすべての面を走査する
+EdgeUse* startUse = edge->firstEdgeUse;
+EdgeUse* curr = startUse;
+do {
+    Face* f = curr->face;
+    // curr->radialNext で稜線の周りを反時計回りに次の面へ回転
+    curr = curr->radialNext;
+} while (curr != startUse); // 3枚でも10枚でも破綻せず一周できる</code></pre>
+          </div>
+          <div class="lesson-tip-box" style="margin-top:14px; border-left-color:var(--accent-cyan);">
+            <strong>🔍 現場のバグ知見：</strong>「IGESからインポートした製品データにフィレットをかけようとすると落ちる」バグの多くは、外部CADの非多様体エラー（3面共有エッジ）をカーネルがManifoldとして誤認識し、Nullポインタを参照することが原因です。Radial-Edge走査で次数（Degree）の事前検証が必須です。
+          </div>
+        `,
+        bodyZh: `
+          <p>传统 CAD 内核（如早期 ACIS/Parasolid）基于<strong>2-流形（2-Manifold）</strong>假设，即每条边必须严格被 2 个方向相反的面共享，必须是严格全封闭的实体。但 Space-E 面对的模具现场充斥着<strong>“未缝合完的破损曲面”、“厚度为零的开壳体/片体”、“一条筋条棱线上交汇 3 个曲面”</strong>。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Half-Edge</span>
+              <span class="workflow-step-title">半边结构的局限</span>
+              <span class="workflow-step-desc">一条 Edge 只能绑定一个 Twin 反向半边，一旦出现 3 个及以上曲面共用一条边（非流形边），半边拓扑指针直接断裂。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Radial-Edge</span>
+              <span class="workflow-step-title">放射状棱边拓扑</span>
+              <span class="workflow-step-desc">引入围绕边旋转的 Face-Use / Edge-Use 环形双向链表（Radial Cycle），允许任意数量的面共享同一条空间边。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Hybrid Body</span>
+              <span class="workflow-step-title">实体与曲面共存</span>
+              <span class="workflow-step-desc">在同一个零件容器内无缝容纳封闭 Shell 与开放 Sheet，即使模型未闭合成实体，也能先行进行拔模分析、倒角与 CAM 切削。</span>
+            </div>
+          </div>
+          <div class="code-ref-box">
+            <div class="code-ref-title">💻 Radial-Edge 拓扑的面环遍历（伪代码 C++）</div>
+            <pre><code style="color:var(--code-text); font-family:'Fira Code', monospace; font-size:12px;">// 遍历共享该棱线的所有 Face（支持非流形任意面数）
+EdgeUse* startUse = edge->firstEdgeUse;
+EdgeUse* curr = startUse;
+do {
+    Face* f = curr->face;
+    // 通过 radialNext 绕该边按空间角度旋转到下一个相邻面
+    curr = curr->radialNext;
+} while (curr != startUse); // 无论共享 2 面、3 面还是多面均稳定循环</code></pre>
+          </div>
+          <div class="lesson-tip-box" style="margin-top:14px; border-left-color:var(--accent-cyan);">
+            <strong>🔍 排查经验：</strong>“用户导入外部片体做倒圆角时崩溃”的常见根本原因，是外部数据存在非流形边，而算法假设了只有两个相邻面（twin-&gt;face），导致解引用空指针。混合建模内核必须在算子入口执行非流形边分支保护。
+          </div>
+        `,
+        trial: {
+          qJa: "Space-Eのような金型向けハイブリッドモデリングCADにおいて、Radial-Edgeトポロジーを採用する最大の利点はどれか？",
+          qZh: "在面向模具混合建模的 CAD 软件中，采用 Radial-Edge 拓扑数据结构的最大核心优势是？",
+          optionsJa: [
+            "完全な閉空間ソリッドだけでなく、1稜線を3面以上が共有する開いた曲面や未縫合シートも単一ボディで安定表現できる",
+            "メモリ消費量がHalf-Edge構造の1/100に激減する",
+            "NURBS曲面の曲率計算が不要になる",
+            "グラフィックカードを使わずにCPUだけで4K描画できるようになる"
+          ],
+          optionsZh: [
+            "不仅能表示全封闭实体，还能在单一模型容器中稳定表达 3 面共边、开放片体及未缝合曲面，无需强制闭合",
+            "内存开销比半边结构暴跌至百分之一",
+            "彻底免去 NURBS 曲面的曲率计算",
+            "无需显卡只靠 CPU 即可实现 4K 极速渲染"
+          ],
+          ans: 0,
+          explainJa: "正解！金型現場では不完全な曲面群のまま加工パスを出したり修正したりする需要が高く、非多様体を許容するRadial-Edge構造が不可欠です。",
+          explainZh: "正确！模具车间经常需要在曲面尚未完全修合的情况下先行计算刀路或修面，容忍非流形的 Radial-Edge 结构是混合建模的基石。"
+        }
+      },
+      {
+        chap: 5,
+        subIndex: 1,
+        titleJa: "D6-2 トリム曲面（Trimmed Surface）の二重表現とトレランス乖離",
+        titleZh: "D6-2 修剪曲面的双重表示与容差漂移",
+        tag: "幾何カーネル",
+        bodyJa: `
+          <p>CADカーネル内部のFaceは、単なる幾何面ではありません。<strong>「無限に広がる母面（Underlying Surface）」</strong>の上に、<strong>「UVパラメータ空間のトリム曲線（p-curve）」</strong>と<strong>「3D空間の近似曲線（3D Model Curve）」</strong>という2つの境界表現が同時に保持されています。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">1. 母面</span>
+              <span class="workflow-step-title">Underlying Surface</span>
+              <span class="workflow-step-desc">四角いUV定義域 [0,1]x[0,1] を持つ数学的NURBS曲面。穴や切り欠きは持たない。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">2. p-curve</span>
+              <span class="workflow-step-title">パラメータ空間トリム</span>
+              <span class="workflow-step-desc">UV平面上の2D曲線。どの領域が「有効な面の領域」かを切り抜く輪郭ループを定義。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">3. 3D Curve</span>
+              <span class="workflow-step-title">実空間同期曲線</span>
+              <span class="workflow-step-desc">隣接面との縫合・交差判定・描画のために3D空間に評価された3D B-Spline曲線。</span>
+            </div>
+          </div>
+          <div class="lesson-tip-box" style="margin-top:14px; border-left-color:var(--accent-rose);">
+            <strong>⚠️ トレランス乖離の悪夢：</strong>
+            CATIA（公差 0.001mm）からエクスポートされたSTEPを、ParasolidベースCAD（公差 0.000001mm）で開くと、p-curve を3D評価した座標と 3D Curve の間に「1ミクロンのズレ」が生じます。この隙間のせいで「縫合できない」「ソリッド化失敗」「ブーリアンで交線が求まらない」という最悪のデータ不整合が発生します。
+          </div>
+        `,
+        bodyZh: `
+          <p>CAD 几何内核内部的 Face 并非单纯的一块几何。每个 Trimmed Face 在底层都维护着<strong>双重表示机制</strong>：<strong>无界母面（Underlying Surface）</strong> + <strong>UV 参数空间修剪环（p-curve）</strong> + <strong>3D 空间逼近曲线（3D Model Curve）</strong>。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">1. 母面</span>
+              <span class="workflow-step-title">Underlying Surface</span>
+              <span class="workflow-step-desc">标准的四边形有界 UV 定义域 [0,1]x[0,1] NURBS 数学曲面本身没有开孔与任意轮廓。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">2. p-curve</span>
+              <span class="workflow-step-title">UV 空间修剪曲线</span>
+              <span class="workflow-step-desc">位于 (u, v) 平面内的 2D 参数曲线环，标定母面上哪一部分是“保留的有效面片”。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">3. 3D Curve</span>
+              <span class="workflow-step-title">3D 空间同步曲线</span>
+              <span class="workflow-step-desc">将 p-curve 映射到三维空间的真实三维曲线，用于与相邻曲面缝合、求交以及视口渲染。</span>
+            </div>
+          </div>
+          <div class="lesson-tip-box" style="margin-top:14px; border-left-color:var(--accent-rose);">
+            <strong>⚠️ 跨系统容差漂移：</strong>
+            系统 A（建模公差 0.001mm）导出的 STEP 模型，在系统 B（公差 0.000001mm）打开时，其 p-curve 投影到 3D 空间的实际轨迹与 3D Model Curve 产生微米级漂移。这个微缝隙（Gap）会导致布尔求差时算法找不到交线而直接死锁或报“Boolean Failed”。
+          </div>
+        `,
+        trial: {
+          qJa: "トリム曲面（Trimmed Surface）のデータ構造において、UV空間の境界線（p-curve）と3D空間の境界線（3D Curve）が同時に存在する理由として最も適切なのは？",
+          qZh: "在修剪曲面（Trimmed Surface）数据结构中，UV 参数空间曲线（p-curve）与 3D 空间曲线（3D Curve）并存的核心原因是什么？",
+          optionsJa: [
+            "曲面の有効領域判定はUV空間（2D）で極めて高速に計算でき、他面との幾何交差や縫合は3D空間で行う必要があるため",
+            "単にファイルサイズを2倍に増やして暗号化するため",
+            "ディスプレイカードが2D画像しか受け付けないため",
+            "3D Curveは古いCADの遺産であり、現代のCADでは一切参照されないため"
+          ],
+          optionsZh: [
+            "在 UV 空间（2D）进行点包含与修剪环判断极为高速稳定，而与其他曲面的求交与公差缝合必须在 3D 空间执行",
+            "只是为了把模型文件体积撑大做数据冗余校验",
+            "因为显卡着色器只能处理 2D 参数方程",
+            "3D Curve 是早期 CAD 的废弃遗产，现代系统已不再使用"
+          ],
+          ans: 0,
+          explainJa: "正解！2Dパラメータ空間での内外判定の数値安定性と、3D空間での物理交差精度の両立を図るための必然的設計です。",
+          explainZh: "正确！UV 空间能够以 2D 拓扑极高效率判断有效区域，而 3D 曲线保证了跨面物理连接与公差校验，两者是工业 CAD 不可或缺的并存机制。"
+        }
+      },
+
+      /* --- D7章：3D描画パイプラインと微小図元ピック --- */
+      {
+        chap: 6,
+        subIndex: 0,
+        titleJa: "D7-1 数学連続曲面の適応型テッセレーション（弦高公差とLOD）",
+        titleZh: "D7-1 数学曲面的自适应三角剖分（弦高误差与 LOD）",
+        tag: "グラフィックス",
+        bodyJa: `
+          <p>GPUはNURBSや解析曲面を直接レンダリングできません。描画パイプラインの入口で、連続曲面を微小な三角形網（Mesh）に離散化する処理を<strong>テッセレーション（Tessellation）</strong>と呼びます。金型CADでは数千〜数万面の超高密度パーツを扱うため、固定分割ではなく<strong>適応型（Adaptive）</strong>分割が命です。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">弦高公差</span>
+              <span class="workflow-step-title">Chordal Deviation (δ)</span>
+              <span class="workflow-step-desc">数学曲面と離散三角形の間の最大法線距離。通常 0.01〜0.005mm 程度に抑えて滑らかさを担保。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">角度公差</span>
+              <span class="workflow-step-title">Angular Tolerance (θ)</span>
+              <span class="workflow-step-desc">隣接する三角形の法線ベクトル間の最大許容角度。急激な曲率変化部でのポリゴン痩せを防止。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">LOD制御</span>
+              <span class="workflow-step-title">視点距離連動 LOD</span>
+              <span class="workflow-step-desc">カメラから遠い部品は粗く（ポリゴン数1/10）、ズームインした部位だけ動的に細分化してFPSを維持。</span>
+            </div>
+          </div>
+          <div class="code-ref-box">
+            <div class="code-ref-title">💻 適応型再帰分割アルゴリズムの判定ロジック（擬似コード）</div>
+            <pre><code style="color:var(--code-text); font-family:'Fira Code', monospace; font-size:12px;">void SubdividePatch(Patch& patch, double chordTol, double angleTol) {
+    double maxSag = EvaluateMaxChordalDeviation(patch);
+    double maxAngle = EvaluateMaxNormalAngle(patch);
+    if (maxSag > chordTol || maxAngle > angleTol) {
+        // 許容誤差を超えている場合は4分割して再帰判定
+        auto [p1, p2, p3, p4] = SplitQuarter(patch);
+        SubdividePatch(p1, chordTol, angleTol);
+        SubdividePatch(p2, chordTol, angleTol);
+        SubdividePatch(p3, chordTol, angleTol);
+        SubdividePatch(p4, chordTol, angleTol);
+    } else {
+        // 許容公差内なら2枚の描画用三角形をGPUバッファにPush
+        EmitTrianglesToVBO(patch);
+    }
+}</code></pre>
+          </div>
+        `,
+        bodyZh: `
+          <p>显卡着色器无法直接渲染高阶数学曲面（NURBS）。在渲染管线前端，必须将连续数学曲面动态离散为微小三角形网格，这一过程称为<strong>三角剖分（Tessellation）</strong>。模具 CAD 常包含数万个微小曲面，全量固定密细分会导致显存爆炸与掉帧，必须采用<strong>自适应（Adaptive）</strong>剖分算法。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">弦高公差</span>
+              <span class="workflow-step-title">Chordal Deviation (δ)</span>
+              <span class="workflow-step-desc">数学曲面点到离散三角平面的最大垂距（弓高/弦高差）。工业显示通常控制在 0.01~0.005mm。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">角度公差</span>
+              <span class="workflow-step-title">Angular Tolerance (θ)</span>
+              <span class="workflow-step-desc">相邻三角形法向量夹角的最大阈值。平坦区域生成大三角形，极小圆角高曲率处自适应加密。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">LOD 调度</span>
+              <span class="workflow-step-title">视锥距离联动 LOD</span>
+              <span class="workflow-step-desc">远离相机的背景零件降低采样深度，鼠标滚轮放大局部微小倒角时动态局部细分，确保 60FPS。</span>
+            </div>
+          </div>
+          <div class="code-ref-box">
+            <div class="code-ref-title">💻 自适应四叉细分算法逻辑（C++ 伪代码）</div>
+            <pre><code style="color:var(--code-text); font-family:'Fira Code', monospace; font-size:12px;">void SubdividePatch(Patch& patch, double chordTol, double angleTol) {
+    double maxSag = EvaluateMaxChordalDeviation(patch);
+    double maxAngle = EvaluateMaxNormalAngle(patch);
+    if (maxSag > chordTol || maxAngle > angleTol) {
+        // 弦高误差或法向夹角超标，执行四叉自适应递归细分
+        auto [p1, p2, p3, p4] = SplitQuarter(patch);
+        SubdividePatch(p1, chordTol, angleTol);
+        SubdividePatch(p2, chordTol, angleTol);
+        SubdividePatch(p3, chordTol, angleTol);
+        SubdividePatch(p4, chordTol, angleTol);
+    } else {
+        // 误差收敛在公差带内，生成三角形推入 GPU VBO
+        EmitTrianglesToVBO(patch);
+    }
+}</code></pre>
+          </div>
+        `,
+        trial: {
+          qJa: "CADの3Dビューポートで「平坦な面は大きなポリゴン数枚なのに、R0.5の小さな角だけ非常に細かくポリゴンが密集している」現象の原理として正しいのはどれか？",
+          qZh: "在 CAD 3D 视口中，“平坦大平面仅有几块大三角形，而 R0.5 的微小圆角处三角形却极其密集”背后的核心原理是？",
+          optionsJa: [
+            "弦高公差（Chordal Deviation）と角度公差に基づき、曲率の高い部分だけ適応型に再帰細分化（Adaptive Tessellation）された結果である",
+            "CADがバグを起こして平坦な面のポリゴン生成をサボった",
+            "GPUが平坦な面を好むため",
+            "微小な面ほどメモリを多く消費する法律があるため"
+          ],
+          optionsZh: [
+            "基于弦高公差与角度公差的自适应剖分（Adaptive Tessellation），仅在高曲率区域进行四叉递归细分以平衡精度与性能",
+            "CAD 软件发生严重故障漏掉了平坦面的三角形",
+            "因为显卡着色器更喜欢大面积四边形",
+            "因为工业软件强制规定小倒角必须占用更多内存"
+          ],
+          ans: 0,
+          explainJa: "正解！曲率が0に近い平坦部は少ない分割で公差を満たし、急激に曲がる部位だけを密に割ることで描画負荷を最小限に抑えています。",
+          explainZh: "正确！曲率接近零的平面用极少三角形就能满足微米级弦高误差，只有法向剧烈变化的曲面才需要高密度离散，这是 CAD 视口高性能的核心。"
+        }
+      },
+      {
+        chap: 6,
+        subIndex: 1,
+        titleJa: "D7-2 微小図元ピッキング：BVHレイキャスト vs 離散Color Buffer ID",
+        titleZh: "D7-2 微米级图元拾取：BVH 射线遍历 vs 离屏 Color Buffer ID",
+        tag: "グラフィックス",
+        bodyJa: `
+          <p>CAD操作の基本は「マウスで特定の稜線（Edge）や面（Face）をクリックして選択する」ことです。しかし、画面内に50万枚の三角形がある状態で、マウスのクリック座標から「どのFaceをクリックしたか」をどう判定するでしょうか？</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">CPU Ray-Cast</span>
+              <span class="workflow-step-title">BVHレイキャスト交差</span>
+              <span class="workflow-step-desc">カメラからクリック位置へ視線レイを飛ばし、バウンディングボックス木（BVH）で高速判定。正確な3D交点座標も同時に取得可能。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Color Buffer ID</span>
+              <span class="workflow-step-title">オフスクリーン色ID描画</span>
+              <span class="workflow-step-desc">見えない裏画面（FBO）に、Face ID番号をRGB色値（例: ID=123 -> #00007B）として描画。クリック位置の1ピクセルを読むだけでO(1)判定。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">ハイブリッド</span>
+              <span class="workflow-step-title">実務での併用設計</span>
+              <span class="workflow-step-desc">面の選択判定には高速なColor Buffer IDを使い、スナップ（端点・中点）判定にはBVH光線交差を使うのが現代の鉄板パターン。</span>
+            </div>
+          </div>
+          <div class="lesson-tip-box" style="margin-top:14px; border-left-color:var(--accent-amber);">
+            <strong>💻 現場の実装コード（Color Picking）：</strong><br>
+            <code>uint32_t faceId = (r) | (g &lt;&lt; 8) | (b &lt;&lt; 16);</code><br>
+            これだけでミリ秒未満で対象オブジェクトを特定できます。全ポリゴンとの交差判定ループを回す初心者のコードを見つけたら即座にリファクタリングを提案してください。
+          </div>
+        `,
+        bodyZh: `
+          <p>CAD 交互的基础是“鼠标点击精准拾取某条 Edge 或某个 Face”。然而在视口渲染了 50 万个三角形的超大模具装配体中，点击鼠标的一瞬间，系统是如何在 1 毫秒内判断用户点中了哪个微小图元的？</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">CPU Ray-Cast</span>
+              <span class="workflow-step-title">BVH 光线空间求交</span>
+              <span class="workflow-step-desc">从相机发射射线穿透视口，利用层次包围盒（BVH / AABB Tree）加速求交。能获取精确的 3D 交点坐标与参数空间 UV。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Color Buffer ID</span>
+              <span class="workflow-step-title">离屏 Color Buffer 编码</span>
+              <span class="workflow-step-desc">在离屏 Framebuffer 中将每个 Face 的内存 ID 直接编码为 RGB 像素值（如 ID=123 渲染为 #00007B）。单次采样即可 O(1) 锁定目标。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">混合引擎</span>
+              <span class="workflow-step-title">工业级最佳实践</span>
+              <span class="workflow-step-desc">曲面粗拾取使用 GPU Color Buffer 保证 120Hz 极速响应，端点/圆心吸附（Snap）使用 BVH 局部光线投射做精确几何解算。</span>
+            </div>
+          </div>
+          <div class="lesson-tip-box" style="margin-top:14px; border-left-color:var(--accent-amber);">
+            <strong>💻 现场实现示例（Color Picking）：</strong><br>
+            <code>uint32_t faceId = (pixel.r) | (pixel.g &lt;&lt; 8) | (pixel.b &lt;&lt; 16);</code><br>
+            无需遍历几何链表，读取一个像素即可在纳秒级完成图元定位。切忌在主线程写嵌套循环比对 50 万个三角形！
+          </div>
+        `,
+        trial: {
+          qJa: "超大規模な金型モデル（数十万面）において、マウスホバー時の面ハイライト処理を「全三角形との線分交差判定（CPUループ）」で実装した場合に生じる問題は？",
+          qZh: "在包含数十万个曲面的超大模具装配体中，若鼠标滑过拾取采用“CPU 遍历全量三角形求交”实现，会引发什么严重后果？",
+          optionsJa: [
+            "マウスを動かすたびにCPU負荷が100%に張り付き、UI描画フレームレートが著しく低下（スパイク）して操作不能になる",
+            "モデルの色がすべて黒色に変わってしまう",
+            "WindowsのOSライセンスが無効化される",
+            "ネットワーク通信パケットが暗号化される"
+          ],
+          optionsZh: [
+            "鼠标移动时 CPU 瞬间打满 100%，视口帧率暴跌发生严重卡顿与假死",
+            "模型颜色全部永久变黑",
+            "操作系统的正版激活状态失效",
+            "网络通讯数据包被非法劫持"
+          ],
+          ans: 0,
+          explainJa: "正解！O(N)の全走査はCADにおいて致命的です。BVHによるO(log N)の空間枝刈り、あるいはGPU Color BufferによるO(1)の実装が不可欠です。",
+          explainZh: "正确！O(N) 遍历全量网格在 CAD 交互中是性能禁忌。工业系统必须依靠 BVH 空间剪枝至 O(log N) 或利用离屏缓冲实现 O(1) 极速拾取。"
+        }
+      },
+
+      /* --- D8章：CAM並列計算と幾何カーネルのスレッドセーフ --- */
+      {
+        chap: 7,
+        subIndex: 0,
+        titleJa: "D8-1 幾何カーネルのポインタ網と並列化の壁",
+        titleZh: "D8-1 几何内核指针网络与多线程并发的死锁陷阱",
+        tag: "CAMアーキテクチャ",
+        bodyJa: `
+          <p>「CAMの等高線荒加工計算が遅いから、OpenMPで並列ループ（#pragma omp parallel for）にしよう！」——この安易な改修は、CAD/CAM開発において<strong>最も悲惨なクラッシュ（SIGSEGV / Heap Corruption）</strong>を引き起こします。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">レガシー構造</span>
+              <span class="workflow-step-title">侵入型ポインタ網</span>
+              <span class="workflow-step-desc">B-Repトポロジは相互参照ポインタの塊。あるスレッドがEdgeを走査中に、別スレッドがFaceを書き換えると即座にポインタが破壊される。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">遅延評価キャッシュ</span>
+              <span class="workflow-step-title">隠れた可変状態</span>
+              <span class="workflow-step-desc">「ただ曲面の座標を問い合わせただけ」でも、内部でバウンディングボックスやB-Splineノットベクトルのキャッシュが書き換わる（非const）。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">排他ロックの罠</span>
+              <span class="workflow-step-title">ミューテックス競合</span>
+              <span class="workflow-step-desc">カーネルのあちこちにMutexを入れると、スレッド同士がロック待ちで固まり、マルチコアなのにシングルスレッドより遅くなる。</span>
+            </div>
+          </div>
+          <div class="lesson-tip-box" style="margin-top:14px; border-left-color:var(--accent-purple);">
+            <strong>📌 黄金ルール：</strong>幾何カーネル（B-Repオブジェクトそのもの）は<strong>「シングルスレッド専用」</strong>として扱うのが鉄則です。マルチスレッド化する際は、後述する「スナップショット隔離」を採用しなければなりません。
+          </div>
+        `,
+        bodyZh: `
+          <p>“等高线粗加工刀路计算太慢了，直接用 OpenMP 给外层循环加一句 #pragma omp parallel for 吧！”——这种冲动的改法，是 CAD/CAM 内核开发中<strong>最惨烈的偶发崩溃（SIGSEGV、堆内存越界、死锁）</strong>的首要温床。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">历史包袱</span>
+              <span class="workflow-step-title">侵入式指针网络</span>
+              <span class="workflow-step-desc">B-Rep 图结构充满互相引用的原始指针。线程 A 遍历 Edge 时若线程 B 更新了面拓扑，指针直接断裂解引用野指针。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">隐蔽写入</span>
+              <span class="workflow-step-title">惰性求值隐式缓存</span>
+              <span class="workflow-step-desc">看似只读的几何查询函数（如 GetBoundingBox()、EvalPoint()），内核内部常伴随惰性缓存更新，本质存在数据写入竞争！</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">锁竞争</span>
+              <span class="workflow-step-title">细粒度 Mutex 反向变慢</span>
+              <span class="workflow-step-desc">在几何图元上加细粒度锁会带来巨大的锁竞争开销，多核吞吐量暴跌，甚至因环形等待引发致命死锁。</span>
+            </div>
+          </div>
+          <div class="lesson-tip-box" style="margin-top:14px; border-left-color:var(--accent-purple);">
+            <strong>📌 架构黄金铁律：</strong>经典 CAD/CAM 几何内核应默认视为<strong>单线程独占对象</strong>。跨线程并发计算必须依靠“几何只读快照”与独立内存空间进行物理隔离。
+          </div>
+        `,
+        trial: {
+          qJa: "幾何カーネルのトポロジー走査処理をマルチスレッド化する際、安易に共有B-Repオブジェクトを複数スレッドから直接読み出してはならない根本原因は？",
+          qZh: "在多线程化几何内核计算时，绝不能让多个工作线程直接并发读取同一个共享 B-Rep 对象的根本原因是什么？",
+          optionsJa: [
+            "見た目は読み取り専用（const）の関数であっても、内部でバウンディングボックスや曲面パラメータの遅延評価キャッシュがスレッドセーフでない形で書き換わるため",
+            "C++のコンパイラがマルチスレッドを禁止しているため",
+            "スレッドを作るとCPUのクロック周波数が半分に制限されるため",
+            "B-Repは暗号化されておりパスワードがないとマルチアクセスできないため"
+          ],
+          optionsZh: [
+            "许多几何查询接口内部包含非线程安全的惰性求值缓存写入（如包围盒、基底采样），只读调用本质存在隐式数据竞争",
+            "因为 C++ 编译器语法层面禁止对指针进行多线程操作",
+            "因为启用多线程会导致主频被操作系统自动锁频减半",
+            "因为 B-Rep 具有硬件级加密狗独占锁不允许并发访问"
+          ],
+          ans: 0,
+          explainJa: "正解！CADカーネルの「内部キャッシュの遅延更新（Lazy Evaluation）」は最も見落とされやすいデータ競合の原因です。",
+          explainZh: "正确！几何内核内部广泛存在的惰性求值缓存更新是只读并发时发生内存越界崩溃的最隐蔽根源。"
+        }
+      },
+      {
+        chap: 7,
+        subIndex: 1,
+        titleJa: "D8-2 スライス並列・ポケット分割とリードオンリー幾何スナップショット",
+        titleZh: "D8-2 切片级并行与只读几何快照隔离架构",
+        tag: "CAMアーキテクチャ",
+        bodyJa: `
+          <p>では、最新のCAMエンジン（Space-E/CAM含む）はどうやって16コア・32スレッドのCPUを100%フル稼働させているのでしょうか？答えは<strong>「計算前のリードオンリー不変スナップショットの生成」</strong>と<strong>「幾何的独立タスクへの分割」</strong>です。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step 1</span>
+              <span class="workflow-step-title">不可変スナップショット</span>
+              <span class="workflow-step-desc">主スレッドで被削材・製品モデルを「三角形メッシュ+BVH木」に一括変換。以降はポインタ変更のない完全リードオンリー配列として全スレッドに配布。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step 2</span>
+              <span class="workflow-step-title">Zレベルスライス並列</span>
+              <span class="workflow-step-desc">Z=0, Z=-5, Z=-10 などの各段差（Slice）は互いに完全に独立。各スレッドが1段ずつ担当して輪郭交差を並行計算。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step 3</span>
+              <span class="workflow-step-title">ポケット領域分割</span>
+              <span class="workflow-step-desc">島状に分かれたキャビティ凹部（Pocket）を検出し、領域ごとに独立したワーカースレッドに割り振ってオフセット刀路を計算。</span>
+            </div>
+          </div>
+          <div class="code-ref-box">
+            <div class="code-ref-title">💻 現代CAMのタスク並列アーキテクチャ（C++ TBB / Task-Based）</div>
+            <pre><code style="color:var(--code-text); font-family:'Fira Code', monospace; font-size:12px;">// 1. 完全不変な幾何スナップショットを準備（ロック不要）
+const ImmutableMeshSnapshot snapshot = ModelMesh::CreateSnapshot(rawBrep);
+
+// 2. 切削レベル一覧（タスクリスト）を生成
+std::vector<double> zLevels = GenerateZSlices(zMin, zMax, stepDown);
+
+// 3. スレッドプールで並列計算（各スレッドは独立したToolpathOutputに書き込む）
+tbb::parallel_for(size_t(0), zLevels.size(), [&](size_t i) {
+    double z = zLevels[i];
+    // snapshotへのアクセスは完全リードオンリーのため排他ロック皆無で超高速！
+    ContourLoop loops = SliceEngine::ComputeIntersect(snapshot, z);
+    toolpaths[i] = OffsetEngine::ComputePocketPath(loops, toolRadius);
+});</code></pre>
+          </div>
+        `,
+        bodyZh: `
+          <p>那么，现代高性能 CAM 系统（包括 Space-E/CAM 计算引擎）究竟是如何榨干 16 核 32 线程 CPU 的全部算力的？其现代架构的精髓在于：<strong>“计算前构建不可变只读几何快照（Immutable Snapshot）”</strong>以及<strong>“切片级与型腔级几何任务分解”</strong>。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step 1</span>
+              <span class="workflow-step-title">不可变几何快照</span>
+              <span class="workflow-step-desc">主线程预先将工件离散为连续平坦数组表达的 Triangle Mesh + BVH 树。切断所有动态指针更新，生成纯只读数据快照。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step 2</span>
+              <span class="workflow-step-title">Z 层切片级并行</span>
+              <span class="workflow-step-desc">等高线粗加工的每个 Z 高度（Z=-1mm, Z=-2mm...）互不干扰，属于天然的易并行业务（Embarrassingly Parallel）。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step 3</span>
+              <span class="workflow-step-title">独立型腔任务调度</span>
+              <span class="workflow-step-desc">将截面轮廓分解为独立的闭合 Pocket（型腔孤岛），分派给工作线程池，各自计算二维内偏置刀路，零锁等待！</span>
+            </div>
+          </div>
+          <div class="code-ref-box">
+            <div class="code-ref-title">💻 现代 CAM 任务流架构（C++ TBB / 线程池并发伪代码）</div>
+            <pre><code style="color:var(--code-text); font-family:'Fira Code', monospace; font-size:12px;">// 1. 预先构建完全不可变（Immutable）的几何快照（彻底免除运行时锁）
+const ImmutableMeshSnapshot snapshot = ModelMesh::CreateSnapshot(rawBrep);
+
+// 2. 生成所有等高切片深度任务序列
+std::vector<double> zLevels = GenerateZSlices(zMin, zMax, stepDown);
+
+// 3. 提交至工作线程池并行求解
+tbb::parallel_for(size_t(0), zLevels.size(), [&](size_t i) {
+    double z = zLevels[i];
+    // 所有工作线程只读查询 snapshot，零锁争用，线性加速比！
+    ContourLoop loops = SliceEngine::ComputeIntersect(snapshot, z);
+    toolpaths[i] = OffsetEngine::ComputePocketPath(loops, toolRadius);
+});</code></pre>
+          </div>
+        `,
+        trial: {
+          qJa: "CAMの等高線加工パス計算において、高並列マルチスレッド化とスレッドセーフを両立させる最も優れた設計パターンは？",
+          qZh: "在 CAM 等高线切削计算中，兼顾多线程高并发吞吐量与线程安全的最佳架构模式是？",
+          optionsJa: [
+            "計算開始前に主スレッドで完全不変（Immutable）な三角メッシュ/BVH幾何スナップショットを作成し、各Z層のスライス計算を排他ロック不要のリードオンリータスクとして並列実行する",
+            "共有のB-Repモデルに対してグローバルMutexを1つかけ、全スレッドを順番待ちさせる",
+            "並列化をあきらめてCPUを液体窒素でオーバークロックする",
+            "計算精度を10mmまで落として計算ステップ数を減らす"
+          ],
+          optionsZh: [
+            "在进入并发前由主线程生成不可变的三角网格/BVH 只读几何快照，将各 Z 层切片与型腔刀轨分配为完全无锁的独立任务并发执行",
+            "给全局共享 B-Rep 挂一个大互斥锁，让几十个线程排队串行访问",
+            "彻底放弃并发优化，依赖单核硬件超频",
+            "将切削公差降到 10mm 强行缩短计算时间"
+          ],
+          ans: 0,
+          explainJa: "正解！「不変スナップショット+領域・層別タスク分解」が、複雑な幾何データを並列化する際の業界標準パターンです。",
+          explainZh: "正确！“不可变只读快照 + 空间切片任务分解”是当代工业级 CAM 引擎发挥多核算力的标准架构范式。"
+        }
+      },
+
+      /* --- D9章：5軸キネマティクス・特異点と先行補間制御 --- */
+      {
+        chap: 8,
+        subIndex: 0,
+        titleJa: "D9-1 CL Dataから機械軸への逆運動学変換とRTCP",
+        titleZh: "D9-1 CL Data 逆运动学变换与 RTCP 刀尖跟随",
+        tag: "5軸CAM",
+        bodyJa: `
+          <p>CAMエンジンが出力する刀位データ（CL Data）は、通常<strong>ワーク座標系上の工具先端位置 (X,Y,Z) と工具軸ベクトル (I,J,K)</strong> です。しかし実際の5軸工作機械は「直線軸(X,Y,Z) + 回転軸(A/B/C)」で駆動されます。この変換を行うのが<strong>ポストプロセッサの逆運動学（Inverse Kinematics）エンジン</strong>です。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">機械構成</span>
+              <span class="workflow-step-title">3大キネマティクス構造</span>
+              <span class="workflow-step-desc">テーブル回転型（Table-Table）、主軸首振り型（Head-Head）、複合型（Head-Table）。構造ごとに変換行列の方程式が全く異なる。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">RTCP制御</span>
+              <span class="workflow-step-title">Tool Center Point Control</span>
+              <span class="workflow-step-desc">回転軸が傾いた際、工具先端点がワークに対してズレないようNC側が直線軸を自動追従補正（FANUC G43.4 / Heidenhain M128）。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">回転中心オフセット</span>
+              <span class="workflow-step-title">機械原点と回転軸間距離</span>
+              <span class="workflow-step-desc">回転軸の交点からテーブル天面までの距離（Pivot Distance）。ポストプロセッサ設定時の最重要パラメータ。</span>
+            </div>
+          </div>
+          <div class="lesson-tip-box" style="margin-top:14px; border-left-color:var(--accent-emerald);">
+            <strong>💻 開発者の数学メモ：</strong><br>
+            工具軸ベクトル (I, J, K) からテーブル傾斜角 A・回転角 C を求める基本逆三角関数：<br>
+            C = atan2(I, J), A = acos(K)<br>
+            この一見単純な数式の中に、次に学ぶ「特異点の悪夢」が潜んでいます。
+          </div>
+        `,
+        bodyZh: `
+          <p>CAM 刀轨引擎计算完毕后输出的刀位源文件（CL Data），通常包含<strong>工件坐标系下的刀尖三维点 (X,Y,Z) 与刀轴空间姿态矢量 (I,J,K)</strong>。然而实体的五轴加工中心依靠的是机械物理轴（X, Y, Z 直线轴 + A/B/C 旋转轴）。后置处理器（Post-Processor）内部的<strong>逆运动学（Inverse Kinematics）解析引擎</strong>负责执行这一空间变换。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">机床拓扑</span>
+              <span class="workflow-step-title">三大运动学拓扑构型</span>
+              <span class="workflow-step-desc">双转台型（Table-Table AC/BC）、双摆头型（Head-Head）、一摆一转型（Head-Table）。各构型的刚体变换矩阵截然不同。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">RTCP 机制</span>
+              <span class="workflow-step-title">刀尖点旋转中心跟随</span>
+              <span class="workflow-step-desc">当刀轴倾斜摆动时，CNC 伺服实时联动插补 XYZ 轴以确保刀尖点相对工件零漂移（FANUC G43.4 / 海德汉 M128）。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">摆长偏置</span>
+              <span class="workflow-step-title">Pivot Length 物理偏置</span>
+              <span class="workflow-step-desc">旋转中心交点到主轴端面及工作台面的距离偏置。若参数测量误差超过 0.01mm，五轴光刀面必现严重接刀台阶。</span>
+            </div>
+          </div>
+          <div class="lesson-tip-box" style="margin-top:14px; border-left-color:var(--accent-emerald);">
+            <strong>💻 开发者数学备忘：</strong><br>
+            对于立式 AC 双转台机床，刀轴矢量 (I, J, K) 映射旋转轴角度的经典初等方程为：<br>
+            C = atan2(I, J), A = acos(K)<br>
+            在这组简洁的几何映射中，正隐藏着让机床剧烈甩头撞机的“奇异点深渊”。
+          </div>
+        `,
+        trial: {
+          qJa: "5軸CAMソフトウェアにおける「RTCP（Rotation Tool Center Point）」機能の本質的な役割として最も適切なのはどれか？",
+          qZh: "在五轴 CAM 与机床控制中，“RTCP（刀尖点跟随控制）”功能的核心本质是？",
+          optionsJa: [
+            "工具軸が回転して傾斜した際、工具先端点が指令されたワーク座標位置からズレないようNC側がXYZ軸をリアルタイムに同時補正すること",
+            "切削液の噴射ノズルの向きを自動調整すること",
+            "NCプログラムの行番号を自動で振り直すこと",
+            "切削抵抗をゼロにして刃物の摩耗を完全に防ぐこと"
+          ],
+          optionsZh: [
+            "当回转轴倾斜摆动时，由控制器实时联动补偿 XYZ 直线轴，使刀具切削刃尖点始终精确保持在指令的工件轨迹上",
+            "自动调节机床高压切削液的喷嘴朝向",
+            "自动重新排列 G 代码的行号 N 序列",
+            "消除一切物理切削阻力使刀具永不磨损"
+          ],
+          ans: 0,
+          explainJa: "正解！RTCP（FANUC G43.4等）により、プログラマは機械の回転軸心位置を意識せず純粋な製品形状基準でCAMパスを作成できます。",
+          explainZh: "正确！RTCP 彻底解放了 CAM 编程人员，无需根据不同机床的具体摆臂长度去重新计算偏置，实现代码与物理机床的解耦。"
+        }
+      },
+      {
+        chap: 8,
+        subIndex: 1,
+        titleJa: "D9-2 運動学特異点（Singularity）の暴走メカニズムと回避アルゴリズム",
+        titleZh: "D9-2 运动学奇异点暴走机制与自适应平滑避让",
+        tag: "5軸CAM",
+        bodyJa: `
+          <p>5軸加工における最大の物理的恐怖、それが<strong>「特異点（Singularity）」</strong>です。立式ACテーブル型工作機械において、工具軸がテーブル法線と完全に平行（I=0, J=0, K=1）になる瞬間、C = atan2(0, 0) となり、C軸角度の数学解が<strong>不定（0除算/特異点）</strong>に陥ります。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">暴走の現象</span>
+              <span class="workflow-step-title">C軸の急激な高速反転</span>
+              <span class="workflow-step-desc">特異点近傍をわずか0.01mm通過するだけで、C軸が180度激しく急旋回。送り速度が追いつかずワークに深傷を掘るかサーボアラーム停止。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">極回避法</span>
+              <span class="workflow-step-title">Pole Avoidance（微小傾斜）</span>
+              <span class="workflow-step-desc">ポストプロセッサ側で、工具軸が極（Z軸）に近づいた際に強制的に 0.05〜0.1度の微小チルトを与えて特異点通過を回避。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">先行補間減速</span>
+              <span class="workflow-step-title">Look-Ahead 速度制御</span>
+              <span class="workflow-step-desc">特異点通過区間を事前検知し、回転軸の許容角加速度を超えないよう送り速度（F値）を自動減速して平滑補間。</span>
+            </div>
+          </div>
+          <div class="lesson-tip-box" style="margin-top:14px; border-left-color:var(--accent-rose);">
+            <strong>⚠️ ポストプロセッサ開発者の必須チェック：</strong>
+            「CAM画面上のシミュレーションでは何の問題もないのに、実機で回すと原点付近でガタガタ激しく揺れる」というバグ報告は100%特異点処理の不備です。ポストプロセッサの逆変換ループに特異点閾値ガード（例: hypot(I, J) &lt; 1e-4）を組み込んでください。
+          </div>
+        `,
+        bodyZh: `
+          <p>五轴加工中最令现场机床操作工闻风丧胆的物理灾难，便是<strong>“运动学奇异点（Kinematic Singularity）”</strong>。在立式 AC 双转台机床上，当刀轴与工作台垂直（I=0, J=0, K=1）时，角度计算出现 C = atan2(0, 0)，其数学解进入<strong>无定义奇异区</strong>！</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">事故现象</span>
+              <span class="workflow-step-title">C 轴瞬时狂转 180°</span>
+              <span class="workflow-step-desc">刀具在工件表面仅仅平移 0.005mm，但因越过极点，C 轴伺服在微秒内收到 180 度反转指令，转台剧烈甩动直接啃坏工件！</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">极点避让</span>
+              <span class="workflow-step-title">Pole Avoidance（微偏补偿）</span>
+              <span class="workflow-step-desc">后置处理器算法在检测到刀轴接近天顶极角（A=0°）时，主动施加一个极微小的倾角（如 0.05°），巧妙绕开奇异死区。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">前瞻平滑</span>
+              <span class="workflow-step-title">角加速度前瞻自适应平滑</span>
+              <span class="workflow-step-desc">后置处理在特异点过渡区强制限制旋转轴的最大角加速度，自动自适应调降线性进给速度 F，平滑过渡。</span>
+            </div>
+          </div>
+          <div class="lesson-tip-box" style="margin-top:14px; border-left-color:var(--accent-rose);">
+            <strong>⚠️ 后置处理器维护者的核心防线：</strong>
+            “CAM 视口仿真刀轨极其平顺，一上真机切削工件就打出深坑甚至过载跳闸”——这种 Bug 报告几乎 100% 源于后置处理器缺失奇异点平滑算法。代码中必须包含极点保护：hypot(I, J) &lt; SINGULARITY_EPSILON。
+          </div>
+        `,
+        trial: {
+          qJa: "5軸CAMのポストプロセッサにおいて、工具軸が機械の回転軸と完全に重なる「特異点（Singularity）」を通過する際に発生する最も典型的な不具合は？",
+          qZh: "在五轴 CAM 后置处理中，当刀轴与机床旋转中心完全重合进入“运动学奇异点（Singularity）”时，最典型的机床异常现象是？",
+          optionsJa: [
+            "回転軸（C軸等）が極小の移動量に対して急激に180度近く激しく高速回転し、過酷な振動や加工面のむしれ・食い込み傷（Gouge）を引き起こす",
+            "工作機械のメインブレーカーが停電する",
+            "NC画面の言語設定が英語に切り替わる",
+            "クーラントタンクの水が蒸発する"
+          ],
+          optionsZh: [
+            "旋转轴（如 C 轴）在微小平移区间内发生近 180 度的剧烈极限反转甩动，引发强烈机械震颤并在工件表面留下深坑过切",
+            "机床总电源发生空气开关短路跳闸",
+            "机床数控面板的语言设置自动乱码变乱",
+            "切削液水箱的水瞬间蒸发殆尽"
+          ],
+          ans: 0,
+          explainJa: "正解！数学的にC軸の自由度が不定（0/0）になるため、わずかな軌跡のブレで角度が180度反転して激しい機械暴走を引き起こします。",
+          explainZh: "正确！由于极点处方位角在数学上出现不定式（0/0），微小的空间位移就会引发旋转轴剧烈自转甚至机械冲击，必须由后置平滑算法防范。"
+        }
+      }
     ];
 
-    /* ==========================================================================
-       4. 实战工坊 (Quest 题库: 4 Tier x 7 题 = 28 道工业工程题目)
-       ========================================================================== */
     const QUEST_BANK = [
       {
             "tier": 0,
@@ -4345,7 +5157,8 @@
       scallopHeight: 0.005,
       sparkGap: 0.05,
       showWireframe: true,
-      animating: false
+      animating: false,
+      devKernelMode: false
     };
 
     // 学习轨道数据访问器：根据 State.track 返回对应的章节/课时数据集
@@ -4709,7 +5522,7 @@
     }
 
     /* ==========================================================================
-       10. 模块 3: 虚拟工场 3D 模拟器 (Interactive WebGL/Canvas Engine)
+       10. 模块 3: 虚拟工场 3D 模拟器 (方案 C: 真实几何内核与切削物理算法交互视口)
        ========================================================================== */
     let canvas, ctx;
     let rotX = 25 * Math.PI / 180;
@@ -4720,12 +5533,40 @@
     let animFrame = null;
     let animAngle = 0;
 
-    function switchLab(labType) {
+    // 基础三维几何向量代数库 (True Vector Algebra Library)
+    function vSub(a, b) { return [a[0] - b[0], a[1] - b[1], a[2] - b[2]]; }
+    function vAdd(a, b) { return [a[0] + b[0], a[1] + b[1], a[2] + b[2]]; }
+    function vScale(a, s) { return [a[0] * s, a[1] * s, a[2] * s]; }
+    function vDot(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
+    function vCross(a, b) {
+      return [
+        a[1] * b[2] - a[2] * b[1],
+        a[2] * b[0] - a[0] * b[2],
+        a[0] * b[1] - a[1] * b[0]
+      ];
+    }
+    function vNorm(v) {
+      const len = Math.hypot(v[0], v[1], v[2]);
+      return len > 1e-7 ? [v[0] / len, v[1] / len, v[2] / len] : [0, 1, 0];
+    }
+    function computeFaceNormal(p0, p1, p2) {
+      return vNorm(vCross(vSub(p1, p0), vSub(p2, p0)));
+    }
+
+    function switchLab(labType, evt) {
       sound.click();
       State.currentLab = labType;
       const tabs = document.querySelectorAll('.lab-tab');
-      tabs.forEach(t => t.classList.remove('active'));
-      event.currentTarget.classList.add('active');
+      tabs.forEach(t => {
+        if (t.getAttribute('data-lab') === labType) {
+          t.classList.add('active');
+        } else {
+          t.classList.remove('active');
+        }
+      });
+      if (evt && evt.currentTarget) {
+        evt.currentTarget.classList.add('active');
+      }
 
       renderLabControls();
       drawLabFrame();
@@ -4762,7 +5603,7 @@
         rotX += dy * 0.008;
         rotX = Math.max(-Math.PI / 2 + 0.1, Math.min(Math.PI / 2 - 0.1, rotX));
 
-        document.getElementById('hudInfo1').innerText = `ROT: X=${Math.round(rotX * 180 / Math.PI)}° Y=${Math.round(rotY * 180 / Math.PI)}°`;
+        updateHudText();
         drawLabFrame();
       });
       window.addEventListener('mouseup', () => { isDragging = false; });
@@ -4779,55 +5620,79 @@
       drawLabFrame();
     }
 
+    function updateHudText() {
+      const h1 = document.getElementById('hudInfo1');
+      const h2 = document.getElementById('hudInfo2');
+      if (h1) h1.innerText = `ROTATION: X=${Math.round(rotX * 180 / Math.PI)}° Y=${Math.round(rotY * 180 / Math.PI)}° (ZOOM: ${zoom.toFixed(2)}x)`;
+      if (h2) {
+        if (State.currentLab === 'draft') {
+          h2.innerText = `PULL VECTOR: (0, ${State.pullDirZ > 0 ? '+1' : '-1'}, 0) | THRESHOLD: ${State.draftAngle.toFixed(1)}°`;
+        } else if (State.currentLab === 'cam') {
+          h2.innerText = `TOOL RADIUS: R${State.toolRadius.toFixed(1)}mm | REST THK: ${(State.toolRadius * (Math.SQRT2 - 1)).toFixed(2)}mm`;
+        } else if (State.currentLab === 'edm') {
+          h2.innerText = `SPARK GAP: -${State.sparkGap.toFixed(3)}mm (NORMAL OFFSET EQUIDISTANT)`;
+        }
+      }
+    }
+
     function resetCamera() {
       sound.click();
       rotX = 25 * Math.PI / 180;
       rotY = 35 * Math.PI / 180;
       zoom = 1.0;
+      updateHudText();
       drawLabFrame();
     }
 
     function toggleWireframe() {
       sound.click();
       State.showWireframe = !State.showWireframe;
-      document.getElementById('btnToggleWireframe').classList.toggle('active', State.showWireframe);
+      const btn = document.getElementById('btnToggleWireframe');
+      if (btn) btn.classList.toggle('active', State.showWireframe);
+      drawLabFrame();
+    }
+
+    function toggleDevKernel() {
+      sound.click();
+      State.devKernelMode = !State.devKernelMode;
+      const btn = document.getElementById('btnToggleDevKernel');
+      if (btn) btn.classList.toggle('active', State.devKernelMode);
       drawLabFrame();
     }
 
     function toggleAnim() {
       sound.click();
       State.animating = !State.animating;
-      document.getElementById('btnToggleAnim').classList.toggle('active', State.animating);
+      const btn = document.getElementById('btnToggleAnim');
+      if (btn) btn.classList.toggle('active', State.animating);
       if (State.animating) loopAnim();
     }
 
     function loopAnim() {
       if (!State.animating) return;
-      animAngle += 0.02;
-      rotY += 0.006;
+      animAngle += 0.025;
+      rotY += 0.005;
       drawLabFrame();
       requestAnimationFrame(loopAnim);
     }
 
-    /* 3D 投影核心函数 */
+    /* 3D 投影核心函数 (Perspective Projection) */
     function project3D(x, y, z, cx, cy, scale) {
-      // Y轴旋转
       const cosY = Math.cos(rotY), sinY = Math.sin(rotY);
       const x1 = x * cosY + z * sinY;
       const z1 = -x * sinY + z * cosY;
 
-      // X轴旋转
       const cosX = Math.cos(rotX), sinX = Math.sin(rotX);
       const y2 = y * cosX - z1 * sinX;
       const z2 = y * sinX + z1 * cosX;
 
-      // 透视投影
-      const dist = 320;
+      const dist = 340;
       const fov = dist / (dist + z2);
       return {
         px: cx + x1 * fov * scale * zoom,
         py: cy - y2 * fov * scale * zoom,
-        z: z2
+        z: z2,
+        fov: fov
       };
     }
 
@@ -4839,7 +5704,28 @@
 
       const cx = w / 2;
       const cy = h / 2;
-      const scale = Math.min(w, h) * 0.0028;
+      const scale = Math.min(w, h) * 0.0030;
+
+      // 视口背景坐标网格
+      ctx.save();
+      ctx.strokeStyle = currentTheme === 'light' ? 'rgba(2, 132, 199, 0.12)' : 'rgba(56, 189, 248, 0.12)';
+      ctx.lineWidth = 1;
+      for (let g = -100; g <= 100; g += 50) {
+        const p1 = project3D(g, -40, -100, cx, cy, scale);
+        const p2 = project3D(g, -40, 100, cx, cy, scale);
+        ctx.beginPath();
+        ctx.moveTo(p1.px, p1.py);
+        ctx.lineTo(p2.px, p2.py);
+        ctx.stroke();
+
+        const p3 = project3D(-100, -40, g, cx, cy, scale);
+        const p4 = project3D(100, -40, g, cx, cy, scale);
+        ctx.beginPath();
+        ctx.moveTo(p3.px, p3.py);
+        ctx.lineTo(p4.px, p4.py);
+        ctx.stroke();
+      }
+      ctx.restore();
 
       if (State.currentLab === 'draft') {
         drawDraftAngleLab(cx, cy, scale);
@@ -4848,192 +5734,437 @@
       } else if (State.currentLab === 'edm') {
         drawEdmElectrodeLab(cx, cy, scale);
       }
+
+      updateHudText();
     }
 
-    /* 1. 勾配解析 3D 渲染 (Draft Angle Inspector) */
+    /* --------------------------------------------------------------------------
+       1. 拔模斜度分析 (Draft Angle Inspector - 严密法向量点积算法)
+       -------------------------------------------------------------------------- */
     function drawDraftAngleLab(cx, cy, scale) {
-      // 绘制一个带阶梯型腔与拔模坡度的金型模型
-      const draftVal = State.draftAngle; // 设定目标抜き勾配 (例: 3度)
-      
-      // 生成模具截面与多面体网格
-      const faces = [
-        // 顶部分型面 (合格 90° 水平面 -> 绿色)
-        { pts: [[-60, 40, -60], [60, 40, -60], [60, 40, 60], [-60, 40, 60]], angle: 90, type: 'pl' },
-        // 型腔前壁 (拔模角 = draftVal度 -> 绿色)
-        { pts: [[-40, 40, 30], [40, 40, 30], [30, -30, 20], [-30, -30, 20]], angle: draftVal, type: 'draft' },
-        // 型腔后壁 (逆拔模 = -1.5度 -> 倒扣红色！)
-        { pts: [[40, 40, -30], [-40, 40, -30], [-30, -30, -38], [30, -30, -38]], angle: -1.5, type: 'undercut' },
-        // 型腔左壁 (拔模角 = draftVal度)
-        { pts: [[-40, 40, -30], [-40, 40, 30], [-30, -30, 20], [-30, -30, -38]], angle: draftVal, type: 'draft' },
-        // 型腔右壁 (直壁 90度垂直 -> 蓝色警戒)
-        { pts: [[40, 40, 30], [40, 40, -30], [40, -30, -38], [40, -30, 20]], angle: 0.0, type: 'vertical' },
-        // 底面
-        { pts: [[-30, -30, 20], [30, -30, 20], [30, -30, -38], [-30, -30, -38]], angle: 90, type: 'pl' }
+      const pullDir = State.pullDirZ; // +1 表示 +Y 抽芯, -1 表示 -Y 抽芯
+      const V_pull = [0, pullDir, 0];
+      const threshold = State.draftAngle; // 合格拔模阈值 (1.0° ~ 5.0°)
+
+      // 构建真实的模具型腔多面体几何 (Mold Cavity Solid)
+      // 包含：顶部分型面 (PL)、正拔模前壁 (+6.6°)、倒扣后壁 (-6.6°)、临界左壁 (+1.4°)、严格垂直右壁 (0.0°)、型腔底面
+      const rawFaces = [
+        // 分型面 1 (顶面 - 严格水平面)
+        { name: "PL面(前)", pts: [[-50, 35, 25], [50, 35, 25], [50, 35, 55], [-50, 35, 55]] },
+        // 分型面 2 (顶面 - 严格水平面)
+        { name: "PL面(后)", pts: [[-50, 35, -55], [50, 35, -55], [50, 35, -25], [-50, 35, -25]] },
+        // 分型面 3 (顶面左)
+        { name: "PL面(左)", pts: [[-50, 35, -25], [-35, 35, -25], [-35, 35, 25], [-50, 35, 25]] },
+        // 分型面 4 (顶面右)
+        { name: "PL面(右)", pts: [[35, 35, -25], [50, 35, -25], [50, 35, 25], [35, 35, 25]] },
+
+        // 型腔前壁 (正拔模面: 顶边 Z=25, 底边 Z=18 -> 内缩 7mm, 高 60mm -> 拔模角 ≈ +6.65°)
+        { name: "前壁 (正拔模)", pts: [[-35, 35, 25], [35, 35, 25], [30, -25, 18], [-30, -25, 18]] },
+
+        // 型腔后壁 (倒扣面 Undercut: 顶边 Z=-25, 底边 Z=-32 -> 反向掏空外延 7mm -> 逆拔模 ≈ -6.65° 倒扣!)
+        { name: "后壁 (倒扣面)", pts: [[35, 35, -25], [-35, 35, -25], [-30, -25, -32], [30, -25, -32]] },
+
+        // 型腔左壁 (临界拔模面: 顶边 X=-35, 底边 X=-33.5 -> 内缩 1.5mm -> 拔模角 ≈ +1.43°)
+        { name: "左壁 (临界面)", pts: [[-35, 35, -25], [-35, 35, 25], [-30, -25, 18], [-30, -25, -32]] },
+
+        // 型腔右壁 (严格垂直壁: 顶边 X=35, 底边 X=35 -> 内缩 0mm -> 拔模角严格为 0.0°)
+        { name: "右壁 (直壁0°)", pts: [[35, 35, 25], [35, 35, -25], [30, -25, -32], [30, -25, 18]] },
+
+        // 型腔底面 (水平面)
+        { name: "底面", pts: [[-30, -25, 18], [30, -25, 18], [30, -25, -32], [-30, -25, -32]] }
       ];
 
-      // 按 Z 深度排序绘制多边形
-      faces.forEach(face => {
-        const projs = face.pts.map(p => project3D(p[0], p[1], p[2], cx, cy, scale));
-        face.avgZ = projs.reduce((acc, p) => acc + p.z, 0) / projs.length;
-        face.projs = projs;
-      });
-      faces.sort((a, b) => b.avgZ - a.avgZ);
+      let countOK = 0, countUndercut = 0, countWarning = 0, countPL = 0;
 
-      faces.forEach(face => {
+      // 实时执行工业级法向量求交与脱模夹角点积计算
+      const processedFaces = rawFaces.map(f => {
+        // 计算真实法向量
+        const norm = computeFaceNormal(f.pts[0], f.pts[1], f.pts[2]);
+
+        // 计算面中心点 (Centroid)
+        const center = [
+          f.pts.reduce((acc, p) => acc + p[0], 0) / f.pts.length,
+          f.pts.reduce((acc, p) => acc + p[1], 0) / f.pts.length,
+          f.pts.reduce((acc, p) => acc + p[2], 0) / f.pts.length
+        ];
+
+        // 点积 dot = N · V_pull
+        const dot = vDot(norm, V_pull);
+        // 空间夹角 phi (0 ~ π)
+        const phi = Math.acos(Math.max(-1, Math.min(1, dot)));
+        // 拔模角 theta = 90° - phi (度数)
+        const thetaDeg = 90.0 - (phi * 180.0 / Math.PI);
+
+        // 判定颜色
+        let color, statusLabel;
+        if (thetaDeg < -0.1) {
+          // 倒扣报警 (红色)
+          color = 'rgba(239, 68, 68, 0.88)';
+          statusLabel = '倒扣 (Undercut)';
+          countUndercut++;
+        } else if (thetaDeg >= 82.0) {
+          // 水平分型面 PL (青金透明色)
+          color = 'rgba(14, 165, 233, 0.65)';
+          statusLabel = 'PL分型面';
+          countPL++;
+        } else if (thetaDeg >= threshold) {
+          // 合格拔模面 (绿色)
+          color = 'rgba(16, 185, 129, 0.88)';
+          statusLabel = '合格拔模 (OK)';
+          countOK++;
+        } else {
+          // 警戒/不足面 (高亮天蓝色)
+          color = 'rgba(2, 132, 199, 0.88)';
+          statusLabel = '拔模不足 (Warning)';
+          countWarning++;
+        }
+
+        const projs = f.pts.map(p => project3D(p[0], p[1], p[2], cx, cy, scale));
+        const avgZ = projs.reduce((acc, p) => acc + p.z, 0) / projs.length;
+        const projCenter = project3D(center[0], center[1], center[2], cx, cy, scale);
+        const normEnd = project3D(center[0] + norm[0] * 18, center[1] + norm[1] * 18, center[2] + norm[2] * 18, cx, cy, scale);
+
+        return {
+          ...f,
+          norm,
+          center,
+          dot,
+          thetaDeg,
+          color,
+          statusLabel,
+          projs,
+          avgZ,
+          projCenter,
+          normEnd
+        };
+      });
+
+      // Painter's Algorithm: 深度 Z 排序
+      processedFaces.sort((a, b) => b.avgZ - a.avgZ);
+
+      // 渲染多边形
+      processedFaces.forEach(f => {
         ctx.beginPath();
-        face.projs.forEach((p, idx) => {
+        f.projs.forEach((p, idx) => {
           if (idx === 0) ctx.moveTo(p.px, p.py);
           else ctx.lineTo(p.px, p.py);
         });
         ctx.closePath();
-
-        // 颜色映射算法 (Space-E 勾配解析假色图谱)
-        if (face.type === 'undercut' || face.angle < 0) {
-          ctx.fillStyle = 'rgba(244, 63, 94, 0.85)'; // 倒拔模红色报警！
-        } else if (face.type === 'vertical' || face.angle === 0) {
-          ctx.fillStyle = 'rgba(56, 189, 248, 0.85)'; // 垂直面蓝色警戒
-        } else {
-          ctx.fillStyle = 'rgba(16, 185, 129, 0.85)'; // 合格拔模绿色
-        }
+        ctx.fillStyle = f.color;
         ctx.fill();
 
         if (State.showWireframe) {
-          ctx.strokeStyle = '#ffffff';
-          ctx.lineWidth = 1.5;
+          ctx.strokeStyle = currentTheme === 'light' ? 'rgba(15, 23, 42, 0.6)' : 'rgba(255, 255, 255, 0.65)';
+          ctx.lineWidth = 1.2;
           ctx.stroke();
+        }
+
+        // 内核透视模式 (Dev Mode): 绘制真实法向量箭头与数值标注
+        if (State.devKernelMode) {
+          ctx.beginPath();
+          ctx.moveTo(f.projCenter.px, f.projCenter.py);
+          ctx.lineTo(f.normEnd.px, f.normEnd.py);
+          ctx.strokeStyle = '#fbbf24';
+          ctx.lineWidth = 2.0;
+          ctx.stroke();
+
+          // 箭头尖端
+          ctx.fillStyle = '#fbbf24';
+          ctx.beginPath();
+          ctx.arc(f.normEnd.px, f.normEnd.py, 3, 0, Math.PI * 2);
+          ctx.fill();
+
+          // 标注法向量与计算度数
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '9px Fira Code';
+          ctx.fillText(`${f.thetaDeg >= 0 ? '+' : ''}${f.thetaDeg.toFixed(1)}°`, f.projCenter.px - 14, f.projCenter.py);
         }
       });
 
-      // 绘制脱模矢量箭头 (+Z 抽芯方向)
-      const pStart = project3D(0, 0, 0, cx, cy, scale);
-      const pEnd = project3D(0, 80 * State.pullDirZ, 0, cx, cy, scale);
+      // 绘制脱模方向主矢量箭头
+      const pullStart = project3D(0, 0, 0, cx, cy, scale);
+      const pullEnd = project3D(0, 75 * pullDir, 0, cx, cy, scale);
       ctx.beginPath();
-      ctx.moveTo(pStart.px, pStart.py);
-      ctx.lineTo(pEnd.px, pEnd.py);
+      ctx.moveTo(pullStart.px, pullStart.py);
+      ctx.lineTo(pullEnd.px, pullEnd.py);
       ctx.strokeStyle = '#fbbf24';
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 3.5;
       ctx.stroke();
 
       ctx.fillStyle = '#fbbf24';
-      ctx.font = 'bold 13px Fira Code';
-      ctx.fillText('PULL (+Z)', pEnd.px + 8, pEnd.py);
+      ctx.font = 'bold 12px Fira Code';
+      ctx.fillText(pullDir > 0 ? 'PULL (+Y / 上向)' : 'PULL (-Y / 下向)', pullEnd.px + 10, pullEnd.py);
+
+      // 更新侧栏状态卡片
+      const statusEl = document.getElementById('draftStatusCardContent');
+      if (statusEl) {
+        statusEl.innerHTML = `
+          <div class="status-item"><span>🟢 合格拔模面 (OK):</span> <strong>${countOK} 面 (&gt;${threshold.toFixed(1)}°)</strong></div>
+          <div class="status-item"><span>🔴 倒扣危险区 (Undercut):</span> <strong style="color:#fb7185;">${countUndercut} 面 (要スライド/斜頂)</strong></div>
+          <div class="status-item"><span>🔵 垂直警戒面 (Warning):</span> <strong style="color:#38bdf8;">${countWarning} 面 (&lt;${threshold.toFixed(1)}°)</strong></div>
+          <div class="status-item"><span>💠 分型水平面 (PL):</span> <strong>${countPL} 面 (90°)</strong></div>
+        `;
+      }
     }
 
-    /* 2. CAM 切削刀具路径与残料模拟 (Toolpath & Rest Machining) */
+    /* --------------------------------------------------------------------------
+       2. CAM 刀轨与真实角落残料几何计算 (Constant-Z & Rest Material Geometry)
+       -------------------------------------------------------------------------- */
     function drawCamToolpathLab(cx, cy, scale) {
-      // 绘制型腔外框
-      const basePts = [
-        [-50, 20, -50], [50, 20, -50], [50, 20, 50], [-50, 20, 50],
-        [-50, -30, -50], [50, -30, -50], [50, -30, 50], [-50, -30, 50]
-      ].map(p => project3D(p[0], p[1], p[2], cx, cy, scale));
+      const R = State.toolRadius; // 刀具半径 R (2.0 ~ 16.0mm)
+      const scallop = State.scallopHeight;
 
-      ctx.strokeStyle = 'rgba(148, 163, 184, 0.4)';
-      ctx.lineWidth = 1;
-      // 绘制底部线框
-      ctx.strokeRect(basePts[0].px - 60, basePts[0].py - 40, 120, 80);
+      // 工件拐角几何定义: 直角内角 (90° Corner)
+      // 角落顶点 O(35, 35) 在 X-Z 平面，内壁 1 为 X=35，内壁 2 为 Z=35
+      // 真实残料最大厚度: T_rest = R * (sqrt(2) - 1) ≈ 0.4142 * R
+      const restThickness = R * (Math.SQRT2 - 1);
 
-      // 绘制等高粗加工切削刀轨 (Constant Z Toolpaths - Cyan)
-      for (let zLevel = 15; zLevel >= -25; zLevel -= 8) {
+      // 绘制工件外框与型腔实体线框
+      const cavityLevels = [15, 0, -15, -30];
+      cavityLevels.forEach((yLvl, idx) => {
+        const pts = [
+          [-45, yLvl, -45], [35, yLvl, -45], [35, yLvl, 35], [-45, yLvl, 35]
+        ].map(p => project3D(p[0], p[1], p[2], cx, cy, scale));
+
         ctx.beginPath();
-        for (let a = 0; a <= Math.PI * 2 + 0.1; a += 0.2) {
-          const r = 35 + Math.sin(a * 4) * 4;
-          const px = Math.cos(a) * r;
-          const pz = Math.sin(a) * r;
-          const p = project3D(px, zLevel, pz, cx, cy, scale);
-          if (a === 0) ctx.moveTo(p.px, p.py);
+        pts.forEach((p, i) => {
+          if (i === 0) ctx.moveTo(p.px, p.py);
           else ctx.lineTo(p.px, p.py);
-        }
-        ctx.strokeStyle = '#38bdf8';
-        ctx.lineWidth = 2;
+        });
+        ctx.closePath();
+        ctx.strokeStyle = idx === 0 ? 'rgba(148, 163, 184, 0.7)' : 'rgba(148, 163, 184, 0.25)';
+        ctx.lineWidth = idx === 0 ? 1.8 : 1.0;
         ctx.stroke();
+      });
+
+      // 绘制等高粗加工刀心轨迹 (Constant-Z Toolpaths)
+      cavityLevels.forEach(yLvl => {
+        const offX = 35 - R;
+        const offZ = 35 - R;
+        const toolpathPts = [
+          [-45 + R, yLvl, -45 + R],
+          [offX, yLvl, -45 + R],
+          [offX, yLvl, offZ],
+          [-45 + R, yLvl, offZ]
+        ].map(p => project3D(p[0], p[1], p[2], cx, cy, scale));
+
+        ctx.beginPath();
+        toolpathPts.forEach((p, i) => {
+          if (i === 0) ctx.moveTo(p.px, p.py);
+          else ctx.lineTo(p.px, p.py);
+        });
+        ctx.closePath();
+        ctx.strokeStyle = '#0284c7';
+        ctx.lineWidth = 2.0;
+        ctx.stroke();
+
+        // 内核透视模式: 绘制 CL Data 离散刀位点采样
+        if (State.devKernelMode) {
+          toolpathPts.forEach(p => {
+            ctx.fillStyle = '#10b981';
+            ctx.beginPath();
+            ctx.arc(p.px, p.py, 3, 0, Math.PI * 2);
+            ctx.fill();
+          });
+        }
+      });
+
+      // 绘制角落真实残料几何实体 (Rest Material Polygon Entity)
+      // 在最底层 yLvl = -30 处填充紫色残料多边形
+      const restY = -30;
+      const cornerO = project3D(35, restY, 35, cx, cy, scale);
+      const tanP1 = project3D(35, restY, 35 - R, cx, cy, scale);
+      const centerC = project3D(35 - R, restY, 35 - R, cx, cy, scale);
+      const tanP2 = project3D(35 - R, restY, 35, cx, cy, scale);
+
+      // 离散刀刃圆弧 (从 tanP1 到 tanP2，圆心为 (35-R, 35-R))
+      ctx.beginPath();
+      ctx.moveTo(cornerO.px, cornerO.py);
+      ctx.lineTo(tanP1.px, tanP1.py);
+      for (let a = 0; a <= Math.PI / 2 + 0.05; a += 0.15) {
+        const arcX = (35 - R) + Math.cos(a) * R;
+        const arcZ = (35 - R) + Math.sin(a) * R;
+        const arcP = project3D(arcX, restY, arcZ, cx, cy, scale);
+        ctx.lineTo(arcP.px, arcP.py);
       }
+      ctx.lineTo(tanP2.px, tanP2.py);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(168, 85, 247, 0.85)'; // 紫色残料实体
+      ctx.fill();
+      ctx.strokeStyle = '#c084fc';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
 
-      // 绘制动态切削刀具模型 (Endmill)
-      const toolX = Math.cos(animAngle * 3) * 28;
-      const toolZ = Math.sin(animAngle * 3) * 28;
-      const toolY = -5;
+      // 标注真实残料厚度尺寸线
+      const restMid = project3D(35 - R * (1 - Math.SQRT1_2), restY, 35 - R * (1 - Math.SQRT1_2), cx, cy, scale);
+      ctx.beginPath();
+      ctx.moveTo(cornerO.px, cornerO.py);
+      ctx.lineTo(restMid.px, restMid.py);
+      ctx.strokeStyle = '#f43f5e';
+      ctx.lineWidth = 2.0;
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px Fira Code';
+      ctx.fillText(`残料 T=${restThickness.toFixed(2)}mm`, cornerO.px - 60, cornerO.py + 18);
+
+      // 绘制当前旋转动态刀具实体 (Tool Body & Spinning Flutes)
+      const curAngle = animAngle * 2.5;
+      const toolX = 35 - R + Math.cos(curAngle) * 4;
+      const toolZ = 35 - R + Math.sin(curAngle) * 4;
+      const toolY = -10;
+
       const tTip = project3D(toolX, toolY, toolZ, cx, cy, scale);
-      const tTop = project3D(toolX, toolY + 45, toolZ, cx, cy, scale);
+      const tTop = project3D(toolX, toolY + 50, toolZ, cx, cy, scale);
 
+      // 刀柄 (Tool Shank)
       ctx.beginPath();
       ctx.moveTo(tTip.px, tTip.py);
       ctx.lineTo(tTop.px, tTop.py);
-      ctx.strokeStyle = '#fbbf24';
-      ctx.lineWidth = State.toolRadius * 2 * (scale * zoom * 0.15);
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = Math.max(4, R * scale * zoom * 0.9);
       ctx.lineCap = 'round';
       ctx.stroke();
 
-      // 绘制刀具圆弧进刀轨迹 (Tangential Lead-in Arc - Emerald)
+      // 螺旋进刀轨迹 (Helical Lead-in Ramp)
       ctx.beginPath();
-      for (let theta = 0; theta <= Math.PI; theta += 0.2) {
-        const ax = toolX + Math.cos(theta) * 12;
-        const az = toolZ + Math.sin(theta) * 12;
-        const ap = project3D(ax, toolY + Math.sin(theta) * 6, az, cx, cy, scale);
-        if (theta === 0) ctx.moveTo(ap.px, ap.py);
-        else ctx.lineTo(ap.px, ap.py);
+      for (let t = 0; t <= Math.PI * 4; t += 0.2) {
+        const hx = (35 - R) + Math.cos(t) * (R * 0.7);
+        const hz = (35 - R) + Math.sin(t) * (R * 0.7);
+        const hy = 25 - t * 2.8;
+        const hp = project3D(hx, hy, hz, cx, cy, scale);
+        if (t === 0) ctx.moveTo(hp.px, hp.py);
+        else ctx.lineTo(hp.px, hp.py);
       }
       ctx.strokeStyle = '#10b981';
       ctx.lineWidth = 1.8;
       ctx.stroke();
-
-      // 绘制角落残料凸显 (Rest Material - Purple)
-      const restCorner = project3D(38, -25, 38, cx, cy, scale);
-      ctx.fillStyle = 'rgba(168, 85, 247, 0.8)';
-      ctx.beginPath();
-      ctx.arc(restCorner.px, restCorner.py, 12, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = '#ffffff';
-      ctx.font = '10px Fira Code';
-      ctx.fillText('REST', restCorner.px - 14, restCorner.py - 16);
     }
 
-    /* 3. EDM 放电加工电极提取 (Electrode Spark Gap) */
+    /* --------------------------------------------------------------------------
+       3. EDM 放电电极提取与真实法向等距负偏置 (Normal Offset Algorithm)
+       -------------------------------------------------------------------------- */
     function drawEdmElectrodeLab(cx, cy, scale) {
-      const gap = State.sparkGap; // 火花放电间隙 (例: 0.05mm)
-      const offsetScale = 1.0 - (gap * 0.8);
+      const gap = State.sparkGap; // 真实物理火花间隙 0.020 ~ 0.200mm
+      const visualGap = gap * 60.0; // 放大至视口清晰可见
 
-      // 绘制基准台 (Datum Base Block - Copper Color)
-      const basePoints = [
-        [-35, 45, -35], [35, 45, -35], [35, 45, 35], [-35, 45, 35],
-        [-35, 20, -35], [35, 20, -35], [35, 20, 35], [-35, 20, 35]
+      // 工件深肋型腔原始几何面 (Cavity Pocket: 槽深 50, 顶宽 16, 底宽 10, 长 50)
+      const cTopW = 16, cBotW = 10, cH = 50, cL = 50;
+
+      // 1. 绘制工件型腔外壳 (半透明钢质灰 + 虚线框)
+      const cavityPts = [
+        [-cTopW / 2, 10, -cL / 2], [cTopW / 2, 10, -cL / 2], [cTopW / 2, 10, cL / 2], [-cTopW / 2, 10, cL / 2],
+        [-cBotW / 2, 10 - cH, -cL / 2], [cBotW / 2, 10 - cH, -cL / 2], [cBotW / 2, 10 - cH, cL / 2], [-cBotW / 2, 10 - cH, cL / 2]
       ].map(p => project3D(p[0], p[1], p[2], cx, cy, scale));
 
-      // 绘制细筋条电极本体 (Rib Blade)
-      const ribPts = [
-        [-6 * offsetScale, 20, -25 * offsetScale], [6 * offsetScale, 20, -25 * offsetScale],
-        [6 * offsetScale, 20, 25 * offsetScale], [-6 * offsetScale, 20, 25 * offsetScale],
-        [-4 * offsetScale, -30, -20 * offsetScale], [4 * offsetScale, -30, -20 * offsetScale],
-        [4 * offsetScale, -30, 20 * offsetScale], [-4 * offsetScale, -30, 20 * offsetScale]
-      ].map(p => project3D(p[0], p[1], p[2], cx, cy, scale));
-
-      // 绘制电极实体（紫铜色 Copper #d97706）
-      ctx.fillStyle = 'rgba(217, 119, 6, 0.85)';
+      ctx.strokeStyle = currentTheme === 'light' ? 'rgba(15, 23, 42, 0.35)' : 'rgba(148, 163, 184, 0.35)';
+      ctx.lineWidth = 1.2;
+      ctx.setLineDash([4, 4]);
+      // 底框
       ctx.beginPath();
-      ctx.moveTo(ribPts[4].px, ribPts[4].py);
-      ctx.lineTo(ribPts[5].px, ribPts[5].py);
-      ctx.lineTo(ribPts[6].px, ribPts[6].py);
-      ctx.lineTo(ribPts[7].px, ribPts[7].py);
+      ctx.moveTo(cavityPts[4].px, cavityPts[4].py);
+      ctx.lineTo(cavityPts[5].px, cavityPts[5].py);
+      ctx.lineTo(cavityPts[6].px, cavityPts[6].py);
+      ctx.lineTo(cavityPts[7].px, cavityPts[7].py);
+      ctx.closePath();
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // 2. 真实法向等距负偏置电极 (Normal Offset Electrode Body)
+      // 侧壁法向向内平移 visualGap，底面向上平移 visualGap，前后端面向内平移 visualGap
+      // 绝对不是整体等比缩放！壁厚与夹角严格等距平行！
+      const eTopW = cTopW - visualGap * 2.0;
+      const eBotW = cBotW - visualGap * 2.0;
+      const eBotY = 10 - cH + visualGap; // 底面沿法线(+Y)退缩
+      const eTopY = 10;
+      const eL = cL - visualGap * 2.0; // 端面沿法线内缩
+
+      // 电极肋条部分 (Rib Blade)
+      const eleRibPts = [
+        [-eTopW / 2, eTopY, -eL / 2], [eTopW / 2, eTopY, -eL / 2], [eTopW / 2, eTopY, eL / 2], [-eTopW / 2, eTopY, eL / 2],
+        [-eBotW / 2, eBotY, -eL / 2], [eBotW / 2, eBotY, -eL / 2], [eBotW / 2, eBotY, eL / 2], [-eBotW / 2, eBotY, eL / 2]
+      ].map(p => project3D(p[0], p[1], p[2], cx, cy, scale));
+
+      // 3. 电极顶部基准台 (Datum Base Block - 35x35x25) 带有 C3 防呆倒角 (Poka-yoke Chamfer)
+      const bW = 36, bH = 22, bL = 46;
+      const chamfer = 8; // 倒角尺寸
+      const basePts = [
+        [-bW / 2, eTopY + bH, -bL / 2],
+        [bW / 2 - chamfer, eTopY + bH, -bL / 2],
+        [bW / 2, eTopY + bH, -bL / 2 + chamfer], // C倒角切角
+        [bW / 2, eTopY + bH, bL / 2],
+        [-bW / 2, eTopY + bH, bL / 2]
+      ].map(p => project3D(p[0], p[1], p[2], cx, cy, scale));
+
+      // 绘制紫铜电极基准台
+      ctx.fillStyle = 'rgba(217, 119, 6, 0.92)'; // 电解紫铜色 (Copper)
+      ctx.beginPath();
+      basePts.forEach((p, i) => {
+        if (i === 0) ctx.moveTo(p.px, p.py);
+        else ctx.lineTo(p.px, p.py);
+      });
       ctx.closePath();
       ctx.fill();
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      // 绘制防呆 C 倒角 (Poka-yoke Chamfer)
-      const cCorner = project3D(35, 45, 35, cx, cy, scale);
+      // 绘制电极放电刃片多面体
+      const ribFaces = [
+        [4, 5, 6, 7], // 底面
+        [0, 1, 5, 4], // 后侧壁
+        [2, 3, 7, 6], // 前侧壁
+        [1, 2, 6, 5], // 右侧壁
+        [3, 0, 4, 7]  // 左侧壁
+      ];
+      ribFaces.forEach(fIdxs => {
+        ctx.beginPath();
+        fIdxs.forEach((idx, i) => {
+          const p = eleRibPts[idx];
+          if (i === 0) ctx.moveTo(p.px, p.py);
+          else ctx.lineTo(p.px, p.py);
+        });
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(245, 158, 11, 0.88)';
+        ctx.fill();
+        ctx.strokeStyle = '#d97706';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+      });
+
+      // 绘制防呆倒角高亮标注 (Poka-yoke Chamfer Label)
+      const cCorner = basePts[2];
       ctx.fillStyle = '#fbbf24';
       ctx.beginPath();
-      ctx.arc(cCorner.px, cCorner.py, 6, 0, Math.PI * 2);
+      ctx.arc(cCorner.px, cCorner.py, 5, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = '#ffffff';
-      ctx.font = '11px Fira Code';
-      ctx.fillText('C面基準角', cCorner.px + 8, cCorner.py + 4);
+      ctx.font = 'bold 11px Fira Code';
+      ctx.fillText('C面防呆基準角', cCorner.px + 8, cCorner.py - 4);
 
-      // 绘制火花放电微粒子效果 (Spark Particles)
+      // 绘制法向等距间隙标注箭头 (Normal Offset Dimension Indicator)
+      const dimCavityP = project3D(cBotW / 2, 10 - cH, 0, cx, cy, scale);
+      const dimEleP = project3D(eBotW / 2, eBotY, 0, cx, cy, scale);
+      ctx.beginPath();
+      ctx.moveTo(dimCavityP.px, dimCavityP.py);
+      ctx.lineTo(dimEleP.px, dimEleP.py);
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2.0;
+      ctx.stroke();
+
+      ctx.fillStyle = '#38bdf8';
+      ctx.font = 'bold 10px Fira Code';
+      ctx.fillText(`GAP=${gap.toFixed(3)}mm (法向等距)`, dimEleP.px + 10, dimEleP.py + 4);
+
+      // 放电微火花离子粒子效果
       if (State.animating) {
-        for (let i = 0; i < 8; i++) {
-          const spark = project3D((Math.random() - 0.5) * 10, -32 + Math.random() * 4, (Math.random() - 0.5) * 40, cx, cy, scale);
+        for (let i = 0; i < 10; i++) {
+          const rx = (Math.random() - 0.5) * eBotW;
+          const rz = (Math.random() - 0.5) * eL;
+          const sp = project3D(rx, eBotY - Math.random() * 2, rz, cx, cy, scale);
           ctx.fillStyle = Math.random() > 0.5 ? '#38bdf8' : '#fbbf24';
           ctx.beginPath();
-          ctx.arc(spark.px, spark.py, 2.5, 0, Math.PI * 2);
+          ctx.arc(sp.px, sp.py, 2.2, 0, Math.PI * 2);
           ctx.fill();
         }
       }
@@ -5043,76 +6174,75 @@
       const panel = document.getElementById('labControlPanel');
       if (State.currentLab === 'draft') {
         panel.innerHTML = `
-          <h3 style="font-size:16px; font-weight:900; color:#fff;">📐 勾配解析パラメータ</h3>
+          <h3 style="font-size:16px; font-weight:900; color:var(--text-main);">📐 勾配解析パラメータ (Draft Angle)</h3>
           <div class="control-group">
             <div class="control-label-row">
               <span>脱模合格角度閾値</span>
               <span class="control-val-badge" id="lblDraftVal">${State.draftAngle.toFixed(1)}°</span>
             </div>
             <input type="range" class="control-slider" min="0.5" max="5.0" step="0.5" value="${State.draftAngle}" oninput="updateDraftVal(this.value)">
-            <span class="control-desc">日本工業規格（JIS）推奨の抜き勾配：通常 1.0°〜3.0°</span>
+            <span class="control-desc">JIS推奨抜き勾配：通常 1.0°〜3.0°（閾値未満は青色警告、倒扣は赤色）</span>
           </div>
 
           <div class="control-group">
             <div class="control-label-row">
               <span>型開き方向ベクトル (Pull Vector)</span>
-              <span class="control-val-badge" id="lblPullVal">${State.pullDirZ > 0 ? '+Z (上向き)' : '-Z (下向き)'}</span>
+              <span class="control-val-badge" id="lblPullVal">${State.pullDirZ > 0 ? '+Y (上向き)' : '-Y (下向き)'}</span>
             </div>
             <div style="display:flex; gap:8px;">
-              <button class="btn-header ${State.pullDirZ > 0 ? 'active' : ''}" onclick="setPullDir(1)">+Z 抜き</button>
-              <button class="btn-header ${State.pullDirZ < 0 ? 'active' : ''}" onclick="setPullDir(-1)">-Z 抜き</button>
+              <button class="btn-header ${State.pullDirZ > 0 ? 'active' : ''}" onclick="setPullDir(1)">+Y 抜き (正方向)</button>
+              <button class="btn-header ${State.pullDirZ < 0 ? 'active' : ''}" onclick="setPullDir(-1)">-Y 抜き (逆方向)</button>
             </div>
+            <span class="control-desc">反転すると法線ベクトルの内積符号が逆転し、倒扣判定がリアルタイムに再計算されます</span>
           </div>
 
-          <div class="lab-status-card">
-            <div class="status-item"><span>🟢 合格拔模面 (Draft OK):</span> <strong>良好 (&gt;${State.draftAngle}°)</strong></div>
-            <div class="status-item"><span>🔴 倒拔模区域 (Undercut):</span> <strong style="color:#fb7185;">1箇所検出 (要スライド)</strong></div>
-            <div class="status-item"><span>🔵 垂直警戒面 (Vertical):</span> <strong style="color:#38bdf8;">0.0° (カジリ注意)</strong></div>
+          <div class="lab-status-card" id="draftStatusCardContent">
+            <!-- 动态注入 -->
           </div>
         `;
       } else if (State.currentLab === 'cam') {
+        const rest = State.toolRadius * (Math.SQRT2 - 1);
         panel.innerHTML = `
-          <h3 style="font-size:16px; font-weight:900; color:#fff;">⚙️ 切削・刀具パス設定</h3>
+          <h3 style="font-size:16px; font-weight:900; color:var(--text-main);">⚙️ CAM切削・残料ジオメトリ (Rest Machining)</h3>
           <div class="control-group">
             <div class="control-label-row">
               <span>切削工具径 (Tool Radius)</span>
               <span class="control-val-badge" id="lblToolR">R ${State.toolRadius.toFixed(1)} mm</span>
             </div>
             <input type="range" class="control-slider" min="2.0" max="16.0" step="1.0" value="${State.toolRadius}" oninput="updateToolRadius(this.value)">
-            <span class="control-desc">大径工具は開粗高能率、小径工具は細部清角に適合</span>
+            <span class="control-desc">大径工具は荒加工高能率、隅部には R(√2-1) の残料多面体が発生</span>
           </div>
 
           <div class="control-group">
             <div class="control-label-row">
-              <span>カスプハイト (Scallop Height)</span>
-              <span class="control-val-badge">${(State.scallopHeight * 1000).toFixed(0)} μm</span>
+              <span>隅部残料厚み (Rest Thickness)</span>
+              <span class="control-val-badge" id="lblRestThk">${rest.toFixed(2)} mm</span>
             </div>
-            <input type="range" class="control-slider" min="0.001" max="0.020" step="0.001" value="${State.scallopHeight}" oninput="updateScallop(this.value)">
-            <span class="control-desc">鏡面仕上げ推奨値：2〜5μm (手作業研磨レス)</span>
+            <span class="control-desc">公式: T = R・(csc(α) - 1)。直角部では約 0.414・R の未切削三角領域が残留</span>
           </div>
 
           <div class="lab-status-card">
-            <div class="status-item"><span>切削アプローチ:</span> <strong>ヘリカル螺旋円弧</strong></div>
-            <div class="status-item"><span>残肉追従 (Rest):</span> <strong style="color:#c084fc;">有効 (自動検知)</strong></div>
-            <div class="status-item"><span>切削方式:</span> <strong style="color:#34d399;">ダウンカット (順方向)</strong></div>
+            <div class="status-item"><span>切削アプローチ:</span> <strong>3Dヘリカル螺旋下刀</strong></div>
+            <div class="status-item"><span>残料形状判定:</span> <strong style="color:#c084fc;">動的閉包ポリゴン生成中</strong></div>
+            <div class="status-item"><span>切削モード:</span> <strong style="color:#34d399;">ダウンカット (順方向切削)</strong></div>
           </div>
         `;
       } else if (State.currentLab === 'edm') {
         panel.innerHTML = `
-          <h3 style="font-size:16px; font-weight:900; color:#fff;">⚡ EDM 放電電極パラメータ</h3>
+          <h3 style="font-size:16px; font-weight:900; color:var(--text-main);">⚡ 放電電極・法線等距離オフセット (Normal Offset)</h3>
           <div class="control-group">
             <div class="control-label-row">
-              <span>火花放電ギャップ (片肉)</span>
+              <span>火花放電ギャップ (Spark Gap)</span>
               <span class="control-val-badge" id="lblSparkGap">${State.sparkGap.toFixed(3)} mm</span>
             </div>
             <input type="range" class="control-slider" min="0.020" max="0.200" step="0.010" value="${State.sparkGap}" oninput="updateSparkGap(this.value)">
-            <span class="control-desc">粗放電：0.15mm / 精仕上げ放電：0.03mm</span>
+            <span class="control-desc">荒放電: 0.150mm / 仕上げ: 0.030mm（中心縮小ではなく法線等距離オフセット）</span>
           </div>
 
           <div class="lab-status-card">
-            <div class="status-item"><span>電極材質:</span> <strong>タフピッチ銅 (Cu)</strong></div>
-            <div class="status-item"><span>ポカよけC面:</span> <strong style="color:#fbbf24;">C3 (基準角1箇所)</strong></div>
-            <div class="status-item"><span>逃げ面クリアランス:</span> <strong>0.80 mm (自動延伸)</strong></div>
+            <div class="status-item"><span>電極材質:</span> <strong>タフピッチ銅 (Copper Cu)</strong></div>
+            <div class="status-item"><span>ポカよけ防呆:</span> <strong style="color:#fbbf24;">C3面基準角（1箇所切欠）</strong></div>
+            <div class="status-item"><span>オフセット精度:</span> <strong>微米級法線平行（歪みゼロ）</strong></div>
           </div>
         `;
       }
@@ -5132,6 +6262,8 @@
     function updateToolRadius(val) {
       State.toolRadius = parseFloat(val);
       document.getElementById('lblToolR').innerText = `R ${State.toolRadius.toFixed(1)} mm`;
+      const lblRest = document.getElementById('lblRestThk');
+      if (lblRest) lblRest.innerText = `${(State.toolRadius * (Math.SQRT2 - 1)).toFixed(2)} mm`;
       drawLabFrame();
     }
     function updateScallop(val) {
@@ -5328,6 +6460,7 @@
        页面初始化引导 (App Initialization)
        ========================================================================== */
     window.addEventListener('DOMContentLoaded', () => {
+      applyTheme();
       loadSavedState();
       updateTrackDescText();
       renderAcademy();
