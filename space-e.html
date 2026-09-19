@@ -716,6 +716,79 @@
       color: #fecdd3;
     }
 
+    /* 直感ミニ試練 (JSが動的生成する選択肢/結果表示) */
+    .mini-quiz-opt {
+      background: var(--surface);
+      border: 1.5px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      text-align: left;
+      color: var(--text-main);
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s;
+    }
+    .mini-quiz-opt:hover:not(:disabled) {
+      border-color: var(--primary);
+      background: rgba(56, 189, 248, 0.08);
+    }
+    .mini-quiz-opt:disabled {
+      cursor: not-allowed;
+      opacity: 0.85;
+    }
+    .mini-quiz-opt.correct {
+      border-color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+    }
+    .mini-quiz-opt.wrong {
+      border-color: var(--accent-rose);
+      background: rgba(244, 63, 94, 0.15);
+      color: #fb7185;
+    }
+
+    .mini-quiz-feedback {
+      margin-top: 14px;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .mini-quiz-feedback.correct {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #a7f3d0;
+    }
+    .mini-quiz-feedback.wrong {
+      background: rgba(244, 63, 94, 0.12);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      color: #fecdd3;
+    }
+
+    /* 修了マークボタン */
+    .btn-mark-complete {
+      background: var(--primary);
+      border: none;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .btn-mark-complete:hover {
+      filter: brightness(1.08);
+    }
+    .btn-mark-complete.active {
+      background: var(--accent-emerald);
+    }
+
     /* 底部课时切换栏 */
     .lesson-footer-nav {
       display: flex;
@@ -1635,13 +1708,13 @@
           <div>
             <h2 class="lesson-title-big" id="lessonTitle">D1-1 B-Rep 拓撲データ構造と境界表現の深層</h2>
             <div class="lesson-tags">
-              <span class="lesson-tag" id="lessonChapterTag">第 1 章 · B-Rep・トポロジー</span>
-              <span class="lesson-tag" id="lessonDifficultyTag">難易度: ★☆☆☆☆</span>
+              <span class="lesson-tag" id="lessonChapTag">第 1 章 · B-Rep・トポロジー</span>
+              <span class="lesson-tag" id="lessonTag">概念</span>
             </div>
           </div>
-          <div class="stat-pill" id="lessonStatusPill">
-            <span>⏳</span> <span>未修了</span>
-          </div>
+          <button class="btn-mark-complete" id="btnMarkComplete" onclick="markCurrentLessonComplete()">
+            修了としてマーク (+25 EXP)
+          </button>
         </div>
 
         <div class="lesson-content-body" id="lessonBody">
@@ -1649,7 +1722,7 @@
         </div>
 
         <!-- 直感ミニ試練 (Mini-Quiz) -->
-        <div class="mini-quiz-box">
+        <div class="mini-quiz-box" id="miniQuizCard">
           <div class="mini-quiz-header">
             <span class="mini-quiz-tag">
               <span>🎯</span> 直感ミニ試練（理解度チェック）
@@ -1659,10 +1732,10 @@
           <div class="mini-quiz-question" id="miniQuizQuestion">
             Space-Eが誇る「ハイブリッドモデリング」の最大の強みは何ですか？
           </div>
-          <div class="mini-quiz-options" id="miniQuizOptions">
+          <div class="mini-quiz-options" id="miniQuizOptionsGrid">
             <!-- 动态生成选项 -->
           </div>
-          <div class="quiz-result-explain" id="miniQuizExplain"></div>
+          <div class="mini-quiz-feedback" id="miniQuizFeedback" style="display:none;"></div>
         </div>
 
         <!-- 课程翻页控制 -->
@@ -6626,6 +6699,9 @@ const State = {
       document.getElementById('lessonTitle').innerText = currentLang === 'ja' ? lesson.titleJa : lesson.titleZh;
       document.getElementById('lessonTag').innerText = lesson.tag;
       document.getElementById('lessonBody').innerHTML = currentLang === 'ja' ? lesson.bodyJa : lesson.bodyZh;
+      document.getElementById('lessonNavCounter').innerText = currentLang === 'ja'
+        ? `第 ${State.currentChap + 1} 章 講 ${State.currentLessonSub + 1} / ${curLessons.length}`
+        : `第 ${State.currentChap + 1} 章 讲 ${State.currentLessonSub + 1} / ${curLessons.length}`;
 
       const curKey = lessonKey(State.track, lesson.chap, lesson.subIndex);
       const isCurDone = State.solvedLessons.has(curKey);
