@@ -195,7 +195,30 @@
   .audio-opt-btn .opt-sub{font-size:12px;color:var(--blue);font-weight:700;text-align:center;}
   .audio-opt-btn.correct{background:var(--green-soft);border-color:var(--green);}
   .audio-opt-btn.wrong{background:var(--red-soft);border-color:var(--imperial-red);animation:shake .3s;}
-  .streak-pill{background:#fee2e2;color:#dc2626;font-size:12px;font-weight:800;padding:3px 10px;border-radius:12px;border:1px solid #fca5a5;}
+  /* Cloze Test */
+  .cloze-card{width:100%;max-width:560px;background:var(--paper);border:2px solid #fbd38d;border-radius:var(--radius-lg);padding:18px;
+    box-shadow:var(--shadow-card);display:flex;flex-direction:column;align-items:center;gap:16px;}
+  .cloze-sentence-wrap{width:100%;background:#fff;border:2px solid #fed7aa;border-radius:var(--radius-md);padding:16px 14px;
+    display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;}
+  .cloze-py{font-size:13px;color:var(--muted);line-height:1.4;}
+  .cloze-sentence{font-size:18px;font-weight:800;color:var(--ink);line-height:1.8;}
+  .cloze-slot{display:inline-block;min-width:64px;padding:2px 10px;margin:0 4px;border-bottom:3px dashed var(--imperial-red);
+    color:var(--imperial-red);font-weight:900;text-align:center;transition:all .2s;}
+  .cloze-slot.filled{border-bottom-style:solid;background:var(--gold-soft);border-radius:6px;animation:popIn .25s ease-out;}
+  .cloze-slot.wrong{color:#dc2626;border-color:#dc2626;background:#fee2e2;}
+  .cloze-en{font-size:12px;color:var(--blue);font-style:italic;text-align:center;}
+  .cloze-hint-row{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 4px;}
+  .cloze-hint-pill{font-size:12px;color:var(--muted);background:#f5f5f4;padding:3px 10px;border-radius:12px;}
+  .cloze-speak-btn{background:#fff;border:1px solid #cbd5e1;border-radius:14px;padding:3px 10px;font-size:12px;font-weight:700;
+    cursor:pointer;display:inline-flex;align-items:center;gap:4px;color:var(--ink);}
+  .cloze-opts{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .cloze-opt-btn{background:#fff;border:2px solid #fbd38d;border-radius:var(--radius-md);padding:12px 10px;cursor:pointer;
+    box-shadow:var(--shadow-pop);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+    font-size:17px;font-weight:800;color:var(--ink);transition:transform .08s, background .15s, border-color .15s;}
+  .cloze-opt-btn:active{transform:translateY(2px);}
+  .cloze-opt-btn .opt-sub{font-size:11px;color:var(--muted);font-weight:600;}
+  .cloze-opt-btn.correct{background:var(--green-soft);border-color:var(--green);color:var(--green);}
+  .cloze-opt-btn.wrong{background:var(--red-soft);border-color:var(--imperial-red);color:var(--imperial-red);animation:shake .3s;}
 
   /* SRS / Review */
   .review-header{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:560px;}
@@ -271,16 +294,22 @@
           <div class="desc">拼出课文重点句子</div>
           <div class="badge" id="badgeScramble" style="display:none;"></div>
         </div>
+        <div class="menu-card" onclick="goCloze()">
+          <div class="ico">🔠</div>
+          <div class="name">选词填空</div>
+          <div class="desc">语境填空 · 课文与微情境</div>
+          <div class="badge" id="badgeCloze" style="display:none;"></div>
+        </div>
         <div class="menu-card" onclick="goAudioChallenge()">
           <div class="ico">🎧</div>
           <div class="name">听音辨字</div>
           <div class="desc">盲听挑战 · 听音选字词句</div>
           <div class="badge" id="badgeAudio" style="display:none;"></div>
         </div>
-        <div class="menu-card" onclick="goQuiz()">
+        <div class="menu-card full" onclick="goQuiz()">
           <div class="ico">❓</div>
-          <div class="name">故事问答</div>
-          <div class="desc">字词与课文理解小测验</div>
+          <div class="name">故事与字词问答</div>
+          <div class="desc">字词与课文理解综合小测验</div>
           <div class="badge" id="badgeQuiz" style="display:none;"></div>
         </div>
         <div class="menu-card full" onclick="goReview()" style="border-color:#f59e0b;background:linear-gradient(135deg,#fffdf7,#fef3c7);">
@@ -442,6 +471,37 @@
         <div class="quiz-opts" id="quizOpts"></div>
       </div>
       <button class="btn ghost" onclick="goHome()">返回菜单</button>
+    </section>
+
+    <!-- CLOZE TEST -->
+    <section class="screen" id="screen-cloze">
+      <h2 class="title">🔠 选词填空 (Cloze Test)</h2>
+      <div class="toggle-row">
+        <div class="chip active" id="chipClozeAll" onclick="setClozeMode('all')">🎲 全部混合</div>
+        <div class="chip" id="chipClozeText" onclick="setClozeMode('text')">📜 课文原句</div>
+        <div class="chip" id="chipClozeMicro" onclick="setClozeMode('micro')">🌱 微情境拓展</div>
+      </div>
+      <div class="hud-row" style="justify-content:space-between;width:100%;max-width:560px;">
+        <span class="story-progress" id="clozeProgress">1 / 8</span>
+        <span class="streak-pill" id="clozeStreak">🔥 连对 0</span>
+      </div>
+      <div class="cloze-card">
+        <div class="cloze-sentence-wrap">
+          <div class="cloze-py" id="clozePy"></div>
+          <div class="cloze-sentence" id="clozeSentence">
+            <span id="clozeBefore"></span>
+            <span class="cloze-slot" id="clozeSlot">____</span>
+            <span id="clozeAfter"></span>
+          </div>
+          <div class="cloze-en" id="clozeEn"></div>
+          <div class="cloze-hint-row">
+            <span class="cloze-hint-pill" id="clozeHint"></span>
+            <button class="cloze-speak-btn" id="clozeSpeakBtn" onclick="speakClozeSentence()">🔊 朗读句子</button>
+          </div>
+        </div>
+        <div class="cloze-opts" id="clozeOpts"></div>
+      </div>
+      <button class="btn ghost" onclick="stopClip(); goHome();">返回菜单</button>
     </section>
 
     <!-- AUDIO CHALLENGE -->
@@ -620,6 +680,166 @@ const QUIZ = [
   {q:"课文最后，作者对妈妈说了什么？", opts:["以后有机会我还要来故宫逛逛。","故宫太大了，我不想再来了。","我想去爬长城看日出。","明天我们要去颐和园划船。"], a:0}
 ];
 
+// 7. 选词填空 (12 Questions: 8 课文原句 + 4 微情境拓展)
+const CLOZE_QUESTIONS = [
+  {
+    id: "gg_c1",
+    type: "text",
+    before: "故宫是中国明朝和清朝的皇宫，又叫",
+    answer: "紫禁城",
+    after: "，一共有二十四位皇帝在这里居住过。",
+    py: "Gùgōng shì Zhōngguó Míngcháo hé Qīngcháo de huánggōng, yòu jiào Zǐjìnchéng...",
+    en: "The Forbidden City was also called the Purple Forbidden City...",
+    answerPy: "Zǐ jìn chéng",
+    options: ["紫禁城", "颐和园", "天安门", "圆明园"],
+    hint: "课文原句 · 明清皇宫的别名",
+    audioId: "st2"
+  },
+  {
+    id: "gg_c2",
+    type: "text",
+    before: "故宫一共有二十四位皇帝在这里",
+    answer: "居住",
+    after: "过。",
+    py: "Yígòng yǒu èrshísì wèi huángdì zài zhèlǐ jūzhù guo.",
+    en: "24 emperors lived here.",
+    answerPy: "jū zhù",
+    options: ["居住", "建筑", "收藏", "参观"],
+    hint: "课文原句 · 课后生字「居」的组词",
+    audioId: "st2"
+  },
+  {
+    id: "gg_c3",
+    type: "text",
+    before: "故宫已经有六百多年的历史了，是中国最大的古代",
+    answer: "宫殿",
+    after: "，也是世界上最大的古代宫殿。",
+    py: "Gùgōng yǐjīng yǒu liùbǎi duō nián de lìshǐ le, shì Zhōngguó zuìdà de gǔdài gōngdiàn...",
+    en: "The largest ancient palace in China and the world.",
+    answerPy: "gōng diàn",
+    options: ["宫殿", "花园", "房屋", "长廊"],
+    hint: "课文原句 · 课后生字「殿」的组词",
+    audioId: "st3"
+  },
+  {
+    id: "gg_c4",
+    type: "text",
+    before: "故宫一共有九千多间房屋，都是用木头建造的，是中国古代",
+    answer: "建筑艺术",
+    after: "的代表。",
+    py: "Dōu shì yòng mùtou jiànzào de, shì Zhōngguó gǔdài jiànzhù yìshù de dàibiǎo.",
+    en: "A masterpiece of ancient Chinese architectural art.",
+    answerPy: "jiàn zhù yì shù",
+    options: ["建筑艺术", "现代科技", "书法艺术", "自然风光"],
+    hint: "课文原句 · 课后生字「筑」与词语「艺术」",
+    audioId: "st5"
+  },
+  {
+    id: "gg_c5",
+    type: "text",
+    before: "故宫里",
+    answer: "收藏",
+    after: "了许多珍贵的历史文物，有许多展览。",
+    py: "Gùgōng lǐ shōucángle xǔduō zhēnguì de lìshǐ wénwù...",
+    en: "The Forbidden City houses many precious historical relics...",
+    answerPy: "shōu cáng",
+    options: ["收藏", "居住", "吸引", "制造"],
+    hint: "课文原句 · 课后生字「藏」的组词",
+    audioId: "st6"
+  },
+  {
+    id: "gg_c6",
+    type: "text",
+    before: "故宫里有许多展览，吸引了许多",
+    answer: "国内外",
+    after: "的游客前去参观。",
+    py: "Xīyǐnle xǔduō guónèiwài de yóukè qiánqù cānguān.",
+    en: "Attracting many domestic and international tourists...",
+    answerPy: "guó nèi wài",
+    options: ["国内外", "全中国", "老北京", "天安门"],
+    hint: "课文原句 · 课后生字「内」与「外」的组词",
+    audioId: "st6"
+  },
+  {
+    id: "gg_c7",
+    type: "text",
+    before: "今天我们只参观了故宫最",
+    answer: "著名",
+    after: "的三座大殿：太和殿、中和殿和保和殿。",
+    py: "Jīntiān wǒmen zhǐ cānguānle tā zuì zhùmíng de sān zuò dàdiàn...",
+    en: "Today we only visited its three most famous great halls...",
+    answerPy: "zhù míng",
+    options: ["著名", "古老", "珍贵", "美丽"],
+    hint: "课文原句 · 课后重点词语",
+    audioId: "st7"
+  },
+  {
+    id: "gg_c8",
+    type: "text",
+    before: "我对妈妈说，以后有",
+    answer: "机会",
+    after: "我还要来故宫逛逛。",
+    py: "Wǒ duì māma shuō, yǐhòu yǒu jīhuì wǒ hái yào lái Gùgōng guàngguang.",
+    en: "If there is a chance in the future, I want to come stroll around again.",
+    answerPy: "jī huì",
+    options: ["机会", "时间", "原因", "习惯"],
+    hint: "课后重点句子 · 重点词语「机会」",
+    audioId: "st8"
+  },
+  {
+    id: "gg_c9",
+    type: "micro",
+    before: "国家博物馆里展出了许多",
+    answer: "珍贵",
+    after: "的历史文物，大家都赞叹不已。",
+    py: "Guójiā bówùguǎn lǐ zhǎnchūle xǔduō zhēnguì de lìshǐ wénwù...",
+    en: "Many precious historical relics were exhibited...",
+    answerPy: "zhēn guì",
+    options: ["珍贵", "方便", "古怪", "难忘"],
+    hint: "微情境拓展 · 价值高、很有意义的物品",
+    audioId: null
+  },
+  {
+    id: "gg_c10",
+    type: "micro",
+    before: "可爱的国宝大熊猫，",
+    answer: "吸引",
+    after: "了成千上万的中外游客前来观看。",
+    py: "Kě'ài de guóbǎo dàxióngmāo, xīyǐnle chéngqiān-shàngwàn de zhōngwài yóukè...",
+    en: "The lovely giant pandas attracted thousands of tourists...",
+    answerPy: "xī yǐn",
+    options: ["吸引", "收藏", "居住", "建造"],
+    hint: "微情境拓展 · 把人的注意力引过来",
+    audioId: null
+  },
+  {
+    id: "gg_c11",
+    type: "micro",
+    before: "长城是世界上",
+    answer: "著名",
+    after: "的伟大建筑奇迹。",
+    py: "Chángchéng shì shìjiè shang zhùmíng de wěidà jiànzhù qíjì.",
+    en: "The Great Wall is a famous architectural wonder in the world.",
+    answerPy: "zhù míng",
+    options: ["著名", "机会", "展览", "居住"],
+    hint: "微情境拓展 · 大家都知道的、很有名气",
+    audioId: null
+  },
+  {
+    id: "gg_c12",
+    type: "micro",
+    before: "周末爸爸妈妈带我去美术馆",
+    answer: "参观",
+    after: "儿童绘画展览。",
+    py: "Zhōumò bàba māma dài wǒ qù měishùguǎn cānguān értóng huìhuà zhǎnlǎn.",
+    en: "Mom and Dad took me to visit the children's painting exhibition.",
+    answerPy: "cān guān",
+    options: ["参观", "收藏", "居住", "代表"],
+    hint: "微情境拓展 · 实地去观看与体验",
+    audioId: null
+  }
+];
+
 /* ---------------- STATE ---------------- */
 let storyIdx = 0, showPy = true, showEn = true;
 let charIdx = 0;
@@ -635,13 +855,13 @@ let lastGame = null;
 const progress = JSON.parse(localStorage.getItem('gugong_progress') || '{}');
 function saveProgress(){ localStorage.setItem('gugong_progress', JSON.stringify(progress)); updateStarTotal(); refreshBadges(); }
 function updateStarTotal(){
-  const t = (progress.match||0) + (progress.scramble||0) + (progress.quiz||0) + (progress.audio||0);
+  const t = (progress.match||0) + (progress.scramble||0) + (progress.quiz||0) + (progress.audio||0) + (progress.cloze||0);
   document.getElementById('starTotal').textContent = '⭐ ' + t;
 }
 function refreshBadges(){
   document.getElementById('badgeChars').style.display = progress.chars ? 'block' : 'none';
   document.getElementById('badgeFlash').style.display = progress.flash ? 'block' : 'none';
-  ['match','scramble','quiz','audio'].forEach(k=>{
+  ['match','scramble','quiz','audio','cloze'].forEach(k=>{
     const el = document.getElementById('badge'+k.charAt(0).toUpperCase()+k.slice(1));
     if(el && progress[k]) { el.style.display='block'; el.textContent = '⭐'.repeat(progress[k]); }
   });
@@ -1298,6 +1518,146 @@ function answerAudioQuestion(opt, btn){
   }, 1200);
 }
 
+/* ---------------- CLOZE TEST ---------------- */
+let clozeMode = 'all';
+let clozeState = {
+  questions: [],
+  idx: 0,
+  correct: 0,
+  streak: 0,
+  maxStreak: 0,
+  answered: false
+};
+
+function setClozeMode(mode){
+  clozeMode = mode;
+  ['All','Text','Micro'].forEach(k => {
+    const el = document.getElementById('chipCloze' + k);
+    if(el) el.classList.toggle('active', k.toLowerCase() === mode);
+  });
+  initClozeGame();
+}
+
+function goCloze(){
+  setClozeMode('all');
+  showScreen('screen-cloze');
+}
+
+function initClozeGame(){
+  let pool = CLOZE_QUESTIONS;
+  if(clozeMode === 'text') pool = pool.filter(q => q.type === 'text');
+  else if(clozeMode === 'micro') pool = pool.filter(q => q.type === 'micro');
+
+  const count = Math.min(8, pool.length);
+  clozeState = {
+    questions: shuffle([...pool]).slice(0, count),
+    idx: 0,
+    correct: 0,
+    streak: 0,
+    maxStreak: 0,
+    answered: false
+  };
+  renderClozeQuestion();
+}
+
+function renderClozeQuestion(){
+  if(clozeState.idx >= clozeState.questions.length){
+    const total = clozeState.questions.length;
+    const correct = clozeState.correct;
+    const stars = correct >= total ? 3 : correct >= Math.ceil(total * 0.7) ? 2 : 1;
+    showResult('cloze', stars, correct + ' / ' + total + ' 答对 · 最高连对 ' + clozeState.maxStreak + ' 题');
+    return;
+  }
+
+  clozeState.answered = false;
+  const q = clozeState.questions[clozeState.idx];
+  document.getElementById('clozeProgress').textContent = (clozeState.idx + 1) + ' / ' + clozeState.questions.length;
+  document.getElementById('clozeStreak').textContent = '🔥 连对 ' + clozeState.streak;
+
+  document.getElementById('clozePy').textContent = q.py || '';
+  document.getElementById('clozeBefore').textContent = q.before;
+  const slot = document.getElementById('clozeSlot');
+  slot.textContent = '____';
+  slot.className = 'cloze-slot';
+  document.getElementById('clozeAfter').textContent = q.after;
+  document.getElementById('clozeEn').textContent = q.en || '';
+  document.getElementById('clozeHint').textContent = q.hint || (q.type === 'text' ? '课文原句' : '情境拓展');
+
+  const optsContainer = document.getElementById('clozeOpts');
+  optsContainer.innerHTML = '';
+
+  const shuffledOpts = shuffle([...q.options]);
+  shuffledOpts.forEach(opt => {
+    const btn = document.createElement('div');
+    btn.className = 'cloze-opt-btn';
+    btn.innerHTML = `<span>${opt}</span>`;
+    btn.onclick = () => answerCloze(opt, btn);
+    optsContainer.appendChild(btn);
+  });
+}
+
+function speakClozeSentence(){
+  const q = clozeState.questions[clozeState.idx];
+  if(!q) return;
+  const text = q.before + q.answer + q.after;
+  if(q.audioId){
+    playClip(q.audioId, text);
+  } else {
+    speak(text);
+  }
+}
+
+function answerCloze(selected, btn){
+  if(clozeState.answered) return;
+  clozeState.answered = true;
+
+  const q = clozeState.questions[clozeState.idx];
+  const isCorrect = selected === q.answer;
+  const slot = document.getElementById('clozeSlot');
+  const allBtns = document.querySelectorAll('#clozeOpts .cloze-opt-btn');
+
+  if(isCorrect){
+    btn.classList.add('correct');
+    slot.textContent = q.answer;
+    slot.className = 'cloze-slot filled';
+    clozeState.correct++;
+    clozeState.streak++;
+    if(clozeState.streak > clozeState.maxStreak){
+      clozeState.maxStreak = clozeState.streak;
+    }
+    toast('🎉 填入正确！语境完全吻合！');
+    speakClozeSentence();
+  } else {
+    btn.classList.add('wrong');
+    slot.textContent = q.answer;
+    slot.className = 'cloze-slot wrong';
+    clozeState.streak = 0;
+    allBtns.forEach(b => {
+      if(b.textContent.trim() === q.answer){
+        b.classList.add('correct');
+      }
+    });
+    toast('选错啦～正确词语是：' + q.answer + '，已记入错题本');
+    speakClozeSentence();
+    recordMistake({
+      id: 'cloze_' + q.id,
+      type: 'cloze',
+      zh: q.answer,
+      py: q.answerPy || '',
+      meaning: q.before + '【' + q.answer + '】' + q.after,
+      audioId: q.audioId || null,
+      clozeItem: q
+    });
+  }
+
+  document.getElementById('clozeStreak').textContent = '🔥 连对 ' + clozeState.streak;
+
+  setTimeout(() => {
+    clozeState.idx++;
+    renderClozeQuestion();
+  }, 1600);
+}
+
 /* ---------------- RESULT ---------------- */
 function showResult(game, stars, note){
   lastGame = game;
@@ -1308,7 +1668,7 @@ function showResult(game, stars, note){
   document.getElementById('resultScore').textContent = note;
   const badges = document.getElementById('resultBadges');
   badges.innerHTML = '';
-  const map = { match:'🧩 拼音配对', scramble:'🔤 句子排序', quiz:'❓ 故事问答', audio:'🎧 听音辨字' };
+  const map = { match:'🧩 拼音配对', scramble:'🔤 句子排序', quiz:'❓ 故事问答', audio:'🎧 听音辨字', cloze:'🔠 选词填空' };
   const b = document.createElement('div');
   b.className = 'mini-badge';
   b.textContent = map[game] + ' ' + '⭐'.repeat(stars);
@@ -1320,6 +1680,7 @@ function retryCurrent(){
   else if(lastGame === 'scramble') goScramble();
   else if(lastGame === 'quiz') goQuiz();
   else if(lastGame === 'audio') goAudioChallenge();
+  else if(lastGame === 'cloze') goCloze();
   else goHome();
 }
 
@@ -1354,6 +1715,7 @@ function recordMistake(item){
     if(item.meaning) existing.meaning = item.meaning;
     if(item.extra) existing.extra = item.extra;
     if(item.quizItem) existing.quizItem = item.quizItem;
+    if(item.clozeItem) existing.clozeItem = item.clozeItem;
   } else {
     srs.items[item.id] = {
       id: item.id,
@@ -1368,7 +1730,8 @@ function recordMistake(item){
       box: 1,
       lastReview: now,
       nextReview: now,
-      quizItem: item.quizItem || null
+      quizItem: item.quizItem || null,
+      clozeItem: item.clozeItem || null
     };
   }
   saveSrsData(srs);
@@ -1562,6 +1925,38 @@ function renderReviewQuizQuestion(){
       b.className = 'opt-btn';
       b.textContent = opt;
       b.onclick = () => handleReviewAnswer(i === cur.quizItem.a, b, cur);
+      optsEl.appendChild(b);
+    });
+    return;
+  }
+
+  if(cur.type === 'cloze' && cur.clozeItem){
+    const q = cur.clozeItem;
+    container.innerHTML = `
+      <div class="review-card" style="width:100%;">
+        <div class="hud-row" style="justify-content:space-between;width:100%;">
+          <span class="story-progress">错题 ${reviewQuizState.idx + 1} / ${reviewQuizState.items.length}</span>
+          <span class="stat-chip ${boxClasses[cur.box||1]}">${boxNames[cur.box||1]} (连对 ${cur.streak||0}/3)</span>
+        </div>
+        <div class="cloze-sentence-wrap" style="margin-top:10px;width:100%;">
+          <div class="cloze-sentence" style="font-size:16px;">
+            ${q.before}<span class="cloze-slot filled" style="color:var(--imperial-red);">${q.answer}</span>${q.after}
+          </div>
+          <div class="cloze-hint-row" style="margin-top:6px;">
+            <span class="cloze-hint-pill">${q.hint || '选词填空'}</span>
+            <button class="cloze-speak-btn" onclick="playClip('${q.audioId||''}','${q.before}${q.answer}${q.after}')">🔊 朗读</button>
+          </div>
+        </div>
+        <div class="quiz-q" style="font-size:14px;color:var(--muted);margin-top:10px;">请选出最恰当的填空词语：</div>
+        <div class="cloze-opts" id="reviewClozeOpts" style="width:100%;"></div>
+      </div>
+    `;
+    const optsEl = document.getElementById('reviewClozeOpts');
+    shuffle([...q.options]).forEach(opt => {
+      const b = document.createElement('div');
+      b.className = 'cloze-opt-btn';
+      b.innerHTML = `<span>${opt}</span>`;
+      b.onclick = () => handleReviewAnswer(opt === q.answer, b, cur);
       optsEl.appendChild(b);
     });
     return;
