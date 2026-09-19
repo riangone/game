@@ -161,6 +161,30 @@
   .audio-opt-btn.correct{background:var(--green-soft);border-color:var(--green);}
   .audio-opt-btn.wrong{background:var(--red-soft);border-color:var(--red);animation:shake .3s;}
   .streak-pill{background:#fee2e2;color:#dc2626;font-size:12px;font-weight:800;padding:3px 10px;border-radius:12px;border:1px solid #fca5a5;}
+
+  /* SRS / Review */
+  .review-header{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:560px;}
+  .review-stats-bar{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:100%;}
+  .stat-chip{padding:5px 12px;border-radius:18px;font-size:12px;font-weight:800;display:inline-flex;align-items:center;gap:5px;}
+  .stat-chip.box1{background:#fee2e2;color:#dc2626;border:1px solid #fca5a5;}
+  .stat-chip.box2{background:#fef3c7;color:#d97706;border:1px solid #fcd34d;}
+  .stat-chip.box3{background:#dbeafe;color:#2563eb;border:1px solid #93c5fd;}
+  .stat-chip.box4{background:#dcfce7;color:#16a34a;border:1px solid #86efac;}
+  .review-card{width:100%;max-width:560px;background:var(--paper);border:2px solid #f3d9ad;border-radius:var(--radius-lg);padding:20px;
+    box-shadow:var(--shadow-card);display:flex;flex-direction:column;align-items:center;gap:14px;}
+  .review-empty{text-align:center;padding:32px 16px;display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;}
+  .review-empty-icon{font-size:48px;}
+  .review-empty-title{font-size:19px;font-weight:900;color:var(--ink);}
+  .review-empty-desc{font-size:14px;color:var(--muted);max-width:380px;line-height:1.6;}
+  .mistake-list{width:100%;max-width:560px;display:flex;flex-direction:column;gap:10px;}
+  .mistake-card{background:#fff;border:2px solid #f3d9ad;border-radius:var(--radius-md);padding:14px;display:flex;flex-direction:column;gap:8px;box-shadow:var(--shadow-pop);}
+  .mistake-top{display:flex;justify-content:space-between;align-items:center;}
+  .mistake-zh{font-size:22px;font-weight:900;color:var(--ink);}
+  .mistake-py{font-size:14px;font-weight:700;color:var(--blue);}
+  .mistake-meaning{font-size:13px;color:var(--muted);line-height:1.5;}
+  .mistake-actions{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;}
+  .action-btn-sm{padding:4px 10px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid #cbd5e1;background:#f8fafc;}
+  .action-btn-sm:hover{background:#e2e8f0;}
 </style>
 </head>
 <body>
@@ -212,11 +236,17 @@
           <div class="desc">盲听挑战 · 听音选词句</div>
           <div class="badge" id="badgeAudio" style="display:none;"></div>
         </div>
-        <div class="menu-card full" onclick="goQuiz()">
+        <div class="menu-card" onclick="goQuiz()">
           <div class="ico">❓</div>
           <div class="name">故事问答</div>
           <div class="desc">读懂课文小测验</div>
           <div class="badge" id="badgeQuiz" style="display:none;"></div>
+        </div>
+        <div class="menu-card full" onclick="goReview()" style="border-color:#ea580c;background:linear-gradient(135deg,#fff7ed,#ffedd5);">
+          <div class="ico">📝</div>
+          <div class="name">错题温故 (SRS)</div>
+          <div class="desc">艾宾浩斯间隔复习 · 智能消错与记忆固化</div>
+          <div class="badge" id="badgeReview" style="display:none;"></div>
         </div>
       </div>
     </section>
@@ -348,6 +378,41 @@
       <button class="btn ghost" onclick="stopClip(); goHome();">返回菜单</button>
     </section>
 
+    <!-- REVIEW / SRS -->
+    <section class="screen" id="screen-review">
+      <div class="review-header">
+        <h2 class="title">📝 艾宾浩斯错题温故</h2>
+        <div class="review-stats-bar">
+          <span class="stat-chip box1" id="statDue">🔴 待温故: 0</span>
+          <span class="stat-chip box2" id="statReviewing">🟡 温故中: 0</span>
+          <span class="stat-chip box3" id="statStrengthening">🔵 强化中: 0</span>
+          <span class="stat-chip box4" id="statMastered">🟢 已掌握: 0</span>
+        </div>
+        <div class="toggle-row" style="margin-top:6px;">
+          <div class="chip active" id="chipReviewQuiz" onclick="switchReviewTab('quiz')">⚡ 快速消错闯关</div>
+          <div class="chip" id="chipReviewList" onclick="switchReviewTab('list')">📋 错题本清单</div>
+        </div>
+      </div>
+
+      <!-- Quiz Mode -->
+      <div id="reviewQuizView" style="width:100%;max-width:560px;display:flex;flex-direction:column;align-items:center;gap:12px;">
+      </div>
+
+      <!-- List Mode -->
+      <div id="reviewListView" style="width:100%;max-width:560px;display:none;flex-direction:column;align-items:center;gap:12px;">
+        <div class="toggle-row" style="margin-bottom:6px;">
+          <div class="chip active" id="chipListDue" onclick="setReviewListFilter('due')">⚡ 待温故</div>
+          <div class="chip" id="chipListMastered" onclick="setReviewListFilter('mastered')">🎓 已掌握</div>
+          <div class="chip" id="chipListAll" onclick="setReviewListFilter('all')">📚 全部</div>
+        </div>
+        <div class="mistake-list" id="reviewMistakeContainer"></div>
+      </div>
+
+      <div style="margin-top:12px;">
+        <button class="btn ghost" onclick="stopClip(); goHome();">返回菜单</button>
+      </div>
+    </section>
+
     <!-- RESULT -->
     <section class="screen" id="screen-result">
       <div class="lantern">🎉</div>
@@ -458,6 +523,25 @@ function refreshBadges(){
     const el = document.getElementById('badge'+k.charAt(0).toUpperCase()+k.slice(1));
     if(el && progress[k]) { el.style.display='block'; el.textContent = '⭐'.repeat(progress[k]); }
   });
+  const reviewEl = document.getElementById('badgeReview');
+  if(reviewEl){
+    const srs = getSrsData();
+    const items = Object.values(srs.items || {});
+    const due = items.filter(i => (i.box||1) < 4).length;
+    if(due > 0){
+      reviewEl.style.display = 'block';
+      reviewEl.style.background = '#dc2626';
+      reviewEl.style.color = '#fff';
+      reviewEl.textContent = due + ' 待温故';
+    } else if(items.length > 0){
+      reviewEl.style.display = 'block';
+      reviewEl.style.background = '#16a34a';
+      reviewEl.style.color = '#fff';
+      reviewEl.textContent = '✓ 全掌握';
+    } else {
+      reviewEl.style.display = 'none';
+    }
+  }
 }
 
 /* ---------------- NAV ---------------- */
@@ -473,6 +557,7 @@ function goMatch(){ setupMatch(); showScreen('screen-match'); }
 function goScramble(){ scrambleState.idx = 0; setupScrambleRound(); showScreen('screen-scramble'); }
 function goQuiz(){ quizState.idx = 0; quizState.correct = 0; renderQuiz(); showScreen('screen-quiz'); }
 function goAudioChallenge(){ setAudioMode('all'); showScreen('screen-audio'); }
+function goReview(){ switchReviewTab('quiz'); showScreen('screen-review'); }
 
 /* ---------------- AUDIO (real MP3 files, TTS as fallback only) ---------------- */
 const AUDIO_DIR = 'audio/hanjia/';
@@ -716,6 +801,17 @@ function selectMatch(side, el, zhKey){
       matchState.wrong++;
       document.getElementById('matchWrong').textContent = matchState.wrong;
       zh.el.classList.add('wrong'); py.el.classList.add('wrong');
+      const item = VOCAB.find(v=>v.zh===zh.zhKey);
+      if(item){
+        recordMistake({
+          id: item.id || ('match_' + item.zh),
+          type: 'word',
+          zh: item.zh,
+          py: item.py,
+          meaning: item.meaning || '',
+          audioId: item.id
+        });
+      }
       setTimeout(()=>{
         zh.el.classList.remove('selected','wrong'); py.el.classList.remove('selected','wrong');
         matchState.selectedZh = null; matchState.selectedPy = null;
@@ -777,7 +873,15 @@ function scrambleCheck(){
     setTimeout(setupScrambleRound, 500);
   } else {
     scrambleMistakes++;
-    toast('再试试看～');
+    toast('再试试看～已记入错题本');
+    recordMistake({
+      id: round.id,
+      type: 'sentence',
+      zh: round.zh,
+      py: '',
+      meaning: '课文重点句子',
+      audioId: round.id
+    });
   }
 }
 
@@ -813,6 +917,15 @@ function answerQuiz(i, el){
   } else {
     el.classList.add('wrong');
     opts[item.a].classList.add('correct');
+    recordMistake({
+      id: 'quiz_' + quizState.idx,
+      type: 'quiz',
+      zh: item.q,
+      py: '',
+      meaning: '正确答案: ' + item.opts[item.a],
+      extra: '误选: ' + item.opts[i],
+      quizItem: item
+    });
   }
   setTimeout(()=>{ quizState.idx++; renderQuiz(); }, 700);
 }
@@ -956,8 +1069,16 @@ function answerAudioQuestion(opt, btn){
     q.opts.forEach((o, i) => {
       if(o.isCorrect && allBtns[i]) allBtns[i].classList.add('correct');
     });
-    toast('听错啦，仔细听听正确发音～');
+    toast('听错啦，仔细听听正确发音～已记入错题本');
     playClip(q.id, q.zh);
+    recordMistake({
+      id: q.id,
+      type: q.type,
+      zh: q.zh,
+      py: (q.opts.find(o=>o.isCorrect)||{}).sub || '',
+      meaning: q.hint,
+      audioId: q.id
+    });
   }
 
   document.getElementById('audioStreak').textContent = '🔥 连对 ' + audioChallengeState.streak;
@@ -991,6 +1112,374 @@ function retryCurrent(){
   else if(lastGame === 'quiz') goQuiz();
   else if(lastGame === 'audio') goAudioChallenge();
   else goHome();
+}
+
+/* ---------------- SRS & 艾宾浩斯错题温故 ---------------- */
+const STORAGE_KEY_SRS = 'hanjia_srs';
+
+function getSrsData(){
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY_SRS);
+    return raw ? JSON.parse(raw) : { items: {} };
+  } catch(e) {
+    return { items: {} };
+  }
+}
+
+function saveSrsData(data){
+  localStorage.setItem(STORAGE_KEY_SRS, JSON.stringify(data));
+  refreshBadges();
+}
+
+function recordMistake(item){
+  if(!item || !item.id) return;
+  const srs = getSrsData();
+  const existing = srs.items[item.id];
+  const now = Date.now();
+  if(existing){
+    existing.mistakes = (existing.mistakes || 0) + 1;
+    existing.streak = 0;
+    existing.box = 1;
+    existing.lastReview = now;
+    existing.nextReview = now;
+    if(item.meaning) existing.meaning = item.meaning;
+    if(item.extra) existing.extra = item.extra;
+    if(item.quizItem) existing.quizItem = item.quizItem;
+  } else {
+    srs.items[item.id] = {
+      id: item.id,
+      type: item.type || 'word',
+      zh: item.zh,
+      py: item.py || '',
+      meaning: item.meaning || '',
+      extra: item.extra || '',
+      audioId: item.audioId || item.id,
+      mistakes: 1,
+      streak: 0,
+      box: 1,
+      lastReview: now,
+      nextReview: now,
+      quizItem: item.quizItem || null
+    };
+  }
+  saveSrsData(srs);
+}
+
+function recordReviewSuccess(id){
+  const srs = getSrsData();
+  const item = srs.items[id];
+  if(!item) return;
+  item.streak = (item.streak || 0) + 1;
+  item.box = Math.min(4, (item.box || 1) + 1);
+  item.lastReview = Date.now();
+  const intervals = [0, 0, 10 * 60 * 1000, 24 * 3600 * 1000, 7 * 24 * 3600 * 1000];
+  item.nextReview = Date.now() + (intervals[item.box] || 0);
+  saveSrsData(srs);
+  if(item.box >= 4){
+    toast('🎓 太棒了！「' + item.zh + '」连续答对3次，已成功掌握毕业！');
+  } else {
+    toast('🎉 强化成功！升级至 Box ' + item.box);
+  }
+}
+
+function recordReviewFailure(id){
+  const srs = getSrsData();
+  const item = srs.items[id];
+  if(!item) return;
+  item.mistakes = (item.mistakes || 0) + 1;
+  item.streak = 0;
+  item.box = 1;
+  item.lastReview = Date.now();
+  item.nextReview = Date.now();
+  saveSrsData(srs);
+  toast('记下啦，已退回 Box 1 重新强化～');
+}
+
+function markItemMastered(id){
+  const srs = getSrsData();
+  if(srs.items[id]){
+    srs.items[id].box = 4;
+    srs.items[id].streak = 3;
+    saveSrsData(srs);
+    renderReview();
+    toast('已标记为掌握！');
+  }
+}
+
+function resetItemMistake(id){
+  const srs = getSrsData();
+  if(srs.items[id]){
+    srs.items[id].box = 1;
+    srs.items[id].streak = 0;
+    srs.items[id].nextReview = Date.now();
+    saveSrsData(srs);
+    renderReview();
+    toast('已重置为待温故！');
+  }
+}
+
+function deleteItemMistake(id){
+  const srs = getSrsData();
+  delete srs.items[id];
+  saveSrsData(srs);
+  renderReview();
+  toast('已从错题本移除');
+}
+
+function getDueMistakes(){
+  const srs = getSrsData();
+  const list = Object.values(srs.items || {});
+  return list.filter(it => (it.box || 1) < 4);
+}
+
+let reviewTab = 'quiz';
+let reviewListFilter = 'due';
+let reviewQuizState = {
+  items: [],
+  idx: 0,
+  answered: false
+};
+
+function switchReviewTab(tab){
+  reviewTab = tab;
+  document.getElementById('chipReviewQuiz').classList.toggle('active', tab === 'quiz');
+  document.getElementById('chipReviewList').classList.toggle('active', tab === 'list');
+  document.getElementById('reviewQuizView').style.display = tab === 'quiz' ? 'flex' : 'none';
+  document.getElementById('reviewListView').style.display = tab === 'list' ? 'flex' : 'none';
+  renderReview();
+}
+
+function setReviewListFilter(filter){
+  reviewListFilter = filter;
+  ['Due', 'Mastered', 'All'].forEach(k => {
+    const el = document.getElementById('chipList' + k);
+    if(el) el.classList.toggle('active', k.toLowerCase() === filter);
+  });
+  renderReviewList();
+}
+
+function updateReviewStats(){
+  const srs = getSrsData();
+  const items = Object.values(srs.items || {});
+  const box1 = items.filter(i => (i.box||1) === 1).length;
+  const box2 = items.filter(i => i.box === 2).length;
+  const box3 = items.filter(i => i.box === 3).length;
+  const box4 = items.filter(i => i.box >= 4).length;
+  const due = box1 + box2 + box3;
+
+  document.getElementById('statDue').textContent = '🔴 待温故: ' + due;
+  document.getElementById('statReviewing').textContent = '🟡 温故中: ' + box2;
+  document.getElementById('statStrengthening').textContent = '🔵 强化中: ' + box3;
+  document.getElementById('statMastered').textContent = '🟢 已掌握: ' + box4;
+}
+
+function renderReview(){
+  updateReviewStats();
+  if(reviewTab === 'quiz'){
+    initReviewQuiz();
+  } else {
+    renderReviewList();
+  }
+}
+
+function initReviewQuiz(){
+  const due = getDueMistakes();
+  const container = document.getElementById('reviewQuizView');
+  if(due.length === 0){
+    container.innerHTML = `
+      <div class="review-card" style="width:100%;">
+        <div class="review-empty">
+          <div class="review-empty-icon">🎉</div>
+          <div class="review-empty-title">太棒了！暂无待温故的错题</div>
+          <div class="review-empty-desc">您做过的错题均已连续答对3次并成功毕业，或者您在挑战中尚未产生错题。继续保持！</div>
+          <div style="display:flex;gap:10px;margin-top:10px;">
+            <button class="btn gold" onclick="switchReviewTab('list')">📋 查看错题本</button>
+            <button class="btn green" onclick="goHome()">🏠 返回主页</button>
+          </div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  reviewQuizState = {
+    items: shuffle(due),
+    idx: 0,
+    answered: false
+  };
+  renderReviewQuizQuestion();
+}
+
+function renderReviewQuizQuestion(){
+  const container = document.getElementById('reviewQuizView');
+  if(reviewQuizState.idx >= reviewQuizState.items.length){
+    container.innerHTML = `
+      <div class="review-card" style="width:100%;">
+        <div class="review-empty">
+          <div class="review-empty-icon">🌟</div>
+          <div class="review-empty-title">本轮错题温故完成！</div>
+          <div class="review-empty-desc">您已完成了本轮待温故词条的复习。根据艾宾浩斯间隔记忆法，连续答对3次即可彻底巩固毕业！</div>
+          <div style="display:flex;gap:10px;margin-top:10px;">
+            <button class="btn gold" onclick="initReviewQuiz()">🔄 再练一轮</button>
+            <button class="btn green" onclick="goHome()">🏠 返回主页</button>
+          </div>
+        </div>
+      </div>
+    `;
+    updateReviewStats();
+    refreshBadges();
+    return;
+  }
+
+  reviewQuizState.answered = false;
+  const cur = reviewQuizState.items[reviewQuizState.idx];
+  const boxNames = ['', 'Box 1 · 待温故', 'Box 2 · 温故中', 'Box 3 · 强化中', '🎓 已掌握'];
+  const boxClasses = ['', 'box1', 'box2', 'box3', 'box4'];
+
+  if(cur.type === 'quiz' && cur.quizItem){
+    container.innerHTML = `
+      <div class="review-card" style="width:100%;">
+        <div class="hud-row" style="justify-content:space-between;width:100%;">
+          <span class="story-progress">错题 ${reviewQuizState.idx + 1} / ${reviewQuizState.items.length}</span>
+          <span class="stat-chip ${boxClasses[cur.box||1]}">${boxNames[cur.box||1]} (连对 ${cur.streak||0}/3)</span>
+        </div>
+        <div class="quiz-q" style="margin-top:6px;">${cur.quizItem.q}</div>
+        <div class="quiz-opts" id="reviewQuizOpts" style="width:100%;"></div>
+      </div>
+    `;
+    const optsEl = document.getElementById('reviewQuizOpts');
+    cur.quizItem.opts.forEach((opt, i)=>{
+      const b = document.createElement('div');
+      b.className = 'opt-btn';
+      b.textContent = opt;
+      b.onclick = () => handleReviewAnswer(i === cur.quizItem.a, b, cur);
+      optsEl.appendChild(b);
+    });
+    return;
+  }
+
+  let hint = '请看字词，选出正确的拼音与释义：';
+  if(cur.type === 'sentence') hint = '请仔细听录音，选出正确的句子：';
+
+  let pool = [];
+  if(cur.type === 'sentence') pool = STORY.filter(s => s.zh !== cur.zh);
+  else pool = VOCAB.filter(v => v.zh !== cur.zh);
+
+  const distractors = shuffle(pool).slice(0, 3).map(d => ({
+    text: d.zh,
+    sub: d.py ? `${d.py} (${d.meaning || d.en || ''})` : (d.en || ''),
+    isCorrect: false
+  }));
+
+  const correctOpt = {
+    text: cur.zh,
+    sub: cur.py ? `${cur.py} (${cur.meaning || ''})` : (cur.meaning || ''),
+    isCorrect: true
+  };
+
+  const opts = shuffle([correctOpt, ...distractors]);
+
+  container.innerHTML = `
+    <div class="review-card" style="width:100%;">
+      <div class="hud-row" style="justify-content:space-between;width:100%;">
+        <span class="story-progress">错题 ${reviewQuizState.idx + 1} / ${reviewQuizState.items.length}</span>
+        <span class="stat-chip ${boxClasses[cur.box||1]}">${boxNames[cur.box||1]} (连对 ${cur.streak||0}/3)</span>
+      </div>
+      <div class="audio-speaker-wrap" onclick="playClip('${cur.audioId||cur.id}', '${cur.zh}')">
+        <div class="audio-speaker-btn" id="reviewSpeakerBtn">🔊</div>
+        <div class="audio-speaker-tip">点击播放发音 ↺</div>
+      </div>
+      <div style="font-size:30px;font-weight:900;color:var(--ink);">${cur.zh}</div>
+      <div class="quiz-q" style="font-size:14px;color:var(--muted);">${hint}</div>
+      <div class="audio-opts ${cur.type==='sentence'?'sentence-layout':'grid-layout'}" id="reviewQuizOpts"></div>
+    </div>
+  `;
+
+  setTimeout(() => {
+    playClip(cur.audioId || cur.id, cur.zh);
+  }, 200);
+
+  const optsContainer = document.getElementById('reviewQuizOpts');
+  opts.forEach(opt => {
+    const btn = document.createElement('div');
+    btn.className = 'audio-opt-btn';
+    btn.innerHTML = `<div class="opt-main">${opt.text}</div><div class="opt-sub">${opt.sub}</div>`;
+    btn.onclick = () => handleReviewAnswer(opt.isCorrect, btn, cur);
+    optsContainer.appendChild(btn);
+  });
+}
+
+function handleReviewAnswer(isCorrect, btn, cur){
+  if(reviewQuizState.answered) return;
+  reviewQuizState.answered = true;
+
+  if(isCorrect){
+    btn.classList.add('correct');
+    recordReviewSuccess(cur.id);
+  } else {
+    btn.classList.add('wrong');
+    recordReviewFailure(cur.id);
+    playClip(cur.audioId || cur.id, cur.zh);
+  }
+
+  setTimeout(() => {
+    reviewQuizState.idx++;
+    renderReviewQuizQuestion();
+  }, 1200);
+}
+
+function renderReviewList(){
+  const srs = getSrsData();
+  const items = Object.values(srs.items || {});
+  const container = document.getElementById('reviewMistakeContainer');
+  container.innerHTML = '';
+
+  let filtered = items;
+  if(reviewListFilter === 'due'){
+    filtered = items.filter(i => (i.box||1) < 4);
+  } else if(reviewListFilter === 'mastered'){
+    filtered = items.filter(i => (i.box||1) >= 4);
+  }
+
+  if(filtered.length === 0){
+    container.innerHTML = `
+      <div class="review-empty" style="background:#fff;border:2px dashed #cbd5e1;border-radius:12px;">
+        <div class="review-empty-icon">📭</div>
+        <div class="review-empty-title">没有符合条件的错题记录</div>
+        <div class="review-empty-desc">当前筛选分类下暂无词条。</div>
+      </div>
+    `;
+    return;
+  }
+
+  const boxNames = ['', 'Box 1 · 待温故', 'Box 2 · 温故中', 'Box 3 · 强化中', '🎓 已掌握'];
+  const boxClasses = ['', 'box1', 'box2', 'box3', 'box4'];
+  const typeMap = { word: '🀄 生词', sentence: '📜 句子', quiz: '❓ 问答' };
+
+  filtered.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'mistake-card';
+    card.innerHTML = `
+      <div class="mistake-top">
+        <div style="display:flex;gap:6px;align-items:center;">
+          <span class="stat-chip ${boxClasses[item.box||1]}">${boxNames[item.box||1]}</span>
+          <span class="mini-badge" style="padding:2px 8px;font-size:11px;">${typeMap[item.type] || '词条'}</span>
+        </div>
+        <span style="font-size:12px;color:var(--muted);font-weight:700;">做错 ${item.mistakes} 次 · 连对 ${item.streak||0}/3</span>
+      </div>
+      <div class="mistake-zh">${item.zh}</div>
+      ${item.py ? `<div class="mistake-py">${item.py}</div>` : ''}
+      ${item.meaning ? `<div class="mistake-meaning">${item.meaning}</div>` : ''}
+      ${item.extra ? `<div class="mistake-meaning" style="color:#ea580c;">${item.extra}</div>` : ''}
+      <div class="mistake-actions">
+        ${item.audioId ? `<button class="action-btn-sm" onclick="playClip('${item.audioId}','${item.zh}')">🔊 听音</button>` : ''}
+        ${(item.box||1) < 4 ? `<button class="action-btn-sm" style="color:#16a34a;" onclick="markItemMastered('${item.id}')">🎓 标记掌握</button>` : ''}
+        ${(item.box||1) >= 4 ? `<button class="action-btn-sm" style="color:#d97706;" onclick="resetItemMistake('${item.id}')">🔄 重置温故</button>` : ''}
+        <button class="action-btn-sm" style="color:#dc2626;" onclick="deleteItemMistake('${item.id}')">🗑️ 移除</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
 }
 
 /* ---------------- INIT ---------------- */
