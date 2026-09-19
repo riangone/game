@@ -3171,6 +3171,170 @@
             }
       },
       {
+            "chap": 0,
+            "subIndex": 2,
+            "titleJa": "D1-3 パラメトリック履歴は依存関係グラフ（DAG）である",
+            "titleZh": "D1-3 参数化历史树的本质：一张依赖关系图（DAG）",
+            "tag": "開発者基礎",
+            "bodyJa": `
+          <p>「フィーチャー履歴（History Tree）」は工程担当者にとって単なる操作ログですが、開発者にとっては<strong>有向非巡回グラフ（DAG）</strong>そのものです。スプレッドシートのセル依存関係や、ビルドシステムの依存関係解決と全く同じ計算モデルで動いています。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Node</span>
+              <span class="workflow-step-title">フィーチャーノード</span>
+              <span class="workflow-step-desc">「押し出し」「フィレット」等の各操作が1ノード。入力パラメータと出力形状（B-Repの参照）を持つ。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Edge</span>
+              <span class="workflow-step-title">依存エッジ</span>
+              <span class="workflow-step-desc">「このフィレットはあのスケッチの辺を参照する」という参照関係。参照元が変わると下流は再計算対象（dirty）になる。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Rebuild</span>
+              <span class="workflow-step-title">トポロジカルソート再計算</span>
+              <span class="workflow-step-desc">dirtyノードを依存順（トポロジカル順序）に再実行する。スプレッドシートの再計算エンジンと同一アルゴリズム。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 実装視点：なぜ「一部だけ再計算」が難しいのか</strong><br>
+            理想は変更ノードの下流だけを再計算する差分リビルドですが、B-Repは前段の形状が丸ごと入力になるため「フィレットの半径だけ変えたのに前段の面IDがズレて、フィレット対象のEdge参照が消える」という<strong>参照解決失敗（Reference Loss）</strong>が典型バグです。ノードの出力に安定なID（Persistent ID）を持たせて追跡する設計が必須になります。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 バグ調査の勘所</strong><br>
+            「履歴の途中を編集すると下流のフィーチャーが赤くエラーになる」系の報告は、まずPersistent IDの解決ログを疑いましょう。座標や公差のバグではなく、DAGの参照が本当に指すべきエッジ／面を見失っているケースが大半です。
+          </div>
+        `,
+            "bodyZh": `
+          <p>“特征历史树（History Tree）”对工艺工程师来说只是一份操作日志，但对开发者而言，它其实就是一张<strong>有向无环图（DAG）</strong>——和电子表格的单元格依赖关系、构建系统的依赖解析，本质上是同一套计算模型。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Node</span>
+              <span class="workflow-step-title">特征节点</span>
+              <span class="workflow-step-desc">“拉伸”“圆角”等每个操作都是一个节点，持有输入参数与输出形状（对 B-Rep 的引用）。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Edge</span>
+              <span class="workflow-step-title">依赖边</span>
+              <span class="workflow-step-desc">“这个圆角引用了那个草图的某条边”这类引用关系。上游一变，下游节点就被标记为需要重算（dirty）。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Rebuild</span>
+              <span class="workflow-step-title">拓扑排序重算</span>
+              <span class="workflow-step-desc">按依赖顺序（拓扑排序）重新执行所有 dirty 节点，与电子表格的重算引擎算法完全一致。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 实现视角：为什么“只重算一部分”很难做到</strong><br>
+            理想情况下只需重算被改动节点的下游，但 B-Rep 的特殊之处在于上一步的完整形状是下一步的输入，因此"只改了圆角半径，却导致上游面 ID 错位，圆角要引用的 Edge 凭空消失"是最典型的 bug——即<strong>引用丢失（Reference Loss）</strong>。必须给每个节点的输出赋予稳定的持久化 ID（Persistent ID）来跟踪引用关系。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 排查经验：</strong>
+            遇到“编辑历史树中间某一步，导致下游特征全部报错变红”的问题时，优先怀疑 Persistent ID 的解析日志，而不是坐标或容差——绝大多数情况是 DAG 的引用真的找不到它该指向的边或面了。
+          </div>
+        `,
+            "quiz": {
+                  "qJa": "パラメトリック履歴（フィーチャーツリー）を計算モデルとして最も正確に説明しているのは？",
+                  "qZh": "从计算模型角度看，参数化历史树（特征树）最准确的类比是？",
+                  "optionsJa": [
+                        "各フィーチャーをノード、参照関係をエッジとする有向非巡回グラフ（DAG）であり、変更をトポロジカル順序で再計算する",
+                        "単なる操作を記録したテキストログであり、計算とは無関係",
+                        "画像ファイルの圧縮アルゴリズム",
+                        "ネットワークのルーティングテーブル"
+                  ],
+                  "optionsZh": [
+                        "以每个特征为节点、引用关系为边的有向无环图（DAG），按拓扑顺序重算变更",
+                        "只是记录操作步骤的纯文本日志，与计算逻辑无关",
+                        "一种图片压缩算法",
+                        "网络路由表"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！フィーチャー履歴はスプレッドシートの再計算エンジンと同じDAGモデルであり、これを理解すると「なぜ途中編集で下流が壊れるか」が論理的に説明できます。",
+                  "explainZh": "正确！特征历史树本质上和电子表格的重算引擎一样是一张 DAG，理解这一点后就能从逻辑上解释“为什么中途编辑会导致下游特征损坏”。"
+            }
+      },
+      {
+            "chap": 0,
+            "subIndex": 3,
+            "titleJa": "D1-4 アセンブリ構造と外部参照：BOMという名の分散データ問題",
+            "titleZh": "D1-4 装配结构与外部引用：BOM 本质是一个分布式数据问题",
+            "tag": "開発者基礎",
+            "bodyJa": `
+          <p>金型は数百〜数千の部品からなるアセンブリです。開発者視点では、アセンブリ構造は<strong>外部キー参照を持つ分散ドキュメントの集合</strong>として理解するのが最も実務的です。1つの部品ファイルが複数のアセンブリから参照される「多対多」の関係が、多くのバグの温床になります。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Instance</span>
+              <span class="workflow-step-title">インスタンス参照</span>
+              <span class="workflow-step-desc">アセンブリは部品の実体をコピーせず、ファイルパス＋配置行列（Transform）への参照を持つだけ（外部キーに相当）。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Path</span>
+              <span class="workflow-step-title">絶対/相対パス解決</span>
+              <span class="workflow-step-desc">参照先ファイルの検索順序（作業フォルダ→ライブラリ→絶対パス）。プロジェクトを他PCに移すと壊れる典型的な原因。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Cache</span>
+              <span class="workflow-step-title">形状キャッシュと差分検知</span>
+              <span class="workflow-step-desc">巨大アセンブリを毎回フルロードすると遅すぎるため、更新日時やハッシュ値でキャッシュの有効性を判定する。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 実装視点：リンク切れは「404エラー」と同じ設計問題</strong><br>
+            部品ファイルを移動・改名すると参照が切れるのは、Webのリンク切れ（404）と全く同じ構造的問題です。堅牢な実装は、ファイルパスだけでなく<strong>一意な内部ID</strong>を併用し、パスが見つからなくてもIDベースで再検索できる冗長性を持たせます。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 バグ調査の勘所</strong><br>
+            「他のPCで開くと部品が読み込めない／古い形状のまま」という報告は、まずキャッシュの有効期限判定ロジックとパス解決順序をログ出力して確認しましょう。ネットワークドライブのパス表記揺れ（大文字小文字、UNCパス）も定番の原因です。
+          </div>
+        `,
+            "bodyZh": `
+          <p>模具通常由成百上千个零件构成一个装配体。从开发者视角看，理解装配结构最实用的方式是：把它当成<strong>一组带外键引用的分布式文档集合</strong>。同一个零件文件被多个装配体引用的“多对多”关系，正是许多 bug 的温床。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Instance</span>
+              <span class="workflow-step-title">实例引用</span>
+              <span class="workflow-step-desc">装配体不复制零件实体，只保存“文件路径 + 摆放矩阵（Transform）”的引用，相当于关系型数据库里的外键。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Path</span>
+              <span class="workflow-step-title">绝对/相对路径解析</span>
+              <span class="workflow-step-desc">引用文件的查找顺序（工作目录 → 库目录 → 绝对路径），项目换电脑后链接断裂的典型原因。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Cache</span>
+              <span class="workflow-step-title">形状缓存与增量检测</span>
+              <span class="workflow-step-desc">大型装配体每次全量加载太慢，需靠修改时间或哈希值判断缓存是否仍然有效。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 实现视角：链接断裂本质就是“404”式的设计问题</strong><br>
+            零件文件被移动或改名后引用失效，和 Web 链接失效（404）在结构上是同一个问题。健壮的实现除了保存文件路径，还会附加一个<strong>唯一内部 ID</strong>，路径找不到时仍可基于 ID 做冗余重新检索。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 排查经验：</strong>
+            遇到“换一台电脑打开零件加载不出来／停留在旧版形状”的报告，优先把缓存有效期判定逻辑与路径解析顺序打印成日志核对；网络盘路径的大小写差异、UNC 路径写法不一致也是常见元凶。
+          </div>
+        `,
+            "quiz": {
+                  "qJa": "アセンブリの部品リンクが「別のPCで開くと見つからない」というバグに対して、最も堅牢な設計はどれか？",
+                  "qZh": "针对装配体零件链接“换一台电脑打开就找不到”的问题，最健壮的设计方案是？",
+                  "optionsJa": [
+                        "ファイルパスに加えて一意な内部IDを併用し、パス解決に失敗してもIDベースで再検索できるようにする",
+                        "常に絶対パスのみを使い、相対パスの概念を廃止する",
+                        "アセンブリを開くたびに全部品を強制的にコピーする",
+                        "エラーが出たら単純にキャッシュを無視して常に再ダウンロードする"
+                  ],
+                  "optionsZh": [
+                        "在文件路径基础上并用一个唯一的内部 ID，路径解析失败时仍可基于 ID 冗余重新检索",
+                        "永远只用绝对路径，彻底废除相对路径的概念",
+                        "每次打开装配体都强制复制全部零件文件",
+                        "只要报错就无视缓存，永远重新下载"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！パスは環境依存で壊れやすいため、パス＋一意IDの二重参照が業界標準的な堅牢設計です。",
+                  "explainZh": "正确！路径本身高度依赖运行环境、极易失效，“路径 + 唯一 ID”的双重引用是业界公认的稳健设计。"
+            }
+      },
+      {
             "chap": 1,
             "subIndex": 0,
             "titleJa": "D2-1 5層アーキテクチャ全体像：自分のコードはどこにあるか",
@@ -3334,6 +3498,170 @@
                   "ans": 0,
                   "explainJa": "正解！非可逆に近い幾何演算では、逆操作の数学的再構築よりも、状態そのものを保持して復元する方が安全で実装も堅牢です。",
                   "explainZh": "正确！对于接近不可逆的几何运算，与其费力重建数学上的逆操作，不如直接保存并还原状态本身，这样更安全，实现也更稳健。"
+            }
+      },
+      {
+            "chap": 1,
+            "subIndex": 2,
+            "titleJa": "D2-3 イベント駆動アーキテクチャ：ビュー・ツリー・プロパティの三位一体同期",
+            "titleZh": "D2-3 事件驱动架构：视口、树形结构与属性面板的三方同步",
+            "tag": "アーキテクチャ",
+            "bodyJa": `
+          <p>3Dビューポート、フィーチャーツリー、プロパティパネルの3つは常に一致した状態を表示します。これは魔法ではなく、<strong>Observer（購読）パターン</strong>によるイベント駆動アーキテクチャで実現されています。フロントエンド開発者にとってはReduxやVueのリアクティブシステムと同じ設計思想です。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Model</span>
+              <span class="workflow-step-title">単一の真実の源（Single Source of Truth）</span>
+              <span class="workflow-step-desc">幾何カーネル内のドキュメントモデルが唯一の正データ。UI側は直接データを持たず、常にモデルを参照する。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Event</span>
+              <span class="workflow-step-title">変更通知イベント</span>
+              <span class="workflow-step-desc">「FaceのIDxxxが変更された」という差分イベントを発行。購読側（ビュー・ツリー・パネル）が自分に関係があれば再描画する。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Loop Guard</span>
+              <span class="workflow-step-title">循環更新の防止</span>
+              <span class="workflow-step-desc">プロパティパネルの編集がモデルを変更→イベント発行→パネル自身が再購読して再描画、という無限ループを防ぐフラグ制御が必須。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 実装視点：なぜフリーズ／無限再描画バグが起きるのか</strong><br>
+            イベント駆動UIの最大の落とし穴は<strong>イベントストーム（Event Storm）</strong>です。1つの変更が複数の購読者に伝播し、それぞれがさらに変更を発行すると、指数関数的にイベントが増殖してUIがフリーズします。実務では「今まさに更新中」フラグ（re-entrancy guard）で自己参照的な発行を止める設計が不可欠です。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 バグ調査の勘所</strong><br>
+            「パラメータを1回変えただけなのにUIが数秒固まる」という報告は、イベントの発行回数をログで数えてみましょう。1回の変更で数千件のイベントが飛んでいたら、それがフリーズの真犯人です。
+          </div>
+        `,
+            "bodyZh": `
+          <p>3D 视口、特征树、属性面板这三者的状态之所以能始终保持一致，靠的不是魔法，而是基于<strong>观察者（Observer）模式</strong>的事件驱动架构——对前端开发者来说，这和 Redux 或 Vue 的响应式系统是同一套设计思想。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Model</span>
+              <span class="workflow-step-title">唯一真相源（Single Source of Truth）</span>
+              <span class="workflow-step-desc">几何内核里的文档模型才是唯一的正确数据，UI 各面板自身不持有数据副本，永远向模型取值。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Event</span>
+              <span class="workflow-step-title">变更通知事件</span>
+              <span class="workflow-step-desc">发布“Face xxx 已变更”这类差分事件，各订阅方（视口/树/面板）判断与自己是否相关，相关则重绘。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Loop Guard</span>
+              <span class="workflow-step-title">防止循环更新</span>
+              <span class="workflow-step-desc">属性面板编辑 → 修改模型 → 触发事件 → 面板自己又被通知重绘，必须用状态标志位打断这种自我引用式死循环。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 实现视角：为什么会出现卡死/无限重绘的 bug</strong><br>
+            事件驱动 UI 最大的陷阱是<strong>事件风暴（Event Storm）</strong>：一次改动传播给多个订阅者，每个订阅者又各自发出新事件，事件数量呈指数级增长，最终导致界面卡死。实践中必须用“正在更新中”标志位（重入保护）来阻止自我触发式的事件发布。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 排查经验：</strong>
+            遇到“只改了一个参数，界面却卡顿好几秒”的报告，先统计一次改动到底触发了多少条事件——如果一次改动引发了成千上万条事件，那就是卡顿的真正元凶。
+          </div>
+        `,
+            "quiz": {
+                  "qJa": "3Dビュー・ツリー・プロパティパネルを同期させるイベント駆動UIで「操作するとUIが数秒フリーズする」バグの典型原因は？",
+                  "qZh": "在同步 3D 视口/树/属性面板的事件驱动 UI 中，“操作后界面卡顿数秒”这类 bug 的典型原因是？",
+                  "optionsJa": [
+                        "1回の変更が循環的に多数のイベントを誘発する「イベントストーム」が発生している",
+                        "3Dグラフィックカードのドライバが古すぎる",
+                        "マウスの電池残量が少ない",
+                        "キーボードの入力遅延設定が高すぎる"
+                  ],
+                  "optionsZh": [
+                        "一次改动循环触发了大量事件，即发生了“事件风暴”",
+                        "显卡驱动版本过旧",
+                        "鼠标电池电量不足",
+                        "键盘输入延迟设置过高"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！購読者同士が互いに再発行し合う循環が発生すると、イベント数が爆発的に増えUIスレッドを占有してフリーズします。",
+                  "explainZh": "正确！当订阅者之间相互重复触发事件形成循环时，事件数量会爆炸式增长并占满 UI 线程，从而导致界面卡死。"
+            }
+      },
+      {
+            "chap": 1,
+            "subIndex": 3,
+            "titleJa": "D2-4 プラグイン機構とAPIバージョン互換性の壁",
+            "titleZh": "D2-4 插件加载机制与 API 版本兼容性的高墙",
+            "tag": "アーキテクチャ",
+            "bodyJa": `
+          <p>Space-E型ソフトウェアは、金型現場ごとのカスタムマクロやサードパーティのアドイン（DLL/COM）をプラグインとして動的ロードします。二次開発者が最初にぶつかる壁が<strong>ABI（バイナリインターフェース）互換性</strong>です。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">ABI</span>
+              <span class="workflow-step-title">バイナリレベルの契約</span>
+              <span class="workflow-step-desc">クラスのメモリレイアウト・関数呼び出し規約が一致していないと、コアがバージョンアップしただけでプラグインがクラッシュする。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">SemVer</span>
+              <span class="workflow-step-title">SDKのセマンティックバージョニング</span>
+              <span class="workflow-step-desc">メジャー番号が変わるとABI破壊的変更の合図。プラグイン側はSDKバージョンを実行時にチェックすべき。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Sandbox</span>
+              <span class="workflow-step-title">プロセス分離という保険</span>
+              <span class="workflow-step-desc">信頼できないサードパーティのプラグインを別プロセスで実行し、クラッシュしてもコア本体を巻き込まない設計。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 実装視点：「コア更新後に古いプラグインが落ちる」根本原因</strong><br>
+            C++のクラスにメンバー変数を1つ追加しただけで、そのクラスのメモリサイズ・オフセットがずれます。古いバージョンでコンパイルされたプラグインDLLは新しいコアのメモリレイアウトを知らないため、フィールドアクセスで全く違う場所を読み書きし、原因不明のクラッシュや不正な値を引き起こします。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 バグ調査の勘所</strong><br>
+            「特定の外部アドインを入れている環境だけ不定期にクラッシュする」という報告は、まずアドインのビルド時SDKバージョンとコア本体のバージョンの組み合わせを確認しましょう。ABI不一致は再現性が低く、症状もランダムに見えるのが特徴です。
+          </div>
+        `,
+            "bodyZh": `
+          <p>Space-E 类软件会把各模具车间的定制宏和第三方插件（DLL/COM）作为插件动态加载。二次开发者最先撞上的一堵墙，就是<strong>ABI（二进制接口）兼容性</strong>问题。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">ABI</span>
+              <span class="workflow-step-title">二进制层面的契约</span>
+              <span class="workflow-step-desc">类的内存布局、函数调用约定一旦不一致，哪怕只是核心程序升级了一个小版本，插件也可能直接崩溃。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">SemVer</span>
+              <span class="workflow-step-title">SDK 的语义化版本号</span>
+              <span class="workflow-step-desc">主版本号变化即意味着可能存在破坏 ABI 的改动，插件应在运行时主动检查所依赖的 SDK 版本号。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Sandbox</span>
+              <span class="workflow-step-title">进程隔离这道保险</span>
+              <span class="workflow-step-desc">将不受信任的第三方插件放到独立进程中运行，即使插件崩溃也不会拖垮核心主程序。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 实现视角：“核心升级后旧插件崩溃”的根本原因</strong><br>
+            哪怕只是给一个 C++ 类新增一个成员变量，这个类的内存大小和字段偏移量就会发生变化。用旧版本 SDK 编译的插件 DLL 并不知道新核心的内存布局，访问字段时会读写到完全错误的位置，从而产生莫名其妙的崩溃或错误数值。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 排查经验：</strong>
+            遇到“只有装了某个第三方插件的环境才会偶发崩溃”的报告，优先核对该插件编译时依赖的 SDK 版本与当前核心程序版本是否匹配——ABI 不一致引发的问题往往复现率低、表现随机，这是它的典型特征。
+          </div>
+        `,
+            "quiz": {
+                  "qJa": "コア本体をアップデートしただけで、対応済みだったはずの古いサードパーティ製プラグインが不定期にクラッシュするようになった。最も疑うべき原因は？",
+                  "qZh": "仅仅升级了核心主程序，原本兼容的旧版第三方插件却开始偶发崩溃，最应怀疑的原因是？",
+                  "optionsJa": [
+                        "コアのクラスにメンバーが追加される等でメモリレイアウトが変化し、古いビルドのプラグインとABIが不一致になった",
+                        "プラグインの開発者のキーボードが壊れている",
+                        "ユーザーのモニターの明るさ設定が低い",
+                        "OSの壁紙の解像度が合っていない"
+                  ],
+                  "optionsZh": [
+                        "核心类新增成员等改动导致内存布局变化，与旧版本编译的插件之间出现 ABI 不一致",
+                        "插件开发者的键盘出现了故障",
+                        "用户显示器的亮度设置过低",
+                        "操作系统桌面壁纸的分辨率不匹配"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！ABI不一致はコンパイルエラーにならずに実行時のメモリ破壊として現れるため、症状が不定期でランダムに見えるのが特徴です。",
+                  "explainZh": "正确！ABI 不一致不会在编译期报错，而是表现为运行期的内存错乱，因此症状看起来随机且不易稳定复现，这正是它的典型特征。"
             }
       },
       {
@@ -3501,6 +3829,170 @@
             }
       },
       {
+            "chap": 2,
+            "subIndex": 2,
+            "titleJa": "D3-3 座標変換行列の連鎖と蓄積誤差",
+            "titleZh": "D3-3 坐标变换矩阵的链式传递与累积误差",
+            "tag": "数値の罠",
+            "bodyJa": `
+          <p>アセンブリ内の部品は「親のローカル座標系 × 配置行列」の連鎖で最終的なワールド座標を得ます。この行列の連鎖が深くなる（サブアセンブリの入れ子が深い）ほど、<strong>浮動小数点の丸め誤差が掛け算的に蓄積</strong>していきます。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">4x4 Matrix</span>
+              <span class="workflow-step-title">同次変換行列</span>
+              <span class="workflow-step-desc">回転・平行移動・スケールを1つの4x4行列にまとめて表現。子の座標は親の行列との積で求める。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Chain</span>
+              <span class="workflow-step-title">行列の連鎖乗算</span>
+              <span class="workflow-step-desc">深い階層のサブアセンブリでは、行列の掛け算が何十回も連鎖し、各段でわずかな丸め誤差が発生する。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Orthonormal</span>
+              <span class="workflow-step-title">直交性の再正規化</span>
+              <span class="workflow-step-desc">誤差蓄積で回転行列の直交性が崩れる（軸が微妙に非直角になる）ため、定期的にGram-Schmidt等で再直交化する。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 実装視点：「深い階層の部品だけ僅かにズレる」バグの正体</strong><br>
+            トップレベルの部品は誤差がほぼゼロなのに、5階層下のサブアセンブリの部品だけ0.001mm単位でズレる、という報告は行列連鎖の誤差蓄積が原因であることが非常に多いです。座標系の階層が深い金型の入れ子構造（電極ホルダー内の電極、等）で特に顕在化します。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 バグ調査の勘所</strong><br>
+            「特定の部品だけ僅かにズレる」報告を受けたら、まずその部品がアセンブリツリーの何階層目にあるかを確認しましょう。階層が深いほど疑いが強まります。
+          </div>
+        `,
+            "bodyZh": `
+          <p>装配体中零件的最终世界坐标，是由“父级局部坐标系 × 摆放矩阵”逐层连乘得到的。子装配体嵌套得越深，这条矩阵链就越长，<strong>浮点数的舍入误差也会随着连乘而累积放大</strong>。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">4x4 Matrix</span>
+              <span class="workflow-step-title">齐次变换矩阵</span>
+              <span class="workflow-step-desc">把旋转、平移、缩放统一表示为一个 4x4 矩阵；子级坐标由自身矩阵与父级矩阵相乘得到。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Chain</span>
+              <span class="workflow-step-title">矩阵链式连乘</span>
+              <span class="workflow-step-desc">层级很深的子装配体，矩阵连乘可能达到几十次，每一次相乘都会引入微小的舍入误差。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Orthonormal</span>
+              <span class="workflow-step-title">正交性再归一化</span>
+              <span class="workflow-step-desc">误差累积会破坏旋转矩阵的正交性（坐标轴变得不再严格垂直），需要定期用 Gram-Schmidt 等方法重新正交化。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 实现视角：“只有深层零件位置有微小偏差”的真相</strong><br>
+            顶层零件几乎零误差，但第 5 层子装配体里的某个零件却出现 0.001mm 级别的偏移——这种报告十有八九是矩阵链累积误差导致的，在模具嵌套结构很深的场景（比如电极夹持座里的电极）中尤其容易显现。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 排查经验：</strong>
+            收到“只有某个零件位置有轻微偏差”的报告时，先确认这个零件在装配树中处于第几层——层级越深，越应该怀疑是矩阵链累积误差。
+          </div>
+        `,
+            "quiz": {
+                  "qJa": "深く入れ子になったサブアセンブリの部品だけ、僅かな座標ズレが生じる不具合の主な原因として最も妥当なのは？",
+                  "qZh": "嵌套层级很深的子装配体零件出现轻微坐标偏差，最合理的主要原因是？",
+                  "optionsJa": [
+                        "配置行列の連鎖乗算により、階層を経るごとに浮動小数点の丸め誤差が蓄積するため",
+                        "その部品だけ材質設定が間違っているため",
+                        "3Dプリンタの解像度が低いため",
+                        "アセンブリファイルの拡張子が間違っているため"
+                  ],
+                  "optionsZh": [
+                        "摆放矩阵逐层连乘导致浮点舍入误差随层级累积",
+                        "只是因为该零件的材质设置有误",
+                        "3D 打印机的分辨率不够高",
+                        "装配体文件的扩展名设置错误"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！階層が深いほど行列の掛け算回数が増え、各段の丸め誤差が積み重なって最終座標に現れます。",
+                  "explainZh": "正确！层级越深，矩阵相乘的次数就越多，每一步的舍入误差层层叠加，最终就体现在坐标偏差上。"
+            }
+      },
+      {
+            "chap": 2,
+            "subIndex": 3,
+            "titleJa": "D3-4 参照カウントの循環とジオメトリのメモリリーク",
+            "titleZh": "D3-4 引用计数循环与几何对象的内存泄漏",
+            "tag": "数値の罠",
+            "bodyJa": `
+          <p>B-Repの各要素（Face・Edge・Vertex）は、互いに親子関係と隣接関係を指し合う<strong>双方向のポインタ網</strong>を形成します。スマートポインタ（shared_ptr）で管理していても、双方向参照は<strong>循環参照によるメモリリーク</strong>を引き起こす典型パターンです。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">shared_ptr</span>
+              <span class="workflow-step-title">参照カウント方式</span>
+              <span class="workflow-step-desc">参照カウントが0になった時点で解放される。AがBを、BがAを強参照し合うと、カウントは決して0にならない。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">weak_ptr</span>
+              <span class="workflow-step-title">弱参照による循環の切断</span>
+              <span class="workflow-step-desc">「子→親」等の逆方向の参照はweak_ptr（弱参照）にすることで、循環を作らずに参照カウントに影響しない。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Leak Detect</span>
+              <span class="workflow-step-title">リーク検出の実務手法</span>
+              <span class="workflow-step-desc">「モデルを閉じてもオブジェクト数が0に戻らない」ことを検証する自動テストで循環参照によるリークを早期発見する。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 実装視点：なぜB-Repは循環参照になりやすいのか</strong><br>
+            FaceはEdgeへの参照を持ち、EdgeもどのFaceに属するかを知る必要があるため双方向参照が自然に発生します。設計原則として「所有権を持つ方向（親→子）はshared_ptr、辿るだけの方向（子→親、隣接要素）はweak_ptr」という一貫したルールを敷かないと、大規模モデルほどメモリが際限なく増え続けます。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 バグ調査の勘所</strong><br>
+            「大きいモデルを開いて閉じてを繰り返すとメモリ使用量が右肩上がりになる」という報告は、まず循環参照を疑いましょう。ヒーププロファイラでオブジェクトの生存数を確認し、閉じたはずのモデルの要素が生き残っていないかチェックします。
+          </div>
+        `,
+            "bodyZh": `
+          <p>B-Rep 的各个元素（Face、Edge、Vertex）之间会形成互相指向的<strong>双向指针网络</strong>——彼此既有父子关系也有邻接关系。即使用智能指针（shared_ptr）管理，双向引用依然是引发<strong>循环引用内存泄漏</strong>的典型模式。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">shared_ptr</span>
+              <span class="workflow-step-title">引用计数机制</span>
+              <span class="workflow-step-desc">引用计数归零时才会释放对象；如果 A 强引用 B、B 又强引用 A，计数永远不会归零。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">weak_ptr</span>
+              <span class="workflow-step-title">用弱引用打破循环</span>
+              <span class="workflow-step-desc">像“子→父”这类反向引用改用 weak_ptr（弱引用），既能访问又不影响引用计数，从而避免形成闭环。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Leak Detect</span>
+              <span class="workflow-step-title">泄漏检测的实务方法</span>
+              <span class="workflow-step-desc">用自动化测试验证“关闭模型后对象数量是否归零”，从而尽早发现循环引用造成的泄漏。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 实现视角：为什么 B-Rep 天生容易出现循环引用</strong><br>
+            Face 需要持有 Edge 的引用，Edge 也需要知道自己属于哪个 Face，双向引用几乎是天然产生的。设计上必须坚持一条铁律：“拥有关系的方向（父→子）用 shared_ptr，仅用于遍历的方向（子→父、相邻元素）用 weak_ptr”——否则模型越大，内存就会无止境地增长。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 排查经验：</strong>
+            遇到“反复打开关闭大模型，内存占用持续走高不回落”的报告，优先怀疑循环引用。用堆内存分析工具查看对象存活数量，确认本该已关闭的模型元素是否仍然“阴魂不散”。
+          </div>
+        `,
+            "quiz": {
+                  "qJa": "shared_ptrで管理されたB-Rep要素同士が「モデルを閉じてもメモリが解放されない」問題を起こす典型的な原因は？",
+                  "qZh": "使用 shared_ptr 管理的 B-Rep 元素之间出现“关闭模型后内存也不释放”的典型原因是？",
+                  "optionsJa": [
+                        "FaceとEdge等が互いに強参照(shared_ptr)し合う循環参照が発生している",
+                        "モデルのファイルサイズが単純に大きすぎるため",
+                        "OSの仮想メモリ設定が足りないため",
+                        "グラフィックドライバのバージョンが古いため"
+                  ],
+                  "optionsZh": [
+                        "Face 与 Edge 等元素之间互相以 shared_ptr 强引用，形成了循环引用",
+                        "只是因为模型文件本身体积过大",
+                        "操作系统虚拟内存设置不足",
+                        "显卡驱动版本过旧"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！双方向の強参照は参照カウントを永遠に0にしないため、明示的にweak_ptrへ置き換えない限りメモリは解放されません。",
+                  "explainZh": "正确！双向强引用会让引用计数永远无法归零，除非显式将其中一个方向改为 weak_ptr，否则内存永远不会被释放。"
+            }
+      },
+      {
             "chap": 3,
             "subIndex": 0,
             "titleJa": "D4-1 API・マクロによる自動化スクリプトの基本構造",
@@ -3646,6 +4138,170 @@
                   "ans": 0,
                   "explainJa": "正解！公差やトポロジーの不整合を抱えたまま後段処理に渡ると、問題が顕在化する箇所とインポート原因の間に大きな距離ができ、調査が困難になります。",
                   "explainZh": "正确！带着容差或拓扑不一致的隐患进入后续处理，问题暴露的位置和导入时的根因之间会隔着很远的距离，排查难度极大。"
+            }
+      },
+      {
+            "chap": 3,
+            "subIndex": 2,
+            "titleJa": "D4-3 APIトランザクションとロールバック：DBのACIDとの対比",
+            "titleZh": "D4-3 API 事务与回滚设计：与数据库 ACID 的对照",
+            "tag": "拡張開発",
+            "bodyJa": `
+          <p>マクロAPIで「10個の穴を開ける」ような複数ステップの操作を実行中に、7個目でエラーが起きたらどうすべきか？答えは<strong>データベースのトランザクションと同じ「全部成功か、全部なかったことにするか」</strong>という原則です。中途半端な状態を残すことは、モデルの整合性を破壊する最悪のバグ源になります。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Atomicity</span>
+              <span class="workflow-step-title">原子性</span>
+              <span class="workflow-step-desc">一連のAPI呼び出しをTransaction.Begin() 〜 Commit()で囲み、途中失敗時はRollback()で開始前の状態に戻す。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Isolation</span>
+              <span class="workflow-step-title">分離性</span>
+              <span class="workflow-step-desc">トランザクション実行中は再描画やイベント通知を一時停止し、中間状態がUIやプラグインに見えないようにする。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Undo統合</span>
+              <span class="workflow-step-title">Undoスタックとの統合</span>
+              <span class="workflow-step-desc">トランザクション全体を1つのUndo単位として登録する。ユーザーが「マクロ実行」をUndoすると10個の穴が一度に消える。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 実装視点：ロールバック漏れが引き起こす「壊れたファイル」</strong><br>
+            トランザクション機構を持たないAPIでマクロが例外を投げると、既に実行された分だけモデルに反映され、失敗分だけ抜けた中途半端な形状が残ります。これを保存してしまうと、次回開いた際に整合性チェックで延々とエラーが出る「壊れたファイル」の温床になります。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 バグ調査の勘所</strong><br>
+            「マクロがエラーで止まった後、モデルの状態がおかしい」という報告は、そのAPI呼び出し列がトランザクションで保護されていたかをまず確認しましょう。保護されていなければ、それ自体が設計上の欠陥です。
+          </div>
+        `,
+            "bodyZh": `
+          <p>如果宏 API 在执行“打 10 个孔”这样的多步骤操作时，第 7 步失败了该怎么办？答案与<strong>数据库事务“要么全部成功、要么全部不算数”</strong>的原则完全一致。留下一个半成品状态，是破坏模型完整性、制造最难排查 bug 的头号根源。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Atomicity</span>
+              <span class="workflow-step-title">原子性</span>
+              <span class="workflow-step-desc">把一连串 API 调用包裹在 Transaction.Begin() ~ Commit() 之间，中途失败则 Rollback() 回退到开始前的状态。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Isolation</span>
+              <span class="workflow-step-title">隔离性</span>
+              <span class="workflow-step-desc">事务执行期间暂停重绘和事件通知，避免中间状态被 UI 或其他插件看到。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Undo集成</span>
+              <span class="workflow-step-title">与 Undo 栈整合</span>
+              <span class="workflow-step-desc">把整个事务注册为一个 Undo 单元；用户对“执行宏”做一次 Undo，10 个孔会一次性全部消失。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 实现视角：漏做回滚会造成“损坏文件”</strong><br>
+            没有事务机制的 API 一旦在宏执行途中抛出异常，已经执行的部分会真实写入模型，失败的部分则缺失，留下一个残缺的中间形状。如果把这样的文件保存下来，下次打开时会被完整性校验反复报错，变成一份“损坏文件”。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 排查经验：</strong>
+            遇到“宏执行报错中断后，模型状态变得很奇怪”的报告，优先确认这一串 API 调用是否被事务机制保护——如果没有，这本身就是一个设计缺陷。
+          </div>
+        `,
+            "quiz": {
+                  "qJa": "10個の穴を開けるマクロが7個目でエラーを起こした場合、最も安全なAPI設計はどれか？",
+                  "qZh": "执行“打 10 个孔”的宏在第 7 个孔时报错，最安全的 API 设计是？",
+                  "optionsJa": [
+                        "一連の操作全体をトランザクションで囲み、失敗時は開始前の状態にロールバックする",
+                        "7個目までの穴はそのまま残し、8個目以降だけ諦める",
+                        "エラーを無視してそのまま処理を続行する",
+                        "アプリケーションを即座に強制終了する"
+                  ],
+                  "optionsZh": [
+                        "把整个操作序列包在事务中，失败时回滚到开始前的状态",
+                        "保留已完成的前 7 个孔，直接放弃第 8 个及以后",
+                        "忽略错误，继续往下执行",
+                        "立即强制退出应用程序"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！中途半端な状態を残さない「全か無か」の原則が、モデルの整合性を守る唯一安全な設計です。",
+                  "explainZh": "正确！“要么全部完成、要么什么都不留”的原则，是保护模型完整性唯一安全的设计方式。"
+            }
+      },
+      {
+            "chap": 3,
+            "subIndex": 3,
+            "titleJa": "D4-4 ファイルフォーマットのバージョン互換性設計",
+            "titleZh": "D4-4 文件格式的版本兼容性设计",
+            "tag": "拡張開発",
+            "bodyJa": `
+          <p>ソフトウェアは何年にもわたって進化し、ネイティブファイル形式にも新しいフィーチャー種別やメタデータが追加されます。開発者は<strong>「新バージョンで保存したファイルを旧バージョンで開く（前方互換性）」「旧ファイルを新バージョンで開く（後方互換性）」</strong>の両方を設計しなければなりません。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Schema Tag</span>
+              <span class="workflow-step-title">バージョンタグ付きレコード</span>
+              <span class="workflow-step-desc">各データブロックに種別IDとバージョン番号を付与する（Protocol Buffersのフィールド番号と同じ発想）。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Unknown Skip</span>
+              <span class="workflow-step-title">未知フィールドの安全なスキップ</span>
+              <span class="workflow-step-desc">旧バージョンのリーダーが「知らない新フィーチャー種別」に出会っても、クラッシュせずそのブロックを読み飛ばせる構造にする。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Downgrade</span>
+              <span class="workflow-step-title">ダウングレード時の代替表現</span>
+              <span class="workflow-step-desc">新フィーチャー（例：新種の高度な曲面）は、旧バージョン向けには近似的なNURBS曲面や単純ソリッドに変換して保存する。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 実装視点：バージョンタグを付け忘れるとどうなるか</strong><br>
+            初期設計でバージョン管理を考慮していないバイナリ形式は、後から新フィールドを追加すると全ての過去ファイルの読み込みオフセットがズレて破綻します。ファイルフォーマットは一度リリースしたら何年も互換性を背負い続けるため、最初から「型＋長さ＋バージョン」を必ずセットで書き込む設計が鉄則です。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 バグ調査の勘所</strong><br>
+            「新しいバージョンで保存したファイルを、旧バージョンで開くと文字化けやクラッシュが起きる」という報告は、未知フィールドのスキップ処理が正しく実装されているかをまず確認しましょう。
+          </div>
+        `,
+            "bodyZh": `
+          <p>软件会经过多年持续演进，原生文件格式也会不断新增特征类型和元数据。开发者必须同时设计好<strong>“用新版本保存的文件在旧版本中打开（前向兼容）”与“旧文件在新版本中打开（后向兼容）”</strong>这两个方向。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Schema Tag</span>
+              <span class="workflow-step-title">带版本标签的记录块</span>
+              <span class="workflow-step-desc">每个数据块都附带类型 ID 与版本号（与 Protocol Buffers 的字段编号是同一思路）。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Unknown Skip</span>
+              <span class="workflow-step-title">安全跳过未知字段</span>
+              <span class="workflow-step-desc">旧版本读取器遇到“不认识的新特征类型”时，不应崩溃，而应能安全跳过该数据块继续解析。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Downgrade</span>
+              <span class="workflow-step-title">降级时的替代表示</span>
+              <span class="workflow-step-desc">面向旧版本保存时，把新特征（如某种高级曲面）转换/近似为旧版本能理解的普通 NURBS 曲面或简单实体。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 实现视角：忘记打版本标签会怎样</strong><br>
+            如果最初的二进制格式设计没有考虑版本管理，后续新增字段就会导致所有历史文件的读取偏移量全部错位、彻底崩坏。文件格式一旦发布就要背负多年的兼容性包袱，因此从一开始就应坚持“类型 + 长度 + 版本号”三件套的写入铁律。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 排查经验：</strong>
+            遇到“用新版本保存的文件，在旧版本打开后出现乱码或崩溃”的报告，优先确认未知字段的跳过逻辑是否正确实现。
+          </div>
+        `,
+            "quiz": {
+                  "qJa": "ネイティブファイル形式の設計において、将来のバージョンアップに備えた最も基本的な鉄則はどれか？",
+                  "qZh": "设计原生文件格式时，为应对未来版本升级，最基本的铁律是？",
+                  "optionsJa": [
+                        "各データブロックに型・長さ・バージョン番号を必ず付与し、未知ブロックは安全にスキップできるようにする",
+                        "ファイルフォーマットの仕様は一度決めたら二度と変更しない",
+                        "常に最新バージョンでしかファイルを開けないよう制限する",
+                        "バージョン情報はファイル名にだけ埋め込めば十分である"
+                  ],
+                  "optionsZh": [
+                        "每个数据块都必须带上类型、长度与版本号，并保证未知数据块能被安全跳过",
+                        "文件格式规范一旦确定就永远不再变动",
+                        "限制文件只能在最新版本中打开",
+                        "只要把版本号嵌入文件名就足够了"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！「型＋長さ＋バージョン」のセットがあれば、旧リーダーは知らないブロックでも長さ情報から安全にスキップでき、将来の拡張に耐えられます。",
+                  "explainZh": "正确！有了“类型 + 长度 + 版本号”这套信息，旧版本读取器即使遇到不认识的数据块，也能凭长度信息安全跳过，从而经受住未来扩展的考验。"
             }
       },
       {
@@ -3847,6 +4503,170 @@
             }
       }
     ,
+      {
+            "chap": 4,
+            "subIndex": 2,
+            "titleJa": "D5-3 クラッシュダンプとコールスタックからの原因特定",
+            "titleZh": "D5-3 从崩溃转储与调用栈定位根因",
+            "tag": "デバッグ実務",
+            "bodyJa": `
+          <p>ユーザーの手元でしか再現しないクラッシュに対する最初の武器は、再現手順ではなく<strong>クラッシュダンプ（Minidump）</strong>です。シンボル情報と組み合わせることで、コードを一切実行せずにクラッシュ地点のコールスタックを特定できます。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Minidump</span>
+              <span class="workflow-step-title">クラッシュ時のメモリ・レジスタ断面</span>
+              <span class="workflow-step-desc">クラッシュ瞬間のスタック・レジスタ・ロード済みモジュール一覧を保存したファイル。個人情報を含まない最小構成が一般的。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">PDB/Symbol</span>
+              <span class="workflow-step-title">シンボルファイルとの突合</span>
+              <span class="workflow-step-desc">リリースビルドの機械語アドレスを関数名・行番号に変換するための対応表。ビルドごとに保管が必須。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Call Stack</span>
+              <span class="workflow-step-title">コールスタックの読み方</span>
+              <span class="workflow-step-desc">一番上のフレームが直接クラッシュした関数とは限らない（最適化によるインライン化・末尾呼び出しに注意）。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 実装視点：なぜ「再現しないから直せない」は言い訳にならないか</strong><br>
+            クラッシュダンプがあれば、実機で再現できなくてもクラッシュ地点のコールスタック・引数値・呼び出し元のモジュールバージョンまで特定できます。現場エンジニアには「異常終了時にダンプを自動生成して送信する」仕組みを最初から製品に組み込んでおくことが、遠隔地のバグ調査効率を桁違いに上げます。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 バグ調査の勘所</strong><br>
+            コールスタックの最上段が汎用的なメモリ確保関数（malloc等）だった場合、真の原因はその少し下のフレームにある「誰が壊れたポインタを渡したか」であることがほとんどです。
+          </div>
+        `,
+            "bodyZh": `
+          <p>面对只在用户现场才能复现的崩溃，第一件武器不是复现步骤，而是<strong>崩溃转储文件（Minidump）</strong>。结合符号表信息，完全不需要在自己机器上跑一遍代码，就能定位到崩溃发生时的完整调用栈。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Minidump</span>
+              <span class="workflow-step-title">崩溃瞬间的内存/寄存器切片</span>
+              <span class="workflow-step-desc">保存崩溃那一刻的调用栈、寄存器状态、已加载模块列表的文件，通常做成不含隐私信息的最小体积版本。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">PDB/Symbol</span>
+              <span class="workflow-step-title">与符号文件比对还原</span>
+              <span class="workflow-step-desc">把发布版的机器码地址还原成函数名与行号的对照表，每次构建都必须妥善归档保存。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Call Stack</span>
+              <span class="workflow-step-title">正确解读调用栈</span>
+              <span class="workflow-step-desc">栈顶那一帧未必是真正出问题的函数（要警惕编译优化带来的内联展开、尾调用优化）。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 实现视角：“复现不了所以修不了”站不住脚</strong><br>
+            只要有崩溃转储，即便无法在自己机器上复现，依然能定位到崩溃点的调用栈、参数值乃至调用方模块的版本号。产品应当从一开始就内置“异常退出时自动生成并回传转储文件”的机制，这能把远程 bug 排查效率提升一个数量级。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 排查经验：</strong>
+            如果调用栈最上层是一个通用的内存分配函数（如 malloc），真正的病根几乎总是在它下面一两帧——也就是“到底是谁传了一个已经损坏的指针进来”。
+          </div>
+        `,
+            "quiz": {
+                  "qJa": "現地でしか再現しないクラッシュを調査する上で、開発者にとって最も実務的な第一歩は？",
+                  "qZh": "调查只在客户现场才复现的崩溃问题，对开发者来说最实际的第一步是？",
+                  "optionsJa": [
+                        "クラッシュダンプ（Minidump）とシンボルファイルを突き合わせ、コールスタックを解析する",
+                        "ユーザーに電話で操作手順を細かく口頭で説明してもらうだけで済ませる",
+                        "とりあえずソフトウェアを再インストールしてもらう",
+                        "問題を再現できるまで開発を一切進めない"
+                  ],
+                  "optionsZh": [
+                        "拿到崩溃转储（Minidump），结合符号文件解析调用栈",
+                        "只靠打电话让用户口头描述操作步骤",
+                        "先让用户重装一遍软件再说",
+                        "在能复现之前完全停止其他开发工作"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！ダンプとシンボルがあれば、現地で再現できなくてもクラッシュ地点を特定でき、口頭説明よりはるかに正確です。",
+                  "explainZh": "正确！有了转储文件和符号表，即使无法在自己环境中复现，也能精确定位崩溃地点，远比口头描述准确可靠。"
+            }
+      },
+      {
+            "chap": 4,
+            "subIndex": 3,
+            "titleJa": "D5-4 幾何回帰テストとゴールデンファイル比較",
+            "titleZh": "D5-4 几何回归测试与黄金文件比对",
+            "tag": "デバッグ実務",
+            "bodyJa": `
+          <p>幾何カーネルの改修が「意図せず別のモデルを壊していないか」を保証する最も実務的な手法が<strong>ゴールデンファイル（Golden File）回帰テスト</strong>です。単体テストだけでは、実在する数千の複雑な金型モデル特有の退化パターンを網羅できません。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Golden Set</span>
+              <span class="workflow-step-title">正解集合の蓄積</span>
+              <span class="workflow-step-desc">過去のバグ再現モデルや代表的な金型モデルを「正しい結果」付きでリポジトリに蓄積し続ける。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Tolerant Diff</span>
+              <span class="workflow-step-title">容差付き差分比較</span>
+              <span class="workflow-step-desc">体積・面積・重心などの数値指標を許容誤差付きで比較する（完全一致は求めない、D3で学んだ通り）。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">CI Gate</span>
+              <span class="workflow-step-title">CIパイプラインへの組み込み</span>
+              <span class="workflow-step-desc">コードのマージ前に全ゴールデンモデルを自動再計算し、指標が閾値を超えて変化したらマージをブロックする。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 実装視点：なぜ単体テストだけでは不十分なのか</strong><br>
+            幾何カーネルのバグは「特定の角度」「特定の曲率半径」といった条件が重なって初めて顕在化することが多く、人為的に書いた単体テストのケースでは想定漏れが必ず発生します。実際の金型モデル群をそのままテスト資産化することで、単体テストではカバーできない「現実世界の複雑さ」を継続的に検証できます。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 バグ調査の勘所</strong><br>
+            過去に一度直したバグが再発する（デグレ）場合は、そのバグの再現モデルがゴールデンセットに追加されていなかった可能性が高いです。バグ修正のPRには必ず再現モデルの追加をセットにする運用が重要です。
+          </div>
+        `,
+            "bodyZh": `
+          <p>要保证几何内核的改动“没有意外弄坏其他模型”，最实用的手段就是<strong>黄金文件（Golden File）回归测试</strong>。仅靠单元测试，无法覆盖现实中成千上万个复杂模具模型各自独有的退化模式。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Golden Set</span>
+              <span class="workflow-step-title">持续积累的正确结果集</span>
+              <span class="workflow-step-desc">把历史 bug 复现模型与有代表性的模具模型连同“正确结果”一起持续沉淀进仓库。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Tolerant Diff</span>
+              <span class="workflow-step-title">带容差的差异比对</span>
+              <span class="workflow-step-desc">对体积、面积、质心等数值指标做带容差的比较（正如 D3 所学，不要求完全相等）。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">CI Gate</span>
+              <span class="workflow-step-title">接入 CI 流水线</span>
+              <span class="workflow-step-desc">代码合并前自动对全部黄金模型重新计算一遍，若指标变化超出阈值就阻止合并。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 实现视角：为什么只靠单元测试不够</strong><br>
+            几何内核的 bug 往往要“特定角度 + 特定曲率半径”等多个条件叠加才会暴露，人工编写的单元测试用例几乎必然会有遗漏。把真实模具模型群直接变成测试资产，才能持续验证单元测试覆盖不到的“真实世界的复杂性”。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 排查经验：</strong>
+            如果一个曾经修复过的 bug 又复发了（俗称"回归"/degrade），大概率是当初修复时没有把复现模型加入黄金测试集。规范做法是：每个 bug 修复的 PR 都必须连带添加对应的复现模型。
+          </div>
+        `,
+            "quiz": {
+                  "qJa": "幾何カーネルの回帰テストにおいて、単体テストだけでは不十分とされる主な理由は？",
+                  "qZh": "在几何内核的回归测试中，认为仅靠单元测试还不够的主要原因是？",
+                  "optionsJa": [
+                        "実バグは特定条件の複合（角度・曲率等）で顕在化するため、現実の複雑な金型モデル群でしか検証できない場合が多い",
+                        "単体テストはそもそも実行速度が遅すぎるから",
+                        "単体テストは開発者ひとりでは書けないものだから",
+                        "単体テストはCIパイプラインに組み込めない仕様だから"
+                  ],
+                  "optionsZh": [
+                        "真实 bug 往往由多个特定条件（角度、曲率等）叠加才会暴露，很多情况只有真实复杂模具模型才能验证出来",
+                        "单元测试本身运行速度太慢，不具备实用性",
+                        "单元测试必须由多名开发者协作才能编写",
+                        "单元测试在设计上就无法接入 CI 流水线"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！現実のモデルが持つ複雑な退化パターンを人為的な単体テストで網羅するのは非常に困難なため、実モデル群をゴールデンセット化する運用が不可欠です。",
+                  "explainZh": "正确！现实模型所具有的复杂退化模式很难靠人工编写的单元测试完全覆盖，因此把真实模型积累为黄金测试集是必不可少的实践。"
+            }
+      },
       /* --- D6章：ハイブリッドモデリングと非多様体トポロジ --- */
       {
         chap: 5,
@@ -3922,7 +4742,7 @@ do {
             <strong>🔍 排查经验：</strong>“用户导入外部片体做倒圆角时崩溃”的常见根本原因，是外部数据存在非流形边，而算法假设了只有两个相邻面（twin-&gt;face），导致解引用空指针。混合建模内核必须在算子入口执行非流形边分支保护。
           </div>
         `,
-        trial: {
+        quiz: {
           qJa: "Space-Eのような金型向けハイブリッドモデリングCADにおいて、Radial-Edgeトポロジーを採用する最大の利点はどれか？",
           qZh: "在面向模具混合建模的 CAD 软件中，采用 Radial-Edge 拓扑数据结构的最大核心优势是？",
           optionsJa: [
@@ -3996,7 +4816,7 @@ do {
             系统 A（建模公差 0.001mm）导出的 STEP 模型，在系统 B（公差 0.000001mm）打开时，其 p-curve 投影到 3D 空间的实际轨迹与 3D Model Curve 产生微米级漂移。这个微缝隙（Gap）会导致布尔求差时算法找不到交线而直接死锁或报“Boolean Failed”。
           </div>
         `,
-        trial: {
+        quiz: {
           qJa: "トリム曲面（Trimmed Surface）のデータ構造において、UV空間の境界線（p-curve）と3D空間の境界線（3D Curve）が同時に存在する理由として最も適切なのは？",
           qZh: "在修剪曲面（Trimmed Surface）数据结构中，UV 参数空间曲线（p-curve）与 3D 空间曲线（3D Curve）并存的核心原因是什么？",
           optionsJa: [
@@ -4014,6 +4834,170 @@ do {
           ans: 0,
           explainJa: "正解！2Dパラメータ空間での内外判定の数値安定性と、3D空間での物理交差精度の両立を図るための必然的設計です。",
           explainZh: "正确！UV 空间能够以 2D 拓扑极高效率判断有效区域，而 3D 曲线保证了跨面物理连接与公差校验，两者是工业 CAD 不可或缺的并存机制。"
+        }
+      },
+      {
+        chap: 5,
+        subIndex: 2,
+        titleJa: "D6-3 ブーリアン演算の内部パイプラインと交線エラー",
+        titleZh: "D6-3 布尔运算的内部流水线与交线求解错误",
+        tag: "幾何カーネル",
+        bodyJa: `
+          <p>ブーリアン演算（和・差・積）は「1回の魔法」ではなく、<strong>交線計算 → トポロジー分割 → 内外分類 → 再結合</strong>という4段階パイプラインです。各段階が独立した失敗ポイントを持ちます。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">1. Intersect</span>
+              <span class="workflow-step-title">曲面同士の交線計算</span>
+              <span class="workflow-step-desc">NURBS曲面同士の交線は解析解を持たず、数値反復法（Newton法等）で追跡する。ほぼ接する曲面同士は不安定になりやすい。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">2. Split</span>
+              <span class="workflow-step-title">交線によるトポロジー分割</span>
+              <span class="workflow-step-desc">求めた交線でFace/Edgeを分割し、新しいトポロジー要素を生成する。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">3. Classify & Merge</span>
+              <span class="workflow-step-title">内外分類と再結合</span>
+              <span class="workflow-step-desc">分割済み要素を「残す／捨てる」に分類し、演算の種類（和・差・積）に応じて再結合してソリッドを再構成する。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 実装視点：「ほぼ接する」形状がなぜ最大の鬼門か</strong><br>
+            2つの曲面が完全に交差せず、公差の範囲内でギリギリ接している（Near-Tangent）場合、交線追跡アルゴリズムは「交わっている」と「接しているだけ」の判定が数値的に不安定になり、交線が虫食い状に途切れたり、誤った内外分類を招きます。これが「特定の組み合わせでだけブーリアンが失敗する」バグの最大要因です。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 バグ調査の勘所</strong><br>
+            「ブーリアン演算がFailedになる」報告を受けたら、まず対象2形状の該当箇所が互いにほぼ接線・ほぼ同一平面になっていないかを確認しましょう。純粋に交差している場合よりも、こちらの方が圧倒的に多い原因です。
+          </div>
+        `,
+        bodyZh: `
+          <p>布尔运算（并、差、交）不是"一步到位的魔法"，而是一条<strong>求交线 → 拓扑分割 → 内外分类 → 重新组合</strong>的四段流水线，每一段都是独立的失败点。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">1. Intersect</span>
+              <span class="workflow-step-title">曲面间求交线</span>
+              <span class="workflow-step-desc">NURBS 曲面之间的交线没有解析解，需要用数值迭代法（如牛顿法）追踪，几乎相切的曲面对极容易数值不稳定。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">2. Split</span>
+              <span class="workflow-step-title">用交线做拓扑分割</span>
+              <span class="workflow-step-desc">用求得的交线切分 Face/Edge，生成新的拓扑元素。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">3. Classify & Merge</span>
+              <span class="workflow-step-title">内外分类与重组</span>
+              <span class="workflow-step-desc">把切分后的元素分类为"保留/丢弃"，再依据运算类型（并/差/交）重新组合成新的实体。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 实现视角：为什么“几乎相切”是最大的鬼门关</strong><br>
+            当两个曲面并非完全相交，而是在容差范围内几乎相切（Near-Tangent）时，交线追踪算法在数值上很难稳定判断“到底是相交还是仅仅相切”，容易导致交线出现断裂缺口，或内外分类判断错误。这正是"只有特定形状组合布尔运算才失败"这类 bug 的头号成因。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 排查经验：</strong>
+            收到“布尔运算失败（Boolean Failed）”的报告时，先检查两个形状在报错区域是否近乎相切或近乎共面——这比单纯的正常相交更容易导致失败，也是最常见的根因。
+          </div>
+        `,
+        quiz: {
+          qJa: "ブーリアン演算が「特定の形状の組み合わせだけ」失敗しやすい最大の要因として最も妥当なのは？",
+          qZh: "布尔运算“只在特定形状组合下”容易失败，最主要的原因是？",
+          optionsJa: [
+            "対象面同士がほぼ接線（Near-Tangent）の状態にあり、交線追跡が数値的に不安定になるため",
+            "使用しているグラフィックカードのメーカーが異なるため",
+            "ファイル名に日本語が含まれているため",
+            "モデルの作成日時が古すぎるため"
+          ],
+          optionsZh: [
+            "参与运算的曲面之间近乎相切（Near-Tangent），导致交线追踪在数值上变得不稳定",
+            "使用的显卡厂商不同所致",
+            "文件名中包含中文或日文字符",
+            "模型创建的时间太久远"
+          ],
+          ans: 0,
+          explainJa: "正解！ほぼ接する形状は交差判定の数値的な閾値付近に位置するため、最も不安定でアルゴリズムが破綻しやすい領域です。",
+          explainZh: "正确！近乎相切的形状恰好位于求交判定数值阈值的边缘地带，是算法最容易崩溃、最不稳定的区域。"
+        }
+      },
+      {
+        chap: 5,
+        subIndex: 3,
+        titleJa: "D6-4 シェル修復とジオメトリヒーリングアルゴリズム",
+        titleZh: "D6-4 壳体修复与几何愈合（Healing）算法",
+        tag: "幾何カーネル",
+        bodyJa: `
+          <p>外部から取り込んだ「汚い」曲面群（微小ギャップ・重複エッジ・極小面）をそのまま演算に使うと必ず破綻します。<strong>ヒーリング（Healing）</strong>は、これらの欠陥を許容範囲内で自動修正し、演算可能な状態に引き上げる前処理です。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Gap Closing</span>
+              <span class="workflow-step-title">微小ギャップの縫合</span>
+              <span class="workflow-step-desc">指定トレランス以内の頂点・エッジを同一とみなして統合し、隙間のあるシェルを閉じたソリッドへ格上げする。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Sliver Removal</span>
+              <span class="workflow-step-title">極小面・極小エッジの除去</span>
+              <span class="workflow-step-desc">後続の演算を不安定にする「幅がほぼゼロの面（スリバー面）」を検出し、隣接面へ吸収または削除する。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Normal Align</span>
+              <span class="workflow-step-title">法線方向の整合</span>
+              <span class="workflow-step-desc">Face同士の法線の向きがバラバラな輸入データを、Shell全体で一貫した向きに揃え直す。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 実装視点：ヒーリングは「トレランスの二段構え」で設計する</strong><br>
+            ヒーリングの許容誤差を演算本体の許容誤差より緩く設定してしまうと、本来別々であるべき形状まで誤って結合してしまいます。実務では「ヒーリング用の緩い公差」と「後続演算用の厳密な公差」を明確に分離し、修復後に厳密公差で再検証する二段構えが定石です。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 バグ調査の勘所</strong><br>
+            「輸入データを開くと、本来別パーツだった2つの面が1つに結合されてしまう」という報告は、ヒーリングのトレランス設定が緩すぎることが濃厚です。
+          </div>
+        `,
+        bodyZh: `
+          <p>外部导入的“脏”曲面数据（微小缝隙、重复边、极小面片）如果直接拿去做运算必然崩溃。<strong>愈合（Healing）</strong>就是在容差范围内自动修正这些缺陷，把数据提升到可运算状态的前处理步骤。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Gap Closing</span>
+              <span class="workflow-step-title">缝合微小缝隙</span>
+              <span class="workflow-step-desc">将指定容差范围内的顶点/边视为同一个并合并，把存在缝隙的壳体升级为真正闭合的实体。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Sliver Removal</span>
+              <span class="workflow-step-title">清除极小面/极小边</span>
+              <span class="workflow-step-desc">检测出会让后续运算变得不稳定的"宽度近乎为零的窄面片（Sliver）"，将其并入相邻面或直接移除。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Normal Align</span>
+              <span class="workflow-step-title">统一法向方向</span>
+              <span class="workflow-step-desc">把导入数据中各 Face 法向朝向不一致的问题，在整个 Shell 范围内重新统一朝向。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 实现视角：愈合要用“双层容差”设计</strong><br>
+            如果愈合阶段的容差设置得比正式运算的容差更宽松，就会把本该保持独立的形状错误地合并在一起。业界惯例是明确区分“愈合用的宽松容差”与“后续运算用的严格容差”，修复完成后再用严格容差重新校验一遍，形成双重保险。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 排查经验：</strong>
+            遇到“打开导入数据后，本应是两个独立零件的曲面被错误合并成了一个”的报告，十有八九是愈合阶段的容差设置过于宽松。
+          </div>
+        `,
+        quiz: {
+          qJa: "ジオメトリヒーリング機能を設計する際、最も注意すべき鉄則はどれか？",
+          qZh: "设计几何愈合（Healing）功能时，最应遵守的铁律是？",
+          optionsJa: [
+            "ヒーリング用の緩い公差と、後続演算用の厳密な公差を明確に分離して二段構えで検証する",
+            "常に最大限緩い公差を一つだけ使い、全工程で使い回す",
+            "ヒーリングは一切せず、常にユーザーに手動修正させる",
+            "ヒーリングの結果を検証せずそのまま本番データとして保存する"
+          ],
+          optionsZh: [
+            "把愈合用的宽松容差与后续运算用的严格容差明确分离，做双层校验",
+            "始终只用一个最宽松的容差贯穿全流程",
+            "完全不做自动愈合，永远要求用户手动修复",
+            "愈合结果不做任何校验直接当作正式数据保存"
+          ],
+          ans: 0,
+          explainJa: "正解！単一の緩い公差だけを使うと、本来別々であるべき形状同士を誤結合するリスクが高まるため、二段構えの公差管理が業界標準です。",
+          explainZh: "正确！只用一个宽松容差会大幅提高把本应独立的形状错误合并的风险，双层容差管理是业界公认的标准做法。"
         }
       },
 
@@ -4100,7 +5084,7 @@ do {
 }</code></pre>
           </div>
         `,
-        trial: {
+        quiz: {
           qJa: "CADの3Dビューポートで「平坦な面は大きなポリゴン数枚なのに、R0.5の小さな角だけ非常に細かくポリゴンが密集している」現象の原理として正しいのはどれか？",
           qZh: "在 CAD 3D 视口中，“平坦大平面仅有几块大三角形，而 R0.5 的微小圆角处三角形却极其密集”背后的核心原理是？",
           optionsJa: [
@@ -4176,7 +5160,7 @@ do {
             无需遍历几何链表，读取一个像素即可在纳秒级完成图元定位。切忌在主线程写嵌套循环比对 50 万个三角形！
           </div>
         `,
-        trial: {
+        quiz: {
           qJa: "超大規模な金型モデル（数十万面）において、マウスホバー時の面ハイライト処理を「全三角形との線分交差判定（CPUループ）」で実装した場合に生じる問題は？",
           qZh: "在包含数十万个曲面的超大模具装配体中，若鼠标滑过拾取采用“CPU 遍历全量三角形求交”实现，会引发什么严重后果？",
           optionsJa: [
@@ -4194,6 +5178,170 @@ do {
           ans: 0,
           explainJa: "正解！O(N)の全走査はCADにおいて致命的です。BVHによるO(log N)の空間枝刈り、あるいはGPU Color BufferによるO(1)の実装が不可欠です。",
           explainZh: "正确！O(N) 遍历全量网格在 CAD 交互中是性能禁忌。工业系统必须依靠 BVH 空间剪枝至 O(log N) 或利用离屏缓冲实现 O(1) 极速拾取。"
+        }
+      },
+      {
+        chap: 6,
+        subIndex: 2,
+        titleJa: "D7-3 巨大アセンブリのシーングラフとLOD管理",
+        titleZh: "D7-3 大型装配体的场景图与 LOD 管理",
+        tag: "描画パイプライン",
+        bodyJa: `
+          <p>数千部品からなる金型アセンブリを毎フレーム全部フル精度で描画すると、GPUが即座に音を上げます。<strong>シーングラフ（Scene Graph）</strong>による階層管理と、距離に応じた<strong>LOD（Level of Detail）</strong>切り替えが不可欠です。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Scene Graph</span>
+              <span class="workflow-step-title">階層ツリーとしての空間管理</span>
+              <span class="workflow-step-desc">アセンブリの親子関係をそのまま描画ツリーに反映し、各ノードにバウンディングボックスを持たせる。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Frustum Culling</span>
+              <span class="workflow-step-title">視錐台カリング</span>
+              <span class="workflow-step-desc">カメラの視野外にあるノードをバウンディングボックス判定だけで即座に描画対象から除外する。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">LOD Switch</span>
+              <span class="workflow-step-title">距離に応じた詳細度切替</span>
+              <span class="workflow-step-desc">カメラから遠い部品は粗いテッセレーション結果に自動的に差し替え、近づいたら高精細メッシュへ再生成する。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 実装視点：「ズームアウトすると逆にカクつく」の意外な原因</strong><br>
+            直感に反して、遠くから全体を見渡した時の方が重くなるケースがあります。LODが正しく効いていないと、画面上ではミリ単位の点にしか見えない部品でも、CPU側では高精細な数万頂点のメッシュをGPUに送信し続けるためです。ボトルネックはGPUの描画能力ではなく、CPU→GPU間の頂点データ転送帯域であることが多いです。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 バグ調査の勘所</strong><br>
+            「全体表示にすると重い」という報告は、GPU使用率よりも先にドローコール数（Draw Call）と転送頂点数を計測しましょう。LODが機能していれば、遠景ほど転送データは激減するはずです。
+          </div>
+        `,
+        bodyZh: `
+          <p>如果每一帧都用完整精度渲染由成千上万个零件组成的模具装配体，GPU 立刻就会顶不住。必须依靠<strong>场景图（Scene Graph）</strong>做层级管理，并根据距离动态切换<strong>LOD（细节层次）</strong>。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Scene Graph</span>
+              <span class="workflow-step-title">以树形结构管理空间</span>
+              <span class="workflow-step-desc">把装配体的父子关系直接映射为渲染树，每个节点都持有一个包围盒。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Frustum Culling</span>
+              <span class="workflow-step-title">视锥体裁剪</span>
+              <span class="workflow-step-desc">仅凭包围盒判断，就能把处于相机视野之外的节点立即排除出渲染队列。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">LOD Switch</span>
+              <span class="workflow-step-title">按距离切换细节层次</span>
+              <span class="workflow-step-desc">离相机远的零件自动替换为粗糙的离散化结果，靠近后再重新生成高精度网格。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 实现视角：“缩小视图反而更卡”的意外真相</strong><br>
+            与直觉相反，缩小到看整体装配体时反而可能更卡。如果 LOD 没有正常生效，那些在屏幕上只占几个像素的零件，CPU 侧依然在把数万顶点的高精度网格源源不断地传给 GPU。瓶颈往往不是 GPU 的渲染能力，而是 CPU→GPU 之间的顶点数据传输带宽。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 排查经验：</strong>
+            遇到“切换到整体视图就变卡”的报告，先测量 Draw Call 数量与顶点传输量，而不是 GPU 占用率——如果 LOD 生效正常，视角越远，传输数据量应该急剧减少才对。
+          </div>
+        `,
+        quiz: {
+          qJa: "巨大アセンブリを全体表示（ズームアウト）した際に描画が重くなる場合、真っ先に疑うべきボトルネックは？",
+          qZh: "缩小查看巨大装配体整体时渲染变卡，最应优先怀疑的瓶颈是？",
+          optionsJa: [
+            "LODが機能せず、画面上は極小に見える部品も高精細メッシュのままCPUからGPUへ転送され続けている",
+            "モニターの物理的なサイズが小さすぎる",
+            "マウスのポーリングレートが低すぎる",
+            "OSの壁紙が動画になっている"
+          ],
+          optionsZh: [
+            "LOD 未生效，屏幕上极小的零件仍以高精度网格持续从 CPU 传输给 GPU",
+            "显示器的物理尺寸太小",
+            "鼠标轮询率设置过低",
+            "操作系统桌面壁纸使用了动态视频"
+          ],
+          ans: 0,
+          explainJa: "正解！LODの目的はまさにこの「画面上で小さい＝転送データも減らす」対応関係を保証することにあります。",
+          explainZh: "正确！LOD 存在的意义正是要保证“屏幕上越小＝传输数据量也应越少”这一对应关系。"
+        }
+      },
+      {
+        chap: 6,
+        subIndex: 3,
+        titleJa: "D7-4 断面表示とダイナミッククリッピング平面の実装",
+        titleZh: "D7-4 剖视图与动态裁剪平面的实现",
+        tag: "描画パイプライン",
+        bodyJa: `
+          <p>金型内部のリブ構造や電極の刺さり具合を確認する「断面表示」機能は、単に半分を消して見せているのではありません。GPU上の<strong>クリッピング平面</strong>によるピクセル破棄と、断面に見える<strong>キャップ面（Cap Face）</strong>の動的生成という2つの技術で構成されます。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Clip Plane</span>
+              <span class="workflow-step-title">シェーダーでのピクセル破棄</span>
+              <span class="workflow-step-desc">任意平面の式 ax+by+cz+d を各ピクセルのワールド座標に適用し、符号が負の側を描画しない（discard）。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Cap Generation</span>
+              <span class="workflow-step-title">断面キャップの動的生成</span>
+              <span class="workflow-step-desc">クリッピングだけでは切断面が「空洞」に見える。切断平面とソリッドの交差輪郭を都度計算し、閉じたポリゴンで塗りつぶす。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Depth Consistency</span>
+              <span class="workflow-step-title">深度バッファとの整合</span>
+              <span class="workflow-step-desc">クリップ後の深度値を正しく更新しないと、断面より奥にあるはずの別部品が手前に透けて見える描画破綻が起きる。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 実装視点：キャップ面はGPUだけでは生成できない</strong><br>
+            クリッピング自体はシェーダーだけで完結する軽量な処理ですが、断面を「中身の詰まった実体」として見せるキャップ生成は、切断平面とB-Repソリッドの幾何交差計算そのものであり、CPU側の幾何カーネルの仕事です。これを怠ると、断面表示は「透明な殻の内側が丸見え」の不自然な絵になります。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 バグ調査の勘所</strong><br>
+            「断面表示にすると内部が空洞に見える／変な模様が透ける」という報告は、まずキャップ生成ロジックが呼ばれているか、対象ソリッドがそもそも閉じたB-Repかを確認しましょう。非流形の開いたシェルはキャップ生成に失敗しやすいです。
+          </div>
+        `,
+        bodyZh: `
+          <p>用来查看模具内部筋位结构或电极插入情况的“剖视图”功能，并不是简单地把一半模型隐藏起来。它由 GPU 上的<strong>裁剪平面（Clip Plane）</strong>像素丢弃，以及动态生成剖切面处<strong>封盖面（Cap Face）</strong>这两项技术共同构成。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Clip Plane</span>
+              <span class="workflow-step-title">在着色器中丢弃像素</span>
+              <span class="workflow-step-desc">将任意平面方程 ax+by+cz+d 应用到每个像素的世界坐标上，符号为负的一侧直接 discard 不绘制。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Cap Generation</span>
+              <span class="workflow-step-title">动态生成剖切封盖面</span>
+              <span class="workflow-step-desc">仅做裁剪会让剖切处看起来是"空心的"。需要实时计算剖切平面与实体的相交轮廓，再用闭合多边形填充。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Depth Consistency</span>
+              <span class="workflow-step-title">与深度缓冲保持一致</span>
+              <span class="workflow-step-desc">裁剪后若未正确更新深度值，本应位于剖面更深处的其他零件会错误地"透"到前面来，造成渲染错乱。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 实现视角：封盖面无法单靠 GPU 生成</strong><br>
+            裁剪本身是着色器就能独立完成的轻量操作，但要让剖面看起来像"实心的实体"，封盖面的生成本质上是剖切平面与 B-Rep 实体的几何求交计算，这是 CPU 侧几何内核的工作。如果省略这一步，剖视图看起来就会是"能看穿空心外壳"的违和画面。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 排查经验：</strong>
+            遇到“切换到剖视图后内部显示为空心／透出诡异花纹”的报告，先确认封盖面生成逻辑是否被正确调用，以及目标实体本身是否为闭合 B-Rep——非流形的开放壳体最容易导致封盖面生成失败。
+          </div>
+        `,
+        quiz: {
+          qJa: "断面表示（セクションビュー）を実装する際、単純なクリッピング平面だけでは不十分とされる理由は？",
+          qZh: "实现剖视图（Section View）时，为什么仅靠简单的裁剪平面是不够的？",
+          optionsJa: [
+            "クリッピングだけでは断面が空洞に見えるため、切断面とソリッドの交差輪郭からキャップ面を別途生成する必要があるから",
+            "クリッピング平面はGPUで一切対応できない機能だから",
+            "断面表示には常に赤色の着色が義務付けられているから",
+            "クリッピングを使うとファイルサイズが2倍になるから"
+          ],
+          optionsZh: [
+            "仅做裁剪会让剖切处看起来是空心的，还需要根据剖切面与实体的相交轮廓另外生成封盖面",
+            "裁剪平面本身是 GPU 完全无法支持的功能",
+            "剖视图规范上必须统一涂成红色",
+            "使用裁剪会让文件体积直接翻倍"
+          ],
+          ans: 0,
+          explainJa: "正解！クリッピングは描画の破棄処理に過ぎず、「切断面が実体で塗りつぶされている」という視覚表現には別途キャップ生成の幾何計算が必要です。",
+          explainZh: "正确！裁剪只是渲染层面的像素丢弃，要呈现出“剖切面被实体填满”的视觉效果，必须额外做一次封盖面生成的几何计算。"
         }
       },
 
@@ -4250,7 +5398,7 @@ do {
             <strong>📌 架构黄金铁律：</strong>经典 CAD/CAM 几何内核应默认视为<strong>单线程独占对象</strong>。跨线程并发计算必须依靠“几何只读快照”与独立内存空间进行物理隔离。
           </div>
         `,
-        trial: {
+        quiz: {
           qJa: "幾何カーネルのトポロジー走査処理をマルチスレッド化する際、安易に共有B-Repオブジェクトを複数スレッドから直接読み出してはならない根本原因は？",
           qZh: "在多线程化几何内核计算时，绝不能让多个工作线程直接并发读取同一个共享 B-Rep 对象的根本原因是什么？",
           optionsJa: [
@@ -4348,7 +5496,7 @@ tbb::parallel_for(size_t(0), zLevels.size(), [&](size_t i) {
 });</code></pre>
           </div>
         `,
-        trial: {
+        quiz: {
           qJa: "CAMの等高線加工パス計算において、高並列マルチスレッド化とスレッドセーフを両立させる最も優れた設計パターンは？",
           qZh: "在 CAM 等高线切削计算中，兼顾多线程高并发吞吐量与线程安全的最佳架构模式是？",
           optionsJa: [
@@ -4366,6 +5514,170 @@ tbb::parallel_for(size_t(0), zLevels.size(), [&](size_t i) {
           ans: 0,
           explainJa: "正解！「不変スナップショット+領域・層別タスク分解」が、複雑な幾何データを並列化する際の業界標準パターンです。",
           explainZh: "正确！“不可变只读快照 + 空间切片任务分解”是当代工业级 CAM 引擎发挥多核算力的标准架构范式。"
+        }
+      },
+      {
+        chap: 7,
+        subIndex: 2,
+        titleJa: "D8-3 ロックフリーキューによるCAMパイプラインの段間連携",
+        titleZh: "D8-3 用无锁队列连接 CAM 流水线的各处理阶段",
+        tag: "並列処理",
+        bodyJa: `
+          <p>CAM計算は「粗加工パス生成 → 干渉チェック → 後処理変換」のように複数段階のパイプラインです。各段を別スレッドで動かす場合、単純にMutex付きキューで橋渡しすると、生産者と消費者の速度差がボトルネックになります。<strong>ロックフリーキュー（Lock-Free Queue）</strong>による段間連携が現実解です。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Producer/Consumer</span>
+              <span class="workflow-step-title">生産者・消費者パターン</span>
+              <span class="workflow-step-desc">刀路生成スレッド（生産者）が結果をキューに積み、後処理スレッド（消費者）が取り出して処理する。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">CAS</span>
+              <span class="workflow-step-title">Compare-And-Swapによる無ロック実装</span>
+              <span class="workflow-step-desc">Mutexで全体をロックする代わりに、キューの先頭/末尾ポインタをアトミック命令（CAS）だけで更新し、待ち時間を最小化する。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Backpressure</span>
+              <span class="workflow-step-title">速度差の吸収（バックプレッシャー）</span>
+              <span class="workflow-step-desc">生産速度が消費速度を上回るとキューが無限に膨張しメモリを圧迫するため、上限を設けて生産側を一時停止させる制御が必要。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 実装視点：なぜ単純なMutexキューでは不十分なのか</strong><br>
+            荒加工の刀路生成は数百のZ層を並列生産する一方、後処理は1本ずつ順番に処理せざるを得ないことが多く、生産速度と消費速度に大きな差があります。単一のMutexキューでは、ロック競合そのものがボトルネックになるだけでなく、キューサイズ管理を怠るとメモリを使い果たしてクラッシュします。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 バグ調査の勘所</strong><br>
+            「大規模加工プログラムを生成すると、途中でメモリ使用量が急増して落ちる」という報告は、パイプライン段間のキューに上限（バックプレッシャー）が設定されているかをまず確認しましょう。
+          </div>
+        `,
+        bodyZh: `
+          <p>CAM 计算通常是“生成粗加工路径 → 干涉检查 → 后置转换”这样的多阶段流水线。如果各阶段跑在不同线程上，用带互斥锁的简单队列直接对接，生产者与消费者的速度差就会变成瓶颈。<strong>无锁队列（Lock-Free Queue）</strong>是更现实的段间连接方案。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Producer/Consumer</span>
+              <span class="workflow-step-title">生产者-消费者模式</span>
+              <span class="workflow-step-desc">刀路生成线程（生产者）把结果压入队列，后置处理线程（消费者）从队列取出并处理。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">CAS</span>
+              <span class="workflow-step-title">用 CAS 实现无锁操作</span>
+              <span class="workflow-step-desc">不用互斥锁锁住整个队列，而是仅用原子指令（Compare-And-Swap）更新队首/队尾指针，把等待开销降到最低。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Backpressure</span>
+              <span class="workflow-step-title">吸收速度差（背压机制）</span>
+              <span class="workflow-step-desc">生产速度长期高于消费速度会导致队列无限膨胀占满内存，因此必须设置队列上限并让生产端在满队列时暂停。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 实现视角：为什么简单的互斥锁队列不够用</strong><br>
+            粗加工路径生成往往能并行产出数百个 Z 层结果，而后置处理常常只能逐条串行处理，两者速度差异巨大。单一互斥锁队列不仅锁竞争本身就是瓶颈，若不设队列容量上限，还会耗尽内存直接导致崩溃。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 排查经验：</strong>
+            遇到“生成大型加工程序时内存占用暴涨并崩溃”的报告，先确认流水线各阶段之间的队列是否设置了容量上限（背压机制）。
+          </div>
+        `,
+        quiz: {
+          qJa: "刀路生成（高速並列）と後処理変換（逐次処理）の間で速度差が大きいCAMパイプラインにおいて、最も適切な段間連携設計は？",
+          qZh: "在刀路生成（高速并行）与后置转换（顺序处理）速度差异悬殊的 CAM 流水线中，最合适的段间连接设计是？",
+          optionsJa: [
+            "上限付きのロックフリーキューでバッファリングし、上限到達時は生産側を一時停止させるバックプレッシャー制御を行う",
+            "後処理側を無理やり並列化不能なまま生産側と同速度にするため生産側の並列数を1に落とす",
+            "キューを使わず全結果を一括でメモリに貯めてから後処理を開始する",
+            "生産側の結果は全て破棄し、後処理側で独自に再計算する"
+          ],
+          optionsZh: [
+            "使用带容量上限的无锁队列做缓冲，队列满时对生产端施加背压使其暂停",
+            "为了强行让速度一致，把生产端的并行度降到 1",
+            "完全不用队列，先把全部结果攒在内存里再统一开始后置处理",
+            "丢弃生产端的全部结果，让后置处理端自行重新计算一遍"
+          ],
+          ans: 0,
+          explainJa: "正解！上限付きロックフリーキュー＋バックプレッシャーは、スループットを落とさずメモリ枯渇も防ぐ標準的な設計です。",
+          explainZh: "正确！“带上限的无锁队列 + 背压机制”既能保持吞吐量，又能防止内存耗尽，是业界标准设计。"
+        }
+      },
+      {
+        chap: 7,
+        subIndex: 3,
+        titleJa: "D8-4 GPUオフロードと計算資源のスケジューリング",
+        titleZh: "D8-4 GPU 计算卸载与计算资源调度",
+        tag: "並列処理",
+        bodyJa: `
+          <p>テッセレーションや干渉チェックの一部は、CPUのCAM計算スレッドと並行してGPUの計算シェーダー（Compute Shader）にオフロードできます。ただし、CPUとGPUは非同期に動くため、<strong>同期のタイミング設計</strong>を誤るとデータ競合や性能劣化を招きます。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Compute Offload</span>
+              <span class="workflow-step-title">GPUへの計算委譲</span>
+              <span class="workflow-step-desc">大量の点群に対する距離計算・簡易な衝突判定など、並列度の高い単純計算をGPU計算シェーダーに投げる。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Fence/Sync</span>
+              <span class="workflow-step-title">フェンスによる同期</span>
+              <span class="workflow-step-desc">GPU計算の完了をCPU側がフェンスオブジェクトで検知してから結果バッファを読む。早すぎる読み取りは未完了データの取得を招く。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Scheduling</span>
+              <span class="workflow-step-title">CPU/GPU資源の綱引き</span>
+              <span class="workflow-step-desc">同じGPUを描画（レンダリング）と計算（Compute）が奪い合うため、優先度制御を誤るとビューポートがカクつく。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 実装視点：「GPUオフロードしたのになぜか遅くなる」の正体</strong><br>
+            CPU→GPUへのデータ転送、GPU計算、GPU→CPUへの結果転送というラウンドトリップ自体に固定コストがあります。1回あたりの計算量が小さいタスクを頻繁にGPUへ投げると、転送オーバーヘッドが計算時間を上回り、CPUだけで計算するより遅くなる「逆効果」が典型的な失敗パターンです。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 バグ調査の勘所</strong><br>
+            「GPUオフロード機能を有効にすると逆に遅くなる」という報告は、まず1回のディスパッチあたりの処理データ量を確認しましょう。バッチサイズが小さすぎる場合はCPU実装にフォールバックする閾値制御が必要です。
+          </div>
+        `,
+        bodyZh: `
+          <p>细分曲面（Tessellation）与部分干涉检查，可以与 CPU 上的 CAM 计算线程并行，卸载给 GPU 的计算着色器（Compute Shader）执行。但 CPU 与 GPU 是异步运行的，<strong>同步时机设计</strong>一旦出错，就会引发数据竞争或性能劣化。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Compute Offload</span>
+              <span class="workflow-step-title">把计算委托给 GPU</span>
+              <span class="workflow-step-desc">对大量点云做距离计算、简单碰撞检测等高并行度的简单运算，交给 GPU 计算着色器处理。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Fence/Sync</span>
+              <span class="workflow-step-title">用栅栏（Fence）同步</span>
+              <span class="workflow-step-desc">CPU 侧通过栅栏对象确认 GPU 计算已完成后，才能读取结果缓冲区；读取过早会拿到尚未写完的数据。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Scheduling</span>
+              <span class="workflow-step-title">CPU/GPU 资源的拉锯战</span>
+              <span class="workflow-step-desc">渲染（Rendering）与计算（Compute）会争抢同一块 GPU，优先级控制不当会导致视口画面卡顿。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 实现视角：“明明卸载给了 GPU 反而更慢”的真相</strong><br>
+            CPU→GPU 传输数据、GPU 计算、GPU→CPU 回传结果，这一整趟往返本身就有固定开销。如果把单次计算量很小的任务频繁丢给 GPU，传输开销会反超计算本身耗时，结果比纯 CPU 计算还慢——这是最典型的失败模式。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 排查经验：</strong>
+            遇到“开启 GPU 卸载功能反而更慢”的报告，先确认每次调度（Dispatch）处理的数据量有多大——批量太小时应该设置阈值自动回退到 CPU 实现。
+          </div>
+        `,
+        quiz: {
+          qJa: "CAM処理の一部をGPUの計算シェーダーにオフロードしたところ、逆に全体が遅くなった。最も可能性が高い原因は？",
+          qZh: "把部分 CAM 处理卸载到 GPU 计算着色器后，整体反而变慢了，最可能的原因是？",
+          optionsJa: [
+            "1回あたりの計算量が小さすぎて、CPU-GPU間のデータ転送往復コストが計算時間を上回っている",
+            "GPUのメーカーがCPUと異なるため",
+            "ディスプレイのリフレッシュレートが計算速度を決めているため",
+            "計算シェーダーは常にCPUより遅いと規格で定められているため"
+          ],
+          optionsZh: [
+            "单次任务的计算量太小，CPU-GPU 往返传输的开销超过了实际计算耗时",
+            "GPU 厂商与 CPU 厂商不一致",
+            "显示器刷新率决定了计算速度",
+            "规范规定计算着色器必然比 CPU 慢"
+          ],
+          ans: 0,
+          explainJa: "正解！GPUオフロードには固定の転送往復コストがあるため、小粒度タスクを頻繁に投げると転送コストが計算効果を打ち消してしまいます。",
+          explainZh: "正确！GPU 卸载存在固定的往返传输开销，频繁抛送小颗粒度任务会让传输成本抵消甚至超过计算本身带来的收益。"
         }
       },
 
@@ -4428,7 +5740,7 @@ tbb::parallel_for(size_t(0), zLevels.size(), [&](size_t i) {
             在这组简洁的几何映射中，正隐藏着让机床剧烈甩头撞机的“奇异点深渊”。
           </div>
         `,
-        trial: {
+        quiz: {
           qJa: "5軸CAMソフトウェアにおける「RTCP（Rotation Tool Center Point）」機能の本質的な役割として最も適切なのはどれか？",
           qZh: "在五轴 CAM 与机床控制中，“RTCP（刀尖点跟随控制）”功能的核心本质是？",
           optionsJa: [
@@ -4502,7 +5814,7 @@ tbb::parallel_for(size_t(0), zLevels.size(), [&](size_t i) {
             “CAM 视口仿真刀轨极其平顺，一上真机切削工件就打出深坑甚至过载跳闸”——这种 Bug 报告几乎 100% 源于后置处理器缺失奇异点平滑算法。代码中必须包含极点保护：hypot(I, J) &lt; SINGULARITY_EPSILON。
           </div>
         `,
-        trial: {
+        quiz: {
           qJa: "5軸CAMのポストプロセッサにおいて、工具軸が機械の回転軸と完全に重なる「特異点（Singularity）」を通過する際に発生する最も典型的な不具合は？",
           qZh: "在五轴 CAM 后置处理中，当刀轴与机床旋转中心完全重合进入“运动学奇异点（Singularity）”时，最典型的机床异常现象是？",
           optionsJa: [
@@ -4520,6 +5832,170 @@ tbb::parallel_for(size_t(0), zLevels.size(), [&](size_t i) {
           ans: 0,
           explainJa: "正解！数学的にC軸の自由度が不定（0/0）になるため、わずかな軌跡のブレで角度が180度反転して激しい機械暴走を引き起こします。",
           explainZh: "正确！由于极点处方位角在数学上出现不定式（0/0），微小的空间位移就会引发旋转轴剧烈自转甚至机械冲击，必须由后置平滑算法防范。"
+        }
+      },
+      {
+        chap: 8,
+        subIndex: 2,
+        titleJa: "D9-3 工作機械コンフィグレーションの抽象化設計",
+        titleZh: "D9-3 机床运动学配置的抽象化设计",
+        tag: "5軸キネマティクス",
+        bodyJa: `
+          <p>5軸機には「テーブル・テーブル型」「テーブル・ヘッド型」「ヘッド・ヘッド型」など複数の運動学構成が存在します。機種ごとに逆運動学の計算式をハードコーディングすると、新機種対応のたびにコアコードを触ることになり破綻します。<strong>機械コンフィグレーションの抽象化（Config-Driven Kinematics）</strong>が実務解です。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Kinematic Chain</span>
+              <span class="workflow-step-title">運動学チェーンの記述</span>
+              <span class="workflow-step-desc">各軸の種類（回転/直動）・回転中心・回転軸ベクトル・親子関係をデータとして記述し、実行時に汎用ソルバーへ読み込ませる。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Generic Solver</span>
+              <span class="workflow-step-title">汎用逆運動学ソルバー</span>
+              <span class="workflow-step-desc">機種固有のif分岐を書く代わりに、任意のチェーン構成を受け取って解を求める汎用アルゴリズム（数値反復法等）を1つ実装する。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Driver Analogy</span>
+              <span class="workflow-step-title">OSのデバイスドライバとの類比</span>
+              <span class="workflow-step-desc">アプリ本体（CAM）は共通APIしか呼ばず、機種固有の違いはコンフィグ（ドライバ相当）が吸収する設計思想。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 実装視点：ハードコーディングが引き起こす技術的負債</strong><br>
+            「テーブル・テーブル型専用」に書かれた逆運動学コードは、後から「ヘッド・ヘッド型」に対応しようとすると、既存コードのあちこちに新しい分岐を継ぎ足すことになり、やがて誰も全体を把握できない巨大なif-elseの塊と化します。設計初期段階でチェーン構成をデータ化しておくことが、長期的な保守コストを大きく左右します。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 バグ調査の勘所</strong><br>
+            「新しい機種を追加したら既存機種の動作までおかしくなった」という報告は、機種固有ロジックが共通コードパスに混入していないかを疑いましょう。コンフィグ駆動設計が徹底されていれば、新機種追加は既存コードに触れずデータ追加だけで完結するはずです。
+          </div>
+        `,
+        bodyZh: `
+          <p>五轴机床存在“双转台型”“转台摆头型”“双摆头型”等多种运动学结构。如果针对每种机型都把逆运动学公式硬编码进代码，每次适配新机型都要动核心代码，长期必然难以维护。<strong>机床配置的抽象化设计（Config-Driven Kinematics）</strong>才是可持续的实务方案。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Kinematic Chain</span>
+              <span class="workflow-step-title">运动学链的数据化描述</span>
+              <span class="workflow-step-desc">把每根轴的类型（旋转/直线）、旋转中心、旋转轴矢量、父子关系都描述成数据，运行时交给通用求解器读取。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Generic Solver</span>
+              <span class="workflow-step-title">通用逆运动学求解器</span>
+              <span class="workflow-step-desc">不为每种机型写专属 if 分支，而是实现一套能接受任意链式结构配置、通过数值迭代等方法统一求解的通用算法。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Driver Analogy</span>
+              <span class="workflow-step-title">与操作系统设备驱动的类比</span>
+              <span class="workflow-step-desc">应用主体（CAM）只调用统一接口，机型间的差异全部由配置文件（相当于驱动程序）吸收消化。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 实现视角：硬编码带来的技术债</strong><br>
+            专为“双转台型”写死的逆运动学代码，日后要支持“双摆头型”时，往往只能在既有代码里到处新增分支，久而久之演变成一坨谁都无法完全掌握的巨型 if-else。是否在设计初期就把运动学链结构数据化，直接决定了长期维护成本的高低。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 排查经验：</strong>
+            遇到“新增一种机型后，连原有机型的行为也变得不对了”的报告，应优先怀疑机型专属逻辑是否混入了公共代码路径。如果配置驱动的设计彻底贯彻，新增机型理应只是增加配置数据，完全不触碰既有代码。
+          </div>
+        `,
+        quiz: {
+          qJa: "複数の5軸機械構成（テーブル・テーブル型／ヘッド・ヘッド型等）に対応するソフトウェアの設計として最も保守性が高いのは？",
+          qZh: "要支持多种五轴机床构型（双转台型/双摆头型等），可维护性最高的软件设计是？",
+          optionsJa: [
+            "各機種固有のif分岐をコアに書く代わりに、運動学チェーンをデータとして記述し汎用ソルバーで解く",
+            "機種ごとに全く別のアプリケーションを1本ずつ開発する",
+            "5軸機は全て同じ構成だと仮定して汎用化を諦める",
+            "新機種が出るたびに既存コードのif文を無制限に追加し続ける"
+          ],
+          optionsZh: [
+            "不在核心代码里为每种机型写专属 if 分支，而是把运动学链描述为数据，交给通用求解器统一求解",
+            "为每一种机型单独开发一套完全独立的应用程序",
+            "假设所有五轴机床构型都相同，放弃做通用化设计",
+            "每次出现新机型就无限制地往既有代码里追加 if 分支"
+          ],
+          ans: 0,
+          explainJa: "正解！コンフィグ駆動の汎用ソルバーは、新機種追加時にコアロジックへ触れる必要がなく、長期的な保守性と拡張性を両立できます。",
+          explainZh: "正确！配置驱动的通用求解器让新增机型时无需触碰核心逻辑，能同时兼顾长期可维护性与可扩展性。"
+        }
+      },
+      {
+        chap: 8,
+        subIndex: 3,
+        titleJa: "D9-4 ポストプロセッサのテンプレートエンジンと現場カスタマイズ",
+        titleZh: "D9-4 后置处理器的模板引擎与现场定制",
+        tag: "5軸キネマティクス",
+        bodyJa: `
+          <p>同じ5軸制御でも、機械メーカーごとにG/Mコードの書式や特殊コマンドは千差万別です。全メーカー分をコアにハードコーディングするのは非現実的なため、多くのCAMソフトは<strong>テンプレートエンジン（スクリプト化された出力フォーマット定義）</strong>を採用し、現場エンジニアがコア本体を再コンパイルせずにカスタマイズできるようにしています。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">CL Data → IR</span>
+              <span class="workflow-step-title">中間表現としてのCLデータ</span>
+              <span class="workflow-step-desc">機械非依存の中間刀位データ（CL Data）を先に生成する。コンパイラでいうところのLLVM IRに相当する層。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Template Script</span>
+              <span class="workflow-step-title">出力フォーマットのスクリプト定義</span>
+              <span class="workflow-step-desc">「移動命令の書式」「軸名の割当」「特殊固定サイクルの記述」等を、専用の設定言語やテンプレートファイルで外部化する。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Sandboxed Exec</span>
+              <span class="workflow-step-title">安全な実行環境</span>
+              <span class="workflow-step-desc">現場が書いたテンプレートスクリプトにバグがあってもコア本体をクラッシュさせないよう、限定的な実行権限のサンドボックスで走らせる。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 実装視点：コンパイラのバックエンドと同じ設計思想</strong><br>
+            CL Data（中間表現）とテンプレートエンジン（バックエンド）を分離する設計は、コンパイラがCPUアーキテクチャに依存しない中間表現（IR）を経由してから、目的別のアセンブリを生成するのと全く同じ発想です。新しい機械メーカーへの対応は、コア（フロントエンド）を一切変更せず、新しいテンプレートを1つ追加するだけで完結すべきです。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 バグ調査の勘所</strong><br>
+            「特定の機械メーカー向け出力だけG-codeの桁数がおかしい」という報告は、コア側の中間表現ではなく、そのメーカー用テンプレートスクリプトの書式定義を疑いましょう。他メーカー向けが正常なら、コア本体はまず疑わなくてよい根拠になります。
+          </div>
+        `,
+        bodyZh: `
+          <p>即便同样是五轴联动，不同机床厂商的 G/M 代码书写格式与特殊指令也千差万别。把所有厂商的差异都硬编码进核心程序并不现实，因此许多 CAM 软件采用<strong>模板引擎（脚本化的输出格式定义）</strong>，让现场工程师无需重新编译核心程序即可完成定制。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">CL Data → IR</span>
+              <span class="workflow-step-title">作为中间表示的 CL Data</span>
+              <span class="workflow-step-desc">先生成与具体机床无关的中间刀位数据（CL Data），相当于编译器体系里的 LLVM IR 这一层。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Template Script</span>
+              <span class="workflow-step-title">输出格式的脚本化定义</span>
+              <span class="workflow-step-desc">把“移动指令格式”“轴名映射”“特殊固定循环写法”等，用专门的配置语言或模板文件外部化描述。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Sandboxed Exec</span>
+              <span class="workflow-step-title">安全的执行环境</span>
+              <span class="workflow-step-desc">即使现场编写的模板脚本存在 bug，也不能让核心程序崩溃，因此需要在权限受限的沙箱中执行这些脚本。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 实现视角：与编译器后端同源的设计思想</strong><br>
+            把 CL Data（中间表示）与模板引擎（后端）分离开的设计，与编译器先生成不依赖具体 CPU 架构的中间表示（IR），再针对不同目标生成汇编代码，是完全相同的思路。适配新的机床厂商，理应只需新增一份模板文件，完全不必改动核心（前端）代码。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 排查经验：</strong>
+            遇到“只有某个机床厂商的输出 G代码位数不对”的报告，应优先怀疑该厂商专属模板脚本的格式定义，而不是核心的中间表示——如果其他厂商的输出都正常，就已经有理由基本排除核心程序本身的问题。
+          </div>
+        `,
+        quiz: {
+          qJa: "多数の機械メーカーに対応するポストプロセッサ設計として、コンパイラのバックエンド設計に最も近い正しいアプローチはどれか？",
+          qZh: "要支持众多机床厂商的后置处理器设计中，与编译器后端设计思路最接近、也最正确的方案是？",
+          optionsJa: [
+            "機械非依存の中間刀位データ(CL Data)を生成し、メーカーごとの出力フォーマットはテンプレートスクリプトとして外部化する",
+            "全メーカーの出力ロジックを1つの巨大な関数にすべて直接書き込む",
+            "新しい機械メーカーに対応するたびにコア本体をゼロから作り直す",
+            "テンプレートという概念を持たず、全出力を手作業でコピー＆ペーストして管理する"
+          ],
+          optionsZh: [
+            "生成与具体机床无关的中间刀位数据（CL Data），各厂商的输出格式外部化为模板脚本",
+            "把所有厂商的输出逻辑都直接写进同一个巨型函数里",
+            "每适配一个新机床厂商就把核心程序推倒重写一遍",
+            "完全不使用模板概念，所有输出都靠手工复制粘贴维护"
+          ],
+          ans: 0,
+          explainJa: "正解！中間表現とテンプレートの分離は、コアを変更せずに新メーカー対応を追加できる、コンパイラ設計から着想を得た拡張性の高いアーキテクチャです。",
+          explainZh: "正确！中间表示与模板相分离，能在不改动核心的前提下新增厂商适配，这正是借鉴编译器设计思想、可扩展性极高的架构。"
         }
       }
     ];
@@ -6664,6 +8140,28 @@ const State = {
       return `${track}:${chap}-${sub}`;
     }
 
+    // 出題データ上は正解が常に配列先頭(index 0/選択肢A)に固定されているため、
+    // 表示時に問題文をシードとした決定論的シャッフルを行い、
+    // 「常にAを選べば正解」という致命的な出題バグを解消する。
+    // 同じ問題は常に同じ並び順になる（再描画・再訪問しても選択肢の位置は変わらない）。
+    function seededOptionOrder(seedKey, n) {
+      let h = 0;
+      for (let i = 0; i < seedKey.length; i++) {
+        h = (Math.imul(h, 31) + seedKey.charCodeAt(i)) | 0;
+      }
+      let seed = (h >>> 0) || 1;
+      const rand = () => {
+        seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+        return seed / 4294967296;
+      };
+      const order = Array.from({ length: n }, (_, i) => i);
+      for (let i = order.length - 1; i > 0; i--) {
+        const j = Math.floor(rand() * (i + 1));
+        [order[i], order[j]] = [order[j], order[i]];
+      }
+      return order;
+    }
+
     function renderAcademy() {
       const chapters = getChaptersData();
       const lessons = getLessonsData();
@@ -6747,11 +8245,14 @@ const State = {
         const grid = document.getElementById('miniQuizOptionsGrid');
         grid.innerHTML = '';
         const opts = currentLang === 'ja' ? quiz.optionsJa : quiz.optionsZh;
-        opts.forEach((optText, optIdx) => {
+        const order = seededOptionOrder(quiz.qJa, opts.length);
+        const correctPos = order.indexOf(quiz.ans);
+        order.forEach((origIdx, pos) => {
+          const optText = opts[origIdx];
           const btn = document.createElement('button');
           btn.className = 'mini-quiz-opt';
-          btn.innerHTML = `<span style="font-weight:900; color:var(--primary);">${String.fromCharCode(65 + optIdx)}</span> <span>${optText}</span>`;
-          btn.onclick = () => checkMiniQuiz(optIdx, quiz.ans, currentLang === 'ja' ? quiz.explainJa : quiz.explainZh, btn);
+          btn.innerHTML = `<span style="font-weight:900; color:var(--primary);">${String.fromCharCode(65 + pos)}</span> <span>${optText}</span>`;
+          btn.onclick = () => checkMiniQuiz(pos, correctPos, currentLang === 'ja' ? quiz.explainJa : quiz.explainZh, btn);
           grid.appendChild(btn);
         });
         document.getElementById('miniQuizFeedback').style.display = 'none';
@@ -6869,12 +8370,15 @@ const State = {
       const grid = document.getElementById('questOptionsGrid');
       grid.innerHTML = '';
       const opts = currentLang === 'ja' ? q.optionsJa : q.optionsZh;
+      const order = seededOptionOrder(q.questionJa, opts.length);
+      const correctPos = order.indexOf(q.ans);
 
-      opts.forEach((optText, optIdx) => {
+      order.forEach((origIdx, pos) => {
+        const optText = opts[origIdx];
         const btn = document.createElement('button');
         btn.className = 'quest-opt-btn';
-        btn.innerHTML = `<span style="font-weight:900; color:var(--primary); font-size:16px;">${String.fromCharCode(65 + optIdx)}</span> <span>${optText}</span>`;
-        btn.onclick = () => checkQuestAnswer(optIdx, q.ans, currentLang === 'ja' ? q.explainJa : q.explainZh, btn, key);
+        btn.innerHTML = `<span style="font-weight:900; color:var(--primary); font-size:16px;">${String.fromCharCode(65 + pos)}</span> <span>${optText}</span>`;
+        btn.onclick = () => checkQuestAnswer(pos, correctPos, currentLang === 'ja' ? q.explainJa : q.explainZh, btn, key);
         grid.appendChild(btn);
       });
 
@@ -7006,15 +8510,17 @@ const State = {
       const grid = document.getElementById('examOptionsGrid');
       grid.innerHTML = '';
       const opts = currentLang === 'ja' ? q.optionsJa : q.optionsZh;
+      const order = seededOptionOrder(q.questionJa, opts.length);
       const currentAns = State.examAnswers[State.examCurrentIndex];
 
-      opts.forEach((optText, optIdx) => {
+      order.forEach((origIdx, pos) => {
+        const optText = opts[origIdx];
         const btn = document.createElement('button');
-        btn.className = `quest-opt-btn ${currentAns === optIdx ? 'correct' : ''}`;
-        btn.innerHTML = `<span style="font-weight:900; color:var(--primary); font-size:16px;">${String.fromCharCode(65 + optIdx)}</span> <span>${optText}</span>`;
+        btn.className = `quest-opt-btn ${currentAns === pos ? 'correct' : ''}`;
+        btn.innerHTML = `<span style="font-weight:900; color:var(--primary); font-size:16px;">${String.fromCharCode(65 + pos)}</span> <span>${optText}</span>`;
         btn.onclick = () => {
           sound.click();
-          State.examAnswers[State.examCurrentIndex] = optIdx;
+          State.examAnswers[State.examCurrentIndex] = pos;
           renderCBTExamProgressDots();
           renderCBTQuestion();
         };
@@ -7052,7 +8558,10 @@ const State = {
       // 计分
       let score = 0;
       State.examQuestions.forEach((q, idx) => {
-        if (State.examAnswers[idx] === q.ans) {
+        const opts = currentLang === 'ja' ? q.optionsJa : q.optionsZh;
+        const order = seededOptionOrder(q.questionJa, opts.length);
+        const correctPos = order.indexOf(q.ans);
+        if (State.examAnswers[idx] === correctPos) {
           score += 10;
         }
       });
