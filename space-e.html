@@ -1436,6 +1436,15 @@
 
     <!-- ==================== 1. 金型学堂 (ACADEMY) ==================== -->
     <div class="academy-panel" id="panelAcademy">
+      <!-- 学习轨道切换（工艺工程师 / 软件开发者） -->
+      <div class="quest-tier-tabs" id="trackSwitchTabs">
+        <button class="tier-tab active" id="trackTabUser" onclick="switchTrack('user')" data-i18n="track_user">🏭 モールドエンジニア向け（操作・工艺习得）</button>
+        <button class="tier-tab" id="trackTabDev" onclick="switchTrack('dev')" data-i18n="track_dev">💻 ソフトウェア開発者向け（保守・拡張開発）</button>
+      </div>
+      <div class="lesson-callout tip" id="trackDescBox" style="margin:0;">
+        <span id="trackDescText">操作手順と工艺判断を学ぶ：モデリング・分模・電極・CAM切削のワークフロー全体を習得します。</span>
+      </div>
+
       <!-- 5大章节选择卡片 -->
       <div class="chap-nav-grid" id="chapNavGrid">
         <!-- 由JS动态生成 -->
@@ -1775,16 +1784,32 @@
         nav_quest: "実戦工坊 (クエスト)",
         nav_lab: "仮想工廠 (3Dシミュレータ)",
         nav_exam: "CBT資格考場",
-        nav_codex: "Space-E 知識大典"
+        nav_codex: "Space-E 知識大典",
+        track_user: "🏭 モールドエンジニア向け（操作・工艺习得）",
+        track_dev: "💻 ソフトウェア開発者向け（保守・拡張開発）"
       },
       zh: {
         nav_academy: "金型学堂 (体系教程)",
         nav_quest: "实战工坊 (闯关训练)",
         nav_lab: "虚拟工场 (3D模拟器)",
         nav_exam: "CBT认证考场",
-        nav_codex: "Space-E 知识大典"
+        nav_codex: "Space-E 知识大典",
+        track_user: "🏭 面向模具工艺工程师（操作与工艺习得）",
+        track_dev: "💻 面向软件开发者（维护与二次开发）"
       }
     };
+
+    function updateTrackDescText() {
+      const el = document.getElementById('trackDescText');
+      if (!el) return;
+      el.innerText = State.track === 'dev'
+        ? (currentLang === 'ja'
+            ? 'ソフトウェア開発者向け：操作は教えず、B-Rep/NURBSデータ構造・階層アーキテクチャ・数値の罠・API拡張・実戦デバッグまで、保守開発に必要な心智模型を身につけます。'
+            : '面向软件开发者：不教操作步骤，专注 B-Rep/NURBS 数据结构、分层架构、数值陷阱、API 扩展与实战调试，建立维护此类软件所需的心智模型。')
+        : (currentLang === 'ja'
+            ? '操作手順と工艺判断を学ぶ：モデリング・分模・電極・CAM切削のワークフロー全体を習得します。'
+            : '学习操作手法与工艺判断：全面掌握建模、分模、电极、CAM切削的完整工作流程。');
+    }
 
     function toggleLanguage() {
       sound.click();
@@ -1800,6 +1825,7 @@
           el.innerText = I18N[currentLang][key];
         }
       });
+      updateTrackDescText();
       renderAcademyLesson();
       renderQuestQuestion();
       renderCodex();
@@ -2658,6 +2684,906 @@
 ];
 
     /* ==========================================================================
+       3-b. 开发者养成轨道 (Dev Onboarding Track): 5章10講
+       对象：不具备CAD/CAM操作经验、但需要负责 Space-E 类软件维护/二次开发的工程师。
+       教学目标：不教"菜单在哪"，只教"这个软件的心智模型"——数据结构、分层架构、
+       领域特有的数值陷阱、API/自动化入口、以及真实的代码阅读/调试方法论。
+       ========================================================================== */
+    const DEV_CHAPTERS_DATA = [
+      {
+            "id": 0,
+            "icon": "🧩",
+            "titleJa": "D1章：開発者のためのドメイン概念速習",
+            "titleZh": "D1章：面向开发者的领域概念速成",
+            "descJa": "操作手順は覚えない。コードや仕様書に出てくる幾何用語が「何のデータ構造か」だけを押さえる。",
+            "descZh": "不背操作步骤，只搞清楚代码/需求文档里那些几何名词到底对应什么数据结构。"
+      },
+      {
+            "id": 1,
+            "icon": "🏗️",
+            "titleJa": "D2章：Space-E 型ソフトウェアの階層アーキテクチャ",
+            "titleZh": "D2章：Space-E 类软件分层架构剖析",
+            "descJa": "自分が触るコードがどの層にあるかを把握する：幾何カーネル／アプリ／CAM計算／データ交換／ポスト処理。",
+            "descZh": "搞清楚自己要改的代码在哪一层：几何内核层／应用命令层／CAM计算层／数据交换层／后置处理层。"
+      },
+      {
+            "id": 2,
+            "icon": "⚠️",
+            "titleJa": "D3章：幾何ソフトウェア特有のエンジニアリング罠",
+            "titleZh": "D3章：几何软件特有的工程陷阱",
+            "descJa": "CADの教科書には載っていない、現場のバグの大半がここから生まれる数値计算の落とし穴。",
+            "descZh": "CAD教科书里学不到，但现场绝大多数bug都源于此的数值计算陷阱。"
+      },
+      {
+            "id": 3,
+            "icon": "🔌",
+            "titleJa": "D4章：API・マクロ自動化と外部データ連携",
+            "titleZh": "D4章：API/宏自动化与外部数据交换",
+            "descJa": "二次開発の入口となるAPI構造と、STEP/IGES変換器で頻発する互換性バグの正体。",
+            "descZh": "二次开发切入点的 API 结构，以及 STEP/IGES 转换器中高发的兼容性缺陷根源。"
+      },
+      {
+            "id": 4,
+            "icon": "🐛",
+            "titleJa": "D5章：実戦演習：コードリーディングとバグ調査",
+            "titleZh": "D5章：实战演习：代码阅读与Bug调查",
+            "descJa": "疑似コードで刀路生成アルゴリズムを読み解き、実際のバグ事例でデバッグ手順を体得する。",
+            "descZh": "用伪代码读懂刀路生成算法，用真实bug案例掌握几何软件的调试方法论。"
+      }
+    ];
+
+    const DEV_LESSONS_DATA = [
+      {
+            "chap": 0,
+            "subIndex": 0,
+            "titleJa": "D1-1 B-Repとは何か？データ構造としての境界表現",
+            "titleZh": "D1-1 B-Rep 是什么？作为数据结构的边界表示法",
+            "tag": "開発者基礎",
+            "bodyJa": `
+          <p>工艺工程师会把 B-Rep 理解为"实体建模的一种方式"，但作为要维护代码的你，应该把它当成一种<strong>图结构（Graph）</strong>来理解——这是读懂内核代码的第一把钥匙。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Vertex</span>
+              <span class="workflow-step-title">頂点（点）</span>
+              <span class="workflow-step-desc">空間座標(x,y,z)を持つ最小単位。1つの座標を複数のEdgeが共有する（ポインタ/インデックス共有）。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Edge</span>
+              <span class="workflow-step-title">辺（曲線の一部）</span>
+              <span class="workflow-step-desc">2つのVertex間を結ぶ曲線パラメータ区間 [t0, t1]。直線・円弧・NURBS曲線のいずれかへの参照を持つ。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Loop</span>
+              <span class="workflow-step-title">ループ（閉じた輪郭）</span>
+              <span class="workflow-step-desc">Edgeを順序付けて連結した閉多角形。1つのFaceは外側Loop 1本＋内側Loop（穴）0本以上を持てる。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Face / Shell</span>
+              <span class="workflow-step-title">面／殻</span>
+              <span class="workflow-step-desc">FaceはLoopで境界を切り取られた曲面。複数FaceがEdgeを共有して閉じるとShell（閉殻＝ソリッド）になる。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 実装視点：なぜ配列でなくポインタ／ハーフエッジ構造なのか</strong><br>
+            実務のB-Repカーネルは多くが <strong>半边构造（Half-Edge / Winged-Edge）</strong> を採用します。理由は、フィレット追加・穴あけ・ブーリアン演算のようなトポロジー編集操作が「隣接する面・辺を O(1) でたどれる」ことを要求するからです。単純な頂点配列＋面インデックス（メッシュ形式）では「このEdgeを共有する反対側のFaceは？」という問いに答えるのに全走査が必要になり、金型モデルのような数万Face規模では致命的に遅くなります。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 バグ調査の勘所</strong><br>
+            「面が消えた」「境界がおかしい」系の不具合報告は、座標計算より先に<strong>Loopの向き（時計回り／反時計回り）</strong>と<strong>Edgeの共有方向（同じ辺を2つのFaceが逆向きに参照しているか）</strong>を疑うと早く原因にたどり着けます。座標値は正しいのに法線が反転している、というのはB-Repカーネルの典型的なバグパターンです。
+          </div>
+        `,
+            "bodyZh": `
+          <p>工艺工程师会把 B-Rep 理解为"实体建模的一种方式"，但作为要维护代码的开发者，你应该把它当成一种<strong>图结构（Graph）</strong>来理解——这是读懂几何内核代码的第一把钥匙。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Vertex</span>
+              <span class="workflow-step-title">顶点</span>
+              <span class="workflow-step-desc">持有 (x,y,z) 空间坐标的最小单元。多条 Edge 会共享同一个顶点（通过指针/索引共享，而非各自复制坐标）。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Edge</span>
+              <span class="workflow-step-title">边（曲线的一段）</span>
+              <span class="workflow-step-desc">连接两个 Vertex 的曲线参数区间 [t0, t1]，内部持有对直线/圆弧/NURBS曲线具体方程的引用。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Loop</span>
+              <span class="workflow-step-title">环（闭合轮廓）</span>
+              <span class="workflow-step-desc">若干 Edge 按顺序首尾相连形成的闭合多边形。一个 Face 有且仅有 1 个外环，可以有 0~N 个内环（代表孔洞）。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Face / Shell</span>
+              <span class="workflow-step-title">面／壳</span>
+              <span class="workflow-step-desc">Face 是被 Loop 裁剪出边界的曲面；多个 Face 通过共享 Edge 闭合起来就构成 Shell（闭合壳＝一个实体）。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 实现视角：为什么用指针/半边结构而不是数组？</strong><br>
+            实际工业级 B-Rep 内核大多采用 <strong>半边结构（Half-Edge / Winged-Edge）</strong>。原因是倒圆角、开孔、布尔运算这类拓扑编辑操作，都要求能以 O(1) 复杂度查到"某条边的相邻面是谁"。如果只用简单的顶点数组+面索引（也就是网格 Mesh 的表示方式），要回答"共享这条边的另一侧 Face 是哪个"就需要全表扫描，在几万个 Face 规模的模具模型上会慢到无法接受。</div>
+          <div class="lesson-callout tip">
+            <strong>🔍 排查Bug的经验之谈</strong><br>
+            遇到"面消失了""边界显示异常"这类报告时，优先怀疑 <strong>Loop 的绕向（顺时针/逆时针）</strong> 和 <strong>Edge 的共享方向</strong>（两个相邻 Face 是否以相反方向引用同一条边），往往比一上来就去查坐标计算更快定位问题。坐标数值完全正确、但法向量方向反了——这是 B-Rep 内核里最典型的一类 bug。
+          </div>
+        `,
+            "quiz": {
+                  "qJa": "金型ソフトウェアの内部で「面の法線が反転する」不具合が起きたとき、まず疑うべき箇所として最も適切なのは？",
+                  "qZh": "在模具软件内部出现“面的法线方向反转”的缺陷时，最应该优先怀疑的地方是？",
+                  "optionsJa": [
+                        "Loopの頂点並び順（絵回り方向）とEdgeの共有方向の整合性",
+                        "ディスプレイの解像度設定",
+                        "使用しているマウスのDPI設定",
+                        "ネットワークの通信速度"
+                  ],
+                  "optionsZh": [
+                        "Loop 的顶点绕向（环绕方向）与 Edge 共享方向是否一致",
+                        "显示器的分辨率设置",
+                        "所用鼠标的 DPI 设置",
+                        "网络通信速度"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！法線はLoopの巡回方向から数学的に導出されるため、トポロジー（Loopの向き・Edgeの共有関係）にバグがあると座標が正しくても法線が反転します。",
+                  "explainZh": "正确！法向量是由 Loop 的遍历方向数学推导出来的，只要拓扑关系（Loop 绕向、Edge 共享方向）出错，即使坐标完全正确，法向量也会反转。"
+            }
+      },
+      {
+            "chap": 0,
+            "subIndex": 1,
+            "titleJa": "D1-2 NURBSはメモリ上でどう表現されるか",
+            "titleZh": "D1-2 NURBS 在内存里到底长什么样",
+            "tag": "開発者基礎",
+            "bodyJa": `
+          <p>工艺工程师眼中的"自由曲面"是屏幕上一块可以拖拽调整的曲面；而在你要维护的代码里，它其实是几个数组和一段插值算法。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">struct</span>
+              <span class="workflow-step-title">典型的なメモリレイアウト</span>
+              <span class="workflow-step-desc">controlPoints: Vec3[m×n] ／ weights: float[m×n] ／ knotsU, knotsV: float[] ／ degreeU, degreeV: int。これだけで曲面全体を表現する。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">評価</span>
+              <span class="workflow-step-title">曲面上の点を求める処理</span>
+              <span class="workflow-step-desc">パラメータ(u,v)を与えてde Boor / Cox-de Boor再帰式で点を計算する。1回の点評価がO(degree²)程度のコスト。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">曲率</span>
+              <span class="workflow-step-title">「曲率連続」は数値判定</span>
+              <span class="workflow-step-desc">G2連続の判定は、境界上の複数サンプル点で二階微分ベクトルを計算し、その差がイプシロン閾値以下かをチェックする処理として実装される。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 開発者が誤解しやすい点</strong><br>
+            「曲率連続かどうか」はCADソフトが厳密な数式で0/1判定しているのではなく、<strong>有限個のサンプル点での近似判定</strong>です。したがって「UIでG2と表示されたのに、CAMで計算すると微小な段差が出る」というバグ報告は、サンプリング密度や許容誤差の設定不一致が原因であることが非常に多いです。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 コードリーディングのコツ</strong><br>
+            ソースコード中に <code>tolerance</code>, <code>epsilon</code>, <code>knotTol</code>, <code>fitTol</code> のような変数名を見つけたら、そこが「本来は連続的な数学対象を、離散的な数値判定に落とし込んでいる境界線」です。バグの多くはこの境界線上で発生します。
+          </div>
+        `,
+            "bodyZh": `
+          <p>工艺工程师眼中的"自由曲面"是屏幕上一块可以拖拽调整的曲面；而在你要维护的代码里，它其实只是几个数组，加上一段插值算法。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">struct</span>
+              <span class="workflow-step-title">典型内存布局</span>
+              <span class="workflow-step-desc">controlPoints: Vec3[m×n] ／ weights: float[m×n] ／ knotsU, knotsV: float[] ／ degreeU, degreeV: int。整张曲面就靠这几个数组表达。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">求值</span>
+              <span class="workflow-step-title">求曲面上任意一点</span>
+              <span class="workflow-step-desc">给定参数 (u,v)，用 de Boor / Cox-de Boor 递推公式求出空间坐标。单次求值复杂度约为 O(degree²)。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">曲率</span>
+              <span class="workflow-step-title">“曲率连续”其实是数值判定</span>
+              <span class="workflow-step-desc">判断是否 G2 连续，实现上是在边界取若干采样点计算二阶导数向量，再检查差值是否小于某个 epsilon 阈值。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 开发者最容易误解的一点</strong><br>
+            “是否曲率连续”并不是 CAD 软件用严格数学公式做出的 0/1 判定，而是<strong>有限个采样点上的近似判定</strong>。所以“UI 上显示 G2 连续，但 CAM 计算刀路时却出现微小台阶”这类 bug 报告，十有八九是采样密度或容差设置不一致导致的。</div>
+          <div class="lesson-callout tip">
+            <strong>🔍 读代码的诀窍</strong><br>
+            当你在源码里看到 <code>tolerance</code>、<code>epsilon</code>、<code>knotTol</code>、<code>fitTol</code> 这类变量名时，那里往往就是"把连续的数学对象强行落地为离散数值判定"的边界地带。绝大多数几何软件的 bug 都诞生在这条边界线上。
+          </div>
+        `,
+            "quiz": {
+                  "qJa": "「UIでは曲面がG2連続と表示されるが、CAM側で刀路を生成すると微小な段差（スキャロップ異常）が出る」というバグの原因として最も可能性が高いのは？",
+                  "qZh": "出现“UI 上显示曲面为 G2 连续，但 CAM 生成刀路时却出现微小台阶异常”的 bug，最可能的原因是？",
+                  "optionsJa": [
+                        "UI側とCAM側で連続性判定に使うサンプリング密度・許容誤差(tolerance)の設定が異なっている",
+                        "モニターのリフレッシュレートが低い",
+                        "曲面の色が間違っている",
+                        "USBマウスのケーブルが劣化している"
+                  ],
+                  "optionsZh": [
+                        "UI 与 CAM 两侧用于判定连续性的采样密度/容差(tolerance)设置不一致",
+                        "显示器刷新率过低",
+                        "曲面渲染颜色设置错误",
+                        "USB 鼠标线材老化"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！連続性判定は離散サンプリングによる近似なので、モジュール間で許容誤差の基準がずれていると「片方はOK、片方はNG」という矛盾が発生します。",
+                  "explainZh": "正确！连续性判定本质是离散采样的近似结果，一旦不同模块间的容差基准不统一，就会出现“一个模块判定合格、另一个模块判定不合格”的矛盾现象。"
+            }
+      },
+      {
+            "chap": 1,
+            "subIndex": 0,
+            "titleJa": "D2-1 5層アーキテクチャ全体像：自分のコードはどこにあるか",
+            "titleZh": "D2-1 五层架构全景：你要改的代码到底在哪一层",
+            "tag": "アーキテクチャ",
+            "bodyJa": `
+          <p>Space-E型のCAD/CAM統合ソフトウェアは、責務ごとに厳密に分離された5つの層で構成されるのが一般的です。バグ修正や機能追加を頼まれたら、まず「これはどの層の話か」を切り分けてください。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">L1</span>
+              <span class="workflow-step-title">幾何カーネル層</span>
+              <span class="workflow-step-desc">B-Rep構築・ブーリアン演算・曲面求交。通常C++実装。数値安定性が最優先で、UIの都合による変更は基本禁止。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">L2</span>
+              <span class="workflow-step-title">アプリケーション／コマンド層</span>
+              <span class="workflow-step-desc">UI操作を内核APIの呼び出し列に変換する。フロントエンド寄りの開発者が最も触れる層。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">L3</span>
+              <span class="workflow-step-title">CAM計算層</span>
+              <span class="workflow-step-desc">刀路生成・残肉認識・干渉チェック。計算負荷が高く、独立プロセス／スレッドプールで動くことが多い。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">L4/L5</span>
+              <span class="workflow-step-title">データ交換層／ポスト処理層</span>
+              <span class="workflow-step-desc">STEP/IGES/Parasolidパーサ、機種別ポストプロセッサ（機械方言プラグイン）。バグの巣窟になりやすい境界領域。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 なぜ層を跨いで直接触ってはいけないのか</strong><br>
+            例えば「UIのボタンから直接、幾何カーネルの内部データ構造を書き換える」ようなショートカット実装は、Undo/Redoスタックの整合性を破壊し、保存ファイルとメモリ状態の不一致（＝ファイルは壊れていないのにロード後にクラッシュする）を引き起こす典型的な原因です。修正は必ず「その層が公開しているAPI経由」で行います。
+          </div>
+        `,
+            "bodyZh": `
+          <p>Space-E 这类 CAD/CAM 一体化软件，通常按职责被严格拆分为 5 层。接到一个改 bug 或加功能的任务时，第一步永远是先判断"这属于哪一层的问题"。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">L1</span>
+              <span class="workflow-step-title">几何内核层</span>
+              <span class="workflow-step-desc">B-Rep 构建、布尔运算、曲面求交。通常用 C++ 实现，数值稳定性优先级最高，一般不允许为了迁就 UI 而改动。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">L2</span>
+              <span class="workflow-step-title">应用/命令层</span>
+              <span class="workflow-step-desc">把 UI 操作翻译成一串内核 API 调用。前端/流程开发者接触最多的一层。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">L3</span>
+              <span class="workflow-step-title">CAM 计算层</span>
+              <span class="workflow-step-desc">刀路生成、残料识别、碰撞检测。计算密集，常独立跑在单独进程或线程池里。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">L4/L5</span>
+              <span class="workflow-step-title">数据交换层／后置处理层</span>
+              <span class="workflow-step-desc">STEP/IGES/Parasolid 解析器、各机床厂商的后置处理插件（机床方言）。是 bug 高发的边界地带。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 为什么不能跨层直接动手</strong><br>
+            比如"从 UI 按钮直接改写几何内核的内部数据结构"这种抄近路的实现，会破坏 Undo/Redo 栈的一致性，并造成保存文件与内存状态不一致（文件本身没坏，但重新加载后却崩溃）这类典型问题。任何修改都应该通过该层对外暴露的 API 进行。
+          </div>
+        `,
+            "quiz": {
+                  "qJa": "「保存したファイル自体は壊れていないのに、再度読み込むとクラッシュする」という不具合の原因として最も疑わしい実装は？",
+                  "qZh": "“保存的文件本身没有损坏，但重新加载后却崩溃”这类问题，最应该怀疑的实现方式是？",
+                  "optionsJa": [
+                        "UI層が正規のAPIを経由せず、幾何カーネルの内部データを直接書き換えていた",
+                        "ファイルの拡張子が間違っていた",
+                        "モニターの色設定が間違っていた",
+                        "会社のロゴ画像が古かった"
+                  ],
+                  "optionsZh": [
+                        "UI 层绕过正规 API，直接改写了几何内核的内部数据",
+                        "文件扩展名设置错误",
+                        "显示器颜色设置错误",
+                        "公司 Logo 图片版本过旧"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！層を跨いだ直接操作はUndo/Redoスタックやキャッシュとの整合性を壊し、保存後の再構築時にのみ顕在化する潜在的破損を生みやすいです。",
+                  "explainZh": "正确！跨层直接操作会破坏 Undo/Redo 栈及缓存的一致性，容易埋下只有在重新构建/加载时才会暴露的潜在数据损坏。"
+            }
+      },
+      {
+            "chap": 1,
+            "subIndex": 1,
+            "titleJa": "D2-2 UI操作からAPIコールへ：コマンドパターンとUndo/Redo",
+            "titleZh": "D2-2 从 UI 操作到 API 调用：命令模式与 Undo/Redo 栈",
+            "tag": "アーキテクチャ",
+            "bodyJa": `
+          <p>「ボタンを押したら形状が変わる」という体験の裏側は、ほぼ例外なく<strong>コマンドパターン（Command Pattern）</strong>で実装されています。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step1</span>
+              <span class="workflow-step-title">Commandオブジェクト生成</span>
+              <span class="workflow-step-desc">「拔模角3度で解析する」等のユーザー操作を、パラメータを持つCommandオブジェクトにカプセル化する。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step2</span>
+              <span class="workflow-step-title">execute()実行</span>
+              <span class="workflow-step-desc">Commandが内核APIを呼び出し、変更前スナップショット（またはdiff）を保持しつつ形状を更新する。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step3</span>
+              <span class="workflow-step-title">Undoスタックへpush</span>
+              <span class="workflow-step-desc">実行済みCommandをスタックに積む。undo()は逆操作を再実行するのではなく、保持したスナップショットへ復元することが多い。</span>
+            </div>
+          </div>
+          <div class="lesson-callout tip">
+            <strong>💻 なぜ「逆演算」ではなく「スナップショット復元」が多いのか</strong><br>
+            ブーリアン演算のような非可逆に近い処理（例：穴あけで一部の面情報が消失する）は、数学的な逆操作を再構築するのが困難、または数値誤差の蓄積で危険です。そのため実務では「操作前の形状スナップショット（または軽量diff）を保持して丸ごと復元」する方式が好まれます。これがメモリ使用量とUndo階層数のトレードオフの根源です。
+          </div>
+          <div class="lesson-callout">
+            <strong>🔍 デバッグの勘所</strong><br>
+            「Undoを2回押すと形状が変になる」系のバグは、Commandのexecute()が副作用として他のCommandの前提状態を書き換えてしまっている（Commandの独立性が壊れている）ことが原因であるケースが非常に多いです。
+          </div>
+        `,
+            "bodyZh": `
+          <p>"点一下按钮，模型就变了"这种体验的背后，几乎无一例外都是用<strong>命令模式（Command Pattern）</strong>实现的。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step1</span>
+              <span class="workflow-step-title">生成 Command 对象</span>
+              <span class="workflow-step-desc">把"用3度拔模角做分析"这类用户操作，连同其参数一起封装成一个 Command 对象。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step2</span>
+              <span class="workflow-step-title">执行 execute()</span>
+              <span class="workflow-step-desc">Command 调用内核 API，同时保留变更前的快照（或 diff），再更新几何形状。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step3</span>
+              <span class="workflow-step-title">压入 Undo 栈</span>
+              <span class="workflow-step-desc">已执行的 Command 被压栈保存。undo() 往往不是重新执行"反向操作"，而是直接恢复到之前保存的快照。</span>
+            </div>
+          </div>
+          <div class="lesson-callout tip">
+            <strong>💻 为什么多用“快照恢复”而不是“逆运算”</strong><br>
+            像布尔运算这类近乎不可逆的操作（例如开孔会导致部分面信息彻底丢失），要重建其数学上的逆操作非常困难，或者容易因数值误差累积而出问题。因此实务上更常见的做法是"保存操作前的形状快照（或轻量 diff），需要撤销时整体还原"。这也正是内存占用与 Undo 层数之间取舍的根源。
+          </div>
+          <div class="lesson-callout">
+            <strong>🔍 排查经验</strong><br>
+            "连按两次 Undo 后模型变得不正常"这类 bug，很多时候是因为某个 Command 的 execute() 产生了副作用，悄悄改写了另一个 Command 所依赖的前提状态（也就是 Command 之间的独立性被破坏了）。
+          </div>
+        `,
+            "quiz": {
+                  "qJa": "ブーリアン演算のようなUndo実装で、単純な「逆演算の再実行」ではなく「操作前スナップショットの復元」が好まれる主な理由は？",
+                  "qZh": "对于布尔运算这类操作的 Undo 实现，为什么更倾向于“恢复操作前快照”而不是简单地“重新执行一次逆运算”？",
+                  "optionsJa": [
+                        "情報欠落（穴あけ等）や数値誤差の蓄積により、数学的な逆操作の再構築が困難／危険なため",
+                        "スナップショットの方がファイルサイズが必ず小さいため",
+                        "ユーザーがUndoボタンを押す回数を減らせるため",
+                        "逆演算はキーボードショートカットに対応できないため"
+                  ],
+                  "optionsZh": [
+                        "开孔等操作会造成信息丢失，加上数值误差累积，使得重建数学上的逆操作困难甚至危险",
+                        "快照方式在任何情况下文件体积都必然更小",
+                        "这样可以减少用户点击 Undo 按钮的次数",
+                        "逆运算无法绑定键盘快捷键"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！非可逆に近い幾何演算では、逆操作の数学的再構築よりも、状態そのものを保持して復元する方が安全で実装も堅牢です。",
+                  "explainZh": "正确！对于接近不可逆的几何运算，与其费力重建数学上的逆操作，不如直接保存并还原状态本身，这样更安全，实现也更稳健。"
+            }
+      },
+      {
+            "chap": 2,
+            "subIndex": 0,
+            "titleJa": "D3-1 浮動小数点比較とイプシロン公差地獄",
+            "titleZh": "D3-1 浮点数比较与 Epsilon 容差地狱",
+            "tag": "数値の罠",
+            "bodyJa": `
+          <p>幾何ソフトウェア開発における「絶対にやってはいけないこと」の第一位は、座標や距離を <code>if (a == b)</code> で比較することです。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">問題</span>
+              <span class="workflow-step-title">浮動小数点は「ほぼ等しい」しかない</span>
+              <span class="workflow-step-desc">2つの曲面が数学的に同じ点で接していても、演算経路の違いにより最終桁で1e-9程度の誤差が生じるのが普通。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">対策</span>
+              <span class="workflow-step-title">絶対公差と相対公差の使い分け</span>
+              <span class="workflow-step-desc">|a-b| < absTol は小さい数値同士の比較に有効だが、モデル全体が数メートル規模になると相対誤差 |a-b|/max(|a|,|b|) の判定も併用が必要。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">連鎖</span>
+              <span class="workflow-step-title">公差の不整合は伝播する</span>
+              <span class="workflow-step-desc">モジュールAが1e-6mm、モジュールBが1e-4mmの公差で判定していると、Aで「接続済み」、Bで「隙間あり」という矛盾が生じる。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 実務でよくある地雷</strong><br>
+            異なる開発者・異なる時代に書かれたモジュール間で、公差定数（0.001mm、0.01mm、1e-6等）がハードコードされたままバラバラに存在しているケースが非常に多いです。公差は必ず一箇所（設定・定数モジュール）で一元管理し、単位（mm/inch）も明示することが鉄則です。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 デバッグの型</strong><br>
+            「特定のモデルだけソリッド化が失敗する」系のバグを調査する際は、まず該当箇所の座標値のスケール（数マイクロメートル？それとも数百メートル？）を確認し、そのスケールに対して使われている公差定数が適切かを疑ってください。
+          </div>
+        `,
+            "bodyZh": `
+          <p>几何软件开发中"绝对不能做的第一件事"，就是用 <code>if (a == b)</code> 来比较坐标或距离这类浮点数。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">问题</span>
+              <span class="workflow-step-title">浮点数只有“近似相等”</span>
+              <span class="workflow-step-desc">两个曲面在数学上明明相切于同一点，但由于计算路径不同，最后几位小数出现 1e-9 量级的误差是家常便饭。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">对策</span>
+              <span class="workflow-step-title">绝对容差与相对容差要分开用</span>
+              <span class="workflow-step-desc">|a-b| < absTol 适合数值本身很小的比较；但当整个模型达到数米规模时，还需要用相对误差 |a-b|/max(|a|,|b|) 来配合判断。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">传染</span>
+              <span class="workflow-step-title">容差不一致会一路传播</span>
+              <span class="workflow-step-desc">模块 A 用 1e-6mm 判定，模块 B 用 1e-4mm 判定，就会出现"A 认为已经缝合、B 却认为存在缝隙"的矛盾结果。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 实务中最常见的地雷</strong><br>
+            由不同开发者、不同年代写下的模块之间，经常散落着各自写死的容差常量（0.001mm、0.01mm、1e-6……）。正确做法是把容差集中到唯一的配置/常量模块里统一管理，并明确标注单位（mm/inch），这是铁律。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 调试套路</strong><br>
+            排查"只有某个特定模型无法实体化"这类 bug 时，先确认该处坐标值的量级（是微米级还是几百米级），再去怀疑当前使用的容差常量是否与这个量级匹配。
+          </div>
+        `,
+            "quiz": {
+                  "qJa": "「モジュールAでは接続済みと判定されるが、モジュールBでは隙間ありと判定される」という矛盾の典型的な原因は？",
+                  "qZh": "“模块 A 判定为已连接，模块 B 却判定为存在缝隙”这类矛盾，最典型的原因是？",
+                  "optionsJa": [
+                        "モジュール間で公差定数の値や単位系（mm/inch）が統一されていない",
+                        "モジュールAのプログラミング言語が古いため",
+                        "モジュールBのUIデザインが複雑すぎるため",
+                        "ネットワーク越しにファイルを開いたため"
+                  ],
+                  "optionsZh": [
+                        "各模块之间的容差常量数值或单位制（mm/inch）没有统一",
+                        "模块 A 所用的编程语言过于陈旧",
+                        "模块 B 的界面设计过于复杂",
+                        "文件是通过网络路径打开的"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！公差はソフトウェア内で一元管理されていなければ、モジュールごとに判定基準がずれ、幾何的な整合性が破綻します。",
+                  "explainZh": "正确！容差如果没有在软件内统一管理，各模块的判定基准就会出现偏差，导致几何一致性被破坏。"
+            }
+      },
+      {
+            "chap": 2,
+            "subIndex": 1,
+            "titleJa": "D3-2 幾何退化・数値特異点とリグレッションテスト戦略",
+            "titleZh": "D3-2 几何退化、数值奇异点与回归测试策略",
+            "tag": "数値の罠",
+            "bodyJa": `
+          <p>幾何演算のクラッシュ・無限ループの多くは、教科書には出てこない「境界条件」で発生します。代表的な退化パターンを押さえておきましょう。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">退化1</span>
+              <span class="workflow-step-title">長さゼロのEdge</span>
+              <span class="workflow-step-desc">2つのVertexが公差以下の距離まで近づくと発生。曲線の接線ベクトルが定義不能（0除算）になりやすい。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">退化2</span>
+              <span class="workflow-step-title">自己交差する曲面</span>
+              <span class="workflow-step-desc">オフセット処理（例：放電クリアランス付与）で負のオフセット量が形状の曲率半径を超えると発生しやすい。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">退化3</span>
+              <span class="workflow-step-title">ノット重複度が階数と一致</span>
+              <span class="workflow-step-desc">NURBSでノットベクトルの重複度が(degree+1)に達すると、その点で曲率計算の分母が0に近づき数値が発散しうる。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 テスト戦略：ゴールデンモデル比較</strong><br>
+            幾何ソフトウェアは <code>assert(result == expected)</code> のような単純な等価テストが原則使えません。実務では「既知の代表的モデル群（ゴールデンモデル）」に対して処理を実行し、出力形状の体積・面積・境界点群を公差付きで比較する<strong>回帰テスト（Regression Test）</strong>を組みます。退化しやすいパターン（上記3種）は必ずゴールデンモデル集合に含めておくべきです。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 実務Tips</strong><br>
+            クラッシュレポートを受け取ったら、まず「そのモデルのどこかに、上記のような退化寸前の形状（ほぼゼロ長のEdge、ほぼ接する曲面）がないか」を可視化ツールで確認するのが最速の一次切り分けです。
+          </div>
+        `,
+            "bodyZh": `
+          <p>几何运算里绝大多数崩溃和死循环，都发生在教科书不会讲的"边界条件"上。先掌握几种典型的退化模式。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">退化1</span>
+              <span class="workflow-step-title">零长边（Zero-length Edge）</span>
+              <span class="workflow-step-desc">当两个顶点距离小于容差时就会出现。曲线的切线向量往往因此变得无法定义（相当于除以零）。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">退化2</span>
+              <span class="workflow-step-title">曲面自相交</span>
+              <span class="workflow-step-desc">在做偏置处理（例如给放电电极加火花间隙）时，如果负偏置量超过了曲面的曲率半径，就极易出现自相交。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">退化3</span>
+              <span class="workflow-step-title">节点重复度等于阶数+1</span>
+              <span class="workflow-step-desc">NURBS 的节点向量若在某处重复度达到 (degree+1)，该点曲率计算的分母会趋近于零，数值可能发散。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 测试策略：黄金模型对比</strong><br>
+            几何软件原则上无法使用 <code>assert(result == expected)</code> 这种简单的相等断言。实务中会准备一批"具有代表性的已知模型"（黄金模型 / Golden Model），对处理结果的体积、面积、边界点集做<strong>带容差的回归测试（Regression Test）</strong>对比。上述三种退化模式，必须被纳入黄金模型集合中长期覆盖。
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 实务小贴士</strong><br>
+            收到崩溃报告后，最快的第一步排查是用可视化工具检查该模型中是否存在上述几种"濒临退化"的几何（几乎零长的边、几乎相切的曲面）。
+          </div>
+        `,
+            "quiz": {
+                  "qJa": "幾何演算ソフトウェアの品質保証において、単純な「結果が期待値と完全一致するか」のassertではなく、公差付きの比較で行う回帰テストが必要な理由は？",
+                  "qZh": "几何运算软件的质量保证中，为什么不能用“结果与期望值完全相等”的简单断言，而必须做带容差的回归测试？",
+                  "optionsJa": [
+                        "浮動小数点演算経路の違いにより、正しい結果同士でも最終桁レベルの微小な差異が生じ得るため",
+                        "テストの実行速度を落とすことが目的だから",
+                        "開発者の人数が多いプロジェクトでは常に必要だから",
+                        "回帰テストの方が見た目が美しいレポートになるから"
+                  ],
+                  "optionsZh": [
+                        "由于浮点运算路径的差异，即便结果都是“正确”的，最后几位小数也可能存在微小差异",
+                        "目的是故意拖慢测试执行速度",
+                        "只要团队开发人数多，就必须这样做",
+                        "带容差的回归测试生成的报告更美观"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！幾何計算には本質的な数値誤差が伴うため、完全一致ではなく「許容範囲内で一致しているか」という基準でしか品質を保証できません。",
+                  "explainZh": "正确！几何计算天生伴随数值误差，只能以“是否落在容差范围内”作为质量判定基准，而不能要求完全相等。"
+            }
+      },
+      {
+            "chap": 3,
+            "subIndex": 0,
+            "titleJa": "D4-1 API・マクロによる自動化スクリプトの基本構造",
+            "titleZh": "D4-1 API/宏自动化脚本的基本结构",
+            "tag": "拡張開発",
+            "bodyJa": `
+          <p>Space-E型のソフトウェアの二次開発は、多くの場合「UI操作の裏にある内核APIを、スクリプトから直接呼び出す」形で行います。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">構成</span>
+              <span class="workflow-step-title">典型的なマクロAPIの3層</span>
+              <span class="workflow-step-desc">①ドキュメント/セッション取得 → ②形状オブジェクトの選択・生成 → ③パラメータ付きコマンド実行（拔模解析、電極抽出等）。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">典型パターン</span>
+              <span class="workflow-step-title">バッチ処理スクリプト</span>
+              <span class="workflow-step-desc">フォルダ内の全モデルを開き、一括で拔模角チェックを実行してレポートCSVを出力する、といった夜間バッチが典型的な自動化ニーズ。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">注意点</span>
+              <span class="workflow-step-title">APIはUIと同じ制約を継承する</span>
+              <span class="workflow-step-desc">スクリプトからAPIを呼んでも、内部的にはUI操作と同じCommandパターンを通るため、Undo履歴やメモリリークのリスクも同様に発生し得る。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 開発者が最初にハマる罠</strong><br>
+            バッチスクリプトでモデルを大量に開閉すると、UIでは目立たない小さなメモリリークが蓄積し、数百ファイル処理した頃にクラッシュする、という不具合が典型的です。長時間バッチには定期的なプロセス再起動や、明示的なリソース解放APIの呼び出しを組み込むのが定石です。
+          </div>
+        `,
+            "bodyZh": `
+          <p>Space-E 这类软件的二次开发，大多是"绕过 UI，直接从脚本调用其背后的内核 API"来实现的。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">结构</span>
+              <span class="workflow-step-title">典型宏 API 的三层</span>
+              <span class="workflow-step-desc">①获取文档/会话对象 → ②选择或生成几何对象 → ③执行带参数的命令（拔模分析、电极提取等）。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">典型模式</span>
+              <span class="workflow-step-title">批处理脚本</span>
+              <span class="workflow-step-desc">打开文件夹里所有模型，批量执行拔模角检查并导出报告 CSV——这是最典型的自动化需求（常见于夜间批处理任务）。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">注意事项</span>
+              <span class="workflow-step-title">API 继承了与 UI 相同的约束</span>
+              <span class="workflow-step-desc">脚本调用 API 时，内部依然走的是与 UI 操作相同的 Command 模式，因此 Undo 历史堆积、内存泄漏等风险同样存在。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 开发者最容易踩的坑</strong><br>
+            批处理脚本如果反复大量开关模型文件，UI 手动操作时不明显的小内存泄漏会不断累积，处理到几百个文件时突然崩溃——这是非常典型的故障模式。长时间批处理任务的标准做法是定期重启进程，或显式调用资源释放 API。
+          </div>
+        `,
+            "quiz": {
+                  "qJa": "夜間バッチスクリプトで数百件のモデルを連続処理した終盤でだけクラッシュする不具合の原因として、最も可能性が高いのは？",
+                  "qZh": "夜间批处理脚本连续处理几百个模型，却只在快结束时才崩溃，最可能的原因是？",
+                  "optionsJa": [
+                        "モデルの開閉を繰り返すことで蓄積した微小なメモリリーク",
+                        "深夜は電力供給が不安定なため",
+                        "スクリプト言語のバージョンが古すぎるため",
+                        "処理するモデルの数が偶数だったため"
+                  ],
+                  "optionsZh": [
+                        "反复开关模型过程中累积起来的微小内存泄漏",
+                        "深夜时段电力供应不稳定",
+                        "脚本语言版本过于陈旧",
+                        "处理的模型数量恰好是偶数"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！小さなリークでもループ回数が数百に達すると蓄積してメモリ不足を引き起こし、処理終盤でクラッシュする典型パターンです。",
+                  "explainZh": "正确！哪怕单次泄漏很小，循环几百次后累积起来也会耗尽内存，这是批处理任务后期崩溃的典型模式。"
+            }
+      },
+      {
+            "chap": 3,
+            "subIndex": 1,
+            "titleJa": "D4-2 STEP/IGES/Parasolidコンバータの設計と互換性バグ",
+            "titleZh": "D4-2 STEP/IGES/Parasolid 转换器设计与兼容性缺陷",
+            "tag": "拡張開発",
+            "bodyJa": `
+          <p>他社CADとのデータ交換は、開発チームにとって最も不具合報告が多い領域の一つです。原因は「規格が同じでも、各CADベンダーの実装解釈が微妙に異なる」ことにあります。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">構造</span>
+              <span class="workflow-step-title">コンバータの基本パイプライン</span>
+              <span class="workflow-step-desc">①ファイルパース（テキスト/バイナリ）→②中間幾何表現へのマッピング→③自社B-Repカーネルへの再構築→④公差付き健全性チェック。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">典型不具合</span>
+              <span class="workflow-step-title">公差の解釈違い</span>
+              <span class="workflow-step-desc">送信元CADの内部公差と自社の公差基準が異なるため、インポート直後は「隙間なし」でも、自社の演算を通すと微小ギャップが顕在化する。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">典型不具合2</span>
+              <span class="workflow-step-title">曲面パラメータ化の向き違い</span>
+              <span class="workflow-step-desc">同じ形状でもCADベンダーによってU/Vパラメータの方向や原点の取り方が異なり、変換後に法線やテクスチャ方向が反転することがある。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 設計指針：インポート直後に必ず健全性検査を挟む</strong><br>
+            外部ファイルを読み込んだ直後に、自社カーネルの公差基準で「閉じたソリッドになっているか」「法線の向きは一貫しているか」を再検証する<strong>Healing（修復）フェーズ</strong>を必ず挟む設計が業界標準です。これを省略すると、インポート自体は成功するのに、後段のCAM処理で原因不明のクラッシュが起きる、という調査困難な不具合を量産します。
+          </div>
+        `,
+            "bodyZh": `
+          <p>与其他 CAD 软件的数据交换，是开发团队接到 bug 报告最多的领域之一。根本原因在于"标准虽然一样，但各家 CAD 厂商的实现解读存在微妙差异"。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">结构</span>
+              <span class="workflow-step-title">转换器的基本流水线</span>
+              <span class="workflow-step-desc">①文件解析（文本/二进制）→②映射到中间几何表示→③重建为自家 B-Rep 内核结构→④带容差的健全性校验。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">典型缺陷1</span>
+              <span class="workflow-step-title">容差解读不一致</span>
+              <span class="workflow-step-desc">源 CAD 的内部容差基准与自家标准不同，导致导入时看起来"无缝隙"，但经过自家运算后微小缝隙会暴露出来。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">典型缺陷2</span>
+              <span class="workflow-step-title">曲面参数化方向不一致</span>
+              <span class="workflow-step-desc">同一个形状在不同 CAD 厂商那里，U/V 参数方向或原点选取方式可能不同，转换后容易出现法向量或贴图方向反转。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 设计准则：导入后必须插入一道健全性检查</strong><br>
+            行业标准做法是：读入外部文件后，立刻用自家内核的容差标准重新校验"是否构成闭合实体""法向量方向是否一致"，也就是一个<strong>修复阶段（Healing）</strong>。省略这一步，会导致导入本身"看似成功"，却在后续 CAM 处理阶段出现原因不明、极难排查的崩溃。
+          </div>
+        `,
+            "quiz": {
+                  "qJa": "外部CADファイルのインポート機能を設計する際、「Healing（修復）フェーズ」を省略すると起こりやすい問題は？",
+                  "qZh": "设计外部 CAD 文件导入功能时，如果省略“修复（Healing）阶段”，容易引发什么问题？",
+                  "optionsJa": [
+                        "インポート自体は成功して見えるが、後段のCAM処理で原因不明のクラッシュが多発する",
+                        "ファイルのアイコン画像が表示されなくなる",
+                        "インポート速度が必ず2倍速くなる",
+                        "ライセンス認証が不要になる"
+                  ],
+                  "optionsZh": [
+                        "导入过程看似成功，但后续 CAM 处理阶段会频繁出现原因不明的崩溃",
+                        "文件图标无法正常显示",
+                        "导入速度必然会翻倍",
+                        "不再需要许可证认证"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！公差やトポロジーの不整合を抱えたまま後段処理に渡ると、問題が顕在化する箇所とインポート原因の間に大きな距離ができ、調査が困難になります。",
+                  "explainZh": "正确！带着容差或拓扑不一致的隐患进入后续处理，问题暴露的位置和导入时的根因之间会隔着很远的距离，排查难度极大。"
+            }
+      },
+      {
+            "chap": 4,
+            "subIndex": 0,
+            "titleJa": "D5-1 刀路(CL Data)生成アルゴリズムの疑似コードを読み解く",
+            "titleZh": "D5-1 读懂刀路(CL Data)生成算法的伪代码",
+            "tag": "実戦演習",
+            "bodyJa": `
+          <p>CAM計算層のコアである等高線荒加工アルゴリズムを、簡略化した疑似コードで読み解いてみましょう。</p>
+          <div class="lesson-callout">
+            <strong>💻 等高線荒加工の疑似コード（簡略版）</strong><br>
+            <code>
+            for z in range(zTop, zBottom, -stepDown):<br>
+            &nbsp;&nbsp;sliceContour = intersectSolidWithPlane(stockModel, z)<br>
+            &nbsp;&nbsp;offsetContour = offsetPolygon(sliceContour, -toolRadius)<br>
+            &nbsp;&nbsp;if offsetContour.hasSelfIntersection(tol):<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;offsetContour = repairSelfIntersection(offsetContour, tol)<br>
+            &nbsp;&nbsp;toolpath.append(smoothCornersWithArc(offsetContour, leadRadius))<br>
+            &nbsp;&nbsp;updateRestMaterial(stockModel, toolpath, toolRadius)
+            </code>
+          </div>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step1</span>
+              <span class="workflow-step-title">スライス断面の抽出</span>
+              <span class="workflow-step-desc">各Z高さで工作物モデルと水平面の交差輪郭を求める。ここが幾何演算層への主な依存箇所。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step2</span>
+              <span class="workflow-step-title">工具半径オフセット</span>
+              <span class="workflow-step-desc">輪郭を工具半径ぶん内側にオフセット。凹形状の鋭角部でオフセット線が自己交差しやすい＝D3章の退化ポイント。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step3</span>
+              <span class="workflow-step-title">残肉モデルの更新</span>
+              <span class="workflow-step-desc">生成した刀路が実際に除去する体積をstockModelから差し引き、次工程（清根等）用の残肉情報を更新する。</span>
+            </div>
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 読み解きのポイント</strong><br>
+            <code>offsetContour.hasSelfIntersection(tol)</code> の呼び出しは、まさにD3-2で学んだ「幾何退化の検出」そのものです。もしこの分岐がなければ、鋭角な内部コーナーを持つ形状で無限ループやクラッシュが起きる、という不具合報告につながります。コードレビューでは、この種のガード処理が省略されていないかを重点的に確認してください。
+          </div>
+        `,
+            "bodyZh": `
+          <p>我们用一段简化后的伪代码，来读懂 CAM 计算层的核心——等高线粗加工算法。</p>
+          <div class="lesson-callout">
+            <strong>💻 等高线粗加工伪代码（简化版）</strong><br>
+            <code>
+            for z in range(zTop, zBottom, -stepDown):<br>
+            &nbsp;&nbsp;sliceContour = intersectSolidWithPlane(stockModel, z)<br>
+            &nbsp;&nbsp;offsetContour = offsetPolygon(sliceContour, -toolRadius)<br>
+            &nbsp;&nbsp;if offsetContour.hasSelfIntersection(tol):<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;offsetContour = repairSelfIntersection(offsetContour, tol)<br>
+            &nbsp;&nbsp;toolpath.append(smoothCornersWithArc(offsetContour, leadRadius))<br>
+            &nbsp;&nbsp;updateRestMaterial(stockModel, toolpath, toolRadius)
+            </code>
+          </div>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step1</span>
+              <span class="workflow-step-title">提取切片截面</span>
+              <span class="workflow-step-desc">在每个 Z 高度求工件模型与水平面的相交轮廓。这里是对几何运算层依赖最重的一步。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step2</span>
+              <span class="workflow-step-title">按刀具半径做偏置</span>
+              <span class="workflow-step-desc">将轮廓向内偏置一个刀具半径。在凹形状的尖锐拐角处，偏置线极易自相交——这正是 D3 章讲过的几何退化点。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">Step3</span>
+              <span class="workflow-step-title">更新残料模型</span>
+              <span class="workflow-step-desc">把本次刀路实际切除的体积从 stockModel 中扣除，更新供下一道工序（如清根）使用的残料信息。</span>
+            </div>
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🔍 阅读要点</strong><br>
+            <code>offsetContour.hasSelfIntersection(tol)</code> 这一行调用，正是 D3-2 讲过的"几何退化检测"在实战代码里的体现。如果缺了这个分支，遇到带尖锐内凹拐角的形状就会触发死循环或崩溃。做代码审查时，务必重点确认这类防护逻辑有没有被省略。
+          </div>
+        `,
+            "quiz": {
+                  "qJa": "等高線荒加工の疑似コードで <code>hasSelfIntersection</code> のチェックとリペア処理が省略された場合、最も起こりやすい不具合は？",
+                  "qZh": "在等高线粗加工的伪代码中，如果省略了 <code>hasSelfIntersection</code> 的检查与修复处理，最容易出现什么问题？",
+                  "optionsJa": [
+                        "鋭角な内部コーナーを持つ形状で、オフセット輪郭の自己交差により無限ループやクラッシュが発生する",
+                        "刀路の色がおかしくなる",
+                        "処理速度が常に2倍速くなる",
+                        "ファイル保存時のアイコンが変わる"
+                  ],
+                  "optionsZh": [
+                        "遇到带尖锐内凹拐角的形状时，偏置轮廓自相交会导致死循环或崩溃",
+                        "刀路显示颜色出现异常",
+                        "处理速度必然翻倍加快",
+                        "保存文件时的图标会发生变化"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！D3章で学んだ幾何退化（自己交差）がこのループ内で発生すると、後続のsmoothCornersWithArc等の処理が不正な入力を受け取り、無限ループやクラッシュにつながります。",
+                  "explainZh": "正确！D3 章学过的几何退化（自相交）一旦在这个循环里发生，后续的 smoothCornersWithArc 等处理就会拿到非法输入，进而引发死循环或崩溃。"
+            }
+      },
+      {
+            "chap": 4,
+            "subIndex": 1,
+            "titleJa": "D5-2 実バグ事例演習：無限ループ／クラッシュの原因究明フロー",
+            "titleZh": "D5-2 实战bug案例：死循环/崩溃的调查方法论",
+            "tag": "実戦演習",
+            "bodyJa": `
+          <p>これまで学んだ知識を統合し、実際の障害調査フローを体験しましょう。以下は典型的な「実バグ報告」とその調査手順です。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">報告</span>
+              <span class="workflow-step-title">「特定の1モデルだけ荒加工計算がフリーズする」</span>
+              <span class="workflow-step-desc">再現性あり。他の数百モデルでは正常。CPU使用率100%のまま数分応答なし＝無限ループの典型徴候。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">仮説1</span>
+              <span class="workflow-step-title">D3章：幾何退化の混入</span>
+              <span class="workflow-step-desc">当該モデルの形状データに、長さゼロのEdgeや自己交差曲面がないか、健全性検査ツールで確認する。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">仮説2</span>
+              <span class="workflow-step-title">D1章：インポート由来の法線異常</span>
+              <span class="workflow-step-desc">当該モデルが他社CADからのSTEPインポートである場合、法線反転や公差解釈違いが混入していないか確認する。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">対処</span>
+              <span class="workflow-step-title">最小再現ケースへの切り出し</span>
+              <span class="workflow-step-desc">問題箇所の形状だけを抽出した最小モデルを作成し、ゴールデンモデル集合に追加＋修復ロジックのテストケースとして固定化する。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 調査フローのまとめ（チェックリスト）</strong><br>
+            1) 再現性の確認（毎回同じモデルで起きるか）<br>
+            2) D1で学んだ観点：モデルのトポロジーに異常（法線反転・Loop方向）がないか可視化確認<br>
+            3) D3で学んだ観点：長さゼロEdge・自己交差・ノット重複度異常がないか健全性チェックツールで確認<br>
+            4) 該当処理のログに <code>tolerance</code> 関連の値を出力し、実際に使われている公差がスケールに対して妥当か検証<br>
+            5) 最小再現モデルを作成し、回帰テストのゴールデンモデル集合へ追加
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🎯 このコースのまとめ</strong><br>
+            工艺工程师はモデルを見て「拔模角が足りない」と判断しますが、あなたは同じ現象を見て「B-Repのトポロジーは？公差の伝播は？どの層のAPIが呼ばれている？」と分解して考えられるようになりました。それが開発者としてのSpace-E型ソフトウェアへの向き合い方です。
+          </div>
+        `,
+            "bodyZh": `
+          <p>把前面学到的知识串起来，体验一次真实的故障调查流程。以下是一份典型的"真实 bug 报告"及其排查步骤。</p>
+          <div class="lesson-workflow-grid">
+            <div class="workflow-step">
+              <span class="workflow-step-num">报告</span>
+              <span class="workflow-step-title">“只有某一个特定模型的粗加工计算会卡死”</span>
+              <span class="workflow-step-desc">可稳定复现，其余几百个模型都正常。CPU 占用 100% 且数分钟无响应——这是死循环的典型症状。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">假设1</span>
+              <span class="workflow-step-title">D3章：混入了几何退化</span>
+              <span class="workflow-step-desc">用健全性检查工具确认该模型数据中是否存在零长边或自相交曲面。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">假设2</span>
+              <span class="workflow-step-title">D1章：导入引入的法向异常</span>
+              <span class="workflow-step-desc">如果该模型是从其他 CAD 通过 STEP 导入的，检查是否混入了法向反转或容差解读差异。</span>
+            </div>
+            <div class="workflow-step">
+              <span class="workflow-step-num">处理</span>
+              <span class="workflow-step-title">切出最小复现用例</span>
+              <span class="workflow-step-desc">只提取出问题所在的局部几何做成最小模型，加入黄金模型集合，并固化为修复逻辑的回归测试用例。</span>
+            </div>
+          </div>
+          <div class="lesson-callout">
+            <strong>💻 调查流程小结（检查清单）</strong><br>
+            1) 确认可复现性（是否每次都在同一模型上发生）<br>
+            2) D1 章的视角：用可视化工具检查模型拓扑是否异常（法向反转、Loop 绕向）<br>
+            3) D3 章的视角：用健全性检查工具确认是否存在零长边、自相交、节点重复度异常<br>
+            4) 在相关处理逻辑中打印 <code>tolerance</code> 相关数值，验证实际使用的容差是否与该模型的坐标量级匹配<br>
+            5) 制作最小复现模型，加入回归测试的黄金模型集合
+          </div>
+          <div class="lesson-callout tip">
+            <strong>🎯 本课程小结</strong><br>
+            工艺工程师看到问题模型，会判断"拔模角不够"；而现在的你，看到同一个现象，已经能够拆解成"B-Rep 拓扑是否正常？容差是怎么传播的？调用的是哪一层的 API？"——这正是作为开发者面对 Space-E 类软件时应有的思维方式。
+          </div>
+        `,
+            "quiz": {
+                  "qJa": "「特定の1モデルだけ荒加工計算がフリーズする（他の数百モデルは正常）」という報告を受けた際、最初に確認すべきこととして最も適切なのは？",
+                  "qZh": "收到“只有某一个特定模型的粗加工计算会卡死（其余几百个模型都正常）”的报告时，最应该优先确认的是？",
+                  "optionsJa": [
+                        "当該モデルのトポロジー（法線・Loop方向）と幾何退化（ゼロ長Edge・自己交差）の有無",
+                        "そのユーザーのパソコンのメーカー",
+                        "その日の天気",
+                        "ソフトウェアのバージョン番号の桁数"
+                  ],
+                  "optionsZh": [
+                        "该模型的拓扑（法向、Loop 绕向）以及是否存在几何退化（零长边、自相交）",
+                        "该用户所用电脑的品牌",
+                        "当天的天气情况",
+                        "软件版本号的位数"
+                  ],
+                  "ans": 0,
+                  "explainJa": "正解！「特定の1モデルだけ」という再現性は、環境要因ではなくデータそのものの幾何的特異性（退化・トポロジー異常）を強く示唆します。",
+                  "explainZh": "正确！“只有特定某个模型”这种复现特征，强烈指向数据本身的几何特殊性（退化、拓扑异常），而不是环境因素。"
+            }
+      }
+    ];
+
+    /* ==========================================================================
        4. 实战工坊 (Quest 题库: 4 Tier x 7 题 = 28 道工业工程题目)
        ========================================================================== */
     const QUEST_BANK = [
@@ -3391,6 +4317,7 @@
 
     const State = {
       tab: 'academy',
+      track: 'user', // 'user' = モールドエンジニア向け, 'dev' = ソフトウェア開発者向け
       currentChap: 0,
       currentLessonSub: 0,
       solvedLessons: new Set(),
@@ -3421,6 +4348,30 @@
       animating: false
     };
 
+    // 学习轨道数据访问器：根据 State.track 返回对应的章节/课时数据集
+    function getChaptersData() {
+      return State.track === 'dev' ? DEV_CHAPTERS_DATA : CHAPTERS_DATA;
+    }
+    function getLessonsData() {
+      return State.track === 'dev' ? DEV_LESSONS_DATA : LESSONS_DATA;
+    }
+
+    function switchTrack(track) {
+      if (State.track === track) return;
+      sound.click();
+      State.track = track;
+      State.currentChap = 0;
+      State.currentLessonSub = 0;
+
+      document.getElementById('trackTabUser').classList.toggle('active', track === 'user');
+      document.getElementById('trackTabDev').classList.toggle('active', track === 'dev');
+      updateTrackDescText();
+
+      saveState();
+      renderAcademy();
+      updateHeaderStats();
+    }
+
     function loadSavedState() {
       try {
         const saved = localStorage.getItem('space_e_quest_state');
@@ -3429,6 +4380,11 @@
           State.exp = parsed.exp || 0;
           if (parsed.solvedLessons) State.solvedLessons = new Set(parsed.solvedLessons);
           if (parsed.solvedQuests) State.solvedQuests = new Set(parsed.solvedQuests);
+          if (parsed.track === 'dev' || parsed.track === 'user') {
+            State.track = parsed.track;
+            document.getElementById('trackTabUser').classList.toggle('active', State.track === 'user');
+            document.getElementById('trackTabDev').classList.toggle('active', State.track === 'dev');
+          }
         }
       } catch (e) {}
       updateHeaderStats();
@@ -3439,7 +4395,8 @@
         const data = {
           exp: State.exp,
           solvedLessons: Array.from(State.solvedLessons),
-          solvedQuests: Array.from(State.solvedQuests)
+          solvedQuests: Array.from(State.solvedQuests),
+          track: State.track
         };
         localStorage.setItem('space_e_quest_state', JSON.stringify(data));
       } catch (e) {}
@@ -3489,9 +4446,11 @@
       const pct = Math.min(100, Math.max(0, Math.round(((State.exp - prevExp) / (nextExp - prevExp)) * 100)));
       document.getElementById('expFill').style.width = `${pct}%`;
 
-      document.getElementById('academySolvedCount').innerText = State.solvedLessons.size;
+      const lessonsInTrack = getLessonsData();
+      const solvedInTrack = lessonsInTrack.filter(l => State.solvedLessons.has(lessonKey(l.chap, l.subIndex))).length;
+      document.getElementById('academySolvedCount').innerText = solvedInTrack;
       document.getElementById('solvedCount').innerText = State.solvedQuests.size;
-      if (document.getElementById('totalAcademyCount')) document.getElementById('totalAcademyCount').innerText = LESSONS_DATA.length;
+      if (document.getElementById('totalAcademyCount')) document.getElementById('totalAcademyCount').innerText = lessonsInTrack.length;
       if (document.getElementById('totalQuestCount')) document.getElementById('totalQuestCount').innerText = QUEST_BANK.length;
     }
 
@@ -3518,17 +4477,21 @@
     /* ==========================================================================
        8. 模块 1: 金型学堂渲染器 (Academy Engine)
        ========================================================================== */
+    function lessonKey(chap, subIndex) {
+      return `${State.track}:${chap}-${subIndex}`;
+    }
+
     function renderAcademy() {
-      // 渲染5大章节导航卡
+      // 渲染章节导航卡（依据当前トラック：モールドエンジニア／ソフトウェア開発者）
       const grid = document.getElementById('chapNavGrid');
       grid.innerHTML = '';
-      CHAPTERS_DATA.forEach(chap => {
+      getChaptersData().forEach(chap => {
         const card = document.createElement('div');
         card.className = `chap-card ${State.currentChap === chap.id ? 'active' : ''}`;
         card.onclick = () => selectAcademyChapter(chap.id);
 
-        const chapLessons = LESSONS_DATA.filter(l => l.chap === chap.id);
-        const solvedInChap = chapLessons.filter(l => State.solvedLessons.has(`${l.chap}-${l.subIndex}`)).length;
+        const chapLessons = getLessonsData().filter(l => l.chap === chap.id);
+        const solvedInChap = chapLessons.filter(l => State.solvedLessons.has(lessonKey(l.chap, l.subIndex))).length;
 
         card.innerHTML = `
           <div class="chap-card-header">
@@ -3558,11 +4521,11 @@
     function renderLessonPills() {
       const pillsBar = document.getElementById('lessonPillsBar');
       pillsBar.innerHTML = '';
-      const lessons = LESSONS_DATA.filter(l => l.chap === State.currentChap);
+      const lessons = getLessonsData().filter(l => l.chap === State.currentChap);
 
       lessons.forEach((l, idx) => {
         const pill = document.createElement('div');
-        const key = `${l.chap}-${l.subIndex}`;
+        const key = lessonKey(l.chap, l.subIndex);
         const isCompleted = State.solvedLessons.has(key);
         pill.className = `lesson-pill ${State.currentLessonSub === idx ? 'active' : ''} ${isCompleted ? 'completed' : ''}`;
         pill.onclick = () => {
@@ -3577,7 +4540,7 @@
     }
 
     function renderAcademyLesson() {
-      const lessons = LESSONS_DATA.filter(l => l.chap === State.currentChap);
+      const lessons = getLessonsData().filter(l => l.chap === State.currentChap);
       const lesson = lessons[State.currentLessonSub] || lessons[0];
       if (!lesson) return;
 
@@ -3585,7 +4548,7 @@
       document.getElementById('lessonChapterTag').innerText = `第 ${lesson.chap + 1} 章 · ${lesson.tag}`;
       document.getElementById('lessonBody').innerHTML = currentLang === 'ja' ? lesson.bodyJa : lesson.bodyZh;
 
-      const key = `${lesson.chap}-${lesson.subIndex}`;
+      const key = lessonKey(lesson.chap, lesson.subIndex);
       const isCompleted = State.solvedLessons.has(key);
       const statusPill = document.getElementById('lessonStatusPill');
       if (isCompleted) {
@@ -3615,7 +4578,7 @@
 
       document.getElementById('lessonNavCounter').innerText = `第 ${State.currentChap + 1} 章 講 ${State.currentLessonSub + 1} / ${lessons.length}`;
       document.getElementById('btnPrevLesson').disabled = (State.currentChap === 0 && State.currentLessonSub === 0);
-      document.getElementById('btnNextLesson').disabled = (State.currentChap === CHAPTERS_DATA.length - 1 && State.currentLessonSub === lessons.length - 1);
+      document.getElementById('btnNextLesson').disabled = (State.currentChap === getChaptersData().length - 1 && State.currentLessonSub === lessons.length - 1);
     }
 
     function checkMiniQuiz(selectedIdx, correctIdx, explanation, btnEl) {
@@ -3629,7 +4592,7 @@
         explainBox.className = 'quiz-result-explain show success';
         explainBox.innerHTML = `<strong>🎉 正解！</strong> ${explanation}`;
 
-        const key = `${State.currentChap}-${State.currentLessonSub}`;
+        const key = lessonKey(State.currentChap, State.currentLessonSub);
         if (!State.solvedLessons.has(key)) {
           State.solvedLessons.add(key);
           addExp(25);
@@ -3647,16 +4610,16 @@
 
     function stepLesson(delta) {
       sound.click();
-      const lessons = LESSONS_DATA.filter(l => l.chap === State.currentChap);
+      const lessons = getLessonsData().filter(l => l.chap === State.currentChap);
       let nextSub = State.currentLessonSub + delta;
 
       if (nextSub >= 0 && nextSub < lessons.length) {
         State.currentLessonSub = nextSub;
       } else if (nextSub < 0 && State.currentChap > 0) {
         State.currentChap--;
-        const prevLessons = LESSONS_DATA.filter(l => l.chap === State.currentChap);
+        const prevLessons = getLessonsData().filter(l => l.chap === State.currentChap);
         State.currentLessonSub = prevLessons.length - 1;
-      } else if (nextSub >= lessons.length && State.currentChap < CHAPTERS_DATA.length - 1) {
+      } else if (nextSub >= lessons.length && State.currentChap < getChaptersData().length - 1) {
         State.currentChap++;
         State.currentLessonSub = 0;
       }
@@ -4366,6 +5329,7 @@
        ========================================================================== */
     window.addEventListener('DOMContentLoaded', () => {
       loadSavedState();
+      updateTrackDescText();
       renderAcademy();
       renderQuestQuestion();
       renderCodex();
