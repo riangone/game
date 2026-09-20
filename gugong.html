@@ -7,6 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=M+PLUS+Rounded+1c:wght@600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+<script src="js/hanzi-writer.min.js"></script>
+<script src="js/hanzi-data.js"></script>
 <style>
   :root{
     --red:#c2410c; --red-dark:#9a3412; --red-soft:#ffedd5;
@@ -86,17 +88,33 @@
     width:130px;height:130px;position:relative;background:#fffdf8;
     border:2.5px solid #ea580c;border-radius:12px;
     display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(234,88,12,0.15);
+    overflow:hidden;
   }
   .tian-grid::before{
-    content:'';position:absolute;left:0;right:0;top:50%;border-top:1.5px dashed #fdba74;
+    content:'';position:absolute;left:0;right:0;top:50%;border-top:1.5px dashed #fdba74;z-index:1;pointer-events:none;
   }
   .tian-grid::after{
-    content:'';position:absolute;top:0;bottom:0;left:50%;border-left:1.5px dashed #fdba74;
+    content:'';position:absolute;top:0;bottom:0;left:50%;border-left:1.5px dashed #fdba74;z-index:1;pointer-events:none;
   }
   .tian-char{
     font-size:82px;font-weight:900;z-index:2;color:#7c2d12;
     font-family:"PingFang SC","Kaiti","STKaiti",serif;line-height:1;
   }
+  #charWriterTarget{
+    width:130px;height:130px;position:relative;z-index:2;touch-action:none;display:flex;align-items:center;justify-content:center;
+  }
+  #charWriterTarget svg{width:100%!important;height:100%!important;}
+  .writer-status{
+    font-size:12px;font-weight:800;color:var(--muted);text-align:center;min-height:18px;line-height:1.4;
+    transition:color .2s;
+  }
+  .writer-status.info{color:var(--blue);}
+  .writer-status.success{color:var(--green);}
+  .writer-status.error{color:var(--imperial-red);animation:shake .3s;}
+  .writer-toolbar{
+    display:flex;gap:8px;justify-content:center;align-items:center;margin:6px 0;width:100%;max-width:340px;
+  }
+  .btn.small{padding:6px 12px;font-size:13px;border-radius:10px;}
   .radical-badge{
     display:inline-flex;align-items:center;gap:6px;background:#0284c7;color:#fff;
     font-weight:800;font-size:13px;padding:3px 12px;border-radius:14px;box-shadow:var(--shadow-pop);
@@ -363,17 +381,19 @@
     <!-- CHARACTERS (生字) -->
     <section class="screen" id="screen-chars">
       <h2 class="title">✍️ 课后生字 (Characters)</h2>
-      <p class="sub">田字格标准识字 · 点击卡片翻面看部首与组词，点喇叭听真人发音。</p>
+      <p class="sub">田字格标准识字 · 笔顺动态演示与指尖描红临摹。</p>
       <div class="char-wrap">
-        <div class="char-card" id="charCard" onclick="flipChar()">
+        <div class="char-card" id="charCard" onclick="flipChar(event)">
           <!-- FRONT -->
           <div class="char-face char-front">
             <div style="font-size:22px;color:var(--blue);font-weight:800;" id="charPy"></div>
             <div class="tian-grid">
-              <span class="tian-char" id="charZh"></span>
+              <div id="charWriterTarget"></div>
+              <span class="tian-char" id="charZh" style="display:none;"></span>
             </div>
             <div id="charRadicalBadgeContainer"></div>
-            <div style="font-size:13px;color:var(--muted);margin-top:2px;">点击卡片翻面查看部首与组词 ↩️</div>
+            <div class="writer-status" id="charWriterStatus">点击「🎬 演示」看笔画，或点「✍️ 描红」临摹</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px;">点击空白翻面查看部首与组词 ↩️</div>
           </div>
           <!-- BACK -->
           <div class="char-face char-back">
@@ -382,8 +402,14 @@
             <div style="font-size:14px;font-weight:800;color:var(--ink);background:#fff;padding:4px 12px;border-radius:12px;border:1px solid #fbd38d;" id="charRadical"></div>
             <div style="font-size:14px;color:var(--ink);text-align:center;line-height:1.6;" id="charWords"></div>
             <div style="font-size:13px;color:var(--muted);text-align:center;" id="charMeaning"></div>
+            <button class="btn secondary small" onclick="flipChar(event)" style="margin-top:6px;">↩️ 返回写字</button>
           </div>
         </div>
+      </div>
+      <div class="writer-toolbar">
+        <button class="btn primary small" onclick="animateCurrentChar(event)">🎬 笔顺演示</button>
+        <button class="btn secondary small" onclick="startCharQuiz(event)">✍️ 跟随描红</button>
+        <button class="btn ghost small" onclick="resetCharWriter(event)">🔁 重置</button>
       </div>
       <div class="flash-controls">
         <button class="icon-btn" onclick="charPrev()">⬅️</button>
@@ -891,7 +917,10 @@ function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
-function goHome(){ showScreen('screen-home'); }
+function goHome(){
+  if(currentWriter){ try { currentWriter.cancelQuiz(); } catch(e){} }
+  showScreen('screen-home');
+}
 function goStory(){ storyIdx = 0; renderStory(); showScreen('screen-story'); }
 function goFull(){ renderFullText(); showScreen('screen-full'); }
 function goChars(){ charIdx = 0; renderCharPills(); renderChar(); showScreen('screen-chars'); progress.chars = true; saveProgress(); }
@@ -1074,6 +1103,8 @@ function renderCharPills(){
     p.appendChild(b);
   });
 }
+let currentWriter = null;
+
 function renderChar(){
   const c = CHARACTERS[charIdx];
   document.getElementById('charCard').classList.remove('flipped');
@@ -1098,8 +1129,154 @@ function renderChar(){
   document.querySelectorAll('.char-pill').forEach((el, i)=>{
     el.classList.toggle('active', i === charIdx);
   });
+
+  initOrUpdateWriter(c.zh);
 }
-function flipChar(){ document.getElementById('charCard').classList.toggle('flipped'); }
+
+function initOrUpdateWriter(charZh){
+  const target = document.getElementById('charWriterTarget');
+  if(!target) return;
+  target.innerHTML = '';
+  if(currentWriter){
+    try { currentWriter.cancelQuiz(); } catch(e){}
+    currentWriter = null;
+  }
+
+  const statusEl = document.getElementById('charWriterStatus');
+  if(statusEl){
+    statusEl.className = 'writer-status';
+    statusEl.textContent = '点击「🎬 演示」看笔画，或点「✍️ 描红」临摹';
+  }
+
+  const fallback = document.getElementById('charZh');
+  if(typeof HanziWriter === 'undefined'){
+    if(fallback) fallback.style.display = 'block';
+    return;
+  }
+  if(fallback) fallback.style.display = 'none';
+
+  try {
+    currentWriter = HanziWriter.create('charWriterTarget', charZh, {
+      width: 130,
+      height: 130,
+      padding: 5,
+      showOutline: true,
+      strokeAnimationSpeed: 1.2,
+      delayBetweenStrokes: 180,
+      strokeColor: '#7c2d12',
+      radicalColor: '#dc2626',
+      outlineColor: '#fed7aa',
+      drawingColor: '#2563eb',
+      drawingWidth: 7,
+      showCharacter: true,
+      charDataLoader: function(char, onComplete, onFail){
+        if(window.HANZI_DATA && window.HANZI_DATA[char]){
+          onComplete(window.HANZI_DATA[char]);
+          return;
+        }
+        fetch('data/hanzi/' + encodeURIComponent(char) + '.json')
+          .then(res => {
+            if(!res.ok) throw new Error('Not found');
+            return res.json();
+          })
+          .then(onComplete)
+          .catch(() => {
+            fetch('https://cdn.jsdelivr.net/npm/hanzi-writer-data@2.0/' + encodeURIComponent(char) + '.json')
+              .then(r => r.json())
+              .then(onComplete)
+              .catch(onFail);
+          });
+      }
+    });
+  } catch(e) {
+    console.warn('HanziWriter error:', e);
+    if(fallback) fallback.style.display = 'block';
+  }
+}
+
+function animateCurrentChar(e){
+  if(e) e.stopPropagation();
+  if(!currentWriter) return;
+  const statusEl = document.getElementById('charWriterStatus');
+  if(statusEl){
+    statusEl.className = 'writer-status info';
+    statusEl.textContent = '🎬 正在演示笔画顺序…';
+  }
+  currentWriter.showCharacter();
+  currentWriter.animateCharacter({
+    onComplete: function(){
+      if(statusEl){
+        statusEl.className = 'writer-status success';
+        statusEl.textContent = '✨ 演示完毕！点击「✍️ 描红」亲手写一次吧';
+      }
+    }
+  });
+}
+
+function startCharQuiz(e){
+  if(e) e.stopPropagation();
+  if(!currentWriter) return;
+  const statusEl = document.getElementById('charWriterStatus');
+  const c = CHARACTERS[charIdx];
+  if(statusEl){
+    statusEl.className = 'writer-status info';
+    statusEl.textContent = '✍️ 请在田字格内描画第一笔…';
+  }
+  currentWriter.quiz({
+    showOutline: true,
+    onMistake: function(strokeData){
+      if(statusEl){
+        statusEl.className = 'writer-status error';
+        statusEl.textContent = '❌ 笔顺或方向不对，看提示再写一次～';
+      }
+    },
+    onCorrectStroke: function(strokeData){
+      if(statusEl){
+        statusEl.className = 'writer-status info';
+        statusEl.textContent = '✨ 第 ' + (strokeData.strokeNum + 1) + ' / ' + strokeData.totalStrokes + ' 笔 正确！';
+      }
+    },
+    onComplete: function(summaryData){
+      if(statusEl){
+        statusEl.className = 'writer-status success';
+        statusEl.textContent = '🎉 太棒了！完成了「' + c.zh + '」字的临摹！';
+      }
+      playSuccessTone();
+    }
+  });
+}
+
+function resetCharWriter(e){
+  if(e) e.stopPropagation();
+  const c = CHARACTERS[charIdx];
+  initOrUpdateWriter(c.zh);
+}
+
+function flipChar(e){
+  if(e && e.target && e.target.closest('#charWriterTarget, .writer-toolbar, .writer-status')){
+    return;
+  }
+  document.getElementById('charCard').classList.toggle('flipped');
+}
+
+function playSuccessTone(){
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(523.25, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.1);
+    osc.frequency.exponentialRampToValueAtTime(783.99, ctx.currentTime + 0.2);
+    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.35);
+  } catch(e){}
+}
+
 function charNext(){ charIdx = (charIdx+1) % CHARACTERS.length; renderChar(); }
 function charPrev(){ charIdx = (charIdx-1+CHARACTERS.length) % CHARACTERS.length; renderChar(); }
 
