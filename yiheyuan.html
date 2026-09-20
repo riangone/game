@@ -75,6 +75,25 @@
   .story-nav{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;max-width:560px;}
   .icon-btn{width:44px;height:44px;border-radius:50%;border:2px solid #a7f3d0;background:#fff;font-size:18px;cursor:pointer;box-shadow:var(--shadow-pop);}
   .icon-btn:active{transform:translateY(2px);}
+  .icon-btn.recording{background:#fed7d7!important;border-color:#e53e3e!important;color:#e53e3e!important;box-shadow:0 0 0 4px rgba(229,62,62,0.25)!important;animation:recPulse 1.2s infinite ease-in-out;}
+  @keyframes recPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+  .voice-wave-panel{display:none;align-items:center;justify-content:center;gap:12px;width:100%;max-width:560px;padding:10px 16px;background:#fff5f5;border:1.5px solid #feb2b2;border-radius:12px;box-sizing:border-box;}
+  .voice-wave-panel.active{display:flex;}
+  .voice-rec-badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#e53e3e;font-variant-numeric:tabular-nums;}
+  .voice-rec-dot{width:8px;height:8px;border-radius:50%;background:#e53e3e;animation:recBlink 1s infinite alternate;}
+  @keyframes recBlink{from{opacity:1;transform:scale(1);}to{opacity:0.3;transform:scale(0.8);}}
+  .voice-wave-bars{display:inline-flex;align-items:center;gap:3px;height:20px;}
+  .voice-wave-bars .bar{display:inline-block;width:3.5px;height:6px;background:#e53e3e;border-radius:3px;transition:height 0.08s ease;}
+  .voice-wave-tip{font-size:12px;color:#742a2a;font-weight:500;}
+  .full-sent-voice-bar{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:8px;padding-top:8px;border-top:1px dashed rgba(0,0,0,0.08);font-size:12px;flex-wrap:wrap;}
+  .sent-action-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;font-size:11px;font-weight:600;border-radius:6px;border:1px solid #cbd5e1;background:#fff;cursor:pointer;transition:all .2s;}
+  .sent-action-btn:hover{background:#f1f5f9;border-color:#94a3b8;}
+  .sent-action-btn.my-voice{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8;}
+  .sent-action-btn.my-voice:hover{background:#dbeafe;}
+  .sent-action-btn.download{background:#f0fdf4;border-color:#86efac;color:#15803d;}
+  .sent-action-btn.record-link{background:#fff7ed;border-color:#fdba74;color:#c2410c;}
+  .sent-voice-tag{font-size:11px;color:#94a3b8;}
+  .full-sentence.has-my-voice{border-left:3.5px solid #059669;}
   .toggle-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
   .chip{font-size:12px;font-weight:700;padding:6px 12px;border-radius:20px;border:2px solid #a7f3d0;background:#fff;cursor:pointer;}
   .chip.active{background:var(--garden-dark);color:#fff;border-color:var(--garden-dark);}
@@ -295,6 +314,7 @@
           <span class="ico">📖</span>
           <span class="name">读课文</span>
           <span class="desc">逐句图文点读 · 拼音/英译 · 点击单句发音</span>
+          <span class="badge" id="badgeVoiceProgress" style="display:none;"></span>
         </div>
         <div class="menu-card" onclick="goChars()">
           <span class="ico">✍️</span>
@@ -356,11 +376,27 @@
         <div class="sentence-zh" id="storyZh"></div>
         <div class="sentence-en" id="storyEn"></div>
       </div>
+      <!-- VOICE WAVE VISUALIZER -->
+      <div class="voice-wave-panel" id="storyVoiceWave">
+        <div class="voice-rec-badge">
+          <span class="voice-rec-dot"></span>
+          <span id="voiceRecTimer">00:00</span>
+        </div>
+        <div class="voice-wave-bars">
+          <span class="bar" id="vbar1"></span>
+          <span class="bar" id="vbar2"></span>
+          <span class="bar" id="vbar3"></span>
+          <span class="bar" id="vbar4"></span>
+          <span class="bar" id="vbar5"></span>
+        </div>
+        <span class="voice-wave-tip">正在录制发音，请清晰大声朗读...</span>
+      </div>
       <div class="story-nav">
         <button class="icon-btn" onclick="storyPrev()">⬅️</button>
-        <button class="icon-btn" onclick="playClip(STORY[storyIdx].id, STORY[storyIdx].zh)">🔊</button>
+        <button class="icon-btn" onclick="playClip(STORY[storyIdx].id, STORY[storyIdx].zh)" title="听原声示范">🔊</button>
         <button class="icon-btn" id="btnStoryRec" onclick="toggleStoryRecord()" title="录制我的朗读">🎙️</button>
         <button class="icon-btn" id="btnStoryPlayRec" onclick="playStoryRecord()" title="试听我的录音" style="display:none;">🎧</button>
+        <button class="icon-btn" id="btnStoryDownloadRec" onclick="downloadStoryRecord()" title="导出下载我的录音" style="display:none;">💾</button>
         <button class="icon-btn" onclick="storyNext()">➡️</button>
       </div>
       <div class="toggle-row">
@@ -378,7 +414,8 @@
       <div class="toggle-row">
         <div class="chip active" id="chipFullPy" onclick="toggleFullPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipFullEn" onclick="toggleFullEn()">English</div>
-        <button class="btn teal small" id="fullPlayBtn" onclick="toggleFullPlay()">▶️ 播放全文</button>
+        <button class="btn teal small" id="fullPlayBtn" onclick="toggleFullPlay()">▶️ 原声连续朗读</button>
+        <button class="btn primary small" id="fullMyPlayBtn" onclick="toggleFullMyPlay()">🎙️ 播放我的全文配音</button>
       </div>
       <div class="full-text-wrap" id="fullTextList"></div>
       <button class="btn ghost" onclick="stopFullPlay(); goHome();">返回菜单</button>
@@ -916,6 +953,26 @@ function refreshBadges(){
       reviewEl.style.display = 'none';
     }
   }
+  const voiceEl = document.getElementById('badgeVoiceProgress');
+  if(voiceEl && typeof getVoiceStats === 'function'){
+    getVoiceStats('yiheyuan_', STORY.length).then(stats=>{
+      if(stats.recorded > 0){
+        voiceEl.style.display = 'block';
+        if(stats.isComplete){
+          voiceEl.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+          voiceEl.style.color = '#fff';
+          voiceEl.textContent = '🎙️ 🏆 朗读之星 (' + stats.recorded + '/' + stats.total + ')';
+        } else {
+          voiceEl.style.display = 'block';
+          voiceEl.style.background = '#059669';
+          voiceEl.style.color = '#fff';
+          voiceEl.textContent = '🎙️ ' + stats.recorded + '/' + stats.total + ' 句';
+        }
+      } else {
+        voiceEl.style.display = 'none';
+      }
+    });
+  }
 }
 
 /* ---------------- NAV ---------------- */
@@ -1060,18 +1117,48 @@ function renderFullText(){
     const row = document.createElement('div');
     row.className = 'full-sentence';
     row.id = 'full-sent-' + i;
-    row.onclick = ()=>{ stopFullPlay(); playClip(s.id, s.zh); };
     row.innerHTML =
       (fullPy ? '<div class="sentence-py">'+s.py+'</div>' : '') +
       '<div class="sentence-zh">'+s.zh+'</div>' +
-      (fullEn ? '<div class="sentence-en">'+s.en+'</div>' : '');
+      (fullEn ? '<div class="sentence-en">'+s.en+'</div>' : '') +
+      '<div class="full-sent-voice-bar">' +
+        '<button class="sent-action-btn" onclick="event.stopPropagation(); stopFullPlay(); stopFullMyPlay(); playClip(\''+s.id+'\',\''+s.zh+'\');" title="听原声示范">🔊 原声</button>' +
+        '<span id="sent-voice-slot-'+i+'"></span>' +
+      '</div>';
+    row.onclick = ()=>{ stopFullPlay(); stopFullMyPlay(); playClip(s.id, s.zh); };
     list.appendChild(row);
   });
+  updateFullTextVoiceStatus();
 }
+
+async function updateFullTextVoiceStatus(){
+  for(let i = 0; i < STORY.length; i++){
+    const s = STORY[i];
+    const voiceId = 'yiheyuan_' + s.id;
+    const slot = document.getElementById('sent-voice-slot-' + i);
+    const row = document.getElementById('full-sent-' + i);
+    if(!slot) continue;
+    const rec = typeof getVoiceBlob === 'function' ? await getVoiceBlob(voiceId) : null;
+    if(rec && rec.blob){
+      if(row) row.classList.add('has-my-voice');
+      slot.innerHTML =
+        '<button class="sent-action-btn my-voice" onclick="event.stopPropagation(); stopFullPlay(); stopFullMyPlay(); playStoryVoiceByIndex('+i+');" title="试听我的朗读">🎧 听我的 ('+(rec.duration||1)+'s)</button>' +
+        '<button class="sent-action-btn download" onclick="event.stopPropagation(); downloadStoryVoiceByIndex('+i+');" title="下载我的录音">💾 导出</button>';
+    } else {
+      if(row) row.classList.remove('has-my-voice');
+      slot.innerHTML =
+        '<span class="sent-voice-tag">⚪ 未录音</span>' +
+        '<button class="sent-action-btn record-link" onclick="event.stopPropagation(); jumpToRecordSentence('+i+');" title="去录制这句">🎙️ 去跟读</button>';
+    }
+  }
+}
+
 function toggleFullPy(){ fullPy = !fullPy; document.getElementById('chipFullPy').classList.toggle('active', fullPy); renderFullText(); }
 function toggleFullEn(){ fullEn = !fullEn; document.getElementById('chipFullEn').classList.toggle('active', fullEn); renderFullText(); }
 function toggleFullPlay(){ if(fullPlaying) stopFullPlay(); else startFullPlay(); }
+
 function startFullPlay(){
+  stopFullMyPlay();
   if(!('speechSynthesis' in window) && !audioCache['st1']) { toast('设备不支持语音朗读'); return; }
   fullPlaying = true;
   fullPlayIdx = 0;
@@ -1092,10 +1179,89 @@ function playFullStep(){
 function stopFullPlay(){
   fullPlaying = false;
   const btn = document.getElementById('fullPlayBtn');
-  if(btn) btn.textContent = '▶️ 播放全文';
+  if(btn) btn.textContent = '▶️ 原声连续朗读';
   document.querySelectorAll('.full-sentence').forEach(el=>el.classList.remove('playing'));
   stopClip();
   if('speechSynthesis' in window) speechSynthesis.cancel();
+}
+
+let fullMyPlaying = false;
+function toggleFullMyPlay(){
+  if(fullMyPlaying) {
+    stopFullMyPlay();
+  } else {
+    startFullMyPlay();
+  }
+}
+
+async function startFullMyPlay(){
+  stopFullPlay();
+  fullMyPlaying = true;
+  const btn = document.getElementById('fullMyPlayBtn');
+  if(btn) btn.textContent = '⏸️ 停止我的配音';
+  toast('🎙️ 开始播放您的全文配音！');
+
+  const items = STORY.map((s, i) => ({
+    index: i,
+    id: s.id,
+    voiceId: 'yiheyuan_' + s.id,
+    zh: s.zh
+  }));
+
+  window.voiceManager.playSequential(items, {
+    onStepStart: (idx, item, hasMyVoice) => {
+      document.querySelectorAll('.full-sentence').forEach(el=>el.classList.remove('playing'));
+      const row = document.getElementById('full-sent-' + idx);
+      if(row){
+        row.classList.add('playing');
+        row.scrollIntoView({behavior:'smooth', block:'center'});
+      }
+      if(!hasMyVoice){
+        toast('第 ' + (idx + 1) + ' 句未录音，自动播放原声');
+      }
+    },
+    onStepEnd: (idx, item) => {
+      const row = document.getElementById('full-sent-' + idx);
+      if(row) row.classList.remove('playing');
+    },
+    fallbackPlay: (idx, item, next) => {
+      playClip(item.id, item.zh, next);
+    },
+    onFinish: () => {
+      stopFullMyPlay();
+      toast('🎉 全文配音播放完毕！');
+    }
+  });
+}
+
+function stopFullMyPlay(){
+  fullMyPlaying = false;
+  const btn = document.getElementById('fullMyPlayBtn');
+  if(btn) btn.textContent = '🎙️ 播放我的全文配音';
+  document.querySelectorAll('.full-sentence').forEach(el=>el.classList.remove('playing'));
+  if(window.voiceManager) window.voiceManager.stopSequential();
+}
+
+function playStoryVoiceByIndex(idx){
+  const s = STORY[idx];
+  const voiceId = 'yiheyuan_' + s.id;
+  window.voiceManager.playRecord(voiceId, () => {
+    toast('🎧 正在播放第 ' + (idx + 1) + ' 句您的朗读录音...');
+  });
+}
+
+function downloadStoryVoiceByIndex(idx){
+  const s = STORY[idx];
+  const voiceId = 'yiheyuan_' + s.id;
+  window.voiceManager.downloadRecord(voiceId, '颐和园_第' + (idx + 1) + '句_我的朗读.webm');
+  toast('💾 正在导出第 ' + (idx + 1) + ' 句录音文件！');
+}
+
+function jumpToRecordSentence(idx){
+  storyIdx = idx;
+  renderStory();
+  showScreen('screen-story');
+  toast('已切换到第 ' + (idx + 1) + ' 句，请点击麦克风开始录音');
 }
 
 /* ---------------- CHARACTERS (生字) ---------------- */
@@ -2282,41 +2448,91 @@ async function updateStoryVoiceUI(){
   const voiceId = 'yiheyuan_' + s.id;
   const recBtn = document.getElementById('btnStoryRec');
   const playBtn = document.getElementById('btnStoryPlayRec');
+  const downBtn = document.getElementById('btnStoryDownloadRec');
+  const wavePanel = document.getElementById('storyVoiceWave');
   if (!recBtn || !playBtn) return;
+
   if (window.voiceManager && window.voiceManager.isRecording()) {
     recBtn.textContent = '⏹️';
-    recBtn.classList.add('pulse');
+    recBtn.classList.add('recording');
+    if (wavePanel) wavePanel.classList.add('active');
   } else {
     recBtn.textContent = '🎙️';
-    recBtn.classList.remove('pulse');
+    recBtn.classList.remove('recording');
+    if (wavePanel) wavePanel.classList.remove('active');
   }
+
   if (typeof getVoiceBlob === 'function') {
     const rec = await getVoiceBlob(voiceId);
     if (rec && rec.blob) {
       playBtn.style.display = 'inline-flex';
+      if (downBtn) downBtn.style.display = 'inline-flex';
       recBtn.title = '重新录制我的朗读';
     } else {
       playBtn.style.display = 'none';
+      if (downBtn) downBtn.style.display = 'none';
       recBtn.title = '录制我的朗读';
     }
   }
+  refreshBadges();
 }
 
 async function toggleStoryRecord(){
   const s = STORY[storyIdx];
   const voiceId = 'yiheyuan_' + s.id;
   const recBtn = document.getElementById('btnStoryRec');
+  const wavePanel = document.getElementById('storyVoiceWave');
+  const timerEl = document.getElementById('voiceRecTimer');
+  const bars = [
+    document.getElementById('vbar1'),
+    document.getElementById('vbar2'),
+    document.getElementById('vbar3'),
+    document.getElementById('vbar4'),
+    document.getElementById('vbar5')
+  ];
+
   if (window.voiceManager.isRecording()) {
     await window.voiceManager.stopRecord();
     recBtn.textContent = '🎙️';
-    recBtn.classList.remove('pulse');
+    recBtn.classList.remove('recording');
+    if (wavePanel) wavePanel.classList.remove('active');
     updateStoryVoiceUI();
-    if (typeof showToast === 'function') showToast('🎉 录音完成并已保存在浏览器中！');
+    toast('🎉 录音完成并已保存在浏览器中！');
   } else {
     recBtn.textContent = '⏹️';
-    recBtn.classList.add('pulse');
-    window.voiceManager.startRecord(voiceId, () => {}, () => {
-      updateStoryVoiceUI();
+    recBtn.classList.add('recording');
+    if (wavePanel) wavePanel.classList.add('active');
+
+    window.voiceManager.startRecord(voiceId, {
+      onStart: () => {
+        if (timerEl) timerEl.textContent = '00:00';
+      },
+      onVolume: (level, freqBins) => {
+        if (bars[0]) {
+          const h1 = Math.max(4, Math.round(level * 22));
+          const h2 = Math.max(6, Math.round((freqBins ? freqBins[1] / 255 : level) * 26));
+          const h3 = Math.max(8, Math.round((freqBins ? freqBins[3] / 255 : level) * 30));
+          const h4 = Math.max(6, Math.round((freqBins ? freqBins[5] / 255 : level) * 24));
+          const h5 = Math.max(4, Math.round(level * 20));
+          bars[0].style.height = h1 + 'px';
+          bars[1].style.height = h2 + 'px';
+          bars[2].style.height = h3 + 'px';
+          bars[3].style.height = h4 + 'px';
+          bars[4].style.height = h5 + 'px';
+        }
+      },
+      onTimer: (formatted) => {
+        if (timerEl) timerEl.textContent = formatted;
+      },
+      onFinish: () => {
+        if (wavePanel) wavePanel.classList.remove('active');
+        updateStoryVoiceUI();
+      },
+      onError: (err) => {
+        if (wavePanel) wavePanel.classList.remove('active');
+        updateStoryVoiceUI();
+        alert('无法启动麦克风录音：' + err.message);
+      }
     });
   }
 }
@@ -2325,8 +2541,15 @@ function playStoryRecord(){
   const s = STORY[storyIdx];
   const voiceId = 'yiheyuan_' + s.id;
   window.voiceManager.playRecord(voiceId, () => {
-    if (typeof showToast === 'function') showToast('🎧 正在播放您的朗读录音...');
+    toast('🎧 正在播放您的朗读录音...');
   });
+}
+
+function downloadStoryRecord(){
+  const s = STORY[storyIdx];
+  const voiceId = 'yiheyuan_' + s.id;
+  window.voiceManager.downloadRecord(voiceId, '颐和园_第' + (storyIdx + 1) + '句_我的朗读.webm');
+  toast('💾 正在导出录音文件！');
 }
 
 </script>
