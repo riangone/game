@@ -1,0 +1,2059 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>京华风物 - 老北京文化长卷与跨课字词综合大挑战 (Beijing Grand Tour)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=M+PLUS+Rounded+1c:wght@600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #b91c1c;
+    --red-dark: #881337;
+    --red-soft: #fee2e2;
+    --gold: #d97706;
+    --gold-dark: #b45309;
+    --gold-soft: #fef3c7;
+    --green: #047857;
+    --green-dark: #065f46;
+    --green-soft: #d1fae5;
+    --blue: #0369a1;
+    --blue-dark: #075985;
+    --blue-soft: #e0f2fe;
+    --purple: #6d28d9;
+    --purple-soft: #ede9fe;
+    --ink: #1c1917;
+    --muted: #78716c;
+    --card: #fffbf0;
+    --paper: #fff9ea;
+    --bg-grad: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #fed7aa 100%);
+    --radius-xl: 28px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --shadow-soft: 0 10px 25px -5px rgba(185, 28, 28, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+    --shadow-hover: 0 20px 30px -10px rgba(185, 28, 28, 0.16);
+    --font-cn: "ZCOOL KuaiLe", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", cursive, sans-serif;
+    --font-ui: "M PLUS Rounded 1c", "Outfit", system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  
+  body {
+    font-family: var(--font-ui);
+    background: var(--bg-grad);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 12px 60px;
+    user-select: none;
+    -webkit-user-select: none;
+    overflow-x: hidden;
+  }
+
+  header {
+    width: 100%;
+    max-width: 960px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding: 10px 18px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    border: 1px solid rgba(217, 119, 6, 0.2);
+  }
+
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    font-size: 20px;
+    text-decoration: none;
+    color: var(--ink);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    transition: transform 0.15s ease;
+    cursor: pointer;
+  }
+  .nav-btn:hover { transform: scale(1.06); }
+  .nav-btn:active { transform: scale(0.95); }
+
+  .header-center {
+    text-align: center;
+    flex: 1;
+    margin: 0 12px;
+  }
+  .header-title {
+    font-family: var(--font-cn);
+    font-size: 24px;
+    color: var(--red);
+    letter-spacing: 1px;
+    text-shadow: 0 1px 2px rgba(185, 28, 28, 0.15);
+  }
+  .header-sub {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .star-badge {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+  }
+
+  .lang-btn {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    color: var(--ink);
+  }
+
+  /* MAIN WRAPPER */
+  main {
+    width: 100%;
+    max-width: 960px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* SCREEN BASE */
+  .screen {
+    display: none;
+    flex-direction: column;
+    animation: fadeIn 0.25s ease-out forwards;
+  }
+  .screen.active {
+    display: flex;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* TOP NAV PILLS */
+  .nav-pills {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 4px 4px 10px;
+    scrollbar-width: none;
+  }
+  .nav-pills::-webkit-scrollbar { display: none; }
+  .nav-pill {
+    white-space: nowrap;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+    background: #fff;
+    border: 1.5px solid rgba(0,0,0,0.06);
+    color: var(--muted);
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .nav-pill.active {
+    background: var(--red);
+    color: #fff;
+    border-color: var(--red);
+    box-shadow: 0 4px 12px rgba(185, 28, 28, 0.28);
+    transform: translateY(-1px);
+  }
+
+  /* MAP VIEW CONTAINER */
+  .map-card {
+    background: #fff;
+    border-radius: var(--radius-xl);
+    padding: 16px;
+    box-shadow: var(--shadow-soft);
+    border: 2px solid #fde68a;
+    position: relative;
+    overflow: hidden;
+  }
+  .map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed rgba(217, 119, 6, 0.2);
+  }
+  .map-title {
+    font-family: var(--font-cn);
+    font-size: 22px;
+    color: var(--red);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .map-tagline {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  /* SVG MAP STYLES */
+  .map-svg-wrap {
+    width: 100%;
+    height: 460px;
+    background: radial-gradient(circle at 50% 50%, #fefce8 0%, #fef08a 60%, #fed7aa 100%);
+    border-radius: var(--radius-lg);
+    border: 2px solid #fbbf24;
+    position: relative;
+    box-shadow: inset 0 2px 10px rgba(217, 119, 6, 0.1);
+  }
+  .map-svg {
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+  }
+
+  /* MAP LANDMARK PIN */
+  .map-pin {
+    cursor: pointer;
+    transition: transform 0.2s ease, filter 0.2s ease;
+  }
+  .map-pin:hover {
+    transform: scale(1.12);
+    filter: drop-shadow(0 6px 12px rgba(185, 28, 28, 0.4));
+  }
+  .map-pin-pulse {
+    animation: pinPulse 2s infinite;
+  }
+  @keyframes pinPulse {
+    0% { r: 16; opacity: 0.8; }
+    50% { r: 26; opacity: 0.15; }
+    100% { r: 16; opacity: 0.8; }
+  }
+
+  /* LANDMARK DETAILS DRAWER */
+  .drawer {
+    display: none;
+    margin-top: 14px;
+    background: #fff9ea;
+    border-radius: var(--radius-lg);
+    border: 2px solid #f59e0b;
+    padding: 18px;
+    animation: fadeIn 0.2s ease-out;
+  }
+  .drawer.active { display: block; }
+  .drawer-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .drawer-title {
+    font-family: var(--font-cn);
+    font-size: 24px;
+    color: var(--red);
+  }
+  .drawer-sub {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .drawer-close {
+    background: #fee2e2;
+    color: var(--red);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: 800;
+  }
+  .drawer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  @media(max-width: 640px) {
+    .drawer-grid { grid-template-columns: 1fr; }
+    .map-svg-wrap { height: 360px; }
+  }
+  .drawer-box {
+    background: #fff;
+    border-radius: var(--radius-md);
+    padding: 12px;
+    border: 1px solid rgba(217, 119, 6, 0.15);
+  }
+  .drawer-box h4 {
+    font-size: 12px;
+    color: var(--gold-dark);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .drawer-box p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .drawer-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .drawer-chip {
+    background: var(--gold-soft);
+    color: var(--gold-dark);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+  .drawer-audio-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+    background: #fefce8;
+    padding: 8px 12px;
+    border-radius: 10px;
+  }
+  .drawer-audio-btn {
+    background: var(--red);
+    color: #fff;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.15s;
+  }
+  .drawer-audio-btn:active { transform: scale(0.9); }
+  .drawer-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .btn-enter {
+    flex: 1;
+    background: linear-gradient(135deg, var(--red), var(--red-dark));
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: var(--radius-md);
+    font-weight: 800;
+    text-decoration: none;
+    text-align: center;
+    font-size: 15px;
+    box-shadow: 0 4px 12px rgba(185, 28, 28, 0.25);
+    transition: transform 0.15s;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-enter:hover { transform: translateY(-2px); }
+
+  /* GAME CARD CONTAINERS */
+  .game-panel {
+    background: #fff;
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    box-shadow: var(--shadow-soft);
+    border: 2px solid #fde68a;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .game-panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #fef3c7;
+    padding-bottom: 12px;
+  }
+  .game-panel-title {
+    font-family: var(--font-cn);
+    font-size: 24px;
+    color: var(--red);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .streak-badge {
+    background: linear-gradient(135deg, #ef4444, #f97316);
+    color: #fff;
+    font-weight: 900;
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    box-shadow: 0 3px 8px rgba(239, 68, 68, 0.3);
+  }
+
+  /* SORTING GAME */
+  .sort-buckets {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  @media(max-width: 640px) {
+    .sort-buckets { grid-template-columns: 1fr; }
+  }
+  .sort-bucket {
+    background: #fffbf0;
+    border: 2px dashed #f59e0b;
+    border-radius: var(--radius-lg);
+    padding: 14px;
+    min-height: 140px;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  .sort-bucket.highlight {
+    background: #fef3c7;
+    border-color: var(--red);
+    transform: scale(1.01);
+  }
+  .bucket-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .bucket-title {
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .bucket-count {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--gold-dark);
+    background: var(--gold-soft);
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .bucket-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+    align-content: flex-start;
+  }
+  .sorted-tag {
+    background: #fff;
+    border: 1px solid rgba(217, 119, 6, 0.3);
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    animation: popIn 0.2s ease-out;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.6); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .sort-pool-wrap {
+    background: #fafaf9;
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    border: 1px solid #e7e5e4;
+  }
+  .sort-pool-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--muted);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .sort-pool {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    min-height: 48px;
+    align-items: center;
+  }
+  .sort-card {
+    background: #fff;
+    border: 2px solid #fbbf24;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--ink);
+    cursor: pointer;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.04);
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .sort-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--red);
+    box-shadow: 0 6px 12px rgba(185, 28, 28, 0.15);
+  }
+  .sort-card.selected {
+    background: var(--red);
+    color: #fff;
+    border-color: var(--red-dark);
+    box-shadow: 0 4px 12px rgba(185, 28, 28, 0.3);
+  }
+
+  /* ARENA / QUIZ GAME */
+  .arena-card {
+    background: #fff9ea;
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    border: 2px solid #fbbf24;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .arena-q-num {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--gold-dark);
+    text-transform: uppercase;
+  }
+  .arena-q-text {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .arena-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 6px;
+  }
+  @media(max-width: 600px) {
+    .arena-options { grid-template-columns: 1fr; }
+  }
+  .arena-opt {
+    background: #fff;
+    border: 2px solid #e5e7eb;
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .arena-opt:hover {
+    border-color: #fbbf24;
+    background: #fffbeb;
+    transform: translateY(-2px);
+  }
+  .arena-opt.correct {
+    background: #ecfdf5;
+    border-color: #10b981;
+    color: #065f46;
+  }
+  .arena-opt.wrong {
+    background: #fef2f2;
+    border-color: #ef4444;
+    color: #991b1b;
+    animation: shake 0.3s;
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  /* CLOZE PASSAGE */
+  .cloze-passage {
+    background: #fff;
+    border: 2px solid #fde68a;
+    border-radius: var(--radius-lg);
+    padding: 22px;
+    font-size: 18px;
+    line-height: 2.2;
+    color: #292524;
+    font-family: var(--font-cn);
+    letter-spacing: 0.5px;
+  }
+  .cloze-blank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 90px;
+    height: 38px;
+    border-bottom: 3px solid var(--red);
+    background: #fef2f2;
+    margin: 0 4px;
+    padding: 0 10px;
+    border-radius: 6px 6px 0 0;
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--red);
+    cursor: pointer;
+    vertical-align: middle;
+    transition: background 0.2s;
+  }
+  .cloze-blank.filled {
+    background: #ecfdf5;
+    border-bottom-color: #10b981;
+    color: #065f46;
+  }
+  .cloze-choices {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    background: #fffbeb;
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    border: 1px solid #fef3c7;
+    justify-content: center;
+  }
+  .cloze-chip {
+    background: #fff;
+    border: 2px solid #f59e0b;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--ink);
+  }
+  .cloze-chip:hover {
+    transform: scale(1.05);
+    background: var(--red);
+    color: #fff;
+    border-color: var(--red);
+  }
+  .cloze-chip.used {
+    opacity: 0.35;
+    pointer-events: none;
+    border-color: #d1d5db;
+    background: #f3f4f6;
+  }
+
+  /* VOICE RECORDING STUDIO (MEDIARECORDER + INDEXEDDB) */
+  .voice-studio {
+    background: #fff;
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    box-shadow: var(--shadow-soft);
+    border: 2px solid #fde68a;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .voice-item {
+    background: #fff9ea;
+    border: 1.5px solid #fbbf24;
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: border-color 0.2s;
+  }
+  .voice-item.recording {
+    border-color: #ef4444;
+    background: #fef2f2;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+  }
+  .voice-item-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .voice-item-source {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--red);
+    background: var(--red-soft);
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+  .voice-item-zh {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.6;
+    font-family: var(--font-cn);
+  }
+  .voice-item-py {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .voice-item-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .v-btn {
+    border: none;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+  .v-btn:active { transform: scale(0.94); }
+  .v-btn-play-master {
+    background: var(--gold-soft);
+    color: var(--gold-dark);
+    border: 1px solid rgba(217, 119, 6, 0.3);
+  }
+  .v-btn-record {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid rgba(185, 28, 28, 0.3);
+  }
+  .v-btn-record.rec-active {
+    background: #ef4444;
+    color: #fff;
+    animation: pulse 1s infinite;
+  }
+  @keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.06); }
+    100% { transform: scale(1); }
+  }
+  .v-btn-my-voice {
+    background: var(--green-soft);
+    color: var(--green-dark);
+    border: 1px solid rgba(4, 120, 87, 0.3);
+  }
+  .v-btn-download {
+    background: var(--blue-soft);
+    color: var(--blue-dark);
+    border: 1px solid rgba(3, 105, 161, 0.3);
+  }
+  .v-status {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  /* CERTIFICATE / BADGE MODAL */
+  .cert-container {
+    background: #fff;
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    box-shadow: var(--shadow-soft);
+    border: 3px solid #d97706;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+  }
+  .cert-scroll {
+    width: 100%;
+    max-width: 620px;
+    background: #fffbeb;
+    border: 3px double #d97706;
+    border-radius: var(--radius-lg);
+    padding: 28px 20px;
+    box-shadow: inset 0 0 20px rgba(217, 119, 6, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .cert-header {
+    font-family: var(--font-cn);
+    font-size: 32px;
+    color: var(--red);
+    letter-spacing: 2px;
+  }
+  .cert-sub {
+    font-size: 14px;
+    color: var(--gold-dark);
+    font-weight: 800;
+  }
+  .cert-seals {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin: 12px 0;
+    flex-wrap: wrap;
+  }
+  .seal {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 3px solid #b91c1c;
+    color: #b91c1c;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-cn);
+    font-size: 12px;
+    font-weight: 800;
+    background: rgba(185, 28, 28, 0.05);
+    box-shadow: 0 4px 10px rgba(185, 28, 28, 0.15);
+  }
+  .seal-icon { font-size: 24px; margin-bottom: 2px; }
+
+  /* BOTTOM NOTIFICATION TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: rgba(28, 25, 23, 0.95);
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 800;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    pointer-events: none;
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 1000;
+  }
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+  }
+</style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <a href="index.html" class="nav-btn" title="返回大厅 (Return to Arcade)">🏠</a>
+    <div class="header-center">
+      <h1 class="header-title" id="uiHeaderTitle">京华风物 · 跨课综合漫游</h1>
+      <p class="header-sub" id="uiHeaderSub">胡同 · 故宫 · 颐和园 · 文化长卷与字词大挑战</p>
+    </div>
+    <div class="header-right">
+      <div class="star-badge" id="starBadge">⭐ <span id="starCount">0</span></div>
+      <button class="lang-btn" onclick="toggleLang()" id="btnLang">JA</button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main>
+    <!-- NAVIGATION PILLS -->
+    <div class="nav-pills">
+      <button class="nav-pill active" onclick="switchTab('map')" id="tab-map">🗺️ 文化地图</button>
+      <button class="nav-pill" onclick="switchTab('sort')" id="tab-sort">🗂️ 风物归类</button>
+      <button class="nav-pill" onclick="switchTab('arena')" id="tab-arena">⚔️ 字词大乱斗</button>
+      <button class="nav-pill" onclick="switchTab('cloze')" id="tab-cloze">📜 游记填空</button>
+      <button class="nav-pill" onclick="switchTab('voice')" id="tab-voice">🎙️ 配音留存室</button>
+      <button class="nav-pill" onclick="switchTab('cert')" id="tab-cert">🏅 结业印章</button>
+    </div>
+
+    <!-- SCREEN 1: MAP -->
+    <section class="screen active" id="screen-map">
+      <div class="map-card">
+        <div class="map-header">
+          <div>
+            <h2 class="map-title" id="mapTitle">🗺️ 老北京文化风物长卷</h2>
+            <p class="map-tagline" id="mapSub">点击地图上的地标，聆听原声朗读，探寻古都文化密码</p>
+          </div>
+          <span style="font-size:24px;">🏮</span>
+        </div>
+
+        <!-- SVG INTERACTIVE MAP -->
+        <div class="map-svg-wrap">
+          <svg class="map-svg" viewBox="0 0 800 460" xmlns="http://www.w3.org/2000/svg">
+            <!-- Background Gradients & Filters -->
+            <defs>
+              <linearGradient id="waterGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#bae6fd" />
+                <stop offset="100%" stop-color="#38bdf8" />
+              </linearGradient>
+              <linearGradient id="palaceGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fef08a" />
+                <stop offset="100%" stop-color="#f59e0b" />
+              </linearGradient>
+            </defs>
+
+            <!-- Ancient City Wall & Central Axis Guide -->
+            <rect x="260" y="30" width="280" height="400" rx="16" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="6,6" opacity="0.6"/>
+            <!-- Central Axis Line -->
+            <line x1="400" y1="40" x2="400" y2="420" stroke="#ef4444" stroke-width="3" stroke-dasharray="4,4" opacity="0.7"/>
+            <text x="410" y="55" font-size="11" fill="#b91c1c" font-weight="bold">北京传统中轴线</text>
+
+            <!-- WEST LAKE & HILL (YIHEYUAN) -->
+            <path d="M 60,180 Q 140,150 200,200 Q 230,260 170,320 Q 90,340 50,270 Z" fill="url(#waterGrad)" opacity="0.85"/>
+            <!-- Longevity Hill -->
+            <path d="M 80,180 Q 130,120 180,180 Z" fill="#86efac" opacity="0.9"/>
+            <text x="110" y="160" font-size="12" fill="#065f46" font-weight="bold">万寿山</text>
+            <!-- Kunming Lake Text -->
+            <text x="115" y="260" font-size="13" fill="#0369a1" font-weight="bold">昆明湖</text>
+            <!-- Seventeen-Arch Bridge Curve -->
+            <path d="M 120,280 Q 150,270 170,290" stroke="#fff" stroke-width="4" fill="none"/>
+
+            <!-- SHICHAHAI & HUTONGS (NORTH) -->
+            <path d="M 330,80 Q 370,70 385,100 Q 370,130 335,120 Z" fill="url(#waterGrad)" opacity="0.8"/>
+            <text x="340" y="105" font-size="11" fill="#0369a1" font-weight="bold">什刹海</text>
+            <!-- Hutong Grid representation -->
+            <g opacity="0.5" stroke="#78716c" stroke-width="1.5">
+              <line x1="310" y1="130" x2="370" y2="130"/>
+              <line x1="310" y1="145" x2="380" y2="145"/>
+              <line x1="420" y1="120" x2="480" y2="120"/>
+              <line x1="410" y1="135" x2="475" y2="135"/>
+            </g>
+
+            <!-- FORBIDDEN CITY (CENTER) -->
+            <rect x="330" y="180" width="140" height="190" rx="6" fill="#fee2e2" stroke="#b91c1c" stroke-width="2.5"/>
+            <!-- Meridian Gate & Hall of Supreme Harmony -->
+            <rect x="360" y="335" width="80" height="25" rx="3" fill="#b91c1c"/>
+            <text x="382" y="352" font-size="11" fill="#fff" font-weight="bold">午门</text>
+            
+            <rect x="355" y="240" width="90" height="45" rx="4" fill="url(#palaceGrad)" stroke="#b45309" stroke-width="2"/>
+            <text x="372" y="268" font-size="13" fill="#78350f" font-weight="bold">太和殿</text>
+
+            <!-- LANDMARK 1 PIN: SHICHAHAI / HUTONG -->
+            <g class="map-pin" onclick="openLandmark('hutong')">
+              <circle cx="430" cy="100" r="22" fill="#ef4444" class="map-pin-pulse"/>
+              <circle cx="430" cy="100" r="16" fill="#b91c1c"/>
+              <text x="430" y="106" font-size="16" text-anchor="middle" fill="#fff">🏮</text>
+              <rect x="380" y="65" width="100" height="24" rx="12" fill="#fff" stroke="#b91c1c" stroke-width="1.5"/>
+              <text x="430" y="81" font-size="11" text-anchor="middle" fill="#b91c1c" font-weight="bold">什刹海·胡同</text>
+            </g>
+
+            <!-- LANDMARK 2 PIN: FORBIDDEN CITY -->
+            <g class="map-pin" onclick="openLandmark('gugong')">
+              <circle cx="400" cy="220" r="24" fill="#f59e0b" class="map-pin-pulse"/>
+              <circle cx="400" cy="220" r="18" fill="#d97706"/>
+              <text x="400" y="227" font-size="18" text-anchor="middle" fill="#fff">🏯</text>
+              <rect x="350" y="180" width="100" height="24" rx="12" fill="#fff" stroke="#d97706" stroke-width="1.5"/>
+              <text x="400" y="196" font-size="11" text-anchor="middle" fill="#d97706" font-weight="bold">故宫·紫禁城</text>
+            </g>
+
+            <!-- LANDMARK 3 PIN: YIHEYUAN -->
+            <g class="map-pin" onclick="openLandmark('yiheyuan')">
+              <circle cx="150" cy="230" r="24" fill="#10b981" class="map-pin-pulse"/>
+              <circle cx="150" cy="230" r="18" fill="#047857"/>
+              <text x="150" y="237" font-size="18" text-anchor="middle" fill="#fff">🏞️</text>
+              <rect x="100" y="190" width="100" height="24" rx="12" fill="#fff" stroke="#047857" stroke-width="1.5"/>
+              <text x="150" y="206" font-size="11" text-anchor="middle" fill="#047857" font-weight="bold">颐和园·皇家园林</text>
+            </g>
+          </svg>
+        </div>
+
+        <!-- LANDMARK DETAILS DRAWER -->
+        <div class="drawer" id="landmarkDrawer">
+          <div class="drawer-top">
+            <div>
+              <h3 class="drawer-title" id="drawerTitle">什刹海 · 胡同人家</h3>
+              <p class="drawer-sub" id="drawerSub">出自小学语文课文《寒假见闻》</p>
+            </div>
+            <button class="drawer-close" onclick="closeLandmark()">✕</button>
+          </div>
+
+          <div class="drawer-grid">
+            <div class="drawer-box">
+              <h4>🏛️ 文化风物档案</h4>
+              <p id="drawerDesc">幽静狭长的胡同，四合院里高大的老槐树，邻里间的热情问候与春节年味，展现了老北京深厚的市井人情与生活气息。</p>
+            </div>
+            <div class="drawer-box">
+              <h4>🀄 核心生字与词汇</h4>
+              <div class="drawer-chips" id="drawerChips">
+                <span class="drawer-chip">胡同</span>
+                <span class="drawer-chip">四合院</span>
+                <span class="drawer-chip">老槐树</span>
+                <span class="drawer-chip">寒假</span>
+                <span class="drawer-chip">春节</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="drawer-audio-row">
+            <button class="drawer-audio-btn" id="drawerAudioBtn" onclick="playDrawerSentence()">🔊</button>
+            <div style="flex:1;">
+              <div style="font-size:14px;font-weight:800;color:var(--ink);" id="drawerSentenceZh">走出四合院，就是幽静狭长的胡同。</div>
+              <div style="font-size:12px;color:var(--muted);" id="drawerSentencePy">zǒu chū sì hé yuàn , jiù shì yōu jìng xiá cháng de hú tong .</div>
+            </div>
+          </div>
+
+          <div class="drawer-actions">
+            <a href="hanjia-jianwen.html" class="btn-enter" id="drawerLink">进入《寒假见闻》精读识字游戏 ➔</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 2: THEMATIC SORTING -->
+    <section class="screen" id="screen-sort">
+      <div class="game-panel">
+        <div class="game-panel-head">
+          <div>
+            <h2 class="game-panel-title">🗂️ 京华风物归类连连看</h2>
+            <p style="font-size:13px;color:var(--muted);font-weight:700;">将下方词汇卡片归入对应的老北京文化类别中！</p>
+          </div>
+          <div class="streak-badge" id="sortStreak">Streak 🔥 0</div>
+        </div>
+
+        <div class="sort-buckets">
+          <!-- BUCKET 1: IMPERIAL ARCHITECTURE -->
+          <div class="sort-bucket" onclick="dropCardToBucket('imperial')" id="bucket-imperial">
+            <div class="bucket-header">
+              <span class="bucket-title">🏛️ 皇家古建筑与宫苑</span>
+              <span class="bucket-count" id="count-imperial">0 / 4</span>
+            </div>
+            <div class="bucket-items" id="items-imperial"></div>
+          </div>
+
+          <!-- BUCKET 2: HUTONG & FOLKLORE -->
+          <div class="sort-bucket" onclick="dropCardToBucket('folk')" id="bucket-folk">
+            <div class="bucket-header">
+              <span class="bucket-title">🏘️ 市井民俗与胡同生活</span>
+              <span class="bucket-count" id="count-folk">0 / 4</span>
+            </div>
+            <div class="bucket-items" id="items-folk"></div>
+          </div>
+
+          <!-- BUCKET 3: ART & RELICS -->
+          <div class="sort-bucket" onclick="dropCardToBucket('art')" id="bucket-art">
+            <div class="bucket-header">
+              <span class="bucket-title">🎨 艺术瑰宝与文物</span>
+              <span class="bucket-count" id="count-art">0 / 4</span>
+            </div>
+            <div class="bucket-items" id="items-art"></div>
+          </div>
+
+          <!-- BUCKET 4: NATURE & LAKES -->
+          <div class="sort-bucket" onclick="dropCardToBucket('nature')" id="bucket-nature">
+            <div class="bucket-header">
+              <span class="bucket-title">🌿 自然湖山与景物</span>
+              <span class="bucket-count" id="count-nature">0 / 4</span>
+            </div>
+            <div class="bucket-items" id="items-nature"></div>
+          </div>
+        </div>
+
+        <!-- POOL OF CARDS -->
+        <div class="sort-pool-wrap">
+          <div class="sort-pool-label">
+            <span>待分类词汇卡片（点击卡片再点击分类框）：</span>
+            <button style="background:none;border:none;color:var(--red);font-weight:800;cursor:pointer;" onclick="initSortGame()">🔄 重新洗牌</button>
+          </div>
+          <div class="sort-pool" id="sortPool"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 3: MASTER CHARACTER ARENA -->
+    <section class="screen" id="screen-arena">
+      <div class="game-panel">
+        <div class="game-panel-head">
+          <div>
+            <h2 class="game-panel-title">⚔️ 跨课生字音形义大乱斗</h2>
+            <p style="font-size:13px;color:var(--muted);font-weight:700;">挑战三篇课文核心生字部首、形近字与词义综合考查！</p>
+          </div>
+          <div class="streak-badge" id="arenaStreak">Streak 🔥 0</div>
+        </div>
+
+        <div class="arena-card">
+          <div class="arena-q-num" id="arenaQNum">第 1 题 / 共 8 题</div>
+          <div class="arena-q-text" id="arenaQText">“尸字头”是哪一个生字的偏旁部首？</div>
+          <div class="arena-options" id="arenaOptions">
+            <!-- Dynamic Options -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 4: CLOZE PASSAGE -->
+    <section class="screen" id="screen-cloze">
+      <div class="game-panel">
+        <div class="game-panel-head">
+          <div>
+            <h2 class="game-panel-title">📜 宏篇京华游记 · 跨课选词填空</h2>
+            <p style="font-size:13px;color:var(--muted);font-weight:700;">点击空白槽，再点击候选词，完成连贯的老北京文化游记！</p>
+          </div>
+          <button class="v-btn v-btn-play-master" onclick="playFullClozeAudio()">🔊 朗读全文</button>
+        </div>
+
+        <div class="cloze-passage" id="clozePassage">
+          <!-- Paragraph 1 -->
+          今年寒假，我来到了向往已久的北京。漫步在幽静狭长的<span class="cloze-blank" id="blank-0" onclick="selectBlank(0)">____</span>里，绿树掩映着传统的<span class="cloze-blank" id="blank-1" onclick="selectBlank(1)">____</span>，院子里高大的<span class="cloze-blank" id="blank-2" onclick="selectBlank(2)">____</span>格外醒目。
+          <br><br>
+          第二天，我们游览了著名的<span class="cloze-blank" id="blank-3" onclick="selectBlank(3)">____</span>。雄伟的<span class="cloze-blank" id="blank-4" onclick="selectBlank(4)">____</span>是中国古代<span class="cloze-blank" id="blank-5" onclick="selectBlank(5)">____</span>的代表，大殿里<span class="cloze-blank" id="blank-6" onclick="selectBlank(6)">____</span>着数百万件<span class="cloze-blank" id="blank-7" onclick="selectBlank(7)">____</span>的历史文物。
+          <br><br>
+          随后，我们来到了皇家园林<span class="cloze-blank" id="blank-8" onclick="selectBlank(8)">____</span>。碧波荡漾的<span class="cloze-blank" id="blank-9" onclick="selectBlank(9)">____</span>上架着长长的<span class="cloze-blank" id="blank-10" onclick="selectBlank(10)">____</span>。登上万寿山，颐和园美丽的景色<span class="cloze-blank" id="blank-11" onclick="selectBlank(11)">____</span>！
+        </div>
+
+        <div class="cloze-choices" id="clozeChoices">
+          <!-- Word Chips -->
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 5: VOICE RECORDING STUDIO (MEDIARECORDER + INDEXEDDB) -->
+    <section class="screen" id="screen-voice">
+      <div class="voice-studio">
+        <div class="game-panel-head">
+          <div>
+            <h2 class="game-panel-title">🎙️ 京华名句配音台 (离线留存)</h2>
+            <p style="font-size:13px;color:var(--muted);font-weight:700;">聆听名师原声示范，录制自己的朗读，录音将永久保存在您的浏览器中！</p>
+          </div>
+          <span style="font-size:22px;">🎧</span>
+        </div>
+
+        <!-- Voice Item List -->
+        <div id="voiceList" style="display:flex;flex-direction:column;gap:14px;">
+          <!-- Items generated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 6: CERTIFICATE & BADGES -->
+    <section class="screen" id="screen-cert">
+      <div class="cert-container">
+        <div class="cert-scroll">
+          <h2 class="cert-header">京华文化小达人</h2>
+          <p class="cert-sub">BEIJING CULTURAL HERITAGE MASTER</p>
+          <p style="font-size:15px;line-height:1.7;color:var(--ink);max-width:480px;">
+            恭喜您圆满踏破《寒假见闻》、《故宫》与《颐和园》三部语文经典篇章，熟练掌握42个核心生字与老北京文化精髓，特颁此印章长卷以资鼓励！
+          </p>
+
+          <div class="cert-seals">
+            <div class="seal">
+              <div class="seal-icon">🏮</div>
+              <div>什刹海</div>
+              <div>民俗印</div>
+            </div>
+            <div class="seal">
+              <div class="seal-icon">🏯</div>
+              <div>紫禁城</div>
+              <div>皇城印</div>
+            </div>
+            <div class="seal">
+              <div class="seal-icon">🏞️</div>
+              <div>颐和园</div>
+              <div>名园印</div>
+            </div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;width:100%;max-width:400px;font-size:12px;color:var(--muted);border-top:1px dashed #d97706;padding-top:8px;">
+            <span>探索星级：⭐⭐⭐ 满分通关</span>
+            <span>认证机构：老北京文化研习社</span>
+          </div>
+        </div>
+
+        <button class="btn-enter" style="max-width:280px;" onclick="downloadCert()">💾 保存结业荣誉奖状</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">提示信息</div>
+
+<script>
+/* =========================================================================
+   1. DATA DEFINITIONS & CONSTANTS
+   ========================================================================= */
+const AUDIO_PATHS = {
+  // Lesson 1: Hanjia
+  'hanjia_st1': 'audio/hanjia/st1.mp3',
+  'hanjia_st5': 'audio/hanjia/st5.mp3',
+  'hanjia_st8': 'audio/hanjia/st8.mp3',
+  'hanjia_st11': 'audio/hanjia/st11.mp3',
+  // Lesson 2: Gugong
+  'gugong_st1': 'audio/gugong/st1.mp3',
+  'gugong_st3': 'audio/gugong/st3.mp3',
+  'gugong_st4': 'audio/gugong/st4.mp3',
+  'gugong_st6': 'audio/gugong/st6.mp3',
+  'gugong_st7': 'audio/gugong/st7.mp3',
+  'gugong_sent1': 'audio/gugong/sent1.mp3',
+  // Lesson 3: Yiheyuan
+  'yiheyuan_st1': 'audio/yiheyuan/st1.mp3',
+  'yiheyuan_st2': 'audio/yiheyuan/st2.mp3',
+  'yiheyuan_st6': 'audio/yiheyuan/st6.mp3',
+  'yiheyuan_st7': 'audio/yiheyuan/st7.mp3',
+  'yiheyuan_st9': 'audio/yiheyuan/st9.mp3',
+  'yiheyuan_st11': 'audio/yiheyuan/st11.mp3',
+  'yiheyuan_sent1': 'audio/yiheyuan/sent1.mp3'
+};
+
+const LANDMARKS = {
+  hutong: {
+    titleZh: '什刹海 · 胡同人家',
+    titleJa: '什刹海 · 胡同の暮らし',
+    subZh: '出自小学语文课文《寒假见闻》',
+    subJa: '教科書『寒假见闻』より',
+    descZh: '幽静狭长的胡同，四合院里高大的老槐树，邻里间的热情问候与春节年味，展现了老北京深厚的人情与市井生活。',
+    descJa: '静かで細長い胡同、四合院の中の大きなエンジュの木。下町の温かい暮らしと伝統文化が息づいています。',
+    chips: ['胡同', '四合院', '老槐树', '寒假', '春节', '见闻', '借书'],
+    sentenceZh: '走出四合院，就是幽静狭长的胡同。',
+    sentencePy: 'zǒu chū sì hé yuàn , jiù shì yōu jìng xiá cháng de hú tong .',
+    audioKey: 'hanjia_st5',
+    link: 'hanjia-jianwen.html',
+    btnText: '进入《寒假见闻》精读识字游戏 ➔'
+  },
+  gugong: {
+    titleZh: '故宫 · 紫禁城',
+    titleJa: '故宮 · 紫禁城',
+    subZh: '出自小学语文课文《故宫》',
+    subJa: '教科書『故宮』より',
+    descZh: '明清两朝二十四位皇帝居住的皇宫，拥有六百多年历史。太和殿、中和殿与保和殿红墙黄瓦、雕梁画栋，收藏数百万件珍贵文物。',
+    descJa: '明・清両王朝の皇宮で600年以上の歴史を誇る世界遺産。太和殿など三大殿の壮麗な建築と膨大な宝物を所蔵。',
+    chips: ['故宫', '紫禁城', '太和殿', '保和殿', '明朝', '清朝', '建筑艺术', '珍贵文物'],
+    sentenceZh: '故宫不仅是中国古代建筑艺术的代表，也是世界著名的文化遗产。',
+    sentencePy: 'gù gōng bù jǐn shì zhōng guó gǔ dài jiàn zhù yì shù de dài biǎo , yě shì shì jiè zhù míng de wén huà yí chǎn .',
+    audioKey: 'gugong_st7',
+    link: 'gugong.html',
+    btnText: '进入《故宫》精读识字游戏 ➔'
+  },
+  yiheyuan: {
+    titleZh: '颐和园 · 皇家园林',
+    titleJa: '頤和園 · 皇室庭園',
+    subZh: '出自小学语文课文《颐和园》',
+    subJa: '教科書『頤和園』より',
+    descZh: '中国保存最完整的皇家名园。昆明湖碧波荡漾，十七孔桥上千姿石狮生动可爱，长廊一眼望不到头，登上万寿山，美景尽收眼底。',
+    descJa: '中国最大の皇室庭園。昆明湖、十七孔橋、精巧な石獅子、長廊、そして万寿山からの雄大な眺望が見どころです。',
+    chips: ['颐和园', '昆明湖', '十七孔桥', '万寿山', '长廊', '石狮子', '尽收眼底'],
+    sentenceZh: '登上万寿山，颐和园的景色尽收眼底。',
+    sentencePy: 'dēng shàng wàn shòu shān , yí hé yuán de jǐng sè jìn shōu yǎn dǐ .',
+    audioKey: 'yiheyuan_st11',
+    link: 'yiheyuan.html',
+    btnText: '进入《颐和园》精读识字游戏 ➔'
+  }
+};
+
+/* THEMATIC SORTING DATA (16 WORDS, 4 PER BUCKET) */
+const SORT_WORDS_DEF = [
+  { id: 'w1', text: '紫禁城', bucket: 'imperial', py: 'Zǐjìnchéng' },
+  { id: 'w2', text: '太和殿', bucket: 'imperial', py: 'Tàihé Diàn' },
+  { id: 'w3', text: '万寿山', bucket: 'imperial', py: 'Wànshòu Shān' },
+  { id: 'w4', text: '十七孔桥', bucket: 'imperial', py: 'Shíqī-kǒng Qiáo' },
+
+  { id: 'w5', text: '胡同', bucket: 'folk', py: 'hútong' },
+  { id: 'w6', text: '四合院', bucket: 'folk', py: 'sìhéyuàn' },
+  { id: 'w7', text: '老槐树', bucket: 'folk', py: 'lǎohuáishù' },
+  { id: 'w8', text: '借书卡', bucket: 'folk', py: 'jièshūkǎ' },
+
+  { id: 'w9', text: '建筑艺术', bucket: 'art', py: 'jiànzhù yìshù' },
+  { id: 'w10', text: '珍贵文物', bucket: 'art', py: 'zhēnguì wénwù' },
+  { id: 'w11', text: '石狮子', bucket: 'art', py: 'shíshīzi' },
+  { id: 'w12', text: '文化遗产', bucket: 'art', py: 'wénhuà yíchǎn' },
+
+  { id: 'w13', text: '昆明湖', bucket: 'nature', py: 'Kūnmíng Hú' },
+  { id: 'w14', text: '湖底水草', bucket: 'nature', py: 'húdǐ shuǐcǎo' },
+  { id: 'w15', text: '美丽小岛', bucket: 'nature', py: 'měilì xiǎodǎo' },
+  { id: 'w16', text: '生动小鱼', bucket: 'nature', py: 'shēngdòng xiǎoyú' }
+];
+
+/* ARENA QUIZ QUESTIONS */
+const ARENA_QUESTIONS = [
+  {
+    q: '“尸字头（尸）”是哪一个教材生字的偏旁部首？',
+    opts: ['居 (居住)', '殿 (大殿)', '站 (站立)', '寿 (长寿)'],
+    ans: 0,
+    hint: '尸字头：居（居住、邻居）。'
+  },
+  {
+    q: '“殳字旁（殳）”是哪一个重点生字的偏旁部首？',
+    opts: ['殿 (太和殿)', '藏 (收藏)', '廊 (长廊)', '筑 (建筑)'],
+    ans: 0,
+    hint: '殳字旁：殿（大殿、太和殿）。'
+  },
+  {
+    q: '“立字旁（立）”是《颐和园》中哪一个生字的偏旁？',
+    opts: ['站 (站在湖边)', '柱 (石柱)', '桥 (石桥)', '洞 (桥洞)'],
+    ans: 0,
+    hint: '立字旁：站（站立、站在湖边）。'
+  },
+  {
+    q: '“寸字底（寸）”是《颐和园》中哪一个生字的部首？',
+    opts: ['寿 (万寿山)', '分 (十分)', '久 (已久)', '底 (湖底)'],
+    ans: 0,
+    hint: '寸字底：寿（万寿山、长寿）。'
+  },
+  {
+    q: '填入正确形近字：“长廊两旁的石【 】上有许多小石狮子。”',
+    opts: ['柱 (石柱)', '住 (居住)', '筑 (建筑)', '注 (注意)'],
+    ans: 0,
+    hint: '石柱用木字旁“柱”；居住用单人旁“住”；建筑用竹字头“筑”。'
+  },
+  {
+    q: '成语“尽收眼底”在《颐和园》课文中的含义是？',
+    opts: ['全部壮丽景色一览无余', '眼睛被风沙遮挡看不清', '湖水清澈能看到湖底', '走在长廊上一眼望不到头'],
+    ans: 0,
+    hint: '登上万寿山，颐和园的景色全部清晰地呈现在眼前。'
+  },
+  {
+    q: '故宫里的“三大殿”指的是哪三座主要宫殿？',
+    opts: ['太和殿、中和殿、保和殿', '乾清宫、交泰殿、坤宁宫', '午门、神武门、东华门', '文华殿、武英殿、保和殿'],
+    ans: 0,
+    hint: '故宫前朝三大殿为：太和殿、中和殿、保和殿。'
+  },
+  {
+    q: '十七孔桥两边的石柱上雕刻的是什么动物？它们有什么特点？',
+    opts: ['小石狮子，千姿百态，生动可爱', '石龙，威武雄壮', '石麒麟，威严祥瑞', '石大象，身躯庞大'],
+    ans: 0,
+    hint: '桥两边的石柱上有许多小石狮子，都很生动，十分可爱。'
+  }
+];
+
+/* CLOZE WORD LIST (12 BLANKS) */
+const CLOZE_WORDS = [
+  '胡同', '四合院', '老槐树',
+  '紫禁城', '太和殿', '建筑艺术', '收藏', '珍贵',
+  '颐和园', '昆明湖', '十七孔桥', '尽收眼底'
+];
+
+/* VOICE STUDIO SENTENCES */
+const VOICE_SENTENCES = [
+  {
+    id: 'hanjia_1',
+    source: '《寒假见闻》',
+    zh: '今年寒假，我和爸爸妈妈一起回到了向往已久的北京。',
+    py: 'jīn nián hán jià , wǒ hé bà ba mā ma yī qǐ huí dào le xiàng wǎng yǐ jiǔ de běi jīng .',
+    audioKey: 'hanjia_st1'
+  },
+  {
+    id: 'hanjia_2',
+    source: '《寒假见闻》',
+    zh: '走出四合院，就是幽静狭长的胡同，充满了老北京的生活气息。',
+    py: 'zǒu chū sì hé yuàn , jiù shì yōu jìng xiá cháng de hú tong , chōng mǎn le lǎo běi jīng de shēng huó qì xī .',
+    audioKey: 'hanjia_st5'
+  },
+  {
+    id: 'gugong_1',
+    source: '《故宫》',
+    zh: '故宫又叫紫禁城，是明朝和清朝的皇宫，也是中国古代建筑艺术的代表。',
+    py: 'gù gōng yòu jiào zǐ jìn chéng , shì míng cháo hé qīng cháo de huáng gōng , yě shì zhōng guó gǔ dài jiàn zhù yì shù de dài biǎo .',
+    audioKey: 'gugong_st1'
+  },
+  {
+    id: 'gugong_2',
+    source: '《故宫》',
+    zh: '以后有机会我还要来故宫逛逛。',
+    py: 'yǐ hòu yǒu jī huì wǒ hái yào lái gù gōng guàng guang .',
+    audioKey: 'gugong_sent1'
+  },
+  {
+    id: 'yiheyuan_1',
+    source: '《颐和园》',
+    zh: '走在著名的长廊上，绿色的柱子，红色的栏杆，一眼望不到头。',
+    py: 'zǒu zài zhù míng de cháng láng shàng , lǜ sè de zhù zi , hóng sè de lán gān , yī yǎn wàng bù dào tóu .',
+    audioKey: 'yiheyuan_st9'
+  },
+  {
+    id: 'yiheyuan_2',
+    source: '《颐和园》',
+    zh: '登上万寿山，颐和园的景色尽收眼底。',
+    py: 'dēng shàng wàn shòu shān , yí hé yuán de jǐng sè jìn shōu yǎn dǐ .',
+    audioKey: 'yiheyuan_st11'
+  }
+];
+
+/* =========================================================================
+   2. STATE MANAGEMENT & INDEXEDDB
+   ========================================================================= */
+let currentLang = 'zh';
+let totalStars = parseInt(localStorage.getItem('beijing_tour_stars') || '0', 10);
+let activeTab = 'map';
+
+// Sorting state
+let selectedSortCard = null;
+let sortRemaining = [];
+let sortStreak = 0;
+
+// Arena state
+let arenaIdx = 0;
+let arenaStreak = 0;
+
+// Cloze state
+let clozeFilled = new Array(12).fill(null);
+let activeBlankIdx = 0;
+
+// Audio player cache
+const audioCache = {};
+let currentPlayingClip = null;
+
+// IndexedDB Voice Storage
+const DB_NAME = 'BeijingTourVoiceDB';
+const STORE_NAME = 'user_recordings';
+let dbInstance = null;
+
+function initDB() {
+  return new Promise((resolve) => {
+    if (!window.indexedDB) {
+      console.warn('IndexedDB not supported in this browser.');
+      resolve(null);
+      return;
+    }
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+      }
+    };
+    req.onsuccess = () => {
+      dbInstance = req.result;
+      resolve(dbInstance);
+    };
+    req.onerror = () => {
+      console.error('Failed to open IndexedDB:', req.error);
+      resolve(null);
+    };
+  });
+}
+
+async function saveAudioToDB(id, blob, duration) {
+  if (!dbInstance) await initDB();
+  if (!dbInstance) return;
+  return new Promise((resolve, reject) => {
+    const tx = dbInstance.transaction(STORE_NAME, 'readwrite');
+    const store = tx.objectStore(STORE_NAME);
+    store.put({ id, blob, duration, time: Date.now() });
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+async function getAudioFromDB(id) {
+  if (!dbInstance) await initDB();
+  if (!dbInstance) return null;
+  return new Promise((resolve) => {
+    const tx = dbInstance.transaction(STORE_NAME, 'readonly');
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.get(id);
+    req.onsuccess = () => resolve(req.result || null);
+    req.onerror = () => resolve(null);
+  });
+}
+
+/* =========================================================================
+   3. AUDIO PLAYBACK & SYNTHESIS
+   ========================================================================= */
+function stopAudio() {
+  if (currentPlayingClip) {
+    currentPlayingClip.pause();
+    currentPlayingClip.currentTime = 0;
+    currentPlayingClip = null;
+  }
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
+}
+
+function playMasterAudio(key, fallbackText, onend) {
+  stopAudio();
+  const path = AUDIO_PATHS[key];
+  if (!path) {
+    speakText(fallbackText, onend);
+    return;
+  }
+  let a = audioCache[key];
+  if (!a) {
+    a = new Audio(path);
+    audioCache[key] = a;
+  }
+  a.currentTime = 0;
+  let done = false;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    if (currentPlayingClip === a) currentPlayingClip = null;
+    if (onend) onend();
+  };
+  a.onended = finish;
+  a.onerror = () => {
+    if (done) return;
+    done = true;
+    if (currentPlayingClip === a) currentPlayingClip = null;
+    speakText(fallbackText, onend);
+  };
+  currentPlayingClip = a;
+  const p = a.play();
+  if (p && typeof p.catch === 'function') {
+    p.catch(() => {
+      if (done) return;
+      done = true;
+      if (currentPlayingClip === a) currentPlayingClip = null;
+      speakText(fallbackText, onend);
+    });
+  }
+}
+
+function speakText(text, onend) {
+  if (!('speechSynthesis' in window) || !text) {
+    if (onend) onend();
+    return;
+  }
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'zh-CN';
+  u.rate = 0.85;
+  u.onend = () => { if (onend) onend(); };
+  u.onerror = () => { if (onend) onend(); };
+  window.speechSynthesis.speak(u);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function addStars(num) {
+  totalStars += num;
+  localStorage.setItem('beijing_tour_stars', totalStars);
+  document.getElementById('starCount').textContent = totalStars;
+}
+
+/* =========================================================================
+   4. NAVIGATION & TABS
+   ========================================================================= */
+function switchTab(tabId) {
+  stopAudio();
+  activeTab = tabId;
+  document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+  const btn = document.getElementById('tab-' + tabId);
+  const scr = document.getElementById('screen-' + tabId);
+  if (btn) btn.classList.add('active');
+  if (scr) scr.classList.add('active');
+
+  if (tabId === 'sort' && sortRemaining.length === 0) initSortGame();
+  if (tabId === 'arena' && arenaIdx === 0) loadArenaQuestion();
+  if (tabId === 'voice') renderVoiceStudio();
+}
+
+function toggleLang() {
+  currentLang = currentLang === 'zh' ? 'ja' : 'zh';
+  document.getElementById('btnLang').textContent = currentLang === 'zh' ? 'JA' : '中';
+  if (currentLang === 'ja') {
+    document.getElementById('uiHeaderTitle').textContent = '京華風物 · 教科書横断パノラマ';
+    document.getElementById('uiHeaderSub').textContent = '胡同 · 故宮 · 頤和園 · 文化絵巻と漢字クエスト';
+    document.getElementById('mapTitle').textContent = '🗺️ 北京文化パノラマ絵巻';
+    document.getElementById('mapSub').textContent = 'ランドマークをタップしてネイティブ音声を聴こう！';
+  } else {
+    document.getElementById('uiHeaderTitle').textContent = '京华风物 · 跨课综合漫游';
+    document.getElementById('uiHeaderSub').textContent = '胡同 · 故宫 · 颐和园 · 文化长卷与字词大挑战';
+    document.getElementById('mapTitle').textContent = '🗺️ 老北京文化风物长卷';
+    document.getElementById('mapSub').textContent = '点击地图上的地标，聆听原声朗读，探寻古都文化密码';
+  }
+}
+
+/* =========================================================================
+   5. SCREEN 1: MAP & LANDMARK DRAWER
+   ========================================================================= */
+let currentLandmarkKey = null;
+
+function openLandmark(key) {
+  currentLandmarkKey = key;
+  const d = LANDMARKS[key];
+  if (!d) return;
+  const drawer = document.getElementById('landmarkDrawer');
+  drawer.classList.add('active');
+
+  document.getElementById('drawerTitle').textContent = currentLang === 'ja' ? d.titleJa : d.titleZh;
+  document.getElementById('drawerSub').textContent = currentLang === 'ja' ? d.subJa : d.subZh;
+  document.getElementById('drawerDesc').textContent = currentLang === 'ja' ? d.descJa : d.descZh;
+  document.getElementById('drawerSentenceZh').textContent = d.sentenceZh;
+  document.getElementById('drawerSentencePy').textContent = d.sentencePy;
+  document.getElementById('drawerLink').href = d.link;
+  document.getElementById('drawerLink').textContent = d.btnText;
+
+  const chipsContainer = document.getElementById('drawerChips');
+  chipsContainer.innerHTML = d.chips.map(c => `<span class="drawer-chip">${c}</span>`).join('');
+
+  // Scroll into view
+  drawer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  playMasterAudio(d.audioKey, d.sentenceZh);
+}
+
+function closeLandmark() {
+  document.getElementById('landmarkDrawer').classList.remove('active');
+  stopAudio();
+}
+
+function playDrawerSentence() {
+  if (!currentLandmarkKey) return;
+  const d = LANDMARKS[currentLandmarkKey];
+  playMasterAudio(d.audioKey, d.sentenceZh);
+}
+
+/* =========================================================================
+   6. SCREEN 2: THEMATIC SORTING GAME
+   ========================================================================= */
+function initSortGame() {
+  selectedSortCard = null;
+  sortStreak = 0;
+  document.getElementById('sortStreak').textContent = `Streak 🔥 ${sortStreak}`;
+  
+  // Clear buckets
+  ['imperial', 'folk', 'art', 'nature'].forEach(b => {
+    document.getElementById(`items-${b}`).innerHTML = '';
+    document.getElementById(`count-${b}`).textContent = '0 / 4';
+  });
+
+  // Shuffle word definitions
+  sortRemaining = [...SORT_WORDS_DEF].sort(() => Math.random() - 0.5);
+  renderSortPool();
+}
+
+function renderSortPool() {
+  const pool = document.getElementById('sortPool');
+  pool.innerHTML = '';
+  if (sortRemaining.length === 0) {
+    pool.innerHTML = '<div style="font-size:16px;color:#047857;font-weight:800;padding:10px 0;">🎉 太棒了！全部16个风物词汇归类完毕！奖励 ⭐+10</div>';
+    addStars(10);
+    showToast('🎉 全部风物分类完成！⭐ +10');
+    return;
+  }
+  sortRemaining.forEach(w => {
+    const card = document.createElement('div');
+    card.className = `sort-card ${selectedSortCard && selectedSortCard.id === w.id ? 'selected' : ''}`;
+    card.innerHTML = `<span>${w.text}</span> <span style="font-size:11px;opacity:0.7;">${w.py}</span>`;
+    card.onclick = (e) => {
+      e.stopPropagation();
+      selectSortCard(w);
+    };
+    pool.appendChild(card);
+  });
+}
+
+function selectSortCard(cardDef) {
+  if (selectedSortCard && selectedSortCard.id === cardDef.id) {
+    selectedSortCard = null;
+  } else {
+    selectedSortCard = cardDef;
+    speakText(cardDef.text);
+  }
+  renderSortPool();
+}
+
+function dropCardToBucket(bucketId) {
+  if (!selectedSortCard) {
+    showToast('请先点击下方的词汇卡片！');
+    return;
+  }
+  if (selectedSortCard.bucket === bucketId) {
+    // Correct
+    sortStreak++;
+    document.getElementById('sortStreak').textContent = `Streak 🔥 ${sortStreak}`;
+    addStars(1);
+    showToast(`✅ 正确！${selectedSortCard.text}`);
+
+    // Add tag to bucket
+    const bucketItems = document.getElementById(`items-${bucketId}`);
+    const tag = document.createElement('span');
+    tag.className = 'sorted-tag';
+    tag.textContent = selectedSortCard.text;
+    bucketItems.appendChild(tag);
+
+    // Update count
+    const count = bucketItems.children.length;
+    document.getElementById(`count-${bucketId}`).textContent = `${count} / 4`;
+
+    // Remove from remaining
+    sortRemaining = sortRemaining.filter(w => w.id !== selectedSortCard.id);
+    selectedSortCard = null;
+    renderSortPool();
+  } else {
+    // Wrong
+    sortStreak = 0;
+    document.getElementById('sortStreak').textContent = `Streak 🔥 0`;
+    showToast(`❌ 类别不匹配，再想想看！`);
+    const bucketElem = document.getElementById(`bucket-${bucketId}`);
+    bucketElem.classList.add('highlight');
+    setTimeout(() => bucketElem.classList.remove('highlight'), 300);
+  }
+}
+
+/* =========================================================================
+   7. SCREEN 3: MASTER ARENA (QUIZ)
+   ========================================================================= */
+function loadArenaQuestion() {
+  if (arenaIdx >= ARENA_QUESTIONS.length) {
+    // Finished
+    const card = document.querySelector('.arena-card');
+    card.innerHTML = `
+      <div style="text-align:center;padding:24px 10px;">
+        <h3 style="font-family:var(--font-cn);font-size:26px;color:var(--red);margin-bottom:8px;">🏆 恭喜踏破生字大乱斗！</h3>
+        <p style="font-size:15px;color:var(--ink);margin-bottom:16px;">您已全面掌握三篇课文的核心偏旁、形近字与文意搭配！</p>
+        <button class="btn-enter" style="max-width:200px;margin:0 auto;" onclick="resetArena()">🔄 再战一轮</button>
+      </div>
+    `;
+    addStars(15);
+    showToast('🏅 踏破生字大乱斗！⭐ +15');
+    return;
+  }
+
+  const qData = ARENA_QUESTIONS[arenaIdx];
+  document.getElementById('arenaQNum').textContent = `第 ${arenaIdx + 1} 题 / 共 ${ARENA_QUESTIONS.length} 题`;
+  document.getElementById('arenaQText').textContent = qData.q;
+  
+  const optsContainer = document.getElementById('arenaOptions');
+  optsContainer.innerHTML = '';
+  qData.opts.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'arena-opt';
+    btn.innerHTML = `<span style="font-size:18px;">${['A','B','C','D'][idx]}.</span> <span>${opt}</span>`;
+    btn.onclick = () => answerArena(idx, btn);
+    optsContainer.appendChild(btn);
+  });
+}
+
+function answerArena(choiceIdx, btnElem) {
+  const qData = ARENA_QUESTIONS[arenaIdx];
+  const allBtns = document.querySelectorAll('.arena-opt');
+  allBtns.forEach(b => b.style.pointerEvents = 'none');
+
+  if (choiceIdx === qData.ans) {
+    btnElem.classList.add('correct');
+    arenaStreak++;
+    document.getElementById('arenaStreak').textContent = `Streak 🔥 ${arenaStreak}`;
+    addStars(2);
+    showToast('🎉 答对了！');
+    setTimeout(() => {
+      arenaIdx++;
+      loadArenaQuestion();
+    }, 1100);
+  } else {
+    btnElem.classList.add('wrong');
+    allBtns[qData.ans].classList.add('correct');
+    arenaStreak = 0;
+    document.getElementById('arenaStreak').textContent = `Streak 🔥 0`;
+    showToast('❌ 回答有误：' + qData.hint);
+    setTimeout(() => {
+      arenaIdx++;
+      loadArenaQuestion();
+    }, 2000);
+  }
+}
+
+function resetArena() {
+  arenaIdx = 0;
+  arenaStreak = 0;
+  document.getElementById('arenaStreak').textContent = `Streak 🔥 0`;
+  const container = document.querySelector('.arena-card');
+  container.innerHTML = `
+    <div class="arena-q-num" id="arenaQNum">第 1 题 / 共 8 题</div>
+    <div class="arena-q-text" id="arenaQText"></div>
+    <div class="arena-options" id="arenaOptions"></div>
+  `;
+  loadArenaQuestion();
+}
+
+/* =========================================================================
+   8. SCREEN 4: CLOZE PASSAGE (GRAND TRAVEL ADVENTURE)
+   ========================================================================= */
+function initCloze() {
+  clozeFilled = new Array(12).fill(null);
+  activeBlankIdx = 0;
+  for (let i = 0; i < 12; i++) {
+    const blank = document.getElementById(`blank-${i}`);
+    if (blank) {
+      blank.textContent = '____';
+      blank.classList.remove('filled');
+    }
+  }
+
+  const choicesContainer = document.getElementById('clozeChoices');
+  choicesContainer.innerHTML = '';
+  // Shuffle words for choices
+  const shuffled = [...CLOZE_WORDS].map((w, idx) => ({ text: w, origIdx: idx })).sort(() => Math.random() - 0.5);
+  shuffled.forEach(item => {
+    const chip = document.createElement('button');
+    chip.className = 'cloze-chip';
+    chip.id = `cloze-chip-${item.origIdx}`;
+    chip.textContent = item.text;
+    chip.onclick = () => fillCloze(item.origIdx);
+    choicesContainer.appendChild(chip);
+  });
+  highlightBlank(0);
+}
+
+function selectBlank(idx) {
+  activeBlankIdx = idx;
+  highlightBlank(idx);
+}
+
+function highlightBlank(idx) {
+  for (let i = 0; i < 12; i++) {
+    const b = document.getElementById(`blank-${i}`);
+    if (!b) continue;
+    if (i === idx) {
+      b.style.outline = '2px solid #ef4444';
+    } else {
+      b.style.outline = 'none';
+    }
+  }
+}
+
+function fillCloze(wordIdx) {
+  const word = CLOZE_WORDS[wordIdx];
+  // Correct match: wordIdx === activeBlankIdx
+  if (wordIdx === activeBlankIdx) {
+    clozeFilled[activeBlankIdx] = word;
+    const blank = document.getElementById(`blank-${activeBlankIdx}`);
+    blank.textContent = word;
+    blank.classList.add('filled');
+    document.getElementById(`cloze-chip-${wordIdx}`).classList.add('used');
+    speakText(word);
+    addStars(1);
+
+    // Find next empty blank
+    let nextIdx = -1;
+    for (let i = 0; i < 12; i++) {
+      if (clozeFilled[i] === null) {
+        nextIdx = i;
+        break;
+      }
+    }
+    if (nextIdx !== -1) {
+      activeBlankIdx = nextIdx;
+      highlightBlank(nextIdx);
+    } else {
+      showToast('🎉 恭喜完成整篇京华游记填空！⭐ +10');
+      addStars(10);
+    }
+  } else {
+    showToast(`“${word}”放在此处不合适，再读读上下文！`);
+  }
+}
+
+function playFullClozeAudio() {
+  const fullText = "今年寒假，我来到了向往已久的北京。漫步在幽静狭长的胡同里，绿树掩映着传统的四合院，院子里高大的老槐树格外醒目。第二天，我们游览了著名的紫禁城。雄伟的太和殿是中国古代建筑艺术的代表，大殿里收藏着数百万件珍贵的历史文物。随后，我们来到了皇家园林颐和园。碧波荡漾的昆明湖上架着长长的十七孔桥。登上万寿山，颐和园美丽的景色尽收眼底！";
+  speakText(fullText);
+}
+
+/* =========================================================================
+   9. SCREEN 5: VOICE RECORDING STUDIO (MEDIARECORDER + INDEXEDDB)
+   ========================================================================= */
+let mediaRecorder = null;
+let audioChunks = [];
+let currentRecordingId = null;
+let recordingStartTime = 0;
+let userAudioPlayer = null;
+
+function renderVoiceStudio() {
+  const container = document.getElementById('voiceList');
+  container.innerHTML = '';
+
+  VOICE_SENTENCES.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'voice-item';
+    card.id = `voice-item-${item.id}`;
+    card.innerHTML = `
+      <div class="voice-item-top">
+        <span class="voice-item-source">${item.source}</span>
+        <span class="v-status" id="v-status-${item.id}">未录制</span>
+      </div>
+      <div class="voice-item-zh">${item.zh}</div>
+      <div class="voice-item-py">${item.py}</div>
+      <div class="voice-item-actions">
+        <button class="v-btn v-btn-play-master" onclick="playMasterAudio('${item.audioKey}', '${item.zh}')">
+          🔊 名师原声
+        </button>
+        <button class="v-btn v-btn-record" id="btn-rec-${item.id}" onclick="toggleRecordVoice('${item.id}')">
+          🎙️ 录制我的朗读
+        </button>
+        <button class="v-btn v-btn-my-voice" id="btn-play-${item.id}" onclick="playUserVoice('${item.id}')" style="display:none;">
+          🎧 试听录音
+        </button>
+        <button class="v-btn v-btn-download" id="btn-down-${item.id}" onclick="downloadUserVoice('${item.id}')" style="display:none;">
+          💾 导出音频
+        </button>
+      </div>
+    `;
+    container.appendChild(card);
+    checkExistingRecording(item.id);
+  });
+}
+
+async function checkExistingRecording(id) {
+  const rec = await getAudioFromDB(id);
+  if (rec && rec.blob) {
+    const status = document.getElementById(`v-status-${id}`);
+    const playBtn = document.getElementById(`btn-play-${id}`);
+    const downBtn = document.getElementById(`btn-down-${id}`);
+    if (status) status.textContent = `已留存 (${rec.duration || 0}秒)`;
+    if (playBtn) playBtn.style.display = 'inline-flex';
+    if (downBtn) downBtn.style.display = 'inline-flex';
+  }
+}
+
+async function toggleRecordVoice(id) {
+  if (currentRecordingId === id) {
+    // Stop recording
+    stopRecordVoice();
+    return;
+  }
+  if (currentRecordingId !== null) {
+    stopRecordVoice();
+  }
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    let mimeType = 'audio/webm';
+    if (!MediaRecorder.isTypeSupported('audio/webm')) {
+      if (MediaRecorder.isTypeSupported('audio/mp4')) mimeType = 'audio/mp4';
+      else if (MediaRecorder.isTypeSupported('audio/ogg')) mimeType = 'audio/ogg';
+    }
+    mediaRecorder = new MediaRecorder(stream, { mimeType });
+    audioChunks = [];
+    currentRecordingId = id;
+    recordingStartTime = Date.now();
+
+    mediaRecorder.ondataavailable = (e) => {
+      if (e.data && e.data.size > 0) audioChunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = async () => {
+      const blob = new Blob(audioChunks, { type: mimeType });
+      const duration = Math.round((Date.now() - recordingStartTime) / 1000);
+      await saveAudioToDB(id, blob, duration);
+      stream.getTracks().forEach(t => t.stop());
+
+      const itemCard = document.getElementById(`voice-item-${id}`);
+      const recBtn = document.getElementById(`btn-rec-${id}`);
+      const status = document.getElementById(`v-status-${id}`);
+      const playBtn = document.getElementById(`btn-play-${id}`);
+      const downBtn = document.getElementById(`btn-down-${id}`);
+
+      if (itemCard) itemCard.classList.remove('recording');
+      if (recBtn) {
+        recBtn.classList.remove('rec-active');
+        recBtn.innerHTML = '🎙️ 重新录制';
+      }
+      if (status) status.textContent = `已留存 (${duration}秒)`;
+      if (playBtn) playBtn.style.display = 'inline-flex';
+      if (downBtn) downBtn.style.display = 'inline-flex';
+
+      currentRecordingId = null;
+      showToast('🎉 录音已妥善留存在浏览器数据库中！');
+      addStars(3);
+    };
+
+    mediaRecorder.start(200);
+    const itemCard = document.getElementById(`voice-item-${id}`);
+    const recBtn = document.getElementById(`btn-rec-${id}`);
+    const status = document.getElementById(`v-status-${id}`);
+
+    if (itemCard) itemCard.classList.add('recording');
+    if (recBtn) {
+      recBtn.classList.add('rec-active');
+      recBtn.innerHTML = '⏹️ 停止录制';
+    }
+    if (status) status.textContent = '● 正在录制...';
+
+  } catch (err) {
+    console.error('Microphone access failed:', err);
+    alert('未能启动麦克风录音，请确保浏览器允许使用麦克风权限！\n' + err.message);
+  }
+}
+
+function stopRecordVoice() {
+  if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+    mediaRecorder.stop();
+  }
+}
+
+async function playUserVoice(id) {
+  const rec = await getAudioFromDB(id);
+  if (!rec || !rec.blob) {
+    showToast('暂无该句录音，请先录制！');
+    return;
+  }
+  stopAudio();
+  if (userAudioPlayer) {
+    userAudioPlayer.pause();
+    userAudioPlayer = null;
+  }
+  const url = URL.createObjectURL(rec.blob);
+  userAudioPlayer = new Audio(url);
+  userAudioPlayer.onended = () => {
+    URL.revokeObjectURL(url);
+    userAudioPlayer = null;
+  };
+  userAudioPlayer.play();
+  showToast('🎧 正在播放您的朗读录音...');
+}
+
+async function downloadUserVoice(id) {
+  const rec = await getAudioFromDB(id);
+  if (!rec || !rec.blob) return;
+  const url = URL.createObjectURL(rec.blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `beijing-reading-${id}.webm`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* =========================================================================
+   10. SCREEN 6: CERTIFICATE
+   ========================================================================= */
+function downloadCert() {
+  showToast('🏅 正在准备结业证书... 您可以使用截图或打印保存！');
+  window.print();
+}
+
+/* =========================================================================
+   11. INITIALIZATION
+   ========================================================================= */
+window.addEventListener('DOMContentLoaded', async () => {
+  document.getElementById('starCount').textContent = totalStars;
+  await initDB();
+  initSortGame();
+  initCloze();
+});
+</script>
+</body>
+</html>

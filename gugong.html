@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=M+PLUS+Rounded+1c:wght@600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
 <script src="js/hanzi-writer.min.js"></script>
 <script src="js/hanzi-data.js"></script>
+<script src="js/voice-recorder.js"></script>
 <style>
   :root{
     --red:#c2410c; --red-dark:#9a3412; --red-soft:#ffedd5;
@@ -266,7 +267,10 @@
 <body>
 <div id="app">
   <header>
-    <a href="index.html" class="nav-btn" title="返回大厅 (Return to Arcade)">🏠</a>
+    <div style="display:flex;gap:6px;align-items:center;">
+      <a href="index.html" class="nav-btn" title="返回大厅 (Return to Arcade)">🏠</a>
+      <a href="beijing-tour.html" class="nav-btn" title="京华风物长卷 (Beijing Grand Tour)">🗺️</a>
+    </div>
     <h1 id="headerTitle">故宫 · 探索紫禁城</h1>
     <span class="stars" id="starTotal">⭐ 0</span>
   </header>
@@ -287,6 +291,12 @@
           <div class="ico">📜</div>
           <div class="name">查看/朗读全文</div>
           <div class="desc">显示完整课文 · 一键连续朗读全文</div>
+        </div>
+        <div class="menu-card full" onclick="location.href='beijing-tour.html'" style="border-color:#b91c1c;background:linear-gradient(135deg,#fee2e2,#fef3c7);cursor:pointer;">
+          <div class="ico">🗺️</div>
+          <div class="name">京华风物 · 跨课联动长卷</div>
+          <div class="desc">串联胡同、故宫、颐和园，挑战字词大乱斗与配音留存台</div>
+          <div class="badge" style="display:inline-flex;background:#b91c1c;color:#fff;">旗舰</div>
         </div>
         <div class="menu-card" onclick="goChars()">
           <div class="ico">✍️</div>
@@ -356,6 +366,8 @@
       <div class="story-nav">
         <button class="icon-btn" onclick="storyPrev()">⬅️</button>
         <button class="icon-btn" onclick="playClip(STORY[storyIdx].id, STORY[storyIdx].zh)">🔊</button>
+        <button class="icon-btn" id="btnStoryRec" onclick="toggleStoryRecord()" title="录制我的朗读">🎙️</button>
+        <button class="icon-btn" id="btnStoryPlayRec" onclick="playStoryRecord()" title="试听我的录音" style="display:none;">🎧</button>
         <button class="icon-btn" onclick="storyNext()">➡️</button>
       </div>
       <button class="btn ghost" onclick="goHome()">返回菜单</button>
@@ -1033,6 +1045,7 @@ function toast(msg){
 /* ---------------- STORY ---------------- */
 function renderStory(){
   const s = STORY[storyIdx];
+  if(typeof updateStoryVoiceUI==="function") updateStoryVoiceUI();
   document.getElementById('storyProgress').textContent = (storyIdx+1) + ' / ' + STORY.length;
   document.getElementById('storyZh').textContent = s.zh;
   document.getElementById('storyPy').textContent = showPy ? s.py : '';
@@ -2269,6 +2282,59 @@ function renderReviewList(){
 refreshBadges();
 updateStarTotal();
 renderStory();
+
+async function updateStoryVoiceUI(){
+  const s = STORY[storyIdx];
+  const voiceId = 'gugong_' + s.id;
+  const recBtn = document.getElementById('btnStoryRec');
+  const playBtn = document.getElementById('btnStoryPlayRec');
+  if (!recBtn || !playBtn) return;
+  if (window.voiceManager && window.voiceManager.isRecording()) {
+    recBtn.textContent = '⏹️';
+    recBtn.classList.add('pulse');
+  } else {
+    recBtn.textContent = '🎙️';
+    recBtn.classList.remove('pulse');
+  }
+  if (typeof getVoiceBlob === 'function') {
+    const rec = await getVoiceBlob(voiceId);
+    if (rec && rec.blob) {
+      playBtn.style.display = 'inline-flex';
+      recBtn.title = '重新录制我的朗读';
+    } else {
+      playBtn.style.display = 'none';
+      recBtn.title = '录制我的朗读';
+    }
+  }
+}
+
+async function toggleStoryRecord(){
+  const s = STORY[storyIdx];
+  const voiceId = 'gugong_' + s.id;
+  const recBtn = document.getElementById('btnStoryRec');
+  if (window.voiceManager.isRecording()) {
+    await window.voiceManager.stopRecord();
+    recBtn.textContent = '🎙️';
+    recBtn.classList.remove('pulse');
+    updateStoryVoiceUI();
+    if (typeof showToast === 'function') showToast('🎉 录音完成并已保存在浏览器中！');
+  } else {
+    recBtn.textContent = '⏹️';
+    recBtn.classList.add('pulse');
+    window.voiceManager.startRecord(voiceId, () => {}, () => {
+      updateStoryVoiceUI();
+    });
+  }
+}
+
+function playStoryRecord(){
+  const s = STORY[storyIdx];
+  const voiceId = 'gugong_' + s.id;
+  window.voiceManager.playRecord(voiceId, () => {
+    if (typeof showToast === 'function') showToast('🎧 正在播放您的朗读录音...');
+  });
+}
+
 </script>
 </body>
 </html>

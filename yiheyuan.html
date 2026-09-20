@@ -9,6 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=M+PLUS+Rounded+1c:wght@600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
 <script src="js/hanzi-writer.min.js"></script>
 <script src="js/hanzi-data.js"></script>
+<script src="js/voice-recorder.js"></script>
 <style>
   :root{
     --lake-blue:#0284c7; --lake-dark:#0369a1; --lake-soft:#e0f2fe;
@@ -358,6 +359,8 @@
       <div class="story-nav">
         <button class="icon-btn" onclick="storyPrev()">⬅️</button>
         <button class="icon-btn" onclick="playClip(STORY[storyIdx].id, STORY[storyIdx].zh)">🔊</button>
+        <button class="icon-btn" id="btnStoryRec" onclick="toggleStoryRecord()" title="录制我的朗读">🎙️</button>
+        <button class="icon-btn" id="btnStoryPlayRec" onclick="playStoryRecord()" title="试听我的录音" style="display:none;">🎧</button>
         <button class="icon-btn" onclick="storyNext()">➡️</button>
       </div>
       <div class="toggle-row">
@@ -1036,6 +1039,7 @@ function toast(msg){
 /* ---------------- STORY ---------------- */
 function renderStory(){
   const s = STORY[storyIdx];
+  if(typeof updateStoryVoiceUI==="function") updateStoryVoiceUI();
   document.getElementById('storyProgress').textContent = (storyIdx+1) + ' / ' + STORY.length;
   document.getElementById('storyZh').textContent = s.zh;
   document.getElementById('storyPy').textContent = showPy ? s.py : '';
@@ -2272,6 +2276,59 @@ function renderReviewList(){
 refreshBadges();
 updateStarTotal();
 renderStory();
+
+async function updateStoryVoiceUI(){
+  const s = STORY[storyIdx];
+  const voiceId = 'yiheyuan_' + s.id;
+  const recBtn = document.getElementById('btnStoryRec');
+  const playBtn = document.getElementById('btnStoryPlayRec');
+  if (!recBtn || !playBtn) return;
+  if (window.voiceManager && window.voiceManager.isRecording()) {
+    recBtn.textContent = '⏹️';
+    recBtn.classList.add('pulse');
+  } else {
+    recBtn.textContent = '🎙️';
+    recBtn.classList.remove('pulse');
+  }
+  if (typeof getVoiceBlob === 'function') {
+    const rec = await getVoiceBlob(voiceId);
+    if (rec && rec.blob) {
+      playBtn.style.display = 'inline-flex';
+      recBtn.title = '重新录制我的朗读';
+    } else {
+      playBtn.style.display = 'none';
+      recBtn.title = '录制我的朗读';
+    }
+  }
+}
+
+async function toggleStoryRecord(){
+  const s = STORY[storyIdx];
+  const voiceId = 'yiheyuan_' + s.id;
+  const recBtn = document.getElementById('btnStoryRec');
+  if (window.voiceManager.isRecording()) {
+    await window.voiceManager.stopRecord();
+    recBtn.textContent = '🎙️';
+    recBtn.classList.remove('pulse');
+    updateStoryVoiceUI();
+    if (typeof showToast === 'function') showToast('🎉 录音完成并已保存在浏览器中！');
+  } else {
+    recBtn.textContent = '⏹️';
+    recBtn.classList.add('pulse');
+    window.voiceManager.startRecord(voiceId, () => {}, () => {
+      updateStoryVoiceUI();
+    });
+  }
+}
+
+function playStoryRecord(){
+  const s = STORY[storyIdx];
+  const voiceId = 'yiheyuan_' + s.id;
+  window.voiceManager.playRecord(voiceId, () => {
+    if (typeof showToast === 'function') showToast('🎧 正在播放您的朗读录音...');
+  });
+}
+
 </script>
 </body>
 </html>
