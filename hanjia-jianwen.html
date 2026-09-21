@@ -69,6 +69,7 @@
   .sentence-zh{font-size:26px;font-weight:700;line-height:1.9;text-align:center;}
   .sentence-py{font-size:15px;color:var(--blue);text-align:center;font-weight:700;min-height:20px;}
   .sentence-en{font-size:13px;color:var(--muted);text-align:center;}
+  .sentence-jp{font-size:13px;color:#8b5cf6;text-align:center;}
   .story-nav{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;max-width:560px;}
   .icon-btn{width:44px;height:44px;border-radius:50%;border:2px solid #f3d9ad;background:#fff;font-size:18px;cursor:pointer;box-shadow:var(--shadow-pop);}
   .icon-btn:active{transform:translateY(2px);}
@@ -208,6 +209,7 @@
   .full-sentence .sentence-zh{font-size:20px;text-align:left;}
   .full-sentence .sentence-py{font-size:13px;text-align:left;}
   .full-sentence .sentence-en{font-size:12px;text-align:left;}
+  .full-sentence .sentence-jp{font-size:12px;text-align:left;color:#8b5cf6;}
   .full-sentence.playing{background:var(--gold-soft);border-color:var(--gold);}
 
   /* audio challenge */
@@ -247,6 +249,7 @@
   .cloze-slot.filled{border-bottom-style:solid;background:var(--gold-soft);border-radius:6px;animation:popIn .25s ease-out;}
   .cloze-slot.wrong{color:#dc2626;border-color:#dc2626;background:#fee2e2;}
   .cloze-en{font-size:12px;color:var(--blue);font-style:italic;text-align:center;}
+  .cloze-jp{font-size:12px;color:#8b5cf6;font-style:italic;text-align:center;}
   .cloze-hint-row{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 4px;}
   .cloze-hint-pill{font-size:12px;color:var(--muted);background:#f5f5f4;padding:3px 10px;border-radius:12px;}
   .cloze-speak-btn{background:#fff;border:1px solid #cbd5e1;border-radius:14px;padding:3px 10px;font-size:12px;font-weight:700;
@@ -368,6 +371,7 @@
       <div class="toggle-row">
         <div class="chip active" id="chipPy" onclick="toggleStoryPy()">拼音</div>
         <div class="chip active" id="chipEn" onclick="toggleStoryEn()">English</div>
+        <div class="chip active" id="chipJp" onclick="toggleStoryJp()">日本語</div>
         <div class="chip" onclick="goFull()">📜 全文朗读</div>
       </div>
       <div class="story-card">
@@ -375,6 +379,7 @@
         <div class="sentence-py" id="storyPy"></div>
         <div class="sentence-zh" id="storyZh"></div>
         <div class="sentence-en" id="storyEn"></div>
+        <div class="sentence-jp" id="storyJp"></div>
       </div>
       <!-- VOICE WAVE VISUALIZER -->
       <div class="voice-wave-panel" id="storyVoiceWave">
@@ -409,6 +414,7 @@
       <div class="toggle-row">
         <div class="chip active" id="chipFullPy" onclick="toggleFullPy()">拼音</div>
         <div class="chip active" id="chipFullEn" onclick="toggleFullEn()">English</div>
+        <div class="chip active" id="chipFullJp" onclick="toggleFullJp()">日本語</div>
       </div>
       <div class="story-card" style="align-items:stretch;gap:12px;">
         <div id="fullTextList" style="display:flex;flex-direction:column;gap:12px;"></div>
@@ -547,6 +553,7 @@
             <span id="clozeAfter"></span>
           </div>
           <div class="cloze-en" id="clozeEn"></div>
+          <div class="cloze-jp" id="clozeJp"></div>
           <div class="cloze-hint-row">
             <span class="cloze-hint-pill" id="clozeHint"></span>
             <button class="cloze-speak-btn" id="clozeSpeakBtn" onclick="speakClozeSentence()">🔊 朗读句子</button>
@@ -634,52 +641,52 @@
 <script>
 /* ---------------- DATA ---------------- */
 const CHARACTERS = [
-  {id:"zi1", zh:"寒", py:"hán", radical:"宀 (宝盖头)", words:"寒假、寒冷", meaning:"cold, winter", context:"今年寒假"},
-  {id:"zi2", zh:"假", py:"jià", radical:"亻 (单人旁)", words:"放假、假期", meaning:"vacation, holiday", context:"寒假见闻"},
-  {id:"zi3", zh:"胡", py:"hú", radical:"月 (月字旁)", words:"胡同、二胡", meaning:"lane, alley", context:"逛胡同"},
-  {id:"zi4", zh:"同", py:"tóng", radical:"冂 (同字框)", words:"胡同、同学", meaning:"same, together", context:"北京的胡同"},
-  {id:"zi5", zh:"车", py:"chē", radical:"车 (车字旁)", words:"人力车、单车", meaning:"cart, vehicle", context:"人力车"},
-  {id:"zi6", zh:"院", py:"yuàn", radical:"阝 (左耳旁)", words:"四合院、院子", meaning:"courtyard", context:"四合院"},
-  {id:"zi7", zh:"树", py:"shù", radical:"木 (木字旁)", words:"老槐树、大树", meaning:"tree", context:"老槐树"},
-  {id:"zi8", zh:"印", py:"yìn", radical:"卩 (单耳旁)", words:"印象、打印", meaning:"impression, print", context:"老北京印象"},
-  {id:"zi9", zh:"象", py:"xiàng", radical:"豕 (豕字底)", words:"印象、大象", meaning:"image, elephant", context:"难忘的印象"},
-  {id:"zi10", zh:"便", py:"biàn", radical:"亻 (单人旁)", words:"方便、便利", meaning:"convenient", context:"交通非常方便"},
-  {id:"zi11", zh:"现", py:"xiàn", radical:"王 (王字旁)", words:"现代、现在", meaning:"present, modern", context:"既古老又现代"},
-  {id:"zi12", zh:"金", py:"jīn", radical:"金 (金字旁)", words:"现金、金子", meaning:"cash, gold", context:"出门不用带现金"}
+  {id:"zi1", zh:"寒", py:"hán", radical:"宀 (宝盖头)", words:"寒假、寒冷", meaning:"cold, winter", meaningJp:"寒い、冬", context:"今年寒假"},
+  {id:"zi2", zh:"假", py:"jià", radical:"亻 (单人旁)", words:"放假、假期", meaning:"vacation, holiday", meaningJp:"休み、休暇", context:"寒假见闻"},
+  {id:"zi3", zh:"胡", py:"hú", radical:"月 (月字旁)", words:"胡同、二胡", meaning:"lane, alley", meaningJp:"路地、横町", context:"逛胡同"},
+  {id:"zi4", zh:"同", py:"tóng", radical:"冂 (同字框)", words:"胡同、同学", meaning:"same, together", meaningJp:"同じ、一緒", context:"北京的胡同"},
+  {id:"zi5", zh:"车", py:"chē", radical:"车 (车字旁)", words:"人力车、单车", meaning:"cart, vehicle", meaningJp:"車、乗り物", context:"人力车"},
+  {id:"zi6", zh:"院", py:"yuàn", radical:"阝 (左耳旁)", words:"四合院、院子", meaning:"courtyard", meaningJp:"庭、中庭", context:"四合院"},
+  {id:"zi7", zh:"树", py:"shù", radical:"木 (木字旁)", words:"老槐树、大树", meaning:"tree", meaningJp:"木", context:"老槐树"},
+  {id:"zi8", zh:"印", py:"yìn", radical:"卩 (单耳旁)", words:"印象、打印", meaning:"impression, print", meaningJp:"印象、印刷", context:"老北京印象"},
+  {id:"zi9", zh:"象", py:"xiàng", radical:"豕 (豕字底)", words:"印象、大象", meaning:"image, elephant", meaningJp:"イメージ、象", context:"难忘的印象"},
+  {id:"zi10", zh:"便", py:"biàn", radical:"亻 (单人旁)", words:"方便、便利", meaning:"convenient", meaningJp:"便利な", context:"交通非常方便"},
+  {id:"zi11", zh:"现", py:"xiàn", radical:"王 (王字旁)", words:"现代、现在", meaning:"present, modern", meaningJp:"現在の、現代の", context:"既古老又现代"},
+  {id:"zi12", zh:"金", py:"jīn", radical:"金 (金字旁)", words:"现金、金子", meaning:"cash, gold", meaningJp:"現金、金", context:"出门不用带现金"}
 ];
 
 // 课文《寒假见闻》（部编/统编语文课文，逐字转写与教材完全一致）
 const STORY = [
-  {id:"st1", zh:"今年寒假，我们全家回北京看望了爷爷奶奶。", py:"Jīnnián hánjià, wǒmen quánjiā huí Běijīng kànwàngle yéye nǎinai.", en:"This winter vacation, our whole family went back to Beijing to visit Grandpa and Grandma."},
-  {id:"st2", zh:"爷爷奶奶带着我们去了好多地方，天安门、故宫、长城……", py:"Yéye nǎinai dàizhe wǒmen qùle hǎoduō dìfang, Tiān'ānmén, Gùgōng, Chángchéng...", en:"Grandpa and Grandma took us to many places: Tiananmen, the Forbidden City, the Great Wall..."},
-  {id:"st3", zh:"让我感觉最亲切的还是北京的胡同，因为那是爸爸小时候住过的地方。", py:"Ràng wǒ gǎnjué zuì qīnqiè de hái shì Běijīng de hútòng, yīnwèi nà shì bàba xiǎoshíhou zhùguo de dìfang.", en:"What felt most endearing to me were Beijing's hutongs, because that was where Dad lived as a child."},
-  {id:"st4", zh:"那天，爷爷带我去逛胡同。", py:"Nà tiān, yéye dài wǒ qù guàng hútòng.", en:"That day, Grandpa took me to stroll through the hutongs."},
-  {id:"st5", zh:"我们坐在人力车上，爷爷给我介绍，这是他们住过的四合院，那是爸爸小时候爬过的老槐树……", py:"Wǒmen zuò zài rénlìchē shang, yéye gěi wǒ jièshào, zhè shì tāmen zhùguo de sìhéyuàn, nà shì bàba xiǎoshíhou páguo de lǎohuáishù...", en:"Sitting in a rickshaw, Grandpa introduced to me: this was the courtyard house they lived in, and that was the old locust tree Dad climbed when he was little..."},
-  {id:"st6", zh:"蓝蓝的天、暖暖的阳光、弯弯曲曲的胡同，成为我难忘的老北京印象。", py:"Lánlán de tiān, nuǎnnuǎn de yángguāng, wānwān-qūqū de hútòng, chéngwéi wǒ nánwàng de lǎo Běijīng yìnxiàng.", en:"Blue skies, warm sunshine, and winding hutongs became my unforgettable impression of old Beijing."},
-  {id:"st7", zh:"北京既古老又现代。", py:"Běijīng jì gǔlǎo yòu xiàndài.", en:"Beijing is both ancient and modern."},
-  {id:"st8", zh:"到处都有共享单车、共享汽车，交通非常方便。", py:"Dàochù dōu yǒu gòngxiǎng dānchē, gòngxiǎng qìchē, jiāotōng fēicháng fāngbiàn.", en:"Everywhere there are shared bicycles and shared cars; transportation is very convenient."},
-  {id:"st9", zh:"现在人们出门不用带现金，去哪儿都可以用手机付款。", py:"Xiànzài rénmen chūmén bú yòng dài xiànjīn, qù nǎr dōu kěyǐ yòng shǒujī fùkuǎn.", en:"Nowadays people don't need to carry cash when going out; anywhere you go, you can pay with your phone."},
-  {id:"st10", zh:"我最喜欢的是小区门口的自助图书馆，奶奶用手机扫一下，我就借到了想看的书！", py:"Wǒ zuì xǐhuan de shì xiǎoqū ménkǒu de zìzhù túshūguǎn, nǎinai yòng shǒujī sǎo yíxià, wǒ jiù jièdàole xiǎng kàn de shū!", en:"What I liked most was the self-service library at the community entrance; Grandma scanned with her phone, and I borrowed the book I wanted to read!"},
-  {id:"st11", zh:"我喜欢北京，以后还会经常回来住住、看看。", py:"Wǒ xǐhuan Běijīng, yǐhòu hái huì jīngcháng huílái zhùzhu, kànkan.", en:"I love Beijing, and in the future I will often come back to stay and visit."}
+  {id:"st1", zh:"今年寒假，我们全家回北京看望了爷爷奶奶。", py:"Jīnnián hánjià, wǒmen quánjiā huí Běijīng kànwàngle yéye nǎinai.", en:"This winter vacation, our whole family went back to Beijing to visit Grandpa and Grandma.", jp:"今年の冬休み、私たち家族は北京に帰っておじいさんとおばあさんに会いに行きました。"},
+  {id:"st2", zh:"爷爷奶奶带着我们去了好多地方，天安门、故宫、长城……", py:"Yéye nǎinai dàizhe wǒmen qùle hǎoduō dìfang, Tiān'ānmén, Gùgōng, Chángchéng...", en:"Grandpa and Grandma took us to many places: Tiananmen, the Forbidden City, the Great Wall...", jp:"おじいさんとおばあさんは私たちをたくさんの場所に連れて行ってくれました。天安門、故宮、万里の長城……"},
+  {id:"st3", zh:"让我感觉最亲切的还是北京的胡同，因为那是爸爸小时候住过的地方。", py:"Ràng wǒ gǎnjué zuì qīnqiè de hái shì Běijīng de hútòng, yīnwèi nà shì bàba xiǎoshíhou zhùguo de dìfang.", en:"What felt most endearing to me were Beijing's hutongs, because that was where Dad lived as a child.", jp:"私にとって一番親しみを感じたのは北京の胡同でした。そこはお父さんが子供の頃に住んでいた場所だからです。"},
+  {id:"st4", zh:"那天，爷爷带我去逛胡同。", py:"Nà tiān, yéye dài wǒ qù guàng hútòng.", en:"That day, Grandpa took me to stroll through the hutongs.", jp:"その日、おじいさんは私を連れて胡同を散策しました。"},
+  {id:"st5", zh:"我们坐在人力车上，爷爷给我介绍，这是他们住过的四合院，那是爸爸小时候爬过的老槐树……", py:"Wǒmen zuò zài rénlìchē shang, yéye gěi wǒ jièshào, zhè shì tāmen zhùguo de sìhéyuàn, nà shì bàba xiǎoshíhou páguo de lǎohuáishù...", en:"Sitting in a rickshaw, Grandpa introduced to me: this was the courtyard house they lived in, and that was the old locust tree Dad climbed when he was little...", jp:"私たちは人力車に乗り、おじいさんが説明してくれました。ここは彼らが住んでいた四合院で、あそこはお父さんが子供の頃によく登った古い槐の木……"},
+  {id:"st6", zh:"蓝蓝的天、暖暖的阳光、弯弯曲曲的胡同，成为我难忘的老北京印象。", py:"Lánlán de tiān, nuǎnnuǎn de yángguāng, wānwān-qūqū de hútòng, chéngwéi wǒ nánwàng de lǎo Běijīng yìnxiàng.", en:"Blue skies, warm sunshine, and winding hutongs became my unforgettable impression of old Beijing.", jp:"青い空、暖かい日差し、曲がりくねった胡同、それらは私の忘れられない古き北京の印象になりました。"},
+  {id:"st7", zh:"北京既古老又现代。", py:"Běijīng jì gǔlǎo yòu xiàndài.", en:"Beijing is both ancient and modern.", jp:"北京は古くもあり、現代的でもあります。"},
+  {id:"st8", zh:"到处都有共享单车、共享汽车，交通非常方便。", py:"Dàochù dōu yǒu gòngxiǎng dānchē, gòngxiǎng qìchē, jiāotōng fēicháng fāngbiàn.", en:"Everywhere there are shared bicycles and shared cars; transportation is very convenient.", jp:"どこにでもシェア自転車やシェアカーがあり、交通はとても便利です。"},
+  {id:"st9", zh:"现在人们出门不用带现金，去哪儿都可以用手机付款。", py:"Xiànzài rénmen chūmén bú yòng dài xiànjīn, qù nǎr dōu kěyǐ yòng shǒujī fùkuǎn.", en:"Nowadays people don't need to carry cash when going out; anywhere you go, you can pay with your phone.", jp:"今、人々は外出する時に現金を持ち歩く必要がなく、どこでもスマホで支払いができます。"},
+  {id:"st10", zh:"我最喜欢的是小区门口的自助图书馆，奶奶用手机扫一下，我就借到了想看的书！", py:"Wǒ zuì xǐhuan de shì xiǎoqū ménkǒu de zìzhù túshūguǎn, nǎinai yòng shǒujī sǎo yíxià, wǒ jiù jièdàole xiǎng kàn de shū!", en:"What I liked most was the self-service library at the community entrance; Grandma scanned with her phone, and I borrowed the book I wanted to read!", jp:"私が一番好きなのは団地の入り口にある自助図書館です。おばあさんがスマホでスキャンすると、私は読みたい本を借りることができました！"},
+  {id:"st11", zh:"我喜欢北京，以后还会经常回来住住、看看。", py:"Wǒ xǐhuan Běijīng, yǐhòu hái huì jīngcháng huílái zhùzhu, kànkan.", en:"I love Beijing, and in the future I will often come back to stay and visit.", jp:"私は北京が好きです。これからもよく戻って来て、住んだり見物したりするつもりです。"}
 ];
 
 const VOCAB = [
-  {id:"vc1", zh:"寒假", py:"hánjià", meaning:"winter vacation", emoji:"⛄"},
-  {id:"vc2", zh:"爷爷奶奶", py:"yéye nǎinai", meaning:"grandpa and grandma", emoji:"👴👵"},
-  {id:"vc3", zh:"天安门", py:"Tiān'ānmén", meaning:"Tiananmen", emoji:"🏛️"},
-  {id:"vc4", zh:"故宫", py:"Gùgōng", meaning:"the Forbidden City", emoji:"🏯"},
-  {id:"vc5", zh:"长城", py:"Chángchéng", meaning:"the Great Wall", emoji:"🧱"},
-  {id:"vc6", zh:"胡同", py:"hútòng", meaning:"hutong alley", emoji:"🏘️"},
-  {id:"vc7", zh:"人力车", py:"rénlìchē", meaning:"rickshaw", emoji:"🛺"},
-  {id:"vc8", zh:"四合院", py:"sìhéyuàn", meaning:"courtyard house", emoji:"🏡"},
-  {id:"vc9", zh:"老槐树", py:"lǎohuáishù", meaning:"old locust tree", emoji:"🌳"},
-  {id:"vc10", zh:"印象", py:"yìnxiàng", meaning:"impression", emoji:"💭"},
-  {id:"vc11", zh:"共享单车", py:"gòngxiǎng dānchē", meaning:"shared bicycle", emoji:"🚲"},
-  {id:"vc12", zh:"方便", py:"fāngbiàn", meaning:"convenient", emoji:"👍"},
-  {id:"vc13", zh:"现金", py:"xiànjīn", meaning:"cash", emoji:"💵"},
-  {id:"vc14", zh:"自助图书馆", py:"zìzhù túshūguǎn", meaning:"self-service library", emoji:"📚"},
-  {id:"vc15", zh:"古老", py:"gǔlǎo", meaning:"ancient", emoji:"🏺"},
-  {id:"vc16", zh:"现代", py:"xiàndài", meaning:"modern", emoji:"🏙️"}
+  {id:"vc1", zh:"寒假", py:"hánjià", meaning:"winter vacation", meaningJp:"冬休み", emoji:"⛄"},
+  {id:"vc2", zh:"爷爷奶奶", py:"yéye nǎinai", meaning:"grandpa and grandma", meaningJp:"おじいさんとおばあさん", emoji:"👴👵"},
+  {id:"vc3", zh:"天安门", py:"Tiān'ānmén", meaning:"Tiananmen", meaningJp:"天安門", emoji:"🏛️"},
+  {id:"vc4", zh:"故宫", py:"Gùgōng", meaning:"the Forbidden City", meaningJp:"故宮", emoji:"🏯"},
+  {id:"vc5", zh:"长城", py:"Chángchéng", meaning:"the Great Wall", meaningJp:"万里の長城", emoji:"🧱"},
+  {id:"vc6", zh:"胡同", py:"hútòng", meaning:"hutong alley", meaningJp:"胡同（フートン）", emoji:"🏘️"},
+  {id:"vc7", zh:"人力车", py:"rénlìchē", meaning:"rickshaw", meaningJp:"人力車", emoji:"🛺"},
+  {id:"vc8", zh:"四合院", py:"sìhéyuàn", meaning:"courtyard house", meaningJp:"四合院", emoji:"🏡"},
+  {id:"vc9", zh:"老槐树", py:"lǎohuáishù", meaning:"old locust tree", meaningJp:"古い槐の木", emoji:"🌳"},
+  {id:"vc10", zh:"印象", py:"yìnxiàng", meaning:"impression", meaningJp:"印象", emoji:"💭"},
+  {id:"vc11", zh:"共享单车", py:"gòngxiǎng dānchē", meaning:"shared bicycle", meaningJp:"シェア自転車", emoji:"🚲"},
+  {id:"vc12", zh:"方便", py:"fāngbiàn", meaning:"convenient", meaningJp:"便利な", emoji:"👍"},
+  {id:"vc13", zh:"现金", py:"xiànjīn", meaning:"cash", meaningJp:"現金", emoji:"💵"},
+  {id:"vc14", zh:"自助图书馆", py:"zìzhù túshūguǎn", meaning:"self-service library", meaningJp:"自助図書館", emoji:"📚"},
+  {id:"vc15", zh:"古老", py:"gǔlǎo", meaning:"ancient", meaningJp:"古い、古くからの", emoji:"🏺"},
+  {id:"vc16", zh:"现代", py:"xiàndài", meaning:"modern", meaningJp:"現代の", emoji:"🏙️"}
 ];
 
 const QUIZ = [
@@ -730,6 +737,7 @@ const CLOZE_QUESTIONS = [
     after: "，我们全家回北京看望了爷爷奶奶。",
     py: "Jīnnián hánjià, wǒmen quánjiā huí Běijīng kànwàngle yéye nǎinai.",
     en: "This winter vacation, our whole family returned to Beijing to visit grandpa and grandma.",
+    jp: "今年の冬休み、私たち家族は北京に帰っておじいさんとおばあさんを訪ねました。",
     answerPy: "hán jià",
     options: ["寒假", "暑假", "春假", "周末"],
     hint: "课文原句 · 课文标题核心词汇",
@@ -743,6 +751,7 @@ const CLOZE_QUESTIONS = [
     after: "，因为那是爸爸小时候住过的地方。",
     py: "Ràng wǒ gǎnjué zuì qīnqiè de hái shì Běijīng de hútòng...",
     en: "What felt most dear to me were Beijing's hutongs...",
+    jp: "私にとって一番親しみを感じたのは北京の胡同でした……",
     answerPy: "hú tong",
     options: ["胡同", "大路", "车站", "花园"],
     hint: "课文原句 · 老北京传统街巷",
@@ -756,6 +765,7 @@ const CLOZE_QUESTIONS = [
     after: "上，爷爷给我介绍这是他们住过的四合院。",
     py: "Wǒmen zuò zài rénlìchē shang, yéye gěi wǒ jièshào...",
     en: "We sat on a rickshaw, and grandpa introduced to me...",
+    jp: "私たちは人力車に乗り、おじいさんが説明してくれました……",
     answerPy: "rén lì chē",
     options: ["人力车", "飞机", "轮船", "卡车"],
     hint: "课文原句 · 老北京特色传统交通工具",
@@ -769,6 +779,7 @@ const CLOZE_QUESTIONS = [
     after: "……蓝蓝的天、暖暖的阳光。",
     py: "Nà shì bàba xiǎoshíhou pá guo de lǎo huáishù...",
     en: "That was the old locust tree Dad climbed when he was little...",
+    jp: "それはお父さんが子供の頃に登った古い槐の木でした……",
     answerPy: "lǎo huái shù",
     options: ["老槐树", "柳树", "松树", "杨树"],
     hint: "课文原句 · 四合院里的老树",
@@ -782,6 +793,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "...chéngwéi wǒ nánwàng de lǎo Běijīng yìnxiàng.",
     en: "...became my unforgettable impression of old Beijing.",
+    jp: "……私の忘れられない古き北京の印象になりました。",
     answerPy: "yìn xiàng",
     options: ["印象", "影响", "感觉", "愿望"],
     hint: "课文原句 · 核心生词「印象」",
@@ -795,6 +807,7 @@ const CLOZE_QUESTIONS = [
     after: "又现代。到处都有共享单车、共享汽车。",
     py: "Běijīng jì gǔlǎo yòu xiàndài. Dàochù dōu yǒu gòngxiǎng dānchē...",
     en: "Beijing is both ancient and modern.",
+    jp: "北京は古くもあり現代的でもあります。",
     answerPy: "gǔ lǎo",
     options: ["古老", "古怪", "破旧", "年轻"],
     hint: "课文原句 · 与「现代」相对的词语",
@@ -808,6 +821,7 @@ const CLOZE_QUESTIONS = [
     after: "，去哪儿都可以用手机付款。",
     py: "Xiànzài rénmen chūmén búyòng dài xiànjīn...",
     en: "Nowadays people don't need to carry cash when going out...",
+    jp: "今、人々は外出する時に現金を持ち歩く必要がなく……",
     answerPy: "xiàn jīn",
     options: ["现金", "钥匙", "雨伞", "手表"],
     hint: "课文原句 · 现代移动支付生活",
@@ -821,6 +835,7 @@ const CLOZE_QUESTIONS = [
     after: "，奶奶用手机扫一下，我就借到了想看的书！",
     py: "Wǒ zuì xǐhuan de shì xiǎoqū ménkǒu de zìzhù túshūguǎn...",
     en: "What I liked most was the self-service library at the community entrance...",
+    jp: "私が一番好きなのは団地の入り口の自助図書館でした……",
     answerPy: "zì zhù tú shū guǎn",
     options: ["自助图书馆", "超级市场", "体育馆", "电影院"],
     hint: "课文原句 · 便民智能借书设施",
@@ -834,6 +849,7 @@ const CLOZE_QUESTIONS = [
     after: "去上学，既环保又能锻炼身体。",
     py: "Gēge měitiān qí gòngxiǎng dānchē qù shàngxué...",
     en: "Older brother rides a shared bike to school every day...",
+    jp: "兄は毎日シェア自転車に乗って学校へ行きます……",
     answerPy: "gòng xiǎng dān chē",
     options: ["共享单车", "人力车", "四合院", "老槐树"],
     hint: "微情境拓展 · 现代绿色低碳出行方式",
@@ -847,6 +863,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Zìcóng ménkǒu tōngle gāosù tiělù, wǒmen huí lǎojiā biànde fēicháng fāngbiàn.",
     en: "Ever since the high-speed rail opened, returning home has become very convenient.",
+    jp: "玄関先に高速鉄道が通ってから、実家に帰るのがとても便利になりました。",
     answerPy: "fāng biàn",
     options: ["方便", "古老", "印象", "现金"],
     hint: "微情境拓展 · 省时省力、不麻烦",
@@ -860,6 +877,7 @@ const CLOZE_QUESTIONS = [
     after: "，东、西、南、北四面都有房屋，中间是个院子。",
     py: "Lǎo Běijīng chuántǒng de sìhéyuàn...",
     en: "Traditional courtyard houses of old Beijing...",
+    jp: "昔ながらの北京の伝統的な四合院……",
     answerPy: "sì hé yuàn",
     options: ["四合院", "高楼", "别墅", "图书馆"],
     hint: "微情境拓展 · 中国传统合院式建筑",
@@ -873,6 +891,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Dì-yī cì dào Běijīng lǚyóu, hóngwěi de Gùgōng gěi wǒ liúxiàle shēnkè de yìnxiàng.",
     en: "The magnificent Forbidden City left a deep impression on me.",
+    jp: "壮大な故宮は私に深い印象を残しました。",
     answerPy: "yìn xiàng",
     options: ["印象", "现金", "方便", "现代"],
     hint: "微情境拓展 · 留在心里的深刻感受或记忆",
@@ -881,7 +900,7 @@ const CLOZE_QUESTIONS = [
 ];
 
 /* ---------------- STATE ---------------- */
-let storyIdx = 0, showPy = true, showEn = true;
+let storyIdx = 0, showPy = true, showEn = true, showJp = true;
 let charIdx = 0, currentWriter = null;
 let flashIdx = 0;
 let matchState = { pairs: [], selectedZh: null, selectedPy: null, wrong: 0, remaining: 0 };
@@ -1084,14 +1103,16 @@ function renderStory(){
   document.getElementById('storyZh').textContent = s.zh;
   document.getElementById('storyPy').textContent = showPy ? s.py : '';
   document.getElementById('storyEn').textContent = showEn ? s.en : '';
+  document.getElementById('storyJp').textContent = showJp ? (s.jp || '') : '';
 }
 function storyNext(){ storyIdx = (storyIdx+1) % STORY.length; renderStory(); }
 function storyPrev(){ storyIdx = (storyIdx-1+STORY.length) % STORY.length; renderStory(); }
 function toggleStoryPy(){ showPy = !showPy; document.getElementById('chipPy').classList.toggle('active', showPy); renderStory(); }
 function toggleStoryEn(){ showEn = !showEn; document.getElementById('chipEn').classList.toggle('active', showEn); renderStory(); }
+function toggleStoryJp(){ showJp = !showJp; document.getElementById('chipJp').classList.toggle('active', showJp); renderStory(); }
 
 /* ---------------- FULL TEXT (view + continuous read-aloud) ---------------- */
-let fullPy = true, fullEn = true;
+let fullPy = true, fullEn = true, fullJp = true;
 let fullPlaying = false, fullPlayIdx = 0;
 function renderFullText(){
   const list = document.getElementById('fullTextList');
@@ -1104,6 +1125,7 @@ function renderFullText(){
       (fullPy ? '<div class="sentence-py">'+s.py+'</div>' : '') +
       '<div class="sentence-zh">'+s.zh+'</div>' +
       (fullEn ? '<div class="sentence-en">'+s.en+'</div>' : '') +
+      (fullJp && s.jp ? '<div class="sentence-jp">'+s.jp+'</div>' : '') +
       '<div class="full-sent-voice-bar">' +
         '<button class="sent-action-btn" onclick="event.stopPropagation(); stopFullPlay(); stopFullMyPlay(); playClip(\''+s.id+'\',\''+s.zh+'\');" title="听原声示范">🔊 原声</button>' +
         '<span id="sent-voice-slot-'+i+'"></span>' +
@@ -1138,6 +1160,7 @@ async function updateFullTextVoiceStatus(){
 
 function toggleFullPy(){ fullPy = !fullPy; document.getElementById('chipFullPy').classList.toggle('active', fullPy); renderFullText(); }
 function toggleFullEn(){ fullEn = !fullEn; document.getElementById('chipFullEn').classList.toggle('active', fullEn); renderFullText(); }
+function toggleFullJp(){ fullJp = !fullJp; document.getElementById('chipFullJp').classList.toggle('active', fullJp); renderFullText(); }
 function toggleFullPlay(){ if(fullPlaying) stopFullPlay(); else startFullPlay(); }
 
 function startFullPlay(){
@@ -1269,7 +1292,7 @@ function renderChar(){
   document.getElementById('charPyBack').textContent = c.py;
   document.getElementById('charRadical').textContent = '偏旁部首: ' + c.radical;
   document.getElementById('charWords').innerHTML = '<strong>组词:</strong> ' + c.words;
-  document.getElementById('charMeaning').textContent = c.meaning + ' · ' + c.context;
+  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + ' · ' + c.context;
   document.getElementById('charCounter').textContent = (charIdx+1) + ' / ' + CHARACTERS.length;
 
   document.querySelectorAll('.char-pill').forEach((el, i)=>{
@@ -1434,7 +1457,7 @@ function renderFlash(){
   document.getElementById('flashZh').textContent = v.zh;
   document.getElementById('flashZhBack').textContent = v.zh;
   document.getElementById('flashPy').textContent = v.py;
-  document.getElementById('flashMeaning').textContent = v.meaning;
+  document.getElementById('flashMeaning').textContent = v.meaning + (v.meaningJp ? ' / ' + v.meaningJp : '');
   document.getElementById('flashCounter').textContent = (flashIdx+1) + ' / ' + VOCAB.length;
 }
 function flipFlash(){ document.getElementById('flashCard').classList.toggle('flipped'); }
@@ -1845,6 +1868,7 @@ function renderClozeQuestion(){
   slot.className = 'cloze-slot';
   document.getElementById('clozeAfter').textContent = q.after;
   document.getElementById('clozeEn').textContent = q.en || '';
+  document.getElementById('clozeJp').textContent = q.jp || '';
   document.getElementById('clozeHint').textContent = q.hint || (q.type === 'text' ? '课文原句' : '情境拓展');
 
   const optsContainer = document.getElementById('clozeOpts');

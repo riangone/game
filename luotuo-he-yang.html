@@ -74,6 +74,7 @@
   .sentence-zh{font-size:24px;font-weight:700;line-height:1.9;text-align:center;}
   .sentence-py{font-size:15px;color:var(--camel-dark);text-align:center;font-weight:700;min-height:20px;}
   .sentence-en{font-size:13px;color:var(--muted);text-align:center;}
+  .sentence-jp{font-size:13px;color:#8b5cf6;text-align:center;}
   .story-nav{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;max-width:560px;}
   .icon-btn{width:44px;height:44px;border-radius:50%;border:2px solid #fed7aa;background:#fff;font-size:18px;cursor:pointer;box-shadow:var(--shadow-pop);}
   .icon-btn:active{transform:translateY(2px);}
@@ -113,6 +114,7 @@
   .full-sentence .sentence-zh{font-size:19px;text-align:left;line-height:1.7;}
   .full-sentence .sentence-py{font-size:13px;text-align:left;color:var(--camel-dark);min-height:0;}
   .full-sentence .sentence-en{font-size:12px;text-align:left;color:var(--muted);margin-top:2px;}
+  .full-sentence .sentence-jp{font-size:12px;text-align:left;color:#8b5cf6;margin-top:2px;}
 
   /* character tian-zi-ge card */
   .char-wrap{width:100%;max-width:340px;perspective:1000px;}
@@ -224,6 +226,7 @@
   .cloze-slot.wrong{color:var(--danger-red);border-color:var(--danger-red);background:var(--red-soft);}
   @keyframes popIn{from{transform:scale(0.85);opacity:0;}to{transform:scale(1);opacity:1;}}
   .cloze-en{font-size:12px;color:var(--blue-sky);font-style:italic;text-align:center;}
+  .cloze-jp{font-size:12px;color:#8b5cf6;font-style:italic;text-align:center;}
   .cloze-hint-row{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 4px;}
   .cloze-hint-pill{font-size:12px;color:var(--muted);background:#f5f5f4;padding:3px 10px;border-radius:12px;}
   .cloze-speak-btn{background:#fff;border:1px solid #cbd5e1;border-radius:14px;padding:3px 10px;font-size:12px;font-weight:700;
@@ -382,6 +385,7 @@
         <div class="sentence-py" id="storyPy"></div>
         <div class="sentence-zh" id="storyZh"></div>
         <div class="sentence-en" id="storyEn"></div>
+        <div class="sentence-jp" id="storyJp"></div>
       </div>
       <!-- VOICE WAVE VISUALIZER -->
       <div class="voice-wave-panel" id="storyVoiceWave">
@@ -409,6 +413,7 @@
       <div class="toggle-row">
         <div class="chip active" id="chipPy" onclick="toggleStoryPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipEn" onclick="toggleStoryEn()">English</div>
+        <div class="chip active" id="chipJp" onclick="toggleStoryJp()">日本語</div>
         <div class="chip" onclick="goFull()">📜 全文朗读</div>
       </div>
       <button class="btn ghost" onclick="goHome()">返回菜单</button>
@@ -421,6 +426,7 @@
       <div class="toggle-row">
         <div class="chip active" id="chipFullPy" onclick="toggleFullPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipFullEn" onclick="toggleFullEn()">English</div>
+        <div class="chip active" id="chipFullJp" onclick="toggleFullJp()">日本語</div>
         <button class="btn clay small" id="fullPlayBtn" onclick="toggleFullPlay()">▶️ 原声连续朗读</button>
         <button class="btn gold small" id="fullMyPlayBtn" onclick="toggleFullMyPlay()">🎙️ 播放我的全文配音</button>
       </div>
@@ -562,6 +568,7 @@
             <span id="clozeAfter"></span>
           </div>
           <div class="cloze-en" id="clozeEn"></div>
+          <div class="cloze-jp" id="clozeJp"></div>
           <div class="cloze-hint-row">
             <span class="cloze-hint-pill" id="clozeHint"></span>
             <button class="cloze-speak-btn" id="clozeSpeakBtn" onclick="speakClozeSentence()">🔊 朗读句子</button>
@@ -650,58 +657,58 @@
 /* ---------------- DATA ---------------- */
 // 1. 课文《骆驼和羊》（教材原版逐字转写）
 const STORY = [
-  {id:"st1", zh:"骆驼长得高，羊长得矮。", py:"Luòtuo zhǎng de gāo, yáng zhǎng de ǎi.", en:"The camel was tall, and the sheep was short."},
-  {id:"st2", zh:"骆驼说：“长得高好。”羊说：“不对，长得矮才好呢。”", py:"Luòtuo shuō: \"Zhǎng de gāo hǎo.\" Yáng shuō: \"Bú duì, zhǎng de ǎi cái hǎo ne.\"", en:"The camel said, \"It is good to be tall.\" The sheep said, \"No, being short is better.\""},
-  {id:"st3", zh:"骆驼说：“我可以做一件事，证明高比矮好。”", py:"Luòtuo shuō: \"Wǒ kěyǐ zuò yí jiàn shìqing, zhèngmíng gāo bǐ ǎi hǎo.\"", en:"The camel said, \"I can do something to prove that being tall is better than being short.\""},
-  {id:"st4", zh:"羊说：“我也可以做一件事，证明矮比高好。”", py:"Yáng shuō: \"Wǒ yě kěyǐ zuò yí jiàn shìqing, zhèngmíng ǎi bǐ gāo hǎo.\"", en:"The sheep said, \"I can also do something to prove that being short is better than being tall.\""},
-  {id:"st5", zh:"他们俩走到一个园子旁边。", py:"Tāmen liǎ zǒu dào yí ge yuánzi pángbiān.", en:"The two of them walked over to the side of a garden."},
-  {id:"st6", zh:"园子四面有围墙，里面种了很多树，茂盛的枝叶伸出墙外来。", py:"Yuánzi sìmiàn yǒu wéiqiáng, lǐmiàn zhòng le hěnduō shù, màoshèng de zhīyè shēn chū qiáng wàilai.", en:"The garden had walls on all four sides, with many trees inside, and lush branches reached out over the wall."},
-  {id:"st7", zh:"骆驼一抬头就吃到了树叶。", py:"Luòtuo yì táitóu jiù chīdào le shùyè.", en:"The camel raised its head and easily ate the tree leaves."},
-  {id:"st8", zh:"羊抬起前腿，扒在墙上，脖子伸得老长，还是吃不着。", py:"Yáng tái qǐ qiántuǐ, bā zài qiáng shang, bózi shēn de lǎocháng, háishì chī bu zháo.", en:"The sheep raised its front legs onto the wall and stretched its neck long, but still couldn't reach them."},
-  {id:"st9", zh:"骆驼说：“你看，这可以证明了吧，高比矮好。”羊摇了摇头，不肯认输。", py:"Luòtuo shuō: \"Nǐ kàn, zhè kěyǐ zhèngmíng le ba, gāo bǐ ǎi hǎo.\" Yáng yáo le yáo tóu, bù kěn rènshū.", en:"The camel said, \"See, this proves it, being tall is better than being short.\" The sheep shook its head, refusing to admit defeat."},
-  {id:"st10", zh:"他们俩又走了几步，看见围墙上有个又窄又矮的门。", py:"Tāmen liǎ yòu zǒu le jǐ bù, kànjiàn wéiqiáng shang yǒu ge yòu zhǎi yòu ǎi de mén.", en:"The two of them walked a few steps and saw a very narrow and low gate in the wall."},
-  {id:"st11", zh:"羊大模大样地走进去吃园子里的草。", py:"Yáng dàmú-dàyàng de zǒujìnqu chī yuánzi lǐ de cǎo.", en:"The sheep strutted right in proudly to eat the grass in the garden."},
-  {id:"st12", zh:"骆驼跪下前腿，低下头，往门里钻，怎么也钻不进去。", py:"Luòtuo guìxià qiántuǐ, dīxià tóu, wǎng mén li zuān, zěnme yě zuān bu jìnqu.", en:"The camel knelt on its front legs and lowered its head to squeeze in, but could not enter no matter what."},
-  {id:"st13", zh:"羊说：“你看，这可以证明了吧，矮比高好。”骆驼摇了摇头，也不肯认输。", py:"Yáng shuō: \"Nǐ kàn, zhè kěyǐ zhèngmíng le ba, ǎi bǐ gāo hǎo.\" Luòtuo yáo le yáo tóu, yě bù kěn rènshū.", en:"The sheep said, \"See, this proves it, being short is better than being tall.\" The camel shook its head, also refusing to admit defeat."},
-  {id:"st14", zh:"他们俩找老牛评理。", py:"Tāmen liǎ zhǎo lǎoniú pínglǐ.", en:"The two of them went to the old ox to judge who was right."},
-  {id:"st15", zh:"老牛说：“你们俩都只看到自己的长处，看不到自己的短处，这是不对的。”", py:"Lǎoniú shuō: \"Nǐmen liǎ dōu zhǐ kàndào zìjǐ de chángchù, kàn bu dào zìjǐ de duǎnchù, zhè shì bú duì de.\"", en:"The old ox said, \"Both of you only see your own strengths and fail to see your own shortcomings; this is not right.\""}
+  {id:"st1", zh:"骆驼长得高，羊长得矮。", py:"Luòtuo zhǎng de gāo, yáng zhǎng de ǎi.", en:"The camel was tall, and the sheep was short.", jp:"らくだは背が高く、羊は背が低い。"},
+  {id:"st2", zh:"骆驼说：“长得高好。”羊说：“不对，长得矮才好呢。”", py:"Luòtuo shuō: \"Zhǎng de gāo hǎo.\" Yáng shuō: \"Bú duì, zhǎng de ǎi cái hǎo ne.\"", en:"The camel said, \"It is good to be tall.\" The sheep said, \"No, being short is better.\"", jp:"らくだは言いました。「背が高い方がいい。」羊は言いました。「いいえ、背が低い方がいいです。」"},
+  {id:"st3", zh:"骆驼说：“我可以做一件事，证明高比矮好。”", py:"Luòtuo shuō: \"Wǒ kěyǐ zuò yí jiàn shìqing, zhèngmíng gāo bǐ ǎi hǎo.\"", en:"The camel said, \"I can do something to prove that being tall is better than being short.\"", jp:"らくだは言いました。「私は一つのことをして、高い方が低いより良いことを証明できます。」"},
+  {id:"st4", zh:"羊说：“我也可以做一件事，证明矮比高好。”", py:"Yáng shuō: \"Wǒ yě kěyǐ zuò yí jiàn shìqing, zhèngmíng ǎi bǐ gāo hǎo.\"", en:"The sheep said, \"I can also do something to prove that being short is better than being tall.\"", jp:"羊は言いました。「私も一つのことをして、低い方が高いより良いことを証明できます。」"},
+  {id:"st5", zh:"他们俩走到一个园子旁边。", py:"Tāmen liǎ zǒu dào yí ge yuánzi pángbiān.", en:"The two of them walked over to the side of a garden.", jp:"二人はある庭園のそばまで歩いて行きました。"},
+  {id:"st6", zh:"园子四面有围墙，里面种了很多树，茂盛的枝叶伸出墙外来。", py:"Yuánzi sìmiàn yǒu wéiqiáng, lǐmiàn zhòng le hěnduō shù, màoshèng de zhīyè shēn chū qiáng wàilai.", en:"The garden had walls on all four sides, with many trees inside, and lush branches reached out over the wall.", jp:"庭園の四方には塀があり、中にはたくさんの木が植えられていて、生い茂った枝葉が塀の外にまで伸びていました。"},
+  {id:"st7", zh:"骆驼一抬头就吃到了树叶。", py:"Luòtuo yì táitóu jiù chīdào le shùyè.", en:"The camel raised its head and easily ate the tree leaves.", jp:"らくだは頭を上げるだけで木の葉を食べることができました。"},
+  {id:"st8", zh:"羊抬起前腿，扒在墙上，脖子伸得老长，还是吃不着。", py:"Yáng tái qǐ qiántuǐ, bā zài qiáng shang, bózi shēn de lǎocháng, háishì chī bu zháo.", en:"The sheep raised its front legs onto the wall and stretched its neck long, but still couldn't reach them.", jp:"羊は前足を上げて塀にかけ、首をうんと長く伸ばしましたが、それでも届きませんでした。"},
+  {id:"st9", zh:"骆驼说：“你看，这可以证明了吧，高比矮好。”羊摇了摇头，不肯认输。", py:"Luòtuo shuō: \"Nǐ kàn, zhè kěyǐ zhèngmíng le ba, gāo bǐ ǎi hǎo.\" Yáng yáo le yáo tóu, bù kěn rènshū.", en:"The camel said, \"See, this proves it, being tall is better than being short.\" The sheep shook its head, refusing to admit defeat.", jp:"らくだは言いました。「ほら、これで証明できたでしょう、高い方が低いより良いと。」羊は頭を振って、負けを認めようとしませんでした。"},
+  {id:"st10", zh:"他们俩又走了几步，看见围墙上有个又窄又矮的门。", py:"Tāmen liǎ yòu zǒu le jǐ bù, kànjiàn wéiqiáng shang yǒu ge yòu zhǎi yòu ǎi de mén.", en:"The two of them walked a few steps and saw a very narrow and low gate in the wall.", jp:"二人はさらに数歩歩き、塀にとても狭くて低い門があるのを見つけました。"},
+  {id:"st11", zh:"羊大模大样地走进去吃园子里的草。", py:"Yáng dàmú-dàyàng de zǒujìnqu chī yuánzi lǐ de cǎo.", en:"The sheep strutted right in proudly to eat the grass in the garden.", jp:"羊は堂々と歩いて中に入り、庭園の中の草を食べました。"},
+  {id:"st12", zh:"骆驼跪下前腿，低下头，往门里钻，怎么也钻不进去。", py:"Luòtuo guìxià qiántuǐ, dīxià tóu, wǎng mén li zuān, zěnme yě zuān bu jìnqu.", en:"The camel knelt on its front legs and lowered its head to squeeze in, but could not enter no matter what.", jp:"らくだは前足を折って跪き、頭を下げて門をくぐろうとしましたが、どうしても入ることができませんでした。"},
+  {id:"st13", zh:"羊说：“你看，这可以证明了吧，矮比高好。”骆驼摇了摇头，也不肯认输。", py:"Yáng shuō: \"Nǐ kàn, zhè kěyǐ zhèngmíng le ba, ǎi bǐ gāo hǎo.\" Luòtuo yáo le yáo tóu, yě bù kěn rènshū.", en:"The sheep said, \"See, this proves it, being short is better than being tall.\" The camel shook its head, also refusing to admit defeat.", jp:"羊は言いました。「ほら、これで証明できたでしょう、低い方が高いより良いと。」らくだも頭を振って、負けを認めようとしませんでした。"},
+  {id:"st14", zh:"他们俩找老牛评理。", py:"Tāmen liǎ zhǎo lǎoniú pínglǐ.", en:"The two of them went to the old ox to judge who was right.", jp:"二人は年老いた牛のところへ判断してもらいに行きました。"},
+  {id:"st15", zh:"老牛说：“你们俩都只看到自己的长处，看不到自己的短处，这是不对的。”", py:"Lǎoniú shuō: \"Nǐmen liǎ dōu zhǐ kàndào zìjǐ de chángchù, kàn bu dào zìjǐ de duǎnchù, zhè shì bú duì de.\"", en:"The old ox said, \"Both of you only see your own strengths and fail to see your own shortcomings; this is not right.\"", jp:"年老いた牛は言いました。「あなたたちは二人とも自分の長所しか見えず、自分の短所が見えていません。それは良くないことです。」"}
 ];
 
 // 2. 课后生字表 (15 Characters - 课本原图)
 const CHARACTERS = [
-  {id:"zi1", zh:"骆", py:"luò", radical:"马 (马字旁)", radicalBadge:"马 —— 骆", words:"骆驼、白骆驼", meaning:"camel", context:"骆驼长得高，羊长得矮"},
-  {id:"zi2", zh:"驼", py:"tuó", radical:"马 (马字旁)", radicalBadge:null, words:"骆驼、驼背、驼绒", meaning:"camel / humpbacked", context:"骆驼长得高，羊长得矮"},
-  {id:"zi3", zh:"矮", py:"ǎi", radical:"矢 (矢字旁)", radicalBadge:"矢 —— 矮", words:"高矮、矮小、又窄又矮", meaning:"short / low", context:"羊长得矮 / 又窄又矮的门"},
-  {id:"zi4", zh:"件", py:"jiàn", radical:"亻 (单人旁)", radicalBadge:null, words:"事情、一件事、条件", meaning:"item / matter / piece", context:"我可以做一件事"},
-  {id:"zi5", zh:"比", py:"bǐ", radical:"比 (比字部)", radicalBadge:null, words:"比较、高比矮好、对比", meaning:"compare / than", context:"证明高比矮好"},
-  {id:"zi6", zh:"俩", py:"liǎ", radical:"亻 (单人旁)", radicalBadge:null, words:"他们俩、俩人、哥俩", meaning:"two people / pair", context:"他们俩走到一个园子旁边"},
-  {id:"zi7", zh:"扒", py:"bā", radical:"扌 (提手旁)", radicalBadge:null, words:"扒在墙上、扒开、扒拉", meaning:"hold on to / dig / pull", context:"羊抬起前腿，扒在墙上"},
-  {id:"zi8", zh:"肯", py:"kěn", radical:"月 (肉月底)", radicalBadge:null, words:"不肯、肯定、肯认输", meaning:"willing to / agree", context:"羊摇了摇头，不肯认输"},
-  {id:"zi9", zh:"输", py:"shū", radical:"车 (车字旁)", radicalBadge:null, words:"认输、输赢、服输", meaning:"lose / defeat", context:"羊摇了摇头，不肯认输"},
-  {id:"zi10", zh:"窄", py:"zhǎi", radical:"穴 (穴宝盖)", radicalBadge:null, words:"又窄又矮、窄小、狭窄", meaning:"narrow / tight", context:"看见围墙上有个又窄又矮的门"},
-  {id:"zi11", zh:"跪", py:"guì", radical:"足 (足字旁)", radicalBadge:null, words:"跪下、下跪、跪拜", meaning:"kneel", context:"骆驼跪下前腿，低下头"},
-  {id:"zi12", zh:"钻", py:"zuān", radical:"钅 (金字旁)", radicalBadge:null, words:"往门里钻、钻进去、钻研", meaning:"crawl into / bore / penetrate", context:"往门里钻，怎么也钻不进去"},
-  {id:"zi13", zh:"找", py:"zhǎo", radical:"扌 (提手旁)", radicalBadge:null, words:"找老牛、寻找、找到", meaning:"look for / seek", context:"他们俩找老牛评理"},
-  {id:"zi14", zh:"评", py:"píng", radical:"讠 (言字旁)", radicalBadge:null, words:"评理、批评、评价", meaning:"judge / evaluate / comment", context:"他们俩找老牛评理"},
-  {id:"zi15", zh:"短", py:"duǎn", radical:"矢 (矢字旁)", radicalBadge:null, words:"短处、长短、短小", meaning:"short / shortcoming", context:"看不到自己的短处"}
+  {id:"zi1", zh:"骆", py:"luò", radical:"马 (马字旁)", radicalBadge:"马 —— 骆", words:"骆驼、白骆驼", meaning:"camel", meaningJp:"らくだ", context:"骆驼长得高，羊长得矮"},
+  {id:"zi2", zh:"驼", py:"tuó", radical:"马 (马字旁)", radicalBadge:null, words:"骆驼、驼背、驼绒", meaning:"camel / humpbacked", meaningJp:"らくだ／背が曲がった", context:"骆驼长得高，羊长得矮"},
+  {id:"zi3", zh:"矮", py:"ǎi", radical:"矢 (矢字旁)", radicalBadge:"矢 —— 矮", words:"高矮、矮小、又窄又矮", meaning:"short / low", meaningJp:"背が低い", context:"羊长得矮 / 又窄又矮的门"},
+  {id:"zi4", zh:"件", py:"jiàn", radical:"亻 (单人旁)", radicalBadge:null, words:"事情、一件事、条件", meaning:"item / matter / piece", meaningJp:"件、事柄（量詞）", context:"我可以做一件事"},
+  {id:"zi5", zh:"比", py:"bǐ", radical:"比 (比字部)", radicalBadge:null, words:"比较、高比矮好、对比", meaning:"compare / than", meaningJp:"比べる、～より", context:"证明高比矮好"},
+  {id:"zi6", zh:"俩", py:"liǎ", radical:"亻 (单人旁)", radicalBadge:null, words:"他们俩、俩人、哥俩", meaning:"two people / pair", meaningJp:"二人", context:"他们俩走到一个园子旁边"},
+  {id:"zi7", zh:"扒", py:"bā", radical:"扌 (提手旁)", radicalBadge:null, words:"扒在墙上、扒开、扒拉", meaning:"hold on to / dig / pull", meaningJp:"しがみつく、掘る", context:"羊抬起前腿，扒在墙上"},
+  {id:"zi8", zh:"肯", py:"kěn", radical:"月 (肉月底)", radicalBadge:null, words:"不肯、肯定、肯认输", meaning:"willing to / agree", meaningJp:"～する気がある、承知する", context:"羊摇了摇头，不肯认输"},
+  {id:"zi9", zh:"输", py:"shū", radical:"车 (车字旁)", radicalBadge:null, words:"认输、输赢、服输", meaning:"lose / defeat", meaningJp:"負ける", context:"羊摇了摇头，不肯认输"},
+  {id:"zi10", zh:"窄", py:"zhǎi", radical:"穴 (穴宝盖)", radicalBadge:null, words:"又窄又矮、窄小、狭窄", meaning:"narrow / tight", meaningJp:"狭い", context:"看见围墙上有个又窄又矮的门"},
+  {id:"zi11", zh:"跪", py:"guì", radical:"足 (足字旁)", radicalBadge:null, words:"跪下、下跪、跪拜", meaning:"kneel", meaningJp:"ひざまずく", context:"骆驼跪下前腿，低下头"},
+  {id:"zi12", zh:"钻", py:"zuān", radical:"钅 (金字旁)", radicalBadge:null, words:"往门里钻、钻进去、钻研", meaning:"crawl into / bore / penetrate", meaningJp:"もぐり込む、穴をあける", context:"往门里钻，怎么也钻不进去"},
+  {id:"zi13", zh:"找", py:"zhǎo", radical:"扌 (提手旁)", radicalBadge:null, words:"找老牛、寻找、找到", meaning:"look for / seek", meaningJp:"探す", context:"他们俩找老牛评理"},
+  {id:"zi14", zh:"评", py:"píng", radical:"讠 (言字旁)", radicalBadge:null, words:"评理、批评、评价", meaning:"judge / evaluate / comment", meaningJp:"判定する、評する", context:"他们俩找老牛评理"},
+  {id:"zi15", zh:"短", py:"duǎn", radical:"矢 (矢字旁)", radicalBadge:null, words:"短处、长短、短小", meaning:"short / shortcoming", meaningJp:"短い、短所", context:"看不到自己的短处"}
 ];
 
 // 3. 课后词语表 (14 Words - 课本原图)
 const WORDS = [
-  {id:"ci1", zh:"事情", py:"shìqing", meaning:"matter / affair / thing", emoji:"📝", context:"我可以做一件事，证明高比矮好", tag:"重点词语"},
-  {id:"ci2", zh:"证明", py:"zhèngmíng", meaning:"prove / certify / proof", emoji:"🔍", context:"这可以证明了吧，高比矮好", tag:"重点词语"},
-  {id:"ci3", zh:"旁边", py:"pángbiān", meaning:"beside / next to / side", emoji:"👉", context:"他们俩走到一个园子旁边", tag:"重点词语"},
-  {id:"ci4", zh:"围墙", py:"wéiqiáng", meaning:"surrounding wall / courtyard wall", emoji:"🧱", context:"园子四面有围墙", tag:"重点词语"},
-  {id:"ci5", zh:"茂盛", py:"màoshèng", meaning:"luxuriant / lush (foliage)", emoji:"🌿", context:"茂盛的枝叶伸出墙外来", tag:"重点词语"},
-  {id:"ci6", zh:"枝叶", py:"zhīyè", meaning:"branches and leaves / foliage", emoji:"🍃", context:"茂盛的枝叶伸出墙外来", tag:"重点词语"},
-  {id:"ci7", zh:"抬头", py:"táitóu", meaning:"raise one's head", emoji:"🦒", context:"骆驼一抬头就吃到了树叶", tag:"重点词语"},
-  {id:"ci8", zh:"脖子", py:"bózi", meaning:"neck", emoji:"🧣", context:"脖子伸得老长，还是吃不着", tag:"重点词语"},
-  {id:"ci9", zh:"摇头", py:"yáotóu", meaning:"shake one's head", emoji:"🙅", context:"羊摇了摇头，不肯认输", tag:"重点词语"},
-  {id:"ci10", zh:"大模大样", py:"dàmú-dàyàng", meaning:"proudly / swaggering / strutting", emoji:"🚶", context:"羊大模大样地走进去吃园子里的草", tag:"成语词汇"},
-  {id:"ci11", zh:"进去", py:"jìnqù", meaning:"go in / enter", emoji:"🚪", context:"羊大模大样地走进去 / 怎么也钻不进去", tag:"重点词语"},
-  {id:"ci12", zh:"自己", py:"zìjǐ", meaning:"oneself / own", emoji:"👤", context:"只看到自己的长处", tag:"重点词语"},
-  {id:"ci13", zh:"长处", py:"chángchù", meaning:"strength / merit / strong point", emoji:"🌟", context:"只看到自己的长处", tag:"哲理词语"},
-  {id:"ci14", zh:"短处", py:"duǎnchù", meaning:"shortcoming / defect / weak point", emoji:"📉", context:"看不到自己的短处", tag:"哲理词语"}
+  {id:"ci1", zh:"事情", py:"shìqing", meaning:"matter / affair / thing", meaningJp:"事柄、用事", emoji:"📝", context:"我可以做一件事，证明高比矮好", tag:"重点词语"},
+  {id:"ci2", zh:"证明", py:"zhèngmíng", meaning:"prove / certify / proof", meaningJp:"証明する", emoji:"🔍", context:"这可以证明了吧，高比矮好", tag:"重点词语"},
+  {id:"ci3", zh:"旁边", py:"pángbiān", meaning:"beside / next to / side", meaningJp:"そば、隣", emoji:"👉", context:"他们俩走到一个园子旁边", tag:"重点词语"},
+  {id:"ci4", zh:"围墙", py:"wéiqiáng", meaning:"surrounding wall / courtyard wall", meaningJp:"囲い塀", emoji:"🧱", context:"园子四面有围墙", tag:"重点词语"},
+  {id:"ci5", zh:"茂盛", py:"màoshèng", meaning:"luxuriant / lush (foliage)", meaningJp:"生い茂っている", emoji:"🌿", context:"茂盛的枝叶伸出墙外来", tag:"重点词语"},
+  {id:"ci6", zh:"枝叶", py:"zhīyè", meaning:"branches and leaves / foliage", meaningJp:"枝葉", emoji:"🍃", context:"茂盛的枝叶伸出墙外来", tag:"重点词语"},
+  {id:"ci7", zh:"抬头", py:"táitóu", meaning:"raise one's head", meaningJp:"頭を上げる", emoji:"🦒", context:"骆驼一抬头就吃到了树叶", tag:"重点词语"},
+  {id:"ci8", zh:"脖子", py:"bózi", meaning:"neck", meaningJp:"首", emoji:"🧣", context:"脖子伸得老长，还是吃不着", tag:"重点词语"},
+  {id:"ci9", zh:"摇头", py:"yáotóu", meaning:"shake one's head", meaningJp:"首を振る", emoji:"🙅", context:"羊摇了摇头，不肯认输", tag:"重点词语"},
+  {id:"ci10", zh:"大模大样", py:"dàmú-dàyàng", meaning:"proudly / swaggering / strutting", meaningJp:"堂々と、偉そうに", emoji:"🚶", context:"羊大模大样地走进去吃园子里的草", tag:"成语词汇"},
+  {id:"ci11", zh:"进去", py:"jìnqù", meaning:"go in / enter", meaningJp:"入っていく", emoji:"🚪", context:"羊大模大样地走进去 / 怎么也钻不进去", tag:"重点词语"},
+  {id:"ci12", zh:"自己", py:"zìjǐ", meaning:"oneself / own", meaningJp:"自分", emoji:"👤", context:"只看到自己的长处", tag:"重点词语"},
+  {id:"ci13", zh:"长处", py:"chángchù", meaning:"strength / merit / strong point", meaningJp:"長所", emoji:"🌟", context:"只看到自己的长处", tag:"哲理词语"},
+  {id:"ci14", zh:"短处", py:"duǎnchù", meaning:"shortcoming / defect / weak point", meaningJp:"短所", emoji:"📉", context:"看不到自己的短处", tag:"哲理词语"}
 ];
 
 const ALL_VOCAB = WORDS;
@@ -764,6 +771,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Luòtuo zhǎng de gāo, yáng zhǎng de ǎi.",
     en: "The camel was tall, and the sheep was short.",
+    jp: "らくだは背が高く、羊は背が低い。",
     answerPy: "ǎi",
     options: ["矮", "短", "高", "窄"],
     hint: "课文首句 · 课后生字「矮」",
@@ -777,6 +785,7 @@ const CLOZE_QUESTIONS = [
     after: "高比矮好。”",
     py: "Luòtuo shuō: Wǒ kěyǐ zuò yí jiàn shìqing, zhèngmíng gāo bǐ ǎi hǎo.",
     en: "The camel said: I can do something to prove tall is better than short.",
+    jp: "らくだは言いました。「私は一つのことをして、高い方が低いより良いことを証明できます。」",
     answerPy: "zhèng míng",
     options: ["证明", "说明", "要求", "评理"],
     hint: "课文原句 · 课后重点词语「证明」",
@@ -790,6 +799,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Tāmen liǎ zǒu dào yí ge yuánzi pángbiān.",
     en: "The two of them walked over to the side of a garden.",
+    jp: "二人はある庭園のそばまで歩いて行きました。",
     answerPy: "páng biān",
     options: ["旁边", "中间", "上头", "底下"],
     hint: "课文原句 · 课后重点词语「旁边」",
@@ -803,6 +813,7 @@ const CLOZE_QUESTIONS = [
     after: "的枝叶伸出墙外来。",
     py: "Yuánzi sìmiàn yǒu wéiqiáng... màoshèng de zhīyè shēn chū qiáng wàilai.",
     en: "The garden had walls... lush branches reached out over the wall.",
+    jp: "庭園には塀があり……生い茂った枝葉が塀の外に伸びていました。",
     answerPy: "mào shèng",
     options: ["茂盛", "美丽", "高大", "生动"],
     hint: "课文原句 · 课后重点词语「茂盛」",
@@ -816,6 +827,7 @@ const CLOZE_QUESTIONS = [
     after: "在墙上，脖子伸得老长，还是吃不着。",
     py: "Yáng tái qǐ qiántuǐ, bā zài qiáng shang...",
     en: "The sheep raised its front legs onto the wall, stretching its neck...",
+    jp: "羊は前足を上げて塀にかけ、首を伸ばして……",
     answerPy: "bā",
     options: ["扒", "趴", "跳", "站"],
     hint: "课文原句 · 课后生字「扒」",
@@ -829,6 +841,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Yáng yáo le yáo tóu, bù kěn rènshū.",
     en: "The sheep shook its head, refusing to admit defeat.",
+    jp: "羊は頭を振って、負けを認めようとしませんでした。",
     answerPy: "rèn shū",
     options: ["认输", "低头", "回家", "评理"],
     hint: "课文原句 · 课后生字「输」的词汇",
@@ -842,6 +855,7 @@ const CLOZE_QUESTIONS = [
     after: "又矮的门。",
     py: "Kànjiàn wéiqiáng shang yǒu ge yòu zhǎi yòu ǎi de mén.",
     en: "Saw a very narrow and low gate in the wall.",
+    jp: "塀にとても狭くて低い門があるのを見つけました。",
     answerPy: "zhǎi",
     options: ["窄", "高", "长", "大"],
     hint: "课文原句 · 课后生字「窄」",
@@ -855,6 +869,7 @@ const CLOZE_QUESTIONS = [
     after: "，看不到自己的短处。”",
     py: "Lǎoniú shuō: Nǐmen liǎ dōu zhǐ kàndào zìjǐ de chángchù...",
     en: "The old ox said: Both of you only see your own strengths...",
+    jp: "年老いた牛は言いました。「あなたたちは自分の長所しか見えていません……」",
     answerPy: "cháng chù",
     options: ["长处", "好处", "本领", "优点"],
     hint: "课文点睛之笔 · 课后重点词语「长处」",
@@ -868,6 +883,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Dàjiā yào hùxiāng bāngzhù... bù néng zhǐ dīng zhe biérén de duǎnchù.",
     en: "We should help each other and not just focus on others' shortcomings.",
+    jp: "互いに助け合うべきで、他人の短所ばかり見てはいけません。",
     answerPy: "duǎn chù",
     options: ["短处", "事情", "脖子", "枝叶"],
     hint: "微情境拓展 · 缺点、不足之处",
@@ -881,6 +897,7 @@ const CLOZE_QUESTIONS = [
     after: "，绿树成荫。",
     py: "Xiàtiān dào le, xiǎohé biān de liǔshù zhǎng de fēicháng màoshèng...",
     en: "Summer arrived, the willow trees by the river grew luxuriantly...",
+    jp: "夏になり、川辺の柳の木がとても生い茂りました。",
     answerPy: "mào shèng",
     options: ["茂盛", "狭窄", "短小", "认输"],
     hint: "微情境拓展 · 植物生长旺盛、生机盎然",
@@ -894,6 +911,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Suīrán luòhòu le, dàn yùndòngyuán... jué bù qīngyì rènshū.",
     en: "Although behind, the athlete persevered and never gave up easily.",
+    jp: "遅れていても、選手は最後まで頑張り抜き、簡単には負けを認めませんでした。",
     answerPy: "rèn shū",
     options: ["认输", "评理", "抬头", "跪下"],
     hint: "微情境拓展 · 承认失败、放弃",
@@ -907,6 +925,7 @@ const CLOZE_QUESTIONS = [
     after: "了这个结论是完全正确的。",
     py: "Kēxué shíyàn yòng xiángshí de shùjù, zhèngmíng le zhè ge jiélùn...",
     en: "Scientific experiments proved that this conclusion is completely correct.",
+    jp: "科学実験は詳細なデータで、この結論が完全に正しいことを証明しました。",
     answerPy: "zhèng míng",
     options: ["证明", "大模大样", "旁边", "枝叶"],
     hint: "微情境拓展 · 用证据证实",
@@ -915,7 +934,7 @@ const CLOZE_QUESTIONS = [
 ];
 
 /* ---------------- STATE ---------------- */
-let storyIdx = 0, showPy = true, showEn = true;
+let storyIdx = 0, showPy = true, showEn = true, showJp = true;
 let charIdx = 0;
 let flashIdx = 0;
 let matchMode = 'chars'; // chars, words, all
@@ -1056,17 +1075,20 @@ function renderStory(){
   document.getElementById('storyZh').textContent = s.zh;
   document.getElementById('storyPy').textContent = s.py;
   document.getElementById('storyEn').textContent = s.en;
+  document.getElementById('storyJp').textContent = s.jp || '';
   document.getElementById('storyPy').style.display = showPy ? 'block' : 'none';
   document.getElementById('storyEn').style.display = showEn ? 'block' : 'none';
+  document.getElementById('storyJp').style.display = showJp ? 'block' : 'none';
   updateStoryVoiceUI();
 }
 function storyPrev(){ if(storyIdx > 0){ storyIdx--; renderStory(); playClip(STORY[storyIdx].id, STORY[storyIdx].zh); } }
 function storyNext(){ if(storyIdx < STORY.length - 1){ storyIdx++; renderStory(); playClip(STORY[storyIdx].id, STORY[storyIdx].zh); } }
 function toggleStoryPy(){ showPy = !showPy; document.getElementById('chipPy').classList.toggle('active', showPy); renderStory(); }
 function toggleStoryEn(){ showEn = !showEn; document.getElementById('chipEn').classList.toggle('active', showEn); renderStory(); }
+function toggleStoryJp(){ showJp = !showJp; document.getElementById('chipJp').classList.toggle('active', showJp); renderStory(); }
 
 /* ---------------- FULL TEXT (全文朗读与配音) ---------------- */
-let fullPlaying = false, fullPlayIdx = 0, fullShowPy = true, fullShowEn = true;
+let fullPlaying = false, fullPlayIdx = 0, fullShowPy = true, fullShowEn = true, fullShowJp = true;
 let fullMyPlaying = false;
 
 function renderFullText(){
@@ -1080,6 +1102,7 @@ function renderFullText(){
       <div class="sentence-py" style="display:${fullShowPy?'block':'none'}">${s.py}</div>
       <div class="sentence-zh">${idx+1}. ${s.zh}</div>
       <div class="sentence-en" style="display:${fullShowEn?'block':'none'}">${s.en}</div>
+      <div class="sentence-jp" style="display:${fullShowJp?'block':'none'}">${s.jp||''}</div>
       <div class="full-sent-voice-bar" id="full-voice-bar-${idx}">
         <span class="sent-voice-tag" id="voice-tag-${idx}">加载录音中...</span>
       </div>
@@ -1125,6 +1148,7 @@ async function updateFullTextVoiceBars(){
 
 function toggleFullPy(){ fullShowPy = !fullShowPy; document.getElementById('chipFullPy').classList.toggle('active', fullShowPy); renderFullText(); }
 function toggleFullEn(){ fullShowEn = !fullShowEn; document.getElementById('chipFullEn').classList.toggle('active', fullShowEn); renderFullText(); }
+function toggleFullJp(){ fullShowJp = !fullShowJp; document.getElementById('chipFullJp').classList.toggle('active', fullShowJp); renderFullText(); }
 
 function highlightFullSentence(idx){
   document.querySelectorAll('.full-sentence').forEach((el, i)=>{
@@ -1273,7 +1297,7 @@ function renderChar(){
   document.getElementById('charPyBack').textContent = c.py;
   document.getElementById('charRadical').textContent = '偏旁部首: ' + c.radical;
   document.getElementById('charWords').innerHTML = '<strong>组词:</strong> ' + c.words;
-  document.getElementById('charMeaning').textContent = c.meaning + ' · ' + c.context;
+  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + ' · ' + c.context;
   document.getElementById('charCounter').textContent = (charIdx+1) + ' / ' + CHARACTERS.length;
 
   const badgeBox = document.getElementById('charRadicalBadgeContainer');
@@ -1432,7 +1456,7 @@ function renderFlash(){
   document.getElementById('flashZh').textContent = w.zh;
   document.getElementById('flashZhBack').textContent = w.zh;
   document.getElementById('flashPy').textContent = w.py;
-  document.getElementById('flashMeaning').textContent = w.meaning;
+  document.getElementById('flashMeaning').textContent = w.meaning + (w.meaningJp ? ' / ' + w.meaningJp : '');
   document.getElementById('flashContext').textContent = '例句: ' + w.context;
   document.getElementById('flashCounter').textContent = (flashIdx + 1) + ' / ' + WORDS.length;
 }
@@ -1744,6 +1768,7 @@ function loadClozeQuestion(){
   document.getElementById('clozeBefore').textContent = q.before;
   document.getElementById('clozeAfter').textContent = q.after;
   document.getElementById('clozeEn').textContent = q.en;
+  document.getElementById('clozeJp').textContent = q.jp || '';
   document.getElementById('clozeHint').textContent = '💡 ' + q.hint;
 
   const slot = document.getElementById('clozeSlot');
