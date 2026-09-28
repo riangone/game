@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>1944: 回旋大师 - 太平洋空战 (The Loop Master)</title>
+<title>1944: 雷霆空战 - 太平洋决战 (Thunder Strike)</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,700;1,700&family=Outfit:wght@400;600;800&display=swap');
 
@@ -141,6 +141,8 @@
     font-weight: 600;
   }
 
+  /* 信息层：所有战况数据一律收拢在屏幕顶部，
+     不占用中/下部画面与底部操作按键区域，保证视野与操作零遮挡 */
   #hud-overlay {
     position: absolute;
     inset: 0;
@@ -148,8 +150,10 @@
     z-index: 15;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    padding: 42px 14px 14px 14px;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 6px;
+    padding: 42px 14px 0 14px;
   }
 
   .hud-top {
@@ -186,13 +190,12 @@
     font-weight: 700;
   }
 
+  /* 随顶部信息流排列（非绝对定位），避免遮挡战斗区域中部 */
   #boss-bar-container {
     display: none;
-    position: absolute;
-    top: 104px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 82%;
+    width: 100%;
+    max-width: 420px;
+    align-self: center;
     background: rgba(15, 23, 42, 0.85);
     border: 1px solid var(--red);
     padding: 6px 12px;
@@ -229,22 +232,24 @@
     transition: width 0.1s linear;
   }
 
+  /* 警报条：随顶部信息流排列的窄幅胶囊条，不落入中部弹幕规避区域，且不吞掉触控输入 */
   #warning-banner {
     display: none;
-    position: absolute;
-    top: 38%;
-    left: 0;
-    width: 100%;
-    background: linear-gradient(90deg, rgba(220,38,38,0.1), rgba(220,38,38,0.9) 20%, rgba(220,38,38,0.9) 80%, rgba(220,38,38,0.1));
-    border-top: 2px solid #ef4444;
-    border-bottom: 2px solid #ef4444;
+    align-self: center;
+    width: auto;
+    max-width: 92%;
+    pointer-events: none;
+    background: linear-gradient(90deg, rgba(220,38,38,0.15), rgba(220,38,38,0.92) 15%, rgba(220,38,38,0.92) 85%, rgba(220,38,38,0.15));
+    border: 1px solid #ef4444;
     color: #fff;
     text-align: center;
-    padding: 14px 0;
-    font-size: 24px;
+    padding: 5px 18px;
+    border-radius: 20px;
+    font-size: 13px;
     font-weight: 800;
-    letter-spacing: 4px;
-    text-shadow: 0 0 15px #000;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px #000;
+    white-space: nowrap;
     z-index: 30;
     animation: flashAlert 0.4s infinite alternate;
   }
@@ -742,7 +747,7 @@
     </div>
     <div class="bezel-row">
       <span>特技状态:</span>
-      <span class="bezel-badge" id="bezel-loop-state" style="color:#10b981;">就绪 (360°回旋)</span>
+      <span class="bezel-badge" id="bezel-loop-state" style="color:#10b981;">就绪 (瞬时闪避)</span>
     </div>
     <div class="bezel-row">
       <span>支援战术:</span>
@@ -751,9 +756,9 @@
     <hr style="border:none; border-top:1px solid rgba(255,255,255,0.1); margin:12px 0;">
     <div class="bezel-title" style="font-size:13px; color:#38bdf8;">核心作战机动说明</div>
     <p style="font-size:11px; line-height:1.6; color:#cbd5e1;">
-      • <strong>特技翻滚 (Loop)</strong>: 飞机瞬间进行纵向360°立体回旋，期间<b>完全无敌</b>并释放音爆震碎周遭敌弹！<br>
+      • <strong>特技闪避 (Evade)</strong>: 飞机瞬间无敌闪避并震碎周遭敌弹，用于紧急脱离弹幕死角！<br>
       • <strong>蓄力极击 (Charge)</strong>: 按住开火键自动蓄能，满载后松开释放贯通能量重炮！<br>
-      • <strong>双翼僚机 (Option)</strong>: 拾取 [O] 补给后可部署双翼支援机协同编队齐射。
+      • <strong>补给接收 (Pickup)</strong>: 飞入掉落的补给勋章即可自动接收，快速强化火力与护盾。
     </p>
   </aside>
 
@@ -771,13 +776,13 @@
       <button class="quick-btn" id="btn-pause-toggle">⏸ 暂停</button>
     </div>
 
-    <!-- Boss 警报横幅 -->
-    <div id="warning-banner">
-      ⚠ WARNING: GIANT TARGET DETECTED ⚠
-    </div>
-
-    <!-- 动态 HUD 图层 -->
+    <!-- 动态 HUD 图层：所有信息统一收拢于顶部，绝不侵入中/下部战斗区与操作按键 -->
     <div id="hud-overlay">
+      <!-- Boss 警报横幅（窄幅居中，随顶部信息流排列，不吞触控事件） -->
+      <div id="warning-banner">
+        ⚠ WARNING: GIANT TARGET DETECTED ⚠
+      </div>
+
       <div class="hud-top">
         <div class="hud-score-card">
           <div class="hud-label">1P 战绩得分</div>
@@ -818,9 +823,9 @@
         </div>
 
         <div class="hud-status-card" style="text-align:right;">
-          <div class="hud-label">回旋翻滚 [K] & 轰炸 [L]</div>
+          <div class="hud-label">特技闪避 [K] & 轰炸 [L]</div>
           <div class="hud-stocks">
-            <span id="hud-loops" title="翻滚存量">🛩 🛩 🛩</span>
+            <span id="hud-loops" title="闪避存量">🛩 🛩 🛩</span>
             <span id="hud-bombs" title="轰炸存量" style="margin-left:6px; color:#ef4444;">💣 💣 💣</span>
           </div>
         </div>
@@ -849,9 +854,9 @@
             <span class="btn-text">轰炸</span>
             <span class="btn-badge" id="touch-bomb-badge">3</span>
           </button>
-          <button class="touch-btn loop-btn" id="btn-touch-loop" title="360° 特技回旋翻滚 [K / X]">
+          <button class="touch-btn loop-btn" id="btn-touch-loop" title="瞬时无敌闪避 [K / X]">
             <span class="btn-icon">🔄</span>
-            <span class="btn-text">翻滚</span>
+            <span class="btn-text">闪避</span>
             <span class="btn-badge" id="touch-loop-badge">3</span>
           </button>
         </div>
@@ -875,11 +880,11 @@
     <div class="modal-overlay" id="modal-title">
       <div class="modal-card">
         <div class="modal-logo">1944</div>
-        <div class="modal-subtitle">THE LOOP MASTER • 太平洋决战</div>
+        <div class="modal-subtitle">THUNDER STRIKE • 太平洋决战</div>
         <div style="margin: 10px auto; font-size: 36px; filter: drop-shadow(0 0 12px rgba(56,189,248,0.7));">✈️</div>
         <p style="font-size:12px; color:#94a3b8; line-height:1.7; margin-bottom:14px;">
           驾驶经典双发 <b>P-38 闪电战机</b>，重回太平洋激战海域！<br>
-          利用<b>特技回旋(Loop)</b>规避密集弹幕，蓄能贯通极击，歼灭敌军超级战列舰！
+          穿梭弹幕间飞行接收火力补给，蓄能贯通极击，歼灭敌军超级战列舰！
         </p>
 
         <button class="btn-action" id="btn-start-game">投入投币 • 出击 (START)</button>
@@ -888,10 +893,10 @@
         <div style="margin-top:14px; font-size:11px; color:#94a3b8; line-height:1.6; text-align:left; background:rgba(0,0,0,0.3); padding:10px; border-radius:6px;">
           <div style="color:#38bdf8; font-weight:700; margin-bottom:4px;">🎮 操作指南：</div>
           <div style="margin-bottom:6px;">
-            <b style="color:#f1f5f9;">[手机 / 平板端]</b> 👆 屏幕任意处滑动 1:1 跟手微操（零遮挡视野）或 🕹️ 虚拟摇杆；右侧配备【💣轰炸】【🔄翻滚】【⚡贯通炮】【🔥连发】；支持多点触控与触感震动反馈。
+            <b style="color:#f1f5f9;">[手机 / 平板端]</b> 👆 屏幕任意处滑动 1:1 跟手微操（零遮挡视野）或 🕹️ 虚拟摇杆；右侧配备【💣轰炸】【🔄闪避】【⚡贯通炮】【🔥连发】；支持多点触控与触感震动反馈。
           </div>
           <div>
-            <b style="color:#f1f5f9;">[电脑 / 键盘端]</b> 移动：WASD / 方向键；机枪/蓄力：J / Z / 空格；特技翻滚：K / X；大招轰炸：L / C；暂停：P / ESC。
+            <b style="color:#f1f5f9;">[电脑 / 键盘端]</b> 移动：WASD / 方向键；机枪/蓄力：J / Z / 空格；特技闪避：K / X；大招轰炸：L / C；暂停：P / ESC。
           </div>
         </div>
       </div>
@@ -906,7 +911,7 @@
         <table class="report-table">
           <tr><td>击坠敌机总数</td><td id="rep-kills">0 架</td></tr>
           <tr><td>巨型目标核心击破</td><td id="rep-boss">达成 (20,000 pts)</td></tr>
-          <tr><td>翻滚规避加分</td><td id="rep-loops">0 pts</td></tr>
+          <tr><td>特技闪避加分</td><td id="rep-loops">0 pts</td></tr>
           <tr><td>剩余护盾奖励</td><td id="rep-armor">0 pts</td></tr>
           <tr style="font-size:15px; color:#f59e0b; border-top:1px solid #38bdf8;">
             <td>关卡总计战果</td><td id="rep-total">0 pts</td></tr>
@@ -942,8 +947,8 @@
       <span>补充 B-29 地毯式战略轰炸支援</span>
     </div>
     <div class="bezel-row">
-      <span style="color:#38bdf8; font-weight:700;">[L] 回旋能量:</span>
-      <span>补充特技回旋翻滚可用次数</span>
+      <span style="color:#38bdf8; font-weight:700;">[L] 闪避能量:</span>
+      <span>补充特技闪避可用次数</span>
     </div>
     <div class="bezel-row">
       <span style="color:#34d399; font-weight:700;">[H] 紧急修理:</span>

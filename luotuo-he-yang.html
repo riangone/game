@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>骆驼和羊 - 各有所长识字闯关 (A Camel and a Sheep)</title>
+<title>第4课 骆驼和羊 - 各有所长识字闯关 (A Camel and a Sheep)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=M+PLUS+Rounded+1c:wght@600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -304,8 +304,9 @@
 <body>
 <div id="app">
   <header>
-    <a class="nav-btn" href="index.html" title="返回游戏大厅">🏠</a>
-    <h1>骆驼和羊 · 各有所长识字闯关</h1>
+    <a class="nav-btn" href="zw-index.html" title="课文一览 (All Lessons)">🏠</a>
+    <a class="nav-btn" href="javascript:void(0)" onclick="goHome()" title="返回主页">📚</a>
+    <h1>第4课 · 骆驼和羊 · 各有所长识字闯关</h1>
     <div class="stars" id="starTotal">⭐ 0</div>
   </header>
 
@@ -382,6 +383,11 @@
     <!-- STORY READER (逐句精读) -->
     <section class="screen" id="screen-story">
       <h2 class="title">📖 读课文 (Sentence by Sentence)</h2>
+      <div class="story-title-audio" onclick="playClip('title', '骆驼和羊', null, 'zh-CN')" title="播放课题发音" style="display:flex;align-items:center;justify-content:center;gap:8px;margin:2px 0 12px;cursor:pointer;">
+        <span style="font-weight:800;font-size:1.05em;">《骆驼和羊》</span>
+        <span style="color:var(--muted,#78716c);font-size:0.85em;">luò tuo hé yáng</span>
+        <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip('title', '骆驼和羊', null, 'zh-CN')" title="播放课题发音">🔊</button>
+      </div>
       <div class="story-progress" id="storyProgress">1 / 15</div>
       <div class="story-card">
         <div class="sentence-py" id="storyPy"></div>
@@ -1091,6 +1097,10 @@ function toast(msg){
 }
 
 /* ---------------- NAVIGATION ---------------- */
+/* Keep Android/browser system back button inside the app: any non-home screen
+   is one logical "level 2" step, so back should return to screen-home instead
+   of leaving the page (which used to fall through to zw-index.html). */
+let _navFromPopstate = false;
 function showScreen(id){
   stopClip();
   if(id !== 'screen-full') stopFullPlay();
@@ -1101,7 +1111,21 @@ function showScreen(id){
     const mainEl = document.querySelector('main');
     if(mainEl) mainEl.scrollTop = 0;
   }
+  if(!_navFromPopstate){
+    if(id === 'screen-home'){
+      history.replaceState({screen:'screen-home'}, '');
+    } else if(!history.state || history.state.screen === 'screen-home'){
+      history.pushState({screen:id}, '');
+    } else {
+      history.replaceState({screen:id}, '');
+    }
+  }
 }
+window.addEventListener('popstate', function(e){
+  _navFromPopstate = true;
+  showScreen((e.state && e.state.screen) || 'screen-home');
+  _navFromPopstate = false;
+});
 function goHome(){ showScreen('screen-home'); refreshBadges(); }
 function goStory(){ renderStory(); showScreen('screen-story'); updateStoryVoiceUI(); }
 function goFull(){ renderFullText(); showScreen('screen-full'); }
@@ -1499,6 +1523,7 @@ function charPrev(){ if(charIdx > 0){ charIdx--; renderChar(); playClip(CHARACTE
 function charNext(){ if(charIdx < CHARACTERS.length - 1){ charIdx++; renderChar(); playClip(CHARACTERS[charIdx].id, CHARACTERS[charIdx].zh); } }
 function flipChar(e){
   if(e && e.target && e.target.closest && (e.target.closest('#charWriterTarget') || e.target.closest('.writer-toolbar'))) return;
+  if(e) e.stopPropagation();
   document.getElementById('charCard').classList.toggle('flipped');
 }
 

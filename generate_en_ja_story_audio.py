@@ -17,6 +17,14 @@ Games covered:
   yiheyuan.html          -> audio/yiheyuan_en/ audio/yiheyuan_ja/
   hanjia-jianwen.html    -> audio/hanjia_en/   audio/hanjia_ja/
   luotuo-he-yang.html    -> audio/luotuo_en/   audio/luotuo_ja/
+  xiaoma-guohe.html      -> audio/xiaoma_en/   audio/xiaoma_ja/
+  houzi-lao-yueliang.html -> audio/houzi_en/   audio/houzi_ja/
+  sima-guang.html        -> audio/sima_en/     audio/sima_ja/
+  shu-xingxing.html      -> audio/xingxing_en/ audio/xingxing_ja/
+  gushi-er-shou.html     -> audio/gushi_en/    audio/gushi_ja/
+  diqiu-qingjiegong.html -> audio/diqiu_en/    audio/diqiu_ja/
+  daziran-yuyan.html     -> audio/daziran_en/  audio/daziran_ja/
+  tanyue.html            -> audio/tanyue_en/   audio/tanyue_ja/
 """
 import asyncio
 import re
@@ -36,6 +44,14 @@ GAMES = [
     ("yiheyuan.html", "yiheyuan"),
     ("hanjia-jianwen.html", "hanjia"),
     ("luotuo-he-yang.html", "luotuo"),
+    ("xiaoma-guohe.html", "xiaoma"),
+    ("houzi-lao-yueliang.html", "houzi"),
+    ("sima-guang.html", "sima"),
+    ("shu-xingxing.html", "xingxing"),
+    ("gushi-er-shou.html", "gushi"),
+    ("diqiu-qingjiegong.html", "diqiu"),
+    ("daziran-yuyan.html", "daziran"),
+    ("tanyue.html", "tanyue"),
 ]
 
 # Matches one STORY entry object and captures id, en, jp (jp optional/absent-safe)

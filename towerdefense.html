@@ -3,38 +3,48 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>元素塔防：晶石守卫 - Elemental Tower Defense</title>
+<title>元素塔防：晶石守卫 - Elemental Tower Defense (3D写实立体版)</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap');
   html, body {
     margin: 0; padding: 0; width: 100%; height: 100%;
-    overflow: hidden; background: #090b16;
+    overflow: hidden; background: #060814;
     font-family: 'Outfit', "PingFang SC", "Microsoft YaHei", sans-serif;
     touch-action: none;
     -webkit-user-select: none; user-select: none;
   }
-  #game { display: block; width: 100%; height: 100%; cursor: default; }
+  #game { display: block; width: 100%; height: 100%; cursor: grab; }
+  #game:active { cursor: grabbing; }
 
   .glass {
-    background: rgba(18, 20, 40, 0.55);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(124, 92, 255, 0.3);
+    background: rgba(14, 17, 36, 0.72);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(138, 110, 255, 0.28);
     border-radius: 14px;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.35);
+    box-shadow: 0 10px 36px 0 rgba(0, 0, 0, 0.55);
     color: #fff;
   }
 
+  /* HUD Top Bar */
   #hud {
     position: fixed; top: 0; left: 0; width: 100%;
     display: flex; justify-content: space-between; align-items: flex-start;
-    padding: 12px 12px; box-sizing: border-box; pointer-events: none;
+    padding: 10px 14px; box-sizing: border-box; pointer-events: none;
     z-index: 5; gap: 8px;
   }
-  #statsCard { display: flex; gap: 14px; padding: 8px 18px; pointer-events: auto; }
-  .stat { display: flex; flex-direction: column; align-items: flex-start; min-width: 46px; }
-  .stat-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; opacity: 0.7; }
-  .stat-value { font-size: 19px; font-weight: 800; line-height: 1.15; }
+  #statsCard { display: flex; gap: 12px; padding: 7px 16px; pointer-events: auto; align-items: center; }
+  .stat { display: flex; flex-direction: column; align-items: flex-start; min-width: 44px; }
+  .stat-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1.2px; opacity: 0.7; }
+  .stat-value { font-size: 18px; font-weight: 800; line-height: 1.15; }
+  #levelBadge {
+    display: flex; align-items: center; gap: 5px;
+    background: rgba(124, 92, 255, 0.22); border: 1px solid rgba(124, 92, 255, 0.45);
+    border-radius: 8px; padding: 4px 10px; cursor: pointer; transition: all 0.15s ease;
+  }
+  #levelBadge:hover { background: rgba(124, 92, 255, 0.38); border-color: #5ce1ff; }
+  #levelBadge .lvl-title { font-size: 12px; font-weight: 800; color: #5ce1ff; white-space: nowrap; }
+
   #goldVal { color: #ffd54f; }
   #livesVal { color: #ff6b6b; }
   #waveVal { color: #5ce1ff; }
@@ -43,22 +53,48 @@
   #controlsCard { display: flex; gap: 6px; padding: 6px; pointer-events: auto; }
   .ctrl-btn {
     background: rgba(124,92,255,0.18); border: 1px solid rgba(124,92,255,0.5);
-    color: #fff; border-radius: 10px; padding: 8px 12px; font-size: 13px; font-weight: 700;
-    cursor: pointer; min-width: 40px; text-align: center;
+    color: #fff; border-radius: 10px; padding: 7px 11px; font-size: 12px; font-weight: 700;
+    cursor: pointer; min-width: 36px; text-align: center;
+    transition: all 0.15s ease;
   }
-  .ctrl-btn:active { background: rgba(124,92,255,0.4); }
-  .ctrl-btn.active { background: rgba(124,92,255,0.55); border-color: #b39dff; }
+  .ctrl-btn:hover { background: rgba(124,92,255,0.32); }
+  .ctrl-btn:active { background: rgba(124,92,255,0.45); transform: scale(0.96); }
+  .ctrl-btn.active { background: rgba(124,92,255,0.6); border-color: #b39dff; }
 
+  /* Floating Camera Zoom Controls */
+  #cameraControls {
+    position: fixed; top: 68px; right: 14px;
+    display: flex; flex-direction: column; gap: 5px; padding: 6px;
+    z-index: 6; pointer-events: auto; align-items: center;
+  }
+  .cam-btn {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff; font-size: 16px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.15s ease;
+  }
+  .cam-btn:hover { background: rgba(92, 225, 255, 0.25); border-color: #5ce1ff; }
+  .cam-btn:active { transform: scale(0.92); }
+  #zoomVal {
+    font-size: 10px; font-weight: 700; color: #5ce1ff; cursor: default;
+    background: transparent; border: none; height: 20px;
+  }
+
+  /* Wave Banner */
   #banner {
-    position: fixed; top: 70px; left: 50%; transform: translateX(-50%);
-    color: #fff; font-size: 14px; font-weight: 700;
-    padding: 8px 20px; border-radius: 14px;
+    position: fixed; top: 68px; left: 50%; transform: translateX(-50%);
+    color: #fff; font-size: 13px; font-weight: 700;
+    padding: 7px 20px; border-radius: 14px;
     display: none; z-index: 6; pointer-events: auto;
     text-align: center; white-space: nowrap;
+    border: 1px solid rgba(92,225,255,0.45);
+    box-shadow: 0 8px 28px rgba(92,225,255,0.25);
   }
   #banner button {
     margin-left: 10px; background: #5ce1ff; border: none; color: #04121a; font-weight: 800;
-    border-radius: 8px; padding: 4px 10px; font-size: 12px; cursor: pointer;
+    border-radius: 8px; padding: 4px 12px; font-size: 12px; cursor: pointer;
+    box-shadow: 0 2px 8px rgba(92,225,255,0.4);
   }
 
   #flash {
@@ -66,50 +102,118 @@
     transition: opacity 0.08s ease;
   }
 
+  /* Bottom Shop */
   #shop {
-    position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
-    display: flex; gap: 8px; padding: 8px; z-index: 5; max-width: 96vw; overflow-x: auto;
+    position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 8px; padding: 8px 12px; z-index: 5; max-width: 96vw; overflow-x: auto;
+    border-radius: 16px;
   }
   .tower-btn {
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    width: 68px; padding: 6px 4px; border-radius: 10px; cursor: pointer;
-    border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05);
-    flex-shrink: 0;
+    width: 66px; padding: 6px 4px; border-radius: 12px; cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04);
+    flex-shrink: 0; position: relative;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .tower-btn .icon { font-size: 22px; }
-  .tower-btn .name { font-size: 10px; margin-top: 2px; opacity: 0.9; }
+  .tower-btn:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+  .tower-btn .icon { font-size: 22px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+  .tower-btn .name { font-size: 10px; margin-top: 2px; opacity: 0.9; font-weight: 600; }
   .tower-btn .cost { font-size: 11px; font-weight: 800; color: #ffd54f; }
-  .tower-btn.selected { border-color: #5ce1ff; background: rgba(92,225,255,0.2); }
-  .tower-btn.disabled { opacity: 0.4; }
+  .tower-btn .hotkey {
+    position: absolute; top: 3px; left: 5px; font-size: 8px; opacity: 0.5; font-weight: 800;
+  }
+  .tower-btn.selected {
+    border-color: #5ce1ff; background: rgba(92,225,255,0.22);
+    box-shadow: 0 0 16px rgba(92,225,255,0.4); transform: translateY(-3px);
+  }
+  .tower-btn.disabled { opacity: 0.4; cursor: not-allowed; }
 
+  /* Tower Upgrade Panel */
   #towerPanel {
-    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
-    padding: 12px 16px; z-index: 5; display: none; min-width: 220px; text-align: center;
+    position: fixed; bottom: 94px; left: 50%; transform: translateX(-50%);
+    padding: 12px 18px; z-index: 5; display: none; min-width: 250px; text-align: center;
+    border: 1px solid rgba(92,225,255,0.35);
   }
   #towerPanel .tp-title { font-size: 14px; font-weight: 800; color: #5ce1ff; margin-bottom: 4px; }
-  #towerPanel .tp-stats { font-size: 11px; opacity: 0.85; margin-bottom: 8px; line-height: 1.6; }
+  #towerPanel .tp-stats { font-size: 11px; opacity: 0.88; margin-bottom: 10px; line-height: 1.6; }
   #towerPanel .tp-row { display: flex; gap: 8px; justify-content: center; }
   #towerPanel button {
-    border: none; border-radius: 8px; padding: 7px 12px; font-size: 12px; font-weight: 800; cursor: pointer;
+    border: none; border-radius: 8px; padding: 7px 14px; font-size: 12px; font-weight: 800; cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: transform 0.1s ease;
   }
-  #upgradeBtn { background: #b6ff5a; color: #10240a; }
-  #sellBtn { background: #ff8a8a; color: #2a0808; }
+  #towerPanel button:active { transform: scale(0.96); }
+  #upgradeBtn { background: linear-gradient(135deg, #b6ff5a, #8ae629); color: #0a1f05; }
+  #sellBtn { background: linear-gradient(135deg, #ff8a8a, #ff5c5c); color: #2a0808; }
   #closePanelBtn { background: rgba(255,255,255,0.15); color: #fff; }
   #towerPanel button:disabled { opacity: 0.35; cursor: not-allowed; }
 
+  /* Overlay Modal (Game Over / Level Clear) */
   #overlay {
-    position: fixed; inset: 0; background: rgba(4, 6, 12, 0.78);
-    display: flex; align-items: center; justify-content: center; z-index: 10;
+    position: fixed; inset: 0; background: rgba(4, 6, 14, 0.85);
+    display: flex; align-items: center; justify-content: center; z-index: 15;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
   }
   #overlay.hidden { display: none; }
-  #overlayCard { padding: 28px 34px; text-align: center; max-width: 420px; }
-  #overlayCard h1 { margin: 0 0 6px; font-size: 24px; background: linear-gradient(90deg,#5ce1ff,#b39dff); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  #overlayCard p { font-size: 13px; opacity: 0.85; line-height: 1.7; margin: 4px 0 16px; }
-  #overlayCard .big-btn {
-    background: linear-gradient(90deg,#5ce1ff,#7c5cff); border: none; color: #04121a;
-    font-weight: 800; font-size: 15px; padding: 12px 30px; border-radius: 12px; cursor: pointer;
+  #overlayCard { padding: 30px 34px; text-align: center; max-width: 460px; border-radius: 20px; }
+  #overlayCard h1 {
+    margin: 0 0 8px; font-size: 26px; font-weight: 800;
+    background: linear-gradient(90deg, #5ce1ff, #b39dff, #ffd54f);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
   }
-  #overlayStats { font-size: 13px; margin-bottom: 14px; color: #ffd54f; }
+  #overlayCard p { font-size: 13px; opacity: 0.88; line-height: 1.7; margin: 6px 0 16px; }
+  .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .big-btn {
+    background: linear-gradient(90deg, #5ce1ff, #7c5cff); border: none; color: #04121a;
+    font-weight: 800; font-size: 14px; padding: 11px 26px; border-radius: 12px; cursor: pointer;
+    box-shadow: 0 6px 20px rgba(92,225,255,0.35); transition: transform 0.15s ease;
+  }
+  .big-btn:hover { transform: scale(1.03); }
+  .big-btn:active { transform: scale(0.97); }
+  .big-btn.secondary {
+    background: rgba(255, 255, 255, 0.12); color: #fff; box-shadow: none;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+  #overlayStats { font-size: 13px; margin-bottom: 16px; color: #ffd54f; font-weight: 600; }
+  #overlayStars { font-size: 26px; margin: 4px 0 12px; }
+
+  /* Level Select Modal */
+  #levelModal {
+    position: fixed; inset: 0; background: rgba(4, 6, 14, 0.85);
+    display: flex; align-items: center; justify-content: center; z-index: 16;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  }
+  #levelModal.hidden { display: none; }
+  #levelModalCard {
+    width: 90%; max-width: 540px; max-height: 85vh; overflow-y: auto;
+    padding: 24px 26px; border-radius: 20px; box-sizing: border-box;
+  }
+  #levelModalCard h2 {
+    margin: 0 0 14px; font-size: 20px; font-weight: 800; text-align: center;
+    background: linear-gradient(90deg, #5ce1ff, #ffd54f);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .level-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .level-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; border-radius: 12px; background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12); cursor: pointer; transition: all 0.15s ease;
+  }
+  .level-item:hover { background: rgba(92, 225, 255, 0.16); border-color: #5ce1ff; transform: translateX(3px); }
+  .level-item.active { border-color: #ffd54f; background: rgba(255, 213, 79, 0.15); }
+  .lvl-info-main { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
+  .lvl-name { font-size: 14px; font-weight: 800; color: #5ce1ff; }
+  .lvl-desc { font-size: 11px; opacity: 0.78; margin-top: 3px; }
+  .lvl-tag {
+    font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 8px;
+    background: rgba(124, 92, 255, 0.3); border: 1px solid rgba(124, 92, 255, 0.45); white-space: nowrap;
+  }
+
+  /* Help hint */
+  #camHint {
+    position: fixed; bottom: 82px; right: 14px;
+    font-size: 10px; opacity: 0.55; color: #fff; pointer-events: none; z-index: 5;
+    text-align: right; line-height: 1.4;
+  }
 </style>
 </head>
 <body>
@@ -118,16 +222,34 @@
 
 <div id="hud">
   <div id="statsCard" class="glass">
+    <div id="levelBadge" title="点击切换关卡">
+      <span style="font-size:14px;">🗺️</span>
+      <div class="stat">
+        <span class="stat-label">关卡</span>
+        <span class="lvl-title" id="levelName">第 1 关</span>
+      </div>
+    </div>
     <div class="stat"><span class="stat-label">金币</span><span class="stat-value" id="goldVal">0</span></div>
     <div class="stat"><span class="stat-label">生命</span><span class="stat-value" id="livesVal">0</span></div>
     <div class="stat"><span class="stat-label">波次</span><span class="stat-value" id="waveVal">0/0</span></div>
     <div class="stat"><span class="stat-label">分数</span><span class="stat-value" id="scoreVal">0</span></div>
   </div>
   <div id="controlsCard" class="glass">
+    <div class="ctrl-btn" id="levelBtn">关卡</div>
     <div class="ctrl-btn" id="speedBtn">x1</div>
     <div class="ctrl-btn" id="pauseBtn">暂停</div>
   </div>
 </div>
+
+<!-- Floating Zoom Controls -->
+<div id="cameraControls" class="glass">
+  <div class="cam-btn" id="zoomInBtn" title="放大 (+)">+</div>
+  <div class="cam-btn" id="zoomVal">100%</div>
+  <div class="cam-btn" id="zoomOutBtn" title="缩小 (-)">−</div>
+  <div class="cam-btn" id="zoomResetBtn" title="居中复位 (R)">⟲</div>
+</div>
+
+<div id="camHint">滚轮/手势缩放<br>按住拖拽移动</div>
 
 <div id="banner" class="glass"></div>
 
@@ -141,20 +263,39 @@
   </div>
 </div>
 
-<div id="shop"></div>
+<div id="shop" class="glass"></div>
 
+<!-- Level Selection Modal -->
+<div id="levelModal" class="hidden">
+  <div id="levelModalCard" class="glass">
+    <h2>战役关卡选择</h2>
+    <div class="level-list" id="levelList"></div>
+    <div style="text-align:center;">
+      <button class="big-btn secondary" id="closeLevelModalBtn">返回游戏</button>
+    </div>
+  </div>
+</div>
+
+<!-- Game Over / Level Clear Overlay -->
 <div id="overlay">
   <div id="overlayCard" class="glass">
     <h1 id="overlayTitle">元素塔防：晶石守卫</h1>
-    <p id="overlayDesc">建造炮塔，阻挡怪物大军抵达你的晶石核心。合理搭配机枪、加农炮、冰霜塔、狙击塔、连锁闪电塔，并用专精的防空塔封锁从另一侧空域切入的无人机航线，在 20 波攻势中生存下来！地图上的岩石与树木会挡住建造位，请提前规划。</p>
+    <div id="overlayStars"></div>
+    <p id="overlayDesc">
+写实风格特种部队与机甲大军鏖战立体沙盘！<br>
+      全景大地图支持无级缩放不失真与平移，5大特色战役关卡，包含双入口与中央围城机制！
+    </p>
     <div id="overlayStats"></div>
-    <button class="big-btn" id="startBtn">开始游戏</button>
+    <div class="btn-row" id="overlayBtnRow">
+      <button class="big-btn" id="startBtn">开始游戏</button>
+    </div>
   </div>
 </div>
 
 <script>
 (function(){
   "use strict";
+
   const canvas = document.getElementById('game');
   const ctx = canvas.getContext('2d');
   const flashEl = document.getElementById('flash');
@@ -162,6 +303,13 @@
   const shopEl = document.getElementById('shop');
   const towerPanelEl = document.getElementById('towerPanel');
   const overlayEl = document.getElementById('overlay');
+  const levelModalEl = document.getElementById('levelModal');
+  const levelListEl = document.getElementById('levelList');
+  const levelNameEl = document.getElementById('levelName');
+  const levelBadgeEl = document.getElementById('levelBadge');
+  const levelBtnEl = document.getElementById('levelBtn');
+  const closeLevelModalBtn = document.getElementById('closeLevelModalBtn');
+
   const goldVal = document.getElementById('goldVal');
   const livesVal = document.getElementById('livesVal');
   const waveVal = document.getElementById('waveVal');
@@ -169,94 +317,379 @@
   const speedBtn = document.getElementById('speedBtn');
   const pauseBtn = document.getElementById('pauseBtn');
 
-  const BEST_KEY = 'td_elemental_best_score';
+  const zoomInBtn = document.getElementById('zoomInBtn');
+  const zoomOutBtn = document.getElementById('zoomOutBtn');
+  const zoomResetBtn = document.getElementById('zoomResetBtn');
+  const zoomValEl = document.getElementById('zoomVal');
 
-  // ---------- Grid ----------
-  const COLS = 13, ROWS = 9;
-  let DPR = 1, W = 0, H = 0, cell = 40, offsetX = 0, offsetY = 0;
+  const BEST_KEY = 'td_elemental_best_score';
+  const STARS_KEY = 'td_elemental_level_stars';
+
+  // ---------- 5 Major Levels / Maps Configuration ----------
+  const LEVELS = [
+    {
+      id: 1,
+      name: '翡翠丘陵',
+      nameJa: 'エメラルドの丘',
+      desc: '绿草与黑曜石沙盘，大迂回长廊，适合构建多段交叉火力网。',
+      cols: 19, rows: 13,
+      wavesCount: 8,
+      startGold: 170,
+      obstacleCount: 12,
+      theme: {
+        top: '#1e2d42', alt: '#182436', left: '#101724', right: '#141c2c',
+        pathTop: '#4a2870', pathLeft: '#1b122c', pathRight: '#24183a', pathGlow: '#8a5cff',
+        cliffL: '#101328', cliffR: '#161a36',
+        bg0: '#101432', bg1: '#050711'
+      },
+      generatePaths: () => {
+        // Long Serpentine Route
+        const cells = [];
+        for (let c = 1; c <= 17; c++) cells.push({ c, r: 1 });
+        for (let r = 2; r <= 3; r++) cells.push({ c: 17, r });
+        for (let c = 17; c >= 2; c--) cells.push({ c, r: 4 });
+        for (let r = 5; r <= 6; r++) cells.push({ c: 2, r });
+        for (let c = 2; c <= 17; c++) cells.push({ c, r: 7 });
+        for (let r = 8; r <= 9; r++) cells.push({ c: 17, r });
+        for (let c = 17; c >= 3; c--) cells.push({ c, r: 10 });
+        cells.push({ c: 3, r: 11 });
+        for (let c = 4; c <= 17; c++) cells.push({ c, r: 11 });
+        return { groundPaths: [cells], airCorridors: [[{ c: 19.5, r: -1.5 }, { c: 9, r: 5 }, { c: 17, r: 11 }]] };
+      }
+    },
+    {
+      id: 2,
+      name: '迷宫石阵',
+      nameJa: '迷宮の石陣',
+      desc: '赤褐裂谷多曲折回廊，大量巨石阻隔黄金站位，考验射程覆盖。',
+      cols: 19, rows: 13,
+      wavesCount: 9,
+      startGold: 180,
+      obstacleCount: 18,
+      theme: {
+        top: '#2d2232', alt: '#251b2a', left: '#17111a', right: '#1d1521',
+        pathTop: '#663628', pathLeft: '#26140f', pathRight: '#361d15', pathGlow: '#ff783c',
+        cliffL: '#1b121a', cliffR: '#221721',
+        bg0: '#221422', bg1: '#0a050d'
+      },
+      generatePaths: () => {
+        // 6-turn winding labyrinth
+        const cells = [];
+        for (let r = 11; r >= 2; r--) cells.push({ c: 1, r });
+        for (let c = 2; c <= 4; c++) cells.push({ c, r: 2 });
+        for (let r = 3; r <= 10; r++) cells.push({ c: 4, r });
+        for (let c = 5; c <= 7; c++) cells.push({ c, r: 10 });
+        for (let r = 9; r >= 2; r--) cells.push({ c: 7, r });
+        for (let c = 8; c <= 10; c++) cells.push({ c, r: 2 });
+        for (let r = 3; r <= 10; r++) cells.push({ c: 10, r });
+        for (let c = 11; c <= 13; c++) cells.push({ c, r: 10 });
+        for (let r = 9; r >= 2; r--) cells.push({ c: 13, r });
+        for (let c = 14; c <= 16; c++) cells.push({ c, r: 2 });
+        for (let r = 3; r <= 11; r++) cells.push({ c: 16, r });
+        cells.push({ c: 17, r: 11 });
+        return { groundPaths: [cells], airCorridors: [[{ c: 19.5, r: 2 }, { c: 9, r: 8 }, { c: 17, r: 11 }]] };
+      }
+    },
+    {
+      id: 3,
+      name: '双子裂谷',
+      nameJa: '双子の裂け目',
+      desc: '【双入口夹攻】南北双路同时涌入敌军部队并在中场汇流，必须分兵防守！',
+      cols: 19, rows: 13,
+      wavesCount: 10,
+      startGold: 210,
+      obstacleCount: 14,
+      theme: {
+        top: '#22183a', alt: '#1b1330', left: '#120c22', right: '#160f29',
+        pathTop: '#581c82', pathLeft: '#220835', pathRight: '#2f0b4a', pathGlow: '#d73cff',
+        cliffL: '#130d22', cliffR: '#19112c',
+        bg0: '#1a0f2e', bg1: '#070312'
+      },
+      generatePaths: () => {
+        // Dual North & South paths merging into (17, 6)
+        const pathNorth = [];
+        for (let c = 1; c <= 7; c++) pathNorth.push({ c, r: 2 });
+        for (let r = 3; r <= 4; r++) pathNorth.push({ c: 7, r });
+        for (let c = 8; c <= 13; c++) pathNorth.push({ c, r: 4 });
+        for (let r = 5; r <= 6; r++) pathNorth.push({ c: 13, r });
+        for (let c = 14; c <= 17; c++) pathNorth.push({ c, r: 6 });
+
+        const pathSouth = [];
+        for (let c = 1; c <= 7; c++) pathSouth.push({ c, r: 10 });
+        for (let r = 9; r >= 8; r--) pathSouth.push({ c: 7, r });
+        for (let c = 8; c <= 13; c++) pathSouth.push({ c, r: 8 });
+        for (let r = 7; r >= 6; r--) pathSouth.push({ c: 13, r });
+        for (let c = 14; c <= 17; c++) pathSouth.push({ c, r: 6 });
+
+        return {
+          groundPaths: [pathNorth, pathSouth],
+          airCorridors: [
+            [{ c: 19.5, r: -1 }, { c: 10, r: 3 }, { c: 17, r: 6 }],
+            [{ c: 19.5, r: 13 }, { c: 10, r: 9 }, { c: 17, r: 6 }]
+          ]
+        };
+      }
+    },
+    {
+      id: 4,
+      name: '虚空要塞',
+      nameJa: '虚空の要塞',
+      desc: '悬空断桥浮岛，双重天空走廊，大量侦察无人机与暗影游击兵疾速突袭！',
+      cols: 19, rows: 13,
+      wavesCount: 10,
+      startGold: 190,
+      obstacleCount: 16,
+      theme: {
+        top: '#132338', alt: '#0f1d2e', left: '#09131d', right: '#0c1724',
+        pathTop: '#15526d', pathLeft: '#0a232f', pathRight: '#0e2f3f', pathGlow: '#5ce1ff',
+        cliffL: '#0a1622', cliffR: '#0e1c2a',
+        bg0: '#0b1a2e', bg1: '#030812'
+      },
+      generatePaths: () => {
+        const cells = [];
+        for (let r = 1; r <= 6; r++) cells.push({ c: 1, r });
+        for (let c = 2; c <= 6; c++) cells.push({ c, r: 6 });
+        for (let r = 5; r >= 1; r--) cells.push({ c: 6, r });
+        for (let c = 7; c <= 12; c++) cells.push({ c, r: 1 });
+        for (let r = 2; r <= 11; r++) cells.push({ c: 12, r });
+        for (let c = 13; c <= 17; c++) cells.push({ c, r: 11 });
+        for (let r = 10; r >= 6; r--) cells.push({ c: 17, r });
+        return {
+          groundPaths: [cells],
+          airCorridors: [
+            [{ c: 19, r: -1 }, { c: 11, r: 2 }, { c: 17, r: 6 }],
+            [{ c: 0, r: 13 }, { c: 8, r: 8 }, { c: 17, r: 6 }]
+          ]
+        };
+      }
+    },
+    {
+      id: 5,
+      name: '熔岩核心',
+      nameJa: '灼熱のコア',
+      desc: '【终极围攻】晶石核心坐镇正中央，双路顺逆时针螺旋逼向神殿，Boss亲率大军压境！',
+      cols: 19, rows: 13,
+      wavesCount: 12,
+      startGold: 230,
+      obstacleCount: 12,
+      theme: {
+        top: '#2b1414', alt: '#231010', left: '#180a0a', right: '#1c0c0c',
+        pathTop: '#782218', pathLeft: '#2f0c08', pathRight: '#41100a', pathGlow: '#ff4b2d',
+        cliffL: '#1c0909', cliffR: '#240c0c',
+        bg0: '#280909', bg1: '#0c0202'
+      },
+      generatePaths: () => {
+        // Dual spiral paths converging to center crystal (9, 6)
+        const pathA = [];
+        for (let c = 1; c <= 17; c++) pathA.push({ c, r: 1 });
+        for (let r = 2; r <= 3; r++) pathA.push({ c: 17, r });
+        for (let c = 16; c >= 4; c--) pathA.push({ c, r: 3 });
+        for (let r = 4; r <= 6; r++) pathA.push({ c: 4, r });
+        for (let c = 5; c <= 9; c++) pathA.push({ c, r: 6 });
+
+        const pathB = [];
+        for (let c = 17; c >= 1; c--) pathB.push({ c, r: 11 });
+        for (let r = 10; r >= 9; r--) pathB.push({ c: 1, r });
+        for (let c = 2; c <= 14; c++) pathB.push({ c, r: 9 });
+        for (let r = 8; r >= 6; r--) pathB.push({ c: 14, r });
+        for (let c = 13; c >= 9; c--) pathB.push({ c, r: 6 });
+
+        return {
+          groundPaths: [pathA, pathB],
+          airCorridors: [
+            [{ c: -1, r: -1 }, { c: 4, r: 3 }, { c: 9, r: 6 }],
+            [{ c: 20, r: 14 }, { c: 14, r: 9 }, { c: 9, r: 6 }]
+          ]
+        };
+      }
+    }
+  ];
+
+  let currentLevelIdx = 0;
+  let curLevel = LEVELS[0];
+  let COLS = curLevel.cols, ROWS = curLevel.rows;
+
+  // ---------- 2.5D Isometric Grid & Camera System ----------
+  let DPR = 1, W = 0, H = 0;
+  let tileW = 44, tileH = 22, blockDepth = 12;
+  let X_center = 0, Y_center = 0;
+  let cellUnit = 24;
+
+  const camera = {
+    x: 0,
+    y: 0,
+    scale: 1.0,
+    minScale: 0.45,
+    maxScale: 2.4,
+    isDragging: false,
+    dragStartX: 0,
+    dragStartY: 0,
+    lastScreenX: 0,
+    lastScreenY: 0,
+    moved: false,
+    touchDist: 0
+  };
+
+  function updateZoomUI() {
+    zoomValEl.textContent = Math.round(camera.scale * 100) + '%';
+  }
+
+  function setZoom(factor, screenX = W / 2, screenY = H / 2) {
+    const oldScale = camera.scale;
+    const newScale = Math.min(camera.maxScale, Math.max(camera.minScale, oldScale * factor));
+    if (Math.abs(newScale - oldScale) < 0.001) return;
+
+    // Zoom centered on (screenX, screenY)
+    const worldPos = screenToWorld(screenX, screenY);
+    camera.scale = newScale;
+    camera.x = screenX - (worldPos.x - W / 2) * newScale - W / 2;
+    camera.y = screenY - (worldPos.y - H / 2) * newScale - H / 2;
+    updateZoomUI();
+  }
+
+  function resetCamera() {
+    camera.x = 0;
+    camera.y = 0;
+    camera.scale = 1.0;
+    updateZoomUI();
+  }
+
+  function screenToWorld(sx, sy) {
+    const cx = W / 2 + camera.x;
+    const cy = H / 2 + camera.y;
+    const wx = (sx - cx) / camera.scale + W / 2;
+    const wy = (sy - cy) / camera.scale + H / 2;
+    return { x: wx, y: wy };
+  }
+
+  function worldToScreen(wx, wy) {
+    const cx = W / 2 + camera.x;
+    const cy = H / 2 + camera.y;
+    const sx = (wx - W / 2) * camera.scale + cx;
+    const sy = (wy - H / 2) * camera.scale + cy;
+    return { x: sx, y: sy };
+  }
+
   let stars = [];
   function buildStars() {
     stars = [];
-    const count = Math.floor((W * H) / 9000);
+    const count = Math.floor((W * H) / 6000);
     for (let i = 0; i < count; i++) {
-      stars.push({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.4 + 0.3, phase: Math.random() * Math.PI * 2, speed: 0.6 + Math.random() * 1.2 });
+      stars.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: Math.random() * 1.3 + 0.3,
+        phase: Math.random() * Math.PI * 2,
+        speed: 0.5 + Math.random() * 1.2,
+        color: ['#cdd6ff', '#5ce1ff', '#ffd54f', '#b39dff', '#ff8a8a'][Math.floor(Math.random() * 5)]
+      });
     }
   }
 
   function resize() {
-    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    // Render at a higher backing resolution than the CSS viewport so that zooming in
+    // (camera.scale up to maxScale) never magnifies an already-rasterized image —
+    // everything is redrawn as vectors every frame, so extra headroom here buys crisp,
+    // distortion-free zoom instead of pixelation.
+    DPR = Math.min((window.devicePixelRatio || 1) * 1.3, 3);
     W = window.innerWidth; H = window.innerHeight;
     canvas.width = Math.floor(W * DPR); canvas.height = Math.floor(H * DPR);
     canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    const topMargin = 92, bottomMargin = 170;
-    cell = Math.max(24, Math.floor(Math.min((W - 40) / COLS, (H - topMargin - bottomMargin) / ROWS)));
-    const gridW = cell * COLS, gridH = cell * ROWS;
-    offsetX = (W - gridW) / 2;
-    offsetY = topMargin + Math.max(0, (H - topMargin - bottomMargin - gridH) / 2);
+    ctx.imageSmoothingEnabled = true;
+    if ('imageSmoothingQuality' in ctx) ctx.imageSmoothingQuality = 'high';
+
+    const topMargin = 75, bottomMargin = 150;
+    const availW = W - 32;
+    const availH = Math.max(220, H - topMargin - bottomMargin);
+
+    // In 2:1 isometric projection for 19x13 grid:
+    // x span = 16 * tileW; y span = 16 * tileH = 8 * tileW
+    tileW = Math.max(20, Math.min(availW / 17.5, availH / 10.0));
+    tileH = Math.round(tileW * 0.5);
+    tileW = tileH * 2;
+    blockDepth = Math.max(8, Math.round(tileH * 0.55));
+    cellUnit = (tileW / 2) * Math.sqrt(1.25);
+
+    X_center = Math.round(W / 2 - (COLS - ROWS) * (tileW / 4));
+    const gridVisualHeight = (COLS + ROWS) * (tileH / 2) + blockDepth + tileW * 0.6;
+    Y_center = Math.round(topMargin + Math.max(10, (availH - gridVisualHeight) / 2) + tileW * 0.25);
+
     rebuildPathPoints();
     buildStars();
+    updateZoomUI();
   }
 
-  function cellToPx(c, r) { return { x: offsetX + c * cell + cell / 2, y: offsetY + r * cell + cell / 2 }; }
-  function pxToCell(x, y) { return { c: Math.floor((x - offsetX) / cell), r: Math.floor((y - offsetY) / cell) }; }
+  // Convert (col, row, z) in grid to world coordinates (center of tile top face)
+  function cellToPx(c, r, z = 0) {
+    const x = X_center + (c - r) * (tileW / 2);
+    const y = Y_center + (c + r + 1) * (tileH / 2) - blockDepth - (z || 0);
+    return { x, y };
+  }
+
+  // Convert world coordinates (wx, wy) to grid (col, row) on top face
+  function pxToCell(wx, wy) {
+    const dx = wx - X_center;
+    const dy = (wy + blockDepth) - Y_center;
+    const c = Math.floor(dx / tileW + dy / tileH - 0.5);
+    const r = Math.floor(dy / tileH - dx / tileW - 0.5);
+    return { c, r };
+  }
+
   function inGrid(c, r) { return c >= 0 && c < COLS && r >= 0 && r < ROWS; }
   function keyOf(c, r) { return c + ',' + r; }
 
-  // ---------- Path (serpentine) ----------
-  let pathCells = [];
-  let pathSet = new Set();
-  let pathPoints = [];
-  let airPathPoints = []; // bent flight corridor for flying enemies, ignores ground path
-  let obstacleSet = new Set();  // decorative rock/tree cells: not buildable, adds map texture
-  let decorations = [];         // cosmetic-only props (small grass tufts etc), never block building
-
-  function buildPathCells() {
-    const rowsSeq = [1, 3, 5, 7];
-    let cells = [];
-    let goingRight = true;
-    for (let i = 0; i < rowsSeq.length; i++) {
-      const r = rowsSeq[i];
-      const cStart = goingRight ? 1 : COLS - 2;
-      const cEnd = goingRight ? COLS - 2 : 1;
-      const step = goingRight ? 1 : -1;
-      for (let c = cStart; ; c += step) {
-        cells.push({ c, r });
-        if (c === cEnd) break;
-      }
-      if (i < rowsSeq.length - 1) {
-        const nextR = rowsSeq[i + 1];
-        for (let r2 = r + 1; r2 <= nextR; r2++) cells.push({ c: cEnd, r: r2 });
-      }
-      goingRight = !goingRight;
+  // Hit-test existing 3D towers first in world space
+  function findTowerAtPx(wx, wy) {
+    if (!state || !state.towers) return null;
+    const sorted = state.towers.slice().sort((a, b) => (b.c + b.r) - (a.c + a.r));
+    for (const t of sorted) {
+      const pos = cellToPx(t.c, t.r);
+      const towerH = tileW * 0.75;
+      const cy = pos.y - towerH * 0.5;
+      const rx = tileW * 0.45;
+      const ry = towerH * 0.55;
+      const nx = (wx - pos.x) / rx;
+      const ny = (wy - cy) / ry;
+      if (nx * nx + ny * ny <= 1) return t;
     }
-    return cells;
+    return null;
+  }
+
+  // ---------- Paths & Map Extras ----------
+  let groundPaths = []; // Array of path arrays [{c, r}]
+  let groundPathsPoints = []; // Array of pixel path arrays [{x, y}]
+  let airCorridors = []; // Raw cell points for flyers
+  let airPathsPoints = []; // Array of pixel air corridors
+  let pathSet = new Set();
+  let obstacleSet = new Set();
+  let decorations = [];
+
+  function loadLevelPaths(level) {
+    const res = level.generatePaths();
+    groundPaths = res.groundPaths;
+    airCorridors = res.airCorridors;
+    pathSet = new Set();
+    for (const p of groundPaths) {
+      for (const cell of p) pathSet.add(keyOf(cell.c, cell.r));
+    }
+    rebuildPathPoints();
+    buildMapExtras(level);
   }
 
   function rebuildPathPoints() {
-    pathPoints = pathCells.map(p => cellToPx(p.c, p.r));
-    // Air corridor swoops in from a different edge than the ground lane and
-    // bends once mid-map, so it reads as its own invasion route (and forces
-    // anti-air towers to be placed away from the ground-lane clusters) rather
-    // than just retracing the ground path's start/end diagonally.
-    const coreCell = pathCells[pathCells.length - 1] || { c: COLS - 2, r: ROWS - 2 };
-    airPathPoints = [
-      cellToPx(COLS - 0.5, -0.8),
-      cellToPx(COLS * 0.32, ROWS * 0.42),
-      cellToPx(coreCell.c, coreCell.r)
-    ];
+    groundPathsPoints = groundPaths.map(path => path.map(p => cellToPx(p.c, p.r)));
+    airPathsPoints = airCorridors.map(corr => corr.map(p => cellToPx(p.c, p.r, 38)));
   }
 
-  function pointsFor(e) { return e.flying ? airPathPoints : pathPoints; }
+  function pointsForEnemy(e) {
+    if (e.flying) {
+      return airPathsPoints[e.pathIdx % airPathsPoints.length] || airPathsPoints[0];
+    }
+    return groundPathsPoints[e.pathIdx % groundPathsPoints.length] || groundPathsPoints[0];
+  }
 
-  pathCells = buildPathCells();
-  pathSet = new Set(pathCells.map(p => keyOf(p.c, p.r)));
-  buildMapExtras();
-
-  // Scatter a handful of rock/tree obstacles (block building) plus purely
-  // cosmetic grass tufts (never block building) across the buildable tiles,
-  // re-rolled each new game so the map layout isn't identical every run.
-  function buildMapExtras() {
+  function buildMapExtras(level) {
     obstacleSet = new Set();
     decorations = [];
     const free = [];
@@ -270,17 +703,17 @@
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-    const OBSTACLE_COUNT = Math.min(6, Math.floor(shuffled.length * 0.08));
-    const obstacleEmojis = ['🪨', '🌳', '🌲'];
-    for (let i = 0; i < OBSTACLE_COUNT; i++) {
+    const count = Math.min(level.obstacleCount, Math.floor(shuffled.length * 0.12));
+    const obstacleTypes = ['rock', 'pinetree', 'roundtree'];
+    for (let i = 0; i < count; i++) {
       const cellPos = shuffled[i];
       obstacleSet.add(keyOf(cellPos.c, cellPos.r));
-      decorations.push({ c: cellPos.c, r: cellPos.r, emoji: obstacleEmojis[i % obstacleEmojis.length], blocking: true });
+      decorations.push({ c: cellPos.c, r: cellPos.r, type: obstacleTypes[i % obstacleTypes.length], blocking: true });
     }
-    for (let i = OBSTACLE_COUNT; i < shuffled.length; i++) {
-      if (Math.random() < 0.14) {
+    for (let i = count; i < shuffled.length; i++) {
+      if (Math.random() < 0.12) {
         const cellPos = shuffled[i];
-        decorations.push({ c: cellPos.c, r: cellPos.r, emoji: Math.random() < 0.5 ? '🌿' : '🍀', blocking: false });
+        decorations.push({ c: cellPos.c, r: cellPos.r, type: Math.random() < 0.5 ? 'grass' : 'flower', blocking: false });
       }
     }
   }
@@ -293,7 +726,7 @@
     return true;
   }
 
-  // ---------- Audio ----------
+  // ---------- WebAudio Synthesizer ----------
   let audioCtx = null;
   function ensureAudio() {
     if (!audioCtx) {
@@ -309,7 +742,7 @@
     osc.type = type || 'square';
     osc.frequency.setValueAtTime(freq, t0);
     if (slideTo) osc.frequency.exponentialRampToValueAtTime(Math.max(1, slideTo), t0 + dur);
-    g.gain.setValueAtTime(gain != null ? gain : 0.15, t0);
+    g.gain.setValueAtTime(gain != null ? gain : 0.14, t0);
     g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
     osc.connect(g); g.connect(audioCtx.destination);
     osc.start(t0); osc.stop(t0 + dur + 0.03);
@@ -327,113 +760,179 @@
     shoot_flak: () => { tone(700, 0.05, 'square', 0.1, 200); tone(1500, 0.03, 'sine', 0.06, 2000, 0.02); },
     hit: () => tone(200, 0.05, 'square', 0.05, 80),
     death: () => tone(500, 0.1, 'square', 0.08, 100),
-    leak: () => tone(180, 0.25, 'sawtooth', 0.15, 60),
+    leak: () => tone(180, 0.25, 'sawtooth', 0.16, 60),
+    heal: () => { tone(650, 0.15, 'sine', 0.1, 1100); tone(850, 0.12, 'sine', 0.08, 1300, 0.05); },
+    emp: () => { tone(320, 0.2, 'sawtooth', 0.16, 90); },
+    berserk: () => { tone(180, 0.35, 'sawtooth', 0.2, 340); tone(240, 0.35, 'square', 0.18, 480, 0.05); },
     wave: () => { tone(500, 0.12, 'square', 0.12, 800); tone(800, 0.15, 'square', 0.1, 1100, 0.1); },
     gameover: () => { tone(400, 0.2, 'sawtooth', 0.15, 100); tone(300, 0.3, 'sawtooth', 0.12, 60, 0.2); },
     win: () => { [660, 880, 1100, 1320].forEach((f, i) => tone(f, 0.18, 'square', 0.12, null, i * 0.12)); }
   };
 
-  // ---------- Config ----------
+  // ---------- Config: Towers & Jump-Jump Enemies ----------
   const TOWER_TYPES = {
-    gatling:   { name: '机枪塔', icon: '🔫', cost: 50, dmg: 6, range: 2.6, rate: 6, color: '#ffd54f', canAirTarget: true },
-    cannon:    { name: '加农炮', icon: '💣', cost: 90, dmg: 24, range: 2.3, rate: 1.1, color: '#ff9d5c', splash: 1.0 },
-    frost:     { name: '冰霜塔', icon: '❄️', cost: 70, dmg: 4, range: 2.2, rate: 1.5, color: '#5ce1ff', slow: 0.55 },
-    sniper:    { name: '狙击塔', icon: '🎯', cost: 130, dmg: 60, range: 4.6, rate: 0.6, color: '#c58bff', armorPierce: true, canAirTarget: true },
-    lightning: { name: '闪电塔', icon: '⚡', cost: 110, dmg: 15, range: 2.4, rate: 1.1, color: '#f4ff5c', chain: 3, chainRange: 1.7, canAirTarget: true },
-    flak:      { name: '防空塔', icon: '🚀', cost: 100, dmg: 20, range: 3.0, rate: 1.4, color: '#5cffb0', splash: 0.7, canAirTarget: true, airOnly: true }
+    gatling:   { name: '机枪塔', icon: '🔫', cost: 50, dmg: 6.5, range: 2.7, rate: 6.2, color: '#ffd54f', canAirTarget: true, desc: '木纹方桩速射机枪' },
+    cannon:    { name: '加农炮', icon: '💣', cost: 90, dmg: 26, range: 2.4, rate: 1.15, color: '#ff9d5c', splash: 1.1, desc: '重型黑铁迫击炮' },
+    frost:     { name: '冰霜塔', icon: '❄️', cost: 70, dmg: 4.5, range: 2.3, rate: 1.5, color: '#5ce1ff', slow: 0.55, desc: '冰晶八面悬浮体' },
+    sniper:    { name: '狙击塔', icon: '🎯', cost: 130, dmg: 65, range: 4.8, rate: 0.65, color: '#c58bff', armorPierce: true, canAirTarget: true, desc: '大理石高台激光聚能镜' },
+    lightning: { name: '闪电塔', icon: '⚡', cost: 110, dmg: 16, range: 2.5, rate: 1.15, color: '#f4ff5c', chain: 3, chainRange: 1.8, canAirTarget: true, desc: '赛博魔方特斯拉电浆球' },
+    flak:      { name: '防空塔', icon: '🚀', cost: 100, dmg: 22, range: 3.2, rate: 1.45, color: '#5cffb0', splash: 0.75, canAirTarget: true, airOnly: true, desc: '双联地空拦截导弹箱' }
   };
   const TOWER_ORDER = ['gatling', 'cannon', 'frost', 'sniper', 'lightning', 'flak'];
 
+  // Hardcore Realistic Infantry & War-Machine Roster (8 Specialized Types)
+  // strideFreq = walk-cycle steps/sec at base speed, bobH = vertical torso bob amplitude (px)
   const ENEMY_TYPES = {
-    normal: { name: '杂兵', hp: 32, speed: 1.4, armor: 0, bounty: 8, leak: 1, color: '#ff6b6b', r: 0.32 },
-    runner: { name: '疾行者', hp: 16, speed: 2.5, armor: 0, bounty: 6, leak: 1, color: '#ffe066', r: 0.26 },
-    tank:   { name: '装甲兽', hp: 100, speed: 0.85, armor: 0.4, bounty: 16, leak: 2, color: '#8d99ae', r: 0.4 },
-    flyer:  { name: '空中无人机', hp: 22, speed: 2.1, armor: 0, bounty: 12, leak: 2, color: '#7cf5c4', r: 0.28, flying: true },
-    boss:   { name: '首领', hp: 700, speed: 0.7, armor: 0.25, bounty: 160, leak: 5, color: '#b385ff', r: 0.55 }
+    normal:  { name: '轻装步兵', hp: 46, speed: 1.5, armor: 0, bounty: 7, leak: 1, color: '#3d4a6b', r: 0.32, bobH: 3.2, strideFreq: 2.6, legs: 2 },
+    runner:  { name: '侦察快跑兵', hp: 22, speed: 3.0, armor: 0, bounty: 6, leak: 2, color: '#ffb703', r: 0.27, bobH: 4.2, strideFreq: 4.2, legs: 2 },
+    tank:    { name: '重装机甲兽', hp: 170, speed: 0.95, armor: 0.46, bounty: 17, leak: 3, color: '#6c757d', r: 0.44, bobH: 2.0, strideFreq: 1.5, legs: 4 },
+    flyer:   { name: '侦察无人机', hp: 32, speed: 2.5, armor: 0, bounty: 12, leak: 2, color: '#7cf5c4', r: 0.28, flying: true, bobH: 0, strideFreq: 0, legs: 0 },
+    medic:   { name: '战地医疗兵', hp: 72, speed: 1.4, armor: 0.15, bounty: 15, leak: 3, color: '#10b981', r: 0.33, bobH: 2.4, strideFreq: 2.2, legs: 2 },
+    phantom: { name: '暗影游击兵', hp: 40, speed: 2.6, armor: 0, bounty: 14, leak: 3, color: '#a855f7', r: 0.3, bobH: 2.6, strideFreq: 3.0, legs: 2, dodgeRate: 0.38 },
+    bomber:  { name: '自爆机械蛛', hp: 55, speed: 1.95, armor: 0.1, bounty: 15, leak: 2, color: '#ef4444', r: 0.3, bobH: 1.6, strideFreq: 5.5, legs: 6 },
+    boss:    { name: '黄金铠甲王', hp: 1150, speed: 0.85, armor: 0.34, bounty: 190, leak: 8, color: '#ffd166', r: 0.58, bobH: 3.6, strideFreq: 1.4, legs: 2 }
   };
 
-  const WAVE_MAX = 20;
-  const WAVE_COUNTDOWN = 8;
+  const WAVE_COUNTDOWN = 7;
 
   // ---------- State ----------
   let state = null;
   let towerAt = new Map();
 
-  function freshState() {
+  function freshState(lvlIdx) {
     towerAt = new Map();
+    const lvl = LEVELS[lvlIdx];
     return {
-      gold: 150, lives: 20, wave: 0, score: 0,
-      enemies: [], towers: [], projectiles: [], particles: [], lightnings: [],
-      spawnQueue: [], spawnTimer: 0,
-      waveActive: false, countdown: WAVE_COUNTDOWN, betweenWaves: true,
-      speedMult: 1, paused: false,
-      selectedBuildType: null, selectedTower: null,
+      levelIdx: lvlIdx,
+      gold: lvl.startGold,
+      lives: 18,
+      wave: 0,
+      score: 0,
+      enemies: [],
+      towers: [],
+      projectiles: [],
+      particles: [],
+      lightnings: [],
+      shockwaves: [],
+      floatingTexts: [],
+      spawnQueue: [],
+      spawnTimer: 0,
+      spawnCount: 0,
+      waveActive: false,
+      countdown: WAVE_COUNTDOWN,
+      betweenWaves: true,
+      speedMult: 1,
+      paused: false,
+      selectedBuildType: null,
+      selectedTower: null,
       hover: null,
-      gameOver: false, win: false,
+      gameOver: false,
+      win: false,
+      levelClear: false,
       running: false,
-      time: 0
+      time: 0,
+      screenShake: 0
     };
   }
 
-  function waveComposition(n) {
-    const boss = n % 5 === 0;
-    const baseCount = 8 + Math.floor(n * 1.6);
+  // Hardcore wave composition based on level & wave
+  function waveComposition(level, wave) {
+    const isBoss = wave === level.wavesCount || (wave % 5 === 0 && wave >= 5);
+    const baseCount = Math.round(12 + wave * 2.8 + (level.id - 1) * 3.6);
     const list = [];
+
     for (let i = 0; i < baseCount; i++) {
       let type = 'normal';
       const roll = Math.random();
-      if (n >= 4 && roll < 0.16) type = 'flyer';
-      else if (n >= 3 && roll < 0.38) type = 'tank';
-      else if (n >= 2 && roll < 0.64) type = 'runner';
-      list.push(type);
+
+      if (level.id >= 3 && wave >= 4 && roll < 0.19) type = 'bomber';
+      else if (level.id >= 2 && wave >= 3 && roll < 0.37) type = 'phantom';
+      else if (wave >= 3 && roll < 0.54) type = 'medic';
+      else if (wave >= 2 && roll < 0.70) type = 'flyer';
+      else if (wave >= 2 && roll < 0.88) type = 'tank';
+      else if (roll < 0.96) type = 'runner';
+
+      list.push({ type, pathIdx: i });
     }
-    if (boss) list.push('boss');
-    return { list, spawnInterval: Math.max(0.32, 0.85 - n * 0.02) };
+
+    if (isBoss) {
+      list.push({ type: 'boss', pathIdx: 0 });
+      if (level.groundPaths.length > 1) list.push({ type: 'boss', pathIdx: 1 });
+      list.push({ type: 'tank', pathIdx: 0 });
+      if (wave >= 10) list.push({ type: 'tank', pathIdx: level.groundPaths.length > 1 ? 1 : 0 });
+    }
+
+    const spawnInterval = Math.max(0.16, 0.7 - wave * 0.032 - (level.id - 1) * 0.035);
+    return { list, spawnInterval };
   }
 
   function startWave() {
-    if (state.wave >= WAVE_MAX) return;
+    if (state.wave >= curLevel.wavesCount) return;
     state.wave++;
-    const comp = waveComposition(state.wave);
+    const comp = waveComposition(curLevel, state.wave);
     state.spawnQueue = comp.list.slice();
     state.spawnInterval = comp.spawnInterval;
     state.spawnTimer = 0;
     state.waveActive = true;
     state.betweenWaves = false;
     sfx.wave();
-    showBanner('第 ' + state.wave + ' 波来袭！', 1400);
+    showBanner(`第 ${state.wave} / ${curLevel.wavesCount} 波来袭！敌军大部队冲锋`, 1600);
   }
 
-  function spawnEnemy(type) {
+  function spawnEnemy(entry) {
+    const type = entry.type;
+    const pathIdx = entry.pathIdx || 0;
     const base = ENEMY_TYPES[type];
-    const hpScale = 1 + (state.wave - 1) * 0.15;
+    const hpScale = (1 + (state.wave - 1) * 0.24 + (curLevel.id - 1) * 0.3);
+    const speedScale = 1 + Math.min(0.5, (state.wave - 1) * 0.018 + (curLevel.id - 1) * 0.02);
+    const armorScale = 1 + Math.min(0.6, (state.wave - 1) * 0.02);
     const hp = Math.round(base.hp * hpScale);
     const flying = !!base.flying;
-    const p0 = (flying ? airPathPoints : pathPoints)[0];
-    state.enemies.push({
-      type, hp, maxHp: hp, speedCells: base.speed, armor: base.armor,
-      bounty: base.bounty, leak: base.leak, color: base.color, radius: base.r, flying,
-      x: p0.x, y: p0.y, idx: 0, slowUntil: 0, slowFactor: 1, id: Math.random()
-    });
+
+    const e = {
+      type, hp, maxHp: hp, speedCells: base.speed * speedScale, armor: Math.min(0.75, base.armor * armorScale),
+      bounty: base.bounty, leak: base.leak, color: base.color, radius: base.r,
+      flying, bobH: base.bobH, strideFreq: base.strideFreq, legs: base.legs,
+      dodgeRate: base.dodgeRate || 0,
+      pathIdx, idx: 0,
+      x: 0, y: 0, z: flying ? 38 : 0,
+      walkPhase: Math.random(), facing: 0,
+      slowUntil: 0, slowFactor: 1,
+      healTimer: 0,
+      enraged: false, shield: 0, maxShield: 0,
+      id: Math.random()
+    };
+
+    const pts = pointsForEnemy(e);
+    if (!pts || pts.length === 0) return;
+    const p0 = pts[0];
+    e.x = p0.x; e.y = p0.y;
+
+    state.enemies.push(e);
+    state.spawnCount++;
+  }
+
+  function addFloatingText(text, x, y, color = '#fff') {
+    state.floatingTexts.push({ text, x, y, vy: -28, life: 0.65, maxLife: 0.65, color });
   }
 
   function towerStats(t) {
     const base = TOWER_TYPES[t.type];
     const lvl = t.level;
-    const dmgMult = 1 + (lvl - 1) * 0.4;
-    const rangeMult = 1 + (lvl - 1) * 0.12;
-    const rateMult = 1 + (lvl - 1) * 0.2;
+    const dmgMult = 1 + (lvl - 1) * 0.42;
+    const rangeMult = 1 + (lvl - 1) * 0.13;
+    const rateMult = 1 + (lvl - 1) * 0.22;
     return {
       dmg: base.dmg * dmgMult,
-      range: base.range * rangeMult * cell,
+      range: base.range * rangeMult * cellUnit,
       rate: base.rate * rateMult,
-      splash: base.splash ? base.splash * rangeMult * cell : 0,
+      splash: base.splash ? base.splash * rangeMult * cellUnit : 0,
       slow: base.slow,
       armorPierce: !!base.armorPierce,
       canAirTarget: !!base.canAirTarget,
       airOnly: !!base.airOnly,
       chain: base.chain || 0,
-      chainRange: base.chain ? base.chainRange * rangeMult * cell : 0,
+      chainRange: base.chain ? base.chainRange * rangeMult * cellUnit : 0,
       color: base.color
     };
   }
@@ -452,11 +951,17 @@
     if (state.gold < base.cost) { sfx.error(); return; }
     if (!canBuild(c, r)) { sfx.error(); return; }
     const pos = cellToPx(c, r);
-    const t = { type, c, r, x: pos.x, y: pos.y, level: 1, cooldown: 0, totalSpent: base.cost, id: Math.random() };
+    const t = {
+      type, c, r, x: pos.x, y: pos.y, level: 1, cooldown: 0,
+      disabledUntil: 0,
+      recoil: 0, muzzleFlash: 0, facing: -Math.PI / 4,
+      totalSpent: base.cost, id: Math.random()
+    };
     state.towers.push(t);
     towerAt.set(keyOf(c, r), t);
     state.gold -= base.cost;
     sfx.place();
+    spawnImpactParticles(pos.x, pos.y, base.color, 14);
   }
 
   function findTarget(t, stats, exclude) {
@@ -467,7 +972,7 @@
       if (!e.flying && stats.airOnly) continue;
       const dx = e.x - t.x, dy = e.y - t.y;
       if (dx * dx + dy * dy > stats.range * stats.range) continue;
-      const pts = pointsFor(e);
+      const pts = pointsForEnemy(e);
       const nextPt = pts[e.idx + 1];
       let remain = nextPt ? Math.hypot(nextPt.x - e.x, nextPt.y - e.y) : 0;
       const progress = e.idx * 10000 - remain;
@@ -477,39 +982,45 @@
   }
 
   function fireTower(t) {
+    if (state.time < t.disabledUntil) return;
     const stats = towerStats(t);
     if (t.type === 'lightning') { fireLightning(t, stats); return; }
     const target = findTarget(t, stats);
     if (!target) return;
     t.cooldown = 1 / stats.rate;
     t.facing = Math.atan2(target.y - t.y, target.x - t.x);
-    t.muzzleFlash = 0.08;
+    t.muzzleFlash = 0.1;
+    t.recoil = 1.0;
+
+    const spawnY = t.y - tileW * 0.45;
     state.projectiles.push({
-      x: t.x, y: t.y, target, dmg: stats.dmg, splash: stats.splash,
+      x: t.x, y: spawnY, target, dmg: stats.dmg, splash: stats.splash,
       slow: stats.slow, armorPierce: stats.armorPierce, color: stats.color,
-      speed: cell * 14, type: t.type
+      speed: cellUnit * 14.5, type: t.type,
+      startY: spawnY, startX: t.x,
+      travelDist: Math.hypot(target.x - t.x, target.y - spawnY),
+      currDist: 0
     });
     if (sfx['shoot_' + t.type]) sfx['shoot_' + t.type]();
   }
 
-  // Chain lightning: instantly zaps the primary target, then arcs to nearby
-  // untouched enemies (damage decays a bit per jump) — a control tool that,
-  // unlike cannon/frost, can also strike flying enemies.
   function fireLightning(t, stats) {
     const first = findTarget(t, stats);
     if (!first) return;
     t.cooldown = 1 / stats.rate;
     t.facing = Math.atan2(first.y - t.y, first.x - t.x);
-    t.muzzleFlash = 0.08;
+    t.muzzleFlash = 0.12;
+    t.recoil = 1.0;
+
     const hit = new Set();
     const arcs = [];
-    let from = { x: t.x, y: t.y };
+    let from = { x: t.x, y: t.y - tileW * 0.45 };
     let cur = first;
     let dmg = stats.dmg;
     let jumps = stats.chain;
     while (cur) {
       damageEnemy(cur, dmg, stats.armorPierce);
-      arcs.push({ x1: from.x, y1: from.y, x2: cur.x, y2: cur.y, life: 0.18, maxLife: 0.18 });
+      arcs.push({ x1: from.x, y1: from.y, x2: cur.x, y2: enemyHitY(cur), life: 0.22, maxLife: 0.22 });
       hit.add(cur);
       if (jumps <= 0) break;
       jumps--;
@@ -521,7 +1032,7 @@
         const d = Math.hypot(e.x - cur.x, e.y - cur.y);
         if (d <= bestD) { bestD = d; next = e; }
       }
-      from = { x: cur.x, y: cur.y };
+      from = { x: cur.x, y: enemyHitY(cur) };
       cur = next;
     }
     state.lightnings.push(...arcs);
@@ -529,54 +1040,172 @@
   }
 
   function damageEnemy(e, dmg, armorPierce) {
-    const actual = armorPierce ? dmg : dmg * (1 - e.armor);
+    // Phantom Dodge Check
+    if (e.dodgeRate && Math.random() < e.dodgeRate) {
+      addFloatingText('闪避!', e.x, enemyHitY(e) - 15, '#c084fc');
+      return;
+    }
+
+    let actual = armorPierce ? dmg : dmg * (1 - e.armor);
+
+    // Shield absorption (Boss berserk shield)
+    if (e.shield > 0) {
+      if (e.shield >= actual) {
+        e.shield -= actual;
+        actual = 0;
+      } else {
+        actual -= e.shield;
+        e.shield = 0;
+      }
+    }
+
     e.hp -= actual;
+
+    // Boss Berserk mechanic
+    if (e.type === 'boss' && !e.enraged && e.hp <= e.maxHp * 0.5) {
+      e.enraged = true;
+      e.speedCells *= 1.35;
+      e.shield = Math.round(e.maxHp * 0.28);
+      e.maxShield = e.shield;
+      state.screenShake = 0.45;
+      sfx.berserk();
+      addFloatingText('🔥 狂暴!', e.x, e.y - 30, '#ff3366');
+      spawnImpactParticles(e.x, e.y, '#ff3366', 22);
+    }
+
     if (e.hp <= 0 && !e.dead) {
       e.dead = true;
       state.gold += e.bounty;
       state.score += e.bounty * 2;
-      spawnParticles(e.x, e.y, e.color);
+      spawnImpactParticles(e.x, enemyHitY(e), e.color, 18);
       sfx.death();
+
+      // Bomber EMP shockwave
+      if (e.type === 'bomber') {
+        sfx.emp();
+        state.shockwaves.push({
+          x: e.x, y: e.y, r: 4, maxR: cellUnit * 2.2, life: 0.4, maxLife: 0.4, color: '#ef4444'
+        });
+        for (const t of state.towers) {
+          const d = Math.hypot(t.x - e.x, t.y - e.y);
+          if (d <= cellUnit * 2.2) {
+            t.disabledUntil = Math.max(t.disabledUntil, state.time + 1.3);
+            addFloatingText('⚡ 瘫痪', t.x, t.y - 20, '#ef4444');
+          }
+        }
+      }
     }
   }
 
-  function spawnParticles(x, y, color) {
-    for (let i = 0; i < 8; i++) {
+  function spawnImpactParticles(x, y, color, count = 8) {
+    for (let i = 0; i < count; i++) {
       const ang = Math.random() * Math.PI * 2;
-      const spd = 40 + Math.random() * 80;
+      const spd = 30 + Math.random() * 95;
       state.particles.push({
         x, y, vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd,
-        life: 0.4 + Math.random() * 0.2, maxLife: 0.6, color
+        life: 0.4 + Math.random() * 0.25, maxLife: 0.65, color
       });
     }
+  }
+
+  function spawnDustPuff(x, y, scale = 1.0) {
+    state.shockwaves.push({
+      x, y, r: 2, maxR: tileW * 0.35 * scale, life: 0.35, maxLife: 0.35, color: 'rgba(255,255,255,0.45)'
+    });
   }
 
   function leakEnemy(e) {
     e.dead = true;
     state.lives -= e.leak;
     sfx.leak();
-    flashEl.style.opacity = '0.35';
+    flashEl.style.opacity = '0.4';
     setTimeout(() => { flashEl.style.opacity = '0'; }, 100);
+    state.screenShake = 0.25;
     if (state.lives <= 0) { state.lives = 0; endGame(false); }
   }
 
   function updateEnemyMove(e, dt) {
     const slowActive = state.time < e.slowUntil;
-    const spd = e.speedCells * cell * (slowActive ? e.slowFactor : 1);
-    const target = pointsFor(e)[e.idx + 1];
+    const spd = e.speedCells * cellUnit * (slowActive ? e.slowFactor : 1);
+    const pts = pointsForEnemy(e);
+    const target = pts[e.idx + 1];
     if (!target) { leakEnemy(e); return; }
+
     const dx = target.x - e.x, dy = target.y - e.y;
     const dist = Math.hypot(dx, dy);
     const step = spd * dt;
-    if (step >= dist) { e.x = target.x; e.y = target.y; e.idx++; }
-    else { e.x += dx / dist * step; e.y += dy / dist * step; }
+
+    if (dist > 0.001) {
+      e.facing = Math.atan2(dy, dx);
+    }
+
+    // Medic periodic healing aura
+    if (e.type === 'medic' && !e.dead) {
+      e.healTimer += dt;
+      if (e.healTimer >= 2.0) {
+        e.healTimer = 0;
+        let healedAny = false;
+        const healRange = cellUnit * 2.5;
+        for (const ally of state.enemies) {
+          if (ally === e || ally.dead) continue;
+          const d = Math.hypot(ally.x - e.x, ally.y - e.y);
+          if (d <= healRange && ally.hp < ally.maxHp) {
+            const healAmt = Math.round(ally.maxHp * 0.18);
+            ally.hp = Math.min(ally.maxHp, ally.hp + healAmt);
+            healedAny = true;
+            spawnImpactParticles(ally.x, ally.y - 10, '#10b981', 4);
+          }
+        }
+        if (healedAny) {
+          sfx.heal();
+          state.shockwaves.push({
+            x: e.x, y: e.y, r: 2, maxR: healRange, life: 0.45, maxLife: 0.45, color: '#10b981'
+          });
+        }
+      }
+    }
+
+    // Realistic walk-cycle animation (feet stay on the ground, torso bobs gently)
+    if (!e.flying) {
+      const moveFactor = dist > 0.001 ? Math.min(1, step / Math.max(0.0001, dt * cellUnit)) : 0;
+      e.walkPhase = (e.walkPhase || 0) + dt * (e.strideFreq || 2.4) * Math.max(0.35, moveFactor);
+      const phi = e.walkPhase % 1.0;
+      e.bobPhase = phi;
+      // Double-bob per stride (feet alternate, torso dips twice per cycle) + slight sway
+      e.z = Math.abs(Math.sin(phi * Math.PI * 2)) * (e.bobH || 3);
+
+      const strideCycle = phi % 0.5;
+      if (strideCycle < 0.04 && !e.landedCycle) {
+        e.landedCycle = true;
+        if (e.type === 'tank' || e.type === 'boss') {
+          spawnDustPuff(e.x, e.y, e.type === 'boss' ? 1.5 : 1.0);
+        }
+      } else if (strideCycle > 0.12) {
+        e.landedCycle = false;
+      }
+    } else {
+      e.z = 38 + Math.sin(state.time * 4 + e.id * 10) * 3.5;
+      e.propAngle = (e.propAngle || 0) + dt * 36;
+      e.walkPhase = (e.walkPhase || 0) + dt * 2.2;
+    }
+
+    if (step >= dist) {
+      e.x = target.x;
+      e.y = target.y;
+      e.idx++;
+    } else {
+      e.x += (dx / dist) * step;
+      e.y += (dy / dist) * step;
+    }
   }
 
   function update(dtRaw) {
     const dt = dtRaw * state.speedMult;
     state.time += dt;
 
-    // spawning
+    if (state.screenShake > 0) state.screenShake = Math.max(0, state.screenShake - dt);
+
+    // Spawning wave
     if (state.waveActive) {
       if (state.spawnQueue.length > 0) {
         state.spawnTimer -= dt;
@@ -585,326 +1214,1202 @@
           state.spawnTimer = state.spawnInterval;
         }
       } else if (state.enemies.length === 0) {
-        // wave cleared
         state.waveActive = false;
-        state.gold += 20 + state.wave * 3;
-        if (state.wave >= WAVE_MAX) { endGame(true); return; }
+        state.gold += 25 + state.wave * 4 + curLevel.id * 5;
+        if (state.wave >= curLevel.wavesCount) {
+          levelComplete();
+          return;
+        }
         state.betweenWaves = true;
         state.countdown = WAVE_COUNTDOWN;
       }
-    } else if (state.betweenWaves && state.wave < WAVE_MAX) {
+    } else if (state.betweenWaves && state.wave < curLevel.wavesCount) {
       state.countdown -= dt;
       if (state.countdown <= 0) startWave();
     }
 
-    // enemies
+    // Enemies
     for (const e of state.enemies) if (!e.dead) updateEnemyMove(e, dt);
     state.enemies = state.enemies.filter(e => !e.dead);
 
-    // towers
+    // Towers
     for (const t of state.towers) {
       if (t.cooldown > 0) t.cooldown -= dt;
       else fireTower(t);
       if (t.muzzleFlash > 0) t.muzzleFlash -= dt;
+      if (t.recoil > 0) t.recoil = Math.max(0, t.recoil - dt * 6);
     }
 
-    // projectiles
+    // Projectiles
     for (const p of state.projectiles) {
       if (!p.target || p.target.dead) { p.dead = true; continue; }
-      const dx = p.target.x - p.x, dy = p.target.y - p.y;
+      const targetY = enemyHitY(p.target);
+      const dx = p.target.x - p.x, dy = targetY - p.y;
       const dist = Math.hypot(dx, dy);
       const step = p.speed * dt;
+      p.currDist += step;
+
       if (step >= dist) {
         p.dead = true;
         damageEnemy(p.target, p.dmg, p.armorPierce);
         if (p.slow) {
-          p.target.slowUntil = state.time + 1.5;
+          p.target.slowUntil = state.time + 1.6;
           p.target.slowFactor = 1 - p.slow;
         }
         if (p.splash > 0) {
+          state.shockwaves.push({
+            x: p.target.x, y: p.target.y, r: 4, maxR: p.splash,
+            life: 0.35, maxLife: 0.35, color: p.color
+          });
           for (const e of state.enemies) {
             if (e === p.target || e.dead) continue;
             const d2 = Math.hypot(e.x - p.target.x, e.y - p.target.y);
-            if (d2 <= p.splash) damageEnemy(e, p.dmg * 0.6, p.armorPierce);
+            if (d2 <= p.splash) damageEnemy(e, p.dmg * 0.65, p.armorPierce);
           }
         }
-      } else { p.x += dx / dist * step; p.y += dy / dist * step; }
+      } else {
+        p.x += (dx / dist) * step;
+        p.y += (dy / dist) * step;
+      }
     }
     state.projectiles = state.projectiles.filter(p => !p.dead);
     state.enemies = state.enemies.filter(e => !e.dead);
 
-    // particles
+    // Particles
     for (const pt of state.particles) {
       pt.x += pt.vx * dt; pt.y += pt.vy * dt; pt.life -= dt;
     }
-    state.particles = state.particles.filter(p => p.life > 0);
+    state.particles = state.particles.filter(pt => pt.life > 0);
 
-    // lightning arcs (visual only, fade out fast)
+    // Shockwaves
+    for (const sw of state.shockwaves) {
+      sw.life -= dt;
+      sw.r += ((sw.maxR - sw.r) * 12) * dt;
+    }
+    state.shockwaves = state.shockwaves.filter(sw => sw.life > 0);
+
+    // Floating Texts
+    for (const ft of state.floatingTexts) {
+      ft.y += ft.vy * dt;
+      ft.life -= dt;
+    }
+    state.floatingTexts = state.floatingTexts.filter(ft => ft.life > 0);
+
+    // Lightning arcs
     for (const a of state.lightnings) a.life -= dt;
     state.lightnings = state.lightnings.filter(a => a.life > 0);
   }
 
-  // ---------- Rendering ----------
-  function render() {
-    ctx.clearRect(0, 0, W, H);
-    // background: deep-space gradient + twinkling stars for atmosphere
-    const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
-    bgGrad.addColorStop(0, '#0f1230');
-    bgGrad.addColorStop(1, '#080a18');
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, W, H);
-    for (const s of stars) {
-      const tw = 0.5 + 0.5 * Math.sin(state.time * s.speed + s.phase);
-      ctx.globalAlpha = 0.25 + tw * 0.55;
-      ctx.fillStyle = '#cdd6ff';
-      ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
+  // ---------- 3D Isometric Rendering Helpers ----------
 
-    // grid tiles with subtle per-tile gradient
-    for (let r = 0; r < ROWS; r++) {
-      for (let c = 0; c < COLS; c++) {
-        const x = offsetX + c * cell, y = offsetY + r * cell;
-        const isPath = pathSet.has(keyOf(c, r));
-        const tileGrad = ctx.createLinearGradient(x, y, x, y + cell);
-        if (isPath) {
-          const pulse = 0.5 + 0.5 * Math.sin(state.time * 2 - (c + r) * 0.5);
-          tileGrad.addColorStop(0, `rgba(52,36,90,${0.95})`);
-          tileGrad.addColorStop(1, `rgba(36,26,64,0.95)`);
-          ctx.fillStyle = tileGrad;
-          ctx.fillRect(x, y, cell, cell);
-          ctx.fillStyle = `rgba(124,92,255,${0.06 + pulse * 0.08})`;
-          ctx.fillRect(x, y, cell, cell);
-        } else {
-          const light = (r + c) % 2 === 0;
-          tileGrad.addColorStop(0, light ? '#171b3c' : '#141733');
-          tileGrad.addColorStop(1, light ? '#12152e' : '#101228');
-          ctx.fillStyle = tileGrad;
-          ctx.fillRect(x, y, cell, cell);
-        }
+  function drawIsoBlock(c, r, topStyle, leftStyle, rightStyle, depth, liftZ = 0) {
+    const hw = tileW / 2, hh = tileH / 2;
+    const cx = X_center + (c - r) * hw;
+    const cy = Y_center + (c + r + 1) * hh - blockDepth - liftZ;
+
+    // Push each corner outward from the tile center by a tiny fixed world-space
+    // amount so adjacent tiles slightly overlap. This "tile bleeding" trick hides
+    // the hairline anti-aliasing seams between separately-filled polygons that
+    // otherwise become visible once the camera zooms in.
+    const EPS = 0.75;
+    function inflate(px, py) {
+      const dx = px - cx, dy = py - cy;
+      const len = Math.hypot(dx, dy) || 1;
+      return { x: px + (dx / len) * EPS, y: py + (dy / len) * EPS };
+    }
+
+    const topPt    = inflate(cx,      cy - hh);
+    const rightPt  = inflate(cx + hw, cy);
+    const bottomPt = inflate(cx,      cy + hh);
+    const leftPt   = inflate(cx - hw, cy);
+
+    // Left Face (soft top-to-bottom shading for a beveled, more three-dimensional feel)
+    const leftGrad = ctx.createLinearGradient(leftPt.x, leftPt.y, leftPt.x, leftPt.y + depth);
+    leftGrad.addColorStop(0, lightenHex(leftStyle, 0.08));
+    leftGrad.addColorStop(1, darkenHex(leftStyle, 0.28));
+    ctx.fillStyle = leftGrad;
+    ctx.beginPath();
+    ctx.moveTo(leftPt.x, leftPt.y);
+    ctx.lineTo(bottomPt.x, bottomPt.y);
+    ctx.lineTo(bottomPt.x, bottomPt.y + depth);
+    ctx.lineTo(leftPt.x, leftPt.y + depth);
+    ctx.closePath();
+    ctx.fill();
+
+    // Right Face
+    const rightGrad = ctx.createLinearGradient(rightPt.x, rightPt.y, rightPt.x, rightPt.y + depth);
+    rightGrad.addColorStop(0, lightenHex(rightStyle, 0.04));
+    rightGrad.addColorStop(1, darkenHex(rightStyle, 0.32));
+    ctx.fillStyle = rightGrad;
+    ctx.beginPath();
+    ctx.moveTo(bottomPt.x, bottomPt.y);
+    ctx.lineTo(rightPt.x, rightPt.y);
+    ctx.lineTo(rightPt.x, rightPt.y + depth);
+    ctx.lineTo(bottomPt.x, bottomPt.y + depth);
+    ctx.closePath();
+    ctx.fill();
+
+    // Top Face (subtle directional light: brighter toward the upper-left corner)
+    const topGrad = ctx.createLinearGradient(topPt.x, topPt.y, bottomPt.x, bottomPt.y);
+    topGrad.addColorStop(0, lightenHex(topStyle, 0.14));
+    topGrad.addColorStop(0.55, topStyle);
+    topGrad.addColorStop(1, darkenHex(topStyle, 0.1));
+    ctx.fillStyle = topGrad;
+    ctx.beginPath();
+    ctx.moveTo(topPt.x, topPt.y);
+    ctx.lineTo(rightPt.x, rightPt.y);
+    ctx.lineTo(bottomPt.x, bottomPt.y);
+    ctx.lineTo(leftPt.x, leftPt.y);
+    ctx.closePath();
+    ctx.fill();
+
+    // Edge highlight
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  function drawFloatingIslandBase() {
+    const hw = tileW / 2, hh = tileH / 2;
+    const islandDepth = blockDepth + 32;
+
+    const topPt    = { x: X_center + (0 - 0) * hw,       y: Y_center + (0 + 0 + 1) * hh - blockDepth - hh };
+    const rightPt  = { x: X_center + (COLS - 0) * hw,    y: Y_center + (COLS + 0) * hh - blockDepth };
+    const bottomPt = { x: X_center + (COLS - ROWS) * hw, y: Y_center + (COLS + ROWS + 1) * hh - blockDepth + hh };
+    const leftPt   = { x: X_center + (0 - ROWS) * hw,    y: Y_center + (0 + ROWS) * hh - blockDepth };
+
+    // Island drop shadow
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(leftPt.x, leftPt.y + islandDepth + 15);
+    ctx.lineTo(bottomPt.x, bottomPt.y + islandDepth + 15);
+    ctx.lineTo(rightPt.x, rightPt.y + islandDepth + 15);
+    ctx.lineTo(bottomPt.x, bottomPt.y + islandDepth + 35);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    ctx.filter = 'blur(16px)';
+    ctx.fill();
+    ctx.restore();
+
+    // Bedrock cliff faces
+    const gradL = ctx.createLinearGradient(leftPt.x, leftPt.y, bottomPt.x, bottomPt.y + islandDepth);
+    gradL.addColorStop(0, curLevel.theme.cliffL);
+    gradL.addColorStop(1, '#05070f');
+    ctx.fillStyle = gradL;
+    ctx.beginPath();
+    ctx.moveTo(leftPt.x, leftPt.y);
+    ctx.lineTo(bottomPt.x, bottomPt.y);
+    ctx.lineTo(bottomPt.x, bottomPt.y + islandDepth);
+    ctx.lineTo(leftPt.x, leftPt.y + islandDepth - 10);
+    ctx.closePath();
+    ctx.fill();
+
+    const gradR = ctx.createLinearGradient(bottomPt.x, bottomPt.y, rightPt.x, rightPt.y + islandDepth);
+    gradR.addColorStop(0, curLevel.theme.cliffR);
+    gradR.addColorStop(1, '#070a16');
+    ctx.fillStyle = gradR;
+    ctx.beginPath();
+    ctx.moveTo(bottomPt.x, bottomPt.y);
+    ctx.lineTo(rightPt.x, rightPt.y);
+    ctx.lineTo(rightPt.x, rightPt.y + islandDepth - 10);
+    ctx.lineTo(bottomPt.x, bottomPt.y + islandDepth);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  // Ground contact point used for projectile / lightning aim (roughly chest height)
+  function enemyHitY(e) {
+    if (e.flying) return e.y;
+    return e.y - e.radius * tileW * 1.5;
+  }
+
+  // Draw a single pendulum limb (thigh/shin or upper-arm) pivoting at (originX, originY)
+  function drawLimb(originX, originY, angle, length, width, color) {
+    ctx.save();
+    ctx.translate(originX, originY);
+    ctx.rotate(angle);
+    const grad = ctx.createLinearGradient(-width / 2, 0, width / 2, 0);
+    grad.addColorStop(0, darkenHex(color, 0.42));
+    grad.addColorStop(0.5, color);
+    grad.addColorStop(1, darkenHex(color, 0.16));
+    ctx.fillStyle = grad;
+    roundRect(-width / 2, 0, width, length, width / 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  const SKIN_TONE = '#dba36f';
+
+  // Realistic bipedal soldier rig shared by 'normal' and 'runner'
+  function drawSoldier(e, rad, isRunner) {
+    const phase = e.bobPhase || 0;
+    const swingAmt = isRunner ? 1.05 : 0.55;
+    const swing = Math.sin(phase * Math.PI * 2) * swingAmt;
+    const bob = (e.z || 0) * 0.5;
+
+    const legLen = rad * (isRunner ? 1.28 : 1.34);
+    const legW = rad * (isRunner ? 0.24 : 0.3);
+    const torsoW = rad * (isRunner ? 0.7 : 0.92);
+    const torsoH = rad * (isRunner ? 0.8 : 1.0);
+    const armLen = rad * (isRunner ? 0.95 : 1.02);
+    const armW = rad * (isRunner ? 0.18 : 0.22);
+    const headR = rad * (isRunner ? 0.4 : 0.44);
+
+    const hipY = -legLen + bob;
+    const shoulderY = hipY - torsoH;
+    const headCenterY = shoulderY - headR * 1.05;
+    const armorColor = e.color;
+
+    // Back leg & arm (depth)
+    drawLimb(0, hipY, -swing, legLen, legW * 0.85, darkenHex(armorColor, 0.3));
+    drawLimb(0, shoulderY, swing * 0.75, armLen * 0.9, armW * 0.85, darkenHex(armorColor, 0.32));
+
+    // Speed streaks for runner
+    if (isRunner) {
+      ctx.strokeStyle = hexToRgba(armorColor, 0.35);
+      ctx.lineWidth = Math.max(1, rad * 0.08);
+      for (let i = 0; i < 3; i++) {
+        const yy = hipY - i * rad * 0.35;
+        ctx.beginPath(); ctx.moveTo(-legLen * 0.5 - i * 4, yy); ctx.lineTo(-legLen * 0.9 - i * 6, yy); ctx.stroke();
       }
     }
-    // path border glow, pulsing gently along the route
-    ctx.lineWidth = 2;
-    pathCells.forEach((p, i) => {
-      const pulse = 0.5 + 0.5 * Math.sin(state.time * 2 - i * 0.4);
-      ctx.strokeStyle = `rgba(124,92,255,${0.25 + pulse * 0.25})`;
-      ctx.strokeRect(offsetX + p.c * cell + 1, offsetY + p.r * cell + 1, cell - 2, cell - 2);
+
+    // Front leg
+    drawLimb(0, hipY, swing, legLen, legW, armorColor);
+
+    // Backpack / pouch (behind torso)
+    ctx.fillStyle = darkenHex(armorColor, 0.35);
+    roundRect(-torsoW * 0.32, shoulderY + torsoH * 0.1, torsoW * 0.34, torsoH * 0.75, torsoW * 0.1);
+    ctx.fill();
+
+    // Torso
+    const tGrad = ctx.createLinearGradient(-torsoW / 2, shoulderY, torsoW / 2, hipY);
+    tGrad.addColorStop(0, lightenHex(armorColor, 0.22));
+    tGrad.addColorStop(1, darkenHex(armorColor, 0.2));
+    ctx.fillStyle = tGrad;
+    roundRect(-torsoW / 2, shoulderY, torsoW, torsoH, torsoW * 0.3);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.28)'; ctx.lineWidth = Math.max(1, rad * 0.05);
+    ctx.beginPath(); ctx.moveTo(-torsoW * 0.28, shoulderY + torsoH * 0.15); ctx.lineTo(torsoW * 0.22, hipY - torsoH * 0.05); ctx.stroke();
+    // Chest light
+    ctx.fillStyle = isRunner ? '#ffd54f' : '#5ce1ff';
+    ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 4;
+    ctx.beginPath(); ctx.arc(0, shoulderY + torsoH * 0.42, rad * 0.07, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Front arm
+    drawLimb(0, shoulderY, -swing * 0.75, armLen, armW, armorColor);
+
+    // Head (skin) + helmet
+    const headGrad = ctx.createRadialGradient(-headR * 0.35, headCenterY - headR * 0.35, 1, 0, headCenterY, headR);
+    headGrad.addColorStop(0, lightenHex(SKIN_TONE, 0.25));
+    headGrad.addColorStop(0.7, SKIN_TONE);
+    headGrad.addColorStop(1, darkenHex(SKIN_TONE, 0.25));
+    ctx.beginPath(); ctx.arc(0, headCenterY, headR, 0, Math.PI * 2);
+    ctx.fillStyle = headGrad; ctx.fill();
+
+    // Helmet cap
+    ctx.fillStyle = darkenHex(armorColor, 0.05);
+    ctx.beginPath();
+    ctx.arc(0, headCenterY - headR * 0.08, headR * 1.04, Math.PI, 0, false);
+    ctx.closePath(); ctx.fill();
+    if (isRunner) {
+      ctx.strokeStyle = '#ffd54f'; ctx.lineWidth = Math.max(1, rad * 0.06);
+      ctx.beginPath(); ctx.moveTo(0, headCenterY - headR); ctx.lineTo(0, headCenterY - headR - rad * 0.35); ctx.stroke();
+      ctx.fillStyle = '#fff';
+      ctx.beginPath(); ctx.arc(0, headCenterY - headR - rad * 0.4, rad * 0.09, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // Visor / HUD glow slit
+    const eyeDir = Math.cos(e.facing || 0) >= 0 ? 1 : -1;
+    ctx.fillStyle = isRunner ? 'rgba(255,213,79,0.85)' : 'rgba(92,225,255,0.85)';
+    ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 5;
+    roundRect(eyeDir * headR * 0.05 - headR * 0.55, headCenterY - headR * 0.12, headR * 0.95, headR * 0.32, headR * 0.14);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    return headCenterY - headR * 1.3;
+  }
+
+  // Robed field medic — legs hidden under a swaying robe hem
+  function drawMedicTrooper(e, rad) {
+    const phase = e.bobPhase || 0;
+    const sway = Math.sin(phase * Math.PI * 2) * 0.12;
+    const bob = (e.z || 0) * 0.5;
+
+    const robeH = rad * 1.55;
+    const robeW = rad * 1.0;
+    const torsoH = rad * 0.9;
+    const armLen = rad * 0.95;
+    const armW = rad * 0.2;
+    const headR = rad * 0.42;
+
+    const hemY = -bob;
+    const shoulderY = hemY - robeH;
+    const headCenterY = shoulderY - headR * 1.05;
+
+    ctx.save();
+    ctx.rotate(sway * 0.2);
+
+    // Robe (trapezoid, swaying at hem)
+    const rGrad = ctx.createLinearGradient(0, shoulderY, 0, hemY);
+    rGrad.addColorStop(0, lightenHex(e.color, 0.2));
+    rGrad.addColorStop(1, darkenHex(e.color, 0.25));
+    ctx.fillStyle = rGrad;
+    ctx.beginPath();
+    ctx.moveTo(-robeW * 0.32, shoulderY);
+    ctx.lineTo(robeW * 0.32, shoulderY);
+    ctx.lineTo(robeW * 0.52 + sway * rad, hemY);
+    ctx.lineTo(-robeW * 0.52 + sway * rad, hemY);
+    ctx.closePath();
+    ctx.fill();
+
+    // Cross emblem
+    ctx.fillStyle = '#fff';
+    roundRect(-rad * 0.06, shoulderY + torsoH * 0.25, rad * 0.12, rad * 0.34, rad * 0.03); ctx.fill();
+    roundRect(-rad * 0.17, shoulderY + torsoH * 0.35, rad * 0.34, rad * 0.12, rad * 0.03); ctx.fill();
+
+    drawLimb(0, shoulderY, -0.15 - sway, armLen, armW, e.color);
+    // Staff
+    ctx.strokeStyle = '#b98d54'; ctx.lineWidth = Math.max(1.5, rad * 0.09);
+    ctx.beginPath(); ctx.moveTo(robeW * 0.4, shoulderY + rad * 0.2); ctx.lineTo(robeW * 0.4, shoulderY - rad * 0.75); ctx.stroke();
+    ctx.fillStyle = '#34d399'; ctx.shadowColor = '#34d399'; ctx.shadowBlur = 6;
+    ctx.beginPath(); ctx.arc(robeW * 0.4, shoulderY - rad * 0.82, rad * 0.13, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+    drawLimb(0, shoulderY, 0.35 + sway, armLen * 0.85, armW, e.color);
+
+    // Head + hood
+    const headGrad = ctx.createRadialGradient(-headR * 0.35, headCenterY - headR * 0.35, 1, 0, headCenterY, headR);
+    headGrad.addColorStop(0, lightenHex(SKIN_TONE, 0.25));
+    headGrad.addColorStop(1, darkenHex(SKIN_TONE, 0.25));
+    ctx.beginPath(); ctx.arc(0, headCenterY, headR, 0, Math.PI * 2);
+    ctx.fillStyle = headGrad; ctx.fill();
+    ctx.fillStyle = darkenHex(e.color, 0.1);
+    ctx.beginPath(); ctx.arc(0, headCenterY - headR * 0.1, headR * 1.08, Math.PI, 0, false); ctx.closePath(); ctx.fill();
+
+    ctx.restore();
+    return headCenterY - headR * 1.3;
+  }
+
+  // Hooded shadow trooper — translucent, ghost-tail trail, no visible legs
+  function drawPhantomTrooper(e, rad) {
+    const phase = e.bobPhase || 0;
+    const drift = Math.sin(phase * Math.PI * 2) * rad * 0.06;
+    const bodyH = rad * 1.85;
+    const bodyW = rad * 0.82;
+    const headR = rad * 0.42;
+
+    const hemY = -rad * 0.15 + drift;
+    const shoulderY = hemY - bodyH;
+    const headCenterY = shoulderY - headR * 1.0;
+
+    ctx.save();
+    ctx.globalAlpha = 0.62;
+
+    // Trailing after-images
+    for (let i = 1; i <= 2; i++) {
+      ctx.globalAlpha = 0.62 - i * 0.2;
+      ctx.fillStyle = e.color;
+      ctx.beginPath();
+      ctx.moveTo(-bodyW * 0.3 - i * 3, shoulderY);
+      ctx.lineTo(bodyW * 0.3 - i * 3, shoulderY);
+      ctx.quadraticCurveTo(bodyW * 0.45 - i * 3, hemY, 0 - i * 3, hemY + rad * 0.1);
+      ctx.quadraticCurveTo(-bodyW * 0.45 - i * 3, hemY, -bodyW * 0.3 - i * 3, shoulderY);
+      ctx.closePath(); ctx.fill();
+    }
+
+    ctx.globalAlpha = 0.7;
+    const grad = ctx.createLinearGradient(0, shoulderY, 0, hemY);
+    grad.addColorStop(0, lightenHex(e.color, 0.3));
+    grad.addColorStop(1, hexToRgba(e.color, 0.1));
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.moveTo(-bodyW * 0.34, shoulderY);
+    ctx.lineTo(bodyW * 0.34, shoulderY);
+    ctx.quadraticCurveTo(bodyW * 0.5, hemY, 0, hemY + rad * 0.15);
+    ctx.quadraticCurveTo(-bodyW * 0.5, hemY, -bodyW * 0.34, shoulderY);
+    ctx.closePath(); ctx.fill();
+
+    ctx.globalAlpha = 0.85;
+    ctx.fillStyle = darkenHex(e.color, 0.1);
+    ctx.beginPath(); ctx.arc(0, headCenterY, headR, 0, Math.PI * 2); ctx.fill();
+    // Glowing eyes
+    ctx.fillStyle = '#f5d0ff'; ctx.shadowColor = '#f5d0ff'; ctx.shadowBlur = 6;
+    ctx.beginPath(); ctx.arc(-headR * 0.32, headCenterY, headR * 0.16, 0, Math.PI * 2); ctx.arc(headR * 0.32, headCenterY, headR * 0.16, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.globalAlpha = 1;
+    ctx.restore();
+    return headCenterY - headR * 1.4;
+  }
+
+  // Six-legged self-destruct spider drone, low profile & fast skittering legs
+  function drawSpiderBot(e, rad) {
+    const phase = e.bobPhase || 0;
+    const bodyY = -rad * 0.7 - (e.z || 0) * 0.4;
+    const bodyW = rad * 1.15, bodyH = rad * 0.62;
+
+    // Legs (6, alternating tripod gait)
+    for (let i = 0; i < 6; i++) {
+      const side = i < 3 ? -1 : 1;
+      const idx = i % 3;
+      const legPhase = (phase + (idx % 2 === 0 ? 0 : 0.5)) * Math.PI * 2;
+      const kAngle = Math.sin(legPhase) * 0.5;
+      const originX = side * bodyW * 0.32;
+      const originY = bodyY - bodyH * 0.1 + idx * bodyH * 0.35 - bodyH * 0.35;
+      drawLimb(originX, originY, side * (0.9 + kAngle * side), rad * 0.55, rad * 0.09, darkenHex(e.color, 0.2));
+    }
+
+    // Body
+    const bGrad = ctx.createRadialGradient(-bodyW * 0.2, bodyY - bodyH * 0.3, 1, 0, bodyY, bodyW * 0.7);
+    bGrad.addColorStop(0, lightenHex(e.color, 0.3));
+    bGrad.addColorStop(1, darkenHex(e.color, 0.25));
+    ctx.fillStyle = bGrad;
+    ctx.beginPath(); ctx.ellipse(0, bodyY, bodyW * 0.5, bodyH * 0.5, 0, 0, Math.PI * 2); ctx.fill();
+
+    // Blinking warning light + fuse
+    const blink = 0.5 + 0.5 * Math.sin(state.time * 10);
+    ctx.fillStyle = `rgba(239,68,68,${0.5 + blink * 0.5})`;
+    ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 6 + blink * 4;
+    ctx.beginPath(); ctx.arc(0, bodyY - bodyH * 0.15, rad * 0.14, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = Math.max(1, rad * 0.06);
+    ctx.beginPath(); ctx.moveTo(bodyW * 0.15, bodyY - bodyH * 0.4); ctx.lineTo(bodyW * 0.3, bodyY - bodyH * 0.8); ctx.stroke();
+
+    return bodyY - bodyH - rad * 0.5;
+  }
+
+  // Heavy quadruped mech beast
+  function drawMechBeast(e, rad) {
+    const phase = e.bobPhase || 0;
+    const swing = Math.sin(phase * Math.PI * 2) * 0.35;
+    const bob = (e.z || 0) * 0.3;
+
+    const legLen = rad * 0.75, legW = rad * 0.32;
+    const bodyW = rad * 1.7, bodyH = rad * 1.0;
+    const hipY = -legLen + bob;
+    const bodyBottomY = hipY;
+    const bodyTopY = bodyBottomY - bodyH;
+    const headR = rad * 0.5;
+    const headCenterY = bodyTopY - headR * 0.6;
+
+    // Four stubby legs (front/back pairs)
+    drawLimb(-bodyW * 0.28, hipY, -swing, legLen, legW * 0.9, darkenHex(e.color, 0.3));
+    drawLimb(bodyW * 0.28, hipY, swing, legLen, legW * 0.9, darkenHex(e.color, 0.3));
+    drawLimb(-bodyW * 0.22, hipY, swing * 0.8, legLen, legW, e.color);
+    drawLimb(bodyW * 0.22, hipY, -swing * 0.8, legLen, legW, e.color);
+
+    // Armored body block
+    const bGrad = ctx.createLinearGradient(-bodyW / 2, bodyTopY, bodyW / 2, bodyBottomY);
+    bGrad.addColorStop(0, lightenHex(e.color, 0.18));
+    bGrad.addColorStop(1, darkenHex(e.color, 0.22));
+    ctx.fillStyle = bGrad;
+    roundRect(-bodyW / 2, bodyTopY, bodyW, bodyH, bodyW * 0.14);
+    ctx.fill();
+    // Rivets & plating seams
+    ctx.strokeStyle = 'rgba(0,0,0,0.3)'; ctx.lineWidth = Math.max(1, rad * 0.05);
+    ctx.beginPath(); ctx.moveTo(-bodyW * 0.42, bodyTopY + bodyH * 0.5); ctx.lineTo(bodyW * 0.42, bodyTopY + bodyH * 0.5); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    [-0.38, 0.38].forEach(fx => { ctx.beginPath(); ctx.arc(bodyW * fx, bodyTopY + bodyH * 0.25, rad * 0.05, 0, Math.PI * 2); ctx.fill(); });
+
+    // Head + glowing visor
+    ctx.fillStyle = darkenHex(e.color, 0.15);
+    roundRect(-headR, headCenterY - headR * 0.6, headR * 2, headR * 1.2, headR * 0.3);
+    ctx.fill();
+    const blink = 0.6 + 0.4 * Math.sin(state.time * 6);
+    ctx.fillStyle = `rgba(239,68,68,${blink})`;
+    ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 8;
+    roundRect(-headR * 0.7, headCenterY - headR * 0.22, headR * 1.4, headR * 0.32, headR * 0.1);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    return headCenterY - headR * 0.6 - 4;
+  }
+
+  // Armored king boss — big humanoid rig + cape + crown
+  function drawKingBoss(e, rad) {
+    const phase = e.bobPhase || 0;
+    const swing = Math.sin(phase * Math.PI * 2) * 0.45;
+    const bob = (e.z || 0) * 0.4;
+
+    const legLen = rad * 1.3, legW = rad * 0.4;
+    const torsoW = rad * 1.25, torsoH = rad * 1.25;
+    const armLen = rad * 1.15, armW = rad * 0.3;
+    const headR = rad * 0.52;
+    const mainColor = e.enraged ? '#ff5c3c' : e.color;
+
+    const hipY = -legLen + bob;
+    const shoulderY = hipY - torsoH;
+    const headCenterY = shoulderY - headR * 1.05;
+
+    // Cape (flows behind, swaying)
+    const capeSway = Math.sin(phase * Math.PI * 2 + 0.4) * rad * 0.3;
+    const capeGrad = ctx.createLinearGradient(0, shoulderY, 0, hipY + rad * 0.4);
+    capeGrad.addColorStop(0, '#7a1f2b');
+    capeGrad.addColorStop(1, '#2d0a10');
+    ctx.fillStyle = capeGrad;
+    ctx.beginPath();
+    ctx.moveTo(-torsoW * 0.45, shoulderY + torsoH * 0.1);
+    ctx.lineTo(torsoW * 0.45, shoulderY + torsoH * 0.1);
+    ctx.lineTo(torsoW * 0.65 + capeSway, hipY + rad * 0.5);
+    ctx.lineTo(-torsoW * 0.65 + capeSway, hipY + rad * 0.5);
+    ctx.closePath(); ctx.fill();
+
+    if (e.enraged) {
+      ctx.save();
+      ctx.globalAlpha = 0.35 + 0.25 * Math.sin(state.time * 8);
+      ctx.strokeStyle = '#ff5c3c'; ctx.lineWidth = rad * 0.12;
+      ctx.beginPath(); ctx.ellipse(0, hipY - torsoH * 0.4, torsoW * 0.9, torsoH * 0.9, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
+    }
+
+    drawLimb(0, hipY, -swing, legLen, legW * 0.9, darkenHex(mainColor, 0.3));
+    drawLimb(0, shoulderY, swing * 0.7, armLen * 0.9, armW * 0.85, darkenHex(mainColor, 0.32));
+    drawLimb(0, hipY, swing, legLen, legW, mainColor);
+
+    const tGrad = ctx.createLinearGradient(-torsoW / 2, shoulderY, torsoW / 2, hipY);
+    tGrad.addColorStop(0, lightenHex(mainColor, 0.3));
+    tGrad.addColorStop(1, darkenHex(mainColor, 0.15));
+    ctx.fillStyle = tGrad;
+    roundRect(-torsoW / 2, shoulderY, torsoW, torsoH, torsoW * 0.28);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = Math.max(1, rad * 0.05);
+    ctx.beginPath(); ctx.moveTo(0, shoulderY + torsoH * 0.1); ctx.lineTo(0, hipY - torsoH * 0.05); ctx.stroke();
+
+    drawLimb(0, shoulderY, -swing * 0.7, armLen, armW, mainColor);
+    // Sword
+    ctx.save();
+    ctx.translate(armW * 1.4, shoulderY + armLen * 0.7);
+    ctx.rotate(-0.5);
+    ctx.fillStyle = '#e2e8f0';
+    ctx.fillRect(-rad * 0.05, -rad * 1.3, rad * 0.1, rad * 1.3);
+    ctx.fillStyle = '#b8860b';
+    ctx.fillRect(-rad * 0.16, -rad * 0.05, rad * 0.32, rad * 0.12);
+    ctx.restore();
+
+    // Head + skin
+    const headGrad = ctx.createRadialGradient(-headR * 0.35, headCenterY - headR * 0.35, 1, 0, headCenterY, headR);
+    headGrad.addColorStop(0, lightenHex(SKIN_TONE, 0.25));
+    headGrad.addColorStop(1, darkenHex(SKIN_TONE, 0.3));
+    ctx.beginPath(); ctx.arc(0, headCenterY, headR, 0, Math.PI * 2);
+    ctx.fillStyle = headGrad; ctx.fill();
+
+    // Crown
+    ctx.fillStyle = e.enraged ? '#ff4d4d' : '#ffd700';
+    ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = 8;
+    const cw = headR * 1.3, ch = headR;
+    const cy0 = headCenterY - headR + 2;
+    ctx.beginPath();
+    ctx.moveTo(-cw / 2, cy0);
+    ctx.lineTo(-cw / 2, cy0 - ch);
+    ctx.lineTo(-cw / 4, cy0 - ch * 0.4);
+    ctx.lineTo(0, cy0 - ch * 1.15);
+    ctx.lineTo(cw / 4, cy0 - ch * 0.4);
+    ctx.lineTo(cw / 2, cy0 - ch);
+    ctx.lineTo(cw / 2, cy0);
+    ctx.closePath(); ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = '#8a6300'; ctx.lineWidth = 1; ctx.stroke();
+
+    return headCenterY - headR - ch;
+  }
+
+  // Quadcopter reconnaissance drone
+  function drawDrone(e, rad) {
+    const bodyW = rad * 1.3, bodyH = rad * 0.55;
+    const armLen = rad * 1.15;
+    const propAngle = e.propAngle || 0;
+
+    // 4 rotor arms
+    [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sy]) => {
+      const ax = sx * armLen * 0.55, ay = sy * bodyH * 0.9;
+      ctx.strokeStyle = '#334155'; ctx.lineWidth = Math.max(1.5, rad * 0.08);
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(ax, ay); ctx.stroke();
+
+      ctx.save();
+      ctx.translate(ax, ay);
+      ctx.rotate(propAngle * sx);
+      ctx.fillStyle = 'rgba(220,230,255,0.75)';
+      ctx.beginPath(); ctx.ellipse(0, 0, rad * 0.45, rad * 0.09, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+      ctx.fillStyle = '#1e293b';
+      ctx.beginPath(); ctx.arc(ax, ay, rad * 0.1, 0, Math.PI * 2); ctx.fill();
     });
 
-    // air corridor: dashed, flowing sky lane the drones fly along
-    if (airPathPoints.length > 1) {
+    // Body
+    const bGrad = ctx.createLinearGradient(0, -bodyH, 0, bodyH);
+    bGrad.addColorStop(0, lightenHex(e.color, 0.35));
+    bGrad.addColorStop(1, darkenHex(e.color, 0.25));
+    ctx.fillStyle = bGrad;
+    roundRect(-bodyW / 2, -bodyH / 2, bodyW, bodyH, bodyH * 0.5);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)'; ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Camera lens / sensor light
+    const blink = 0.5 + 0.5 * Math.sin(state.time * 8);
+    ctx.fillStyle = `rgba(239,68,68,${0.5 + blink * 0.5})`;
+    ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 6;
+    ctx.beginPath(); ctx.arc(0, bodyH * 0.35, rad * 0.12, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = '#7cf5c4';
+    ctx.beginPath(); ctx.arc(0, -bodyH * 0.1, rad * 0.16, 0, Math.PI * 2); ctx.fill();
+
+    return -bodyH / 2 - rad * 0.55;
+  }
+
+  // Master character dispatcher
+  function drawCharacter(e) {
+    const rad = e.radius * tileW;
+    const shadowScale = e.flying ? Math.max(0.18, 1 - e.z / (tileW * 1.6)) : 1;
+    const groundY = e.flying ? e.y + e.z : e.y;
+
+    // Contact / cast shadow
+    ctx.beginPath();
+    ctx.ellipse(e.x, groundY + 2, rad * 0.85 * shadowScale, rad * 0.4 * shadowScale, 0, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0,0,0,${0.4 * shadowScale})`;
+    ctx.fill();
+
+    const facingDir = Math.cos(e.facing || 0) >= 0 ? 1 : -1;
+
+    ctx.save();
+    ctx.translate(e.x, e.y);
+    ctx.scale(facingDir, 1);
+
+    let topY;
+    switch (e.type) {
+      case 'flyer':   topY = drawDrone(e, rad); break;
+      case 'tank':    topY = drawMechBeast(e, rad); break;
+      case 'bomber':  topY = drawSpiderBot(e, rad); break;
+      case 'phantom': topY = drawPhantomTrooper(e, rad); break;
+      case 'medic':   topY = drawMedicTrooper(e, rad); break;
+      case 'boss':    topY = drawKingBoss(e, rad); break;
+      case 'runner':  topY = drawSoldier(e, rad, true); break;
+      default:        topY = drawSoldier(e, rad, false); break;
+    }
+
+    // Freeze slow visual halo
+    if (state.time < e.slowUntil) {
       ctx.save();
-      ctx.strokeStyle = 'rgba(124, 245, 255, 0.35)';
-      ctx.lineWidth = Math.max(2, cell * 0.1);
-      ctx.setLineDash([cell * 0.35, cell * 0.28]);
-      ctx.lineDashOffset = -state.time * cell * 1.6;
-      ctx.beginPath();
-      ctx.moveTo(airPathPoints[0].x, airPathPoints[0].y);
-      for (let i = 1; i < airPathPoints.length; i++) ctx.lineTo(airPathPoints[i].x, airPathPoints[i].y);
-      ctx.stroke();
+      ctx.strokeStyle = 'rgba(92,225,255,0.85)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([3, 3]);
+      ctx.strokeRect(-rad * 1.15, topY - 4, rad * 2.3, -topY + 4);
       ctx.setLineDash([]);
       ctx.restore();
     }
 
-    // decorations: blocking rocks/trees first, cosmetic grass tufts on top of empty tiles
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    for (const d of decorations) {
-      const pos = cellToPx(d.c, d.r);
-      if (d.blocking) {
-        ctx.beginPath();
-        ctx.arc(pos.x, pos.y, cell * 0.34, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(0,0,0,0.25)';
-        ctx.fill();
-        ctx.font = (cell * 0.56) + 'px sans-serif';
-        ctx.fillText(d.emoji, pos.x, pos.y);
-      } else {
-        ctx.globalAlpha = 0.55;
-        ctx.font = (cell * 0.3) + 'px sans-serif';
-        ctx.fillText(d.emoji, pos.x, pos.y + cell * 0.28);
-        ctx.globalAlpha = 1;
-      }
+    // Overhead health & shield bar
+    const barW = rad * 1.6, barH = 3.5;
+    const barX = -barW / 2, barY = topY - 8;
+    const pct = Math.max(0, e.hp / e.maxHp);
+    roundRect(barX, barY, barW, barH, 2);
+    ctx.fillStyle = 'rgba(0,0,0,0.55)'; ctx.fill();
+    roundRect(barX, barY, barW * pct, barH, 2);
+    ctx.fillStyle = pct > 0.5 ? '#b6ff5a' : (pct > 0.25 ? '#ffd54f' : '#ff6b6b');
+    ctx.fill();
+    if (e.shield > 0 && e.maxShield > 0) {
+      const sPct = Math.min(1, e.shield / e.maxShield);
+      roundRect(barX, barY - 4, barW * sPct, 2.5, 1);
+      ctx.fillStyle = '#5ce1ff'; ctx.fill();
     }
 
-    // entrance / core markers, with a soft glowing pad under the core crystal
-    const startPt = pathPoints[0], endPt = pathPoints[pathPoints.length - 1];
-    if (endPt) {
-      const glowR = cell * (0.5 + 0.08 * Math.sin(state.time * 3));
-      const coreGlow = ctx.createRadialGradient(endPt.x, endPt.y, 0, endPt.x, endPt.y, glowR);
-      coreGlow.addColorStop(0, 'rgba(92,225,255,0.45)');
-      coreGlow.addColorStop(1, 'rgba(92,225,255,0)');
-      ctx.fillStyle = coreGlow;
-      ctx.beginPath(); ctx.arc(endPt.x, endPt.y, glowR, 0, Math.PI * 2); ctx.fill();
-    }
-    if (startPt) { ctx.font = (cell * 0.6) + 'px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('🚩', startPt.x, startPt.y); }
-    if (endPt) { ctx.font = (cell * 0.62) + 'px sans-serif'; ctx.fillText('💎', endPt.x, endPt.y); }
+    ctx.restore();
+  }
 
-    // build hover preview
-    if (state.selectedBuildType && state.hover) {
-      const { c, r } = state.hover;
-      if (inGrid(c, r)) {
-        const ok = canBuild(c, r) && state.gold >= TOWER_TYPES[state.selectedBuildType].cost;
-        const pos = cellToPx(c, r);
-        ctx.fillStyle = ok ? 'rgba(182,255,90,0.25)' : 'rgba(255,107,107,0.25)';
-        ctx.fillRect(offsetX + c * cell, offsetY + r * cell, cell, cell);
-        const rangePx = TOWER_TYPES[state.selectedBuildType].range * cell;
-        ctx.beginPath();
-        ctx.arc(pos.x, pos.y, rangePx, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(255,255,255,0.35)';
-        ctx.stroke();
-      }
-    }
+  // Draw 3D Tower Pedestal & Turret
+  function drawTower3D(t) {
+    const stats = towerStats(t);
+    const info = TOWER_TYPES[t.type];
+    const hw = tileW / 2, hh = tileH / 2;
+    const pos = cellToPx(t.c, t.r);
 
-    // towers
-    for (const t of state.towers) {
-      const stats = towerStats(t);
-      if (state.selectedTower === t) {
-        ctx.beginPath();
-        ctx.arc(t.x, t.y, stats.range, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255,255,255,0.05)';
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(255,255,255,0.4)';
-        ctx.stroke();
-        if (stats.chainRange) {
-          ctx.beginPath();
-          ctx.setLineDash([4, 4]);
-          ctx.arc(t.x, t.y, stats.chainRange, 0, Math.PI * 2);
-          ctx.strokeStyle = 'rgba(244,255,92,0.6)';
-          ctx.stroke();
-          ctx.setLineDash([]);
-        }
-      }
-      const info = TOWER_TYPES[t.type];
-      // glowing base pad in the tower's element color, plus an outer ring
-      const baseGlow = ctx.createRadialGradient(t.x, t.y, 0, t.x, t.y, cell * 0.42);
-      baseGlow.addColorStop(0, hexToRgba(info.color, 0.35));
-      baseGlow.addColorStop(1, hexToRgba(info.color, 0));
-      ctx.fillStyle = baseGlow;
-      ctx.beginPath(); ctx.arc(t.x, t.y, cell * 0.42, 0, Math.PI * 2); ctx.fill();
+    // Range preview when selected
+    if (state.selectedTower === t) {
+      ctx.save();
       ctx.beginPath();
-      ctx.arc(t.x, t.y, cell * 0.36, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(20,18,40,0.75)';
-      ctx.fill();
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = hexToRgba(info.color, 0.7);
-      ctx.stroke();
-      // barrel: a short indicator protruding towards the last target
-      if (t.facing != null) {
-        ctx.save();
-        ctx.translate(t.x, t.y);
-        ctx.rotate(t.facing);
-        ctx.strokeStyle = 'rgba(255,255,255,0.85)';
-        ctx.lineWidth = Math.max(2, cell * 0.07);
+      ctx.ellipse(pos.x, pos.y, stats.range, stats.range * 0.5, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(92,225,255,0.08)'; ctx.fill();
+      ctx.strokeStyle = 'rgba(92,225,255,0.6)'; ctx.lineWidth = 2;
+      ctx.setLineDash([6, 4]); ctx.stroke();
+
+      if (stats.chainRange) {
         ctx.beginPath();
-        ctx.moveTo(cell * 0.3, 0);
-        ctx.lineTo(cell * 0.5, 0);
-        ctx.stroke();
-        ctx.restore();
+        ctx.ellipse(pos.x, pos.y, stats.chainRange, stats.chainRange * 0.5, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(244,255,92,0.65)'; ctx.stroke();
       }
-      // muzzle flash: quick bright flash at the barrel tip right after firing
-      if (t.muzzleFlash > 0 && t.facing != null) {
-        const fx = t.x + Math.cos(t.facing) * cell * 0.5, fy = t.y + Math.sin(t.facing) * cell * 0.5;
-        ctx.globalAlpha = t.muzzleFlash / 0.08;
-        ctx.fillStyle = '#fff8d0';
-        ctx.beginPath(); ctx.arc(fx, fy, cell * 0.14, 0, Math.PI * 2); ctx.fill();
-        ctx.globalAlpha = 1;
-      }
-      ctx.font = (cell * 0.55) + 'px sans-serif';
+      ctx.restore();
+    }
+
+    const pedW = tileW * 0.68, pedH = tileH * 0.68;
+    const pH = tileW * 0.38;
+    const topY = pos.y - pH;
+
+    let topColor = '#2b2d42', leftColor = '#1a1b29', rightColor = '#222436';
+    if (t.type === 'gatling') {
+      topColor = '#8d5b4c'; leftColor = '#5c382e'; rightColor = '#6d4337';
+    } else if (t.type === 'cannon') {
+      topColor = '#3a3f58'; leftColor = '#202433'; rightColor = '#2c3147';
+    } else if (t.type === 'frost') {
+      topColor = '#4cc9f0'; leftColor = '#2a7b9b'; rightColor = '#3aa4cb';
+    } else if (t.type === 'sniper') {
+      topColor = '#e2e8f0'; leftColor = '#94a3b8'; rightColor = '#cbd5e1';
+    } else if (t.type === 'lightning') {
+      topColor = '#4f46e5'; leftColor = '#312e81'; rightColor = '#3730a3';
+    } else if (t.type === 'flak') {
+      topColor = '#2d6a4f'; leftColor = '#1b4332'; rightColor = '#24563f';
+    }
+
+    // Pedestal Block (gradient-shaded faces for a richer, more volumetric look)
+    const pedLeftGrad = ctx.createLinearGradient(pos.x - pedW / 2, topY, pos.x - pedW / 2, pos.y);
+    pedLeftGrad.addColorStop(0, lightenHex(leftColor, 0.1));
+    pedLeftGrad.addColorStop(1, darkenHex(leftColor, 0.3));
+    ctx.fillStyle = pedLeftGrad;
+    ctx.beginPath();
+    ctx.moveTo(pos.x - pedW / 2, pos.y);
+    ctx.lineTo(pos.x, pos.y + pedH / 2);
+    ctx.lineTo(pos.x, topY + pedH / 2);
+    ctx.lineTo(pos.x - pedW / 2, topY);
+    ctx.closePath(); ctx.fill();
+
+    const pedRightGrad = ctx.createLinearGradient(pos.x + pedW / 2, topY, pos.x + pedW / 2, pos.y);
+    pedRightGrad.addColorStop(0, lightenHex(rightColor, 0.05));
+    pedRightGrad.addColorStop(1, darkenHex(rightColor, 0.35));
+    ctx.fillStyle = pedRightGrad;
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y + pedH / 2);
+    ctx.lineTo(pos.x + pedW / 2, pos.y);
+    ctx.lineTo(pos.x + pedW / 2, topY);
+    ctx.lineTo(pos.x, topY + pedH / 2);
+    ctx.closePath(); ctx.fill();
+
+    const pedTopGrad = ctx.createLinearGradient(pos.x - pedW / 2, topY, pos.x + pedW / 2, topY);
+    pedTopGrad.addColorStop(0, lightenHex(topColor, 0.22));
+    pedTopGrad.addColorStop(1, darkenHex(topColor, 0.08));
+    ctx.fillStyle = pedTopGrad;
+    ctx.beginPath();
+    ctx.moveTo(pos.x, topY - pedH / 2);
+    ctx.lineTo(pos.x + pedW / 2, topY);
+    ctx.lineTo(pos.x, topY + pedH / 2);
+    ctx.lineTo(pos.x - pedW / 2, topY);
+    ctx.closePath(); ctx.fill();
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.22)'; ctx.lineWidth = 1; ctx.stroke();
+
+    // Turret Animated Weapons
+    ctx.save();
+    ctx.translate(pos.x, topY);
+
+    if (t.type === 'gatling') {
+      ctx.rotate(t.facing || 0);
+      const rec = (t.recoil || 0) * 3;
+      ctx.fillStyle = '#b45309';
+      ctx.fillRect(-6 - rec, -5, 14, 4);
+      ctx.fillRect(-6 - rec, 1, 14, 4);
+    } else if (t.type === 'cannon') {
+      ctx.rotate(t.facing || 0);
+      const rec = (t.recoil || 0) * 4;
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(-8 - rec, -5, 16, 10);
+    } else if (t.type === 'frost') {
+      ctx.save();
+      ctx.rotate(state.time * 2.2);
+      ctx.fillStyle = '#7dd3fc';
+      ctx.beginPath();
+      ctx.moveTo(0, -9); ctx.lineTo(7, 0); ctx.lineTo(0, 9); ctx.lineTo(-7, 0); ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+    } else if (t.type === 'sniper') {
+      ctx.rotate(t.facing || 0);
+      ctx.fillStyle = '#a855f7';
+      ctx.fillRect(-2, -2, 18, 4);
+    } else if (t.type === 'lightning') {
+      ctx.save();
+      ctx.rotate(state.time * 3);
+      ctx.fillStyle = '#fde047'; ctx.shadowColor = '#fde047'; ctx.shadowBlur = 8;
+      ctx.beginPath(); ctx.arc(0, -2, 5, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    } else if (t.type === 'flak') {
+      ctx.rotate(t.facing || 0);
+      ctx.fillStyle = '#22c55e';
+      ctx.fillRect(-4, -6, 12, 4);
+      ctx.fillRect(-4, 2, 12, 4);
+    }
+
+    ctx.restore();
+
+    // Disabled EMP Sparkles
+    if (state.time < t.disabledUntil) {
+      ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 1.5;
+      ctx.strokeRect(pos.x - pedW/2, topY - pedH/2, pedW, pedH + pH);
+    }
+
+    // Stars on Tower
+    if (t.level > 1) {
+      ctx.fillStyle = '#ffd700'; ctx.font = '10px sans-serif';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(info.icon, t.x, t.y);
-      if (t.level > 1) {
-        ctx.font = (cell * 0.22) + 'px sans-serif';
-        ctx.fillStyle = '#ffd54f';
-        ctx.fillText('★'.repeat(t.level - 1), t.x, t.y + cell * 0.38);
-      }
-    }
-
-    // enemies
-    for (const e of state.enemies) {
-      const rad = e.radius * cell;
-      if (e.flying) {
-        // ground shadow to sell the "airborne" read, then draw the drone lifted above it
-        ctx.beginPath();
-        ctx.ellipse(e.x, e.y + rad * 0.6, rad * 0.9, rad * 0.4, 0, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(0,0,0,0.28)';
-        ctx.fill();
-      }
-      const drawY = e.flying ? e.y - rad * 1.4 : e.y;
-      // soft outer glow in the enemy's own color, then a radial-shaded body
-      const glow = ctx.createRadialGradient(e.x, drawY, 0, e.x, drawY, rad * 1.8);
-      glow.addColorStop(0, hexToRgba(e.color, 0.35));
-      glow.addColorStop(1, hexToRgba(e.color, 0));
-      ctx.fillStyle = glow;
-      ctx.beginPath(); ctx.arc(e.x, drawY, rad * 1.8, 0, Math.PI * 2); ctx.fill();
-      const bodyGrad = ctx.createRadialGradient(e.x - rad * 0.3, drawY - rad * 0.3, rad * 0.1, e.x, drawY, rad);
-      bodyGrad.addColorStop(0, lightenHex(e.color, 0.35));
-      bodyGrad.addColorStop(1, e.color);
-      ctx.beginPath();
-      ctx.arc(e.x, drawY, rad, 0, Math.PI * 2);
-      ctx.fillStyle = bodyGrad;
-      ctx.fill();
-      if (e.flying) {
-        ctx.setLineDash([3, 3]);
-        ctx.strokeStyle = 'rgba(255,255,255,0.6)'; ctx.lineWidth = 1.5; ctx.stroke();
-        ctx.setLineDash([]);
-      }
-      if (state.time < e.slowUntil) {
-        ctx.strokeStyle = '#5ce1ff'; ctx.lineWidth = 2; ctx.stroke();
-      }
-      // hp bar: rounded, colored green -> amber -> red as health drops
-      const barW = rad * 2.2, barH = 4, barX = e.x - barW / 2, barY = drawY - rad - 8;
-      const pct = Math.max(0, e.hp / e.maxHp);
-      roundRect(barX, barY, barW, barH, 2);
-      ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fill();
-      roundRect(barX, barY, barW * pct, barH, 2);
-      ctx.fillStyle = pct > 0.5 ? '#b6ff5a' : (pct > 0.25 ? '#ffd54f' : '#ff6b6b');
-      ctx.fill();
-    }
-
-    // projectiles: glowing core + short motion trail
-    for (const p of state.projectiles) {
-      const r = Math.max(3, cell * 0.08);
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, r * 2.2, 0, Math.PI * 2);
-      ctx.fillStyle = hexToRgba(p.color, 0.25);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
-      ctx.fillStyle = p.color;
-      ctx.fill();
-    }
-
-    // particles
-    for (const pt of state.particles) {
-      ctx.globalAlpha = Math.max(0, pt.life / pt.maxLife);
-      ctx.fillStyle = pt.color;
-      ctx.beginPath();
-      ctx.arc(pt.x, pt.y, 3, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.globalAlpha = 1;
-    }
-
-    // lightning chain arcs, with a soft glow to sell the electric feel
-    for (const a of state.lightnings) {
-      ctx.globalAlpha = Math.max(0, a.life / a.maxLife);
-      ctx.shadowColor = '#f4ff5c';
-      ctx.shadowBlur = 8;
-      ctx.strokeStyle = '#f4ff5c';
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      const mx = (a.x1 + a.x2) / 2 + (Math.random() - 0.5) * cell * 0.3;
-      const my = (a.y1 + a.y2) / 2 + (Math.random() - 0.5) * cell * 0.3;
-      ctx.moveTo(a.x1, a.y1);
-      ctx.lineTo(mx, my);
-      ctx.lineTo(a.x2, a.y2);
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-      ctx.globalAlpha = 1;
+      ctx.fillText(t.level === 3 ? '★★★' : '★★', pos.x, topY - pedH / 2 - 8);
     }
   }
 
+  // 3D Entrance Portals & Sacred Core
+  function drawPortal3D(pos) {
+    ctx.save();
+    ctx.translate(pos.x, pos.y);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, tileW * 0.42, tileH * 0.42, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(239, 68, 68, 0.4)'; ctx.fill();
+    ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2; ctx.stroke();
+
+    ctx.fillStyle = '#fff'; ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('▼', 0, -6 + Math.sin(state.time * 5) * 3);
+    ctx.restore();
+  }
+
+  function drawCrystalCore3D(pos) {
+    ctx.save();
+    ctx.translate(pos.x, pos.y);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, tileW * 0.48, tileH * 0.48, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(92, 225, 255, 0.2)'; ctx.fill();
+    ctx.strokeStyle = '#5ce1ff'; ctx.lineWidth = 2; ctx.stroke();
+
+    const floatY = -tileW * 0.45 + Math.sin(state.time * 2.5) * 5;
+    ctx.save();
+    ctx.translate(0, floatY);
+    ctx.rotate(state.time * 1.5);
+    ctx.fillStyle = '#5ce1ff'; ctx.shadowColor = '#5ce1ff'; ctx.shadowBlur = 12;
+    ctx.beginPath();
+    ctx.moveTo(0, -12); ctx.lineTo(9, 0); ctx.lineTo(0, 12); ctx.lineTo(-9, 0); ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+
+    ctx.restore();
+  }
+
+  // All decorations are drawn as vector shapes (never bitmap glyphs) so that they stay
+  // perfectly crisp no matter how far the camera zooms in.
+  function drawObstacle3D(d) {
+    const pos = cellToPx(d.c, d.r);
+    if (d.type === 'rock') {
+      const sz = tileW * 0.28;
+      ctx.beginPath();
+      ctx.ellipse(pos.x, pos.y + sz * 0.55, sz * 0.9, sz * 0.32, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fill();
+
+      const grad = ctx.createLinearGradient(pos.x - sz, pos.y - sz * 1.3, pos.x + sz, pos.y);
+      grad.addColorStop(0, '#6b7d94');
+      grad.addColorStop(0.55, '#475569');
+      grad.addColorStop(1, '#2c3644');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.moveTo(pos.x - sz, pos.y);
+      ctx.lineTo(pos.x - sz * 0.3, pos.y - sz * 1.3);
+      ctx.lineTo(pos.x + sz * 0.5, pos.y - sz * 0.9);
+      ctx.lineTo(pos.x + sz, pos.y);
+      ctx.lineTo(pos.x + sz * 0.2, pos.y + sz * 0.6);
+      ctx.lineTo(pos.x - sz * 0.4, pos.y + sz * 0.5);
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(pos.x - sz * 0.3, pos.y - sz * 1.3); ctx.lineTo(pos.x - sz * 0.1, pos.y - sz * 0.2); ctx.stroke();
+    } else if (d.type === 'pinetree') {
+      const h = tileW * 0.55, w = tileW * 0.2;
+      ctx.beginPath();
+      ctx.ellipse(pos.x, pos.y + 3, w * 1.1, w * 0.4, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fill();
+
+      ctx.fillStyle = '#4a2e17';
+      ctx.fillRect(pos.x - w * 0.12, pos.y - h * 0.15, w * 0.24, h * 0.2);
+
+      for (let i = 0; i < 3; i++) {
+        const ty = pos.y - h * 0.15 - i * h * 0.28;
+        const tw = w * (1.15 - i * 0.28);
+        const grad = ctx.createLinearGradient(pos.x - tw, ty, pos.x + tw, ty - h * 0.35);
+        grad.addColorStop(0, '#0e5c33');
+        grad.addColorStop(0.5, '#1a8a4c');
+        grad.addColorStop(1, '#0e5c33');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.moveTo(pos.x - tw, ty);
+        ctx.lineTo(pos.x, ty - h * 0.4);
+        ctx.lineTo(pos.x + tw, ty);
+        ctx.closePath(); ctx.fill();
+      }
+    } else if (d.type === 'roundtree') {
+      const h = tileW * 0.5, r = tileW * 0.22;
+      ctx.beginPath();
+      ctx.ellipse(pos.x, pos.y + 3, r * 1.1, r * 0.4, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fill();
+
+      ctx.fillStyle = '#4a2e17';
+      ctx.fillRect(pos.x - r * 0.14, pos.y - h * 0.35, r * 0.28, h * 0.4);
+
+      const foliageY = pos.y - h * 0.55;
+      const grad = ctx.createRadialGradient(pos.x - r * 0.3, foliageY - r * 0.3, 1, pos.x, foliageY, r * 1.15);
+      grad.addColorStop(0, '#3fae6a');
+      grad.addColorStop(0.7, '#1a8a4c');
+      grad.addColorStop(1, '#0c5a30');
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(pos.x, foliageY, r, 0, Math.PI * 2); ctx.fill();
+    } else if (d.type === 'flower') {
+      const petalColor = ['#ff8fb3', '#ffd166', '#c77dff'][Math.floor((d.c + d.r) % 3)];
+      ctx.save();
+      ctx.translate(pos.x, pos.y - 2);
+      for (let i = 0; i < 5; i++) {
+        const a = (i / 5) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.ellipse(Math.cos(a) * 2.4, Math.sin(a) * 2.4, 2.2, 1.3, a, 0, Math.PI * 2);
+        ctx.fillStyle = hexToRgba(petalColor, 0.85);
+        ctx.fill();
+      }
+      ctx.beginPath(); ctx.arc(0, 0, 1.6, 0, Math.PI * 2);
+      ctx.fillStyle = '#ffe066'; ctx.fill();
+      ctx.restore();
+    } else {
+      // grass tufts
+      ctx.strokeStyle = 'rgba(120, 200, 140, 0.7)';
+      ctx.lineCap = 'round';
+      for (let i = -1; i <= 1; i++) {
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.moveTo(pos.x + i * 3, pos.y + 2);
+        ctx.quadraticCurveTo(pos.x + i * 3 + i * 1.5, pos.y - 5, pos.x + i * 4, pos.y - 9);
+        ctx.stroke();
+      }
+    }
+  }
+
+  // ---------- Main Render Pipeline ----------
+  function render() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Deep Space Atmosphere
+    const bgGrad = ctx.createRadialGradient(W / 2, H / 2, 80, W / 2, H / 2, Math.max(W, H) * 0.75);
+    bgGrad.addColorStop(0, curLevel.theme.bg0);
+    bgGrad.addColorStop(1, curLevel.theme.bg1);
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Starfield
+    for (const s of stars) {
+      const tw = 0.5 + 0.5 * Math.sin(state.time * s.speed + s.phase);
+      ctx.globalAlpha = 0.25 + tw * 0.65;
+      ctx.fillStyle = s.color;
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // Camera Transform Applied to Sandtable & Entities
+    ctx.save();
+    let shakeX = 0, shakeY = 0;
+    if (state.screenShake > 0) {
+      shakeX = (Math.random() - 0.5) * 12 * (state.screenShake / 0.45);
+      shakeY = (Math.random() - 0.5) * 12 * (state.screenShake / 0.45);
+    }
+    ctx.translate(W / 2 + camera.x + shakeX, H / 2 + camera.y + shakeY);
+    ctx.scale(camera.scale, camera.scale);
+    ctx.translate(-W / 2, -H / 2);
+
+    // 1. Bedrock Foundation Slab
+    drawFloatingIslandBase();
+
+    // 2. Render 3D Grid Blocks (back-to-front depth)
+    const hoverCell = state.selectedBuildType && state.hover ? state.hover : null;
+
+    for (let depth = 0; depth < COLS + ROWS; depth++) {
+      for (let r = 0; r < ROWS; r++) {
+        const c = depth - r;
+        if (c < 0 || c >= COLS) continue;
+
+        const isPath = pathSet.has(keyOf(c, r));
+        const isHovered = hoverCell && hoverCell.c === c && hoverCell.r === r;
+        const liftZ = isHovered ? 8 : 0;
+
+        let topStyle, leftStyle, rightStyle;
+        if (isPath) {
+          const pulse = 0.5 + 0.5 * Math.sin(state.time * 2.5 - (c + r) * 0.35);
+          topStyle = curLevel.theme.pathTop;
+          leftStyle = curLevel.theme.pathLeft;
+          rightStyle = curLevel.theme.pathRight;
+        } else {
+          const isAlt = (c + r) % 2 === 0;
+          topStyle = isAlt ? curLevel.theme.top : curLevel.theme.alt;
+          leftStyle = curLevel.theme.left;
+          rightStyle = curLevel.theme.right;
+        }
+
+        drawIsoBlock(c, r, topStyle, leftStyle, rightStyle, blockDepth, liftZ);
+
+        if (isPath) {
+          const pos = cellToPx(c, r, liftZ);
+          ctx.strokeStyle = curLevel.theme.pathGlow;
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.ellipse(pos.x, pos.y, tileW * 0.25, tileH * 0.25, 0, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // 3. Flight Corridors
+    for (const airPts of airPathsPoints) {
+      if (airPts.length > 1) {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(124, 245, 255, 0.4)';
+        ctx.lineWidth = Math.max(2, tileW * 0.08);
+        ctx.setLineDash([tileW * 0.35, tileW * 0.25]);
+        ctx.lineDashOffset = -state.time * tileW * 1.5;
+        ctx.beginPath();
+        ctx.moveTo(airPts[0].x, airPts[0].y);
+        for (let i = 1; i < airPts.length; i++) ctx.lineTo(airPts[i].x, airPts[i].y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+    }
+
+    // 4. Portals & Sacred Core (Deduplicated)
+    const startKeys = new Set();
+    const endKeys = new Set();
+    for (const gPath of groundPaths) {
+      if (gPath.length > 0) {
+        startKeys.add(keyOf(gPath[0].c, gPath[0].r));
+        endKeys.add(keyOf(gPath[gPath.length - 1].c, gPath[gPath.length - 1].r));
+      }
+    }
+    for (const k of startKeys) {
+      const [c, r] = k.split(",").map(Number);
+      drawPortal3D(cellToPx(c, r));
+    }
+    for (const k of endKeys) {
+      const [c, r] = k.split(",").map(Number);
+      drawCrystalCore3D(cellToPx(c, r));
+    }
+
+    // 6. Build Hologram Preview
+    if (hoverCell && inGrid(hoverCell.c, hoverCell.r)) {
+      const ok = canBuild(hoverCell.c, hoverCell.r) && state.gold >= TOWER_TYPES[state.selectedBuildType].cost;
+      const pos = cellToPx(hoverCell.c, hoverCell.r, 8);
+      const rangePx = TOWER_TYPES[state.selectedBuildType].range * cellUnit;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(pos.x, pos.y, rangePx, rangePx * 0.5, 0, 0, Math.PI * 2);
+      ctx.fillStyle = ok ? 'rgba(182,255,90,0.14)' : 'rgba(255,107,107,0.14)';
+      ctx.fill();
+      ctx.strokeStyle = ok ? '#b6ff5a' : '#ff6b6b';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.font = '20px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.globalAlpha = 0.75;
+      ctx.fillText(TOWER_TYPES[state.selectedBuildType].icon, pos.x, pos.y - tileW * 0.35);
+      ctx.restore();
+    }
+
+    // 7. Depth-Sorted Scene Objects (Obstacles, Towers, Enemies)
+    // Decorations are interleaved into the same depth sort as towers/enemies (rather
+    // than drawn in a separate earlier pass) so a tree on a "further back" row can
+    // never visually float in front of / above a taller foreground character.
+    const renderList = [];
+    for (const d of decorations) {
+      renderList.push({ type: 'obstacle', depth: d.c + d.r, item: d });
+    }
+    for (const t of state.towers) {
+      renderList.push({ type: 'tower', depth: t.c + t.r + 0.5, item: t });
+    }
+    for (const e of state.enemies) {
+      const effR = (e.y + (e.flying ? e.z : 0) - Y_center) / tileH;
+      const effC = (e.x - X_center) / tileW;
+      const depth = effC + effR;
+      renderList.push({ type: 'enemy', depth: e.flying ? depth + 4 : depth, item: e });
+    }
+    renderList.sort((a, b) => a.depth - b.depth);
+
+    for (const entity of renderList) {
+      if (entity.type === 'obstacle') drawObstacle3D(entity.item);
+      else if (entity.type === 'tower') drawTower3D(entity.item);
+      else if (entity.type === 'enemy') drawCharacter(entity.item);
+    }
+
+    // 8. Ground Shockwaves
+    for (const sw of state.shockwaves) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(sw.x, sw.y, sw.r, sw.r * 0.5, 0, 0, Math.PI * 2);
+      ctx.strokeStyle = sw.color;
+      ctx.lineWidth = 2.5;
+      ctx.globalAlpha = sw.life / sw.maxLife;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // 9. Projectiles
+    for (const p of state.projectiles) {
+      const rad = Math.max(3.5, tileW * 0.07);
+      if (p.type === 'cannon') {
+        const progress = Math.min(1, p.currDist / (p.travelDist || 1));
+        const arcZ = Math.sin(progress * Math.PI) * (tileW * 0.65);
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y + arcZ, rad * 0.8, rad * 0.4, 0, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.fill();
+        ctx.beginPath(); ctx.arc(p.x, p.y, rad * 1.3, 0, Math.PI * 2);
+        ctx.fillStyle = '#ff9d5c'; ctx.shadowColor = '#ff9d5c'; ctx.shadowBlur = 8;
+        ctx.fill(); ctx.shadowBlur = 0;
+      } else {
+        ctx.beginPath(); ctx.arc(p.x, p.y, rad * 1.6, 0, Math.PI * 2);
+        ctx.fillStyle = hexToRgba(p.color, 0.35); ctx.fill();
+        ctx.beginPath(); ctx.arc(p.x, p.y, rad, 0, Math.PI * 2);
+        ctx.fillStyle = p.color; ctx.fill();
+      }
+    }
+
+    // 10. Particles
+    for (const pt of state.particles) {
+      ctx.globalAlpha = Math.max(0, pt.life / pt.maxLife);
+      ctx.fillStyle = pt.color;
+      ctx.beginPath(); ctx.arc(pt.x, pt.y, 3, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    // 11. Lightning Arcs
+    for (const a of state.lightnings) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, a.life / a.maxLife);
+      ctx.shadowColor = '#f4ff5c'; ctx.shadowBlur = 10;
+      ctx.strokeStyle = '#f4ff5c'; ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      const mx = (a.x1 + a.x2) / 2 + (Math.random() - 0.5) * tileW * 0.4;
+      const my = (a.y1 + a.y2) / 2 + (Math.random() - 0.5) * tileW * 0.4;
+      ctx.moveTo(a.x1, a.y1); ctx.lineTo(mx, my); ctx.lineTo(a.x2, a.y2);
+      ctx.stroke(); ctx.restore();
+    }
+
+    // 12. Floating Battle Texts (Miss, Heal, EMP, Berserk)
+    for (const ft of state.floatingTexts) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, ft.life / ft.maxLife);
+      ctx.font = 'bold 13px sans-serif';
+      ctx.fillStyle = ft.color;
+      ctx.textAlign = 'center';
+      ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
+      ctx.fillText(ft.text, ft.x, ft.y);
+      ctx.restore();
+    }
+
+    ctx.restore();
+
+    // Screen-space atmospheric vignette (drawn after the camera transform so it
+    // stays fixed to the viewport regardless of zoom/pan — adds depth & focus).
+    const vig = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.72);
+    vig.addColorStop(0, 'rgba(0,0,0,0)');
+    vig.addColorStop(1, 'rgba(0,0,0,0.38)');
+    ctx.fillStyle = vig;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // ---------- Utilities ----------
   function roundRect(x, y, w, h, r) {
     r = Math.min(r, w / 2, h / 2);
     ctx.beginPath();
@@ -935,12 +2440,18 @@
     const mix = (v) => Math.round(v + (255 - v) * amt);
     return `rgb(${mix(r)},${mix(g)},${mix(b)})`;
   }
+  function darkenHex(hex, amt) {
+    const { r, g, b } = hexToRgb(hex);
+    const mix = (v) => Math.round(v * (1 - amt));
+    return `rgb(${mix(r)},${mix(g)},${mix(b)})`;
+  }
 
-  // ---------- UI sync ----------
+  // ---------- UI Synchronization & Modals ----------
   function syncHud() {
+    levelNameEl.textContent = `第 ${curLevel.id} 关: ${curLevel.name}`;
     goldVal.textContent = state.gold;
     livesVal.textContent = state.lives;
-    waveVal.textContent = state.wave + '/' + WAVE_MAX;
+    waveVal.textContent = state.wave + '/' + curLevel.wavesCount;
     scoreVal.textContent = state.score;
   }
 
@@ -953,8 +2464,8 @@
   }
 
   function updateBetweenWaveBanner() {
-    if (state.betweenWaves && !state.gameOver) {
-      showBanner('下一波: ' + Math.ceil(state.countdown) + 's <button id="skipBtn">立即开始</button>', 0);
+    if (state.betweenWaves && !state.gameOver && !state.levelClear) {
+      showBanner(`下一波倒计时: ${Math.ceil(state.countdown)}s <button id="skipBtn">立即开始</button>`, 0);
       const skipBtn = document.getElementById('skipBtn');
       if (skipBtn) skipBtn.onclick = () => { state.countdown = 0; };
     } else if (!bannerTimeout) {
@@ -964,13 +2475,18 @@
 
   function buildShop() {
     shopEl.innerHTML = '';
-    TOWER_ORDER.forEach(type => {
+    TOWER_ORDER.forEach((type, idx) => {
       const info = TOWER_TYPES[type];
       const btn = document.createElement('div');
       btn.className = 'tower-btn glass';
-      btn.title = info.airOnly ? '专精防空，仅能攻击空中单位' : (info.canAirTarget ? '可攻击空中单位' : '仅能攻击地面单位');
+      btn.title = info.desc + (info.airOnly ? '（专精防空）' : (info.canAirTarget ? '（可打空中）' : '（仅地面）'));
       const badge = info.airOnly ? '<span style="font-size:9px;vertical-align:top;">🎯✈️</span>' : (info.canAirTarget ? '<span style="font-size:9px;vertical-align:top;">✈️</span>' : '');
-      btn.innerHTML = '<div class="icon">' + info.icon + badge + '</div><div class="name">' + info.name + '</div><div class="cost">' + info.cost + '</div>';
+      btn.innerHTML = `
+        <div class="hotkey">${idx + 1}</div>
+        <div class="icon">${info.icon}${badge}</div>
+        <div class="name">${info.name}</div>
+        <div class="cost">${info.cost}💰</div>
+      `;
       btn.onclick = () => {
         ensureAudio();
         if (state.selectedBuildType === type) { state.selectedBuildType = null; }
@@ -981,6 +2497,7 @@
       shopEl.appendChild(btn);
     });
   }
+
   function refreshShopSelection() {
     Array.from(shopEl.children).forEach(btn => {
       btn.classList.toggle('selected', btn.dataset.type === state.selectedBuildType);
@@ -993,11 +2510,12 @@
     towerPanelEl.style.display = 'block';
     const info = TOWER_TYPES[t.type];
     const stats = towerStats(t);
-    document.getElementById('tpTitle').textContent = info.icon + ' ' + info.name + ' Lv.' + t.level;
-    let statsText = '伤害 ' + Math.round(stats.dmg) + ' · 范围 ' + (stats.range / cell).toFixed(1) + ' 格 · 射速 ' + stats.rate.toFixed(1) + '/s';
+    document.getElementById('tpTitle').textContent = `${info.icon} ${info.name} Lv.${t.level} [3D台座]`;
+    let statsText = `伤害 ${Math.round(stats.dmg)} · 范围 ${(stats.range / cellUnit).toFixed(1)} 格 · 射速 ${stats.rate.toFixed(1)}/s`;
     statsText += stats.airOnly ? ' · 专精防空(仅空中)' : (stats.canAirTarget ? ' · 可打空中' : ' · 仅地面');
-    if (stats.chain) statsText += ' · 连锁 ' + (stats.chain + 1) + ' 目标';
+    if (stats.chain) statsText += ` · 连锁 ${stats.chain + 1} 目标`;
     document.getElementById('tpStats').textContent = statsText;
+
     const upBtn = document.getElementById('upgradeBtn');
     const sellBtn = document.getElementById('sellBtn');
     if (t.level >= 3) {
@@ -1005,10 +2523,10 @@
       upBtn.disabled = true;
     } else {
       const cost = upgradeCost(t);
-      upBtn.textContent = '升级 (' + cost + '💰)';
+      upBtn.textContent = `升级 (${cost}💰)`;
       upBtn.disabled = state.gold < cost;
     }
-    sellBtn.textContent = '出售 (+' + sellValue(t) + '💰)';
+    sellBtn.textContent = `出售 (+${sellValue(t)}💰)`;
   }
   function hideTowerPanel() { towerPanelEl.style.display = 'none'; }
 
@@ -1021,6 +2539,7 @@
     t.totalSpent += cost;
     t.level++;
     sfx.upgrade();
+    spawnImpactParticles(t.x, t.y - tileW * 0.35, '#ffd54f', 16);
     showTowerPanel(t);
   };
   document.getElementById('sellBtn').onclick = () => {
@@ -1038,27 +2557,231 @@
     hideTowerPanel();
   };
 
-  // ---------- Input ----------
-  function eventToCell(ev) {
-    const rect = canvas.getBoundingClientRect();
-    const cx = (ev.clientX - rect.left);
-    const cy = (ev.clientY - rect.top);
-    return pxToCell(cx, cy);
+  // ---------- Level Modal Management ----------
+  function openLevelModal() {
+    levelListEl.innerHTML = '';
+    const starData = JSON.parse(localStorage.getItem(STARS_KEY) || '{}');
+
+    LEVELS.forEach((lvl, idx) => {
+      const item = document.createElement('div');
+      item.className = 'level-item' + (idx === currentLevelIdx ? ' active' : '');
+      const stars = starData[lvl.id] || 0;
+      const starStr = stars > 0 ? '★'.repeat(stars) + '☆'.repeat(3 - stars) : '未通关';
+
+      item.innerHTML = `
+        <div class="lvl-info-main">
+          <div class="lvl-name">关卡 ${lvl.id}: ${lvl.name} <span style="font-size:12px;color:#ffd54f;margin-left:6px;">${starStr}</span></div>
+          <div class="lvl-desc">${lvl.desc}</div>
+        </div>
+        <div class="lvl-tag">${lvl.wavesCount} 波次</div>
+      `;
+      item.onclick = () => {
+        switchLevel(idx);
+        levelModalEl.classList.add('hidden');
+      };
+      levelListEl.appendChild(item);
+    });
+    levelModalEl.classList.remove('hidden');
   }
 
-  canvas.addEventListener('pointermove', (ev) => {
-    if (state.selectedBuildType) state.hover = eventToCell(ev);
-  });
+  levelBadgeEl.onclick = openLevelModal;
+  levelBtnEl.onclick = openLevelModal;
+  closeLevelModalBtn.onclick = () => levelModalEl.classList.add('hidden');
+
+  function switchLevel(lvlIdx) {
+    currentLevelIdx = lvlIdx;
+    curLevel = LEVELS[currentLevelIdx];
+    COLS = curLevel.cols; ROWS = curLevel.rows;
+    loadLevelPaths(curLevel);
+    resize();
+    resetCamera();
+    resetGame();
+    state.running = true;
+    overlayEl.classList.add('hidden');
+  }
+
+  // ---------- Level Victory & Game Over ----------
+  function levelComplete() {
+    state.levelClear = true;
+    state.running = false;
+
+    // Calculate stars (3 stars if lives >= 18, 2 if >= 10, else 1)
+    const stars = state.lives >= 18 ? 3 : (state.lives >= 10 ? 2 : 1);
+    const starData = JSON.parse(localStorage.getItem(STARS_KEY) || '{}');
+    starData[curLevel.id] = Math.max(starData[curLevel.id] || 0, stars);
+    localStorage.setItem(STARS_KEY, JSON.stringify(starData));
+
+    const best = Math.max(state.score, parseInt(localStorage.getItem(BEST_KEY) || '0', 10));
+    localStorage.setItem(BEST_KEY, String(best));
+
+    document.getElementById('overlayTitle').textContent = `🎉 关卡胜利！第 ${curLevel.id} 关已守卫`;
+    document.getElementById('overlayStars').textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+    document.getElementById('overlayStars').style.color = '#ffd700';
+
+    const isLast = currentLevelIdx === LEVELS.length - 1;
+    document.getElementById('overlayDesc').textContent = isLast
+      ? '🏆 传奇诞生！你成功平定了全套 5 场经典战役，晶石核心永耀沙盘！'
+      : `已成功击退本关全部 ${curLevel.wavesCount} 波敌军部队，晶石核心完好无损！准备好迎战下一张地图了吗？`;
+
+    document.getElementById('overlayStats').textContent = `本关得分: ${state.score} · 剩余生命: ${state.lives}`;
+
+    const btnRow = document.getElementById('overlayBtnRow');
+    btnRow.innerHTML = '';
+
+    if (!isLast) {
+      const nextBtn = document.createElement('button');
+      nextBtn.className = 'big-btn';
+      nextBtn.textContent = '进入下一关 ➔';
+      nextBtn.onclick = () => switchLevel(currentLevelIdx + 1);
+      btnRow.appendChild(nextBtn);
+    }
+
+    const replayBtn = document.createElement('button');
+    replayBtn.className = 'big-btn secondary';
+    replayBtn.textContent = '重新挑战本关';
+    replayBtn.onclick = () => switchLevel(currentLevelIdx);
+    btnRow.appendChild(replayBtn);
+
+    const selectBtn = document.createElement('button');
+    selectBtn.className = 'big-btn secondary';
+    selectBtn.textContent = '关卡列表';
+    selectBtn.onclick = () => { overlayEl.classList.add('hidden'); openLevelModal(); };
+    btnRow.appendChild(selectBtn);
+
+    overlayEl.classList.remove('hidden');
+    sfx.win();
+  }
+
+  function endGame(won) {
+    state.gameOver = true; state.win = won; state.running = false;
+    const best = Math.max(state.score, parseInt(localStorage.getItem(BEST_KEY) || '0', 10));
+    localStorage.setItem(BEST_KEY, String(best));
+
+    document.getElementById('overlayTitle').textContent = '💥 晶石核心沦陷';
+    document.getElementById('overlayStars').textContent = '';
+    document.getElementById('overlayDesc').textContent = `在第 ${state.wave} 波，敌军部队攻破了防线。调整台座布局，再战一次吧！`;
+    document.getElementById('overlayStats').textContent = `本关得分: ${state.score}　历史最高: ${best}`;
+
+    const btnRow = document.getElementById('overlayBtnRow');
+    btnRow.innerHTML = `
+      <button class="big-btn" id="retryBtn">重试本关</button>
+      <button class="big-btn secondary" id="chooseLvlBtn">选择关卡</button>
+    `;
+    document.getElementById('retryBtn').onclick = () => switchLevel(currentLevelIdx);
+    document.getElementById('chooseLvlBtn').onclick = () => { overlayEl.classList.add('hidden'); openLevelModal(); };
+
+    overlayEl.classList.remove('hidden');
+    sfx.gameover();
+  }
+
+  function resetGame() {
+    state = freshState(currentLevelIdx);
+    buildMapExtras(curLevel);
+    hideTowerPanel();
+    bannerEl.style.display = 'none';
+    speedBtn.textContent = 'x1';
+    pauseBtn.textContent = '暂停';
+    pauseBtn.classList.remove('active');
+    refreshShopSelection();
+    syncHud();
+  }
+
+  document.getElementById('startBtn').onclick = () => {
+    ensureAudio();
+    resetGame();
+    state.running = true;
+    overlayEl.classList.add('hidden');
+  };
+
+  // ---------- Camera Controls Listeners ----------
+  zoomInBtn.onclick = () => setZoom(1.2);
+  zoomOutBtn.onclick = () => setZoom(0.83);
+  zoomResetBtn.onclick = resetCamera;
+
+  canvas.addEventListener('wheel', (ev) => {
+    ev.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const sx = ev.clientX - rect.left;
+    const sy = ev.clientY - rect.top;
+    const factor = ev.deltaY < 0 ? 1.15 : 0.87;
+    setZoom(factor, sx, sy);
+  }, { passive: false });
+
+  // ---------- Input Handling (Touch & Mouse Drag / Pan / Build) ----------
+  function eventToScreen(ev) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: ev.clientX - rect.left,
+      y: ev.clientY - rect.top
+    };
+  }
 
   canvas.addEventListener('pointerdown', (ev) => {
     ensureAudio();
-    const { c, r } = eventToCell(ev);
+    const sPos = eventToScreen(ev);
+    camera.isDragging = true;
+    camera.dragStartX = sPos.x;
+    camera.dragStartY = sPos.y;
+    camera.lastScreenX = sPos.x;
+    camera.lastScreenY = sPos.y;
+    camera.moved = false;
+  });
+
+  window.addEventListener('pointermove', (ev) => {
+    if (!state) return;
+    const sPos = eventToScreen(ev);
+
+    if (camera.isDragging) {
+      const dx = sPos.x - camera.lastScreenX;
+      const dy = sPos.y - camera.lastScreenY;
+      const totalMoved = Math.hypot(sPos.x - camera.dragStartX, sPos.y - camera.dragStartY);
+
+      if (totalMoved > 6) {
+        camera.moved = true;
+        camera.x += dx;
+        camera.y += dy;
+      }
+      camera.lastScreenX = sPos.x;
+      camera.lastScreenY = sPos.y;
+    }
+
+    // Hover build cell in world coordinates
     if (state.selectedBuildType) {
+      const wPos = screenToWorld(sPos.x, sPos.y);
+      state.hover = pxToCell(wPos.x, wPos.y);
+    }
+  });
+
+  window.addEventListener('pointerup', (ev) => {
+    if (!camera.isDragging) return;
+    camera.isDragging = false;
+
+    // If was dragging the map view, don't trigger click action
+    if (camera.moved) return;
+
+    const sPos = eventToScreen(ev);
+    const wPos = screenToWorld(sPos.x, sPos.y);
+
+    // 1. Placing a new tower
+    if (state.selectedBuildType) {
+      const { c, r } = pxToCell(wPos.x, wPos.y);
       placeTower(state.selectedBuildType, c, r);
       state.selectedBuildType = null;
+      state.hover = null;
       refreshShopSelection();
       return;
     }
+
+    // 2. Select existing 3D tower
+    const clickedTower = findTowerAtPx(wPos.x, wPos.y);
+    if (clickedTower) {
+      state.selectedTower = clickedTower;
+      showTowerPanel(clickedTower);
+      return;
+    }
+
+    // 3. Clicked ground cell
+    const { c, r } = pxToCell(wPos.x, wPos.y);
     const t = towerAt.get(keyOf(c, r));
     if (t) {
       state.selectedTower = t;
@@ -1069,6 +2792,29 @@
     }
   });
 
+  // Touch Pinch-to-Zoom
+  canvas.addEventListener('touchstart', (ev) => {
+    if (ev.touches.length === 2) {
+      const t1 = ev.touches[0], t2 = ev.touches[1];
+      camera.touchDist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+    }
+  }, { passive: true });
+
+  canvas.addEventListener('touchmove', (ev) => {
+    if (ev.touches.length === 2) {
+      const t1 = ev.touches[0], t2 = ev.touches[1];
+      const dist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+      if (camera.touchDist > 0) {
+        const factor = dist / camera.touchDist;
+        const midX = (t1.clientX + t2.clientX) / 2;
+        const midY = (t1.clientY + t2.clientY) / 2;
+        setZoom(factor, midX, midY);
+      }
+      camera.touchDist = dist;
+    }
+  }, { passive: true });
+
+  // Keyboard Shortcuts
   window.addEventListener('keydown', (ev) => {
     if (ev.key === '1') { state.selectedBuildType = 'gatling'; refreshShopSelection(); }
     else if (ev.key === '2') { state.selectedBuildType = 'cannon'; refreshShopSelection(); }
@@ -1076,7 +2822,13 @@
     else if (ev.key === '4') { state.selectedBuildType = 'sniper'; refreshShopSelection(); }
     else if (ev.key === '5') { state.selectedBuildType = 'lightning'; refreshShopSelection(); }
     else if (ev.key === '6') { state.selectedBuildType = 'flak'; refreshShopSelection(); }
-    else if (ev.key === 'Escape') { state.selectedBuildType = null; state.selectedTower = null; hideTowerPanel(); refreshShopSelection(); }
+    else if (ev.key === 'Escape') {
+      state.selectedBuildType = null; state.selectedTower = null;
+      hideTowerPanel(); refreshShopSelection();
+    }
+    else if (ev.key === 'r' || ev.key === 'R') { resetCamera(); }
+    else if (ev.key === '+' || ev.key === '=') { setZoom(1.2); }
+    else if (ev.key === '-' || ev.key === '_') { setZoom(0.83); }
     else if (ev.key === ' ') { togglePause(); ev.preventDefault(); }
     else if (ev.key === 'Enter') { if (state.betweenWaves) state.countdown = 0; }
   });
@@ -1094,41 +2846,7 @@
   }
   pauseBtn.onclick = togglePause;
 
-  // ---------- Game over / win ----------
-  function endGame(won) {
-    state.gameOver = true; state.win = won; state.running = false;
-    const best = Math.max(state.score, parseInt(localStorage.getItem(BEST_KEY) || '0', 10));
-    localStorage.setItem(BEST_KEY, String(best));
-    document.getElementById('overlayTitle').textContent = won ? '🎉 守卫成功！' : '💥 核心已陷落';
-    document.getElementById('overlayDesc').textContent = won
-      ? '你顶住了全部 ' + WAVE_MAX + ' 波攻势，晶石核心安然无恙！'
-      : '在第 ' + state.wave + ' 波，防线被突破了。重整旗鼓再来一次吧！';
-    document.getElementById('overlayStats').textContent = '本局分数: ' + state.score + '　最高分: ' + best;
-    document.getElementById('startBtn').textContent = '再来一局';
-    overlayEl.classList.remove('hidden');
-    (won ? sfx.win : sfx.gameover)();
-  }
-
-  function resetGame() {
-    state = freshState();
-    buildMapExtras();
-    hideTowerPanel();
-    bannerEl.style.display = 'none';
-    speedBtn.textContent = 'x1';
-    pauseBtn.textContent = '暂停';
-    pauseBtn.classList.remove('active');
-    refreshShopSelection();
-    syncHud();
-  }
-
-  document.getElementById('startBtn').onclick = () => {
-    ensureAudio();
-    resetGame();
-    state.running = true;
-    overlayEl.classList.add('hidden');
-  };
-
-  // ---------- Main loop ----------
+  // ---------- Main Game Loop ----------
   let lastTs = 0;
   function loop(ts) {
     requestAnimationFrame(loop);
@@ -1136,7 +2854,8 @@
     let dt = (ts - lastTs) / 1000;
     lastTs = ts;
     dt = Math.min(dt, 0.05);
-    if (state && state.running && !state.paused && !state.gameOver) {
+
+    if (state && state.running && !state.paused && !state.gameOver && !state.levelClear) {
       update(dt);
     }
     if (state) {
@@ -1147,12 +2866,15 @@
     }
   }
 
+  // Initialization
   window.addEventListener('resize', resize);
+  loadLevelPaths(curLevel);
   resize();
   buildShop();
   resetGame();
+
   const best0 = parseInt(localStorage.getItem(BEST_KEY) || '0', 10);
-  document.getElementById('overlayStats').textContent = best0 > 0 ? ('历史最高分: ' + best0) : '';
+  document.getElementById('overlayStats').textContent = best0 > 0 ? (`历史最高分: ${best0}`) : '';
   requestAnimationFrame(loop);
 })();
 </script>

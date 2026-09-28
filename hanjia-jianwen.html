@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>寒假见闻 - 回北京过年识字闯关 (Winter Break Diary)</title>
+<title>第1课 寒假见闻 - 回北京过年识字闯关 (Winter Break Diary)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=M+PLUS+Rounded+1c:wght@600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -293,8 +293,9 @@
 <body>
 <div id="app">
   <header>
-    <a href="index.html" class="nav-btn" title="返回大厅 (Return to Arcade)">🏠</a>
-    <h1 id="headerTitle">寒假见闻 · 回北京过年</h1>
+    <a href="zw-index.html" class="nav-btn" title="课文一览 (All Lessons)">🏠</a>
+    <a href="javascript:void(0)" class="nav-btn" onclick="goHome()" title="返回主页 (Return to Menu)">📚</a>
+    <h1 id="headerTitle">第1课 · 寒假见闻 · 回北京过年</h1>
     <span class="stars" id="starTotal">⭐ 0</span>
   </header>
 
@@ -302,7 +303,7 @@
     <!-- HOME -->
     <section class="screen active" id="screen-home">
       <div class="lantern">🏮</div>
-      <h2 class="title">寒假见闻</h2>
+      <h2 class="title">2 寒假见闻</h2>
       <p class="sub">Winter Vacation Experiences · 跟着课文回北京，看望爷爷奶奶，逛四合院、坐人力车、体验现代北京！</p>
       <div class="menu-grid">
         <div class="menu-card full" onclick="goStory()">
@@ -370,6 +371,11 @@
     <!-- STORY -->
     <section class="screen" id="screen-story">
       <h2 class="title">📖 寒假见闻</h2>
+      <div class="story-title-audio" onclick="playClip('title', '寒假见闻', null, 'zh-CN')" title="播放课题发音" style="display:flex;align-items:center;justify-content:center;gap:8px;margin:2px 0 12px;cursor:pointer;">
+        <span style="font-weight:800;font-size:1.05em;">《寒假见闻》</span>
+        <span style="color:var(--muted,#78716c);font-size:0.85em;">hán jià jiàn wén</span>
+        <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip('title', '寒假见闻', null, 'zh-CN')" title="播放课题发音">🔊</button>
+      </div>
       <div class="toggle-row">
         <div class="chip active" id="chipPy" onclick="toggleStoryPy()">拼音</div>
         <div class="chip active" id="chipEn" onclick="toggleStoryEn()">English</div>
@@ -972,10 +978,28 @@ function refreshBadges(){
 }
 
 /* ---------------- NAV ---------------- */
+/* Keep Android/browser system back button inside the app: any non-home screen
+   is one logical "level 2" step, so back should return to screen-home instead
+   of leaving the page (which used to fall through to zw-index.html). */
+let _navFromPopstate = false;
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  if(!_navFromPopstate){
+    if(id === 'screen-home'){
+      history.replaceState({screen:'screen-home'}, '');
+    } else if(!history.state || history.state.screen === 'screen-home'){
+      history.pushState({screen:id}, '');
+    } else {
+      history.replaceState({screen:id}, '');
+    }
+  }
 }
+window.addEventListener('popstate', function(e){
+  _navFromPopstate = true;
+  showScreen((e.state && e.state.screen) || 'screen-home');
+  _navFromPopstate = false;
+});
 function goHome(){
   if(currentWriter){ try { currentWriter.cancelQuiz(); } catch(e){} }
   showScreen('screen-home');
@@ -1452,6 +1476,7 @@ function flipChar(e){
   if(e && e.target && e.target.closest('#charWriterTarget, .writer-toolbar, .writer-status')){
     return;
   }
+  if(e) e.stopPropagation();
   document.getElementById('charCard').classList.toggle('flipped');
 }
 
