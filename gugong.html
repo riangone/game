@@ -287,6 +287,15 @@
   .mistake-actions{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;}
   .action-btn-sm{padding:4px 10px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1px solid #cbd5e1;background:#f8fafc;}
   .action-btn-sm:hover{background:#e2e8f0;}
+
+  .scramble-target.correct{border-color:#10b981!important;background:#f0fdf4!important;}
+  .scramble-target.wrong{border-color:#ef4444!important;background:#fef2f2!important;animation:shake .35s ease-in-out;}
+  .word-chip.in-target.correct{background:#10b981!important;color:#fff!important;border-color:#059669!important;}
+  .cloze-opt-btn.wrong{background:var(--red-soft,#fee2e2)!important;border-color:var(--danger-red,#ef4444)!important;color:var(--danger-red,#dc2626)!important;opacity:0.65;cursor:not-allowed;}
+
+
+  .opt-btn.correct{background:var(--green-soft,#d1fae5)!important;border-color:var(--green,#10b981)!important;color:var(--green-dark,#065f46)!important;}
+  .opt-btn.wrong{background:var(--red-soft,#fee2e2)!important;border-color:var(--danger-red,#ef4444)!important;color:var(--danger-red,#dc2626)!important;animation:shake .35s ease-in-out;opacity:0.75;cursor:not-allowed;}
 </style>
 </head>
 <body>
@@ -355,14 +364,14 @@
         </div>
         <div class="menu-card" onclick="goScramble()">
           <div class="ico">🔤</div>
-          <div class="name">句子排序</div>
+          <div class="name">连词成句</div>
           <div class="desc">拼出课文重点句子</div>
           <div class="badge" id="badgeScramble" style="display:none;"></div>
         </div>
         <div class="menu-card" onclick="goCloze()">
           <div class="ico">🔠</div>
           <div class="name">选词填空</div>
-          <div class="desc">语境填空 · 课文与微情境</div>
+          <div class="desc">选择恰当的词语</div>
           <div class="badge" id="badgeCloze" style="display:none;"></div>
         </div>
         <div class="menu-card" onclick="goAudioChallenge()">
@@ -556,14 +565,16 @@
 
     <!-- SCRAMBLE -->
     <section class="screen" id="screen-scramble">
-      <h2 class="title">🔤 句子排序</h2>
+      <h2 class="title">🔤 连词成句</h2>
       <p class="sub" id="scrambleHint">按顺序点击词语，拼出课文与课后的重点句子。</p>
       <div class="story-progress" id="scrambleProgress">1 / 5</div>
       <div class="scramble-target" id="scrambleTarget"></div>
       <div class="scramble-pool" id="scramblePool"></div>
-      <div style="display:flex;gap:10px;">
+      <div class="scramble-nav-bar" style="display:flex;align-items:center;justify-content:center;gap:10px;margin:12px 0 6px;flex-wrap:wrap;">
+        <button class="btn ghost small" onclick="scramblePrev()">⬅️ 上一句</button>
         <button class="btn ghost small" onclick="scrambleUndo()">撤销</button>
-        <button class="btn gold small" onclick="scrambleCheck()">对一对</button>
+        <button class="btn gold small" id="scrambleCheckBtn" onclick="scrambleCheck()">答案</button>
+        <button class="btn ghost small" onclick="scrambleNext()">下一句 ➡️</button>
       </div>
       <button class="btn ghost" onclick="goHome()">返回菜单</button>
     </section>
@@ -576,7 +587,11 @@
         <div class="quiz-q" id="quizQ"></div>
         <div class="quiz-opts" id="quizOpts"></div>
       </div>
-      <button class="btn ghost" onclick="goHome()">返回菜单</button>
+            <div style="display:flex;gap:10px;justify-content:center;margin:12px 0;width:100%;max-width:560px;">
+        <button class="btn ghost small" onclick="quizPrev()">⬅️ 上一题</button>
+        <button class="btn ghost small" onclick="quizNext()">下一题 ➡️</button>
+      </div>
+<button class="btn ghost" onclick="goHome()">返回菜单</button>
     </section>
 
     <!-- CLOZE TEST -->
@@ -607,6 +622,10 @@
           </div>
         </div>
         <div class="cloze-opts" id="clozeOpts"></div>
+      </div>
+      <div class="cloze-nav-bar" style="display:flex;align-items:center;justify-content:center;gap:12px;margin:12px 0 6px;">
+        <button class="btn ghost small" onclick="clozePrev()">⬅️ 上一题</button>
+        <button class="btn ghost small" onclick="clozeNext()">下一题 ➡️</button>
       </div>
       <button class="btn ghost" onclick="stopClip(); goHome();">返回菜单</button>
     </section>
@@ -801,7 +820,7 @@ const CLOZE_QUESTIONS = [
     answerPy: "Zǐ jìn chéng",
     options: ["紫禁城", "颐和园", "天安门", "圆明园"],
     hint: "课文原句 · 明清皇宫的别名",
-    audioId: "st2"
+    audioId: "cloze_1"
   },
   {
     id: "gg_c2",
@@ -815,7 +834,7 @@ const CLOZE_QUESTIONS = [
     answerPy: "jū zhù",
     options: ["居住", "建筑", "收藏", "参观"],
     hint: "课文原句 · 课后生字「居」的组词",
-    audioId: "st2"
+    audioId: "cloze_2"
   },
   {
     id: "gg_c3",
@@ -829,7 +848,7 @@ const CLOZE_QUESTIONS = [
     answerPy: "gōng diàn",
     options: ["宫殿", "花园", "房屋", "长廊"],
     hint: "课文原句 · 课后生字「殿」的组词",
-    audioId: "st3"
+    audioId: "cloze_3"
   },
   {
     id: "gg_c4",
@@ -843,7 +862,7 @@ const CLOZE_QUESTIONS = [
     answerPy: "jiàn zhù yì shù",
     options: ["建筑艺术", "现代科技", "书法艺术", "自然风光"],
     hint: "课文原句 · 课后生字「筑」与词语「艺术」",
-    audioId: "st5"
+    audioId: "cloze_4"
   },
   {
     id: "gg_c5",
@@ -857,7 +876,7 @@ const CLOZE_QUESTIONS = [
     answerPy: "shōu cáng",
     options: ["收藏", "居住", "吸引", "制造"],
     hint: "课文原句 · 课后生字「藏」的组词",
-    audioId: "st6"
+    audioId: "cloze_5"
   },
   {
     id: "gg_c6",
@@ -871,7 +890,7 @@ const CLOZE_QUESTIONS = [
     answerPy: "guó nèi wài",
     options: ["国内外", "全中国", "老北京", "天安门"],
     hint: "课文原句 · 课后生字「内」与「外」的组词",
-    audioId: "st6"
+    audioId: "cloze_6"
   },
   {
     id: "gg_c7",
@@ -885,7 +904,7 @@ const CLOZE_QUESTIONS = [
     answerPy: "zhù míng",
     options: ["著名", "古老", "珍贵", "美丽"],
     hint: "课文原句 · 课后重点词语",
-    audioId: "st7"
+    audioId: "cloze_7"
   },
   {
     id: "gg_c8",
@@ -899,7 +918,7 @@ const CLOZE_QUESTIONS = [
     answerPy: "jī huì",
     options: ["机会", "时间", "原因", "习惯"],
     hint: "课后重点句子 · 重点词语「机会」",
-    audioId: "st8"
+    audioId: "cloze_8"
   },
   {
     id: "gg_c9",
@@ -913,7 +932,8 @@ const CLOZE_QUESTIONS = [
     answerPy: "zhēn guì",
     options: ["珍贵", "方便", "古怪", "难忘"],
     hint: "微情境拓展 · 价值高、很有意义的物品",
-    audioId: null
+    audioId: null,
+    audioId: "cloze_9"
   },
   {
     id: "gg_c10",
@@ -927,7 +947,8 @@ const CLOZE_QUESTIONS = [
     answerPy: "xī yǐn",
     options: ["吸引", "收藏", "居住", "建造"],
     hint: "微情境拓展 · 把人的注意力引过来",
-    audioId: null
+    audioId: null,
+    audioId: "cloze_10"
   },
   {
     id: "gg_c11",
@@ -941,7 +962,8 @@ const CLOZE_QUESTIONS = [
     answerPy: "zhù míng",
     options: ["著名", "机会", "展览", "居住"],
     hint: "微情境拓展 · 大家都知道的、很有名气",
-    audioId: null
+    audioId: null,
+    audioId: "cloze_11"
   },
   {
     id: "gg_c12",
@@ -955,7 +977,8 @@ const CLOZE_QUESTIONS = [
     answerPy: "cān guān",
     options: ["参观", "收藏", "居住", "代表"],
     hint: "微情境拓展 · 实地去观看与体验",
-    audioId: null
+    audioId: null,
+    audioId: "cloze_12"
   }
 ];
 
@@ -1539,6 +1562,26 @@ function playSuccessTone(){
   } catch(e){}
 }
 
+function playWrongTone(){
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = ctx.currentTime;
+    [0, 0.12].forEach((delay) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(220, now + delay);
+      osc.frequency.exponentialRampToValueAtTime(160, now + delay + 0.09);
+      gain.gain.setValueAtTime(0.18, now + delay);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + delay + 0.09);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + delay);
+      osc.stop(now + delay + 0.09);
+    });
+  } catch(e){}
+}
+
 function charNext(){ charIdx = (charIdx+1) % CHARACTERS.length; renderChar(); }
 function charPrev(){ charIdx = (charIdx-1+CHARACTERS.length) % CHARACTERS.length; renderChar(); }
 
@@ -1672,6 +1715,8 @@ function selectMatch(side, el, zhKey){
 
 /* ---------------- SCRAMBLE ---------------- */
 function setupScrambleRound(){
+  scrambleChecking = false;
+  const _tg = document.getElementById("scrambleTarget"); if(_tg) _tg.classList.remove("correct","wrong");
   if(scrambleState.idx >= SCRAMBLE_SENTENCES.length){
     setTimeout(()=>showResult('scramble', 3, '句子全部完成！'), 200);
     return;
@@ -1715,22 +1760,58 @@ function scrambleUndo(){
   const last = scrambleState.placed.pop();
   if(last){ last.used = false; renderScramble(); }
 }
+let scrambleChecking = false;
+function scramblePrev(){
+  stopClip();
+  if(!SCRAMBLE_SENTENCES || SCRAMBLE_SENTENCES.length === 0) return;
+  if(scrambleState.idx > 0) scrambleState.idx--;
+  else scrambleState.idx = SCRAMBLE_SENTENCES.length - 1;
+  setupScrambleRound();
+}
+function scrambleNext(){
+  stopClip();
+  if(!SCRAMBLE_SENTENCES || SCRAMBLE_SENTENCES.length === 0) return;
+  if(scrambleState.idx < SCRAMBLE_SENTENCES.length - 1) scrambleState.idx++;
+  else scrambleState.idx = 0;
+  setupScrambleRound();
+}
+
 function scrambleCheck(){
+  if(scrambleChecking) return;
   const round = SCRAMBLE_SENTENCES[scrambleState.idx];
-  const built = scrambleState.placed.map(p=>p.text).join('');
+  const built = scrambleState.placed.map(p => (p.text !== undefined ? p.text : p.token)).join('');
+  const target = document.getElementById('scrambleTarget');
   if(built === round.zh){
-    playClip(round.id, round.zh);
-    toast('✅ 正确！');
-    scrambleState.idx++;
-    setTimeout(setupScrambleRound, 500);
+    scrambleChecking = true;
+    if(target){
+      target.classList.remove('wrong');
+      target.classList.add('correct');
+      target.querySelectorAll('.word-chip').forEach(c => c.classList.add('correct'));
+    }
+    playSuccessTone();
+    toast('🎉 答对了！太棒了！');
+    playClip(round.id, round.zh, () => {
+      setTimeout(() => {
+        scrambleChecking = false;
+        if(target) target.classList.remove('correct');
+        scrambleState.idx++;
+        setupScrambleRound();
+      }, 700);
+    });
   } else {
-    toast('再试试看～已记入错题本');
+    if(target){
+      target.classList.remove('correct');
+      target.classList.add('wrong');
+      setTimeout(() => target.classList.remove('wrong'), 600);
+    }
+    playWrongTone();
+    toast('排序还不太对哦，点击词块可以撤回调整！');
     recordMistake({
       id: round.id,
       type: 'sentence',
       zh: round.zh,
-      py: '',
-      meaning: round.isKey ? '课后重点句子' : '课文重点句子',
+      py: round.py || '',
+      meaning: '连词成句',
       audioId: round.id
     });
   }
@@ -1744,6 +1825,7 @@ function renderQuiz(){
     return;
   }
   quizState.answered = false;
+  quizState.hasWrong = false;
   const item = QUIZ[quizState.idx];
   document.getElementById('quizProgress').textContent = (quizState.idx+1) + ' / ' + QUIZ.length;
   document.getElementById('quizQ').textContent = item.q;
@@ -1759,26 +1841,61 @@ function renderQuiz(){
 }
 function answerQuiz(i, el){
   if(quizState.answered) return;
-  quizState.answered = true;
   const item = QUIZ[quizState.idx];
-  const opts = document.querySelectorAll('#quizOpts .opt-btn');
   if(i === item.a){
+    quizState.answered = true;
+    el.classList.remove('wrong');
     el.classList.add('correct');
-    quizState.correct++;
-  } else {
-    el.classList.add('wrong');
-    opts[item.a].classList.add('correct');
-    recordMistake({
-      id: 'quiz_' + quizState.idx,
-      type: 'quiz',
-      zh: item.q,
-      py: '',
-      meaning: '正确答案: ' + item.opts[item.a],
-      extra: '误选: ' + item.opts[i],
-      quizItem: item
+    if(!el.textContent.includes('✔️')){
+      el.textContent += ' ✔️';
+    }
+    document.querySelectorAll('#quizOpts .opt-btn').forEach(b => {
+      b.style.pointerEvents = 'none';
     });
+    playSuccessTone();
+    if(!quizState.hasWrong){
+      quizState.correct++;
+      toast('🌟 答对啦！太棒了！');
+    } else {
+      toast('🎉 太棒了，找到正确答案了！');
+    }
+    setTimeout(()=>{
+      quizState.idx++;
+      renderQuiz();
+    }, 900);
+  } else {
+    if(!quizState.hasWrong){
+      quizState.hasWrong = true;
+      recordMistake({
+        id: 'quiz_' + quizState.idx,
+        type: 'quiz',
+        zh: item.q,
+        py: '',
+        meaning: '正确答案: ' + item.opts[item.a],
+        extra: '误选: ' + item.opts[i],
+        quizItem: item
+      });
+    }
+    playWrongTone();
+    el.classList.add('wrong');
+    if(!el.textContent.includes('❌')){
+      el.textContent += ' ❌';
+    }
+    el.style.pointerEvents = 'none';
+    toast('❌ 选错了哦，再想一想，换个答案试试！');
   }
-  setTimeout(()=>{ quizState.idx++; renderQuiz(); }, 700);
+}
+
+function quizPrev(){
+  if(quizState.idx > 0) quizState.idx--;
+  else quizState.idx = QUIZ.length - 1;
+  renderQuiz();
+}
+
+function quizNext(){
+  if(quizState.idx < QUIZ.length - 1) quizState.idx++;
+  else quizState.idx = 0;
+  renderQuiz();
 }
 
 /* ---------------- AUDIO CHALLENGE (听音辨字 / 盲听挑战) ---------------- */
@@ -2040,23 +2157,33 @@ function speakClozeSentence(){
   const q = clozeState.questions[clozeState.idx];
   if(!q) return;
   const text = q.before + q.answer + q.after;
-  if(q.audioId){
-    playClip(q.audioId, text);
-  } else {
-    speak(text);
-  }
+  playClip(q.audioId || ('cloze_' + (clozeState.idx + 1)), text);
+}
+
+function clozePrev(){
+  stopClip();
+  if(!clozeState.questions || clozeState.questions.length === 0) return;
+  if(clozeState.idx > 0) clozeState.idx--;
+  else clozeState.idx = clozeState.questions.length - 1;
+  renderClozeQuestion();
+}
+function clozeNext(){
+  stopClip();
+  if(!clozeState.questions || clozeState.questions.length === 0) return;
+  if(clozeState.idx < clozeState.questions.length - 1) clozeState.idx++;
+  else clozeState.idx = 0;
+  renderClozeQuestion();
 }
 
 function answerCloze(selected, btn){
   if(clozeState.answered) return;
-  clozeState.answered = true;
-
   const q = clozeState.questions[clozeState.idx];
   const isCorrect = selected === q.answer;
   const slot = document.getElementById('clozeSlot');
-  const allBtns = document.querySelectorAll('#clozeOpts .cloze-opt-btn');
 
   if(isCorrect){
+    clozeState.answered = true;
+    btn.classList.remove('wrong');
     btn.classList.add('correct');
     slot.textContent = q.answer;
     slot.className = 'cloze-slot filled';
@@ -2065,20 +2192,40 @@ function answerCloze(selected, btn){
     if(clozeState.streak > clozeState.maxStreak){
       clozeState.maxStreak = clozeState.streak;
     }
+    document.getElementById('clozeStreak').textContent = '🔥 连对 ' + clozeState.streak;
     toast('🎉 填入正确！语境完全吻合！');
-    speakClozeSentence();
-  } else {
-    btn.classList.add('wrong');
-    slot.textContent = q.answer;
-    slot.className = 'cloze-slot wrong';
-    clozeState.streak = 0;
-    allBtns.forEach(b => {
-      if(b.textContent.trim() === q.answer){
-        b.classList.add('correct');
-      }
+    playSuccessTone();
+
+    document.querySelectorAll('#clozeOpts .cloze-opt-btn').forEach(b => {
+      b.style.pointerEvents = 'none';
     });
-    toast('选错啦～正确词语是：' + q.answer + '，已记入错题本');
-    speakClozeSentence();
+
+    const fullText = q.before + q.answer + q.after;
+    playClip(q.audioId || ('cloze_' + (clozeState.idx + 1)), fullText, () => {
+      setTimeout(() => {
+        clozeState.idx++;
+        renderClozeQuestion();
+      }, 800);
+    });
+  } else {
+    clozeState.streak = 0;
+    document.getElementById('clozeStreak').textContent = '🔥 连对 ' + clozeState.streak;
+    playWrongTone();
+
+    btn.classList.add('wrong');
+    btn.style.pointerEvents = 'none';
+
+    slot.textContent = selected;
+    slot.className = 'cloze-slot wrong';
+    toast('选错了哦，再想一想，换个词试试！');
+
+    setTimeout(() => {
+      if(!clozeState.answered){
+        slot.textContent = '____';
+        slot.className = 'cloze-slot';
+      }
+    }, 800);
+
     recordMistake({
       id: 'cloze_' + q.id,
       type: 'cloze',
@@ -2089,13 +2236,6 @@ function answerCloze(selected, btn){
       clozeItem: q
     });
   }
-
-  document.getElementById('clozeStreak').textContent = '🔥 连对 ' + clozeState.streak;
-
-  setTimeout(() => {
-    clozeState.idx++;
-    renderClozeQuestion();
-  }, 1600);
 }
 
 /* ---------------- RESULT ---------------- */
@@ -2108,7 +2248,7 @@ function showResult(game, stars, note){
   document.getElementById('resultScore').textContent = note;
   const badges = document.getElementById('resultBadges');
   badges.innerHTML = '';
-  const map = { match:'🧩 拼音配对', scramble:'🔤 句子排序', quiz:'❓ 故事问答', audio:'🎧 听音辨字', cloze:'🔠 选词填空' };
+  const map = { match:'🧩 拼音配对', scramble:'🔤 连词成句', quiz:'❓ 故事问答', audio:'🎧 听音辨字', cloze:'🔠 选词填空' };
   const b = document.createElement('div');
   b.className = 'mini-badge';
   b.textContent = map[game] + ' ' + '⭐'.repeat(stars);

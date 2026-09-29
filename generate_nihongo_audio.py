@@ -29,7 +29,7 @@ for d in (OUT_DIR, OUT_DIR_EN, OUT_DIR_ZH):
 JA_VOICE = "ja-JP-NanamiNeural"
 EN_VOICE = "en-US-JennyNeural"
 ZH_VOICE = "zh-CN-XiaoxiaoNeural"
-JA_RATE = "-12%"  # slightly slower for language-learning clarity
+JA_RATE = "-5%"  # was -12%; smaller cut preserves natural prosody (2026-09 tuning)
 EN_RATE = "-8%"
 ZH_RATE = "-10%"
 
