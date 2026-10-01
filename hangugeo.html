@@ -30,7 +30,7 @@
     border-bottom:2px solid #bfdbfe;flex-shrink:0;z-index:20;}
   .nav-btn{width:40px;height:40px;border-radius:50%;background:#fff;border:2px solid #bfdbfe;display:flex;align-items:center;justify-content:center;
     font-size:18px;text-decoration:none;color:var(--ink);cursor:pointer;box-shadow:var(--shadow-pop);}
-  header h1{font-size:16px;font-weight:800;flex:1;text-align:center;color:var(--kr-blue-dark);}
+  header h1{font-size:16px;font-weight:800;flex:1;text-align:center;color:var(--kr-blue-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   header .stars{font-size:13px;font-weight:800;color:var(--imperial-gold);background:#fff;border:2px solid var(--imperial-gold);border-radius:20px;padding:5px 10px;white-space:nowrap;}
 
   main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;position:relative;}
@@ -232,7 +232,7 @@
 <div id="app">
   <header>
     <button class="nav-btn" onclick="goHome()" title="返回主页">🏠</button>
-    <h1 id="topTitle">나의 일주일 (My Week in Korea)</h1>
+    <h1 id="topTitle">나의 일주일</h1>
     <div class="stars" id="topStars">⭐ 0</div>
   </header>
 
@@ -298,14 +298,14 @@
         </div>
         <div class="menu-card full" onclick="goQuiz()">
           <div class="ico">❓</div>
-          <div class="name">课文理解问答</div>
-          <div class="desc">课文内容与韩语常识小测验</div>
+          <div class="name">读解练习</div>
+          <div class="desc">检测阅读能力</div>
           <div class="badge" id="badgeQuiz" style="display:none;"></div>
         </div>
         <div class="menu-card full" onclick="goReview()" style="border-color:#f59e0b;background:linear-gradient(135deg,#fffdf7,#fef3c7);">
           <div class="ico">🧠</div>
-          <div class="name">错题温故 (SRS)</div>
-          <div class="desc">艾宾浩斯间隔复习 · 智能固化薄弱知识点</div>
+          <div class="name">错题温故</div>
+          <div class="desc">温习做错的题 · 攻克薄弱环节</div>
           <div class="badge" id="badgeReview" style="display:none;"></div>
         </div>
       </div>
@@ -504,7 +504,7 @@
 
     <!-- QUIZ -->
     <section class="screen" id="screen-quiz">
-      <h2 class="title">❓ 课文理解问答</h2>
+      <h2 class="title">❓ 读解练习</h2>
       <p class="sub">综合测试课文故事情节、核心字块构成与语法助词。</p>
 
       <div style="font-size:13px;color:var(--muted);">
@@ -580,11 +580,11 @@
 
     <!-- SRS REVIEW -->
     <section class="screen" id="screen-review">
-      <h2 class="title">🧠 错题温故 (SRS)</h2>
-      <p class="sub">艾宾浩斯间隔复习算法 · 强化在消消乐、问答或选词中做错的内容。</p>
+      <h2 class="title">🧠 错题温故</h2>
+      <p class="sub">温习做错的题目 · 巩固薄弱知识点</p>
 
       <div class="toggle-row">
-        <div class="chip active" id="chipReviewQuiz" onclick="setReviewTab('quiz')">✍️ 错题抽测</div>
+        <div class="chip active" id="chipReviewQuiz" onclick="setReviewTab('quiz')">⚡ 错题闯关</div>
         <div class="chip" id="chipReviewList" onclick="setReviewTab('list')">📋 错题本列表</div>
       </div>
 
@@ -2103,7 +2103,7 @@ function recordReviewSuccess(id){
   item.box = Math.min(4, (item.box || 1) + 1);
   item.lastReview = Date.now();
   saveSrsData(srs);
-  if(item.box >= 4) toast('🎓 太棒了！「' + item.zh + '」已连续3次正确，成功掌握毕业！');
+  if(item.box >= 4) toast('🎓 太棒了！「' + item.zh + '」已连续3次正确，已完全掌握！');
   else toast('🎉 巩固成功！升级至 Box ' + item.box);
 }
 
@@ -2144,13 +2144,18 @@ function setReviewTab(tab){
 function renderReviewQuiz(){
   const container = document.getElementById('reviewQuizContainer');
   const srs = getSrsData();
-  const list = Object.values(srs.items || {}).filter(it => (it.box || 1) < 4);
+  const allItems = Object.values(srs.items || {});
+  const list = allItems.filter(it => (it.box || 1) < 4);
   if(!list.length){
+    const masteredCount = allItems.filter(it => (it.box || 1) >= 4).length;
+    const descText = masteredCount > 0 
+      ? '做错的题目都已全部掌握，太了不起了！继续保持！' 
+      : '挑战中还没有产生错题，太棒啦！继续保持！';
     container.innerHTML = `
       <div style="text-align:center;padding:30px 10px;color:var(--muted);">
-        <div style="font-size:42px;margin-bottom:8px;">✨</div>
-        <div style="font-size:16px;font-weight:800;color:var(--ink);">当前没有待温故的错题！</div>
-        <div style="font-size:12px;margin-top:4px;">在配对、重组或测试中遇到难题会自动收录到这里。</div>
+        <div style="font-size:42px;margin-bottom:8px;">🎉</div>
+        <div style="font-size:16px;font-weight:800;color:var(--ink);">太棒了！暂无待闯关的错题</div>
+        <div style="font-size:13px;margin-top:6px;color:var(--muted);">${descText}</div>
       </div>
     `;
     return;
@@ -2179,7 +2184,7 @@ function renderReviewList(){
   const srs = getSrsData();
   const list = Object.values(srs.items || {});
   if(!list.length){
-    container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--muted);">错题本空空如也～</div>`;
+    container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--muted);">暂无错题记录～</div>`;
     return;
   }
   container.innerHTML = '';
@@ -2207,7 +2212,7 @@ function showResult(game, stars, note){
   document.getElementById('resultScore').textContent = note;
   const badges = document.getElementById('resultBadges');
   badges.innerHTML = '';
-  const map = { match:'🧩 韩语消消乐', scramble:'🔤 句子重组', quiz:'❓ 课文问答', audio:'🎧 听音辨字', cloze:'📝 选词填空' };
+  const map = { match:'🧩 韩语消消乐', scramble:'🔤 句子重组', quiz:'❓ 读解练习', audio:'🎧 听音辨字', cloze:'📝 选词填空' };
   const b = document.createElement('div');
   b.className = 'mini-badge';
   b.textContent = map[game] + ' ' + '⭐'.repeat(stars);

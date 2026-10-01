@@ -32,7 +32,7 @@
     border-bottom:2px solid #fbd38d;flex-shrink:0;z-index:20;}
   .nav-btn{width:40px;height:40px;border-radius:50%;background:#fff;border:2px solid #fbd38d;display:flex;align-items:center;justify-content:center;
     font-size:18px;text-decoration:none;color:var(--ink);cursor:pointer;box-shadow:var(--shadow-pop);}
-  header h1{font-size:16px;font-weight:800;flex:1;text-align:center;color:var(--imperial-red);}
+  header h1{font-size:16px;font-weight:800;flex:1;text-align:center;color:var(--imperial-red);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   header .stars{font-size:13px;font-weight:800;color:var(--imperial-gold);background:#fff;border:2px solid var(--imperial-gold);border-radius:20px;padding:5px 10px;white-space:nowrap;}
 
   main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;position:relative;}
@@ -303,7 +303,7 @@
   <header>
     <a href="nhg-index.html" class="nav-btn" title="课文一览 (All Lessons)">🏠</a>
     <a href="javascript:void(0)" class="nav-btn" onclick="goHome()" title="返回主页 (Return to Menu)">📚</a>
-    <h1 id="headerTitle">わたしの一日 · 日语识字闯关</h1>
+    <h1 id="headerTitle">わたしの一日</h1>
     <span class="stars" id="starTotal">⭐ 0</span>
   </header>
 
@@ -374,14 +374,14 @@
         </div>
         <div class="menu-card full" onclick="goQuiz()">
           <div class="ico">❓</div>
-          <div class="name">故事与字词问答</div>
-          <div class="desc">字词与课文理解综合小测验</div>
+          <div class="name">读解练习</div>
+          <div class="desc">检测阅读能力</div>
           <div class="badge" id="badgeQuiz" style="display:none;"></div>
         </div>
         <div class="menu-card full" onclick="goReview()" style="border-color:#f59e0b;background:linear-gradient(135deg,#fffdf7,#fef3c7);">
           <div class="ico">📝</div>
-          <div class="name">错题温故 (SRS)</div>
-          <div class="desc">艾宾浩斯间隔复习 · 智能消错与记忆固化</div>
+          <div class="name">错题温故</div>
+          <div class="desc">温习做错的题 · 攻克薄弱环节</div>
           <div class="badge" id="badgeReview" style="display:none;"></div>
         </div>
       </div>
@@ -568,7 +568,7 @@
 
     <!-- QUIZ -->
     <section class="screen" id="screen-quiz">
-      <h2 class="title">❓ 故事与字词问答</h2>
+      <h2 class="title">❓ 读解练习</h2>
       <div class="story-progress" id="quizProgress">1 / 8</div>
       <div class="quiz-card">
         <div class="quiz-q" id="quizQ"></div>
@@ -621,7 +621,7 @@
     <section class="screen" id="screen-audio">
       <h2 class="title">🎧 听音辨字 (Audio Challenge)</h2>
       <div class="toggle-row">
-        <div class="chip active" id="chipAudioAll" onclick="setAudioMode('all')">🎲 全部混合</div>
+        <div class="chip active" id="chipAudioAll" onclick="setAudioMode('all')">🎲 词句混合</div>
         <div class="chip" id="chipAudioChars" onclick="setAudioMode('chars')">✍️ 听生字</div>
         <div class="chip" id="chipAudioWords" onclick="setAudioMode('words')">🀄 听生词</div>
         <div class="chip" id="chipAudioSentences" onclick="setAudioMode('sentences')">📜 听句子</div>
@@ -644,7 +644,7 @@
     <!-- REVIEW / SRS -->
     <section class="screen" id="screen-review">
       <div class="review-header">
-        <h2 class="title">📝 艾宾浩斯错题温故</h2>
+        <h2 class="title">📝 错题温故</h2>
         <div class="review-stats-bar">
           <span class="stat-chip box1" id="statDue">🔴 待温故: 0</span>
           <span class="stat-chip box2" id="statReviewing">🟡 温故中: 0</span>
@@ -652,7 +652,7 @@
           <span class="stat-chip box4" id="statMastered">🟢 已掌握: 0</span>
         </div>
         <div class="toggle-row" style="margin-top:6px;">
-          <div class="chip active" id="chipReviewQuiz" onclick="switchReviewTab('quiz')">⚡ 快速消错闯关</div>
+          <div class="chip active" id="chipReviewQuiz" onclick="switchReviewTab('quiz')">⚡ 错题闯关</div>
           <div class="chip" id="chipReviewList" onclick="switchReviewTab('list')">📋 错题本清单</div>
         </div>
       </div>
@@ -2245,7 +2245,7 @@ function showResult(game, stars, note){
   document.getElementById('resultScore').textContent = note;
   const badges = document.getElementById('resultBadges');
   badges.innerHTML = '';
-  const map = { match:'🧩 假名配对', scramble:'🔤 连词成句', quiz:'❓ 故事问答', audio:'🎧 听音辨字', cloze:'🔠 选词填空' };
+  const map = { match:'🧩 假名配对', scramble:'🔤 连词成句', quiz:'❓ 读解练习', audio:'🎧 听音辨字', cloze:'🔠 选词填空' };
   const b = document.createElement('div');
   b.className = 'mini-badge';
   b.textContent = map[game] + ' ' + '⭐'.repeat(stars);
@@ -2325,7 +2325,7 @@ function recordReviewSuccess(id){
   item.nextReview = Date.now() + (intervals[item.box] || 0);
   saveSrsData(srs);
   if(item.box >= 4){
-    toast('🎓 太棒了！「' + item.zh + '」连续答对3次，已成功掌握毕业！');
+    toast('🎓 太棒了！「' + item.zh + '」连续答对3次，已完全掌握！');
   } else {
     toast('🎉 强化成功！升级至 Box ' + item.box);
   }
@@ -2435,12 +2435,18 @@ function initReviewQuiz(){
   const due = getDueMistakes();
   const container = document.getElementById('reviewQuizView');
   if(due.length === 0){
+    const srs = getSrsData();
+    const items = Object.values(srs.items || {});
+    const masteredCount = items.filter(i => (i.box || 1) >= 4).length;
+    const descText = masteredCount > 0 
+      ? '做错的题目都已全部掌握，太了不起了！继续保持！' 
+      : '挑战中还没有产生错题，太棒啦！继续保持！';
     container.innerHTML = `
       <div class="review-card" style="width:100%;">
         <div class="review-empty">
           <div class="review-empty-icon">🎉</div>
-          <div class="review-empty-title">太棒了！暂无待温故的错题</div>
-          <div class="review-empty-desc">您做过的错题均已连续答对3次并成功毕业，或者您在挑战中尚未产生错题。继续保持！</div>
+          <div class="review-empty-title">太棒了！暂无待闯关的错题</div>
+          <div class="review-empty-desc">${descText}</div>
           <div style="display:flex;gap:10px;margin-top:10px;">
             <button class="btn gold" onclick="switchReviewTab('list')">📋 查看错题本</button>
             <button class="btn green" onclick="goHome()">🏠 返回主页</button>
@@ -2466,8 +2472,8 @@ function renderReviewQuizQuestion(){
       <div class="review-card" style="width:100%;">
         <div class="review-empty">
           <div class="review-empty-icon">🌟</div>
-          <div class="review-empty-title">本轮错题温故完成！</div>
-          <div class="review-empty-desc">您已完成了本轮待温故词条的复习。根据艾宾浩斯间隔记忆法，连续答对3次即可彻底巩固毕业！</div>
+          <div class="review-empty-title">本轮错题闯关完成！</div>
+          <div class="review-empty-desc">太棒了！这轮错题已经全部攻克，多练几次就能彻底掌握哦！</div>
           <div style="display:flex;gap:10px;margin-top:10px;">
             <button class="btn gold" onclick="initReviewQuiz()">🔄 再练一轮</button>
             <button class="btn green" onclick="goHome()">🏠 返回主页</button>
