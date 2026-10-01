@@ -303,6 +303,16 @@
   .scramble-target.correct{border-color:#10b981!important;background:#f0fdf4!important;}
   .scramble-target.wrong{border-color:#ef4444!important;background:#fef2f2!important;animation:shake .35s ease-in-out;}
   .word-chip.in-target.correct{background:#10b981!important;color:#fff!important;border-color:#059669!important;}
+  .word-chip.in-target.wrong{background:#fee2e2!important;border-color:#ef4444!important;color:#dc2626!important;animation:shake .35s ease-in-out;}
+  .scramble-wrong-badge{margin:8px auto 0;padding:5px 14px;background:#fee2e2;border:1px solid #ef4444;color:#dc2626;font-size:13px;font-weight:800;border-radius:20px;animation:shake .35s ease-in-out;text-align:center;max-width:420px;display:none;}
+  .scramble-answer-box{width:100%;max-width:560px;background:#fffbeb;border:2px solid #f59e0b;border-radius:var(--radius-md,14px);padding:12px 14px;margin:10px 0;box-shadow:var(--shadow-pop,0 3px 8px rgba(0,0,0,0.06));text-align:left;display:none;}
+  .scramble-answer-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+  .scramble-answer-tag{font-size:13px;font-weight:800;color:#b45309;display:flex;align-items:center;gap:4px;}
+  .scramble-answer-text{font-size:18px;font-weight:900;color:#1e293b;line-height:1.5;padding:4px 0 8px;letter-spacing:0.5px;}
+  .scramble-answer-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:4px;}
+  .btn-answer-sound{background:#fef3c7;border:1px solid #f59e0b;color:#b45309;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:800;cursor:pointer;}
+  .btn-answer-fill{background:#10b981;border:none;color:#fff;border-radius:8px;padding:6px 14px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 2px 4px rgba(16,185,129,0.25);}
+  .btn-answer-fill:active{transform:translateY(1px);}
   .cloze-opt-btn.wrong{background:var(--red-soft,#fee2e2)!important;border-color:var(--danger-red,#ef4444)!important;color:var(--danger-red,#dc2626)!important;opacity:0.65;cursor:not-allowed;}
 
 
@@ -551,6 +561,17 @@
       <p class="sub" id="scrambleHint">按顺序点击词语，拼出课文中的精彩对话与哲理句子。</p>
       <div class="story-progress" id="scrambleProgress">1 / 6</div>
       <div class="scramble-target" id="scrambleTarget"></div>
+      <div class="scramble-wrong-badge" id="scrambleWrongBadge">❌ 顺序不对哦，点击词块可撤回，或看下方正确答案！</div>
+      <div class="scramble-answer-box" id="scrambleAnswerBox">
+        <div class="scramble-answer-header">
+          <span class="scramble-answer-tag">💡 正确答案</span>
+          <button class="btn-answer-sound" type="button" onclick="playScrambleAnswerAudio()" title="听句子读音">🔊 听一听</button>
+        </div>
+        <div class="scramble-answer-text" id="scrambleAnswerText"></div>
+        <div class="scramble-answer-footer">
+          <button class="btn-answer-fill" type="button" onclick="fillScrambleAnswer()">✨ 填入正确答案</button>
+        </div>
+      </div>
       <div class="scramble-pool" id="scramblePool"></div>
       <div class="scramble-nav-bar" style="display:flex;align-items:center;justify-content:center;gap:10px;margin:12px 0 6px;flex-wrap:wrap;">
         <button class="btn ghost small" onclick="scramblePrev()">⬅️ 上一句</button>
@@ -1686,18 +1707,20 @@ function playWrongTone(){
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
     const now = ctx.currentTime;
-    [0, 0.12].forEach((delay) => {
+    [0, 0.14].forEach((delay, idx) => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(220, now + delay);
-      osc.frequency.exponentialRampToValueAtTime(160, now + delay + 0.09);
-      gain.gain.setValueAtTime(0.18, now + delay);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + delay + 0.09);
+      osc.type = "triangle";
+      const f1 = idx === 0 ? 320 : 260;
+      const f2 = idx === 0 ? 220 : 180;
+      osc.frequency.setValueAtTime(f1, now + delay);
+      osc.frequency.exponentialRampToValueAtTime(f2, now + delay + 0.1);
+      gain.gain.setValueAtTime(0.3, now + delay);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + delay + 0.1);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start(now + delay);
-      osc.stop(now + delay + 0.09);
+      osc.stop(now + delay + 0.1);
     });
   } catch(e){}
 }
@@ -1711,9 +1734,12 @@ function initScramble(){
 function loadScrambleSentence(){
   scrambleChecking = false;
   const _tg = document.getElementById("scrambleTarget"); if(_tg) _tg.classList.remove("correct","wrong");
+  const wb = document.getElementById("scrambleWrongBadge"); if(wb) wb.style.display = "none";
+  const ab = document.getElementById("scrambleAnswerBox"); if(ab) ab.style.display = "none";
   const s = SCRAMBLE_SENTENCES[scrambleState.idx];
-  document.getElementById('scrambleProgress').textContent = (scrambleState.idx + 1) + ' / ' + SCRAMBLE_SENTENCES.length;
+  document.getElementById("scrambleProgress").textContent = (scrambleState.idx + 1) + " / " + SCRAMBLE_SENTENCES.length;
   scrambleState.placed = [];
+  scrambleState.hasWrong = false;
   scrambleState.pool = s.tokens.slice().map((token, i) => ({ token, origIdx: i })).sort(() => Math.random() - 0.5);
   renderScramble();
 }
@@ -1745,17 +1771,20 @@ function placeToken(poolIdx){
   const item = scrambleState.pool[poolIdx];
   item.used = true;
   scrambleState.placed.push(item);
+  const wb = document.getElementById("scrambleWrongBadge"); if(wb) wb.style.display = "none";
   renderScramble();
 }
 function unplaceToken(placedIdx){
   const item = scrambleState.placed.splice(placedIdx, 1)[0];
   item.used = false;
+  const wb = document.getElementById("scrambleWrongBadge"); if(wb) wb.style.display = "none";
   renderScramble();
 }
 function scrambleUndo(){
   if(scrambleState.placed.length > 0){
     const item = scrambleState.placed.pop();
     item.used = false;
+    const wb = document.getElementById("scrambleWrongBadge"); if(wb) wb.style.display = "none";
     renderScramble();
   }
 }
@@ -1775,50 +1804,124 @@ function scrambleNext(){
   loadScrambleSentence();
 }
 
+function playScrambleAnswerAudio(){
+  if(!SCRAMBLE_SENTENCES || !SCRAMBLE_SENTENCES[scrambleState.idx]) return;
+  const s = SCRAMBLE_SENTENCES[scrambleState.idx];
+  playClip(s.id, s.zh);
+}
+
+function fillScrambleAnswer(){
+  if(scrambleChecking) return;
+  if(!SCRAMBLE_SENTENCES || !SCRAMBLE_SENTENCES[scrambleState.idx]) return;
+  const s = SCRAMBLE_SENTENCES[scrambleState.idx];
+  scrambleState.placed = s.tokens.map((token, i) => ({ token, origIdx: i, used: true }));
+  if(scrambleState.pool) scrambleState.pool.forEach(p => p.used = true);
+  renderScramble();
+
+  const wb = document.getElementById("scrambleWrongBadge"); if(wb) wb.style.display = "none";
+  const ab = document.getElementById("scrambleAnswerBox"); if(ab) ab.style.display = "none";
+
+  scrambleChecking = true;
+  const target = document.getElementById("scrambleTarget");
+  if(target){
+    target.classList.remove("wrong");
+    target.classList.add("correct");
+    target.querySelectorAll(".word-chip").forEach(c => {
+      c.classList.remove("wrong");
+      c.classList.add("correct");
+    });
+  }
+  playSuccessTone();
+  toast("✨ 已填入正确句子！");
+  playClip(s.id, s.zh, () => {
+    setTimeout(() => {
+      scrambleChecking = false;
+      if(target) target.classList.remove("correct");
+      scrambleState.idx++;
+      if(scrambleState.idx < SCRAMBLE_SENTENCES.length){
+        loadScrambleSentence();
+      } else {
+        progress.scramble = 3;
+        saveProgress();
+        showResult("🔤 连词成句全通关！", 3, 100, ["语感大师", "句意通达"]);
+      }
+    }, 700);
+  });
+}
+
 function scrambleCheck(){
   if(scrambleChecking) return;
   const s = SCRAMBLE_SENTENCES[scrambleState.idx];
-  const built = scrambleState.placed.map(p => (p.token !== undefined ? p.token : p.text)).join('');
-  const target = document.getElementById('scrambleTarget');
-  if(built === s.zh){
+  const built = scrambleState.placed.map(p => (p.token !== undefined ? p.token : p.text)).join("");
+  const target = document.getElementById("scrambleTarget");
+  const wb = document.getElementById("scrambleWrongBadge");
+  const ab = document.getElementById("scrambleAnswerBox");
+  const at = document.getElementById("scrambleAnswerText");
+
+  const isCorrect = (built.replace(/\s+/g, "") === s.zh.replace(/\s+/g, "")) &&
+                    (scrambleState.placed.length === s.tokens.length);
+
+  if(isCorrect){
     scrambleChecking = true;
+    if(wb) wb.style.display = "none";
+    if(ab) ab.style.display = "none";
     if(target){
-      target.classList.remove('wrong');
-      target.classList.add('correct');
-      target.querySelectorAll('.word-chip').forEach(c => c.classList.add('correct'));
+      target.classList.remove("wrong");
+      target.classList.add("correct");
+      target.querySelectorAll(".word-chip").forEach(c => {
+        c.classList.remove("wrong");
+        c.classList.add("correct");
+      });
     }
     playSuccessTone();
-    toast('🎉 答对了！太棒了！');
+    toast("🎉 答对了！太棒了！");
     playClip(s.id, s.zh, () => {
       setTimeout(() => {
         scrambleChecking = false;
-        if(target) target.classList.remove('correct');
+        if(target) target.classList.remove("correct");
         scrambleState.idx++;
         if(scrambleState.idx < SCRAMBLE_SENTENCES.length){
           loadScrambleSentence();
         } else {
           progress.scramble = 3;
           saveProgress();
-          showResult('🔤 连词成句全通关！', 3, 100, ['语感大师', '句意通达']);
+          showResult("🔤 连词成句全通关！", 3, 100, ["语感大师", "句意通达"]);
         }
       }, 700);
     });
   } else {
     if(target){
-      target.classList.remove('correct');
-      target.classList.add('wrong');
-      setTimeout(() => target.classList.remove('wrong'), 600);
+      target.classList.remove("correct");
+      target.classList.add("wrong");
+      target.querySelectorAll(".word-chip").forEach(c => {
+        c.classList.remove("correct");
+        c.classList.add("wrong");
+      });
+      setTimeout(() => {
+        target.classList.remove("wrong");
+        target.querySelectorAll(".word-chip").forEach(c => c.classList.remove("wrong"));
+      }, 800);
+    }
+    if(wb){
+      wb.style.display = "block";
+    }
+    if(ab && at){
+      at.textContent = s.zh;
+      ab.style.display = "block";
     }
     playWrongTone();
-    toast('排序还不太对哦，点击词块可以撤回调整！');
-    recordMistake({
-      id: 'scramble_' + s.id,
-      type: 'sentence',
-      zh: s.zh,
-      py: '',
-      meaning: '连词成句',
-      audioId: s.id
-    });
+    toast("❌ 顺序不对哦，可查看下方正确答案！");
+    if(!scrambleState.hasWrong){
+      scrambleState.hasWrong = true;
+      recordMistake({
+        id: "scramble_" + s.id,
+        type: "sentence",
+        zh: s.zh,
+        py: "",
+        meaning: "连词成句",
+        audioId: s.id
+      });
+    }
   }
 }
 
