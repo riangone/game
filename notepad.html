@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>极简便签 · 纯前端离线记事本</title>
+  <meta name="description" content="零依赖、纯前端本地便签与记事本。支持自动保存、实时字数统计、Markdown轻量预览、文件导出，数据仅保存在浏览器本地，隐私安全。">
+  <style>
+    :root {
+      --bg-base: #f8fafc;
+      --bg-surface: #ffffff;
+      --border-color: #e2e8f0;
+      --border-focus: #0284c7;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --primary-subtle: #e0f2fe;
+      --danger: #ef4444;
+      --danger-hover: #dc2626;
+      --success: #10b981;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --bg-base: #0f172a;
+      --bg-surface: #1e293b;
+      --border-color: #334155;
+      --border-focus: #38bdf8;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --primary: #38bdf8;
+      --primary-hover: #0ea5e9;
+      --primary-subtle: rgba(56, 189, 248, 0.15);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    /* 顶部导航与操作栏 */
+    header.app-header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      padding: 10px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      background: var(--bg-base);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .back-link:hover {
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .app-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-icon {
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .save-status {
+      font-size: 12px;
+      color: var(--text-light);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 6px;
+    }
+
+    .save-status.saved {
+      color: var(--success);
+    }
+
+    .save-status.saving {
+      color: var(--primary);
+    }
+
+    /* 顶部操作区 */
+    .header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+      line-height: 1.4;
+    }
+
+    .btn:hover {
+      background: var(--bg-base);
+      border-color: var(--text-light);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      border-color: var(--primary-hover);
+    }
+
+    .btn-danger {
+      color: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: var(--danger);
+    }
+
+    .btn-icon-only {
+      padding: 6px 8px;
+      font-size: 14px;
+    }
+
+    .view-toggles {
+      display: inline-flex;
+      background: var(--bg-base);
+      padding: 2px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+    }
+
+    .toggle-btn {
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 4px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .toggle-btn.active {
+      background: var(--bg-surface);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* 主体编辑区域 */
+    main.editor-container {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .note-header-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .note-title-input {
+      flex: 1;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 6px 4px;
+      outline: none;
+      transition: border-color 0.2s ease;
+      font-family: inherit;
+    }
+
+    .note-title-input:focus {
+      border-bottom-color: var(--primary);
+    }
+
+    .note-title-input::placeholder {
+      color: var(--text-light);
+    }
+
+    /* 编辑器与预览区分屏 / 单屏 */
+    .workspace {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      min-height: calc(100vh - 220px);
+    }
+
+    .workspace.split-view {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .editor-pane, .preview-pane {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .pane-toolbar {
+      padding: 8px 12px;
+      background: var(--bg-base);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .editor-textarea {
+      flex: 1;
+      width: 100%;
+      height: 100%;
+      min-height: 400px;
+      padding: 16px;
+      border: none;
+      outline: none;
+      resize: none;
+      background: transparent;
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .editor-textarea.font-mono {
+      font-family: var(--font-mono);
+      font-size: 14px;
+    }
+
+    .editor-textarea.font-lg {
+      font-size: 17px;
+    }
+
+    .editor-textarea::placeholder {
+      color: var(--text-light);
+    }
+
+    .preview-pane {
+      padding: 20px 24px;
+      overflow-y: auto;
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    /* Markdown 预览样式 */
+    .preview-pane h1 { font-size: 1.8em; margin: 0.6em 0 0.3em; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3em; }
+    .preview-pane h2 { font-size: 1.5em; margin: 0.6em 0 0.3em; border-bottom: 1px solid var(--border-color); padding-bottom: 0.2em; }
+    .preview-pane h3 { font-size: 1.25em; margin: 0.5em 0 0.3em; }
+    .preview-pane p { margin: 0.6em 0; }
+    .preview-pane ul, .preview-pane ol { margin: 0.6em 0 0.6em 1.5em; }
+    .preview-pane li { margin: 0.2em 0; }
+    .preview-pane blockquote {
+      border-left: 4px solid var(--primary);
+      padding: 4px 12px;
+      color: var(--text-muted);
+      background: var(--bg-base);
+      margin: 0.8em 0;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+    .preview-pane pre {
+      background: var(--bg-base);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      margin: 0.8em 0;
+    }
+    .preview-pane code {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      background: var(--bg-base);
+      padding: 2px 5px;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+    }
+    .preview-pane pre code {
+      background: transparent;
+      padding: 0;
+      border: none;
+    }
+    .preview-pane hr {
+      border: none;
+      border-top: 1px solid var(--border-color);
+      margin: 1.2em 0;
+    }
+    .preview-pane a {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    /* 底部状态栏 */
+    footer.app-footer {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-color);
+      padding: 10px 20px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .footer-stats {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .stat-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .stat-value {
+      font-weight: 700;
+      color: var(--text-main);
+      font-family: var(--font-mono);
+    }
+
+    .footer-shortcuts {
+      font-size: 11.5px;
+      color: var(--text-light);
+    }
+
+    /* 消息气泡 Toast */
+    .toast-msg {
+      position: fixed;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(15, 23, 42, 0.88);
+      color: #ffffff;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+      pointer-events: none;
+      opacity: 0;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 768px) {
+      .workspace.split-view {
+        grid-template-columns: 1fr;
+      }
+      .preview-pane {
+        min-height: 260px;
+      }
+      .footer-shortcuts {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部导航 -->
+  <header class="app-header">
+    <div class="header-left">
+      <a href="index.html" class="back-link" title="返回大厅">
+        <span>←</span>
+        <span>大厅</span>
+      </a>
+      <div class="app-brand">
+        <span class="brand-icon">📝</span>
+        <span class="brand-title">极简便签</span>
+        <span class="save-status saved" id="saveStatus">● 已自动保存</span>
+      </div>
+      <div style="display: flex; gap: 6px; margin-left: 10px; flex-wrap: wrap;">
+        <a href="tools.html" class="back-link" title="实用工具箱总览" style="padding: 4px 8px; font-size: 12px; font-weight: 700;">🛠️ 工具箱</a>
+        <a href="calculator.html" class="back-link" title="切换到计算器" style="padding: 4px 8px; font-size: 12px;">🧮 计算器</a>
+        <a href="unit-converter.html" class="back-link" title="切换到单位换算器" style="padding: 4px 8px; font-size: 12px;">📐 换算器</a>
+        <a href="currency.html" class="back-link" title="切换到全球汇率换算" style="padding: 4px 8px; font-size: 12px;">💱 汇率</a>
+        <a href="weather.html" class="back-link" title="切换到极简天气看板" style="padding: 4px 8px; font-size: 12px;">🌤️ 天气</a>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <!-- 视图切换 -->
+      <div class="view-toggles" role="group" aria-label="视图模式">
+        <button class="toggle-btn active" id="viewEditBtn" onclick="switchView('edit')">编辑</button>
+        <button class="toggle-btn" id="viewSplitBtn" onclick="switchView('split')">分栏</button>
+        <button class="toggle-btn" id="viewPreviewBtn" onclick="switchView('preview')">预览</button>
+      </div>
+
+      <!-- 字体与排版 -->
+      <button class="btn btn-icon-only" id="fontToggleBtn" onclick="toggleMonoFont()" title="切换等宽/正文字体">Aa</button>
+      
+      <!-- 复制全文 -->
+      <button class="btn" onclick="copyContent()" title="复制全部内容到剪贴板">
+        <span>📋</span>
+        <span>复制</span>
+      </button>
+
+      <!-- 导出选项 -->
+      <button class="btn" onclick="exportFile('md')" title="导出为 Markdown 文件">
+        <span>💾</span>
+        <span>导出 .md</span>
+      </button>
+      <button class="btn" onclick="exportFile('txt')" title="导出为纯文本文件">
+        <span>📄</span>
+        <span>导出 .txt</span>
+      </button>
+
+      <!-- 清空 -->
+      <button class="btn btn-danger" onclick="clearContent()" title="清空便签内容">
+        <span>🗑️</span>
+        <span>清空</span>
+      </button>
+
+      <!-- 主题切换 -->
+      <button class="btn btn-icon-only" onclick="toggleTheme()" id="themeBtn" title="切换深色/浅色主题">🌓</button>
+    </div>
+  </header>
+
+  <!-- 主编辑区 -->
+  <main class="editor-container">
+    <div class="note-header-row">
+      <input type="text" id="noteTitle" class="note-title-input" placeholder="输入便签标题（选填）..." maxlength="80">
+    </div>
+
+    <div class="workspace" id="workspace">
+      <!-- 编辑面板 -->
+      <div class="editor-pane" id="editorPane">
+        <textarea 
+          id="noteContent" 
+          class="editor-textarea" 
+          placeholder="即开即写，内容会自动保存在本地浏览器中...&#10;&#10;支持常用 Markdown 语法：&#10;# 一级标题&#10;## 二级标题&#10;- 无序列表&#10;> 引用文本&#10;`行内代码` 或 ```代码块```"
+          spellcheck="false"
+        ></textarea>
+      </div>
+
+      <!-- 预览面板（默认隐藏，分栏或预览模式显示） -->
+      <div class="preview-pane" id="previewPane" style="display: none;"></div>
+    </div>
+  </main>
+
+  <!-- 底部统计栏 -->
+  <footer class="app-footer">
+    <div class="footer-stats">
+      <div class="stat-item">字符数: <span class="stat-value" id="charCount">0</span></div>
+      <div class="stat-item">字数/词数: <span class="stat-value" id="wordCount">0</span></div>
+      <div class="stat-item">行数: <span class="stat-value" id="lineCount">0</span></div>
+      <div class="stat-item">预估阅读: <span class="stat-value" id="readTime">0 分钟</span></div>
+    </div>
+    <div class="footer-shortcuts">
+      提示: 浏览器本地实时存储 · 离线全功能可用 · 零数据上云
+    </div>
+  </footer>
+
+  <!-- Toast 提示框 -->
+  <div class="toast-msg" id="toastMsg">已复制到剪贴板</div>
+
+  <script>
+    // 存储键名
+    const STORAGE_KEY_CONTENT = 'quick_notepad_content_v1';
+    const STORAGE_KEY_TITLE = 'quick_notepad_title_v1';
+    const STORAGE_KEY_THEME = 'quick_notepad_theme_v1';
+
+    const titleInput = document.getElementById('noteTitle');
+    const contentInput = document.getElementById('noteContent');
+    const saveStatus = document.getElementById('saveStatus');
+    const previewPane = document.getElementById('previewPane');
+    const editorPane = document.getElementById('editorPane');
+    const workspace = document.getElementById('workspace');
+    const toastEl = document.getElementById('toastMsg');
+
+    let currentView = 'edit';
+    let saveTimeout = null;
+
+    // 初始化加载
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedTitle = localStorage.getItem(STORAGE_KEY_TITLE) || '';
+      const savedContent = localStorage.getItem(STORAGE_KEY_CONTENT) || '';
+      const savedTheme = localStorage.getItem(STORAGE_KEY_THEME) || '';
+
+      titleInput.value = savedTitle;
+      contentInput.value = savedContent;
+
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+
+      updateStats();
+      renderMarkdownPreview();
+
+      // 输入监听
+      titleInput.addEventListener('input', triggerAutoSave);
+      contentInput.addEventListener('input', () => {
+        updateStats();
+        triggerAutoSave();
+        if (currentView !== 'edit') {
+          renderMarkdownPreview();
+        }
+      });
+
+      // 快捷键支持 Ctrl+S / Cmd+S
+      window.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+          e.preventDefault();
+          saveImmediately();
+          showToast('已手动保存');
+        }
+      });
+    });
+
+    // 防抖自动保存
+    function triggerAutoSave() {
+      saveStatus.textContent = '● 正在保存...';
+      saveStatus.className = 'save-status saving';
+
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() => {
+        saveImmediately();
+      }, 400);
+    }
+
+    function saveImmediately() {
+      localStorage.setItem(STORAGE_KEY_TITLE, titleInput.value);
+      localStorage.setItem(STORAGE_KEY_CONTENT, contentInput.value);
+      const timeStr = new Date().toLocaleTimeString('zh-CN', { hour12: false });
+      saveStatus.textContent = `● 已自动保存 (${timeStr})`;
+      saveStatus.className = 'save-status saved';
+    }
+
+    // 统计分析
+    function updateStats() {
+      const text = contentInput.value;
+      const chars = text.length;
+      
+      // 字数/词数统计（支持中英混合）
+      const cjk = (text.match(/[\u4e00-\u9fa5\u3040-\u30ff\uac00-\ud7af]/g) || []).length;
+      const nonCjkWords = (text.replace(/[\u4e00-\u9fa5\u3040-\u30ff\uac00-\ud7af]/g, ' ')
+                              .match(/[a-zA-Z0-9_\-]+/g) || []).length;
+      const totalWords = cjk + nonCjkWords;
+
+      // 行数
+      const lines = text === '' ? 0 : text.split('\n').length;
+      
+      // 预估阅读时间 (中文按约 300 字/分钟，英文按约 200 词/分钟)
+      const minutes = Math.ceil(totalWords / 260) || (chars > 0 ? 1 : 0);
+
+      document.getElementById('charCount').textContent = chars.toLocaleString();
+      document.getElementById('wordCount').textContent = totalWords.toLocaleString();
+      document.getElementById('lineCount').textContent = lines.toLocaleString();
+      document.getElementById('readTime').textContent = `${minutes} 分钟`;
+    }
+
+    // 视图切换
+    function switchView(mode) {
+      currentView = mode;
+      document.getElementById('viewEditBtn').classList.toggle('active', mode === 'edit');
+      document.getElementById('viewSplitBtn').classList.toggle('active', mode === 'split');
+      document.getElementById('viewPreviewBtn').classList.toggle('active', mode === 'preview');
+
+      workspace.classList.toggle('split-view', mode === 'split');
+
+      if (mode === 'edit') {
+        editorPane.style.display = 'flex';
+        previewPane.style.display = 'none';
+      } else if (mode === 'preview') {
+        editorPane.style.display = 'none';
+        previewPane.style.display = 'block';
+        renderMarkdownPreview();
+      } else if (mode === 'split') {
+        editorPane.style.display = 'flex';
+        previewPane.style.display = 'block';
+        renderMarkdownPreview();
+      }
+    }
+
+    // 轻量原生 Markdown 解析渲染（零外部库）
+    function renderMarkdownPreview() {
+      const raw = contentInput.value;
+      if (!raw.trim()) {
+        previewPane.innerHTML = '<p style="color: var(--text-light); text-align: center; margin-top: 40px;">暂无预览内容，请在编辑区输入文本...</p>';
+        return;
+      }
+
+      let html = raw
+        // 转义 HTML 字符
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        // 代码块 ```lang ... ```
+        .replace(/```([\s\S]*?)```/g, (match, p1) => `<pre><code>${p1.trim()}</code></pre>`)
+        // 标题 #
+        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+        // 引用 >
+        .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
+        // 粗体 **text**
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        // 斜体 *text*
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        // 行内代码 `code`
+        .replace(/`([^`]+)`/g, '<code>$1</code>')
+        // 分割线 ---
+        .replace(/^---$/gim, '<hr>')
+        // 无序列表 - item
+        .replace(/^\- (.*$)/gim, '<li>$1</li>')
+        // 段落换行
+        .replace(/\n\n+/g, '</p><p>')
+        .replace(/\n/g, '<br>');
+
+      previewPane.innerHTML = `<p>${html}</p>`;
+    }
+
+    // 复制到剪贴板
+    async function copyContent() {
+      const fullText = (titleInput.value ? titleInput.value + '\n\n' : '') + contentInput.value;
+      if (!fullText.trim()) {
+        showToast('内容为空，无可复制项');
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(fullText);
+        showToast('已复制全文到剪贴板');
+      } catch (err) {
+        // 兼容降级
+        const ta = document.createElement('textarea');
+        ta.value = fullText;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('已复制全文到剪贴板');
+      }
+    }
+
+    // 本地导出文件 (Blob + createObjectURL，纯原生离线)
+    function exportFile(ext) {
+      const title = (titleInput.value.trim() || '便签速记').replace(/[/\\?%*:|"<>]/g, '-');
+      const content = contentInput.value;
+      const fullText = (ext === 'md' && titleInput.value.trim() ? `# ${titleInput.value.trim()}\n\n` : '') + content;
+      
+      const blob = new Blob([fullText], { type: ext === 'md' ? 'text/markdown;charset=utf-8' : 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${title}_${new Date().toISOString().slice(0, 10)}.${ext}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast(`已成功导出 ${ext.toUpperCase()} 文件`);
+    }
+
+    // 清空便签
+    function clearContent() {
+      if (!titleInput.value && !contentInput.value) return;
+      if (confirm('确认清空当前便签的所有标题与内容吗？此操作无法撤销。')) {
+        titleInput.value = '';
+        contentInput.value = '';
+        saveImmediately();
+        updateStats();
+        renderMarkdownPreview();
+        showToast('已清空便签');
+      }
+    }
+
+    // 字体切换（等宽/正文）
+    function toggleMonoFont() {
+      contentInput.classList.toggle('font-mono');
+      const isMono = contentInput.classList.contains('font-mono');
+      showToast(isMono ? '已切换至等宽编程字体' : '已切换至通用正文字体');
+    }
+
+    // 主题切换
+    function toggleTheme() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem(STORAGE_KEY_THEME, 'light');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem(STORAGE_KEY_THEME, 'dark');
+      }
+    }
+
+    // 提示 Toast
+    function showToast(msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      setTimeout(() => {
+        toastEl.classList.remove('show');
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

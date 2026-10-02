@@ -1,0 +1,2499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-Y1P7PMMM6V');
+    </script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>맛있는 한국 음식 - 韩国语课文识字闯关 (Delicious Korean Food)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=M+PLUS+Rounded+1c:wght@600;700;800;900&family=Noto+Sans+KR:wght@500;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+<script src="js/voice-recorder.js"></script>
+<style>
+  :root{
+    --kr-blue:#1d4ed8; --kr-blue-dark:#1e3a8a; --kr-blue-soft:#dbeafe;
+    --kr-red:#dc2626; --kr-red-dark:#991b1b; --kr-red-soft:#fee2e2;
+    --imperial-gold:#d97706; --gold-soft:#fef3c7;
+    --green:#059669; --green-soft:#d1fae5;
+    --ink:#1f2937; --muted:#6b7280;
+    --card:#ffffff; --paper:#fffdf7;
+    --radius-xl:26px; --radius-lg:18px; --radius-md:14px; --radius-sm:10px;
+    --shadow-card:0 12px 28px rgba(30,58,138,0.1);
+    --shadow-pop:0 5px 0 rgba(0,0,0,0.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;}
+  html,body{width:100%;height:100%;overflow:hidden;background:linear-gradient(160deg,#eff6ff,#fef2f2 50%,#fefce8);
+    font-family:"Noto Sans KR","M PLUS Rounded 1c","Outfit","PingFang SC",system-ui,sans-serif;color:var(--ink);touch-action:manipulation;}
+  #app{width:100%;height:100%;display:flex;flex-direction:column;position:relative;}
+
+  /* top bar */
+  header{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,255,255,0.92);backdrop-filter:blur(8px);
+    border-bottom:2px solid #bfdbfe;flex-shrink:0;z-index:20;}
+  .nav-btn{width:40px;height:40px;border-radius:50%;background:#fff;border:2px solid #bfdbfe;display:flex;align-items:center;justify-content:center;
+    font-size:18px;text-decoration:none;color:var(--ink);cursor:pointer;box-shadow:var(--shadow-pop);}
+  header h1{font-size:16px;font-weight:800;flex:1;text-align:center;color:var(--kr-blue-dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  header .stars{font-size:13px;font-weight:800;color:var(--imperial-gold);background:#fff;border:2px solid var(--imperial-gold);border-radius:20px;padding:5px 10px;white-space:nowrap;}
+
+  main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;position:relative;}
+  .screen{display:none;min-height:100%;padding:18px 16px 36px;flex-direction:column;align-items:center;gap:14px;}
+  .screen.active{display:flex;}
+
+  h2.title{font-size:22px;font-weight:900;color:var(--kr-blue-dark);text-align:center;}
+  p.sub{font-size:13px;color:var(--muted);text-align:center;max-width:520px;line-height:1.6;}
+
+  /* home menu */
+  .palace-ico{font-size:52px;filter:drop-shadow(0 6px 8px rgba(0,0,0,0.12));display:flex;justify-content:center;}
+  .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:520px;margin-top:4px;}
+  .menu-card{background:var(--card);border:2px solid #bfdbfe;border-radius:var(--radius-lg);padding:14px 10px;text-align:center;
+    box-shadow:var(--shadow-card);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;transition:transform .08s;}
+  .menu-card .ico{font-size:30px;}
+  .menu-card .name{font-size:14px;font-weight:800;color:var(--ink);}
+  .menu-card .desc{font-size:11px;color:var(--muted);}
+  .menu-card .badge{position:absolute;top:6px;right:6px;font-size:11px;background:var(--kr-blue);color:#fff;border-radius:10px;padding:1px 7px;font-weight:700;}
+  .menu-card:active{transform:scale(0.97);}
+  .menu-card.full{grid-column:1/3;}
+
+  .btn{border:none;border-radius:16px;padding:12px 24px;font-size:15px;font-weight:800;cursor:pointer;box-shadow:var(--shadow-pop);
+    color:#fff;background:var(--kr-blue);transition:transform .08s;display:inline-flex;align-items:center;justify-content:center;gap:6px;}
+  .btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,0.14);}
+  .btn.gold{background:var(--imperial-gold);}
+  .btn.red{background:var(--kr-red);}
+  .btn.green{background:var(--green);}
+  .btn.ghost{background:#fff;color:var(--ink);border:2px solid #cbd5e1;box-shadow:none;}
+  .btn.small{padding:7px 14px;font-size:13px;}
+
+  /* story reader */
+  .story-card{background:var(--paper);border:2px solid #bfdbfe;border-radius:var(--radius-lg);padding:18px;width:100%;max-width:560px;
+    box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:10px;}
+  .story-progress{font-size:12px;color:var(--muted);text-align:center;}
+  .sentence-zh{font-size:24px;font-weight:800;line-height:1.8;text-align:center;color:#0f172a;}
+  .sentence-py{font-size:14px;color:var(--kr-blue);text-align:center;font-weight:700;min-height:20px;letter-spacing:0.3px;}
+  .sentence-en{font-size:13px;color:var(--muted);text-align:center;}
+  .sentence-jp{font-size:13px;color:#7c3aed;text-align:center;}
+  .mini-speak-btn{border:none;background:none;font-size:14px;cursor:pointer;line-height:1;padding:3px;border-radius:50%;flex-shrink:0;opacity:.8;}
+  .mini-speak-btn:active{opacity:1;transform:scale(1.15);}
+  .story-nav{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;max-width:560px;}
+  .icon-btn{width:44px;height:44px;border-radius:50%;border:2px solid #bfdbfe;background:#fff;font-size:18px;cursor:pointer;box-shadow:var(--shadow-pop);}
+  .icon-btn:active{transform:translateY(2px);}
+  .icon-btn.recording{background:#fee2e2!important;border-color:#ef4444!important;color:#ef4444!important;box-shadow:0 0 0 4px rgba(239,68,68,0.25)!important;animation:recPulse 1.2s infinite ease-in-out;}
+  @keyframes recPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+
+  /* voice wave visualizer */
+  .voice-wave-panel{display:none;align-items:center;justify-content:center;gap:12px;width:100%;max-width:560px;padding:10px 16px;background:#fff5f5;border:1.5px solid #fecaca;border-radius:12px;box-sizing:border-box;}
+  .voice-wave-panel.active{display:flex;}
+  .voice-rec-badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#ef4444;font-variant-numeric:tabular-nums;}
+  .voice-rec-dot{width:8px;height:8px;border-radius:50%;background:#ef4444;animation:recBlink 1s infinite alternate;}
+  @keyframes recBlink{from{opacity:1;transform:scale(1);}to{opacity:0.3;transform:scale(0.8);}}
+  .voice-wave-bars{display:inline-flex;align-items:center;gap:3px;height:20px;}
+  .voice-wave-bars .bar{display:inline-block;width:3.5px;height:6px;background:#ef4444;border-radius:3px;transition:height 0.08s ease;}
+  .voice-wave-tip{font-size:12px;color:#991b1b;font-weight:600;}
+
+  .full-sent-voice-bar{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-top:8px;padding-top:8px;border-top:1px dashed rgba(0,0,0,0.08);font-size:12px;flex-wrap:wrap;}
+  .sent-action-btn{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;font-size:11px;font-weight:600;border-radius:6px;border:1px solid #cbd5e1;background:#fff;cursor:pointer;transition:all .2s;}
+  .sent-action-btn:hover{background:#f1f5f9;border-color:#94a3b8;}
+  .sent-action-btn.my-voice{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8;}
+  .sent-action-btn.download{background:#f0fdf4;border-color:#86efac;color:#15803d;}
+  .sent-action-btn.record-link{background:#fff7ed;border-color:#fdba74;color:#c2410c;}
+  .full-sentence.has-my-voice{border-left:3.5px solid #3b82f6;}
+  .toggle-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+  .chip{font-size:12px;font-weight:700;padding:6px 12px;border-radius:20px;border:2px solid #bfdbfe;background:#fff;cursor:pointer;}
+  .chip.active{background:var(--kr-blue);color:#fff;border-color:var(--kr-blue);}
+
+  /* character & hangul grid card */
+  .char-wrap{width:100%;max-width:340px;perspective:1000px;}
+  .char-card{width:100%;aspect-ratio:4/5;position:relative;transform-style:preserve-3d;transition:transform .5s;cursor:pointer;}
+  .char-card.flipped{transform:rotateY(180deg);}
+  .char-face{position:absolute;inset:0;border-radius:var(--radius-lg);backface-visibility:hidden;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:8px;box-shadow:var(--shadow-card);border:2px solid #bfdbfe;padding:16px;}
+  .char-front{background:var(--card);}
+  .char-back{background:linear-gradient(135deg,#eff6ff,#fef2f2);transform:rotateY(180deg);}
+
+  .hangul-grid{
+    width:140px;height:140px;position:relative;background:#fff;
+    border:2.5px solid var(--kr-blue);border-radius:14px;
+    display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(29,78,216,0.15);
+    overflow:hidden;
+  }
+  .hangul-grid::before{
+    content:'';position:absolute;left:0;right:0;top:50%;border-top:1.5px dashed #93c5fd;z-index:1;pointer-events:none;
+  }
+  .hangul-grid::after{
+    content:'';position:absolute;top:0;bottom:0;left:50%;border-left:1.5px dashed #93c5fd;z-index:1;pointer-events:none;
+  }
+  .hangul-char{font-size:80px;font-weight:900;color:var(--kr-blue-dark);line-height:1;position:relative;z-index:2;}
+  #hangulCanvas{position:absolute;inset:0;z-index:3;touch-action:none;cursor:crosshair;}
+
+  .breakdown-strip{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;background:#f8fafc;padding:5px 10px;border-radius:12px;border:1px solid #e2e8f0;}
+  .breakdown-part{background:#fff;padding:2px 7px;border-radius:6px;border:1px solid #cbd5e1;color:var(--kr-blue-dark);display:flex;align-items:center;gap:3px;}
+  .breakdown-part .type{font-size:10px;color:var(--muted);}
+  .hanja-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:8px;background:var(--gold-soft);color:#92400e;border:1px solid #fde68a;font-size:12px;font-weight:700;}
+
+  .char-pills{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;max-width:560px;}
+  .char-pill{font-size:14px;font-weight:800;padding:6px 12px;border-radius:12px;background:#fff;border:2px solid #bfdbfe;cursor:pointer;}
+  .char-pill.active{background:var(--kr-blue);color:#fff;border-color:var(--kr-blue);}
+
+  /* flashcard */
+  .flash-card{width:100%;max-width:340px;aspect-ratio:4/3;background:var(--card);border:2px solid #bfdbfe;border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-card);position:relative;transform-style:preserve-3d;transition:transform .5s;cursor:pointer;}
+  .flash-card.flipped{transform:rotateY(180deg);}
+  .flash-face{position:absolute;inset:0;backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:20px;}
+  .flash-front{background:var(--card);border-radius:var(--radius-lg);}
+  .flash-back{background:linear-gradient(135deg,#eff6ff,#fef2f2);border-radius:var(--radius-lg);transform:rotateY(180deg);}
+
+  /* matching game */
+  .match-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:500px;}
+  .match-col{display:flex;flex-direction:column;gap:8px;}
+  .match-tile{background:var(--card);border:2px solid #cbd5e1;border-radius:var(--radius-md);padding:12px 8px;text-align:center;
+    font-size:15px;font-weight:800;cursor:pointer;box-shadow:var(--shadow-pop);transition:all .15s;}
+  .match-tile.zh-tile{font-size:18px;color:var(--kr-blue-dark);}
+  .match-tile.selected{background:var(--kr-blue-soft);border-color:var(--kr-blue);color:var(--kr-blue-dark);transform:scale(1.03);}
+  .match-tile.correct{background:var(--green-soft);border-color:var(--green);color:var(--green);pointer-events:none;opacity:.65;}
+  .match-tile.wrong{background:var(--kr-red-soft);border-color:var(--kr-red);animation:shake .4s;}
+  @keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+
+  /* scramble sentences */
+  .scramble-box{width:100%;max-width:520px;display:flex;flex-direction:column;gap:14px;}
+  .target-zone{min-height:76px;padding:12px;background:#fff;border:2px dashed #93c5fd;border-radius:var(--radius-md);
+    display:flex;flex-wrap:wrap;gap:8px;align-items:center;align-content:center;}
+  .pool-zone{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:10px 0;}
+  .word-chip{padding:8px 14px;background:#fff;border:2px solid #bfdbfe;border-radius:14px;font-size:15px;font-weight:800;
+    cursor:pointer;box-shadow:var(--shadow-pop);color:var(--ink);transition:transform .08s;}
+  .word-chip:active{transform:translateY(2px);}
+  .word-chip.in-target{background:var(--kr-blue-soft);border-color:var(--kr-blue);color:var(--kr-blue-dark);}
+  .word-chip.placed{opacity:0.35;pointer-events:none;}
+
+  /* quiz */
+  .quiz-card{width:100%;max-width:520px;background:var(--card);border:2px solid #bfdbfe;border-radius:var(--radius-lg);padding:20px;
+    box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:14px;}
+  .quiz-q{font-size:17px;font-weight:800;color:var(--ink);line-height:1.6;}
+  .opt-list{display:flex;flex-direction:column;gap:8px;}
+  .opt-btn{background:#f8fafc;border:2px solid #e2e8f0;border-radius:var(--radius-md);padding:12px 14px;font-size:14px;font-weight:700;
+    text-align:left;cursor:pointer;transition:all .15s;}
+  .opt-btn:active{transform:scale(0.98);}
+  .opt-btn.correct{background:var(--green-soft);border-color:var(--green);color:#065f46;}
+  .opt-btn.wrong{background:var(--kr-red-soft);border-color:var(--kr-red);color:#991b1b;}
+
+  /* cloze test */
+  .cloze-card{width:100%;max-width:520px;background:var(--card);border:2px solid #bfdbfe;border-radius:var(--radius-lg);padding:20px;
+    box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:12px;}
+  .cloze-sentence{font-size:18px;font-weight:800;line-height:1.8;text-align:center;padding:12px;background:#f8fafc;border-radius:12px;}
+  .cloze-slot{display:inline-block;min-width:60px;padding:2px 8px;margin:0 4px;border-bottom:2.5px solid var(--kr-blue);color:var(--kr-blue);font-weight:900;}
+  .cloze-slot.filled{background:var(--green-soft);border-color:var(--green);color:var(--green);border-radius:6px;}
+  .cloze-slot.wrong{background:var(--kr-red-soft);border-color:var(--kr-red);color:var(--kr-red);border-radius:6px;}
+  .cloze-opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:8px;}
+  .cloze-opt-btn{background:#fff;border:2px solid #cbd5e1;border-radius:var(--radius-md);padding:12px;text-align:center;
+    font-size:15px;font-weight:800;cursor:pointer;box-shadow:var(--shadow-pop);}
+  .cloze-opt-btn.correct{background:var(--green-soft);border-color:var(--green);color:var(--green);}
+  .cloze-opt-btn.wrong{background:var(--kr-red-soft);border-color:var(--kr-red);color:var(--kr-red);}
+
+  /* audio challenge */
+  .audio-speaker-card{width:100%;max-width:520px;background:var(--card);border:2px solid #bfdbfe;border-radius:var(--radius-lg);padding:24px;
+    display:flex;flex-direction:column;align-items:center;gap:14px;box-shadow:var(--shadow-card);}
+  .speaker-circle{width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,var(--kr-blue),#2563eb);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:32px;cursor:pointer;box-shadow:0 8px 18px rgba(37,99,235,0.35);transition:transform .1s;}
+  .speaker-circle:active{transform:scale(0.94);}
+  .speaker-circle.playing{animation:speakerPulse 1s infinite alternate;}
+  @keyframes speakerPulse{from{box-shadow:0 0 0 0 rgba(37,99,235,0.4);}to{box-shadow:0 0 0 16px rgba(37,99,235,0);}}
+  .audio-opts{width:100%;max-width:520px;display:grid;gap:10px;}
+  .audio-opts.grid-layout{grid-template-columns:1fr 1fr;}
+  .audio-opts.sentence-layout{grid-template-columns:1fr;}
+  .audio-opt-btn{background:#fff;border:2px solid #cbd5e1;border-radius:var(--radius-md);padding:14px;text-align:center;
+    cursor:pointer;box-shadow:var(--shadow-pop);transition:all .15s;}
+  .audio-opt-btn .opt-main{font-size:16px;font-weight:800;}
+  .audio-opt-btn .opt-sub{font-size:11px;color:var(--muted);margin-top:3px;}
+  .audio-opt-btn.correct{background:var(--green-soft);border-color:var(--green);color:var(--green);}
+  .audio-opt-btn.wrong{background:var(--kr-red-soft);border-color:var(--kr-red);color:var(--kr-red);}
+
+  /* full text reader */
+  .full-text-wrap{width:100%;max-width:560px;background:var(--paper);border:2px solid #bfdbfe;border-radius:var(--radius-lg);
+    padding:16px;box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:12px;}
+  .full-sentence{padding:12px 14px;border-radius:12px;background:#fff;border:1px solid #e2e8f0;display:flex;flex-direction:column;gap:4px;cursor:pointer;transition:all .15s;}
+  .full-sentence.playing{background:#eff6ff;border-color:var(--kr-blue);box-shadow:0 4px 12px rgba(29,78,216,0.15);}
+  .full-sent-zh{font-size:16px;font-weight:800;color:var(--ink);}
+  .full-sent-py{font-size:12px;color:var(--kr-blue);font-weight:700;}
+  .full-sent-en{font-size:11px;color:var(--muted);}
+  .full-sent-jp{font-size:11px;color:#7c3aed;}
+
+  /* result screen */
+  .result-box{text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;margin-top:20px;}
+  .result-stars{font-size:42px;letter-spacing:4px;}
+  .badge-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px;}
+  .mini-badge{background:var(--gold-soft);border:1px solid #fde68a;color:#92400e;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;}
+
+  /* toast */
+  #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:rgba(15,23,42,0.92);color:#fff;
+    padding:10px 18px;border-radius:24px;font-size:13px;font-weight:700;z-index:100;pointer-events:none;opacity:0;transition:opacity .2s;text-align:center;max-width:90%;}
+  #toast.show{opacity:1;}
+
+  .opt-btn.correct{background:var(--green-soft,#d1fae5)!important;border-color:var(--green,#10b981)!important;color:var(--green-dark,#065f46)!important;}
+  .opt-btn.wrong{background:var(--red-soft,#fee2e2)!important;border-color:var(--danger-red,#ef4444)!important;color:var(--danger-red,#dc2626)!important;animation:shake .35s ease-in-out;opacity:0.75;cursor:not-allowed;}
+  .target-zone.correct{border-color:#10b981!important;background:#f0fdf4!important;}
+  .target-zone.wrong{border-color:#ef4444!important;background:#fef2f2!important;animation:shake .35s ease-in-out;}
+  .word-chip.in-target.correct{background:#10b981!important;color:#fff!important;border-color:#059669!important;}
+  .word-chip.in-target.wrong{background:#fee2e2!important;border-color:#ef4444!important;color:#dc2626!important;animation:shake .35s ease-in-out;}
+  .scramble-wrong-badge{margin:8px auto 0;padding:5px 14px;background:#fee2e2;border:1px solid #ef4444;color:#dc2626;font-size:13px;font-weight:800;border-radius:20px;animation:shake .35s ease-in-out;text-align:center;max-width:420px;display:none;}
+  .scramble-answer-box{width:100%;max-width:520px;background:#fffbeb;border:2px solid #f59e0b;border-radius:var(--radius-md,14px);padding:12px 14px;margin:10px 0;box-shadow:var(--shadow-pop,0 3px 8px rgba(0,0,0,0.06));text-align:left;display:none;}
+  .scramble-answer-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+  .scramble-answer-tag{font-size:13px;font-weight:800;color:#b45309;display:flex;align-items:center;gap:4px;}
+  .scramble-answer-text{font-size:18px;font-weight:900;color:#1e293b;line-height:1.5;padding:4px 0 8px;letter-spacing:0.5px;}
+  .scramble-answer-footer{display:flex;justify-content:flex-end;gap:8px;margin-top:4px;}
+  .btn-answer-sound{background:#fef3c7;border:1px solid #f59e0b;color:#b45309;border-radius:8px;padding:4px 10px;font-size:12px;font-weight:800;cursor:pointer;}
+  .btn-answer-fill{background:#10b981;border:none;color:#fff;border-radius:8px;padding:6px 14px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 2px 4px rgba(16,185,129,0.25);}
+  .btn-answer-fill:active{transform:translateY(1px);}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <a href="kr-index.html" class="nav-btn" title="课文一览 (All Lessons)">🏠</a>
+    <h1 id="topTitle">맛있는 한국 음식</h1>
+    <div class="stars" id="topStars">⭐ 0</div>
+  </header>
+
+  <main>
+    <!-- HOME SCREEN -->
+    <section class="screen active" id="screen-home">
+      <div class="palace-ico" aria-label="美味韩食与传统市场">
+        <svg viewBox="0 0 64 64" width="60" height="60" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="32" cy="32" r="28" fill="#fff7ed" stroke="#ea580c" stroke-width="2.5"/>
+          <path d="M14 28 Q32 20 50 28 L46 48 Q32 54 18 48 Z" fill="#c2410c"/>
+          <path d="M16 29 Q32 24 48 29 Q32 34 16 29 Z" fill="#f97316"/>
+          <path d="M26 20 Q24 14 26 10" stroke="#f97316" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M32 18 Q34 12 32 8" stroke="#ea580c" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path d="M38 20 Q36 14 38 10" stroke="#f97316" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <circle cx="32" cy="31" r="3" fill="#fef08a"/>
+        </svg>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;justify-content:center;">
+        <a href="hangugeo.html" style="font-size:12px;font-weight:700;padding:4px 10px;border-radius:12px;background:#fff;border:1.5px solid #bfdbfe;color:#1d4ed8;text-decoration:none;">◀ 第1课: 나의 일주일</a>
+        <a href="hangugeo2.html" style="font-size:12px;font-weight:700;padding:4px 10px;border-radius:12px;background:#fff;border:1.5px solid #bfdbfe;color:#1d4ed8;text-decoration:none;">◀ 第2课: 나의 하루</a>
+        <span style="font-size:12px;font-weight:800;padding:4px 10px;border-radius:12px;background:#ea580c;color:#fff;">第3课: 맛있는 한국 음식</span>
+      </div>
+      <h2 class="title">맛있는 한국 음식 (Delicious Korean Food)</h2>
+      <p class="sub">跟随敏宇走进热闹非凡的韩国传统市场！探索经典街头小吃、餐厅点餐交流、双辅音与12个核心音节字块。本课是《나의 하루》的精彩续篇。</p>
+      <div class="menu-grid">
+        <div class="menu-card full" onclick="goStory()">
+          <div class="ico">📖</div>
+          <div class="name">读课文</div>
+          <div class="desc">罗马音与发音 · 点击单句朗读与录音</div>
+          <div class="badge" id="badgeVoiceProgress" style="display:none;"></div>
+        </div>
+        <div class="menu-card full" onclick="goFull()">
+          <div class="ico">📜</div>
+          <div class="name">查看/朗读全文</div>
+          <div class="desc">显示完整课文 · 一键原声连读与配音回放</div>
+        </div>
+        <div class="menu-card" onclick="goChars()">
+          <div class="ico">✍️</div>
+          <div class="name">核心字块 (音节)</div>
+          <div class="desc">12个音节 · 初声中声终声拆解</div>
+          <div class="badge" id="badgeChars" style="display:none;">✓</div>
+        </div>
+        <div class="menu-card" onclick="goFlash()">
+          <div class="ico">🗂️</div>
+          <div class="name">单词闪卡</div>
+          <div class="desc">19个餐饮美食与日常词汇</div>
+          <div class="badge" id="badgeFlash" style="display:none;">✓</div>
+        </div>
+        <div class="menu-card" onclick="goMatch()">
+          <div class="ico">🧩</div>
+          <div class="name">韩语消消乐</div>
+          <div class="desc">韩语连读音与中文释义</div>
+          <div class="badge" id="badgeMatch" style="display:none;"></div>
+        </div>
+        <div class="menu-card" onclick="goScramble()">
+          <div class="ico">🔤</div>
+          <div class="name">连词成句</div>
+          <div class="desc">拼出课文重点韩语句型</div>
+          <div class="badge" id="badgeScramble" style="display:none;"></div>
+        </div>
+        <div class="menu-card" onclick="goCloze()">
+          <div class="ico">📝</div>
+          <div class="name">选词填空</div>
+          <div class="desc">语法助词与重点词语实战</div>
+          <div class="badge" id="badgeCloze" style="display:none;"></div>
+        </div>
+        <div class="menu-card" onclick="goAudioChallenge()">
+          <div class="ico">🎧</div>
+          <div class="name">听力练习</div>
+          <div class="desc">纯正首尔音盲听挑战</div>
+          <div class="badge" id="badgeAudio" style="display:none;"></div>
+        </div>
+        <div class="menu-card full" onclick="goQuiz()">
+          <div class="ico">❓</div>
+          <div class="name">读解练习</div>
+          <div class="desc">检测阅读能力</div>
+          <div class="badge" id="badgeQuiz" style="display:none;"></div>
+        </div>
+        <div class="menu-card full" onclick="goReview()" style="border-color:#f59e0b;background:linear-gradient(135deg,#fffdf7,#fef3c7);">
+          <div class="ico">🧠</div>
+          <div class="name">错题本</div>
+          <div class="desc">温习做错的题 · 攻克薄弱环节</div>
+          <div class="badge" id="badgeReview" style="display:none;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STORY READER -->
+    <section class="screen" id="screen-story">
+      <div class="story-card">
+        <div class="story-progress" id="storyProgress">1 / 8</div>
+        <div class="sentence-zh" id="storyKo"></div>
+        <div class="sentence-py" id="storyRo"></div>
+        <div class="sentence-en" id="storyEnRow" style="display:none;">
+          <span id="storyEn"></span>
+          <button class="mini-speak-btn" onclick="speakStoryEn()" title="听英语朗读">🔊</button>
+        </div>
+        <div class="sentence-jp" id="storyZhRow">
+          <span id="storyZh"></span>
+          <button class="mini-speak-btn" onclick="speakStoryZh()" title="听中文朗读">🔊</button>
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <div class="chip" id="chipToggleRo" onclick="toggleRo()">罗马音: 开</div>
+        <div class="chip active" id="chipToggleZh" onclick="toggleZh()">中文: 开</div>
+        <div class="chip" id="chipToggleEn" onclick="toggleEn()">英文: 关</div>
+      </div>
+
+      <!-- Voice wave recording panel -->
+      <div class="voice-wave-panel" id="voiceWavePanel">
+        <div class="voice-rec-badge">
+          <span class="voice-rec-dot"></span>
+          <span id="voiceRecTimer">00:00</span>
+        </div>
+        <div class="voice-wave-bars">
+          <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+          <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+        </div>
+        <div class="voice-wave-tip">正在录音… 请清晰跟读课文</div>
+      </div>
+
+      <div class="story-nav">
+        <button class="icon-btn" onclick="storyPrev()" title="上一句">◀</button>
+        <button class="btn gold" onclick="playCurrentStory()" style="flex:1;">🔊 播放单句</button>
+        <button class="icon-btn" id="storyMicBtn" onclick="toggleSentenceRecord()" title="跟读录音">🎙️</button>
+        <button class="icon-btn" onclick="storyNext()" title="下一句">▶</button>
+      </div>
+
+      <button class="btn ghost small" onclick="goHome()">返回目录</button>
+    </section>
+
+    <!-- FULL TEXT READER -->
+    <section class="screen" id="screen-full">
+      <h2 class="title">📜 完整课文朗读</h2>
+      <p class="sub">点击单句发音，支持原声连续朗读与个人跟读配音回放。</p>
+      <div class="full-text-wrap" id="fullTextList"></div>
+      <div class="story-nav" style="justify-content:center;gap:12px;flex-wrap:wrap;">
+        <button class="btn gold" id="fullPlayBtn" onclick="toggleFullPlay()">▶️ 原声连续朗读</button>
+        <button class="btn" id="fullMyPlayBtn" onclick="toggleFullMyPlay()">🎙️ 播放我的全文配音</button>
+      </div>
+      <button class="btn ghost small" onclick="stopFullPlay(); goHome();">返回菜单</button>
+    </section>
+
+    <!-- CHARACTERS (12 CORE SYLLABLE BLOCKS) -->
+    <section class="screen" id="screen-chars">
+      <h2 class="title">✍️ 核心音节字块</h2>
+      <p class="sub">韩语是音节组合文字！田字格笔画临摹 · 初声/中声/终声(收音)拆解与汉字溯源。</p>
+      
+      <div class="char-wrap">
+        <div class="char-card" id="charCard" onclick="flipChar(event)">
+          <!-- FRONT -->
+          <div class="char-face char-front">
+            <div style="font-size:18px;color:var(--kr-blue);font-weight:800;" id="charRo"></div>
+            <div class="hangul-grid">
+              <span class="hangul-char" id="charHangul">한</span>
+              <canvas id="hangulCanvas" width="140" height="140"></canvas>
+            </div>
+            <div class="breakdown-strip" id="charBreakdown">
+              <div class="breakdown-part"><span class="type">初声</span> <span id="bdCho">ㅎ</span></div>
+              <div class="breakdown-part"><span class="type">中声</span> <span id="bdJung">ㅏ</span></div>
+              <div class="breakdown-part" id="bdJongWrap"><span class="type">终声</span> <span id="bdJong">ㄴ</span></div>
+            </div>
+            <div class="hanja-badge" id="charHanjaBadge">对应汉字: 韓</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px;">可在方格内手写临摹 · 点击翻面看释义 ↩️</div>
+          </div>
+          <!-- BACK -->
+          <div class="char-face char-back">
+            <div style="font-size:36px;font-weight:900;color:var(--kr-blue-dark);" id="charHangulBack">한</div>
+            <div style="font-size:15px;color:var(--kr-blue);font-weight:800;" id="charRoBack">han</div>
+            <div class="hanja-badge" id="charHanjaDesc" style="font-size:14px;">汉字词源: 韓</div>
+            <div style="font-size:14px;color:var(--ink);text-align:center;line-height:1.6;" id="charWords">常用词: 한국, 한국어</div>
+            <div style="font-size:13px;color:var(--muted);text-align:center;" id="charMeaning">Korea / 韩国</div>
+            <button class="btn ghost small" onclick="flipChar(event)" style="margin-top:6px;">↩️ 返回写字</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="story-nav" style="justify-content:center;gap:10px;">
+        <button class="btn gold small" onclick="playCurrentCharAudio(event)">🔊 朗读发音</button>
+        <button class="btn red small" onclick="clearHangulCanvas(event)">🔁 清空格子</button>
+      </div>
+
+      <div class="char-pills" id="charPills"></div>
+
+      <div class="story-nav" style="width:100%;max-width:340px;">
+        <button class="btn ghost small" onclick="charPrev()">◀ 上一个</button>
+        <span id="charCounter" style="font-size:13px;font-weight:700;color:var(--muted);">1 / 12</span>
+        <button class="btn ghost small" onclick="charNext()">下一个 ▶</button>
+      </div>
+
+      <button class="btn ghost small" onclick="goHome()">返回菜单</button>
+    </section>
+
+    <!-- FLASHCARDS (生词) -->
+    <section class="screen" id="screen-flash">
+      <h2 class="title">🗂️ 单词闪卡</h2>
+      <p class="sub">包含12个课文生词与7个星期名称，点击卡片翻看罗马音、释义与例句。</p>
+
+      <div class="toggle-row">
+        <div class="chip active" id="chipVocabAll" onclick="setVocabFilter('all')">全部 (19)</div>
+        <div class="chip" id="chipVocabWords" onclick="setVocabFilter('words')">课文词汇 (12)</div>
+        <div class="chip" id="chipVocabProper" onclick="setVocabFilter('proper')">星期词汇 (7)</div>
+      </div>
+
+      <div class="flash-card" id="flashCard" onclick="flipFlash()">
+        <!-- FRONT -->
+        <div class="flash-face flash-front">
+          <div style="font-size:46px;" id="flashEmoji">🏷️</div>
+          <div style="font-size:26px;font-weight:900;color:var(--kr-blue-dark);" id="flashKo">이름</div>
+          <div class="hanja-badge" id="flashTag">生词</div>
+          <div style="font-size:12px;color:var(--muted);">点击翻转查看释义 ↩️</div>
+        </div>
+        <!-- BACK -->
+        <div class="flash-face flash-back">
+          <div style="font-size:26px;font-weight:900;color:var(--kr-blue-dark);" id="flashKoBack">이름</div>
+          <div style="font-size:15px;color:var(--kr-blue);font-weight:800;" id="flashRo">ireum</div>
+          <div style="font-size:14px;font-weight:700;color:var(--ink);" id="flashMeaning">名字 / name</div>
+          <div style="font-size:12px;color:var(--muted);text-align:center;" id="flashContext">“제 이름은 민우입니다”</div>
+          <button class="mini-speak-btn" onclick="playFlashAudio(event)" style="font-size:18px;margin-top:4px;">🔊 听发音</button>
+        </div>
+      </div>
+
+      <div class="story-nav" style="width:100%;max-width:340px;">
+        <button class="btn ghost small" onclick="flashPrev()">◀ 上一个</button>
+        <span id="flashCounter" style="font-size:13px;font-weight:700;color:var(--muted);">1 / 19</span>
+        <button class="btn ghost small" onclick="flashNext()">下一个 ▶</button>
+      </div>
+
+      <button class="btn ghost small" onclick="goHome()">返回菜单</button>
+    </section>
+
+    <!-- MATCHING GAME -->
+    <section class="screen" id="screen-match">
+      <h2 class="title">🧩 韩语消消乐</h2>
+      <p class="sub">两两配对！左边是韩语词汇，右边是中文含义或读音。</p>
+      
+      <div class="toggle-row">
+        <div class="chip active" id="chipMatchChars" onclick="setMatchMode('chars')">字块</div>
+        <div class="chip" id="chipMatchWords" onclick="setMatchMode('words')">词汇</div>
+        <div class="chip" id="chipMatchProper" onclick="setMatchMode('proper')">星期</div>
+        <div class="chip" id="chipMatchAll" onclick="setMatchMode('all')">综合</div>
+      </div>
+
+      <div style="font-size:13px;color:var(--muted);">
+        剩余待配: <strong id="matchLeft" style="color:var(--kr-blue);">6</strong> · 失误: <strong id="matchWrong" style="color:var(--kr-red);">0</strong>
+      </div>
+
+      <div class="match-grid">
+        <div class="match-col" id="matchColZh"></div>
+        <div class="match-col" id="matchColPy"></div>
+      </div>
+
+      <button class="btn ghost small" onclick="goHome()">返回菜单</button>
+    </section>
+
+    <!-- SCRAMBLE SENTENCES -->
+    <section class="screen" id="screen-scramble">
+      <h2 class="title">🔤 连词成句</h2>
+      <p class="sub" id="scrambleHint">按顺序点击韩语词块，组合成正确的课文句子。</p>
+
+      <div style="font-size:13px;color:var(--muted);">
+        第 <span id="scrambleProgress" style="font-weight:800;color:var(--kr-blue);">1 / 5</span> 句
+      </div>
+
+      <div class="scramble-box">
+        <div class="target-zone" id="scrambleTarget"></div>
+        <div class="scramble-wrong-badge" id="scrambleWrongBadge">❌ 顺序不对哦，点击词块可撤回，或看下方正确答案！</div>
+        <div class="scramble-answer-box" id="scrambleAnswerBox">
+          <div class="scramble-answer-header">
+            <span class="scramble-answer-tag">💡 正确答案</span>
+            <button class="btn-answer-sound" type="button" onclick="playScrambleAnswerAudio()" title="听句子读音">🔊 听一听</button>
+          </div>
+          <div class="scramble-answer-text" id="scrambleAnswerText"></div>
+          <div class="scramble-answer-footer">
+            <button class="btn-answer-fill" type="button" onclick="fillScrambleAnswer()">✨ 填入正确答案</button>
+          </div>
+        </div>
+        <div class="pool-zone" id="scramblePool"></div>
+      </div>
+
+      <div class="scramble-nav-bar" style="display:flex;align-items:center;justify-content:center;gap:10px;margin:12px 0 6px;flex-wrap:wrap;">
+        <button class="btn ghost small" onclick="scramblePrev()">⬅️ 上一句</button>
+        <button class="btn ghost small" onclick="scrambleUndo()">撤销</button>
+        <button class="btn gold small" id="scrambleCheckBtn" onclick="scrambleCheck()">答案</button>
+        <button class="btn ghost small" onclick="scrambleNext()">下一句 ➡️</button>
+      </div>
+
+      <button class="btn ghost small" onclick="goHome()">返回菜单</button>
+    </section>
+
+    <!-- QUIZ -->
+    <section class="screen" id="screen-quiz">
+      <h2 class="title">❓ 读解练习</h2>
+      <p class="sub">综合测试课文故事情节、核心字块构成与语法助词。</p>
+
+      <div style="font-size:13px;color:var(--muted);">
+        进度: <span id="quizProgress" style="font-weight:800;color:var(--kr-blue);">1 / 8</span>
+      </div>
+
+      <div class="quiz-card">
+        <div class="quiz-q" id="quizQ"></div>
+        <div class="opt-list" id="quizOpts"></div>
+      </div>
+
+            <div style="display:flex;gap:10px;justify-content:center;margin:12px 0;width:100%;max-width:560px;">
+        <button class="btn ghost small" onclick="quizPrev()">⬅️ 上一题</button>
+        <button class="btn ghost small" onclick="quizNext()">下一题 ➡️</button>
+      </div>
+<button class="btn ghost small" onclick="goHome()">返回菜单</button>
+    </section>
+
+    <!-- CLOZE TEST -->
+    <section class="screen" id="screen-cloze">
+      <h2 class="title">📝 选词填空</h2>
+      <p class="sub" id="clozeHint">根据课文语境与语法助词搭配，选择最合适的一项填入。</p>
+
+      <div style="display:flex;justify-content:space-between;width:100%;max-width:520px;font-size:13px;color:var(--muted);">
+        <div>进度: <span id="clozeProgress" style="font-weight:800;color:var(--kr-blue);">1 / 8</span></div>
+        <div id="clozeStreak">🔥 连对 0</div>
+      </div>
+
+      <div class="cloze-card">
+        <div style="font-size:13px;color:var(--kr-blue);text-align:center;font-weight:700;" id="clozePy"></div>
+        <div class="cloze-sentence">
+          <span id="clozeBefore"></span>
+          <span class="cloze-slot" id="clozeSlot">____</span>
+          <span id="clozeAfter"></span>
+        </div>
+        <div style="font-size:12px;color:var(--muted);text-align:center;" id="clozeEn"></div>
+        <div style="font-size:12px;color:#7c3aed;text-align:center;" id="clozeJp"></div>
+        <div id="clozeFeedback" style="display:none;width:100%;padding:8px 12px;border-radius:10px;font-size:14px;font-weight:800;text-align:center;box-sizing:border-box;"></div>
+        <div class="cloze-opts" id="clozeOpts"></div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;margin:12px 0;width:100%;max-width:560px;">
+        <button class="btn ghost small" onclick="clozePrev()">⬅️ 上一题</button>
+        <button class="btn ghost small" onclick="clozeNext()">下一题 ➡️</button>
+      </div>
+      <button class="btn ghost small" onclick="goHome()">返回菜单</button>
+    </section>
+
+    <!-- AUDIO CHALLENGE -->
+    <section class="screen" id="screen-audio">
+      <h2 class="title">🎧 听力练习</h2>
+      <p class="sub">盲听韩语原生发音，辨析正确的音节、单词或句子。</p>
+
+      <div class="toggle-row">
+        <div class="chip" id="chipAudioChars" onclick="setAudioMode('chars')">字块</div>
+        <div class="chip" id="chipAudioWords" onclick="setAudioMode('words')">词汇</div>
+        <div class="chip" id="chipAudioSentences" onclick="setAudioMode('sentences')">句子</div>
+        <div class="chip active" id="chipAudioAll" onclick="setAudioMode('all')">综合</div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;width:100%;max-width:520px;font-size:13px;color:var(--muted);">
+        <div>进度: <span id="audioProgress" style="font-weight:800;color:var(--kr-blue);">1 / 10</span></div>
+        <div id="audioStreak">🔥 连对 0</div>
+      </div>
+
+      <div class="audio-speaker-card">
+        <div style="font-size:13px;color:var(--muted);" id="audioPrompt">请听发音，选择正确的选项：</div>
+        <div class="speaker-circle" id="audioSpeakerBtn" onclick="playCurrentAudio()" title="再次播放发音">
+          🔊
+        </div>
+        <div style="font-size:11px;color:var(--muted);">点击喇叭可重复听发音</div>
+      </div>
+
+      <div class="audio-opts grid-layout" id="audioOpts"></div>
+
+      <button class="btn ghost small" onclick="goHome()">返回菜单</button>
+    </section>
+
+    <!-- SRS REVIEW -->
+    <section class="screen" id="screen-review">
+      <h2 class="title">🧠 错题本</h2>
+      <p class="sub">温习做错的题目 · 巩固薄弱知识点</p>
+
+      <div class="toggle-row">
+        <div class="chip active" id="chipReviewQuiz" onclick="setReviewTab('quiz')">⚡ 错题闯关</div>
+        <div class="chip" id="chipReviewList" onclick="setReviewTab('list')">📋 错题本列表</div>
+      </div>
+
+      <div id="reviewQuizContainer" style="width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center;gap:12px;"></div>
+      <div id="reviewListContainer" style="width:100%;max-width:520px;display:none;flex-direction:column;gap:10px;"></div>
+
+      <button class="btn ghost small" onclick="goHome()">返回菜单</button>
+    </section>
+
+    <!-- RESULT SCREEN -->
+    <section class="screen" id="screen-result">
+      <div class="result-box">
+        <div style="font-size:54px;">🎉</div>
+        <h2 class="title" id="resultTitle">太棒了！闯关成功！</h2>
+        <div class="result-stars" id="resultStars">⭐⭐⭐</div>
+        <div style="font-size:14px;color:var(--muted);" id="resultScore">恭喜完成挑战！</div>
+        <div class="badge-row" id="resultBadges"></div>
+        <div style="display:flex;gap:12px;margin-top:16px;">
+          <button class="btn gold" onclick="retryCurrent()">🔁 再来一次</button>
+          <button class="btn ghost" onclick="goHome()">🏠 返回目录</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="toast"></div>
+
+<script>
+
+let appAudioCtx = null;
+function getAppAudioCtx(){
+  if(!appAudioCtx){
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if(AudioCtx) appAudioCtx = new AudioCtx();
+  }
+  if(appAudioCtx && appAudioCtx.state === 'suspended'){
+    appAudioCtx.resume();
+  }
+  return appAudioCtx;
+}
+document.addEventListener('click', () => { getAppAudioCtx(); }, { once: true });
+document.addEventListener('touchstart', () => { getAppAudioCtx(); }, { once: true });
+
+function playSuccessTone(){
+  try {
+    const ctx = getAppAudioCtx();
+    if(!ctx) return;
+    if(ctx.state === 'suspended') ctx.resume();
+    const now = ctx.currentTime;
+    const notes = [523.25, 659.25, 783.99];
+    notes.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.09);
+      gain.gain.setValueAtTime(0.25, now + idx * 0.09);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.09 + 0.18);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + idx * 0.09);
+      osc.stop(now + idx * 0.09 + 0.2);
+    });
+  } catch(e){}
+}
+
+function playWrongTone(){
+  try {
+    const ctx = getAppAudioCtx();
+    if(!ctx) return;
+    if(ctx.state === 'suspended') ctx.resume();
+    const now = ctx.currentTime;
+    const tones = [
+      { f1: 340, f2: 240, start: 0, dur: 0.14, gain: 0.35 },
+      { f1: 280, f2: 190, start: 0.16, dur: 0.18, gain: 0.35 }
+    ];
+    tones.forEach(t => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(t.f1, now + t.start);
+      osc.frequency.exponentialRampToValueAtTime(t.f2, now + t.start + t.dur);
+      gain.gain.setValueAtTime(t.gain, now + t.start);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + t.start + t.dur);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + t.start);
+      osc.stop(now + t.start + t.dur + 0.02);
+    });
+  } catch(e){}
+}
+/* ---------------- DATA DEFINITIONS ---------------- */
+// 1. 课文《맛있는 한국 음식》(Delicious Korean Food · A1/TOPIK 1入门 · 续《나의 하루》)
+const STORY = [
+  {id:"st1", zh:"주말에 친구와 함께 전통시장에 갑니다.", py:"Ju-mal-e chin-gu-wa ham-kke jeon-tong-si-jang-e gam-ni-da.", en:"On the weekend, I go to the traditional market with my friend.", jp:"周末和朋友一起去传统市场。"},
+  {id:"st2", zh:"시장에는 맛있는 음식이 정말 많습니다.", py:"Si-jang-e-neun mas-it-neun eum-sig-i jeong-mal man-seum-ni-da.", en:"There is really a lot of delicious food in the market.", jp:"市场里美味的食物真的很多。"},
+  {id:"st3", zh:"우리는 분식집에서 떡볶이와 김밥을 주문해요.", py:"U-ri-neun bun-sik-jip-e-seo tteok-bok-ki-wa gim-bab-eul ju-mun-hae-yo.", en:"We order tteokbokki and kimbap at the snack restaurant.", jp:"我们在小吃店点辣炒年糕和紫菜包饭。"},
+  {id:"st4", zh:"매콤하고 달콤한 떡볶이가 아주 맛있어요.", py:"Mae-kom-ha-go dal-kom-han tteok-bok-ki-ga a-ju mas-it-eo-yo.", en:"The spicy and sweet tteokbokki is very delicious.", jp:"微辣带甜的炒年糕非常美味。"},
+  {id:"st5", zh:"따뜻한 어묵 국물도 한 컵 마십니다.", py:"Tta-tteut-han eo-muk guk-mul-do han keop ma-sim-ni-da.", en:"I also drink a cup of warm fish cake broth.", jp:"温热的鱼饼汤也喝上一杯。"},
+  {id:"st6", zh:"후식으로 달콤하고 바삭한 호떡을 사 먹어요.", py:"Hu-sig-eu-ro dal-kom-ha-go ba-sak-han ho-tteog-eul sa meog-eo-yo.", en:"For dessert, we buy and eat sweet, crispy hotteok.", jp:"作为甜点，买香甜酥脆的糖饼吃。"},
+  {id:"st7", zh:"이모님, 정말 잘 먹었습니다! 인사해요.", py:"I-mo-nim, jeong-mal jal meog-eot-seum-ni-da! In-sa-hae-yo.", en:"Auntie, thank you for the wonderful meal! We greet politely.", jp:"阿姨，真的吃得很好！礼貌地道谢。"},
+  {id:"st8", zh:"배도 부르고 기분도 참 행복합니다.", py:"Bae-do bu-reu-go gi-bun-do cham haeng-bok-ham-ni-da.", en:"My belly is full and I feel truly happy.", jp:"肚子吃得饱饱的，心情也特别幸福。"}
+];
+
+// 2. 课后核心音节字块 (12 Syllable Blocks)
+const CHARACTERS = [
+  {id:"zi1", zh:"맛", py:"mat", hanja:"味/固有", cho:"ㅁ", jung:"ㅏ", jong:"ㅅ", words:"맛있다 (好吃), 맛집 (名吃店), 손맛 (厨艺/手艺)", meaning:"Taste / Flavor", context:"시장에는 맛있는 음식이 정말 많습니다"},
+  {id:"zi2", zh:"음", py:"eum", hanja:"飮/音", cho:"ㅇ", jung:"ㅡ", jong:"ㅁ", words:"음식 (食物), 음료수 (饮料), 음악 (音乐)", meaning:"Food / Drink", context:"시장에는 맛있는 음식이 정말 많습니다"},
+  {id:"zi3", zh:"식", py:"sik", hanja:"食/式", cho:"ㅅ", jung:"ㅣ", jong:"ㄱ", words:"음식 (饮食), 분식 (小吃), 식당 (餐馆)", meaning:"Food / Meal", context:"우리는 분식집에서 떡볶이와 김밥을 주문해요"},
+  {id:"zi4", zh:"장", py:"jang", hanja:"場/市", cho:"ㅈ", jung:"ㅏ", jong:"ㅇ", words:"시장 (市场), 전통시장 (传统市场), 광장 (广场)", meaning:"Market / Place", context:"주말에 친구와 함께 전통시장에 갑니다"},
+  {id:"zi5", zh:"떡", py:"tteok", hanja:"固有 (年糕)", cho:"ㄸ", jung:"ㅓ", jong:"ㄱ", words:"떡볶이 (炒年糕), 호떡 (糖饼), 꿀떡 (蜜年糕)", meaning:"Rice Cake", context:"우리는 분식집에서 떡볶이와 김밥을 주문해요"},
+  {id:"zi6", zh:"김", py:"gim", hanja:"金/固有 (紫菜)", cho:"ㄱ", jung:"ㅣ", jong:"ㅁ", words:"김밥 (紫菜包饭), 김치 (泡菜), 조미김 (烤海苔)", meaning:"Seaweed / Laver", context:"우리는 분식집에서 떡볶이와 김밥을 주문해요"},
+  {id:"zi7", zh:"주", py:"ju", hanja:"注/主/周", cho:"ㅈ", jung:"ㅜ", jong:null, words:"주문 (点餐), 주인 (主人), 주말 (周末)", meaning:"Order / Pour", context:"우리는 분식집에서 떡볶이와 김밥을 주문해요"},
+  {id:"zi8", zh:"문", py:"mun", hanja:"文/問/門", cho:"ㅁ", jung:"ㅜ", jong:"ㄴ", words:"주문 (点餐/订购), 질문 (提问), 동대문 (东大门)", meaning:"Order / Gate", context:"우리는 분식집에서 떡볶이와 김밥을 주문해요"},
+  {id:"zi9", zh:"물", py:"mul", hanja:"水/物", cho:"ㅁ", jung:"ㅜ", jong:"ㄹ", words:"국물 (汤汁), 생수 (矿泉水), 선물 (礼物)", meaning:"Water / Broth", context:"따뜻한 어묵 국물도 한 컵 마십니다"},
+  {id:"zi10", zh:"복", py:"bok", hanja:"福/復", cho:"ㅂ", jung:"ㅗ", jong:"ㄱ", words:"행복 (幸福), 새해 복 (新年福气), 복주머니 (福袋)", meaning:"Blessing / Fortune", context:"배도 부르고 기분도 참 행복합니다"},
+  {id:"zi11", zh:"행", py:"haeng", hanja:"幸/行", cho:"ㅎ", jung:"ㅐ", jong:"ㅇ", words:"행복 (幸福), 여행 (旅行), 은행 (银行)", meaning:"Happiness / Travel", context:"배도 부르고 기분도 참 행복합니다"},
+  {id:"zi12", zh:"말", py:"mal", hanja:"末/固有 (语)", cho:"ㅁ", jung:"ㅏ", jong:"ㄹ", words:"주말 (周末), 한국말 (韩国话), 인사말 (问候语)", meaning:"Weekend / Word", context:"주말에 친구와 함께 전통시장에 갑니다"}
+];
+
+// 3. 课后核心生词 (12 Words)
+const WORDS = [
+  {id:"ci1", zh:"시장", py:"si-jang", meaning:"market / bazaar", meaningJp:"市场、集市", emoji:"🏬", context:"주말에 친구와 함께 전통시장에 갑니다", tag:"场所"},
+  {id:"ci2", zh:"음식", py:"eum-sik", meaning:"food / cuisine", meaningJp:"食物、料理", emoji:"🍲", context:"시장에는 맛있는 음식이 정말 많습니다", tag:"饮食"},
+  {id:"ci3", zh:"분식집", py:"bun-sik-jip", meaning:"snack restaurant", meaningJp:"小吃店、便餐店", emoji:"🏪", context:"우리는 분식집에서 떡볶이와 김밥을 주문해요", tag:"场所"},
+  {id:"ci4", zh:"주문", py:"ju-mun", meaning:"order / ordering", meaningJp:"点单、点餐", emoji:"📋", context:"떡볶이와 김밥을 주문해요", tag:"动作"},
+  {id:"ci5", zh:"국물", py:"guk-mul", meaning:"broth / soup", meaningJp:"汤水、汤汁", emoji:"🥣", context:"따뜻한 어묵 국물도 한 컵 마십니다", tag:"饮食"},
+  {id:"ci6", zh:"후식", py:"hu-sik", meaning:"dessert", meaningJp:"甜点、饭后点心", emoji:"🍮", context:"후식으로 달콤하고 바삭한 호떡을 사 먹어요", tag:"饮食"},
+  {id:"ci7", zh:"이모님", py:"i-mo-nim", meaning:"auntie (friendly restaurant call)", meaningJp:"阿姨、姨母(亲切称谓)", emoji:"👩", context:"이모님, 정말 잘 먹었습니다! 인사해요", tag:"称谓"},
+  {id:"ci8", zh:"주말", py:"ju-mal", meaning:"weekend", meaningJp:"周末", emoji:"🗓️", context:"주말에 친구와 함께 전통시장에 갑니다", tag:"时间"},
+  {id:"ci9", zh:"행복", py:"haeng-bok", meaning:"happiness", meaningJp:"幸福、快乐", emoji:"✨", context:"배도 부르고 기분도 참 행복합니다", tag:"情感"},
+  {id:"ci10", zh:"맛있다", py:"mas-it-da", meaning:"delicious / tasty", meaningJp:"好吃、美味", emoji:"😋", context:"매콤하고 달콤한 떡볶이가 아주 맛있어요", tag:"形容"},
+  {id:"ci11", zh:"맵다", py:"maep-da", meaning:"spicy / hot", meaningJp:"辣", emoji:"🌶️", context:"매콤한 떡볶이가 아주 맛있어요", tag:"形容"},
+  {id:"ci12", zh:"달다", py:"dal-da", meaning:"sweet", meaningJp:"甜、香甜", emoji:"🍯", context:"달콤한 호떡을 사 먹어요", tag:"形容"}
+];
+
+// 4. 课后「韩国美食」词表 (7 Thematic Food Words)
+const PROPER_NOUNS = [
+  {id:"pn1", zh:"떡볶이", py:"tteok-bok-ki", meaning:"spicy rice cake (tteokbokki)", meaningJp:"辣炒年糕", emoji:"🍢", context:"우리는 분식집에서 떡볶이와 김밥을 주문해요", tag:"美食"},
+  {id:"pn2", zh:"김밥", py:"gim-bap", meaning:"seaweed rice roll (kimbap)", meaningJp:"紫菜包饭", emoji:"🍙", context:"우리는 분식집에서 떡볶이와 김밥을 주문해요", tag:"美食"},
+  {id:"pn3", zh:"어묵", py:"eo-muk", meaning:"fish cake (odeng)", meaningJp:"鱼饼、鱼糕", emoji:"🍥", context:"따뜻한 어묵 국물도 한 컵 마십니다", tag:"美食"},
+  {id:"pn4", zh:"호떡", py:"ho-tteok", meaning:"sweet filled pancake (hotteok)", meaningJp:"糖饼、香甜油饼", emoji:"🥞", context:"후식으로 달콤하고 바삭한 호떡을 사 먹어요", tag:"美食"},
+  {id:"pn5", zh:"비빔밥", py:"bi-bim-bap", meaning:"mixed rice (bibimbap)", meaningJp:"韩式拌饭", emoji:"🥗", context:"한국의 대표적인 전통 건강식 비빔밥", tag:"美食"},
+  {id:"pn6", zh:"라면", py:"ra-myeon", meaning:"ramen / instant noodles", meaningJp:"拉面、方便面", emoji:"🍜", context:"얼큰하고 쫄깃쫄깃한 라면 한 그릇", tag:"美食"},
+  {id:"pn7", zh:"물냉면", py:"mul-naeng-myeon", meaning:"cold buckwheat noodles", meaningJp:"水冷面", emoji:"🧊", context:"살얼음 동동 시원한 물냉면", tag:"美食"}
+];
+
+const ALL_VOCAB = [...WORDS, ...PROPER_NOUNS];
+
+// 5. 课后重点句子打散重组 (5 Sentences)
+const SCRAMBLE_SENTENCES = [
+  {
+    id: "sent1",
+    zh: "맛있는 음식을 친구와 함께 나누어 먹는 것은 큰 기쁨입니다.",
+    tokens: ["맛있는 음식을", "친구와 함께", "나누어 먹는 것은", "큰 기쁨입니다."],
+    isKey: true
+  },
+  {
+    id: "st1",
+    zh: "주말에 친구와 함께 전통시장에 갑니다.",
+    tokens: ["주말에", "친구와 함께", "전통시장에", "갑니다."]
+  },
+  {
+    id: "st3",
+    zh: "우리는 분식집에서 떡볶이와 김밥을 주문해요.",
+    tokens: ["우리는", "분식집에서", "떡볶이와 김밥을", "주문해요."]
+  },
+  {
+    id: "st4",
+    zh: "매콤하고 달콤한 떡볶이가 아주 맛있어요.",
+    tokens: ["매콤하고 달콤한", "떡볶이가", "아주 맛있어요."]
+  },
+  {
+    id: "st7",
+    zh: "이모님, 정말 잘 먹었습니다! 인사해요.",
+    tokens: ["이모님,", "정말 잘 먹었습니다!", "인사해요."]
+  }
+];
+
+// 6. 故事与韩语常识问答 (8 Questions)
+const QUIZ = [
+  {q:"민우는 주말에 누구와 어디에 갑니까?", opts:["혼자 도서관 (独自去图书馆)", "친구와 전통시장 (和朋友去传统市场)", "동생과 수영장", "가족과 공항"], a:1},
+  {q:"분식집에서 먼저 주문한 두 가지 음식은 무엇입니까?", opts:["피자와 콜라", "커피와 케이크", "떡볶이와 김밥 (辣炒年糕和紫菜包饭)", "삼계탕과 냉면"], a:2},
+  {q:"떡볶이의 맛은 어떠했습니까?", opts:["매콤하고 달콤해요 (微辣带甜)", "너무 짜요 (太咸)", "쓰고 떫어요 (苦涩)", "아무 맛도 안 나요"], a:0},
+  {q:"음식을 먹으며 함께 따뜻하게 마신 것은 무엇입니까?", opts:["시원한 콜라", "차가운 우유", "따뜻한 어묵 국물 (温热的鱼饼汤)", "녹차"], a:2},
+  {q:"식사 후 달콤한 ‘후식’(디저트)으로 사 먹은 음식은?", opts:["아이스크림", "달콤하고 바삭한 호떡 (香甜酥脆的糖饼)", "초콜릿", "과일 주스"], a:1},
+  {q:"식사를 마친 후 식당 이모님께 드린 한국어 감사의 인사는?", opts:["안녕하세요", "죄송합니다", "잘 먹었습니다! (多谢款待/吃得很好)", "안녕히 계세요"], a:2},
+  {q:"글자 ‘떡’의 초성인 ‘ㄸ’은 한글에서 무엇이라고 부릅니까?", opts:["쌍자음 (双辅音)", "단모음 (单元音)", "받침 (终声收音)", "이중모음"], a:0},
+  {q:"한국의 분식집이나 식당에서 친근하게 여주인님을 부르는 호칭은?", opts:["선생님 (老师)", "이모님 / 이모 (姨母/阿姨)", "대통령", "동생"], a:1},
+];
+
+// 7. 选词填空 (12 Questions: 课文句式 + 助词用法)
+const CLOZE_QUESTIONS = [
+  {
+    id: "kr3_c1",
+    type: "text",
+    before: "주말에 친구",
+    answer: "와",
+    after: " 함께 전통시장에 갑니다.",
+    py: "Ju-mal-e chin-gu-wa ham-kke jeon-tong-si-jang-e gam-ni-da.",
+    en: "On the weekend, I go to the traditional market with my friend.",
+    jp: "周末和朋友一起去传统市场。",
+    options: ["와", "과", "를", "에서"],
+    hint: "语法助词 · 无收音名词后用伴随助词「와」(和...)",
+    audioId: "st1"
+  },
+  {
+    id: "kr3_c2",
+    type: "text",
+    before: "주말에 친구와 함께 전통시장",
+    answer: "에",
+    after: " 갑니다.",
+    py: "Ju-mal-e chin-gu-wa ham-kke jeon-tong-si-jang-e gam-ni-da.",
+    en: "On the weekend, I go to the traditional market with my friend.",
+    jp: "周末和朋友一起去传统市场。",
+    options: ["에", "에서", "을", "의"],
+    hint: "语法助词 · 接在去向目的地名词后的方向助词「에」",
+    audioId: "st1"
+  },
+  {
+    id: "kr3_c3",
+    type: "text",
+    before: "",
+    answer: "시장",
+    after: "에는 맛있는 음식이 정말 많습니다.",
+    py: "Si-jang-e-neun mas-it-neun eum-sig-i jeong-mal man-seum-ni-da.",
+    en: "There is really a lot of delicious food in the market.",
+    jp: "市场里美味的食物真的很多。",
+    options: ["시장", "병원", "도서관", "운동장"],
+    hint: "课文核心词 · 表示商品与美食交易的「市场」",
+    audioId: "st2"
+  },
+  {
+    id: "kr3_c4",
+    type: "text",
+    before: "시장에는 맛있는 음식",
+    answer: "이",
+    after: " 정말 많습니다.",
+    py: "Si-jang-e-neun mas-it-neun eum-sig-i jeong-mal man-seum-ni-da.",
+    en: "There is really a lot of delicious food in the market.",
+    jp: "市场里美味的食物真的很多。",
+    options: ["이", "가", "을", "를"],
+    hint: "语法助词 · 有收音的名词后用主格助词「이」",
+    audioId: "st2"
+  },
+  {
+    id: "kr3_c5",
+    type: "text",
+    before: "우리는 분식집",
+    answer: "에서",
+    after: " 떡볶이와 김밥을 주문해요.",
+    py: "U-ri-neun bun-sik-jip-e-seo tteok-bok-ki-wa gim-bab-eul ju-mun-hae-yo.",
+    en: "We order tteokbokki and kimbap at the snack restaurant.",
+    jp: "我们在小吃店点辣炒年糕和紫菜包饭。",
+    options: ["에서", "에", "로", "과"],
+    hint: "语法助词 · 表示动作进行场所的助词「에서」(在...)",
+    audioId: "st3"
+  },
+  {
+    id: "kr3_c6",
+    type: "text",
+    before: "우리는 분식집에서 떡볶이와 김밥",
+    answer: "을",
+    after: " 주문해요.",
+    py: "U-ri-neun bun-sik-jip-e-seo tteok-bok-ki-wa gim-bab-eul ju-mun-hae-yo.",
+    en: "We order tteokbokki and kimbap at the snack restaurant.",
+    jp: "我们在小吃店点辣炒年糕和紫菜包饭。",
+    options: ["을", "를", "이", "가"],
+    hint: "语法助词 · 有收音的名词后用宾格助词「을」",
+    audioId: "st3"
+  },
+  {
+    id: "kr3_c7",
+    type: "text",
+    before: "매콤하",
+    answer: "고",
+    after: " 달콤한 떡볶이가 아주 맛있어요.",
+    py: "Mae-kom-ha-go dal-kom-han tteok-bok-ki-ga a-ju mas-it-eo-yo.",
+    en: "The spicy and sweet tteokbokki is very delicious.",
+    jp: "微辣带甜的炒年糕非常美味。",
+    options: ["고", "면", "지만", "며"],
+    hint: "语法连接词尾 · 表示两个形容词并列并存的「-고」",
+    audioId: "st4"
+  },
+  {
+    id: "kr3_c8",
+    type: "text",
+    before: "따뜻한 ",
+    answer: "어묵",
+    after: " 국물도 한 컵 마십니다.",
+    py: "Tta-tteut-han eo-muk guk-mul-do han keop ma-sim-ni-da.",
+    en: "I also drink a cup of warm fish cake broth.",
+    jp: "温热的鱼饼汤也喝上一杯。",
+    options: ["어묵", "사탕", "수박", "초콜릿"],
+    hint: "韩国特色传统小吃 · 串在竹签上的「鱼饼/鱼糕」",
+    audioId: "st5"
+  },
+  {
+    id: "kr3_c9",
+    type: "text",
+    before: "후식",
+    answer: "으로",
+    after: " 달콤하고 바삭한 호떡을 사 먹어요.",
+    py: "Hu-sig-eu-ro dal-kom-ha-go ba-sak-han ho-tteog-eul sa meog-eo-yo.",
+    en: "For dessert, we buy and eat sweet, crispy hotteok.",
+    jp: "作为甜点，买香甜酥脆的糖饼吃。",
+    options: ["으로", "에서", "와", "는"],
+    hint: "语法助词 · 表示身份、用途或资格的助词「-(으)로」(作为...)",
+    audioId: "st6"
+  },
+  {
+    id: "kr3_c10",
+    type: "text",
+    before: "달콤하고 바삭한 호떡을 ",
+    answer: "사 먹어요",
+    after: ".",
+    py: "Hu-sig-eu-ro dal-kom-ha-go ba-sak-han ho-tteog-eul sa meog-eo-yo.",
+    en: "For dessert, we buy and eat sweet, crispy hotteok.",
+    jp: "作为甜点，买香甜酥脆的糖饼吃。",
+    options: ["사 먹어요", "버려요", "그려요", "던져요"],
+    hint: "复合动词表达 · 表示「买来吃」日常表达",
+    audioId: "st6"
+  },
+  {
+    id: "kr3_c11",
+    type: "text",
+    before: "이모님, 정말 ",
+    answer: "잘 먹었습니다",
+    after: "! 인사해요.",
+    py: "I-mo-nim, jeong-mal jal meog-eot-seum-ni-da! In-sa-hae-yo.",
+    en: "Auntie, thank you for the wonderful meal! We greet politely.",
+    jp: "阿姨，真的吃得很好！礼貌地道谢。",
+    options: ["잘 먹었습니다", "안녕히 가세요", "처음 뵙겠습니다", "축하합니다"],
+    hint: "韩国用餐经典礼仪 · 饭后向主人表达美味与感谢的常用语",
+    audioId: "st7"
+  },
+  {
+    id: "kr3_c12",
+    type: "text",
+    before: "배도 부르고 기분도 참 ",
+    answer: "행복합니다",
+    after: ".",
+    py: "Bae-do bu-reu-go gi-bun-do cham haeng-bok-ham-ni-da.",
+    en: "My belly is full and I feel truly happy.",
+    jp: "肚子吃得饱饱的，心情也特别幸福。",
+    options: ["행복합니다", "슬픕니다", "어렵습니다", "춥습니다"],
+    hint: "情感形容词 · 表示「幸福、满心喜悦」的格式体敬语",
+    audioId: "st8"
+  }
+];
+
+/* ---------------- GLOBAL STATE ---------------- */
+let storyIdx = 0;
+let showRo = true;
+let showZh = true;
+let showEn = false;
+let charIdx = 0;
+let flashIdx = 0;
+let vocabFilter = 'all';
+let currentVocabList = ALL_VOCAB;
+let matchMode = 'chars';
+let matchState = { pairs: [], selectedZh: null, selectedPy: null, wrong: 0, remaining: 0 };
+let scrambleState = { idx: 0, placed: [], pool: [] };
+let quizState = { idx: 0, correct: 0, answered: false };
+let lastGame = null;
+
+const progress = JSON.parse(localStorage.getItem('hangugeo3_progress') || '{}');
+function saveProgress(){
+  localStorage.setItem('hangugeo3_progress', JSON.stringify(progress));
+  refreshBadges();
+}
+
+function refreshBadges(){
+  const t = (progress.match||0) + (progress.scramble||0) + (progress.quiz||0) + (progress.audio||0) + (progress.cloze||0);
+  document.getElementById('topStars').textContent = '⭐ ' + t;
+  ['match','scramble','quiz','audio','cloze'].forEach(k=>{
+    const el = document.getElementById('badge' + k.charAt(0).toUpperCase() + k.slice(1));
+    if(el){
+      if(progress[k]){ el.style.display = 'block'; el.textContent = '⭐'.repeat(progress[k]); }
+      else el.style.display = 'none';
+    }
+  });
+
+  const reviewEl = document.getElementById('badgeReview');
+  if(reviewEl){
+    const srs = getSrsData();
+    const items = Object.values(srs.items || {});
+    const due = items.filter(i => (i.box||1) < 4).length;
+    if(due > 0){
+      reviewEl.style.display = 'block';
+      reviewEl.textContent = due + ' 待温故';
+    } else {
+      reviewEl.style.display = 'none';
+    }
+  }
+
+  // Voice progress
+  const voiceEl = document.getElementById('badgeVoiceProgress');
+  if(voiceEl && window.voiceManager){
+    const items = STORY.map(s => ({ id: 'hangugeo3_' + s.id }));
+    window.voiceManager.countRecorded(items).then(count => {
+      if(count > 0){
+        voiceEl.style.display = 'block';
+        voiceEl.textContent = '🎙️ ' + count + '/' + STORY.length;
+      } else {
+        voiceEl.style.display = 'none';
+      }
+    });
+  }
+}
+
+/* ---------------- AUDIO & TTS ENGINE ---------------- */
+const AUDIO_DIR = 'audio/hangugeo3/';
+const AUDIO_DIR_EN = 'audio/hangugeo3_en/';
+const AUDIO_DIR_ZH = 'audio/hangugeo3_zh/';
+const audioCache = {};
+let currentClip = null;
+
+function playClip(id, text, onend, lang){
+  stopClip();
+  lang = lang || 'ko-KR';
+  const dir = lang === 'en-US' ? AUDIO_DIR_EN : (lang === 'zh-CN' ? AUDIO_DIR_ZH : AUDIO_DIR);
+  if(!id){ speak(text, onend, lang); return; }
+  const key = lang + ':' + id;
+  let a = audioCache[key];
+  if(!a){ a = new Audio(dir + id + '.mp3'); audioCache[key] = a; }
+  a.currentTime = 0;
+  let done = false;
+  const finish = ()=>{ if(done) return; done = true; if(currentClip === a) currentClip = null; if(onend) onend(); };
+  a.onended = finish;
+  a.onerror = ()=>{ if(done) return; done = true; if(currentClip === a) currentClip = null; speak(text, onend, lang); };
+  currentClip = a;
+  const p = a.play();
+  if(p && typeof p.catch === 'function'){
+    p.catch(()=>{ if(done) return; done = true; currentClip = null; speak(text, onend, lang); });
+  }
+}
+
+function stopClip(){
+  if(currentClip){ try{ currentClip.pause(); currentClip.currentTime = 0; }catch(e){} currentClip = null; }
+}
+
+/* ---------------- TTS FALLBACK ---------------- */
+let koVoice = null, zhVoice = null, enVoice = null;
+let currentUtterance = null;
+let resumeWatchdog = null;
+
+function pickVoice(){
+  if(!('speechSynthesis' in window)) return;
+  const voices = speechSynthesis.getVoices();
+  koVoice = voices.find(v=>/^ko/i.test(v.lang||'')) || null;
+  zhVoice = voices.find(v=>/^zh/i.test(v.lang||'') && /cn|hans|mandarin/i.test((v.lang+v.name).toLowerCase())) || voices.find(v=>/^zh/i.test(v.lang||'')) || null;
+  enVoice = voices.find(v=>/^en-US/i.test(v.lang||'')) || voices.find(v=>/^en/i.test(v.lang||'')) || null;
+}
+
+if('speechSynthesis' in window){
+  pickVoice();
+  speechSynthesis.onvoiceschanged = pickVoice;
+  let voicePolls = 0;
+  const voicePollTimer = setInterval(()=>{
+    pickVoice();
+    voicePolls++;
+    if((koVoice && zhVoice && enVoice) || voicePolls > 8) clearInterval(voicePollTimer);
+  }, 400);
+
+  const unlockSpeech = ()=>{
+    try{
+      const u = new SpeechSynthesisUtterance(' ');
+      u.volume = 0;
+      speechSynthesis.speak(u);
+    }catch(e){}
+    document.removeEventListener('touchend', unlockSpeech);
+    document.removeEventListener('click', unlockSpeech);
+  };
+  document.addEventListener('touchend', unlockSpeech, {once:true, passive:true});
+  document.addEventListener('click', unlockSpeech, {once:true});
+}
+
+function speak(text, onend, lang){
+  lang = lang || 'ko-KR';
+  if(!('speechSynthesis' in window)) { toast('设备不支持语音朗读'); if(onend) onend(); return; }
+  try{
+    if(resumeWatchdog){ clearInterval(resumeWatchdog); resumeWatchdog = null; }
+    speechSynthesis.cancel();
+    let voice = /^ko/i.test(lang) ? koVoice : (/^zh/i.test(lang) ? zhVoice : enVoice);
+    if(!voice){ pickVoice(); voice = /^ko/i.test(lang) ? koVoice : (/^zh/i.test(lang) ? zhVoice : enVoice); }
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang;
+    if(voice) u.voice = voice;
+    u.rate = /^ko/i.test(lang) ? 0.9 : 0.85;
+    let finished = false;
+    const finish = ()=>{
+      if(finished) return;
+      finished = true;
+      if(resumeWatchdog){ clearInterval(resumeWatchdog); resumeWatchdog = null; }
+      if(onend) onend();
+    };
+    u.onend = finish;
+    u.onerror = ()=>{ finish(); };
+    currentUtterance = u;
+    setTimeout(()=>{
+      speechSynthesis.speak(u);
+      resumeWatchdog = setInterval(()=>{
+        if(speechSynthesis.speaking) speechSynthesis.resume();
+        else { clearInterval(resumeWatchdog); resumeWatchdog = null; }
+      }, 4000);
+      setTimeout(()=>{ if(!finished && !speechSynthesis.speaking) finish(); }, 6000);
+    }, 30);
+  }catch(e){
+    if(onend) onend();
+  }
+}
+
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+function showScreen(id){
+  stopClip();
+  if('speechSynthesis' in window) speechSynthesis.cancel();
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const s = document.getElementById(id);
+  if(s) s.classList.add('active');
+  const main = document.querySelector('main');
+  if(main) main.scrollTop = 0;
+}
+
+function goHome(){
+  showScreen('screen-home');
+  refreshBadges();
+}
+
+/* ---------------- STORY READER ---------------- */
+function goStory(){
+  showScreen('screen-story');
+  renderStory();
+}
+
+function renderStory(){
+  const s = STORY[storyIdx];
+  document.getElementById('storyProgress').textContent = (storyIdx + 1) + ' / ' + STORY.length;
+  document.getElementById('storyKo').textContent = s.zh;
+  document.getElementById('storyRo').textContent = s.py;
+  document.getElementById('storyEn').textContent = s.en;
+  document.getElementById('storyZh').textContent = s.jp;
+
+  document.getElementById('storyRo').style.display = showRo ? 'block' : 'none';
+  document.getElementById('storyEnRow').style.display = showEn ? 'flex' : 'none';
+  document.getElementById('storyZhRow').style.display = showZh ? 'flex' : 'none';
+
+  updateSentenceRecordStatus();
+}
+
+function toggleRo(){
+  showRo = !showRo;
+  const chip = document.getElementById('chipToggleRo');
+  chip.classList.toggle('active', showRo);
+  chip.textContent = '罗马音: ' + (showRo ? '开' : '关');
+  renderStory();
+}
+function toggleZh(){
+  showZh = !showZh;
+  const chip = document.getElementById('chipToggleZh');
+  chip.classList.toggle('active', showZh);
+  chip.textContent = '中文: ' + (showZh ? '开' : '关');
+  renderStory();
+}
+function toggleEn(){
+  showEn = !showEn;
+  const chip = document.getElementById('chipToggleEn');
+  chip.classList.toggle('active', showEn);
+  chip.textContent = '英文: ' + (showEn ? '开' : '关');
+  renderStory();
+}
+
+function playCurrentStory(){
+  const s = STORY[storyIdx];
+  playClip(s.id, s.zh);
+}
+function speakStoryZh(){
+  const s = STORY[storyIdx];
+  playClip(s.id, s.jp, null, 'zh-CN');
+}
+function speakStoryEn(){
+  const s = STORY[storyIdx];
+  playClip(s.id, s.en, null, 'en-US');
+}
+
+function storyPrev(){
+  if(storyIdx > 0){ storyIdx--; renderStory(); }
+  else { storyIdx = STORY.length - 1; renderStory(); }
+}
+function storyNext(){
+  if(storyIdx < STORY.length - 1){ storyIdx++; renderStory(); }
+  else { storyIdx = 0; renderStory(); }
+}
+
+/* ---------------- VOICE RECORDER ---------------- */
+let isRecording = false;
+let recTimerInterval = null;
+let recSeconds = 0;
+
+function updateSentenceRecordStatus(){
+  const s = STORY[storyIdx];
+  const voiceId = 'hangugeo3_' + s.id;
+  const micBtn = document.getElementById('storyMicBtn');
+  if(!micBtn) return;
+  if(window.voiceManager){
+    window.voiceManager.hasRecord(voiceId).then(has => {
+      if(!isRecording){
+        micBtn.style.background = has ? '#eff6ff' : '#fff';
+        micBtn.style.borderColor = has ? '#93c5fd' : '#bfdbfe';
+        micBtn.style.color = has ? '#1d4ed8' : 'var(--ink)';
+      }
+    });
+  }
+}
+
+async function toggleSentenceRecord(){
+  if(!window.voiceManager){ toast('录音模块初始化中'); return; }
+  const s = STORY[storyIdx];
+  const voiceId = 'hangugeo3_' + s.id;
+  const micBtn = document.getElementById('storyMicBtn');
+  const wavePanel = document.getElementById('voiceWavePanel');
+
+  if(isRecording){
+    // Stop recording
+    try{
+      await window.voiceManager.stopRecord();
+    }catch(e){}
+    isRecording = false;
+    micBtn.classList.remove('recording');
+    wavePanel.classList.remove('active');
+    clearInterval(recTimerInterval);
+    toast('🎉 第 ' + (storyIdx + 1) + ' 句录音保存成功！');
+    updateSentenceRecordStatus();
+    refreshBadges();
+  } else {
+    // Start recording
+    stopClip();
+    try{
+      await window.voiceManager.startRecord(voiceId, {
+        onWave: (freq) => {
+          const bars = document.querySelectorAll('.voice-wave-bars .bar');
+          bars.forEach((b, i) => {
+            const h = Math.max(4, Math.min(20, (freq[i * 2] || 0) / 10));
+            b.style.height = h + 'px';
+          });
+        }
+      });
+      isRecording = true;
+      micBtn.classList.add('recording');
+      wavePanel.classList.add('active');
+      recSeconds = 0;
+      document.getElementById('voiceRecTimer').textContent = '00:00';
+      recTimerInterval = setInterval(()=>{
+        recSeconds++;
+        const mm = String(Math.floor(recSeconds / 60)).padStart(2, '0');
+        const ss = String(recSeconds % 60).padStart(2, '0');
+        document.getElementById('voiceRecTimer').textContent = mm + ':' + ss;
+      }, 1000);
+    }catch(err){
+      toast('无法启动麦克风，请检查浏览器录音权限');
+    }
+  }
+}
+
+/* ---------------- FULL TEXT READER ---------------- */
+function goFull(){
+  showScreen('screen-full');
+  renderFullText();
+}
+
+function renderFullText(){
+  const list = document.getElementById('fullTextList');
+  list.innerHTML = '';
+  STORY.forEach((s, i)=>{
+    const row = document.createElement('div');
+    row.className = 'full-sentence';
+    row.id = 'full-sent-' + i;
+    row.onclick = (e)=>{
+      if(e.target.closest('.sent-action-btn')) return;
+      playClip(s.id, s.zh);
+    };
+    row.innerHTML = `
+      <div class="full-sent-zh">${i + 1}. ${s.zh}</div>
+      <div class="full-sent-py">${s.py}</div>
+      <div class="full-sent-en">${s.en}</div>
+      <div class="full-sent-jp">${s.jp}</div>
+      <div class="full-sent-voice-bar" id="sent-voice-slot-${i}">
+        <button class="sent-action-btn record-link" onclick="jumpToRecordSentence(${i})">🎙️ 跟读</button>
+      </div>
+    `;
+    list.appendChild(row);
+  });
+  updateFullTextVoiceBars();
+}
+
+function updateFullTextVoiceBars(){
+  if(!window.voiceManager) return;
+  STORY.forEach((s, i)=>{
+    const voiceId = 'hangugeo3_' + s.id;
+    const slot = document.getElementById('sent-voice-slot-' + i);
+    const row = document.getElementById('full-sent-' + i);
+    if(!slot) return;
+    window.voiceManager.hasRecord(voiceId).then(has => {
+      if(has){
+        if(row) row.classList.add('has-my-voice');
+        slot.innerHTML = `
+          <button class="sent-action-btn my-voice" onclick="playStoryVoiceByIndex(${i})">🎧 我的配音</button>
+          <button class="sent-action-btn download" onclick="downloadStoryVoiceByIndex(${i})">💾 导出</button>
+          <button class="sent-action-btn record-link" onclick="jumpToRecordSentence(${i})">🔁 重录</button>
+        `;
+      }
+    });
+  });
+}
+
+let fullPlaying = false;
+let fullPlayIdx = 0;
+function toggleFullPlay(){
+  if(fullPlaying) stopFullPlay();
+  else startFullPlay();
+}
+function startFullPlay(){
+  stopFullPlay();
+  fullPlaying = true;
+  fullPlayIdx = 0;
+  document.getElementById('fullPlayBtn').textContent = '⏸️ 停止播放';
+  playFullStep();
+}
+function playFullStep(){
+  if(!fullPlaying || fullPlayIdx >= STORY.length){ stopFullPlay(); return; }
+  document.querySelectorAll('.full-sentence').forEach(el=>el.classList.remove('playing'));
+  const row = document.getElementById('full-sent-' + fullPlayIdx);
+  if(row){ row.classList.add('playing'); row.scrollIntoView({behavior:'smooth', block:'center'}); }
+  playClip(STORY[fullPlayIdx].id, STORY[fullPlayIdx].zh, ()=>{
+    if(!fullPlaying) return;
+    fullPlayIdx++;
+    setTimeout(playFullStep, 400);
+  });
+}
+function stopFullPlay(){
+  fullPlaying = false;
+  const btn = document.getElementById('fullPlayBtn');
+  if(btn) btn.textContent = '▶️ 原声连续朗读';
+  document.querySelectorAll('.full-sentence').forEach(el=>el.classList.remove('playing'));
+  stopClip();
+}
+
+let fullMyPlaying = false;
+function toggleFullMyPlay(){
+  if(fullMyPlaying) stopFullMyPlay();
+  else startFullMyPlay();
+}
+async function startFullMyPlay(){
+  stopFullPlay();
+  fullMyPlaying = true;
+  document.getElementById('fullMyPlayBtn').textContent = '⏸️ 停止我的配音';
+  toast('🎙️ 开始连续播放您的全文配音！');
+
+  const items = STORY.map((s, i) => ({
+    index: i,
+    id: s.id,
+    voiceId: 'hangugeo3_' + s.id,
+    zh: s.zh
+  }));
+
+  window.voiceManager.playSequential(items, {
+    onStepStart: (idx, item, hasMyVoice) => {
+      document.querySelectorAll('.full-sentence').forEach(el=>el.classList.remove('playing'));
+      const row = document.getElementById('full-sent-' + idx);
+      if(row){ row.classList.add('playing'); row.scrollIntoView({behavior:'smooth', block:'center'}); }
+      if(!hasMyVoice) toast('第 ' + (idx + 1) + ' 句未录音，自动播放原声');
+    },
+    onStepEnd: (idx) => {
+      const row = document.getElementById('full-sent-' + idx);
+      if(row) row.classList.remove('playing');
+    },
+    fallbackPlay: (idx, item, next) => {
+      playClip(item.id, item.zh, next);
+    },
+    onFinish: () => {
+      stopFullMyPlay();
+      toast('🎉 全文配音播放完毕！');
+    }
+  });
+}
+function stopFullMyPlay(){
+  fullMyPlaying = false;
+  const btn = document.getElementById('fullMyPlayBtn');
+  if(btn) btn.textContent = '🎙️ 播放我的全文配音';
+  document.querySelectorAll('.full-sentence').forEach(el=>el.classList.remove('playing'));
+  if(window.voiceManager) window.voiceManager.stopSequential();
+}
+
+function playStoryVoiceByIndex(idx){
+  const s = STORY[idx];
+  const voiceId = 'hangugeo3_' + s.id;
+  window.voiceManager.playRecord(voiceId, () => {
+    toast('🎧 正在播放第 ' + (idx + 1) + ' 句您的朗读录音…');
+  });
+}
+function downloadStoryVoiceByIndex(idx){
+  const s = STORY[idx];
+  const voiceId = 'hangugeo3_' + s.id;
+  window.voiceManager.downloadRecord(voiceId, '나의하루_第' + (idx + 1) + '句_录音.webm');
+  toast('💾 正在导出录音文件！');
+}
+function jumpToRecordSentence(idx){
+  storyIdx = idx;
+  renderStory();
+  showScreen('screen-story');
+  toast('已切换到第 ' + (idx + 1) + ' 句，请点击麦克风开始录音');
+}
+
+/* ---------------- CHARACTERS (12 CORE SYLLABLE BLOCKS) ---------------- */
+function goChars(){
+  showScreen('screen-chars');
+  renderCharPills();
+  renderChar();
+  initHangulCanvas();
+}
+
+function renderCharPills(){
+  const p = document.getElementById('charPills');
+  p.innerHTML = '';
+  CHARACTERS.forEach((c, idx)=>{
+    const b = document.createElement('div');
+    b.className = 'char-pill' + (idx === charIdx ? ' active' : '');
+    b.textContent = c.zh;
+    b.onclick = ()=>{ charIdx = idx; renderChar(); };
+    p.appendChild(b);
+  });
+}
+
+function renderChar(){
+  const c = CHARACTERS[charIdx];
+  document.getElementById('charCard').classList.remove('flipped');
+  document.getElementById('charRo').textContent = c.py;
+  document.getElementById('charHangul').textContent = c.zh;
+  document.getElementById('charHangulBack').textContent = c.zh;
+  document.getElementById('charRoBack').textContent = c.py;
+  document.getElementById('charHanjaBadge').textContent = '对应汉字: ' + c.hanja;
+  document.getElementById('charHanjaDesc').textContent = '汉字词源: ' + c.hanja;
+  document.getElementById('charWords').innerHTML = '<strong>常用词:</strong> ' + c.words;
+  document.getElementById('charMeaning').textContent = c.meaning + ' · ' + c.context;
+  document.getElementById('charCounter').textContent = (charIdx + 1) + ' / ' + CHARACTERS.length;
+
+  document.getElementById('bdCho').textContent = c.cho;
+  document.getElementById('bdJung').textContent = c.jung;
+  const jongWrap = document.getElementById('bdJongWrap');
+  if(c.jong){
+    jongWrap.style.display = 'flex';
+    document.getElementById('bdJong').textContent = c.jong;
+  } else {
+    jongWrap.style.display = 'none';
+  }
+
+  document.querySelectorAll('.char-pill').forEach((el, i)=>{
+    el.classList.toggle('active', i === charIdx);
+  });
+
+  clearHangulCanvas();
+}
+
+function flipChar(e){
+  if(e && e.target && e.target.closest('#hangulCanvas, .btn')){ return; }
+  if(e) e.stopPropagation();
+  document.getElementById('charCard').classList.toggle('flipped');
+}
+
+function charNext(){ charIdx = (charIdx + 1) % CHARACTERS.length; renderChar(); }
+function charPrev(){ charIdx = (charIdx - 1 + CHARACTERS.length) % CHARACTERS.length; renderChar(); }
+
+function playCurrentCharAudio(e){
+  if(e) e.stopPropagation();
+  const c = CHARACTERS[charIdx];
+  playClip(c.id, c.zh);
+}
+
+/* Hangul Handwriting Canvas */
+let hCanvas = null, hCtx = null, isDrawing = false;
+function initHangulCanvas(){
+  hCanvas = document.getElementById('hangulCanvas');
+  if(!hCanvas) return;
+  hCtx = hCanvas.getContext('2d');
+  hCtx.lineWidth = 6;
+  hCtx.lineCap = 'round';
+  hCtx.lineJoin = 'round';
+  hCtx.strokeStyle = '#1d4ed8';
+
+  const getPos = (e) => {
+    const rect = hCanvas.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return { x: (clientX - rect.left) * (hCanvas.width / rect.width), y: (clientY - rect.top) * (hCanvas.height / rect.height) };
+  };
+
+  const startDraw = (e)=>{
+    e.preventDefault(); e.stopPropagation();
+    isDrawing = true;
+    const pos = getPos(e);
+    hCtx.beginPath();
+    hCtx.moveTo(pos.x, pos.y);
+  };
+  const moveDraw = (e)=>{
+    if(!isDrawing) return;
+    e.preventDefault(); e.stopPropagation();
+    const pos = getPos(e);
+    hCtx.lineTo(pos.x, pos.y);
+    hCtx.stroke();
+  };
+  const stopDraw = (e)=>{
+    if(!isDrawing) return;
+    e.preventDefault(); e.stopPropagation();
+    isDrawing = false;
+  };
+
+  hCanvas.addEventListener('mousedown', startDraw);
+  hCanvas.addEventListener('mousemove', moveDraw);
+  window.addEventListener('mouseup', stopDraw);
+
+  hCanvas.addEventListener('touchstart', startDraw, {passive:false});
+  hCanvas.addEventListener('touchmove', moveDraw, {passive:false});
+  hCanvas.addEventListener('touchend', stopDraw, {passive:false});
+}
+
+function clearHangulCanvas(e){
+  if(e) e.stopPropagation();
+  if(!hCanvas || !hCtx) return;
+  hCtx.clearRect(0, 0, hCanvas.width, hCanvas.height);
+}
+
+/* ---------------- FLASHCARDS (生词) ---------------- */
+function goFlash(){
+  showScreen('screen-flash');
+  setVocabFilter('all');
+}
+
+function setVocabFilter(mode){
+  vocabFilter = mode;
+  ['All','Words','Proper'].forEach(k=>{
+    const el = document.getElementById('chipVocab' + k);
+    if(el) el.classList.remove('active');
+  });
+  if(mode === 'all'){
+    currentVocabList = ALL_VOCAB;
+    document.getElementById('chipVocabAll').classList.add('active');
+  } else if(mode === 'words'){
+    currentVocabList = WORDS;
+    document.getElementById('chipVocabWords').classList.add('active');
+  } else if(mode === 'proper'){
+    currentVocabList = PROPER_NOUNS;
+    document.getElementById('chipVocabProper').classList.add('active');
+  }
+  flashIdx = 0;
+  renderFlash();
+}
+
+function renderFlash(){
+  if(!currentVocabList.length) return;
+  const v = currentVocabList[flashIdx];
+  document.getElementById('flashCard').classList.remove('flipped');
+  document.getElementById('flashEmoji').textContent = v.emoji;
+  document.getElementById('flashKo').textContent = v.zh;
+  document.getElementById('flashTag').textContent = v.tag;
+  document.getElementById('flashKoBack').textContent = v.zh;
+  document.getElementById('flashRo').textContent = v.py;
+  document.getElementById('flashMeaning').textContent = v.meaning + ' · ' + v.meaningJp;
+  document.getElementById('flashContext').textContent = '“' + v.context + '”';
+  document.getElementById('flashCounter').textContent = (flashIdx + 1) + ' / ' + currentVocabList.length;
+}
+
+function flipFlash(){ document.getElementById('flashCard').classList.toggle('flipped'); }
+function flashNext(){ flashIdx = (flashIdx + 1) % currentVocabList.length; renderFlash(); }
+function flashPrev(){ flashIdx = (flashIdx - 1 + currentVocabList.length) % currentVocabList.length; renderFlash(); }
+
+function playFlashAudio(e){
+  if(e) e.stopPropagation();
+  const v = currentVocabList[flashIdx];
+  playClip(v.id, v.zh);
+}
+
+/* ---------------- MATCHING GAME ---------------- */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1; i>0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function goMatch(){
+  showScreen('screen-match');
+  setMatchMode('chars');
+}
+
+function setMatchMode(mode){
+  matchMode = mode;
+  ['Chars','Words','Proper','All'].forEach(k=>{
+    const el = document.getElementById('chipMatch' + k);
+    if(el) el.classList.remove('active');
+  });
+  const map = { chars:'Chars', words:'Words', proper:'Proper', all:'All' };
+  document.getElementById('chipMatch' + map[mode]).classList.add('active');
+  setupMatch();
+}
+
+function setupMatch(){
+  let pool = [];
+  if(matchMode === 'chars') pool = CHARACTERS;
+  else if(matchMode === 'words') pool = WORDS;
+  else if(matchMode === 'proper') pool = PROPER_NOUNS;
+  else pool = [...CHARACTERS, ...WORDS, ...PROPER_NOUNS];
+
+  const picks = shuffle(pool).slice(0, 6);
+  matchState = { pairs: picks, selectedZh: null, selectedPy: null, wrong: 0, remaining: picks.length };
+  document.getElementById('matchWrong').textContent = 0;
+  document.getElementById('matchLeft').textContent = picks.length;
+
+  const zhCol = document.getElementById('matchColZh');
+  const pyCol = document.getElementById('matchColPy');
+  zhCol.innerHTML = ''; pyCol.innerHTML = '';
+
+  shuffle(picks).forEach(v=>{
+    const t = document.createElement('div');
+    t.className = 'match-tile zh-tile'; t.textContent = v.zh; t.dataset.zh = v.zh;
+    t.onclick = ()=>selectMatch('zh', t, v.zh);
+    zhCol.appendChild(t);
+  });
+  shuffle(picks).forEach(v=>{
+    const t = document.createElement('div');
+    t.className = 'match-tile';
+    t.textContent = v.meaningJp || v.meaning;
+    t.dataset.zh = v.zh;
+    t.onclick = ()=>selectMatch('py', t, v.zh);
+    pyCol.appendChild(t);
+  });
+}
+
+function selectMatch(side, el, zhKey){
+  if(el.classList.contains('correct')) return;
+  if(side === 'zh'){
+    if(matchState.selectedZh) matchState.selectedZh.el.classList.remove('selected');
+    matchState.selectedZh = { el, zhKey };
+    el.classList.add('selected');
+  } else {
+    if(matchState.selectedPy) matchState.selectedPy.el.classList.remove('selected');
+    matchState.selectedPy = { el, zhKey };
+    el.classList.add('selected');
+  }
+
+  if(matchState.selectedZh && matchState.selectedPy){
+    const zh = matchState.selectedZh, py = matchState.selectedPy;
+    if(zh.zhKey === py.zhKey){
+      zh.el.classList.remove('selected'); py.el.classList.remove('selected');
+      zh.el.classList.add('correct'); py.el.classList.add('correct');
+      const matched = matchState.pairs.find(v=>v.zh===zh.zhKey);
+      playClip(matched && matched.id, zh.zhKey);
+      matchState.remaining--;
+      document.getElementById('matchLeft').textContent = matchState.remaining;
+      matchState.selectedZh = null; matchState.selectedPy = null;
+      if(matchState.remaining === 0){
+        const stars = matchState.wrong === 0 ? 3 : matchState.wrong <= 2 ? 2 : 1;
+        setTimeout(()=>showResult('match', stars, '消消乐配对完成！'), 400);
+      }
+    } else {
+      matchState.wrong++;
+      document.getElementById('matchWrong').textContent = matchState.wrong;
+      zh.el.classList.add('wrong'); py.el.classList.add('wrong');
+      const item = matchState.pairs.find(v=>v.zh===zh.zhKey);
+      if(item){
+        recordMistake({
+          id: item.id || ('match_' + item.zh),
+          type: item.cho ? 'char' : 'word',
+          zh: item.zh,
+          py: item.py,
+          meaning: item.meaningJp || item.meaning,
+          audioId: item.id
+        });
+      }
+      setTimeout(()=>{
+        zh.el.classList.remove('selected','wrong'); py.el.classList.remove('selected','wrong');
+        matchState.selectedZh = null; matchState.selectedPy = null;
+      }, 400);
+    }
+  }
+}
+
+/* ---------------- SCRAMBLE SENTENCES ---------------- */
+function goScramble(){
+  showScreen('screen-scramble');
+  scrambleState.idx = 0;
+  setupScrambleRound();
+}
+
+let scrambleChecking = false;
+function setupScrambleRound(){
+  scrambleChecking = false;
+  const _tg = document.getElementById("scrambleTarget"); if(_tg) _tg.classList.remove("correct","wrong");
+  const wb = document.getElementById("scrambleWrongBadge"); if(wb) wb.style.display = "none";
+  const ab = document.getElementById("scrambleAnswerBox"); if(ab) ab.style.display = "none";
+  if(scrambleState.idx >= SCRAMBLE_SENTENCES.length){
+    setTimeout(()=>showResult("scramble", 3, "句子全部完成！"), 200);
+    return;
+  }
+  const round = SCRAMBLE_SENTENCES[scrambleState.idx];
+  scrambleState.placed = [];
+  scrambleState.hasWrong = false;
+  scrambleState.pool = shuffle(round.tokens.map((t,i)=>({ text:t, id:i, used:false })));
+  document.getElementById("scrambleProgress").textContent = (scrambleState.idx + 1) + " / " + SCRAMBLE_SENTENCES.length;
+  const hint = document.getElementById("scrambleHint");
+  if(round.isKey) hint.textContent = "🌟 重点拓展句：按顺序点击韩语词块拼出完整句子！";
+  else hint.textContent = "按顺序点击词块，拼出课文中的句子。";
+  renderScramble();
+}
+
+function renderScramble(){
+  const target = document.getElementById("scrambleTarget");
+  const pool = document.getElementById("scramblePool");
+  target.innerHTML = "";
+  scrambleState.placed.forEach(p=>{
+    const c = document.createElement("div");
+    c.className = "word-chip in-target";
+    c.textContent = p.text;
+    c.onclick = ()=>{ removeFromTarget(p); };
+    target.appendChild(c);
+  });
+  pool.innerHTML = "";
+  scrambleState.pool.forEach(p=>{
+    const c = document.createElement("div");
+    c.className = "word-chip" + (p.used ? " placed" : "");
+    c.textContent = p.text;
+    c.onclick = ()=>{ if(!p.used) placeToken(p); };
+    pool.appendChild(c);
+  });
+}
+
+function placeToken(p){
+  p.used = true;
+  scrambleState.placed.push(p);
+  const wb = document.getElementById("scrambleWrongBadge"); if(wb) wb.style.display = "none";
+  renderScramble();
+}
+
+function removeFromTarget(p){
+  p.used = false;
+  scrambleState.placed = scrambleState.placed.filter(x=>x.id !== p.id);
+  const wb = document.getElementById("scrambleWrongBadge"); if(wb) wb.style.display = "none";
+  renderScramble();
+}
+
+function scrambleUndo(){
+  const last = scrambleState.placed.pop();
+  if(last){
+    last.used = false;
+    const wb = document.getElementById("scrambleWrongBadge"); if(wb) wb.style.display = "none";
+    renderScramble();
+  }
+}
+
+function scramblePrev(){
+  stopClip();
+  if(!SCRAMBLE_SENTENCES || SCRAMBLE_SENTENCES.length === 0) return;
+  if(scrambleState.idx > 0) scrambleState.idx--;
+  else scrambleState.idx = SCRAMBLE_SENTENCES.length - 1;
+  setupScrambleRound();
+}
+
+function scrambleNext(){
+  stopClip();
+  if(!SCRAMBLE_SENTENCES || SCRAMBLE_SENTENCES.length === 0) return;
+  if(scrambleState.idx < SCRAMBLE_SENTENCES.length - 1) scrambleState.idx++;
+  else scrambleState.idx = 0;
+  setupScrambleRound();
+}
+
+function playScrambleAnswerAudio(){
+  if(!SCRAMBLE_SENTENCES || !SCRAMBLE_SENTENCES[scrambleState.idx]) return;
+  const round = SCRAMBLE_SENTENCES[scrambleState.idx];
+  playClip(round.id, round.zh);
+}
+
+function fillScrambleAnswer(){
+  if(scrambleChecking) return;
+  if(!SCRAMBLE_SENTENCES || !SCRAMBLE_SENTENCES[scrambleState.idx]) return;
+  const round = SCRAMBLE_SENTENCES[scrambleState.idx];
+  scrambleState.placed = round.tokens.map((t, i) => ({ text: t, id: i, used: true }));
+  scrambleState.pool.forEach(p => p.used = true);
+  renderScramble();
+
+  const wb = document.getElementById("scrambleWrongBadge"); if(wb) wb.style.display = "none";
+  const ab = document.getElementById("scrambleAnswerBox"); if(ab) ab.style.display = "none";
+
+  scrambleChecking = true;
+  const target = document.getElementById("scrambleTarget");
+  if(target){
+    target.classList.remove("wrong");
+    target.classList.add("correct");
+    target.querySelectorAll(".word-chip").forEach(c => {
+      c.classList.remove("wrong");
+      c.classList.add("correct");
+    });
+  }
+  playSuccessTone();
+  toast("✨ 已填入正确句子！");
+  playClip(round.id, round.zh, () => {
+    setTimeout(() => {
+      scrambleChecking = false;
+      if(target) target.classList.remove("correct");
+      scrambleState.idx++;
+      setupScrambleRound();
+    }, 700);
+  });
+}
+
+function scrambleCheck(){
+  if(scrambleChecking) return;
+  const round = SCRAMBLE_SENTENCES[scrambleState.idx];
+  const built = scrambleState.placed.map(p => (p.text !== undefined ? p.text : p.token)).join("");
+  const target = document.getElementById("scrambleTarget");
+  const wb = document.getElementById("scrambleWrongBadge");
+  const ab = document.getElementById("scrambleAnswerBox");
+  const at = document.getElementById("scrambleAnswerText");
+
+  const isCorrect = (built.replace(/\s+/g, "") === round.zh.replace(/\s+/g, "")) &&
+                    (scrambleState.placed.length === round.tokens.length);
+
+  if(isCorrect){
+    scrambleChecking = true;
+    if(wb) wb.style.display = "none";
+    if(ab) ab.style.display = "none";
+    if(target){
+      target.classList.remove("wrong");
+      target.classList.add("correct");
+      target.querySelectorAll(".word-chip").forEach(c => {
+        c.classList.remove("wrong");
+        c.classList.add("correct");
+      });
+    }
+    playSuccessTone();
+    toast("🎉 答对了！太棒了！");
+    playClip(round.id, round.zh, () => {
+      setTimeout(() => {
+        scrambleChecking = false;
+        if(target) target.classList.remove("correct");
+        scrambleState.idx++;
+        setupScrambleRound();
+      }, 700);
+    });
+  } else {
+    if(target){
+      target.classList.remove("correct");
+      target.classList.add("wrong");
+      target.querySelectorAll(".word-chip").forEach(c => {
+        c.classList.remove("correct");
+        c.classList.add("wrong");
+      });
+      setTimeout(() => {
+        target.classList.remove("wrong");
+        target.querySelectorAll(".word-chip").forEach(c => c.classList.remove("wrong"));
+      }, 800);
+    }
+    if(wb){
+      wb.style.display = "block";
+    }
+    if(ab && at){
+      at.textContent = round.zh;
+      ab.style.display = "block";
+    }
+    playWrongTone();
+    toast("❌ 顺序不对哦，可查看下方正确答案！");
+    if(!scrambleState.hasWrong){
+      scrambleState.hasWrong = true;
+      recordMistake({
+        id: round.id,
+        type: "sentence",
+        zh: round.zh,
+        py: "",
+        meaning: round.isKey ? "课后重点句子" : "课文重点句子",
+        audioId: round.id
+      });
+    }
+  }
+}
+
+/* ---------------- QUIZ ---------------- */
+function goQuiz(){
+  showScreen('screen-quiz');
+  quizState.idx = 0;
+  quizState.correct = 0; quizState.orderMap = {};
+  renderQuiz();
+}
+
+function renderQuiz(){
+  if(quizState.idx >= QUIZ.length){
+    const stars = quizState.correct >= QUIZ.length ? 3 : quizState.correct >= Math.ceil(QUIZ.length * 0.7) ? 2 : 1;
+    showResult('quiz', stars, quizState.correct + ' / ' + QUIZ.length + ' 题正确');
+    return;
+  }
+  quizState.answered = false;
+  quizState.hasWrong = false;
+  const item = QUIZ[quizState.idx];
+  document.getElementById('quizProgress').textContent = (quizState.idx + 1) + ' / ' + QUIZ.length;
+  document.getElementById('quizQ').textContent = item.q;
+  const optsEl = document.getElementById('quizOpts');
+  optsEl.innerHTML = '';
+  if(!quizState.orderMap) quizState.orderMap = {};
+  if(!quizState.orderMap[quizState.idx]){
+    const indices = item.opts.map((_, i) => i);
+    for(let i = indices.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    quizState.orderMap[quizState.idx] = indices;
+  }
+  quizState.orderMap[quizState.idx].forEach(i => {
+    const opt = item.opts[i];
+    const b = document.createElement('div');
+    b.className = 'opt-btn';
+    b.textContent = opt;
+    b.onclick = () => answerQuiz(i, b);
+    optsEl.appendChild(b);
+  });
+}
+
+function answerQuiz(i, el){
+  if(quizState.answered) return;
+  const item = QUIZ[quizState.idx];
+  if(i === item.a){
+    quizState.answered = true;
+    el.classList.remove('wrong');
+    el.classList.add('correct');
+    if(!el.textContent.includes('✔️')){
+      el.textContent += ' ✔️';
+    }
+    document.querySelectorAll('#quizOpts .opt-btn').forEach(b => {
+      b.style.pointerEvents = 'none';
+    });
+    playSuccessTone();
+    if(!quizState.hasWrong){
+      quizState.correct++;
+      toast('🌟 答对啦！太棒了！');
+    } else {
+      toast('🎉 太棒了，找到正确答案了！');
+    }
+    setTimeout(()=>{
+      quizState.idx++;
+      renderQuiz();
+    }, 900);
+  } else {
+    if(!quizState.hasWrong){
+      quizState.hasWrong = true;
+      recordMistake({
+        id: 'quiz_' + quizState.idx,
+        type: 'quiz',
+        zh: item.q,
+        py: '',
+        meaning: '正确答案: ' + item.opts[item.a],
+        extra: '误选: ' + item.opts[i],
+        quizItem: item
+      });
+    }
+    playWrongTone();
+    el.classList.add('wrong');
+    if(!el.textContent.includes('❌')){
+      el.textContent += ' ❌';
+    }
+    el.style.pointerEvents = 'none';
+    toast('❌ 选错了哦，再想一想，换个答案试试！');
+  }
+}
+
+function quizPrev(){
+  if(quizState.idx > 0) quizState.idx--;
+  else quizState.idx = QUIZ.length - 1;
+  renderQuiz();
+}
+
+function quizNext(){
+  if(quizState.idx < QUIZ.length - 1) quizState.idx++;
+  else quizState.idx = 0;
+  renderQuiz();
+}
+
+/* ---------------- CLOZE TEST ---------------- */
+let clozeState = { questions: [], idx: 0, correct: 0, streak: 0, maxStreak: 0, answered: false };
+
+function goCloze(){
+  showScreen('screen-cloze');
+  initClozeGame();
+}
+
+function initClozeGame(){
+  const count = Math.min(8, CLOZE_QUESTIONS.length);
+  clozeState = {
+    questions: shuffle([...CLOZE_QUESTIONS]).slice(0, count),
+    idx: 0,
+    correct: 0,
+    streak: 0,
+    maxStreak: 0,
+    answered: false
+  };
+  renderClozeQuestion();
+}
+
+function renderClozeQuestion(){
+  if(clozeState.idx >= clozeState.questions.length){
+    const total = clozeState.questions.length;
+    const correct = clozeState.correct;
+    const stars = correct >= total ? 3 : correct >= Math.ceil(total * 0.7) ? 2 : 1;
+    showResult('cloze', stars, correct + ' / ' + total + ' 答对 · 最高连对 ' + clozeState.maxStreak + ' 题');
+    return;
+  }
+  clozeState.answered = false;
+  const q = clozeState.questions[clozeState.idx];
+  document.getElementById('clozeProgress').textContent = (clozeState.idx + 1) + ' / ' + clozeState.questions.length;
+  document.getElementById('clozeStreak').textContent = '🔥 连对 ' + clozeState.streak;
+
+  document.getElementById('clozePy').textContent = q.py || '';
+  document.getElementById('clozeBefore').textContent = q.before;
+  const slot = document.getElementById('clozeSlot');
+  slot.textContent = '____';
+  slot.className = 'cloze-slot';
+  const fb = document.getElementById('clozeFeedback');
+  if(fb){ fb.style.display = 'none'; fb.innerHTML = ''; }
+  document.getElementById('clozeAfter').textContent = q.after;
+  document.getElementById('clozeEn').textContent = q.en || '';
+  document.getElementById('clozeJp').textContent = q.jp || '';
+  document.getElementById('clozeHint').textContent = q.hint;
+
+  const optsContainer = document.getElementById('clozeOpts');
+  optsContainer.innerHTML = '';
+  shuffle([...q.options]).forEach(opt => {
+    const btn = document.createElement('div');
+    btn.className = 'cloze-opt-btn';
+    btn.innerHTML = `<span>${opt}</span>`;
+    btn.onclick = () => answerCloze(opt, btn);
+    optsContainer.appendChild(btn);
+  });
+}
+
+function clozePrev(){
+  stopClip();
+  if(!clozeState.questions || clozeState.questions.length === 0) return;
+  if(clozeState.idx > 0) clozeState.idx--;
+  else clozeState.idx = clozeState.questions.length - 1;
+  renderClozeQuestion();
+}
+function clozeNext(){
+  stopClip();
+  if(!clozeState.questions || clozeState.questions.length === 0) return;
+  if(clozeState.idx < clozeState.questions.length - 1) clozeState.idx++;
+  else clozeState.idx = 0;
+  renderClozeQuestion();
+}
+
+function answerCloze(selected, btn){
+  if(clozeState.answered) return;
+  const q = clozeState.questions[clozeState.idx];
+  const isCorrect = selected === q.answer;
+  const slot = document.getElementById('clozeSlot');
+  const fb = document.getElementById('clozeFeedback');
+
+  if(isCorrect){
+    clozeState.answered = true;
+    btn.classList.remove('wrong');
+    btn.classList.add('correct');
+    if(!btn.innerHTML.includes('✔️')){
+      btn.innerHTML = `<span>${q.answer}</span> <span class="correct-mark" style="color:#16a34a;font-weight:900;font-size:18px;margin-left:4px;">✔️</span>`;
+    }
+    slot.innerHTML = `${q.answer} <span style="font-size:16px;color:#16a34a;font-weight:900;margin-left:2px;">✔️</span>`;
+    slot.className = 'cloze-slot filled';
+    clozeState.correct++;
+    clozeState.streak++;
+    if(clozeState.streak > clozeState.maxStreak){
+      clozeState.maxStreak = clozeState.streak;
+    }
+    document.getElementById('clozeStreak').textContent = '🔥 连对 ' + clozeState.streak;
+    if(fb){
+      fb.style.display = 'block';
+      fb.style.background = '#dcfce7';
+      fb.style.color = '#15803d';
+      fb.style.border = '1px solid #86efac';
+      fb.innerHTML = '🎉 填入正确！助词与语境完全吻合！';
+    }
+    toast('🎉 填入正确！助词与语境完全吻合！');
+    playSuccessTone();
+
+    document.querySelectorAll('#clozeOpts .cloze-opt-btn').forEach(b => {
+      b.style.pointerEvents = 'none';
+    });
+
+    const fullText = q.before + q.answer + q.after;
+    playClip(q.audioId || ('cloze_' + (clozeState.idx + 1)), fullText, () => {
+      setTimeout(() => {
+        clozeState.idx++;
+        renderClozeQuestion();
+      }, 800);
+    });
+  } else {
+    clozeState.streak = 0;
+    document.getElementById('clozeStreak').textContent = '🔥 连对 ' + clozeState.streak;
+    playWrongTone();
+
+    btn.classList.add('wrong');
+    btn.style.pointerEvents = 'none';
+    if(!btn.innerHTML.includes('❌')){
+      btn.innerHTML = `<span>${selected}</span> <span class="wrong-mark" style="color:#ef4444;font-weight:900;font-size:18px;margin-left:4px;">❌</span>`;
+    }
+
+    slot.innerHTML = `<span style="text-decoration:line-through;color:#dc2626;">${selected}</span> <span style="font-size:16px;color:#ef4444;font-weight:900;margin-left:2px;">❌</span>`;
+    slot.className = 'cloze-slot wrong';
+    if(fb){
+      fb.style.display = 'block';
+      fb.style.background = '#fee2e2';
+      fb.style.color = '#dc2626';
+      fb.style.border = '1px solid #fca5a5';
+      fb.innerHTML = `❌ 选错了哦！“${selected}” 填在这里不合适，换个词试试！`;
+    }
+    toast(`❌ 选错啦！“${selected}” 不合适，换个词再试试！`);
+
+    setTimeout(() => {
+      if(!clozeState.answered){
+        slot.textContent = '____';
+        slot.className = 'cloze-slot';
+      }
+    }, 1000);
+
+    recordMistake({
+      id: 'cloze_' + q.id,
+      type: 'cloze',
+      zh: q.answer,
+      py: q.py || '',
+      meaning: q.before + '【' + q.answer + '】' + q.after,
+      audioId: q.audioId || null,
+      clozeItem: q
+    });
+  }
+}
+
+/* ---------------- AUDIO CHALLENGE ---------------- */
+let audioChallengeMode = 'all';
+let audioChallengeState = { questions: [], idx: 0, correct: 0, streak: 0, maxStreak: 0, answered: false };
+
+function goAudioChallenge(){
+  showScreen('screen-audio');
+  setAudioMode('all');
+}
+
+function setAudioMode(mode){
+  audioChallengeMode = mode;
+  ['Chars','Words','Sentences','All'].forEach(k=>{
+    const el = document.getElementById('chipAudio' + k);
+    if(el) el.classList.remove('active');
+  });
+  const map = { chars:'Chars', words:'Words', sentences:'Sentences', all:'All' };
+  if(document.getElementById('chipAudio' + map[mode])) document.getElementById('chipAudio' + map[mode]).classList.add('active');
+  setupAudioChallenge();
+}
+
+function setupAudioChallenge(){
+  let pool = [];
+  if(audioChallengeMode === 'chars' || audioChallengeMode === 'all'){
+    CHARACTERS.forEach(c => {
+      const others = shuffle(CHARACTERS.filter(x=>x.id !== c.id)).slice(0, 3);
+      const opts = shuffle([c, ...others]).map(o => ({ text: o.zh, sub: o.py, isCorrect: o.id === c.id }));
+      pool.push({ id: c.id, zh: c.zh, type: 'char', hint: '请听发音，选择正确的韩语音节：', opts });
+    });
+  }
+  if(audioChallengeMode === 'words' || audioChallengeMode === 'all'){
+    ALL_VOCAB.forEach(v => {
+      const others = shuffle(ALL_VOCAB.filter(x=>x.id !== v.id)).slice(0, 3);
+      const opts = shuffle([v, ...others]).map(o => ({ text: o.zh, sub: o.meaningJp || o.meaning, isCorrect: o.id === v.id }));
+      pool.push({ id: v.id, zh: v.zh, type: 'word', hint: '请听发音，选择正确的词汇：', opts });
+    });
+  }
+  if(audioChallengeMode === 'sentences' || audioChallengeMode === 'all'){
+    STORY.forEach(s => {
+      const others = shuffle(STORY.filter(x=>x.id !== s.id)).slice(0, 3);
+      const opts = shuffle([s, ...others]).map(o => ({ text: o.zh, sub: o.jp, isCorrect: o.id === s.id }));
+      pool.push({ id: s.id, zh: s.zh, type: 'sentence', hint: '请听朗读，选择听到的完整句子：', opts });
+    });
+  }
+
+  const count = Math.min(10, pool.length);
+  audioChallengeState = {
+    questions: shuffle(pool).slice(0, count),
+    idx: 0,
+    correct: 0,
+    streak: 0,
+    maxStreak: 0,
+    answered: false
+  };
+  renderAudioQuestion();
+}
+
+function renderAudioQuestion(){
+  if(audioChallengeState.idx >= audioChallengeState.questions.length){
+    const total = audioChallengeState.questions.length;
+    const correct = audioChallengeState.correct;
+    const stars = correct >= total ? 3 : correct >= Math.ceil(total * 0.7) ? 2 : 1;
+    showResult('audio', stars, correct + ' / ' + total + ' 答对 · 最高连对 ' + audioChallengeState.maxStreak + ' 题');
+    return;
+  }
+  audioChallengeState.answered = false;
+  const q = audioChallengeState.questions[audioChallengeState.idx];
+  document.getElementById('audioProgress').textContent = (audioChallengeState.idx + 1) + ' / ' + audioChallengeState.questions.length;
+  document.getElementById('audioStreak').textContent = '🔥 连对 ' + audioChallengeState.streak;
+  document.getElementById('audioPrompt').textContent = q.hint;
+
+  const optsContainer = document.getElementById('audioOpts');
+  optsContainer.innerHTML = '';
+  optsContainer.className = 'audio-opts ' + (q.type === 'sentence' ? 'sentence-layout' : 'grid-layout');
+
+  q.opts.forEach((opt)=>{
+    const btn = document.createElement('div');
+    btn.className = 'audio-opt-btn';
+    btn.innerHTML = `<div class="opt-main">${opt.text}</div><div class="opt-sub" style="display:none;">${opt.sub}</div>`;
+    btn.onclick = () => answerAudioQuestion(opt, btn);
+    optsContainer.appendChild(btn);
+  });
+
+  setTimeout(()=>{ playCurrentAudio(); }, 300);
+}
+
+function playCurrentAudio(){
+  const q = audioChallengeState.questions[audioChallengeState.idx];
+  if(!q) return;
+  const speaker = document.getElementById('audioSpeakerBtn');
+  if(speaker) speaker.classList.add('playing');
+  playClip(q.id, q.zh, ()=>{
+    if(speaker) speaker.classList.remove('playing');
+  });
+}
+
+function answerAudioQuestion(opt, btn){
+  if(audioChallengeState.answered) return;
+  audioChallengeState.answered = true;
+  const q = audioChallengeState.questions[audioChallengeState.idx];
+  const allBtns = document.querySelectorAll('#audioOpts .audio-opt-btn');
+  document.querySelectorAll('#audioOpts .opt-sub').forEach(el=>el.style.display='block');
+
+  if(opt.isCorrect){
+    btn.classList.add('correct');
+    audioChallengeState.correct++;
+    audioChallengeState.streak++;
+    if(audioChallengeState.streak > audioChallengeState.maxStreak) audioChallengeState.maxStreak = audioChallengeState.streak;
+    toast('🎉 听力太敏锐了！答对了！');
+  } else {
+    btn.classList.add('wrong');
+    audioChallengeState.streak = 0;
+    q.opts.forEach((o, i)=>{
+      if(o.isCorrect && allBtns[i]) allBtns[i].classList.add('correct');
+    });
+    toast('听错啦，仔细听听正确发音～已记入错题本');
+    playClip(q.id, q.zh);
+    recordMistake({
+      id: q.id,
+      type: q.type,
+      zh: q.zh,
+      py: (q.opts.find(o=>o.isCorrect)||{}).sub || '',
+      meaning: q.hint,
+      audioId: q.id
+    });
+  }
+  document.getElementById('audioStreak').textContent = '🔥 连对 ' + audioChallengeState.streak;
+  setTimeout(()=>{
+    audioChallengeState.idx++;
+    renderAudioQuestion();
+  }, 1200);
+}
+
+/* ---------------- SRS REVIEW ---------------- */
+const STORAGE_KEY_SRS = 'hangugeo3_srs';
+function getSrsData(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY_SRS);
+    return raw ? JSON.parse(raw) : { items: {} };
+  }catch(e){ return { items: {} }; }
+}
+function saveSrsData(data){
+  localStorage.setItem(STORAGE_KEY_SRS, JSON.stringify(data));
+  refreshBadges();
+}
+
+function recordMistake(item){
+  if(!item || !item.id) return;
+  const srs = getSrsData();
+  const existing = srs.items[item.id];
+  const now = Date.now();
+  if(existing){
+    existing.mistakes = (existing.mistakes || 0) + 1;
+    existing.streak = 0;
+    existing.box = 1;
+    existing.lastReview = now;
+    existing.nextReview = now;
+    if(item.meaning) existing.meaning = item.meaning;
+  } else {
+    srs.items[item.id] = {
+      id: item.id,
+      type: item.type || 'word',
+      zh: item.zh,
+      py: item.py || '',
+      meaning: item.meaning || '',
+      audioId: item.audioId || item.id,
+      mistakes: 1,
+      streak: 0,
+      box: 1,
+      lastReview: now,
+      nextReview: now,
+      quizItem: item.quizItem || null,
+      clozeItem: item.clozeItem || null
+    };
+  }
+  saveSrsData(srs);
+}
+
+function recordReviewSuccess(id){
+  const srs = getSrsData();
+  const item = srs.items[id];
+  if(!item) return;
+  item.streak = (item.streak || 0) + 1;
+  item.box = Math.min(4, (item.box || 1) + 1);
+  item.lastReview = Date.now();
+  saveSrsData(srs);
+  if(item.box >= 4) toast('🎓 太棒了！「' + item.zh + '」已连续3次正确，已完全掌握！');
+  else toast('🎉 巩固成功！升级至 Box ' + item.box);
+}
+
+function recordReviewFailure(id){
+  const srs = getSrsData();
+  const item = srs.items[id];
+  if(!item) return;
+  item.mistakes = (item.mistakes || 0) + 1;
+  item.streak = 0;
+  item.box = 1;
+  saveSrsData(srs);
+  toast('记下啦，已退回 Box 1 重新强化～');
+}
+
+let reviewTab = 'quiz';
+function goReview(){
+  showScreen('screen-review');
+  setReviewTab('quiz');
+}
+
+function setReviewTab(tab){
+  reviewTab = tab;
+  document.getElementById('chipReviewQuiz').classList.toggle('active', tab === 'quiz');
+  document.getElementById('chipReviewList').classList.toggle('active', tab === 'list');
+  const qBox = document.getElementById('reviewQuizContainer');
+  const lBox = document.getElementById('reviewListContainer');
+  if(tab === 'quiz'){
+    qBox.style.display = 'flex';
+    lBox.style.display = 'none';
+    renderReviewQuiz();
+  } else {
+    qBox.style.display = 'none';
+    lBox.style.display = 'flex';
+    renderReviewList();
+  }
+}
+
+function renderReviewQuiz(){
+  const container = document.getElementById('reviewQuizContainer');
+  const srs = getSrsData();
+  const allItems = Object.values(srs.items || {});
+  const list = allItems.filter(it => (it.box || 1) < 4);
+  if(!list.length){
+    const masteredCount = allItems.filter(it => (it.box || 1) >= 4).length;
+    const descText = masteredCount > 0 
+      ? '做错的题目都已全部掌握，太了不起了！继续保持！' 
+      : '挑战中还没有产生错题，太棒啦！继续保持！';
+    container.innerHTML = `
+      <div style="text-align:center;padding:30px 10px;color:var(--muted);">
+        <div style="font-size:42px;margin-bottom:8px;">🎉</div>
+        <div style="font-size:16px;font-weight:800;color:var(--ink);">太棒了！暂无待闯关的错题</div>
+        <div style="font-size:13px;margin-top:6px;color:var(--muted);">${descText}</div>
+      </div>
+    `;
+    return;
+  }
+  const item = list[0];
+  container.innerHTML = `
+    <div class="quiz-card">
+      <div style="font-size:12px;color:var(--muted);display:flex;justify-content:space-between;">
+        <span>错题本 · Box ${item.box || 1}</span>
+        <span>失误次数: ${item.mistakes}</span>
+      </div>
+      <div style="font-size:24px;font-weight:900;text-align:center;color:var(--kr-blue-dark);margin:10px 0;">${item.zh}</div>
+      <div style="font-size:13px;color:var(--muted);text-align:center;">${item.py || ''}</div>
+      <div style="font-size:14px;color:var(--ink);text-align:center;background:#f8fafc;padding:10px;border-radius:10px;">${item.meaning || '请回忆此项的含义与用法'}</div>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:10px;">
+        <button class="btn gold small" onclick="playClip('${item.audioId||item.id}', '${item.zh}')">🔊 听读音</button>
+        <button class="btn green small" onclick="recordReviewSuccess('${item.id}'); renderReviewQuiz();">✅ 我记住了</button>
+        <button class="btn red small" onclick="recordReviewFailure('${item.id}'); renderReviewQuiz();">❌ 还不熟练</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderReviewList(){
+  const container = document.getElementById('reviewListContainer');
+  const srs = getSrsData();
+  const list = Object.values(srs.items || {});
+  if(!list.length){
+    container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--muted);">暂无错题记录～</div>`;
+    return;
+  }
+  container.innerHTML = '';
+  list.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'full-sentence';
+    card.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:16px;font-weight:900;color:var(--kr-blue-dark);">${item.zh}</span>
+        <span style="font-size:11px;padding:2px 7px;border-radius:10px;background:${item.box>=4?'#dcfce7':'#fef3c7'};color:${item.box>=4?'#15803d':'#b45309'};font-weight:700;">Box ${item.box||1} ${item.box>=4?'(已掌握)':''}</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);">${item.py || ''} · ${item.meaning}</div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+/* ---------------- RESULTS ---------------- */
+function showResult(game, stars, note){
+  lastGame = game;
+  progress[game] = Math.max(progress[game] || 0, stars);
+  saveProgress();
+  document.getElementById('resultTitle').textContent = stars === 3 ? '太棒了！满分闯关！' : stars === 2 ? '真不错！继续加油！' : '完成啦，再练一练！';
+  document.getElementById('resultStars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+  document.getElementById('resultScore').textContent = note;
+  const badges = document.getElementById('resultBadges');
+  badges.innerHTML = '';
+  const map = { match:'🧩 韩语消消乐', scramble:'🔤 句子重组', quiz:'❓ 读解练习', audio:'🎧 听力练习', cloze:'📝 选词填空' };
+  const b = document.createElement('div');
+  b.className = 'mini-badge';
+  b.textContent = map[game] + ' ' + '⭐'.repeat(stars);
+  badges.appendChild(b);
+  showScreen('screen-result');
+}
+
+function retryCurrent(){
+  if(lastGame === 'match') goMatch();
+  else if(lastGame === 'scramble') goScramble();
+  else if(lastGame === 'quiz') goQuiz();
+  else if(lastGame === 'audio') goAudioChallenge();
+  else if(lastGame === 'cloze') goCloze();
+  else goHome();
+}
+
+// Initial boot
+refreshBadges();
+</script>
+</body>
+</html>

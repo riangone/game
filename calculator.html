@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>科学表达式计算器 · 纯前端离线工具</title>
+  <meta name="description" content="零依赖、纯前端现代表达式计算器。支持调度场算法精准解析、括号优先级、历史记录回溯、键盘无缝操作、浮点精度修正，完全离线运行。">
+  <style>
+    :root {
+      --bg-base: #f1f5f9;
+      --bg-surface: #ffffff;
+      --border-color: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --btn-num-bg: #ffffff;
+      --btn-num-hover: #f8fafc;
+      --btn-fn-bg: #f8fafc;
+      --btn-fn-hover: #e2e8f0;
+      --btn-op-bg: #e0f2fe;
+      --btn-op-color: #0369a1;
+      --btn-op-hover: #bae6fd;
+      --btn-equal-bg: #0284c7;
+      --btn-equal-color: #ffffff;
+      --btn-equal-hover: #0369a1;
+      --btn-clear-color: #ef4444;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --shadow-calc: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --bg-base: #0f172a;
+      --bg-surface: #1e293b;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --primary: #38bdf8;
+      --primary-hover: #0ea5e9;
+      --btn-num-bg: #334155;
+      --btn-num-hover: #475569;
+      --btn-fn-bg: #1e293b;
+      --btn-fn-hover: #334155;
+      --btn-op-bg: rgba(56, 189, 248, 0.15);
+      --btn-op-color: #38bdf8;
+      --btn-op-hover: rgba(56, 189, 248, 0.25);
+      --btn-equal-bg: #38bdf8;
+      --btn-equal-color: #0f172a;
+      --btn-equal-hover: #7dd3fc;
+      --btn-clear-color: #f87171;
+      --shadow-calc: 0 15px 30px -5px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    /* 顶部导航 */
+    header.app-header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      background: var(--bg-base);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .back-link:hover {
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .app-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-icon {
+      font-size: 20px;
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      padding: 6px 10px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+
+    .icon-btn:hover {
+      color: var(--text-main);
+      background: var(--bg-base);
+    }
+
+    /* 主容器 */
+    main.main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px 16px;
+    }
+
+    .calculator-layout {
+      width: 100%;
+      max-width: 820px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 768px) {
+      .calculator-layout {
+        grid-template-columns: 420px 1fr;
+      }
+    }
+
+    /* 计算器主体卡片 */
+    .calc-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-calc);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* 屏幕显示区域 */
+    .calc-screen {
+      background: var(--bg-base);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      min-height: 104px;
+      cursor: pointer;
+      user-select: text;
+      position: relative;
+    }
+
+    .calc-screen:hover::after {
+      content: '点击复制';
+      position: absolute;
+      top: 6px;
+      left: 8px;
+      font-size: 10px;
+      color: var(--text-light);
+      background: var(--bg-surface);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+    }
+
+    .screen-history {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      min-height: 20px;
+      word-break: break-all;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .screen-main {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-main);
+      font-family: var(--font-mono);
+      word-break: break-all;
+      line-height: 1.25;
+      margin-top: 4px;
+    }
+
+    /* 按键矩阵 */
+    .keypad-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .key-btn {
+      appearance: none;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      height: 52px;
+      font-size: 17px;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      user-select: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.1s ease;
+      background: var(--btn-num-bg);
+      color: var(--text-main);
+    }
+
+    .key-btn:hover {
+      background: var(--btn-num-hover);
+      transform: translateY(-1px);
+    }
+
+    .key-btn:active {
+      transform: translateY(1px);
+    }
+
+    .key-fn {
+      background: var(--btn-fn-bg);
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    .key-fn:hover {
+      background: var(--btn-fn-hover);
+      color: var(--text-main);
+    }
+
+    .key-op {
+      background: var(--btn-op-bg);
+      color: var(--btn-op-color);
+      font-size: 19px;
+    }
+
+    .key-op:hover {
+      background: var(--btn-op-hover);
+    }
+
+    .key-clear {
+      color: var(--btn-clear-color);
+      font-weight: 700;
+    }
+
+    .key-equal {
+      background: var(--btn-equal-bg);
+      color: var(--btn-equal-color);
+      font-weight: 700;
+      font-size: 20px;
+      grid-column: span 2;
+    }
+
+    .key-equal:hover {
+      background: var(--btn-equal-hover);
+    }
+
+    /* 历史记录侧边栏 */
+    .history-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      box-shadow: var(--shadow-calc);
+      display: flex;
+      flex-direction: column;
+      max-height: 520px;
+    }
+
+    .history-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .history-title {
+      font-size: 15px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .clear-history-btn {
+      font-size: 12px;
+      color: var(--btn-clear-color);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .clear-history-btn:hover {
+      background: rgba(239, 68, 68, 0.1);
+    }
+
+    .history-list {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-right: 4px;
+    }
+
+    .history-item {
+      padding: 10px 12px;
+      background: var(--bg-base);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: right;
+    }
+
+    .history-item:hover {
+      border-color: var(--primary);
+      transform: translateX(-2px);
+    }
+
+    .hist-expr {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      margin-bottom: 2px;
+      word-break: break-all;
+    }
+
+    .hist-res {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      font-family: var(--font-mono);
+    }
+
+    .history-empty {
+      text-align: center;
+      color: var(--text-light);
+      font-size: 13px;
+      margin-top: 40px;
+    }
+
+    /* 快捷键提示 */
+    .keyboard-hint {
+      margin-top: 10px;
+      font-size: 11.5px;
+      color: var(--text-light);
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    /* Toast */
+    .toast-msg {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(15, 23, 42, 0.88);
+      color: #ffffff;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+      pointer-events: none;
+      opacity: 0;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部导航 -->
+  <header class="app-header">
+    <div class="header-left">
+      <a href="index.html" class="back-link" title="返回大厅">
+        <span>←</span>
+        <span>大厅</span>
+      </a>
+      <div class="app-brand">
+        <span class="brand-icon">🧮</span>
+        <span class="brand-title">表达式计算器</span>
+      </div>
+      <div style="display: flex; gap: 6px; margin-left: 10px; flex-wrap: wrap;">
+        <a href="tools.html" class="back-link" title="实用工具箱总览" style="padding: 4px 8px; font-size: 12px; font-weight: 700;">🛠️ 工具箱</a>
+        <a href="notepad.html" class="back-link" title="切换到便签" style="padding: 4px 8px; font-size: 12px;">📝 便签</a>
+        <a href="unit-converter.html" class="back-link" title="切换到单位换算器" style="padding: 4px 8px; font-size: 12px;">📐 换算器</a>
+        <a href="currency.html" class="back-link" title="切换到全球汇率换算" style="padding: 4px 8px; font-size: 12px;">💱 汇率</a>
+        <a href="weather.html" class="back-link" title="切换到极简天气看板" style="padding: 4px 8px; font-size: 12px;">🌤️ 天气</a>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <button class="icon-btn" onclick="toggleTheme()" id="themeBtn" title="切换深色/浅色模式">🌓 主题</button>
+    </div>
+  </header>
+
+  <!-- 主布局 -->
+  <main class="main-content">
+    <div class="calculator-layout">
+      <!-- 计算器卡片 -->
+      <div class="calc-card">
+        <!-- 屏幕 -->
+        <div class="calc-screen" id="calcScreen" onclick="copyResult()" title="点击复制计算结果">
+          <div class="screen-history" id="screenHistory"></div>
+          <div class="screen-main" id="screenMain">0</div>
+        </div>
+
+        <!-- 键盘区 -->
+        <div class="keypad-grid">
+          <!-- 行 1: 辅助功能 -->
+          <button class="key-btn key-fn key-clear" onclick="pressClear()" title="清空 (Esc / C)">AC</button>
+          <button class="key-btn key-fn" onclick="pressBackspace()" title="退格 (Backspace)">⌫</button>
+          <button class="key-btn key-fn" onclick="pressParen('(')">(</button>
+          <button class="key-btn key-fn" onclick="pressParen(')')">)</button>
+
+          <!-- 行 2: 常用运算与函数 -->
+          <button class="key-btn key-fn" onclick="pressFn('sqrt')" title="平方根">√</button>
+          <button class="key-btn key-fn" onclick="pressFn('sqr')" title="平方">x²</button>
+          <button class="key-btn key-fn" onclick="pressFn('recip')" title="倒数 (1/x)">1/x</button>
+          <button class="key-btn key-op" onclick="pressOp('/')" title="除法">÷</button>
+
+          <!-- 行 3: 7 8 9 × -->
+          <button class="key-btn" onclick="pressNum('7')">7</button>
+          <button class="key-btn" onclick="pressNum('8')">8</button>
+          <button class="key-btn" onclick="pressNum('9')">9</button>
+          <button class="key-btn key-op" onclick="pressOp('*')" title="乘法">×</button>
+
+          <!-- 行 4: 4 5 6 - -->
+          <button class="key-btn" onclick="pressNum('4')">4</button>
+          <button class="key-btn" onclick="pressNum('5')">5</button>
+          <button class="key-btn" onclick="pressNum('6')">6</button>
+          <button class="key-btn key-op" onclick="pressOp('-')" title="减法">-</button>
+
+          <!-- 行 5: 1 2 3 + -->
+          <button class="key-btn" onclick="pressNum('1')">1</button>
+          <button class="key-btn" onclick="pressNum('2')">2</button>
+          <button class="key-btn" onclick="pressNum('3')">3</button>
+          <button class="key-btn key-op" onclick="pressOp('+')" title="加法">+</button>
+
+          <!-- 行 6: ± 0 . = -->
+          <button class="key-btn key-fn" onclick="pressToggleSign()" title="正负号切换">±</button>
+          <button class="key-btn" onclick="pressNum('0')">0</button>
+          <button class="key-btn" onclick="pressDot()">.</button>
+          <button class="key-btn key-fn" onclick="pressPercent()" title="百分比">%</button>
+
+          <!-- 等号占两格 -->
+          <button class="key-btn key-equal" onclick="pressEqual()" title="计算 (Enter)">=</button>
+        </div>
+
+        <div class="keyboard-hint">
+          支持电脑键盘：数字键、+ - * /、Enter (等于)、Backspace (退格)、Esc (清空)
+        </div>
+      </div>
+
+      <!-- 历史记录面板 -->
+      <div class="history-card">
+        <div class="history-header">
+          <div class="history-title">
+            <span>🕒</span>
+            <span>计算历史</span>
+          </div>
+          <button class="clear-history-btn" onclick="clearHistory()">清空记录</button>
+        </div>
+        <div class="history-list" id="historyList">
+          <div class="history-empty">暂无计算记录</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="toast-msg" id="toastMsg">已复制</div>
+
+  <script>
+    const STORAGE_KEY_HIST = 'calculator_history_v1';
+    const STORAGE_KEY_THEME = 'calculator_theme_v1';
+
+    const screenHistory = document.getElementById('screenHistory');
+    const screenMain = document.getElementById('screenMain');
+    const historyList = document.getElementById('historyList');
+    const toastEl = document.getElementById('toastMsg');
+
+    let currentExpression = '';
+    let isEvaluated = false;
+    let historyRecords = [];
+
+    // 初始化
+    window.addEventListener('DOMContentLoaded', () => {
+      loadHistory();
+
+      const savedTheme = localStorage.getItem(STORAGE_KEY_THEME) || '';
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+
+      // 绑定物理键盘事件
+      window.addEventListener('keydown', handleKeyboard);
+    });
+
+    // 键盘处理
+    function handleKeyboard(e) {
+      if (e.key >= '0' && e.key <= '9') {
+        pressNum(e.key);
+      } else if (e.key === '.') {
+        pressDot();
+      } else if (e.key === '+' || e.key === '-') {
+        pressOp(e.key);
+      } else if (e.key === '*') {
+        pressOp('*');
+      } else if (e.key === '/') {
+        e.preventDefault();
+        pressOp('/');
+      } else if (e.key === '(' || e.key === ')') {
+        pressParen(e.key);
+      } else if (e.key === 'Enter' || e.key === '=') {
+        e.preventDefault();
+        pressEqual();
+      } else if (e.key === 'Backspace') {
+        e.preventDefault();
+        pressBackspace();
+      } else if (e.key === 'Escape' || e.key.toLowerCase() === 'c') {
+        pressClear();
+      } else if (e.key === '%') {
+        pressPercent();
+      }
+    }
+
+    // 按下数字
+    function pressNum(digit) {
+      if (isEvaluated) {
+        currentExpression = '';
+        isEvaluated = false;
+      }
+      currentExpression += digit;
+      updateDisplay();
+    }
+
+    // 按下小数点
+    function pressDot() {
+      if (isEvaluated) {
+        currentExpression = '0';
+        isEvaluated = false;
+      }
+      // 获取当前最后一个数字块，防止连续输入两个点
+      const tokens = currentExpression.split(/[\+\-\*\/\(\)]/);
+      const lastToken = tokens[tokens.length - 1];
+      if (!lastToken.includes('.')) {
+        if (lastToken === '' || currentExpression === '') {
+          currentExpression += '0.';
+        } else {
+          currentExpression += '.';
+        }
+      }
+      updateDisplay();
+    }
+
+    // 按下运算符
+    function pressOp(op) {
+      if (isEvaluated) {
+        isEvaluated = false;
+      }
+      if (currentExpression === '' && op === '-') {
+        currentExpression = '-';
+        updateDisplay();
+        return;
+      }
+      if (currentExpression === '') return;
+
+      const lastChar = currentExpression.slice(-1);
+      if (['+', '-', '*', '/'].includes(lastChar)) {
+        // 替换最后一个操作符
+        currentExpression = currentExpression.slice(0, -1) + op;
+      } else if (lastChar !== '(') {
+        currentExpression += op;
+      }
+      updateDisplay();
+    }
+
+    // 按下括号
+    function pressParen(p) {
+      if (isEvaluated) {
+        currentExpression = '';
+        isEvaluated = false;
+      }
+      currentExpression += p;
+      updateDisplay();
+    }
+
+    // 退格删除
+    function pressBackspace() {
+      if (isEvaluated) {
+        currentExpression = '';
+        isEvaluated = false;
+      } else {
+        currentExpression = currentExpression.slice(0, -1);
+      }
+      updateDisplay();
+    }
+
+    // 清空
+    function pressClear() {
+      currentExpression = '';
+      isEvaluated = false;
+      screenHistory.textContent = '';
+      screenMain.textContent = '0';
+    }
+
+    // 单目运算（平方根、平方、倒数）
+    function pressFn(fn) {
+      if (currentExpression === '') return;
+      try {
+        const val = safeEvaluate(currentExpression);
+        let res;
+        let exprText = '';
+        if (fn === 'sqrt') {
+          if (val < 0) throw new Error('无效输入');
+          res = Math.sqrt(val);
+          exprText = `√(${formatNumber(val)})`;
+        } else if (fn === 'sqr') {
+          res = val * val;
+          exprText = `sqr(${formatNumber(val)})`;
+        } else if (fn === 'recip') {
+          if (val === 0) throw new Error('不能除以零');
+          res = 1 / val;
+          exprText = `1/(${formatNumber(val)})`;
+        }
+        res = fixPrecision(res);
+        addHistory(exprText, res);
+        currentExpression = String(res);
+        isEvaluated = true;
+        screenHistory.textContent = `${exprText} =`;
+        screenMain.textContent = formatNumber(res);
+      } catch (err) {
+        screenMain.textContent = err.message || '错误';
+        isEvaluated = true;
+      }
+    }
+
+    // 正负号反转
+    function pressToggleSign() {
+      if (currentExpression === '') return;
+      try {
+        const val = safeEvaluate(currentExpression);
+        const res = -val;
+        currentExpression = String(res);
+        updateDisplay();
+      } catch (err) {}
+    }
+
+    // 百分比
+    function pressPercent() {
+      if (currentExpression === '') return;
+      try {
+        const val = safeEvaluate(currentExpression);
+        const res = fixPrecision(val / 100);
+        currentExpression = String(res);
+        updateDisplay();
+      } catch (err) {}
+    }
+
+    // 计算等于
+    function pressEqual() {
+      if (!currentExpression.trim()) return;
+      try {
+        const rawExpr = currentExpression;
+        const result = safeEvaluate(rawExpr);
+        const cleanResult = fixPrecision(result);
+        
+        screenHistory.textContent = `${formatExpression(rawExpr)} =`;
+        screenMain.textContent = formatNumber(cleanResult);
+
+        addHistory(rawExpr, cleanResult);
+        currentExpression = String(cleanResult);
+        isEvaluated = true;
+      } catch (err) {
+        screenHistory.textContent = `${formatExpression(currentExpression)} =`;
+        screenMain.textContent = err.message || '格式错误';
+        isEvaluated = true;
+      }
+    }
+
+    // 格式化表达式用于显示
+    function formatExpression(expr) {
+      return expr.replace(/\*/g, ' × ').replace(/\//g, ' ÷ ').replace(/\+/g, ' + ').replace(/\-/g, ' - ');
+    }
+
+    // 格式化数字（逗号分隔千分位，但保留长小数）
+    function formatNumber(num) {
+      if (isNaN(num)) return '错误';
+      if (!isFinite(num)) return num > 0 ? '∞ 无穷大' : '-∞ 负无穷大';
+      const parts = String(num).split('.');
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      return parts.join('.');
+    }
+
+    // 浮点数精度修正 (避免 0.1 + 0.2 = 0.30000000000000004)
+    function fixPrecision(n) {
+      if (isNaN(n) || !isFinite(n)) return n;
+      return parseFloat(Number(n.toPrecision(12)).toFixed(10));
+    }
+
+    // 更新界面显示
+    function updateDisplay() {
+      if (currentExpression === '') {
+        screenMain.textContent = '0';
+      } else {
+        screenMain.textContent = formatExpression(currentExpression);
+      }
+    }
+
+    // ============================================
+    // 安全表达式解析引擎：调度场算法（Shunting-Yard）
+    // 零 eval()，完全安全，支持加减乘除、括号与一元负号
+    // ============================================
+    function safeEvaluate(expr) {
+      const tokens = tokenize(expr);
+      const rpn = shuntingYard(tokens);
+      return evaluateRPN(rpn);
+    }
+
+    function tokenize(expr) {
+      const tokens = [];
+      let i = 0;
+      const len = expr.length;
+
+      while (i < len) {
+        const ch = expr[i];
+
+        if (ch === ' ' || ch === '\t') {
+          i++;
+          continue;
+        }
+
+        // 数字（包含小数点）
+        if ((ch >= '0' && ch <= '9') || ch === '.') {
+          let numStr = '';
+          while (i < len && ((expr[i] >= '0' && expr[i] <= '9') || expr[i] === '.')) {
+            numStr += expr[i];
+            i++;
+          }
+          tokens.push({ type: 'NUM', value: parseFloat(numStr) });
+          continue;
+        }
+
+        // 一元负号判断：若前面没有 token，或前一个 token 是操作符或左括号，则属于负数
+        if (ch === '-') {
+          const prev = tokens[tokens.length - 1];
+          if (!prev || prev.type === 'OP' || (prev.type === 'PAREN' && prev.value === '(')) {
+            // 一元负号
+            i++;
+            let numStr = '-';
+            while (i < len && ((expr[i] >= '0' && expr[i] <= '9') || expr[i] === '.')) {
+              numStr += expr[i];
+              i++;
+            }
+            if (numStr === '-') {
+              throw new Error('表达式语法错误');
+            }
+            tokens.push({ type: 'NUM', value: parseFloat(numStr) });
+            continue;
+          }
+        }
+
+        if (['+', '-', '*', '/'].includes(ch)) {
+          tokens.push({ type: 'OP', value: ch });
+          i++;
+          continue;
+        }
+
+        if (ch === '(' || ch === ')') {
+          tokens.push({ type: 'PAREN', value: ch });
+          i++;
+          continue;
+        }
+
+        throw new Error(`未知字符: ${ch}`);
+      }
+      return tokens;
+    }
+
+    const PRECEDENCE = { '+': 1, '-': 1, '*': 2, '/': 2 };
+
+    function shuntingYard(tokens) {
+      const outputQueue = [];
+      const opStack = [];
+
+      for (const token of tokens) {
+        if (token.type === 'NUM') {
+          outputQueue.push(token);
+        } else if (token.type === 'OP') {
+          while (
+            opStack.length > 0 &&
+            opStack[opStack.length - 1].type === 'OP' &&
+            PRECEDENCE[opStack[opStack.length - 1].value] >= PRECEDENCE[token.value]
+          ) {
+            outputQueue.push(opStack.pop());
+          }
+          opStack.push(token);
+        } else if (token.type === 'PAREN' && token.value === '(') {
+          opStack.push(token);
+        } else if (token.type === 'PAREN' && token.value === ')') {
+          let matched = false;
+          while (opStack.length > 0) {
+            const top = opStack.pop();
+            if (top.type === 'PAREN' && top.value === '(') {
+              matched = true;
+              break;
+            } else {
+              outputQueue.push(top);
+            }
+          }
+          if (!matched) throw new Error('括号不匹配');
+        }
+      }
+
+      while (opStack.length > 0) {
+        const top = opStack.pop();
+        if (top.type === 'PAREN') throw new Error('括号不匹配');
+        outputQueue.push(top);
+      }
+
+      return outputQueue;
+    }
+
+    function evaluateRPN(rpn) {
+      const stack = [];
+
+      for (const token of rpn) {
+        if (token.type === 'NUM') {
+          stack.push(token.value);
+        } else if (token.type === 'OP') {
+          if (stack.length < 2) throw new Error('语法错误');
+          const b = stack.pop();
+          const a = stack.pop();
+          let res = 0;
+          switch (token.value) {
+            case '+': res = a + b; break;
+            case '-': res = a - b; break;
+            case '*': res = a * b; break;
+            case '/':
+              if (b === 0) throw new Error('不能除以零');
+              res = a / b;
+              break;
+          }
+          stack.push(res);
+        }
+      }
+
+      if (stack.length !== 1) throw new Error('计算异常');
+      return stack[0];
+    }
+
+    // ============================================
+    // 历史记录与持久化
+    // ============================================
+    function loadHistory() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY_HIST);
+        if (data) {
+          historyRecords = JSON.parse(data);
+          renderHistoryUI();
+        }
+      } catch (e) {
+        historyRecords = [];
+      }
+    }
+
+    function addHistory(expr, res) {
+      historyRecords.unshift({ expr, res, time: new Date().toLocaleTimeString('zh-CN', { hour12: false }) });
+      if (historyRecords.length > 30) historyRecords.pop();
+      try {
+        localStorage.setItem(STORAGE_KEY_HIST, JSON.stringify(historyRecords));
+      } catch (e) {}
+      renderHistoryUI();
+    }
+
+    function renderHistoryUI() {
+      if (historyRecords.length === 0) {
+        historyList.innerHTML = '<div class="history-empty">暂无计算记录</div>';
+        return;
+      }
+      historyList.innerHTML = historyRecords.map((item, index) => `
+        <div class="history-item" onclick="useHistory(${index})" title="点击填入该计算结果">
+          <div class="hist-expr">${formatExpression(item.expr)} =</div>
+          <div class="hist-res">${formatNumber(item.res)}</div>
+        </div>
+      `).join('');
+    }
+
+    function useHistory(index) {
+      const item = historyRecords[index];
+      if (item) {
+        currentExpression = String(item.res);
+        isEvaluated = true;
+        screenHistory.textContent = `载入历史: ${formatExpression(item.expr)} =`;
+        screenMain.textContent = formatNumber(item.res);
+        showToast('已载入该结果');
+      }
+    }
+
+    function clearHistory() {
+      if (historyRecords.length === 0) return;
+      historyRecords = [];
+      localStorage.removeItem(STORAGE_KEY_HIST);
+      renderHistoryUI();
+      showToast('历史记录已清空');
+    }
+
+    // 复制结果
+    async function copyResult() {
+      const text = screenMain.textContent.replace(/,/g, '');
+      if (text === '0' || text === '错误') return;
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast(`已复制结果: ${text}`);
+      } catch (e) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast(`已复制结果: ${text}`);
+      }
+    }
+
+    // 主题切换
+    function toggleTheme() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem(STORAGE_KEY_THEME, 'light');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem(STORAGE_KEY_THEME, 'dark');
+      }
+    }
+
+    function showToast(msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      setTimeout(() => {
+        toastEl.classList.remove('show');
+      }, 1800);
+    }
+  </script>
+</body>
+</html>

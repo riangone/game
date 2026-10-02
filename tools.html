@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-Y1P7PMMM6V');
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>实用生活工具箱 · 纯前端免安装极速轻应用</title>
+  <meta name="description" content="纯前端、零依赖、本地优先的生活实用工具矩阵。包含极简离线便签、表达式计算器、通用单位换算、全球实时汇率、极简天气看板。">
+  <meta name="theme-color" content="#0284c7">
+
+  <style>
+    :root {
+      --bg-base: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --border-color: #e2e8f0;
+      --border-focus: #0284c7;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --primary-subtle: #e0f2fe;
+      --primary-border: #bae6fd;
+      
+      --success: #10b981;
+      --success-subtle: #d1fae5;
+      --warning: #f59e0b;
+      --warning-subtle: #fef3c7;
+      --purple: #8b5cf6;
+      --purple-subtle: #ede9fe;
+      --rose: #f43f5e;
+      --rose-subtle: #ffe4e6;
+      
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-pill: 9999px;
+      
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+      --shadow-lg: 0 12px 24px -4px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+      --shadow-hover: 0 20px 30px -6px rgba(15, 23, 42, 0.12), 0 8px 16px -4px rgba(15, 23, 42, 0.06);
+
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --bg-base: #090d16;
+      --bg-surface: #111827;
+      --bg-subtle: #1f2937;
+      --border-color: #374151;
+      --border-focus: #38bdf8;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --text-light: #6b7280;
+      
+      --primary: #38bdf8;
+      --primary-hover: #0ea5e9;
+      --primary-subtle: rgba(56, 189, 248, 0.15);
+      --primary-border: #0369a1;
+      
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.6);
+      --shadow-hover: 0 20px 30px -6px rgba(0, 0, 0, 0.7);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.25s ease, color 0.25s ease;
+      line-height: 1.5;
+    }
+
+    /* 顶部导航条 */
+    .app-header {
+      background-color: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(8px);
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-icon {
+      font-size: 26px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-md);
+      background: var(--primary-subtle);
+      border: 1px solid var(--primary-border);
+    }
+
+    .brand-text h1 {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-text p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    .badge-sub {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: var(--radius-pill);
+      background: var(--primary-subtle);
+      color: var(--primary);
+      border: 1px solid var(--primary-border);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      background: var(--bg-subtle);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+
+    .btn-nav:hover {
+      background: var(--primary-subtle);
+      border-color: var(--primary-border);
+      color: var(--primary);
+    }
+
+    .btn-icon-only {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-md);
+      background: var(--bg-subtle);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-icon-only:hover {
+      background: var(--primary-subtle);
+      border-color: var(--primary-border);
+      color: var(--primary);
+    }
+
+    /* 主体容器 */
+    .container {
+      max-width: 1080px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+      flex: 1;
+    }
+
+    /* Hero 横幅 */
+    .hero-banner {
+      text-align: center;
+      margin-bottom: 32px;
+      position: relative;
+    }
+
+    .hero-title {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--text-main);
+      letter-spacing: -0.03em;
+      margin-bottom: 10px;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, #0284c7 0%, #06b6d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 640px;
+      margin: 0 auto 20px;
+      line-height: 1.6;
+    }
+
+    /* 架构特性药丸徽章 */
+    .feature-pills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .feature-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-pill);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .feature-pill span.icon {
+      font-size: 14px;
+    }
+
+    /* 搜索与分类控制栏 */
+    .toolbar-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 240px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--primary-subtle);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      color: var(--text-light);
+      pointer-events: none;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 6px;
+      background: var(--bg-subtle);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+    }
+
+    .filter-tab {
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .filter-tab.active {
+      background: var(--bg-surface);
+      color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* 工具卡片网格 */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+
+    .tool-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+      border-color: var(--border-focus);
+    }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .card-icon {
+      font-size: 34px;
+      line-height: 1;
+      width: 58px;
+      height: 58px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      transition: transform 0.2s ease;
+    }
+
+    .tool-card:hover .card-icon {
+      transform: scale(1.08) rotate(3deg);
+    }
+
+    .card-action-arrow {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+
+    .tool-card:hover .card-action-arrow {
+      background: var(--primary);
+      color: #ffffff;
+      transform: translateX(3px);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 18px;
+      flex: 1;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: auto;
+    }
+
+    .card-tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    .card-tag.offline {
+      background: var(--success-subtle);
+      color: var(--success);
+      border-color: rgba(16, 185, 129, 0.25);
+    }
+
+    .card-tag.api {
+      background: var(--primary-subtle);
+      color: var(--primary);
+      border-color: var(--primary-border);
+    }
+
+    /* 底部声明 */
+    .footer {
+      border-top: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      padding: 24px 20px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: auto;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
+      .hero-title {
+        font-size: 26px;
+      }
+      .app-header {
+        padding: 10px 16px;
+      }
+      .container {
+        padding: 20px 14px 36px;
+      }
+      .tools-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部导航 -->
+  <header class="app-header">
+    <a href="tools.html" class="brand-group">
+      <div class="brand-icon">🛠️</div>
+      <div class="brand-text">
+        <h1>实用工具箱 <span class="badge-sub">v2.0</span></h1>
+        <p>tool.0101.click · 纯前端免安装独立矩阵</p>
+      </div>
+    </a>
+
+    <div class="nav-actions">
+      <a href="index.html" class="btn-nav" title="返回游戏大厅">
+        <span>🎮</span>
+        <span>游戏大厅</span>
+      </a>
+      <button class="btn-icon-only" id="themeToggleBtn" onclick="toggleTheme()" title="切换明暗主题">
+        🌓
+      </button>
+    </div>
+  </header>
+
+  <!-- 主内容区域 -->
+  <main class="container">
+
+    <!-- Hero 介绍 -->
+    <section class="hero-banner">
+      <h2 class="hero-title">高频生活便利 <span>轻量工具集</span></h2>
+      <p class="hero-desc">
+        秉持“单文件自包含、零构建依赖、离线优先与数据隐私”架构标准打造。所有数据仅保存在浏览器本地，即开即用、轻快可靠。
+      </p>
+
+      <!-- 架构特性徽章 -->
+      <div class="feature-pills">
+        <div class="feature-pill"><span class="icon">⚡</span> 纯前端零构建</div>
+        <div class="feature-pill"><span class="icon">🔒</span> 本地数据私有 (100% 离线可用)</div>
+        <div class="feature-pill"><span class="icon">🌐</span> 免 Key 开放数据源</div>
+        <div class="feature-pill"><span class="icon">📱</span> 全设备响应式自适应</div>
+      </div>
+    </section>
+
+    <!-- 搜索与筛选工具栏 -->
+    <div class="toolbar-bar">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" class="search-input" placeholder="输入关键字搜索工具（如：计算、汇率、天气、单位...）" oninput="filterTools()">
+      </div>
+
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="all" onclick="setFilter('all')">全部工具</button>
+        <button class="filter-tab" data-filter="offline" onclick="setFilter('offline')">100% 纯离线</button>
+        <button class="filter-tab" data-filter="network" onclick="setFilter('network')">开放数据网路</button>
+      </div>
+    </div>
+
+    <!-- 工具卡片网格 -->
+    <div class="tools-grid" id="toolsGrid">
+
+      <!-- 1. 记事本 -->
+      <a href="notepad.html" class="tool-card" data-category="offline" data-keywords="便签 记事本 草稿 markdown 备忘录 离线 导出 文本 编辑器 notepad">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(2, 132, 199, 0.1); border-color: rgba(2, 132, 199, 0.2);">📝</div>
+          <div class="card-action-arrow">→</div>
+        </div>
+        <h3 class="card-title">极简便签 / 记事本</h3>
+        <p class="card-desc">
+          零依赖、即开即写的高速本地草稿纸。毫秒级防抖自动存盘、内置纯原生 Markdown 实时分栏预览、字数统计及一键导出 .md / .txt。
+        </p>
+        <div class="card-tags">
+          <span class="card-tag offline">100% 纯离线</span>
+          <span class="card-tag">防抖自存</span>
+          <span class="card-tag">Markdown</span>
+          <span class="card-tag">字数统计</span>
+        </div>
+      </a>
+
+      <!-- 2. 表达式计算器 -->
+      <a href="calculator.html" class="tool-card" data-category="offline" data-keywords="计算器 科学计算 表达式 算术 调度场 精度 历史记录 浮点数 calculator">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(139, 92, 246, 0.1); border-color: rgba(139, 92, 246, 0.2);">🧮</div>
+          <div class="card-action-arrow">→</div>
+        </div>
+        <h3 class="card-title">表达式计算器</h3>
+        <p class="card-desc">
+          基于调度场算法（Shunting-Yard）的逆波兰计算引擎，杜绝 eval() 安全隐患与浮点数精度漏洞，全键盘映射支持与计算历史回溯。
+        </p>
+        <div class="card-tags">
+          <span class="card-tag offline">100% 纯离线</span>
+          <span class="card-tag">算法解析</span>
+          <span class="card-tag">无 eval</span>
+          <span class="card-tag">键盘全映射</span>
+        </div>
+      </a>
+
+      <!-- 3. 通用单位换算 -->
+      <a href="unit-converter.html" class="tool-card" data-category="offline" data-keywords="单位换算 长度 重量 面积 温度 存储 进制 转换 converter">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.2);">📐</div>
+          <div class="card-action-arrow">→</div>
+        </div>
+        <h3 class="card-title">全能单位换算器</h3>
+        <p class="card-desc">
+          涵盖长度、重量、面积、温度、数据存储（1024进制）与 2/8/10/16 进制。单项输入其余所有单位毫秒级双向联动，无需源与目标反复切换。
+        </p>
+        <div class="card-tags">
+          <span class="card-tag offline">100% 纯离线</span>
+          <span class="card-tag">多对多联动</span>
+          <span class="card-tag">6大领域</span>
+          <span class="card-tag">BigInt 精准支持</span>
+        </div>
+      </a>
+
+      <!-- 4. 全球实时汇率换算 -->
+      <a href="currency.html" class="tool-card" data-category="network" data-keywords="汇率 货币 美元 人民币 日元 欧元 港币 换算 外汇 金融 currency">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.2);">💱</div>
+          <div class="card-action-arrow">→</div>
+        </div>
+        <h3 class="card-title">全球实时汇率换算</h3>
+        <p class="card-desc">
+          覆盖全球 32 种法定货币实时双向联动推导。直连免 Key 开放 API，具备本地快照自动缓存与离线平滑降级，弱网断网依然可用。
+        </p>
+        <div class="card-tags">
+          <span class="card-tag api">免 Key 开放 API</span>
+          <span class="card-tag">离线快照容灾</span>
+          <span class="card-tag">32种主流货币</span>
+          <span class="card-tag">任意基准置顶</span>
+        </div>
+      </a>
+
+      <!-- 5. 极简天气看板 -->
+      <a href="weather.html" class="tool-card" data-category="network" data-keywords="天气 气温 预报 湿度 风速 紫外线 降水 气象 定位 weather">
+        <div class="card-top">
+          <div class="card-icon" style="background: rgba(6, 182, 212, 0.1); border-color: rgba(6, 182, 212, 0.2);">🌤️</div>
+          <div class="card-action-arrow">→</div>
+        </div>
+        <h3 class="card-title">极简实时天气看板</h3>
+        <p class="card-desc">
+          集成 Open-Meteo 高精度免 Key 气象源。支持 GPS 定位与全球城市检索，提供 24h 趋势、7天预报、6项核心气象指标与纯原生 SVG 矢量天气图标。
+        </p>
+        <div class="card-tags">
+          <span class="card-tag api">免 Key 气象 API</span>
+          <span class="card-tag">原生 GPS 定位</span>
+          <span class="card-tag">24h与7天趋势</span>
+          <span class="card-tag">零外部图标</span>
+        </div>
+      </a>
+
+    </div>
+
+  </main>
+
+  <!-- 底部说明与跨域导航 -->
+  <footer class="footer">
+    <div class="footer-links">
+      <a href="index.html">🎮 游戏大厅 (game.0101.click)</a>
+      <span>·</span>
+      <a href="kids.html">🎈 奇趣益智乐园 (l.0101.click)</a>
+      <span>·</span>
+      <a href="languages.html">🌐 多语言课文乐园 (zw / nhg / hge)</a>
+      <span>·</span>
+      <a href="https://0101.click">🏠 0101.click 门户</a>
+    </div>
+    <p>© 2026 实用工具箱 · 纯前端自包含轻应用架构 · 托管于 tool.0101.click</p>
+  </footer>
+
+  <script>
+    // 明暗主题切换
+    function initTheme() {
+      const savedTheme = localStorage.getItem('app_theme');
+      if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const target = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', target);
+      localStorage.setItem('app_theme', target);
+    }
+
+    initTheme();
+
+    // 分类筛选
+    let currentFilter = 'all';
+    function setFilter(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.getAttribute('data-filter') === filter);
+      });
+      filterTools();
+    }
+
+    // 搜索与过滤逻辑
+    function filterTools() {
+      const query = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+      const cards = document.querySelectorAll('.tool-card');
+
+      cards.forEach(card => {
+        const cat = card.getAttribute('data-category');
+        const keywords = card.getAttribute('data-keywords').toLowerCase();
+        const title = card.querySelector('.card-title').textContent.toLowerCase();
+        const desc = card.querySelector('.card-desc').textContent.toLowerCase();
+
+        const matchCat = (currentFilter === 'all') || (cat === currentFilter);
+        const matchQuery = !query || title.includes(query) || desc.includes(query) || keywords.includes(query);
+
+        if (matchCat && matchQuery) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

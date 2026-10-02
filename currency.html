@@ -1,0 +1,1207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>全球实时汇率换算器 · 纯前端离线容灾工具</title>
+  <meta name="description" content="零构建、免API Key、支持离线缓存的纯前端实时汇率换算器。支持全球30+主流法定货币即时双向联动计算、千分位格式化、离线基准容灾。">
+  <style>
+    :root {
+      --bg-base: #f8fafc;
+      --bg-surface: #ffffff;
+      --border-color: #e2e8f0;
+      --border-active: #0284c7;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --primary-subtle: #e0f2fe;
+      --accent: #10b981;
+      --accent-subtle: #d1fae5;
+      --warning-bg: #fffbeb;
+      --warning-border: #fef3c7;
+      --warning-text: #b45309;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --bg-base: #0f172a;
+      --bg-surface: #1e293b;
+      --border-color: #334155;
+      --border-active: #38bdf8;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --primary: #38bdf8;
+      --primary-hover: #0ea5e9;
+      --primary-subtle: rgba(56, 189, 248, 0.15);
+      --accent: #34d399;
+      --accent-subtle: rgba(52, 211, 153, 0.15);
+      --warning-bg: rgba(245, 158, 11, 0.12);
+      --warning-border: rgba(245, 158, 11, 0.25);
+      --warning-text: #fbbf24;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    /* 顶部导航 */
+    header.app-header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      padding: 10px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      background: var(--bg-base);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .back-link:hover {
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .app-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-right: 4px;
+    }
+
+    .brand-icon {
+      font-size: 20px;
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .peer-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .theme-btn {
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .theme-btn:hover {
+      color: var(--text-main);
+      background: var(--bg-base);
+    }
+
+    /* 主布局 */
+    main.main-content {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* 状态与控制栏 */
+    .status-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .status-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 13px;
+    }
+
+    .rate-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .rate-badge.live {
+      background: var(--accent-subtle);
+      color: var(--accent);
+    }
+
+    .rate-badge.cached {
+      background: var(--warning-bg);
+      color: var(--warning-text);
+      border: 1px solid var(--warning-border);
+    }
+
+    .update-time {
+      color: var(--text-muted);
+      font-size: 12.5px;
+    }
+
+    .status-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-refresh {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 12px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--primary);
+      background: var(--primary-subtle);
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-refresh:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-refresh.loading span.icon {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    /* 实时汇率走势小挂件条 */
+    .ticker-bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      overflow-x: auto;
+      padding: 8px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 12.5px;
+      white-space: nowrap;
+      scrollbar-width: thin;
+    }
+
+    .ticker-label {
+      font-weight: 700;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .ticker-items {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .ticker-item {
+      color: var(--text-main);
+      background: var(--bg-base);
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      font-family: var(--font-mono);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .ticker-item:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* 过滤器与搜索栏 */
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .filter-tabs {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-surface);
+      padding: 3px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      overflow-x: auto;
+      max-width: 100%;
+    }
+
+    .filter-tab {
+      padding: 6px 12px;
+      font-size: 12.5px;
+      font-weight: 600;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .filter-tab.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .search-box {
+      position: relative;
+      flex: 1;
+      max-width: 320px;
+      min-width: 220px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 8px 12px 8px 32px;
+      font-size: 13px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--border-active);
+      box-shadow: 0 0 0 3px var(--primary-subtle);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: var(--text-light);
+      pointer-events: none;
+    }
+
+    /* 货币网格 */
+    .currency-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 14px;
+    }
+
+    .currency-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .currency-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--text-light);
+    }
+
+    .currency-card.active-base {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary);
+      background: linear-gradient(to bottom right, var(--bg-surface), var(--primary-subtle));
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .currency-identity {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .currency-flag {
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .currency-meta {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .currency-code-box {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .currency-code {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.2px;
+    }
+
+    .currency-symbol {
+      font-size: 13px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+
+    .currency-name {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .action-btn {
+      padding: 4px 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background: var(--bg-base);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .action-btn:hover {
+      color: var(--primary);
+      border-color: var(--primary);
+      background: var(--bg-surface);
+    }
+
+    .base-tag {
+      font-size: 10.5px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .card-input-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-base);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 4px 10px;
+      transition: all 0.15s ease;
+    }
+
+    .currency-card.active-base .card-input-row {
+      border-color: var(--primary);
+      background: var(--bg-surface);
+      box-shadow: 0 0 0 2px var(--primary-subtle);
+    }
+
+    .card-input-row:focus-within {
+      border-color: var(--border-active);
+      background: var(--bg-surface);
+      box-shadow: 0 0 0 2px var(--primary-subtle);
+    }
+
+    .input-symbol {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--text-muted);
+      font-size: 16px;
+    }
+
+    .currency-input {
+      flex: 1;
+      width: 100%;
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: var(--font-mono);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-main);
+      text-align: right;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--text-light);
+      padding-top: 4px;
+      border-top: 1px dashed var(--border-color);
+    }
+
+    .rate-ref {
+      font-family: var(--font-mono);
+    }
+
+    .card-presets {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .preset-btn {
+      font-size: 11px;
+      padding: 2px 5px;
+      border-radius: 3px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-base);
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .preset-btn:hover {
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    /* 空态 */
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      border: 1px dashed var(--border-color);
+      border-radius: var(--radius-md);
+    }
+
+    /* 底部提示 */
+    footer.app-footer {
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 16px 24px;
+      font-size: 12px;
+      color: var(--text-light);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Toast */
+    .toast-msg {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(15, 23, 42, 0.88);
+      color: #ffffff;
+      padding: 8px 18px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+      pointer-events: none;
+      opacity: 0;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部导航 -->
+  <header class="app-header">
+    <div class="header-left">
+      <a href="index.html" class="back-link" title="返回大厅">
+        <span>←</span>
+        <span>大厅</span>
+      </a>
+      <div class="app-brand">
+        <span class="brand-icon">💱</span>
+        <span class="brand-title">全球汇率换算</span>
+      </div>
+      <nav class="peer-nav" aria-label="同级实用工具">
+        <a href="tools.html" class="back-link" title="实用工具箱总览" style="padding: 4px 8px; font-size: 12px; font-weight: 700;">🛠️ 工具箱</a>
+        <a href="notepad.html" class="back-link" title="切换到便签" style="padding: 4px 8px; font-size: 12px;">📝 便签</a>
+        <a href="calculator.html" class="back-link" title="切换到计算器" style="padding: 4px 8px; font-size: 12px;">🧮 计算器</a>
+        <a href="unit-converter.html" class="back-link" title="切换到单位换算器" style="padding: 4px 8px; font-size: 12px;">📐 换算器</a>
+        <a href="weather.html" class="back-link" title="切换到极简天气" style="padding: 4px 8px; font-size: 12px;">🌤️ 天气</a>
+      </nav>
+    </div>
+
+    <div>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="切换深色/浅色模式">🌓 主题</button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <!-- 状态面板 -->
+    <section class="status-panel">
+      <div class="status-left">
+        <span class="rate-badge live" id="statusBadge">● 实时汇率已就绪</span>
+        <span class="update-time" id="updateTimeText">数据源：ExchangeRate-API · 正在获取中...</span>
+      </div>
+      <div class="status-actions">
+        <button class="btn-refresh" id="refreshBtn" onclick="fetchLiveRates(true)" title="立即拉取最新汇率行情">
+          <span class="icon">🔄</span>
+          <span>刷新汇率</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 常用参考行情小看板 -->
+    <section class="ticker-bar" id="tickerBar">
+      <div class="ticker-label">
+        <span>📌</span>
+        <span>基准兑换参考:</span>
+      </div>
+      <div class="ticker-items" id="tickerItems">
+        <!-- 动态生成 -->
+      </div>
+    </section>
+
+    <!-- 分类过滤与搜索 -->
+    <section class="controls-row">
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-tab active" data-category="all" onclick="setCategory('all')">全部货币 (32)</button>
+        <button class="filter-tab" data-category="popular" onclick="setCategory('popular')">🔥 热门常用</button>
+        <button class="filter-tab" data-category="asia" onclick="setCategory('asia')">🌏 亚太地区</button>
+        <button class="filter-tab" data-category="europe" onclick="setCategory('europe')">🌍 欧洲与美洲</button>
+        <button class="filter-tab" data-category="other" onclick="setCategory('other')">🌐 更多地区</button>
+      </div>
+
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" class="search-input" placeholder="搜索货币代码/名称 (如 CNY, 美元)..." oninput="handleSearch(this.value)">
+      </div>
+    </section>
+
+    <!-- 货币卡片容器 -->
+    <section class="currency-grid" id="currencyGrid">
+      <!-- 动态注入货币卡片 -->
+    </section>
+  </main>
+
+  <!-- 底部说明与免责 -->
+  <footer class="app-footer">
+    <div>💡 提示：在任意货币卡片中输入金额，其余币种将即时自动换算。支持离线容灾，数据本地自动缓存。</div>
+    <div>免责声明：汇率数据均来自开放公开接口，仅供日常换算参考，不构成投资或交易结汇凭据。</div>
+  </footer>
+
+  <!-- 浮动 Toast 提示 -->
+  <div class="toast-msg" id="toastMsg">已复制</div>
+
+  <script>
+    // -------------------------------------------------------------
+    // 1. 全球主要法定货币字典 (带国旗、符号、地区分类、小数位)
+    // -------------------------------------------------------------
+    const CURRENCIES = [
+      { code: 'CNY', name: '人民币', symbol: '¥', flag: '🇨🇳', category: 'popular', decimals: 2 },
+      { code: 'USD', name: '美元', symbol: '$', flag: '🇺🇸', category: 'popular', decimals: 2 },
+      { code: 'EUR', name: '欧元', symbol: '€', flag: '🇪🇺', category: 'popular', decimals: 2 },
+      { code: 'JPY', name: '日元', symbol: '¥', flag: '🇯🇵', category: 'popular', decimals: 0 },
+      { code: 'HKD', name: '港币', symbol: 'HK$', flag: '🇭🇰', category: 'popular', decimals: 2 },
+      { code: 'GBP', name: '英镑', symbol: '£', flag: '🇬🇧', category: 'popular', decimals: 2 },
+      { code: 'TWD', name: '新台币', symbol: 'NT$', flag: '🇹🇼', category: 'asia', decimals: 2 },
+      { code: 'KRW', name: '韩元', symbol: '₩', flag: '🇰🇷', category: 'asia', decimals: 0 },
+      { code: 'SGD', name: '新加坡元', symbol: 'S$', flag: '🇸🇬', category: 'asia', decimals: 2 },
+      { code: 'AUD', name: '澳大利亚元', symbol: 'A$', flag: '🇦🇺', category: 'popular', decimals: 2 },
+      { code: 'CAD', name: '加拿大元', symbol: 'C$', flag: '🇨🇦', category: 'popular', decimals: 2 },
+      { code: 'CHF', name: '瑞士法郎', symbol: 'Fr', flag: '🇨🇭', category: 'europe', decimals: 2 },
+      { code: 'THB', name: '泰铢', symbol: '฿', flag: '🇹🇭', category: 'asia', decimals: 2 },
+      { code: 'MYR', name: '马来西亚林吉特', symbol: 'RM', flag: '🇲🇾', category: 'asia', decimals: 2 },
+      { code: 'NZD', name: '新西兰元', symbol: 'NZ$', flag: '🇳🇿', category: 'other', decimals: 2 },
+      { code: 'INR', name: '印度卢比', symbol: '₹', flag: '🇮🇳', category: 'asia', decimals: 2 },
+      { code: 'VND', name: '越南盾', symbol: '₫', flag: '🇻🇳', category: 'asia', decimals: 0 },
+      { code: 'RUB', name: '俄罗斯卢布', symbol: '₽', flag: '🇷🇺', category: 'europe', decimals: 2 },
+      { code: 'AED', name: '阿联酋迪拉姆', symbol: 'AED', flag: '🇦🇪', category: 'other', decimals: 2 },
+      { code: 'SAR', name: '沙特里亚尔', symbol: 'SR', flag: '🇸🇦', category: 'other', decimals: 2 },
+      { code: 'BRL', name: '巴西雷亚尔', symbol: 'R$', flag: '🇧🇷', category: 'other', decimals: 2 },
+      { code: 'MXN', name: '墨西哥比索', symbol: 'Mex$', flag: '🇲🇽', category: 'other', decimals: 2 },
+      { code: 'IDR', name: '印尼卢比', symbol: 'Rp', flag: '🇮🇩', category: 'asia', decimals: 0 },
+      { code: 'PHP', name: '菲律宾比索', symbol: '₱', flag: '🇵🇭', category: 'asia', decimals: 2 },
+      { code: 'SEK', name: '瑞典克朗', symbol: 'kr', flag: '🇸🇪', category: 'europe', decimals: 2 },
+      { code: 'NOK', name: '挪威克朗', symbol: 'kr', flag: '🇳🇴', category: 'europe', decimals: 2 },
+      { code: 'DKK', name: '丹麦克朗', symbol: 'kr', flag: '🇩🇰', category: 'europe', decimals: 2 },
+      { code: 'PLN', name: '波兰兹罗提', symbol: 'zł', flag: '🇵🇱', category: 'europe', decimals: 2 },
+      { code: 'TRY', name: '土耳其里拉', symbol: '₺', flag: '🇹🇷', category: 'europe', decimals: 2 },
+      { code: 'ZAR', name: '南非兰特', symbol: 'R', flag: '🇿🇦', category: 'other', decimals: 2 },
+      { code: 'EGP', name: '埃及镑', symbol: 'E£', flag: '🇪🇬', category: 'other', decimals: 2 },
+      { code: 'ILS', name: '以色列新谢克尔', symbol: '₪', flag: '🇮🇱', category: 'other', decimals: 2 }
+    ];
+
+    // 默认内置基准汇率字典 (以 1 USD 为基准，供首次无网络离线应急使用)
+    const DEFAULT_FALLBACK_RATES = {
+      USD: 1.0,
+      CNY: 7.23,
+      EUR: 0.92,
+      JPY: 153.5,
+      HKD: 7.82,
+      GBP: 0.77,
+      TWD: 32.1,
+      KRW: 1378.0,
+      SGD: 1.34,
+      AUD: 1.51,
+      CAD: 1.38,
+      CHF: 0.88,
+      THB: 34.6,
+      MYR: 4.42,
+      NZD: 1.66,
+      INR: 84.1,
+      VND: 25300.0,
+      RUB: 97.5,
+      AED: 3.67,
+      SAR: 3.75,
+      BRL: 5.75,
+      MXN: 20.1,
+      IDR: 15700.0,
+      PHP: 58.2,
+      SEK: 10.7,
+      NOK: 10.9,
+      DKK: 6.88,
+      PLN: 4.02,
+      TRY: 34.3,
+      ZAR: 17.6,
+      EGP: 49.2,
+      ILS: 3.72
+    };
+
+    // -------------------------------------------------------------
+    // 2. 状态机
+    // -------------------------------------------------------------
+    const STORAGE_KEY_RATES = 'currency_rates_cache_v2';
+    const STORAGE_KEY_THEME = 'app_theme_mode';
+
+    let currentRates = { ...DEFAULT_FALLBACK_RATES };
+    let baseCurrency = 'USD';
+    let baseAmount = 100; // 默认基准输入 100 USD
+    let activeInputCode = 'USD'; // 当前正在由哪个输入框驱动
+    let activeCategory = 'all';
+    let searchQuery = '';
+    let isFetching = false;
+
+    // -------------------------------------------------------------
+    // 3. 初始化与事件挂载
+    // -------------------------------------------------------------
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      loadCachedRates();
+      renderAll();
+      fetchLiveRates(false); // 静默加载最新
+    });
+
+    // -------------------------------------------------------------
+    // 4. 数据获取与缓存层
+    // -------------------------------------------------------------
+    function loadCachedRates() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_RATES);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.rates) {
+            currentRates = { ...currentRates, ...parsed.rates };
+            updateStatusUI(false, parsed.lastUpdated ? new Date(parsed.lastUpdated) : null, parsed.source || '本地缓存');
+          }
+        }
+      } catch (e) {
+        console.warn('读取汇率缓存失败', e);
+      }
+    }
+
+    async function fetchLiveRates(isUserInitiated = false) {
+      if (isFetching) return;
+      isFetching = true;
+
+      const refreshBtn = document.getElementById('refreshBtn');
+      if (refreshBtn) refreshBtn.classList.add('loading');
+
+      if (isUserInitiated) {
+        showToast('正在获取全球最新汇率行情...');
+      }
+
+      let success = false;
+
+      // 首选端点: ExchangeRate-API (免 Key, 支持 CORS)
+      try {
+        const res = await fetch('https://open.er-api.com/v6/latest/USD', { cache: 'no-cache' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (data && data.rates) {
+          applyNewRates(data.rates, new Date(), 'ExchangeRate-API 实时源');
+          success = true;
+        }
+      } catch (errPrimary) {
+        console.warn('主汇率端点请求失败，尝试备用 Frankfurter 端点...', errPrimary);
+        // 备用端点: Frankfurter
+        try {
+          const res = await fetch('https://api.frankfurter.dev/v1/latest?base=USD', { cache: 'no-cache' });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          if (data && data.rates) {
+            const combinedRates = { ...data.rates, USD: 1.0 };
+            applyNewRates(combinedRates, new Date(), 'Frankfurter 开放源');
+            success = true;
+          }
+        } catch (errFallback) {
+          console.warn('备用汇率端点亦不可用', errFallback);
+        }
+      }
+
+      if (!success) {
+        updateStatusUI(true, null, '网络离线 / 本地基准模式');
+        if (isUserInitiated) {
+          showToast('无法连接汇率服务器，已保留当前缓存数据');
+        }
+      } else if (isUserInitiated) {
+        showToast('汇率已更新至最新行情！');
+      }
+
+      isFetching = false;
+      if (refreshBtn) refreshBtn.classList.remove('loading');
+    }
+
+    function applyNewRates(newRates, updateDate, sourceName) {
+      currentRates = { ...currentRates, ...newRates };
+      // 持久化到 localStorage
+      try {
+        localStorage.setItem(STORAGE_KEY_RATES, JSON.stringify({
+          rates: currentRates,
+          lastUpdated: updateDate.toISOString(),
+          source: sourceName
+        }));
+      } catch (e) {
+        console.warn('缓存汇率失败', e);
+      }
+      updateStatusUI(false, updateDate, sourceName);
+      renderTicker();
+      updateAllInputsExcept(null);
+    }
+
+    function updateStatusUI(isOffline, date, sourceName) {
+      const badge = document.getElementById('statusBadge');
+      const timeText = document.getElementById('updateTimeText');
+
+      if (isOffline) {
+        badge.className = 'rate-badge cached';
+        badge.textContent = '● 离线基准模式';
+        timeText.textContent = `提示：当前使用离线汇率数据，数据仅供参考`;
+      } else {
+        badge.className = 'rate-badge live';
+        badge.textContent = '● 实时汇率同步中';
+        const timeStr = date ? date.toLocaleTimeString('zh-CN', { hour12: false }) : '刚刚';
+        timeText.textContent = `数据源：${sourceName} · 更新时间：${timeStr}`;
+      }
+    }
+
+    // -------------------------------------------------------------
+    // 5. 核心计算与换算引擎
+    // -------------------------------------------------------------
+    // 获取 1 单位 currencyCode 对应多少 USD
+    function getUsdRate(currencyCode) {
+      return currentRates[currencyCode] || 1;
+    }
+
+    // 针对任意指定货币换算金额
+    function calculateAmount(targetCode) {
+      const activeRate = getUsdRate(activeInputCode); // 1 USD = x ActiveCode
+      const targetRate = getUsdRate(targetCode);      // 1 USD = y TargetCode
+
+      if (!activeRate || activeRate === 0) return 0;
+
+      // 先将当前输入的金额折算为基准 USD
+      const usdValue = baseAmount / activeRate;
+      // 再由 USD 折算为目标货币
+      return usdValue * targetRate;
+    }
+
+    function formatNumber(val, decimals = 2) {
+      if (isNaN(val) || val === null || val === undefined) return '0';
+      if (val === 0) return '0';
+
+      // 极大或极小值容错
+      if (val > 1e14) return val.toExponential(4);
+
+      return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: decimals
+      }).format(val);
+    }
+
+    // -------------------------------------------------------------
+    // 6. 视图渲染
+    // -------------------------------------------------------------
+    function renderAll() {
+      renderTicker();
+      renderCurrencyGrid();
+    }
+
+    // 渲染走势小看板
+    function renderTicker() {
+      const tickerContainer = document.getElementById('tickerItems');
+      const cnyRate = currentRates['CNY'] || 7.2;
+      const eurRate = currentRates['EUR'] || 0.92;
+      const jpyRate = currentRates['JPY'] || 153.5;
+      const gbpRate = currentRates['GBP'] || 0.77;
+      const hkdRate = currentRates['HKD'] || 7.82;
+
+      // 1 USD = x CNY
+      // 1 EUR = (cny / eur) CNY
+      // 100 JPY = (cny / jpy * 100) CNY
+      const eurToCny = (cnyRate / eurRate).toFixed(2);
+      const jpyToCny = ((cnyRate / jpyRate) * 100).toFixed(2);
+      const gbpToCny = (cnyRate / gbpRate).toFixed(2);
+      const hkdToCny = (cnyRate / hkdRate).toFixed(2);
+
+      const itemsHtml = `
+        <div class="ticker-item" onclick="setBaseAndAmount('USD', 1)" title="点击以此为基准">1 USD ≈ ${cnyRate.toFixed(2)} CNY</div>
+        <div class="ticker-item" onclick="setBaseAndAmount('EUR', 1)" title="点击以此为基准">1 EUR ≈ ${eurToCny} CNY</div>
+        <div class="ticker-item" onclick="setBaseAndAmount('GBP', 1)" title="点击以此为基准">1 GBP ≈ ${gbpToCny} CNY</div>
+        <div class="ticker-item" onclick="setBaseAndAmount('HKD', 100)" title="点击以此为基准">100 HKD ≈ ${hkdToCny} CNY</div>
+        <div class="ticker-item" onclick="setBaseAndAmount('JPY', 100)" title="点击以此为基准">100 JPY ≈ ${jpyToCny} CNY</div>
+      `;
+      tickerContainer.innerHTML = itemsHtml;
+    }
+
+    // 渲染货币卡片列表
+    function renderCurrencyGrid() {
+      const grid = document.getElementById('currencyGrid');
+      grid.innerHTML = '';
+
+      const filtered = CURRENCIES.filter(curr => {
+        // 分类匹配
+        if (activeCategory === 'popular' && curr.category !== 'popular') return false;
+        if (activeCategory === 'asia' && curr.category !== 'asia' && curr.code !== 'JPY' && curr.code !== 'HKD' && curr.code !== 'CNY') return false;
+        if (activeCategory === 'europe' && curr.category !== 'europe' && curr.code !== 'USD' && curr.code !== 'EUR' && curr.code !== 'GBP' && curr.code !== 'CAD') return false;
+        if (activeCategory === 'other' && curr.category !== 'other') return false;
+
+        // 搜索关键词匹配
+        if (searchQuery) {
+          const q = searchQuery.toLowerCase().trim();
+          const matchCode = curr.code.toLowerCase().includes(q);
+          const matchName = curr.name.toLowerCase().includes(q);
+          if (!matchCode && !matchName) return false;
+        }
+
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="empty-state">没有找到匹配「${escapeHtml(searchQuery)}」的货币</div>`;
+        return;
+      }
+
+      filtered.forEach(curr => {
+        const isBase = (curr.code === activeInputCode);
+        const card = document.createElement('div');
+        card.className = `currency-card ${isBase ? 'active-base' : ''}`;
+        card.id = `card-${curr.code}`;
+
+        const convertedVal = calculateAmount(curr.code);
+        const displayVal = isBase ? baseAmount : formatNumber(convertedVal, curr.decimals);
+
+        // 与 USD 的直接比率说明
+        const rateToUsd = (currentRates[curr.code] || 1).toFixed(curr.decimals > 2 ? 4 : 2);
+
+        card.innerHTML = `
+          <div class="card-top">
+            <div class="currency-identity">
+              <span class="currency-flag">${curr.flag}</span>
+              <div class="currency-meta">
+                <div class="currency-code-box">
+                  <span class="currency-code">${curr.code}</span>
+                  <span class="currency-symbol">${curr.symbol}</span>
+                </div>
+                <span class="currency-name">${curr.name}</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              ${isBase ? '<span class="base-tag">基准源</span>' : `<button class="action-btn" onclick="setBaseCurrency('${curr.code}')" title="设为输入基准">设为基准</button>`}
+              <button class="action-btn" onclick="copyAmount('${curr.code}')" title="复制换算金额">复制</button>
+            </div>
+          </div>
+
+          <div class="card-input-row">
+            <span class="input-symbol">${curr.symbol}</span>
+            <input 
+              type="text" 
+              inputmode="decimal" 
+              id="input-${curr.code}" 
+              class="currency-input" 
+              value="${displayVal}"
+              onfocus="handleInputFocus('${curr.code}')"
+              oninput="handleAmountInput('${curr.code}', this.value)"
+              autocomplete="off"
+            >
+          </div>
+
+          <div class="card-footer">
+            <span class="rate-ref">1 USD ≈ ${rateToUsd} ${curr.code}</span>
+            <div class="card-presets">
+              <button class="preset-btn" onclick="quickSetAmount('${curr.code}', 1)">1</button>
+              <button class="preset-btn" onclick="quickSetAmount('${curr.code}', 100)">100</button>
+              <button class="preset-btn" onclick="quickSetAmount('${curr.code}', 1000)">1k</button>
+            </div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    // -------------------------------------------------------------
+    // 7. 用户交互与联动
+    // -------------------------------------------------------------
+    function handleInputFocus(code) {
+      if (activeInputCode !== code) {
+        activeInputCode = code;
+        highlightActiveCard();
+      }
+    }
+
+    function handleAmountInput(code, rawVal) {
+      activeInputCode = code;
+      // 清理非数字字符（允许一个小数点）
+      let cleanVal = rawVal.replace(/[^\d.]/g, '');
+      const parts = cleanVal.split('.');
+      if (parts.length > 2) {
+        cleanVal = parts[0] + '.' + parts.slice(1).join('');
+      }
+
+      const num = parseFloat(cleanVal);
+      baseAmount = isNaN(num) ? 0 : num;
+
+      // 实时更新其余所有输入框
+      updateAllInputsExcept(code);
+    }
+
+    function updateAllInputsExcept(skipCode) {
+      CURRENCIES.forEach(curr => {
+        if (curr.code === skipCode) return;
+        const inputEl = document.getElementById(`input-${curr.code}`);
+        if (inputEl) {
+          const val = calculateAmount(curr.code);
+          inputEl.value = formatNumber(val, curr.decimals);
+        }
+      });
+    }
+
+    function highlightActiveCard() {
+      document.querySelectorAll('.currency-card').forEach(c => c.classList.remove('active-base'));
+      const activeCard = document.getElementById(`card-${activeInputCode}`);
+      if (activeCard) {
+        activeCard.classList.add('active-base');
+      }
+    }
+
+    function setBaseCurrency(code) {
+      activeInputCode = code;
+      highlightActiveCard();
+      const inputEl = document.getElementById(`input-${code}`);
+      if (inputEl) {
+        inputEl.focus();
+        inputEl.select();
+      }
+      showToast(`已切换「${code}」为输入基准币种`);
+    }
+
+    function setBaseAndAmount(code, amount) {
+      activeInputCode = code;
+      baseAmount = amount;
+      highlightActiveCard();
+      const inputEl = document.getElementById(`input-${code}`);
+      if (inputEl) {
+        inputEl.value = amount;
+        inputEl.focus();
+      }
+      updateAllInputsExcept(code);
+      showToast(`已切换为 ${amount} ${code}`);
+    }
+
+    function quickSetAmount(code, amount) {
+      activeInputCode = code;
+      baseAmount = amount;
+      highlightActiveCard();
+      const inputEl = document.getElementById(`input-${code}`);
+      if (inputEl) {
+        inputEl.value = amount;
+        inputEl.focus();
+      }
+      updateAllInputsExcept(code);
+    }
+
+    function copyAmount(code) {
+      const inputEl = document.getElementById(`input-${code}`);
+      if (!inputEl) return;
+      const text = inputEl.value.replace(/,/g, '');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast(`已复制 ${code} 金额: ${inputEl.value}`);
+        });
+      } else {
+        inputEl.select();
+        document.execCommand('copy');
+        showToast(`已复制 ${code} 金额: ${inputEl.value}`);
+      }
+    }
+
+    function setCategory(cat) {
+      activeCategory = cat;
+      document.querySelectorAll('.filter-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.category === cat);
+      });
+      renderCurrencyGrid();
+    }
+
+    function handleSearch(val) {
+      searchQuery = val;
+      renderCurrencyGrid();
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/[&<>"']/g, m => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      }[m]));
+    }
+
+    // -------------------------------------------------------------
+    // 8. 主题与 Toast 提示
+    // -------------------------------------------------------------
+    function initTheme() {
+      const savedTheme = localStorage.getItem(STORAGE_KEY_THEME);
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+      }
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem(STORAGE_KEY_THEME, 'light');
+        showToast('已切换至浅色模式');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem(STORAGE_KEY_THEME, 'dark');
+        showToast('已切换至深色模式');
+      }
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const toast = document.getElementById('toastMsg');
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.classList.add('show');
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2200);
+    }
+  </script>
+</body>
+</html>

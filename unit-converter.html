@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>通用单位换算器 · 纯前端离线工具</title>
+  <meta name="description" content="零依赖、纯前端通用单位换算工具。涵盖长度、重量、面积、温度、数据存储、进制转换，任意单位即时双向联动推导，100% 离线可用。">
+  <style>
+    :root {
+      --bg-base: #f8fafc;
+      --bg-surface: #ffffff;
+      --border-color: #e2e8f0;
+      --border-active: #0284c7;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --primary-subtle: #f0f9ff;
+      --card-bg: #ffffff;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --bg-base: #0f172a;
+      --bg-surface: #1e293b;
+      --border-color: #334155;
+      --border-active: #38bdf8;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --primary: #38bdf8;
+      --primary-hover: #0ea5e9;
+      --primary-subtle: rgba(56, 189, 248, 0.12);
+      --card-bg: #1e293b;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    header.app-header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-decoration: none;
+      background: var(--bg-base);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      transition: all 0.15s ease;
+    }
+
+    .back-link:hover {
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .app-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-icon {
+      font-size: 20px;
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .theme-btn {
+      padding: 6px 10px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+
+    .theme-btn:hover {
+      color: var(--text-main);
+      background: var(--bg-base);
+    }
+
+    /* 主布局 */
+    main.main-content {
+      flex: 1;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* 类别选择栏 */
+    .category-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 8px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .cat-btn {
+      flex: 1;
+      min-width: 90px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 14px;
+      font-size: 13.5px;
+      font-weight: 600;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .cat-btn:hover {
+      background: var(--bg-base);
+      color: var(--text-main);
+    }
+
+    .cat-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+    }
+
+    /* 提示横幅 */
+    .info-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--text-muted);
+      padding: 4px 8px;
+    }
+
+    .quick-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .action-pill {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .action-pill:hover {
+      background: var(--bg-base);
+      color: var(--text-main);
+      border-color: var(--text-light);
+    }
+
+    /* 单位换算栅格 */
+    .converter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 16px;
+    }
+
+    .unit-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .unit-card:focus-within {
+      border-color: var(--border-active);
+      box-shadow: 0 0 0 3px var(--primary-subtle);
+    }
+
+    .unit-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .unit-name-box {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .unit-name {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .unit-symbol {
+      font-size: 12.5px;
+      font-family: var(--font-mono);
+      color: var(--text-light);
+    }
+
+    .unit-copy-btn {
+      font-size: 12px;
+      padding: 3px 8px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .unit-copy-btn:hover {
+      background: var(--bg-base);
+      color: var(--primary);
+    }
+
+    .unit-input-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .unit-input {
+      flex: 1;
+      width: 100%;
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-main);
+      background: var(--bg-base);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .unit-input:focus {
+      border-color: var(--primary);
+      background: var(--bg-surface);
+    }
+
+    /* 底部提示 */
+    footer.app-footer {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border-color);
+      padding: 12px 20px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* Toast */
+    .toast-msg {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(15, 23, 42, 0.88);
+      color: #ffffff;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+      pointer-events: none;
+      opacity: 0;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部导航 -->
+  <header class="app-header">
+    <div class="header-left">
+      <a href="index.html" class="back-link" title="返回大厅">
+        <span>←</span>
+        <span>大厅</span>
+      </a>
+      <div class="app-brand">
+        <span class="brand-icon">📐</span>
+        <span class="brand-title">通用单位换算器</span>
+      </div>
+      <div style="display: flex; gap: 6px; margin-left: 10px; flex-wrap: wrap;">
+        <a href="tools.html" class="back-link" title="实用工具箱总览" style="padding: 4px 8px; font-size: 12px; font-weight: 700;">🛠️ 工具箱</a>
+        <a href="notepad.html" class="back-link" title="切换到便签" style="padding: 4px 8px; font-size: 12px;">📝 便签</a>
+        <a href="calculator.html" class="back-link" title="切换到计算器" style="padding: 4px 8px; font-size: 12px;">🧮 计算器</a>
+        <a href="currency.html" class="back-link" title="切换到全球汇率换算" style="padding: 4px 8px; font-size: 12px;">💱 汇率</a>
+        <a href="weather.html" class="back-link" title="切换到极简天气看板" style="padding: 4px 8px; font-size: 12px;">🌤️ 天气</a>
+      </div>
+    </div>
+
+    <div>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="切换深色/浅色模式">🌓 主题</button>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <!-- 分类导航 -->
+    <nav class="category-nav" role="tablist">
+      <button class="cat-btn active" onclick="switchCategory('length')">📏 长度</button>
+      <button class="cat-btn" onclick="switchCategory('weight')">⚖️ 重量</button>
+      <button class="cat-btn" onclick="switchCategory('area')">🗺️ 面积</button>
+      <button class="cat-btn" onclick="switchCategory('temperature')">🌡️ 温度</button>
+      <button class="cat-btn" onclick="switchCategory('data')">💾 数据容量</button>
+      <button class="cat-btn" onclick="switchCategory('radix')">🔢 进制转换</button>
+    </nav>
+
+    <!-- 说明与快捷操作 -->
+    <div class="info-bar">
+      <span>💡 提示：在任意卡片中输入数值，其余所有单位将即时自动推导演算。</span>
+      <div class="quick-actions">
+        <button class="action-pill" onclick="resetToPreset(1)">设为 1</button>
+        <button class="action-pill" onclick="resetToPreset(100)">设为 100</button>
+        <button class="action-pill" onclick="clearAllInputs()">清空</button>
+      </div>
+    </div>
+
+    <!-- 单位换算矩阵容器 -->
+    <div class="converter-grid" id="converterGrid">
+      <!-- 动态根据当前类别渲染各个单位卡片 -->
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    国际标准计量单位 (SI) 联动推导 · 纯客户端即时计算 · 100% 离线支持
+  </footer>
+
+  <div class="toast-msg" id="toastMsg">已复制</div>
+
+  <script>
+    // ============================================
+    // 单位换算数据模型（以国际基准单位为锚点）
+    // ============================================
+    const CONVERTER_CONFIG = {
+      // 1. 长度 (基准单位: 米 m)
+      length: {
+        baseUnit: 'm',
+        units: [
+          { key: 'm', name: '米', symbol: 'm', toBase: v => v, fromBase: v => v },
+          { key: 'km', name: '千米 (公里)', symbol: 'km', toBase: v => v * 1000, fromBase: v => v / 1000 },
+          { key: 'cm', name: '厘米', symbol: 'cm', toBase: v => v * 0.01, fromBase: v => v / 0.01 },
+          { key: 'mm', name: '毫米', symbol: 'mm', toBase: v => v * 0.001, fromBase: v => v / 0.001 },
+          { key: 'um', name: '微米', symbol: 'μm', toBase: v => v * 1e-6, fromBase: v => v / 1e-6 },
+          { key: 'inch', name: '英寸', symbol: 'in', toBase: v => v * 0.0254, fromBase: v => v / 0.0254 },
+          { key: 'foot', name: '英尺', symbol: 'ft', toBase: v => v * 0.3048, fromBase: v => v / 0.3048 },
+          { key: 'yard', name: '码', symbol: 'yd', toBase: v => v * 0.9144, fromBase: v => v / 0.9144 },
+          { key: 'mile', name: '英里', symbol: 'mi', toBase: v => v * 1609.344, fromBase: v => v / 1609.344 },
+          { key: 'nmi', name: '海里', symbol: 'nmi', toBase: v => v * 1852, fromBase: v => v / 1852 },
+          { key: 'chi_li', name: '市里', symbol: '里', toBase: v => v * 500, fromBase: v => v / 500 },
+          { key: 'chi_zhang', name: '市丈', symbol: '丈', toBase: v => v * (10 / 3), fromBase: v => v / (10 / 3) },
+          { key: 'chi_chi', name: '市尺', symbol: '尺', toBase: v => v * (1 / 3), fromBase: v => v / (1 / 3) },
+          { key: 'chi_cun', name: '市寸', symbol: '寸', toBase: v => v * (1 / 30), fromBase: v => v / (1 / 30) }
+        ]
+      },
+
+      // 2. 重量 / 质量 (基准单位: 千克 kg)
+      weight: {
+        baseUnit: 'kg',
+        units: [
+          { key: 'kg', name: '千克 (公斤)', symbol: 'kg', toBase: v => v, fromBase: v => v },
+          { key: 'g', name: '克', symbol: 'g', toBase: v => v * 0.001, fromBase: v => v / 0.001 },
+          { key: 'mg', name: '毫克', symbol: 'mg', toBase: v => v * 1e-6, fromBase: v => v / 1e-6 },
+          { key: 't', name: '公吨', symbol: 't', toBase: v => v * 1000, fromBase: v => v / 1000 },
+          { key: 'lb', name: '磅', symbol: 'lb', toBase: v => v * 0.45359237, fromBase: v => v / 0.45359237 },
+          { key: 'oz', name: '盎司', symbol: 'oz', toBase: v => v * 0.028349523125, fromBase: v => v / 0.028349523125 },
+          { key: 'ct', name: '克拉', symbol: 'ct', toBase: v => v * 0.0002, fromBase: v => v / 0.0002 },
+          { key: 'jin', name: '市斤', symbol: '斤', toBase: v => v * 0.5, fromBase: v => v / 0.5 },
+          { key: 'liang', name: '市两', symbol: '两', toBase: v => v * 0.05, fromBase: v => v / 0.05 },
+          { key: 'qian', name: '市钱', symbol: '钱', toBase: v => v * 0.005, fromBase: v => v / 0.005 }
+        ]
+      },
+
+      // 3. 面积 (基准单位: 平方米 m²)
+      area: {
+        baseUnit: 'sq_m',
+        units: [
+          { key: 'sq_m', name: '平方米', symbol: 'm²', toBase: v => v, fromBase: v => v },
+          { key: 'sq_km', name: '平方千米', symbol: 'km²', toBase: v => v * 1e6, fromBase: v => v / 1e6 },
+          { key: 'sq_dm', name: '平方分米', symbol: 'dm²', toBase: v => v * 0.01, fromBase: v => v / 0.01 },
+          { key: 'sq_cm', name: '平方厘米', symbol: 'cm²', toBase: v => v * 1e-4, fromBase: v => v / 1e-4 },
+          { key: 'ha', name: '公顷', symbol: 'ha', toBase: v => v * 10000, fromBase: v => v / 10000 },
+          { key: 'mu', name: '市亩', symbol: '亩', toBase: v => v * (2000 / 3), fromBase: v => v / (2000 / 3) },
+          { key: 'sq_ft', name: '平方英尺', symbol: 'sq ft', toBase: v => v * 0.09290304, fromBase: v => v / 0.09290304 },
+          { key: 'sq_yd', name: '平方码', symbol: 'sq yd', toBase: v => v * 0.83612736, fromBase: v => v / 0.83612736 },
+          { key: 'acre', name: '英亩', symbol: 'acre', toBase: v => v * 4046.8564224, fromBase: v => v / 4046.8564224 }
+        ]
+      },
+
+      // 4. 温度 (基准单位: 摄氏度 °C)
+      temperature: {
+        baseUnit: 'c',
+        units: [
+          { key: 'c', name: '摄氏度', symbol: '°C', toBase: v => v, fromBase: v => v },
+          { key: 'f', name: '华氏度', symbol: '°F', toBase: v => (v - 32) * 5 / 9, fromBase: v => (v * 9 / 5) + 32 },
+          { key: 'k', name: '开尔文', symbol: 'K', toBase: v => v - 273.15, fromBase: v => v + 273.15 }
+        ]
+      },
+
+      // 5. 数据容量 (基准单位: 字节 Byte, 1024 二进制)
+      data: {
+        baseUnit: 'byte',
+        units: [
+          { key: 'byte', name: '字节', symbol: 'Byte', toBase: v => v, fromBase: v => v },
+          { key: 'kb', name: '千字节', symbol: 'KB', toBase: v => v * 1024, fromBase: v => v / 1024 },
+          { key: 'mb', name: '兆字节', symbol: 'MB', toBase: v => v * Math.pow(1024, 2), fromBase: v => v / Math.pow(1024, 2) },
+          { key: 'gb', name: '吉字节', symbol: 'GB', toBase: v => v * Math.pow(1024, 3), fromBase: v => v / Math.pow(1024, 3) },
+          { key: 'tb', name: '太字节', symbol: 'TB', toBase: v => v * Math.pow(1024, 4), fromBase: v => v / Math.pow(1024, 4) },
+          { key: 'pb', name: '拍字节', symbol: 'PB', toBase: v => v * Math.pow(1024, 5), fromBase: v => v / Math.pow(1024, 5) },
+          { key: 'bit', name: '比特', symbol: 'Bit', toBase: v => v / 8, fromBase: v => v * 8 }
+        ]
+      },
+
+      // 6. 进制转换 (特殊逻辑，基于十进制整型/BigInt)
+      radix: {
+        isSpecialRadix: true,
+        units: [
+          { key: 'bin', name: '二进制 (Binary)', symbol: 'BIN (Radix 2)', base: 2 },
+          { key: 'oct', name: '八进制 (Octal)', symbol: 'OCT (Radix 8)', base: 8 },
+          { key: 'dec', name: '十进制 (Decimal)', symbol: 'DEC (Radix 10)', base: 10 },
+          { key: 'hex', name: '十六进制 (Hexadecimal)', symbol: 'HEX (Radix 16)', base: 16 }
+        ]
+      }
+    };
+
+    let currentCategory = 'length';
+    const gridEl = document.getElementById('converterGrid');
+    const toastEl = document.getElementById('toastMsg');
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // 检查主题
+      const savedTheme = localStorage.getItem('unit_converter_theme_v1');
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+
+      renderCategoryView('length');
+      // 初始填充 1
+      resetToPreset(1);
+    });
+
+    // 切换分类
+    function switchCategory(catKey) {
+      currentCategory = catKey;
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('onclick').includes(catKey));
+      });
+      renderCategoryView(catKey);
+      resetToPreset(catKey === 'temperature' ? 25 : (catKey === 'radix' ? 100 : 1));
+    }
+
+    // 渲染当前类别的卡片
+    function renderCategoryView(catKey) {
+      const cfg = CONVERTER_CONFIG[catKey];
+      if (!cfg) return;
+
+      gridEl.innerHTML = cfg.units.map(u => `
+        <div class="unit-card" id="card_${u.key}">
+          <div class="unit-header">
+            <div class="unit-name-box">
+              <span class="unit-name">${u.name}</span>
+              <span class="unit-symbol">${u.symbol}</span>
+            </div>
+            <button class="unit-copy-btn" onclick="copyCardValue('${u.key}')" title="复制数值">复制</button>
+          </div>
+          <div class="unit-input-row">
+            <input 
+              type="text" 
+              class="unit-input" 
+              id="input_${u.key}" 
+              placeholder="0"
+              autocomplete="off"
+              oninput="handleUnitInput('${u.key}', this.value)"
+            >
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 实时多向推导
+    function handleUnitInput(sourceKey, rawVal) {
+      const trimmed = rawVal.trim();
+      const cfg = CONVERTER_CONFIG[currentCategory];
+
+      // 进制转换专用推导
+      if (cfg.isSpecialRadix) {
+        handleRadixInput(sourceKey, trimmed);
+        return;
+      }
+
+      if (!trimmed || isNaN(trimmed)) {
+        // 如果输入为空或非有效数字，清空其他输入框
+        if (!trimmed) {
+          cfg.units.forEach(u => {
+            if (u.key !== sourceKey) {
+              const el = document.getElementById(`input_${u.key}`);
+              if (el) el.value = '';
+            }
+          });
+        }
+        return;
+      }
+
+      const numVal = parseFloat(trimmed);
+      const sourceUnit = cfg.units.find(u => u.key === sourceKey);
+      if (!sourceUnit) return;
+
+      // 1. 转为基准单位
+      const baseVal = sourceUnit.toBase(numVal);
+
+      // 2. 推导所有其它单位
+      cfg.units.forEach(u => {
+        if (u.key !== sourceKey) {
+          const el = document.getElementById(`input_${u.key}`);
+          if (el) {
+            const calculated = u.fromBase(baseVal);
+            el.value = formatUnitResult(calculated);
+          }
+        }
+      });
+    }
+
+    // 进制转换推导
+    function handleRadixInput(sourceKey, rawVal) {
+      const cfg = CONVERTER_CONFIG.radix;
+      const sourceUnit = cfg.units.find(u => u.key === sourceKey);
+      if (!sourceUnit || !rawVal) {
+        if (!rawVal) {
+          cfg.units.forEach(u => {
+            if (u.key !== sourceKey) {
+              const el = document.getElementById(`input_${u.key}`);
+              if (el) el.value = '';
+            }
+          });
+        }
+        return;
+      }
+
+      try {
+        let decBigInt;
+        if (sourceUnit.base === 16) {
+          // 检查十六进制合法字符
+          if (!/^[0-9a-fA-F]+$/.test(rawVal)) return;
+          decBigInt = BigInt('0x' + rawVal);
+        } else if (sourceUnit.base === 2) {
+          if (!/^[01]+$/.test(rawVal)) return;
+          decBigInt = BigInt('0b' + rawVal);
+        } else if (sourceUnit.base === 8) {
+          if (!/^[0-7]+$/.test(rawVal)) return;
+          decBigInt = BigInt('0o' + rawVal);
+        } else {
+          if (!/^[0-9]+$/.test(rawVal)) return;
+          decBigInt = BigInt(rawVal);
+        }
+
+        cfg.units.forEach(u => {
+          if (u.key !== sourceKey) {
+            const el = document.getElementById(`input_${u.key}`);
+            if (el) {
+              if (u.base === 16) {
+                el.value = decBigInt.toString(16).toUpperCase();
+              } else {
+                el.value = decBigInt.toString(u.base);
+              }
+            }
+          }
+        });
+      } catch (err) {
+        // 忽略非法输入
+      }
+    }
+
+    // 格式化输出浮点数值，控制合理有效位
+    function formatUnitResult(val) {
+      if (isNaN(val) || !isFinite(val)) return '';
+      if (val === 0) return '0';
+
+      const abs = Math.abs(val);
+      // 极大或极小使用科学计数法
+      if (abs >= 1e12 || abs < 1e-6) {
+        return parseFloat(val.toPrecision(7)).toExponential();
+      }
+      // 常用范围修约，去除多余末尾 0
+      return parseFloat(Number(val.toPrecision(8)).toFixed(8)).toString();
+    }
+
+    // 预设数值填充
+    function resetToPreset(presetNum) {
+      const cfg = CONVERTER_CONFIG[currentCategory];
+      if (!cfg) return;
+
+      const firstUnit = cfg.units[0];
+      const firstInput = document.getElementById(`input_${firstUnit.key}`);
+      if (firstInput) {
+        firstInput.value = presetNum;
+        handleUnitInput(firstUnit.key, String(presetNum));
+      }
+    }
+
+    // 清空所有
+    function clearAllInputs() {
+      const cfg = CONVERTER_CONFIG[currentCategory];
+      if (!cfg) return;
+      cfg.units.forEach(u => {
+        const el = document.getElementById(`input_${u.key}`);
+        if (el) el.value = '';
+      });
+      showToast('已清空数值');
+    }
+
+    // 复制卡片数值
+    async function copyCardValue(key) {
+      const el = document.getElementById(`input_${key}`);
+      if (!el || !el.value) {
+        showToast('数值为空');
+        return;
+      }
+      const val = el.value;
+      try {
+        await navigator.clipboard.writeText(val);
+        showToast(`已复制: ${val}`);
+      } catch (e) {
+        const ta = document.createElement('textarea');
+        ta.value = val;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast(`已复制: ${val}`);
+      }
+    }
+
+    // 主题切换
+    function toggleTheme() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.setItem('unit_converter_theme_v1', 'light');
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('unit_converter_theme_v1', 'dark');
+      }
+    }
+
+    function showToast(msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      setTimeout(() => {
+        toastEl.classList.remove('show');
+      }, 1800);
+    }
+  </script>
+</body>
+</html>

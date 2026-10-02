@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-Y1P7PMMM6V');
+    </script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>나의 일주일 - 韩国语课文识字闯关 (My Week in Korea)</title>
@@ -244,7 +254,7 @@
 <body>
 <div id="app">
   <header>
-    <button class="nav-btn" onclick="goHome()" title="返回主页">🏠</button>
+    <a href="kr-index.html" class="nav-btn" title="课文一览 (All Lessons)">🏠</a>
     <h1 id="topTitle">나의 일주일</h1>
     <div class="stars" id="topStars">⭐ 0</div>
   </header>
@@ -258,6 +268,11 @@
           <path d="M32 10 A11 11 0 0 1 32 32 A11 11 0 0 0 32 54 A22 22 0 0 0 32 10 Z" fill="#dc2626"/>
           <path d="M32 10 A11 11 0 0 1 32 32 A11 11 0 0 0 32 54 A22 22 0 0 1 32 10 Z" fill="#1d4ed8"/>
         </svg>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;justify-content:center;">
+        <span style="font-size:12px;font-weight:800;padding:4px 10px;border-radius:12px;background:#1d4ed8;color:#fff;">第1课: 나의 일주일</span>
+        <a href="hangugeo2.html" style="font-size:12px;font-weight:700;padding:4px 10px;border-radius:12px;background:#fff;border:1.5px solid #bfdbfe;color:#1d4ed8;text-decoration:none;">第2课: 나의 하루 ▶</a>
+        <a href="hangugeo3.html" style="font-size:12px;font-weight:700;padding:4px 10px;border-radius:12px;background:#fff;border:1.5px solid #fed7aa;color:#c2410c;text-decoration:none;">第3课: 맛있는 한국 음식 ▶</a>
       </div>
       <h2 class="title">나의 일주일 (My Week)</h2>
       <p class="sub">跟着原创韩语课文走进韩国校园的一周生活！学习韩国语音节方块字、核心词汇与七个星期的地道说法。</p>
@@ -305,7 +320,7 @@
         </div>
         <div class="menu-card" onclick="goAudioChallenge()">
           <div class="ico">🎧</div>
-          <div class="name">听音辨字</div>
+          <div class="name">听力练习</div>
           <div class="desc">纯正首尔音盲听挑战</div>
           <div class="badge" id="badgeAudio" style="display:none;"></div>
         </div>
@@ -317,7 +332,7 @@
         </div>
         <div class="menu-card full" onclick="goReview()" style="border-color:#f59e0b;background:linear-gradient(135deg,#fffdf7,#fef3c7);">
           <div class="ico">🧠</div>
-          <div class="name">错题温故</div>
+          <div class="name">错题本</div>
           <div class="desc">温习做错的题 · 攻克薄弱环节</div>
           <div class="badge" id="badgeReview" style="display:none;"></div>
         </div>
@@ -568,15 +583,19 @@
         </div>
         <div style="font-size:12px;color:var(--muted);text-align:center;" id="clozeEn"></div>
         <div style="font-size:12px;color:#7c3aed;text-align:center;" id="clozeJp"></div>
+        <div id="clozeFeedback" style="display:none;width:100%;padding:8px 12px;border-radius:10px;font-size:14px;font-weight:800;text-align:center;box-sizing:border-box;"></div>
         <div class="cloze-opts" id="clozeOpts"></div>
       </div>
-
+      <div style="display:flex;gap:10px;justify-content:center;margin:12px 0;width:100%;max-width:560px;">
+        <button class="btn ghost small" onclick="clozePrev()">⬅️ 上一题</button>
+        <button class="btn ghost small" onclick="clozeNext()">下一题 ➡️</button>
+      </div>
       <button class="btn ghost small" onclick="goHome()">返回菜单</button>
     </section>
 
     <!-- AUDIO CHALLENGE -->
     <section class="screen" id="screen-audio">
-      <h2 class="title">🎧 听音辨字</h2>
+      <h2 class="title">🎧 听力练习</h2>
       <p class="sub">盲听韩语原生发音，辨析正确的音节、单词或句子。</p>
 
       <div class="toggle-row">
@@ -606,7 +625,7 @@
 
     <!-- SRS REVIEW -->
     <section class="screen" id="screen-review">
-      <h2 class="title">🧠 错题温故</h2>
+      <h2 class="title">🧠 错题本</h2>
       <p class="sub">温习做错的题目 · 巩固薄弱知识点</p>
 
       <div class="toggle-row">
@@ -641,42 +660,64 @@
 
 <script>
 
+let appAudioCtx = null;
+function getAppAudioCtx(){
+  if(!appAudioCtx){
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if(AudioCtx) appAudioCtx = new AudioCtx();
+  }
+  if(appAudioCtx && appAudioCtx.state === 'suspended'){
+    appAudioCtx.resume();
+  }
+  return appAudioCtx;
+}
+document.addEventListener('click', () => { getAppAudioCtx(); }, { once: true });
+document.addEventListener('touchstart', () => { getAppAudioCtx(); }, { once: true });
+
 function playSuccessTone(){
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(523.25, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.1);
-    osc.frequency.exponentialRampToValueAtTime(783.99, ctx.currentTime + 0.2);
-    gain.gain.setValueAtTime(0.15, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.35);
+    const ctx = getAppAudioCtx();
+    if(!ctx) return;
+    if(ctx.state === 'suspended') ctx.resume();
+    const now = ctx.currentTime;
+    const notes = [523.25, 659.25, 783.99];
+    notes.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.09);
+      gain.gain.setValueAtTime(0.25, now + idx * 0.09);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.09 + 0.18);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + idx * 0.09);
+      osc.stop(now + idx * 0.09 + 0.2);
+    });
   } catch(e){}
 }
 
 function playWrongTone(){
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = getAppAudioCtx();
+    if(!ctx) return;
+    if(ctx.state === 'suspended') ctx.resume();
     const now = ctx.currentTime;
-    [0, 0.14].forEach((delay, idx) => {
+    const tones = [
+      { f1: 340, f2: 240, start: 0, dur: 0.14, gain: 0.35 },
+      { f1: 280, f2: 190, start: 0.16, dur: 0.18, gain: 0.35 }
+    ];
+    tones.forEach(t => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.type = "triangle";
-      const f1 = idx === 0 ? 320 : 260;
-      const f2 = idx === 0 ? 220 : 180;
-      osc.frequency.setValueAtTime(f1, now + delay);
-      osc.frequency.exponentialRampToValueAtTime(f2, now + delay + 0.1);
-      gain.gain.setValueAtTime(0.3, now + delay);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + delay + 0.1);
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(t.f1, now + t.start);
+      osc.frequency.exponentialRampToValueAtTime(t.f2, now + t.start + t.dur);
+      gain.gain.setValueAtTime(t.gain, now + t.start);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + t.start + t.dur);
       osc.connect(gain);
       gain.connect(ctx.destination);
-      osc.start(now + delay);
-      osc.stop(now + delay + 0.1);
+      osc.start(now + t.start);
+      osc.stop(now + t.start + t.dur + 0.02);
     });
   } catch(e){}
 }
@@ -770,14 +811,14 @@ const SCRAMBLE_SENTENCES = [
 
 // 6. 故事与韩语常识问答 (8 Questions)
 const QUIZ = [
-  {q:"제 이름은 무엇입니까?", opts:["민우 (Minwoo)","지훈 (Jihoon)","서연 (Seoyeon)","수빈 (Subin)"], a:0},
-  {q:"한국어 수업이 있는 요일은 언제입니까?", opts:["월요일 · 수요일 · 금요일","화요일 · 목요일","토요일 · 일요일","매일매일"], a:0},
-  {q:"화요일과 목요일에는 학교에서 누구와 공부합니까?", opts:["친구 (Friend)","혼자 (Alone)","동생 (Younger sibling)","로봇 (Robot)"], a:0},
-  {q:"토요일에는 누구와 공원에서 놉니까?", opts:["가족 (Family)","선생님 (Teacher)","의사 (Doctor)","혼자"], a:0},
-  {q:"일요일에는 집에서 무엇을 합니까?", opts:["책을 읽어요 (Read books)","잠만 자요 (Just sleep)","요리를 해요 (Cook)","노래를 불러요"], a:0},
-  {q:"우리 선생님은 어떤 분입니까?", opts:["아주 친절합니다 (Very kind)","매우 무서워요","아주 바빠요","조용해요"], a:0},
-  {q:"글자 ‘한’(韓)의 받침(종성)은 무엇입니까?", opts:["ㄴ (n)","ㄱ (k)","ㅇ (ng)","ㅁ (m)"], a:0},
-  {q:"‘학교’(學校)와 ‘선생님’(先生님)에서 ‘학’(學)과 ‘생’(生)이 합쳐져 만들어진 단어는?", opts:["학생 (學生 · Student)","교생 (校生)","선생 (先生)","학원 (學院)"], a:0}
+  {q:"제 이름은 무엇입니까?", opts:["지훈 (Jihoon)", "민우 (Minwoo)", "서연 (Seoyeon)", "수빈 (Subin)"], a:1},
+  {q:"한국어 수업이 있는 요일은 언제입니까?", opts:["화요일 · 목요일", "토요일 · 일요일", "월요일 · 수요일 · 금요일", "매일매일"], a:2},
+  {q:"화요일과 목요일에는 학교에서 누구와 공부합니까?", opts:["친구 (Friend)", "혼자 (Alone)", "동생 (Younger sibling)", "로봇 (Robot)"], a:0},
+  {q:"토요일에는 누구와 공원에서 놉니까?", opts:["선생님 (Teacher)", "의사 (Doctor)", "혼자", "가족 (Family)"], a:3},
+  {q:"일요일에는 집에서 무엇을 합니까?", opts:["잠만 자요 (Just sleep)", "요리를 해요 (Cook)", "책을 읽어요 (Read books)", "노래를 불러요"], a:2},
+  {q:"우리 선생님은 어떤 분입니까?", opts:["매우 무서워요", "아주 친절합니다 (Very kind)", "아주 바빠요", "조용해요"], a:1},
+  {q:"글자 ‘한’(韓)의 받침(종성)은 무엇입니까?", opts:["ㄱ (k)", "ㅇ (ng)", "ㅁ (m)", "ㄴ (n)"], a:3},
+  {q:"‘학교’(學校)와 ‘선생님’(先生님)에서 ‘학’(學)과 ‘생’(生)이 합쳐져 만들어진 단어는?", opts:["학생 (學生 · Student)", "교생 (校生)", "선생 (先生)", "학원 (學院)"], a:0},
 ];
 
 // 7. 选词填空 (12 Questions: 课文句式 + 助词用法)
@@ -1885,7 +1926,7 @@ function scrambleCheck(){
 function goQuiz(){
   showScreen('screen-quiz');
   quizState.idx = 0;
-  quizState.correct = 0;
+  quizState.correct = 0; quizState.orderMap = {};
   renderQuiz();
 }
 
@@ -1902,11 +1943,21 @@ function renderQuiz(){
   document.getElementById('quizQ').textContent = item.q;
   const optsEl = document.getElementById('quizOpts');
   optsEl.innerHTML = '';
-  item.opts.forEach((opt, i)=>{
+  if(!quizState.orderMap) quizState.orderMap = {};
+  if(!quizState.orderMap[quizState.idx]){
+    const indices = item.opts.map((_, i) => i);
+    for(let i = indices.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    quizState.orderMap[quizState.idx] = indices;
+  }
+  quizState.orderMap[quizState.idx].forEach(i => {
+    const opt = item.opts[i];
     const b = document.createElement('div');
     b.className = 'opt-btn';
     b.textContent = opt;
-    b.onclick = ()=>answerQuiz(i, b);
+    b.onclick = () => answerQuiz(i, b);
     optsEl.appendChild(b);
   });
 }
@@ -2009,6 +2060,8 @@ function renderClozeQuestion(){
   const slot = document.getElementById('clozeSlot');
   slot.textContent = '____';
   slot.className = 'cloze-slot';
+  const fb = document.getElementById('clozeFeedback');
+  if(fb){ fb.style.display = 'none'; fb.innerHTML = ''; }
   document.getElementById('clozeAfter').textContent = q.after;
   document.getElementById('clozeEn').textContent = q.en || '';
   document.getElementById('clozeJp').textContent = q.jp || '';
@@ -2019,37 +2072,99 @@ function renderClozeQuestion(){
   shuffle([...q.options]).forEach(opt => {
     const btn = document.createElement('div');
     btn.className = 'cloze-opt-btn';
-    btn.textContent = opt;
+    btn.innerHTML = `<span>${opt}</span>`;
     btn.onclick = () => answerCloze(opt, btn);
     optsContainer.appendChild(btn);
   });
 }
 
+function clozePrev(){
+  stopClip();
+  if(!clozeState.questions || clozeState.questions.length === 0) return;
+  if(clozeState.idx > 0) clozeState.idx--;
+  else clozeState.idx = clozeState.questions.length - 1;
+  renderClozeQuestion();
+}
+function clozeNext(){
+  stopClip();
+  if(!clozeState.questions || clozeState.questions.length === 0) return;
+  if(clozeState.idx < clozeState.questions.length - 1) clozeState.idx++;
+  else clozeState.idx = 0;
+  renderClozeQuestion();
+}
+
 function answerCloze(selected, btn){
   if(clozeState.answered) return;
-  clozeState.answered = true;
   const q = clozeState.questions[clozeState.idx];
   const isCorrect = selected === q.answer;
   const slot = document.getElementById('clozeSlot');
-  const allBtns = document.querySelectorAll('#clozeOpts .cloze-opt-btn');
+  const fb = document.getElementById('clozeFeedback');
 
   if(isCorrect){
+    clozeState.answered = true;
+    btn.classList.remove('wrong');
     btn.classList.add('correct');
-    slot.textContent = q.answer;
+    if(!btn.innerHTML.includes('✔️')){
+      btn.innerHTML = `<span>${q.answer}</span> <span class="correct-mark" style="color:#16a34a;font-weight:900;font-size:18px;margin-left:4px;">✔️</span>`;
+    }
+    slot.innerHTML = `${q.answer} <span style="font-size:16px;color:#16a34a;font-weight:900;margin-left:2px;">✔️</span>`;
     slot.className = 'cloze-slot filled';
     clozeState.correct++;
     clozeState.streak++;
-    if(clozeState.streak > clozeState.maxStreak) clozeState.maxStreak = clozeState.streak;
+    if(clozeState.streak > clozeState.maxStreak){
+      clozeState.maxStreak = clozeState.streak;
+    }
+    document.getElementById('clozeStreak').textContent = '🔥 连对 ' + clozeState.streak;
+    if(fb){
+      fb.style.display = 'block';
+      fb.style.background = '#dcfce7';
+      fb.style.color = '#15803d';
+      fb.style.border = '1px solid #86efac';
+      fb.innerHTML = '🎉 填入正确！助词与语境完全吻合！';
+    }
     toast('🎉 填入正确！助词与语境完全吻合！');
-  } else {
-    btn.classList.add('wrong');
-    slot.textContent = q.answer;
-    slot.className = 'cloze-slot wrong';
-    clozeState.streak = 0;
-    allBtns.forEach(b => {
-      if(b.textContent.trim() === q.answer) b.classList.add('correct');
+    playSuccessTone();
+
+    document.querySelectorAll('#clozeOpts .cloze-opt-btn').forEach(b => {
+      b.style.pointerEvents = 'none';
     });
-    toast('选错啦～正确选项是：' + q.answer + '，已记入错题本');
+
+    const fullText = q.before + q.answer + q.after;
+    playClip(q.audioId || ('cloze_' + (clozeState.idx + 1)), fullText, () => {
+      setTimeout(() => {
+        clozeState.idx++;
+        renderClozeQuestion();
+      }, 800);
+    });
+  } else {
+    clozeState.streak = 0;
+    document.getElementById('clozeStreak').textContent = '🔥 连对 ' + clozeState.streak;
+    playWrongTone();
+
+    btn.classList.add('wrong');
+    btn.style.pointerEvents = 'none';
+    if(!btn.innerHTML.includes('❌')){
+      btn.innerHTML = `<span>${selected}</span> <span class="wrong-mark" style="color:#ef4444;font-weight:900;font-size:18px;margin-left:4px;">❌</span>`;
+    }
+
+    slot.innerHTML = `<span style="text-decoration:line-through;color:#dc2626;">${selected}</span> <span style="font-size:16px;color:#ef4444;font-weight:900;margin-left:2px;">❌</span>`;
+    slot.className = 'cloze-slot wrong';
+    if(fb){
+      fb.style.display = 'block';
+      fb.style.background = '#fee2e2';
+      fb.style.color = '#dc2626';
+      fb.style.border = '1px solid #fca5a5';
+      fb.innerHTML = `❌ 选错了哦！“${selected}” 填在这里不合适，换个词试试！`;
+    }
+    toast(`❌ 选错啦！“${selected}” 不合适，换个词再试试！`);
+
+    setTimeout(() => {
+      if(!clozeState.answered){
+        slot.textContent = '____';
+        slot.className = 'cloze-slot';
+      }
+    }, 1000);
+
     recordMistake({
       id: 'cloze_' + q.id,
       type: 'cloze',
@@ -2060,11 +2175,6 @@ function answerCloze(selected, btn){
       clozeItem: q
     });
   }
-  document.getElementById('clozeStreak').textContent = '🔥 连对 ' + clozeState.streak;
-  setTimeout(()=>{
-    clozeState.idx++;
-    renderClozeQuestion();
-  }, 1400);
 }
 
 /* ---------------- AUDIO CHALLENGE ---------------- */
@@ -2313,7 +2423,7 @@ function renderReviewQuiz(){
   container.innerHTML = `
     <div class="quiz-card">
       <div style="font-size:12px;color:var(--muted);display:flex;justify-content:space-between;">
-        <span>错题温故 · Box ${item.box || 1}</span>
+        <span>错题本 · Box ${item.box || 1}</span>
         <span>失误次数: ${item.mistakes}</span>
       </div>
       <div style="font-size:24px;font-weight:900;text-align:center;color:var(--kr-blue-dark);margin:10px 0;">${item.zh}</div>
@@ -2361,7 +2471,7 @@ function showResult(game, stars, note){
   document.getElementById('resultScore').textContent = note;
   const badges = document.getElementById('resultBadges');
   badges.innerHTML = '';
-  const map = { match:'🧩 韩语消消乐', scramble:'🔤 句子重组', quiz:'❓ 读解练习', audio:'🎧 听音辨字', cloze:'📝 选词填空' };
+  const map = { match:'🧩 韩语消消乐', scramble:'🔤 句子重组', quiz:'❓ 读解练习', audio:'🎧 听力练习', cloze:'📝 选词填空' };
   const b = document.createElement('div');
   b.className = 'mini-badge';
   b.textContent = map[game] + ' ' + '⭐'.repeat(stars);

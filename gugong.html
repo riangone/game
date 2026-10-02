@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-Y1P7PMMM6V');
+    </script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>第2课 故宫 - 游览紫禁城识字闯关 (The Forbidden City)</title>
@@ -386,7 +396,7 @@
         </div>
         <div class="menu-card" onclick="goAudioChallenge()">
           <div class="ico">🎧</div>
-          <div class="name">听音辨字</div>
+          <div class="name">听力练习</div>
           <div class="desc">盲听挑战 · 听音选字词句</div>
           <div class="badge" id="badgeAudio" style="display:none;"></div>
         </div>
@@ -398,7 +408,7 @@
         </div>
         <div class="menu-card full" onclick="goReview()" style="border-color:#f59e0b;background:linear-gradient(135deg,#fffdf7,#fef3c7);">
           <div class="ico">📝</div>
-          <div class="name">错题温故</div>
+          <div class="name">错题本</div>
           <div class="desc">温习做错的题 · 攻克薄弱环节</div>
           <div class="badge" id="badgeReview" style="display:none;"></div>
         </div>
@@ -642,6 +652,7 @@
             <button class="cloze-speak-btn" id="clozeSpeakBtn" onclick="speakClozeSentence()">🔊 朗读句子</button>
           </div>
         </div>
+        <div id="clozeFeedback" style="display:none;width:100%;padding:8px 12px;border-radius:10px;font-size:14px;font-weight:800;text-align:center;box-sizing:border-box;"></div>
         <div class="cloze-opts" id="clozeOpts"></div>
       </div>
       <div class="cloze-nav-bar" style="display:flex;align-items:center;justify-content:center;gap:12px;margin:12px 0 6px;">
@@ -653,7 +664,7 @@
 
     <!-- AUDIO CHALLENGE -->
     <section class="screen" id="screen-audio">
-      <h2 class="title">🎧 听音辨字 (Audio Challenge)</h2>
+      <h2 class="title">🎧 听力练习 (Audio Challenge)</h2>
       <div class="toggle-row">
         <div class="chip active" id="chipAudioAll" onclick="setAudioMode('all')">🎲 词句混合</div>
         <div class="chip" id="chipAudioChars" onclick="setAudioMode('chars')">✍️ 听生字</div>
@@ -678,7 +689,7 @@
     <!-- REVIEW / SRS -->
     <section class="screen" id="screen-review">
       <div class="review-header">
-        <h2 class="title">📝 错题温故</h2>
+        <h2 class="title">📝 错题本</h2>
         <div class="review-stats-bar">
           <span class="stat-chip box1" id="statDue">🔴 待温故: 0</span>
           <span class="stat-chip box2" id="statReviewing">🟡 温故中: 0</span>
@@ -817,14 +828,14 @@ const SCRAMBLE_SENTENCES = [
 
 // 6. 故事与字词问答 (8 Questions)
 const QUIZ = [
-  {q:"故宫是中国哪两个朝代的皇宫？", opts:["明朝和清朝","唐朝和宋朝","汉朝和唐朝","秦朝和汉朝"], a:0},
-  {q:"生字「居」的偏旁部首是什么？", opts:["尸字头 (尸)","门字框 (门)","竹字头 (竹)","夕字旁 (夕)"], a:0},
-  {q:"生字「殿」的偏旁部首是什么？", opts:["殳字旁 (殳)","月字旁 (月)","草字头 (艹)","单人旁 (亻)"], a:0},
-  {q:"故宫又叫什么名字？", opts:["颐和园","圆明园","紫禁城","白宫"], a:2},
-  {q:"一共有多少位皇帝在故宫居住过？", opts:["12位","18位","24位","36位"], a:2},
-  {q:"课文中今天他们参观了哪三座最著名的大殿？", opts:["太和殿、中和殿和保和殿","乾清宫、交泰殿和坤宁宫","养心殿、慈宁宫和寿康宫","文华殿、武英殿和奉先殿"], a:0},
-  {q:"故宫一共有多少间房屋？是用什么建造的？", opts:["三千多间，石头","五千多间，砖头","九千多间，木头","一万多间，钢铁"], a:2},
-  {q:"课文最后，作者对妈妈说了什么？", opts:["以后有机会我还要来故宫逛逛。","故宫太大了，我不想再来了。","我想去爬长城看日出。","明天我们要去颐和园划船。"], a:0}
+  {q:"故宫是中国哪两个朝代的皇宫？", opts:["唐朝和宋朝", "明朝和清朝", "汉朝和唐朝", "秦朝和汉朝"], a:1},
+  {q:"生字「居」的偏旁部首是什么？", opts:["门字框 (门)", "竹字头 (竹)", "尸字头 (尸)", "夕字旁 (夕)"], a:2},
+  {q:"生字「殿」的偏旁部首是什么？", opts:["殳字旁 (殳)", "月字旁 (月)", "草字头 (艹)", "单人旁 (亻)"], a:0},
+  {q:"故宫又叫什么名字？", opts:["颐和园", "圆明园", "白宫", "紫禁城"], a:3},
+  {q:"一共有多少位皇帝在故宫居住过？", opts:["12位", "18位", "24位", "36位"], a:2},
+  {q:"课文中今天他们参观了哪三座最著名的大殿？", opts:["乾清宫、交泰殿和坤宁宫", "太和殿、中和殿和保和殿", "养心殿、慈宁宫和寿康宫", "文华殿、武英殿和奉先殿"], a:1},
+  {q:"故宫一共有多少间房屋？是用什么建造的？", opts:["三千多间，石头", "五千多间，砖头", "一万多间，钢铁", "九千多间，木头"], a:3},
+  {q:"课文最后，作者对妈妈说了什么？", opts:["以后有机会我还要来故宫逛逛。", "故宫太大了，我不想再来了。", "我想去爬长城看日出。", "明天我们要去颐和园划船。"], a:0},
 ];
 
 // 7. 选词填空 (12 Questions: 8 课文原句 + 4 微情境拓展)
@@ -1101,7 +1112,7 @@ function goChars(){ charIdx = 0; renderCharPills(); renderChar(); showScreen('sc
 function goFlash(){ flashIdx = 0; setVocabFilter('all'); showScreen('screen-flash'); progress.flash = true; saveProgress(); }
 function goMatch(){ setupMatch(); showScreen('screen-match'); }
 function goScramble(){ scrambleState.idx = 0; setupScrambleRound(); showScreen('screen-scramble'); }
-function goQuiz(){ quizState.idx = 0; quizState.correct = 0; renderQuiz(); showScreen('screen-quiz'); }
+function goQuiz(){ quizState.idx = 0; quizState.correct = 0; quizState.orderMap = {}; renderQuiz(); showScreen('screen-quiz'); }
 function goAudioChallenge(){ setAudioMode('all'); showScreen('screen-audio'); }
 function goReview(){ switchReviewTab('quiz'); showScreen('screen-review'); }
 
@@ -1565,42 +1576,64 @@ function flipChar(e){
   document.getElementById('charCard').classList.toggle('flipped');
 }
 
+let appAudioCtx = null;
+function getAppAudioCtx(){
+  if(!appAudioCtx){
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if(AudioCtx) appAudioCtx = new AudioCtx();
+  }
+  if(appAudioCtx && appAudioCtx.state === 'suspended'){
+    appAudioCtx.resume();
+  }
+  return appAudioCtx;
+}
+document.addEventListener('click', () => { getAppAudioCtx(); }, { once: true });
+document.addEventListener('touchstart', () => { getAppAudioCtx(); }, { once: true });
+
 function playSuccessTone(){
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(523.25, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.1);
-    osc.frequency.exponentialRampToValueAtTime(783.99, ctx.currentTime + 0.2);
-    gain.gain.setValueAtTime(0.15, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.35);
+    const ctx = getAppAudioCtx();
+    if(!ctx) return;
+    if(ctx.state === 'suspended') ctx.resume();
+    const now = ctx.currentTime;
+    const notes = [523.25, 659.25, 783.99];
+    notes.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.09);
+      gain.gain.setValueAtTime(0.25, now + idx * 0.09);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.09 + 0.18);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + idx * 0.09);
+      osc.stop(now + idx * 0.09 + 0.2);
+    });
   } catch(e){}
 }
 
 function playWrongTone(){
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = getAppAudioCtx();
+    if(!ctx) return;
+    if(ctx.state === 'suspended') ctx.resume();
     const now = ctx.currentTime;
-    [0, 0.14].forEach((delay, idx) => {
+    const tones = [
+      { f1: 340, f2: 240, start: 0, dur: 0.14, gain: 0.35 },
+      { f1: 280, f2: 190, start: 0.16, dur: 0.18, gain: 0.35 }
+    ];
+    tones.forEach(t => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.type = "triangle";
-      const f1 = idx === 0 ? 320 : 260;
-      const f2 = idx === 0 ? 220 : 180;
-      osc.frequency.setValueAtTime(f1, now + delay);
-      osc.frequency.exponentialRampToValueAtTime(f2, now + delay + 0.1);
-      gain.gain.setValueAtTime(0.3, now + delay);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + delay + 0.1);
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(t.f1, now + t.start);
+      osc.frequency.exponentialRampToValueAtTime(t.f2, now + t.start + t.dur);
+      gain.gain.setValueAtTime(t.gain, now + t.start);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + t.start + t.dur);
       osc.connect(gain);
       gain.connect(ctx.destination);
-      osc.start(now + delay);
-      osc.stop(now + delay + 0.1);
+      osc.start(now + t.start);
+      osc.stop(now + t.start + t.dur + 0.02);
     });
   } catch(e){}
 }
@@ -1932,11 +1965,21 @@ function renderQuiz(){
   document.getElementById('quizQ').textContent = item.q;
   const optsEl = document.getElementById('quizOpts');
   optsEl.innerHTML = '';
-  item.opts.forEach((opt, i)=>{
+  if(!quizState.orderMap) quizState.orderMap = {};
+  if(!quizState.orderMap[quizState.idx]){
+    const indices = item.opts.map((_, i) => i);
+    for(let i = indices.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    quizState.orderMap[quizState.idx] = indices;
+  }
+  quizState.orderMap[quizState.idx].forEach(i => {
+    const opt = item.opts[i];
     const b = document.createElement('div');
     b.className = 'opt-btn';
     b.textContent = opt;
-    b.onclick = ()=>answerQuiz(i, b);
+    b.onclick = () => answerQuiz(i, b);
     optsEl.appendChild(b);
   });
 }
@@ -1999,7 +2042,7 @@ function quizNext(){
   renderQuiz();
 }
 
-/* ---------------- AUDIO CHALLENGE (听音辨字 / 盲听挑战) ---------------- */
+/* ---------------- AUDIO CHALLENGE (听力练习 / 盲听挑战) ---------------- */
 let audioChallengeMode = 'all'; // chars, words, sentences, all
 let audioChallengeState = {
   questions: [],
@@ -2236,6 +2279,8 @@ function renderClozeQuestion(){
   const slot = document.getElementById('clozeSlot');
   slot.textContent = '____';
   slot.className = 'cloze-slot';
+  const fb = document.getElementById('clozeFeedback');
+  if(fb){ fb.style.display = 'none'; fb.innerHTML = ''; }
   document.getElementById('clozeAfter').textContent = q.after;
   document.getElementById('clozeEn').textContent = q.en || '';
   document.getElementById('clozeJp').textContent = q.jp || '';
@@ -2281,12 +2326,16 @@ function answerCloze(selected, btn){
   const q = clozeState.questions[clozeState.idx];
   const isCorrect = selected === q.answer;
   const slot = document.getElementById('clozeSlot');
+  const fb = document.getElementById('clozeFeedback');
 
   if(isCorrect){
     clozeState.answered = true;
     btn.classList.remove('wrong');
     btn.classList.add('correct');
-    slot.textContent = q.answer;
+    if(!btn.innerHTML.includes('✔️')){
+      btn.innerHTML = `<span>${q.answer}</span> <span class="correct-mark" style="color:#16a34a;font-weight:900;font-size:18px;margin-left:4px;">✔️</span>`;
+    }
+    slot.innerHTML = `${q.answer} <span style="font-size:16px;color:#16a34a;font-weight:900;margin-left:2px;">✔️</span>`;
     slot.className = 'cloze-slot filled';
     clozeState.correct++;
     clozeState.streak++;
@@ -2294,6 +2343,13 @@ function answerCloze(selected, btn){
       clozeState.maxStreak = clozeState.streak;
     }
     document.getElementById('clozeStreak').textContent = '🔥 连对 ' + clozeState.streak;
+    if(fb){
+      fb.style.display = 'block';
+      fb.style.background = '#dcfce7';
+      fb.style.color = '#15803d';
+      fb.style.border = '1px solid #86efac';
+      fb.innerHTML = '🎉 填入正确！语境完全吻合！';
+    }
     toast('🎉 填入正确！语境完全吻合！');
     playSuccessTone();
 
@@ -2315,17 +2371,27 @@ function answerCloze(selected, btn){
 
     btn.classList.add('wrong');
     btn.style.pointerEvents = 'none';
+    if(!btn.innerHTML.includes('❌')){
+      btn.innerHTML = `<span>${selected}</span> <span class="wrong-mark" style="color:#ef4444;font-weight:900;font-size:18px;margin-left:4px;">❌</span>`;
+    }
 
-    slot.textContent = selected;
+    slot.innerHTML = `<span style="text-decoration:line-through;color:#dc2626;">${selected}</span> <span style="font-size:16px;color:#ef4444;font-weight:900;margin-left:2px;">❌</span>`;
     slot.className = 'cloze-slot wrong';
-    toast('选错了哦，再想一想，换个词试试！');
+    if(fb){
+      fb.style.display = 'block';
+      fb.style.background = '#fee2e2';
+      fb.style.color = '#dc2626';
+      fb.style.border = '1px solid #fca5a5';
+      fb.innerHTML = `❌ 选错了哦！“${selected}” 填在这里不合适，换个词试试！`;
+    }
+    toast(`❌ 选错啦！“${selected}” 不合适，换个词再试试！`);
 
     setTimeout(() => {
       if(!clozeState.answered){
         slot.textContent = '____';
         slot.className = 'cloze-slot';
       }
-    }, 800);
+    }, 1000);
 
     recordMistake({
       id: 'cloze_' + q.id,
@@ -2349,7 +2415,7 @@ function showResult(game, stars, note){
   document.getElementById('resultScore').textContent = note;
   const badges = document.getElementById('resultBadges');
   badges.innerHTML = '';
-  const map = { match:'🧩 拼音配对', scramble:'🔤 连词成句', quiz:'❓ 读解练习', audio:'🎧 听音辨字', cloze:'🔠 选词填空' };
+  const map = { match:'🧩 拼音配对', scramble:'🔤 连词成句', quiz:'❓ 读解练习', audio:'🎧 听力练习', cloze:'🔠 选词填空' };
   const b = document.createElement('div');
   b.className = 'mini-badge';
   b.textContent = map[game] + ' ' + '⭐'.repeat(stars);
@@ -2365,7 +2431,7 @@ function retryCurrent(){
   else goHome();
 }
 
-/* ---------------- SRS & 艾宾浩斯错题温故 ---------------- */
+/* ---------------- SRS & 艾宾浩斯错题本 ---------------- */
 const STORAGE_KEY_SRS = 'gugong_srs';
 
 function getSrsData(){

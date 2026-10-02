@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-Y1P7PMMM6V');
+    </script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>第8课 数星星的孩子 - 识字闯关 (The Boy Who Counted Stars)</title>
@@ -380,7 +390,7 @@
         </div>
         <div class="menu-card" onclick="goAudioChallenge()">
           <span class="ico">🎧</span>
-          <span class="name">听音辨字</span>
+          <span class="name">听力练习</span>
           <span class="desc">盲听挑战 · 听音选字、词、句</span>
           <span class="badge" id="badgeAudio" style="display:none;"></span>
         </div>
@@ -392,7 +402,7 @@
         </div>
         <div class="menu-card full" onclick="goReview()" style="border-color:#1e3a8a;background:linear-gradient(135deg,#fefce8,#fef3c7);">
           <span class="ico">📝</span>
-          <span class="name">错题温故</span>
+          <span class="name">错题本</span>
           <span class="desc">温习做错的题 · 攻克薄弱环节</span>
           <span class="badge" id="badgeReview" style="display:none;"></span>
         </div>
@@ -624,6 +634,7 @@
             <button class="cloze-speak-btn" id="clozeSpeakBtn" onclick="speakClozeSentence()">🔊 朗读句子</button>
           </div>
         </div>
+        <div id="clozeFeedback" style="display:none;width:100%;padding:8px 12px;border-radius:10px;font-size:14px;font-weight:800;text-align:center;box-sizing:border-box;"></div>
         <div class="cloze-opts" id="clozeOpts"></div>
       </div>
       <div class="cloze-nav-bar" style="display:flex;align-items:center;justify-content:center;gap:12px;margin:12px 0 6px;">
@@ -635,7 +646,7 @@
 
     <!-- AUDIO CHALLENGE -->
     <section class="screen" id="screen-audio">
-      <h2 class="title">🎧 听音辨字 (Audio Challenge)</h2>
+      <h2 class="title">🎧 听力练习 (Audio Challenge)</h2>
       <div class="toggle-row">
         <div class="chip active" id="chipAudioAll" onclick="setAudioMode('all')">🎲 词句混合</div>
         <div class="chip" id="chipAudioChars" onclick="setAudioMode('chars')">✍️ 听生字</div>
@@ -660,7 +671,7 @@
     <!-- REVIEW / SRS -->
     <section class="screen" id="screen-review">
       <div class="review-header">
-        <h2 class="title">📝 错题温故</h2>
+        <h2 class="title">📝 错题本</h2>
         <div class="review-stats-bar">
           <span class="stat-chip box1" id="statDue">🔴 待温故: 0</span>
           <span class="stat-chip box2" id="statReviewing">🟡 温故中: 0</span>
@@ -789,14 +800,14 @@ const SCRAMBLE_SENTENCES = [
 
 // 5. 故事与字词问答 (8 Questions)
 const QUIZ = [
-  {q:"数星星的孩子叫什么名字？", opts:["张衡","司马光","李白","王安石"], a:0},
-  {q:"孩子数了很久星星，结果怎么样？", opts:["还是数不完","刚好数完了","数错了","没有耐心数下去"], a:0},
-  {q:"那七颗星连起来像什么？", opts:["一把勺子","一条龙","一顶帽子","一座桥"], a:0},
-  {q:"像勺子的那七颗星是什么星？", opts:["北斗星","北极星","启明星","牛郎星"], a:0},
-  {q:"奶奶笑着问孩子什么？", opts:["那么多星星，你能数得清吗？","你几岁了？","星星在哪里？","你困不困？"], a:0},
-  {q:"张衡长大后成为了什么？", opts:["著名的天文学家","画家","医生","诗人"], a:0},
-  {q:"生字「靠」的部首是什么？", opts:["非字旁 (非)","木字旁 (木)","古字旁 (古)","口字旁 (口)"], a:0},
-  {q:"生字「斗」（北斗星）的部首是什么？", opts:["斗字旁 (斗)","米字旁 (米)","十字旁 (十)","讠字旁 (讠)"], a:0}
+  {q:"数星星的孩子叫什么名字？", opts:["司马光", "张衡", "李白", "王安石"], a:1},
+  {q:"孩子数了很久星星，结果怎么样？", opts:["刚好数完了", "数错了", "还是数不完", "没有耐心数下去"], a:2},
+  {q:"那七颗星连起来像什么？", opts:["一把勺子", "一条龙", "一顶帽子", "一座桥"], a:0},
+  {q:"像勺子的那七颗星是什么星？", opts:["北极星", "启明星", "牛郎星", "北斗星"], a:3},
+  {q:"奶奶笑着问孩子什么？", opts:["你几岁了？", "星星在哪里？", "那么多星星，你能数得清吗？", "你困不困？"], a:2},
+  {q:"张衡长大后成为了什么？", opts:["画家", "著名的天文学家", "医生", "诗人"], a:1},
+  {q:"生字「靠」的部首是什么？", opts:["木字旁 (木)", "古字旁 (古)", "口字旁 (口)", "非字旁 (非)"], a:3},
+  {q:"生字「斗」（北斗星）的部首是什么？", opts:["斗字旁 (斗)", "米字旁 (米)", "十字旁 (十)", "讠字旁 (讠)"], a:0},
 ];
 
 // 6. 选词填空 (12 Questions: 8 课文原句 + 4 微情境拓展)
@@ -1685,42 +1696,64 @@ function finishMatch(){
   showResult('🧩 拼音配对通关！', stars, 100 - matchState.wrong * 10, ['眼疾手快', stars === 3 ? '完美配对' : '再接再厉']);
 }
 
+let appAudioCtx = null;
+function getAppAudioCtx(){
+  if(!appAudioCtx){
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if(AudioCtx) appAudioCtx = new AudioCtx();
+  }
+  if(appAudioCtx && appAudioCtx.state === 'suspended'){
+    appAudioCtx.resume();
+  }
+  return appAudioCtx;
+}
+document.addEventListener('click', () => { getAppAudioCtx(); }, { once: true });
+document.addEventListener('touchstart', () => { getAppAudioCtx(); }, { once: true });
+
 function playSuccessTone(){
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'triangle';
-    osc.frequency.setValueAtTime(523.25, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(659.25, ctx.currentTime + 0.1);
-    osc.frequency.exponentialRampToValueAtTime(783.99, ctx.currentTime + 0.2);
-    gain.gain.setValueAtTime(0.15, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start();
-    osc.stop(ctx.currentTime + 0.35);
+    const ctx = getAppAudioCtx();
+    if(!ctx) return;
+    if(ctx.state === 'suspended') ctx.resume();
+    const now = ctx.currentTime;
+    const notes = [523.25, 659.25, 783.99];
+    notes.forEach((freq, idx) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, now + idx * 0.09);
+      gain.gain.setValueAtTime(0.25, now + idx * 0.09);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.09 + 0.18);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + idx * 0.09);
+      osc.stop(now + idx * 0.09 + 0.2);
+    });
   } catch(e){}
 }
 
 function playWrongTone(){
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const ctx = getAppAudioCtx();
+    if(!ctx) return;
+    if(ctx.state === 'suspended') ctx.resume();
     const now = ctx.currentTime;
-    [0, 0.14].forEach((delay, idx) => {
+    const tones = [
+      { f1: 340, f2: 240, start: 0, dur: 0.14, gain: 0.35 },
+      { f1: 280, f2: 190, start: 0.16, dur: 0.18, gain: 0.35 }
+    ];
+    tones.forEach(t => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.type = "triangle";
-      const f1 = idx === 0 ? 320 : 260;
-      const f2 = idx === 0 ? 220 : 180;
-      osc.frequency.setValueAtTime(f1, now + delay);
-      osc.frequency.exponentialRampToValueAtTime(f2, now + delay + 0.1);
-      gain.gain.setValueAtTime(0.3, now + delay);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + delay + 0.1);
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(t.f1, now + t.start);
+      osc.frequency.exponentialRampToValueAtTime(t.f2, now + t.start + t.dur);
+      gain.gain.setValueAtTime(t.gain, now + t.start);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + t.start + t.dur);
       osc.connect(gain);
       gain.connect(ctx.destination);
-      osc.start(now + delay);
-      osc.stop(now + delay + 0.1);
+      osc.start(now + t.start);
+      osc.stop(now + t.start + t.dur + 0.02);
     });
   } catch(e){}
 }
@@ -1930,6 +1963,7 @@ function initQuiz(){
   lastGame = 'quiz';
   quizState.idx = 0;
   quizState.correct = 0;
+  quizState.orderMap = {};
   loadQuizQuestion();
 }
 function loadQuizQuestion(){
@@ -1940,7 +1974,17 @@ function loadQuizQuestion(){
   document.getElementById('quizQ').textContent = q.q;
   const opts = document.getElementById('quizOpts');
   opts.innerHTML = '';
-  q.opts.forEach((opt, i)=>{
+  if(!quizState.orderMap) quizState.orderMap = {};
+  if(!quizState.orderMap[quizState.idx]){
+    const indices = q.opts.map((_, i) => i);
+    for(let i = indices.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    quizState.orderMap[quizState.idx] = indices;
+  }
+  quizState.orderMap[quizState.idx].forEach(i => {
+    const opt = q.opts[i];
     const b = document.createElement('button');
     b.className = 'opt-btn';
     b.textContent = opt;
@@ -2071,6 +2115,8 @@ function loadClozeQuestion(){
   const slot = document.getElementById('clozeSlot');
   slot.className = 'cloze-slot';
   slot.textContent = '____';
+  const fb = document.getElementById('clozeFeedback');
+  if(fb){ fb.style.display = 'none'; fb.innerHTML = ''; }
 
   const optsContainer = document.getElementById('clozeOpts');
   optsContainer.innerHTML = '';
@@ -2104,20 +2150,31 @@ function clozeNext(){
 function answerCloze(choice, btn, q){
   if(clozePassed) return;
   const slot = document.getElementById('clozeSlot');
+  const fb = document.getElementById('clozeFeedback');
   const isRight = (choice === q.answer);
 
   if(isRight){
     clozePassed = true;
-    slot.textContent = q.answer;
+    slot.innerHTML = `${q.answer} <span style="font-size:16px;color:#16a34a;font-weight:900;margin-left:2px;">✔️</span>`;
     slot.className = 'cloze-slot filled';
     btn.classList.remove('wrong');
     btn.classList.add('correct');
+    if(!btn.innerHTML.includes('✔️')){
+      btn.innerHTML = `<span class="opt-main">${q.answer}</span> <span class="correct-mark" style="color:#16a34a;font-weight:900;font-size:18px;margin-left:4px;">✔️</span>`;
+    }
     clozeStreak++;
     updateClozeStreakUI();
+    if(fb){
+      fb.style.display = 'block';
+      fb.style.background = '#dcfce7';
+      fb.style.color = '#15803d';
+      fb.style.border = '1px solid #86efac';
+      fb.innerHTML = '🎉 太棒了！选词完全正确！';
+    }
     toast('🎉 太棒了！选词完全正确！');
     playSuccessTone();
 
-    document.querySelectorAll('.cloze-opt-btn').forEach(b => {
+    document.querySelectorAll('#clozeOpts .cloze-opt-btn').forEach(b => {
       b.style.pointerEvents = 'none';
     });
 
@@ -2133,18 +2190,29 @@ function answerCloze(choice, btn, q){
     updateClozeStreakUI();
     playWrongTone();
 
-    slot.textContent = choice;
-    slot.className = 'cloze-slot wrong';
     btn.classList.add('wrong');
     btn.style.pointerEvents = 'none';
-    toast('选错了哦，再想一想，换个词试试！');
+    if(!btn.innerHTML.includes('❌')){
+      btn.innerHTML = `<span class="opt-main">${choice}</span> <span class="wrong-mark" style="color:#ef4444;font-weight:900;font-size:18px;margin-left:4px;">❌</span>`;
+    }
+
+    slot.innerHTML = `<span style="text-decoration:line-through;color:#dc2626;">${choice}</span> <span style="font-size:16px;color:#ef4444;font-weight:900;margin-left:2px;">❌</span>`;
+    slot.className = 'cloze-slot wrong';
+    if(fb){
+      fb.style.display = 'block';
+      fb.style.background = '#fee2e2';
+      fb.style.color = '#dc2626';
+      fb.style.border = '1px solid #fca5a5';
+      fb.innerHTML = `❌ 选错了哦！“${choice}” 填在这里不合适，换个词试试！`;
+    }
+    toast(`❌ 选错啦！“${choice}” 不合适，换个词再试试！`);
 
     setTimeout(() => {
       if(!clozePassed){
         slot.textContent = '____';
         slot.className = 'cloze-slot';
       }
-    }, 800);
+    }, 1000);
 
     recordMistake({
       id: q.id,
@@ -2270,12 +2338,12 @@ function answerAudioChallenge(item, btn){
     btn.classList.add('correct');
     audioStreak++;
     updateAudioStreakUI();
-    toast('🎉 听音辨字正确！');
+    toast('🎉 听力练习正确！');
   } else {
     btn.classList.add('wrong');
     audioStreak = 0;
     updateAudioStreakUI();
-    toast(`听音辨字失误，正确答案是：${currentChallengeItem.zh}`);
+    toast(`听力练习失误，正确答案是：${currentChallengeItem.zh}`);
 
     document.querySelectorAll('.audio-opt-btn').forEach(b => {
       if(b.querySelector('.opt-main').textContent.trim() === currentChallengeItem.zh){
@@ -2299,7 +2367,7 @@ function answerAudioChallenge(item, btn){
   }, isRight ? 1100 : 1800);
 }
 
-/* ---------------- SRS / REVIEW (错题温故系统) ---------------- */
+/* ---------------- SRS / REVIEW (错题本系统) ---------------- */
 const STORAGE_KEY_SRS = 'xingxing_srs_mistakes_v1';
 let currentReviewTab = 'quiz';
 let currentReviewFilter = 'due';
