@@ -665,6 +665,10 @@
         <div class="quiz-q" id="audioPrompt" style="font-size:15px;color:var(--muted);">请仔细听发音，选择正确的选项：</div>
         <div class="audio-opts" id="audioOpts"></div>
       </div>
+      <div class="audio-nav-bar" style="display:flex;align-items:center;justify-content:center;gap:12px;margin:12px 0 6px;">
+        <button class="btn ghost small" onclick="audioPrev()">⬅️ 上一题</button>
+        <button class="btn ghost small" onclick="audioNext()">下一题 ➡️</button>
+      </div>
       <button class="btn ghost" onclick="stopClip(); goHome();">返回菜单</button>
     </section>
 
@@ -2277,6 +2281,7 @@ function updateAudioStreakUI(){
 }
 
 function loadAudioChallengeQuestion(){
+  if(window.audioTimer) { clearTimeout(window.audioTimer); window.audioTimer = null; }
   audioAnswered = false;
   if(audioIdx >= audioPool.length){
     const stars = audioStreak >= 8 ? 3 : (audioStreak >= 5 ? 2 : 1);
@@ -2328,6 +2333,34 @@ function playCurrentAudio(){
   });
 }
 
+function audioPrev(){
+  stopClip();
+  if(window.audioTimer) { clearTimeout(window.audioTimer); window.audioTimer = null; }
+  const speaker = document.getElementById('audioSpeakerBtn');
+  if(speaker) speaker.classList.remove('playing');
+  if(!audioPool || audioPool.length === 0) return;
+  if(audioIdx > 0 && audioIdx < audioPool.length) {
+    audioIdx--;
+  } else {
+    audioIdx = audioPool.length - 1;
+  }
+  loadAudioChallengeQuestion();
+}
+
+function audioNext(){
+  stopClip();
+  if(window.audioTimer) { clearTimeout(window.audioTimer); window.audioTimer = null; }
+  const speaker = document.getElementById('audioSpeakerBtn');
+  if(speaker) speaker.classList.remove('playing');
+  if(!audioPool || audioPool.length === 0) return;
+  if(audioIdx < audioPool.length - 1) {
+    audioIdx++;
+  } else {
+    audioIdx = 0;
+  }
+  loadAudioChallengeQuestion();
+}
+
 function answerAudioChallenge(item, btn){
   if(audioAnswered) return;
   audioAnswered = true;
@@ -2362,10 +2395,7 @@ function answerAudioChallenge(item, btn){
     });
   }
 
-  setTimeout(() => {
-    audioIdx++;
-    loadAudioChallengeQuestion();
-  }, isRight ? 1100 : 1800);
+  window.audioTimer = setTimeout(() => { window.audioTimer = null; audioIdx++; loadAudioChallengeQuestion(); }, isRight ? 1100 : 1800);
 }
 
 /* ---------------- SRS / REVIEW (错题本系统) ---------------- */

@@ -620,6 +620,11 @@
 
       <div class="audio-opts grid-layout" id="audioOpts"></div>
 
+      <div class="audio-nav-bar" style="display:flex;align-items:center;justify-content:center;gap:12px;margin:12px 0 6px;">
+        <button class="btn ghost small" onclick="audioPrev()">⬅️ 上一题</button>
+        <button class="btn ghost small" onclick="audioNext()">下一题 ➡️</button>
+      </div>
+
       <button class="btn ghost small" onclick="goHome()">返回菜单</button>
     </section>
 
@@ -2234,6 +2239,7 @@ function setupAudioChallenge(){
 }
 
 function renderAudioQuestion(){
+  if(window.audioTimer) { clearTimeout(window.audioTimer); window.audioTimer = null; }
   if(audioChallengeState.idx >= audioChallengeState.questions.length){
     const total = audioChallengeState.questions.length;
     const correct = audioChallengeState.correct;
@@ -2259,7 +2265,7 @@ function renderAudioQuestion(){
     optsContainer.appendChild(btn);
   });
 
-  setTimeout(()=>{ playCurrentAudio(); }, 300);
+  window.audioTimer = setTimeout(() => { window.audioTimer = null; playCurrentAudio(); }, 300);
 }
 
 function playCurrentAudio(){
@@ -2270,6 +2276,34 @@ function playCurrentAudio(){
   playClip(q.id, q.zh, ()=>{
     if(speaker) speaker.classList.remove('playing');
   });
+}
+
+function audioPrev(){
+  stopClip();
+  if(window.audioTimer) { clearTimeout(window.audioTimer); window.audioTimer = null; }
+  const speaker = document.getElementById('audioSpeakerBtn');
+  if(speaker) speaker.classList.remove('playing');
+  if(!audioChallengeState.questions || audioChallengeState.questions.length === 0) return;
+  if(audioChallengeState.idx > 0 && audioChallengeState.idx < audioChallengeState.questions.length) {
+    audioChallengeState.idx--;
+  } else {
+    audioChallengeState.idx = audioChallengeState.questions.length - 1;
+  }
+  renderAudioQuestion();
+}
+
+function audioNext(){
+  stopClip();
+  if(window.audioTimer) { clearTimeout(window.audioTimer); window.audioTimer = null; }
+  const speaker = document.getElementById('audioSpeakerBtn');
+  if(speaker) speaker.classList.remove('playing');
+  if(!audioChallengeState.questions || audioChallengeState.questions.length === 0) return;
+  if(audioChallengeState.idx < audioChallengeState.questions.length - 1) {
+    audioChallengeState.idx++;
+  } else {
+    audioChallengeState.idx = 0;
+  }
+  renderAudioQuestion();
 }
 
 function answerAudioQuestion(opt, btn){
@@ -2303,10 +2337,7 @@ function answerAudioQuestion(opt, btn){
     });
   }
   document.getElementById('audioStreak').textContent = '🔥 连对 ' + audioChallengeState.streak;
-  setTimeout(()=>{
-    audioChallengeState.idx++;
-    renderAudioQuestion();
-  }, 1200);
+  window.audioTimer = setTimeout(() => { window.audioTimer = null; audioChallengeState.idx++; renderAudioQuestion(); }, 1200);
 }
 
 /* ---------------- SRS REVIEW ---------------- */
