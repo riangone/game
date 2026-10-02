@@ -1817,9 +1817,22 @@ function scramblePrev(){
 function scrambleNext(){
   stopClip();
   if(!SCRAMBLE_SENTENCES || SCRAMBLE_SENTENCES.length === 0) return;
-  if(scrambleState.idx < SCRAMBLE_SENTENCES.length - 1) scrambleState.idx++;
-  else scrambleState.idx = 0;
-  setupScrambleRound();
+  if(scrambleState.idx < SCRAMBLE_SENTENCES.length - 1) {
+    scrambleState.idx++;
+    setupScrambleRound();
+  } else {
+    const round = SCRAMBLE_SENTENCES[scrambleState.idx];
+    const built = scrambleState.placed.map(p => (p.text !== undefined ? p.text : p.token)).join('');
+    const isCorrect = (built.replace(/\s+/g, '') === round.zh.replace(/\s+/g, '')) &&
+                      (scrambleState.placed.length === round.tokens.length);
+    if(isCorrect){
+      scrambleState.idx++;
+      setupScrambleRound();
+    } else {
+      scrambleState.idx = 0;
+      setupScrambleRound();
+    }
+  }
 }
 
 function playScrambleAnswerAudio(){
@@ -1851,14 +1864,7 @@ function fillScrambleAnswer(){
   }
   playSuccessTone();
   toast("✨ 已填入正确句子！");
-  playClip(round.id, round.zh, () => {
-    setTimeout(() => {
-      scrambleChecking = false;
-      if(target) target.classList.remove("correct");
-      scrambleState.idx++;
-      setupScrambleRound();
-    }, 700);
-  });
+  playClip(round.id, round.zh, () => { scrambleChecking = false; });
 }
 
 function scrambleCheck(){
@@ -1887,14 +1893,7 @@ function scrambleCheck(){
     }
     playSuccessTone();
     toast("🎉 答对了！太棒了！");
-    playClip(round.id, round.zh, () => {
-      setTimeout(() => {
-        scrambleChecking = false;
-        if(target) target.classList.remove("correct");
-        scrambleState.idx++;
-        setupScrambleRound();
-      }, 700);
-    });
+    playClip(round.id, round.zh, () => { scrambleChecking = false; });
   } else {
     if(target){
       target.classList.remove("correct");
@@ -1991,10 +1990,6 @@ function answerQuiz(i, el){
     } else {
       toast('🎉 太棒了，找到正确答案了！');
     }
-    setTimeout(()=>{
-      quizState.idx++;
-      renderQuiz();
-    }, 900);
   } else {
     if(!quizState.hasWrong){
       quizState.hasWrong = true;
@@ -2025,9 +2020,19 @@ function quizPrev(){
 }
 
 function quizNext(){
-  if(quizState.idx < QUIZ.length - 1) quizState.idx++;
-  else quizState.idx = 0;
-  renderQuiz();
+  if(!QUIZ || QUIZ.length === 0) return;
+  if(quizState.idx < QUIZ.length - 1) {
+    quizState.idx++;
+    renderQuiz();
+  } else {
+    if(quizState.answered){
+      quizState.idx++;
+      renderQuiz();
+    } else {
+      quizState.idx = 0;
+      renderQuiz();
+    }
+  }
 }
 
 /* ---------------- CLOZE TEST ---------------- */
@@ -2097,9 +2102,18 @@ function clozePrev(){
 function clozeNext(){
   stopClip();
   if(!clozeState.questions || clozeState.questions.length === 0) return;
-  if(clozeState.idx < clozeState.questions.length - 1) clozeState.idx++;
-  else clozeState.idx = 0;
-  renderClozeQuestion();
+  if(clozeState.idx < clozeState.questions.length - 1) {
+    clozeState.idx++;
+    renderClozeQuestion();
+  } else {
+    if(clozeState.answered){
+      clozeState.idx++;
+      renderClozeQuestion();
+    } else {
+      clozeState.idx = 0;
+      renderClozeQuestion();
+    }
+  }
 }
 
 function answerCloze(selected, btn){
@@ -2139,12 +2153,7 @@ function answerCloze(selected, btn){
     });
 
     const fullText = q.before + q.answer + q.after;
-    playClip(q.audioId || ('cloze_' + (clozeState.idx + 1)), fullText, () => {
-      setTimeout(() => {
-        clozeState.idx++;
-        renderClozeQuestion();
-      }, 800);
-    });
+    playClip(q.audioId || ('cloze_' + (clozeState.idx + 1)), fullText);
   } else {
     clozeState.streak = 0;
     document.getElementById('clozeStreak').textContent = '🔥 连对 ' + clozeState.streak;
@@ -2304,10 +2313,16 @@ function audioNext(){
   if(!audioChallengeState.questions || audioChallengeState.questions.length === 0) return;
   if(audioChallengeState.idx < audioChallengeState.questions.length - 1) {
     audioChallengeState.idx++;
+    renderAudioQuestion();
   } else {
-    audioChallengeState.idx = 0;
+    if(audioChallengeState.answered){
+      audioChallengeState.idx++;
+      renderAudioQuestion();
+    } else {
+      audioChallengeState.idx = 0;
+      renderAudioQuestion();
+    }
   }
-  renderAudioQuestion();
 }
 
 function answerAudioQuestion(opt, btn){
@@ -2341,7 +2356,6 @@ function answerAudioQuestion(opt, btn){
     });
   }
   document.getElementById('audioStreak').textContent = '🔥 连对 ' + audioChallengeState.streak;
-  window.audioTimer = setTimeout(() => { window.audioTimer = null; audioChallengeState.idx++; renderAudioQuestion(); }, 1200);
 }
 
 /* ---------------- SRS REVIEW ---------------- */

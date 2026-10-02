@@ -1834,12 +1834,30 @@ function scramblePrev(){
   else scrambleState.idx = SCRAMBLE_SENTENCES.length - 1;
   loadScrambleSentence();
 }
+function finishScramble(){
+  progress.scramble = 3;
+  saveProgress();
+  showResult("🔤 连词成句全通关！", 3, 100, ["语感大师", "句意通达"]);
+}
+
 function scrambleNext(){
   stopClip();
   if(!SCRAMBLE_SENTENCES || SCRAMBLE_SENTENCES.length === 0) return;
-  if(scrambleState.idx < SCRAMBLE_SENTENCES.length - 1) scrambleState.idx++;
-  else scrambleState.idx = 0;
-  loadScrambleSentence();
+  if(scrambleState.idx < SCRAMBLE_SENTENCES.length - 1) {
+    scrambleState.idx++;
+    loadScrambleSentence();
+  } else {
+    const s = SCRAMBLE_SENTENCES[scrambleState.idx];
+    const built = scrambleState.placed.map(p => (p.token !== undefined ? p.token : p.text)).join('');
+    const isCorrect = (built.replace(/\s+/g, '') === s.zh.replace(/\s+/g, '')) &&
+                      (scrambleState.placed.length === s.tokens.length);
+    if(isCorrect){
+      finishScramble();
+    } else {
+      scrambleState.idx = 0;
+      loadScrambleSentence();
+    }
+  }
 }
 
 function playScrambleAnswerAudio(){
@@ -1871,20 +1889,7 @@ function fillScrambleAnswer(){
   }
   playSuccessTone();
   toast("✨ 已填入正确句子！");
-  playClip(s.id, s.zh, () => {
-    setTimeout(() => {
-      scrambleChecking = false;
-      if(target) target.classList.remove("correct");
-      scrambleState.idx++;
-      if(scrambleState.idx < SCRAMBLE_SENTENCES.length){
-        loadScrambleSentence();
-      } else {
-        progress.scramble = 3;
-        saveProgress();
-        showResult("🔤 连词成句全通关！", 3, 100, ["语感大师", "句意通达"]);
-      }
-    }, 700);
-  });
+  playClip(s.id, s.zh, () => { scrambleChecking = false; });
 }
 
 function scrambleCheck(){
@@ -1913,20 +1918,7 @@ function scrambleCheck(){
     }
     playSuccessTone();
     toast("🎉 答对了！太棒了！");
-    playClip(s.id, s.zh, () => {
-      setTimeout(() => {
-        scrambleChecking = false;
-        if(target) target.classList.remove("correct");
-        scrambleState.idx++;
-        if(scrambleState.idx < SCRAMBLE_SENTENCES.length){
-          loadScrambleSentence();
-        } else {
-          progress.scramble = 3;
-          saveProgress();
-          showResult("🔤 连词成句全通关！", 3, 100, ["语感大师", "句意通达"]);
-        }
-      }, 700);
-    });
+    playClip(s.id, s.zh, () => { scrambleChecking = false; });
   } else {
     if(target){
       target.classList.remove("correct");
@@ -2018,18 +2010,7 @@ function answerQuiz(choice, btn){
     } else {
       toast('🎉 太棒了，找到正确答案了！');
     }
-    setTimeout(()=>{
-      quizState.idx++;
-      if(quizState.idx < QUIZ.length){
-        loadQuizQuestion();
-      } else {
-        const pct = Math.round((quizState.correct / QUIZ.length) * 100);
-        const stars = pct >= 85 ? 3 : (pct >= 60 ? 2 : 1);
-        progress.quiz = Math.max(progress.quiz || 0, stars);
-        saveProgress();
-        showResult('❓ 读解练习完成！', stars, pct, ['寓言小博士', pct === 100 ? '满分通关' : '博闻强识']);
-      }
-    }, 900);
+    
   } else {
     if(!quizState.hasWrong){
       quizState.hasWrong = true;
@@ -2058,10 +2039,27 @@ function quizPrev(){
   loadQuizQuestion();
 }
 
+function finishQuiz(){
+  const pct = Math.round((quizState.correct / QUIZ.length) * 100);
+        const stars = pct >= 85 ? 3 : (pct >= 60 ? 2 : 1);
+        progress.quiz = Math.max(progress.quiz || 0, stars);
+        saveProgress();
+        showResult('❓ 读解练习完成！', stars, pct, ['寓言小博士', pct === 100 ? '满分通关' : '博闻强识']);
+}
+
 function quizNext(){
-  if(quizState.idx < QUIZ.length - 1) quizState.idx++;
-  else quizState.idx = 0;
-  loadQuizQuestion();
+  if(!QUIZ || QUIZ.length === 0) return;
+  if(quizState.idx < QUIZ.length - 1) {
+    quizState.idx++;
+    loadQuizQuestion();
+  } else {
+    if(quizState.answered){
+      finishQuiz();
+    } else {
+      quizState.idx = 0;
+      loadQuizQuestion();
+    }
+  }
 }
 
 /* ---------------- CLOZE TEST (选词填空) ---------------- */
@@ -2147,9 +2145,18 @@ function clozePrev(){
 function clozeNext(){
   stopClip();
   if(!clozeList || clozeList.length === 0) return;
-  if(clozeIdx < clozeList.length - 1) clozeIdx++;
-  else clozeIdx = 0;
-  loadClozeQuestion();
+  if(clozeIdx < clozeList.length - 1) {
+    clozeIdx++;
+    loadClozeQuestion();
+  } else {
+    if(clozePassed){
+      clozeIdx++;
+      loadClozeQuestion();
+    } else {
+      clozeIdx = 0;
+      loadClozeQuestion();
+    }
+  }
 }
 
 function answerCloze(choice, btn, q){
@@ -2184,12 +2191,7 @@ function answerCloze(choice, btn, q){
     });
 
     const fullSentence = q.before + q.answer + q.after;
-    playClip(q.audioId || ('cloze_' + (clozeIdx + 1)), fullSentence, () => {
-      setTimeout(() => {
-        clozeIdx++;
-        loadClozeQuestion();
-      }, 800);
-    });
+    playClip(q.audioId || ('cloze_' + (clozeIdx + 1)), fullSentence);
   } else {
     clozeStreak = 0;
     updateClozeStreakUI();
@@ -2355,10 +2357,16 @@ function audioNext(){
   if(!audioPool || audioPool.length === 0) return;
   if(audioIdx < audioPool.length - 1) {
     audioIdx++;
+    loadAudioChallengeQuestion();
   } else {
-    audioIdx = 0;
+    if(audioAnswered){
+      audioIdx++;
+      loadAudioChallengeQuestion();
+    } else {
+      audioIdx = 0;
+      loadAudioChallengeQuestion();
+    }
   }
-  loadAudioChallengeQuestion();
 }
 
 function answerAudioChallenge(item, btn){
@@ -2394,8 +2402,6 @@ function answerAudioChallenge(item, btn){
       audioId: currentChallengeItem.id
     });
   }
-
-  window.audioTimer = setTimeout(() => { window.audioTimer = null; audioIdx++; loadAudioChallengeQuestion(); }, isRight ? 1100 : 1800);
 }
 
 /* ---------------- SRS / REVIEW (错题本系统) ---------------- */
