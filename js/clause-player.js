@@ -51,6 +51,33 @@
     isDraggingScrub: false,
 
     /**
+     * 可靠获取当前课文句子索引。
+     * 注意：各课文页面以 `let storyIdx = 0 ...` 声明该变量，
+     * 顶层 `let`/`const` 不会挂载为 window 的属性（不同于 var/function 声明），
+     * 因此不能直接读取 window.storyIdx（恒为 undefined）。
+     * 改为从页面上已同步更新的 #storyProgress（格式："N / 总数"）解析真实索引。
+     */
+    getStoryIdx: function() {
+      if (typeof window.storyIdx === 'number') return window.storyIdx;
+      const progEl = document.getElementById('storyProgress');
+      if (progEl) {
+        const m = (progEl.textContent || '').match(/(\d+)\s*\//);
+        if (m) return Math.max(0, parseInt(m[1], 10) - 1);
+      }
+      return 0;
+    },
+
+    /**
+     * 同理，showPy/showEn/showJp/showKo 也是以 let 声明的页面级变量，
+     * 无法通过 window.showXxx 读取，改为读取对应语言开关 chip 的 active 状态。
+     */
+    getShowFlag: function(chipId) {
+      const chip = document.getElementById(chipId);
+      if (chip) return chip.classList.contains('active');
+      return true;
+    },
+
+    /**
      * 自动初始化或指定 lessonKey / lessonSlug
      */
     init: function(options) {
@@ -168,6 +195,7 @@
           <div class="clause-focus-trans" id="cpFocusTrans">
             <div class="clause-focus-en" id="cpFocusEn"></div>
             <div class="clause-focus-jp" id="cpFocusJp"></div>
+            <div class="clause-focus-ko" id="cpFocusKo"></div>
           </div>
         </div>
 
@@ -283,7 +311,7 @@
       if (typeof originalRenderStory === 'function') {
         window.renderStory = function() {
           originalRenderStory.apply(this, arguments);
-          const idx = typeof window.storyIdx === 'number' ? window.storyIdx : 0;
+          const idx = self.getStoryIdx();
           self.onSentenceChange(idx);
         };
       }
@@ -324,7 +352,7 @@
       }
 
       // 如果页面打开就在 story 屏，立即同步一次
-      const currentIdx = typeof window.storyIdx === 'number' ? window.storyIdx : 0;
+      const currentIdx = this.getStoryIdx();
       this.onSentenceChange(currentIdx);
     },
 
@@ -463,20 +491,25 @@
       const zhEl = document.getElementById('cpFocusZh');
       const enEl = document.getElementById('cpFocusEn');
       const jpEl = document.getElementById('cpFocusJp');
+      const koEl = document.getElementById('cpFocusKo');
 
       if (numEl) numEl.textContent = `分句 ${this.currentClauseIdx + 1} / ${sent.clauses.length}`;
       if (pyEl) {
         pyEl.textContent = clause.py || '';
-        pyEl.style.display = (window.showPy !== false) ? 'block' : 'none';
+        pyEl.style.display = this.getShowFlag('chipPy') ? 'block' : 'none';
       }
       if (zhEl) zhEl.textContent = clause.zh || '';
       if (enEl) {
         enEl.textContent = clause.en || '';
-        enEl.style.display = (window.showEn !== false && clause.en) ? 'block' : 'none';
+        enEl.style.display = (this.getShowFlag('chipEn') && clause.en) ? 'block' : 'none';
       }
       if (jpEl) {
         jpEl.textContent = clause.jp || '';
-        jpEl.style.display = (window.showJp !== false && clause.jp) ? 'block' : 'none';
+        jpEl.style.display = (this.getShowFlag('chipJp') && clause.jp) ? 'block' : 'none';
+      }
+      if (koEl) {
+        koEl.textContent = clause.ko || '';
+        koEl.style.display = (this.getShowFlag('chipKo') && clause.ko) ? 'block' : 'none';
       }
     },
 
@@ -486,15 +519,17 @@
       const origPy = storyScreen ? storyScreen.querySelector('#storyPy') : null;
       const origEnRow = document.getElementById('storyEnRow');
       const origJpRow = document.getElementById('storyJpRow');
+      const origKoRow = document.getElementById('storyKoRow');
       const pillsContainer = document.getElementById('cpPillsContainer');
       const focusCard = document.getElementById('cpFocusCard');
 
       if (this.granularityMode === 'original') {
         // 原声整句模式：显示整句大字和译文，隐藏分句药丸和聚焦卡片
         if (origZh) origZh.style.display = 'block';
-        if (origPy) origPy.style.display = (window.showPy !== false) ? 'block' : 'none';
-        if (origEnRow) origEnRow.style.display = (window.showEn !== false) ? 'flex' : 'none';
-        if (origJpRow) origJpRow.style.display = (window.showJp !== false) ? 'flex' : 'none';
+        if (origPy) origPy.style.display = this.getShowFlag('chipPy') ? 'block' : 'none';
+        if (origEnRow) origEnRow.style.display = this.getShowFlag('chipEn') ? 'flex' : 'none';
+        if (origJpRow) origJpRow.style.display = this.getShowFlag('chipJp') ? 'flex' : 'none';
+        if (origKoRow) origKoRow.style.display = this.getShowFlag('chipKo') ? 'flex' : 'none';
         if (focusCard) focusCard.style.display = 'none';
         if (pillsContainer) pillsContainer.style.display = 'none';
       } else if (this.granularityMode === 'clause') {
@@ -503,14 +538,16 @@
         if (origPy) origPy.style.display = 'none';
         if (origEnRow) origEnRow.style.display = 'none';
         if (origJpRow) origJpRow.style.display = 'none';
+        if (origKoRow) origKoRow.style.display = 'none';
         if (focusCard) focusCard.style.display = 'flex';
         if (pillsContainer) pillsContainer.style.display = 'flex';
       } else {
         // 整句连续听模式：保留整句大字与分句胶囊，胶囊随音频同步高亮
         if (origZh) origZh.style.display = 'block';
-        if (origPy) origPy.style.display = (window.showPy !== false) ? 'block' : 'none';
-        if (origEnRow) origEnRow.style.display = (window.showEn !== false) ? 'flex' : 'none';
-        if (origJpRow) origJpRow.style.display = (window.showJp !== false) ? 'flex' : 'none';
+        if (origPy) origPy.style.display = this.getShowFlag('chipPy') ? 'block' : 'none';
+        if (origEnRow) origEnRow.style.display = this.getShowFlag('chipEn') ? 'flex' : 'none';
+        if (origJpRow) origJpRow.style.display = this.getShowFlag('chipJp') ? 'flex' : 'none';
+        if (origKoRow) origKoRow.style.display = this.getShowFlag('chipKo') ? 'flex' : 'none';
         if (focusCard) focusCard.style.display = 'none';
         if (pillsContainer) pillsContainer.style.display = 'flex';
       }
