@@ -88,6 +88,7 @@
   .sentence-py{font-size:15px;color:var(--camel-dark);text-align:center;font-weight:700;min-height:20px;}
   .sentence-en{font-size:13px;color:var(--muted);text-align:center;}
   .sentence-jp{font-size:13px;color:#8b5cf6;text-align:center;}
+  .sentence-ko{font-size:13px;color:#059669;text-align:center;}
   .mini-speak-btn{border:none;background:none;font-size:13px;cursor:pointer;line-height:1;padding:2px 3px;border-radius:50%;flex-shrink:0;opacity:.75;}
   .mini-speak-btn:active{opacity:1;transform:scale(1.15);}
   .story-nav{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;max-width:560px;}
@@ -130,6 +131,7 @@
   .full-sentence .sentence-py{font-size:13px;text-align:left;color:var(--camel-dark);min-height:0;}
   .full-sentence .sentence-en{font-size:12px;text-align:left;color:var(--muted);margin-top:2px;}
   .full-sentence .sentence-jp{font-size:12px;text-align:left;color:#8b5cf6;margin-top:2px;}
+  .full-sentence .sentence-ko{font-size:12px;text-align:left;color:#059669;margin-top:2px;}
 
   /* character tian-zi-ge card */
   .char-wrap{width:100%;max-width:340px;perspective:1000px;}
@@ -242,6 +244,7 @@
   @keyframes popIn{from{transform:scale(0.85);opacity:0;}to{transform:scale(1);opacity:1;}}
   .cloze-en{font-size:12px;color:var(--blue-sky);font-style:italic;text-align:center;}
   .cloze-jp{font-size:12px;color:#8b5cf6;font-style:italic;text-align:center;}
+  .cloze-ko{font-size:12px;color:#059669;font-style:italic;text-align:center;}
   .cloze-hint-row{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 4px;}
   .cloze-hint-pill{font-size:12px;color:var(--muted);background:#eff6ff;padding:3px 10px;border-radius:12px;}
   .cloze-speak-btn{background:#fff;border:1px solid #cbd5e1;border-radius:14px;padding:3px 10px;font-size:12px;font-weight:700;
@@ -432,6 +435,10 @@
           <div class="sentence-jp" id="storyJp"></div>
           <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].jp||'', null, 'ja-JP')" title="播放日文发音">🔊</button>
         </div>
+        <div class="lang-line-row" id="storyKoRow" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+          <div class="sentence-ko" id="storyKo"></div>
+          <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].ko||'', null, 'ko-KR')" title="播放韩文发音">🔊</button>
+        </div>
       </div>
       <!-- VOICE WAVE VISUALIZER -->
       <div class="voice-wave-panel" id="storyVoiceWave">
@@ -460,6 +467,7 @@
         <div class="chip active" id="chipPy" onclick="toggleStoryPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipEn" onclick="toggleStoryEn()">English</div>
         <div class="chip active" id="chipJp" onclick="toggleStoryJp()">日本語</div>
+        <div class="chip active" id="chipKo" onclick="toggleStoryKo()">한국어</div>
         <div class="chip" onclick="goFull()">📜 全文朗读</div>
       </div>
       <button class="btn ghost" onclick="goHome()">返回菜单</button>
@@ -473,6 +481,7 @@
         <div class="chip active" id="chipFullPy" onclick="toggleFullPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipFullEn" onclick="toggleFullEn()">English</div>
         <div class="chip active" id="chipFullJp" onclick="toggleFullJp()">日本語</div>
+        <div class="chip active" id="chipFullKo" onclick="toggleFullKo()">한국어</div>
         <button class="btn clay small" id="fullPlayBtn" onclick="toggleFullPlay()">▶️ 原声连续朗读</button>
         <button class="btn gold small" id="fullMyPlayBtn" onclick="toggleFullMyPlay()">🎙️ 播放我的全文配音</button>
       </div>
@@ -632,6 +641,7 @@
           </div>
           <div class="cloze-en" id="clozeEn"></div>
           <div class="cloze-jp" id="clozeJp"></div>
+          <div class="cloze-ko" id="clozeKo"></div>
           <div class="cloze-hint-row">
             <span class="cloze-hint-pill" id="clozeHint"></span>
             <button class="cloze-speak-btn" id="clozeSpeakBtn" onclick="speakClozeSentence()">🔊 朗读句子</button>
@@ -729,53 +739,53 @@
 /* ---------------- DATA ---------------- */
 // 1. 课文《探月》（教材原版逐字转写，第12课）
 const STORY = [
-  {id:"st1", zh:"月亮上有什么呢？", py:"Yuèliang shang yǒu shénme ne?", en:"What is on the moon?", jp:"月には何があるのでしょうか？"},
-  {id:"st2", zh:"人们很早很早以前就想看个明白。", py:"Rénmen hěn zǎo hěn zǎo yǐqián jiù xiǎng kàn ge míngbai.", en:"People have wanted to find out clearly for a very, very long time.", jp:"人々はとても昔からそれをはっきり知りたいと思っていました。"},
-  {id:"st3", zh:"一九六九年七月二十一日美国宇航员第一次登上了月球，在月球上留下了人类第一个脚印，实现了人类登月的梦想。", py:"Yī jiǔ liù jiǔ nián qī yuè èrshíyī rì Měiguó yǔhángyuán dì yī cì dēng shang le yuèqiú, zài yuèqiú shang liú xià le rénlèi dì yī ge jiǎoyìn, shíxiàn le rénlèi dēng yuè de mèngxiǎng.", en:"On July 21, 1969, American astronauts stepped onto the moon for the first time, leaving humanity's first footprint on the moon and fulfilling humankind's dream of landing there.", jp:"1969年7月21日、アメリカの宇宙飛行士が初めて月面に降り立ち、人類最初の足跡を月面に残し、人類の月面着陸の夢を実現しました。"},
-  {id:"st4", zh:"七月十六日，他们坐“阿波罗号”飞船离开了地球，飞了三天多才到达月球。", py:"Qī yuè shíliù rì, tāmen zuò \"Ābōluóhào\" fēichuán líkāi le dìqiú, fēi le sān tiān duō cái dàodá yuèqiú.", en:"On July 16, they left Earth aboard the \"Apollo\" spacecraft, flying for more than three days before reaching the moon.", jp:"7月16日、彼らは「アポロ号」の宇宙船に乗って地球を離れ、3日余り飛行してようやく月に到達しました。"},
-  {id:"st5", zh:"宇航员发现月球是一个荒凉的世界，到处都是石头和泥土，没有水，没有动物和植物，听不到一点儿声音。", py:"Yǔhángyuán fāxiàn yuèqiú shì yí ge huāngliáng de shìjiè, dàochù dōu shì shítou hé nítǔ, méiyǒu shuǐ, méiyǒu dòngwù hé zhíwù, tīng bu dào yìdiǎnr shēngyīn.", en:"The astronauts discovered that the moon is a desolate world — everywhere is rock and dust, there is no water, no animals or plants, and not a single sound can be heard.", jp:"宇宙飛行士たちは、月が荒涼とした世界であることを発見しました——至る所が石と泥で、水もなく、動物も植物もなく、物音一つ聞こえませんでした。"},
-  {id:"st6", zh:"七月二十四日，他们带着月球上的泥土和石块，安全回到了地球。", py:"Qī yuè èrshísì rì, tāmen dài zhe yuèqiú shang de nítǔ hé shíkuài, ānquán huí dào le dìqiú.", en:"On July 24, they brought back lunar soil and rock samples and returned safely to Earth.", jp:"7月24日、彼らは月の泥や石を持って、無事に地球に帰りました。"},
-  {id:"st7", zh:"二〇〇四年，中国正式开展嫦娥探月工程。", py:"Èr líng líng sì nián, Zhōngguó zhèngshì kāizhǎn Cháng'é tànyuè gōngchéng.", en:"In 2004, China officially launched the Chang'e Lunar Exploration Program.", jp:"2004年、中国は正式に「嫦娥探月工程」を開始しました。"},
-  {id:"st8", zh:"二〇一九年一月三日，“嫦娥四号”实现了人类航天器首次在月球背面着陆。", py:"Èr líng yī jiǔ nián yī yuè sān rì, \"Cháng'é sìhào\" shíxiàn le rénlèi hángtiānqì shǒucì zài yuèqiú bèimiàn zhuólù.", en:"On January 3, 2019, \"Chang'e-4\" achieved humanity's first spacecraft landing on the far side of the moon.", jp:"2019年1月3日、「嫦娥四号」は人類の宇宙機として初めて月の裏側に着陸することを実現しました。"}
+  {id:"st1", zh:"月亮上有什么呢？", py:"Yuèliang shang yǒu shénme ne?", en:"What is on the moon?", jp:"月には何があるのでしょうか？", ko:"달에는 무엇이 있을까요?"},
+  {id:"st2", zh:"人们很早很早以前就想看个明白。", py:"Rénmen hěn zǎo hěn zǎo yǐqián jiù xiǎng kàn ge míngbai.", en:"People have wanted to find out clearly for a very, very long time.", jp:"人々はとても昔からそれをはっきり知りたいと思っていました。", ko:"사람들은 아주 오래전부터 그것을 분명히 알고 싶어 했습니다."},
+  {id:"st3", zh:"一九六九年七月二十一日美国宇航员第一次登上了月球，在月球上留下了人类第一个脚印，实现了人类登月的梦想。", py:"Yī jiǔ liù jiǔ nián qī yuè èrshíyī rì Měiguó yǔhángyuán dì yī cì dēng shang le yuèqiú, zài yuèqiú shang liú xià le rénlèi dì yī ge jiǎoyìn, shíxiàn le rénlèi dēng yuè de mèngxiǎng.", en:"On July 21, 1969, American astronauts stepped onto the moon for the first time, leaving humanity's first footprint on the moon and fulfilling humankind's dream of landing there.", jp:"1969年7月21日、アメリカの宇宙飛行士が初めて月面に降り立ち、人類最初の足跡を月面に残し、人類の月面着陸の夢を実現しました。", ko:"1969년 7월 21일 미국 우주비행사가 처음으로 달에 올라섰고, 달에 인류 최초의 발자국을 남기며 인류의 달 착륙의 꿈을 실현했습니다."},
+  {id:"st4", zh:"七月十六日，他们坐“阿波罗号”飞船离开了地球，飞了三天多才到达月球。", py:"Qī yuè shíliù rì, tāmen zuò \"Ābōluóhào\" fēichuán líkāi le dìqiú, fēi le sān tiān duō cái dàodá yuèqiú.", en:"On July 16, they left Earth aboard the \"Apollo\" spacecraft, flying for more than three days before reaching the moon.", jp:"7月16日、彼らは「アポロ号」の宇宙船に乗って地球を離れ、3日余り飛行してようやく月に到達しました。", ko:"7월 16일, 그들은 \"아폴로호\" 우주선을 타고 지구를 떠나 3일 넘게 비행한 후에야 달에 도착했습니다."},
+  {id:"st5", zh:"宇航员发现月球是一个荒凉的世界，到处都是石头和泥土，没有水，没有动物和植物，听不到一点儿声音。", py:"Yǔhángyuán fāxiàn yuèqiú shì yí ge huāngliáng de shìjiè, dàochù dōu shì shítou hé nítǔ, méiyǒu shuǐ, méiyǒu dòngwù hé zhíwù, tīng bu dào yìdiǎnr shēngyīn.", en:"The astronauts discovered that the moon is a desolate world — everywhere is rock and dust, there is no water, no animals or plants, and not a single sound can be heard.", jp:"宇宙飛行士たちは、月が荒涼とした世界であることを発見しました——至る所が石と泥で、水もなく、動物も植物もなく、物音一つ聞こえませんでした。", ko:"우주비행사들은 달이 황량한 세계라는 것을 발견했습니다. 곳곳이 돌과 흙뿐이고, 물도 없고, 동물과 식물도 없으며, 아무 소리도 들리지 않았습니다."},
+  {id:"st6", zh:"七月二十四日，他们带着月球上的泥土和石块，安全回到了地球。", py:"Qī yuè èrshísì rì, tāmen dài zhe yuèqiú shang de nítǔ hé shíkuài, ānquán huí dào le dìqiú.", en:"On July 24, they brought back lunar soil and rock samples and returned safely to Earth.", jp:"7月24日、彼らは月の泥や石を持って、無事に地球に帰りました。", ko:"7월 24일, 그들은 달의 흙과 돌을 가지고 안전하게 지구로 돌아왔습니다."},
+  {id:"st7", zh:"二〇〇四年，中国正式开展嫦娥探月工程。", py:"Èr líng líng sì nián, Zhōngguó zhèngshì kāizhǎn Cháng'é tànyuè gōngchéng.", en:"In 2004, China officially launched the Chang'e Lunar Exploration Program.", jp:"2004年、中国は正式に「嫦娥探月工程」を開始しました。", ko:"2004년, 중국은 정식으로 창어 탐월 프로젝트를 시작했습니다."},
+  {id:"st8", zh:"二〇一九年一月三日，“嫦娥四号”实现了人类航天器首次在月球背面着陆。", py:"Èr líng yī jiǔ nián yī yuè sān rì, \"Cháng'é sìhào\" shíxiàn le rénlèi hángtiānqì shǒucì zài yuèqiú bèimiàn zhuólù.", en:"On January 3, 2019, \"Chang'e-4\" achieved humanity's first spacecraft landing on the far side of the moon.", jp:"2019年1月3日、「嫦娥四号」は人類の宇宙機として初めて月の裏側に着陸することを実現しました。", ko:"2019년 1월 3일, \"창어 4호\"는 인류의 우주 탐사기로서 처음으로 달의 뒷면에 착륙하는 것을 실현했습니다."}
 ];
 
 // 2. 课后生字表 (15 Characters - 课本原图)
 const CHARACTERS = [
-  {id:"zi1", zh:"探", py:"tàn", radical:"扌 (提手旁)", radicalBadge:null, words:"探月、探索、探望", meaning:"to explore / to probe", meaningJp:"探る、探検する", context:"探月"},
-  {id:"zi2", zh:"员", py:"yuán", radical:"口 (口字旁)", radicalBadge:null, words:"宇航员、队员、员工", meaning:"member / personnel", meaningJp:"（職業や組織の）員", context:"美国宇航员第一次登上了月球"},
-  {id:"zi3", zh:"次", py:"cì", radical:"冫 (两点水)", radicalBadge:null, words:"第一次、次数、下次", meaning:"time / occurrence (measure word)", meaningJp:"回、度", context:"第一次登上了月球"},
-  {id:"zi4", zh:"类", py:"lèi", radical:"米 (米字头)", radicalBadge:null, words:"人类、种类、类似", meaning:"kind / category; humankind", meaningJp:"人類、種類", context:"实现了人类登月的梦想"},
-  {id:"zi5", zh:"实", py:"shí", radical:"宀 (宝盖头)", radicalBadge:null, words:"实现、事实、实在", meaning:"real; to realize / to fulfil", meaningJp:"実現する、事実", context:"实现了人类登月的梦想"},
-  {id:"zi6", zh:"梦", py:"mèng", radical:"夕 (夕字底)", radicalBadge:null, words:"梦想、做梦、梦见", meaning:"dream", meaningJp:"夢、夢想", context:"实现了人类登月的梦想"},
-  {id:"zi7", zh:"船", py:"chuán", radical:"舟 (舟字旁)", radicalBadge:"舟 —— 船", words:"飞船、轮船、船只", meaning:"boat / ship", meaningJp:"船、宇宙船", context:"他们坐“阿波罗号”飞船离开了地球"},
-  {id:"zi8", zh:"达", py:"dá", radical:"辶 (走之旁)", radicalBadge:null, words:"到达、达到、发达", meaning:"to reach / to arrive at", meaningJp:"到達する、達する", context:"飞了三天多才到达月球"},
-  {id:"zi9", zh:"植", py:"zhí", radical:"木 (木字旁)", radicalBadge:null, words:"植物、种植、植树", meaning:"plant; to plant", meaningJp:"植物、植える", context:"没有动物和植物"},
-  {id:"zi10", zh:"音", py:"yīn", radical:"音 (音字旁)", radicalBadge:null, words:"声音、音乐、口音", meaning:"sound", meaningJp:"音、声", context:"听不到一点儿声音"},
-  {id:"zi11", zh:"式", py:"shì", radical:"戈 (戈字旁)", radicalBadge:"戈 —— 式", words:"正式、式子、方式", meaning:"style / form; formal", meaningJp:"式、正式な", context:"中国正式开展嫦娥探月工程"},
-  {id:"zi12", zh:"程", py:"chéng", radical:"禾 (禾字旁)", radicalBadge:null, words:"工程、程度、路程", meaning:"project / procedure; journey", meaningJp:"工程、行程", context:"中国正式开展嫦娥探月工程"},
-  {id:"zi13", zh:"器", py:"qì", radical:"口 (口字结构)", radicalBadge:null, words:"航天器、容器、乐器", meaning:"instrument / apparatus", meaningJp:"器具、機器", context:"人类航天器首次在月球背面着陆"},
-  {id:"zi14", zh:"背", py:"bèi", radical:"月 (月字底)", radicalBadge:null, words:"背面、背后、背包", meaning:"back (side); to carry on the back", meaningJp:"背面、背中", context:"在月球背面着陆"},
-  {id:"zi15", zh:"陆", py:"lù", radical:"阝(左耳旁)", radicalBadge:null, words:"着陆、陆地、大陆", meaning:"land (as opposed to sea); to land", meaningJp:"着陸する、陸地", context:"在月球背面着陆"}
+  {id:"zi1", zh:"探", py:"tàn", radical:"扌 (提手旁)", radicalBadge:null, words:"探月、探索、探望", meaning:"to explore / to probe", meaningJp:"探る、探検する", meaningKo:"탐험하다, 살피다", context:"探月"},
+  {id:"zi2", zh:"员", py:"yuán", radical:"口 (口字旁)", radicalBadge:null, words:"宇航员、队员、员工", meaning:"member / personnel", meaningJp:"（職業や組織の）員", meaningKo:"원, 요원", context:"美国宇航员第一次登上了月球"},
+  {id:"zi3", zh:"次", py:"cì", radical:"冫 (两点水)", radicalBadge:null, words:"第一次、次数、下次", meaning:"time / occurrence (measure word)", meaningJp:"回、度", meaningKo:"번, 차례(양사)", context:"第一次登上了月球"},
+  {id:"zi4", zh:"类", py:"lèi", radical:"米 (米字头)", radicalBadge:null, words:"人类、种类、类似", meaning:"kind / category; humankind", meaningJp:"人類、種類", meaningKo:"인류, 종류", context:"实现了人类登月的梦想"},
+  {id:"zi5", zh:"实", py:"shí", radical:"宀 (宝盖头)", radicalBadge:null, words:"实现、事实、实在", meaning:"real; to realize / to fulfil", meaningJp:"実現する、事実", meaningKo:"실현하다, 사실", context:"实现了人类登月的梦想"},
+  {id:"zi6", zh:"梦", py:"mèng", radical:"夕 (夕字底)", radicalBadge:null, words:"梦想、做梦、梦见", meaning:"dream", meaningJp:"夢、夢想", meaningKo:"꿈", context:"实现了人类登月的梦想"},
+  {id:"zi7", zh:"船", py:"chuán", radical:"舟 (舟字旁)", radicalBadge:"舟 —— 船", words:"飞船、轮船、船只", meaning:"boat / ship", meaningJp:"船、宇宙船", meaningKo:"배, 우주선", context:"他们坐“阿波罗号”飞船离开了地球"},
+  {id:"zi8", zh:"达", py:"dá", radical:"辶 (走之旁)", radicalBadge:null, words:"到达、达到、发达", meaning:"to reach / to arrive at", meaningJp:"到達する、達する", meaningKo:"도달하다", context:"飞了三天多才到达月球"},
+  {id:"zi9", zh:"植", py:"zhí", radical:"木 (木字旁)", radicalBadge:null, words:"植物、种植、植树", meaning:"plant; to plant", meaningJp:"植物、植える", meaningKo:"식물, 심다", context:"没有动物和植物"},
+  {id:"zi10", zh:"音", py:"yīn", radical:"音 (音字旁)", radicalBadge:null, words:"声音、音乐、口音", meaning:"sound", meaningJp:"音、声", meaningKo:"소리", context:"听不到一点儿声音"},
+  {id:"zi11", zh:"式", py:"shì", radical:"戈 (戈字旁)", radicalBadge:"戈 —— 式", words:"正式、式子、方式", meaning:"style / form; formal", meaningJp:"式、正式な", meaningKo:"식, 정식의", context:"中国正式开展嫦娥探月工程"},
+  {id:"zi12", zh:"程", py:"chéng", radical:"禾 (禾字旁)", radicalBadge:null, words:"工程、程度、路程", meaning:"project / procedure; journey", meaningJp:"工程、行程", meaningKo:"공정, 과정", context:"中国正式开展嫦娥探月工程"},
+  {id:"zi13", zh:"器", py:"qì", radical:"口 (口字结构)", radicalBadge:null, words:"航天器、容器、乐器", meaning:"instrument / apparatus", meaningJp:"器具、機器", meaningKo:"기기, 도구", context:"人类航天器首次在月球背面着陆"},
+  {id:"zi14", zh:"背", py:"bèi", radical:"月 (月字底)", radicalBadge:null, words:"背面、背后、背包", meaning:"back (side); to carry on the back", meaningJp:"背面、背中", meaningKo:"뒷면, 등", context:"在月球背面着陆"},
+  {id:"zi15", zh:"陆", py:"lù", radical:"阝(左耳旁)", radicalBadge:null, words:"着陆、陆地、大陆", meaning:"land (as opposed to sea); to land", meaningJp:"着陸する、陸地", meaningKo:"착륙하다, 육지", context:"在月球背面着陆"}
 ];
 
 // 3. 课后词语表 (12 Words + 4 专有名词 - 课本原图)
 const WORDS = [
-  {id:"ci1", zh:"以前", py:"yǐqián", meaning:"before / in the past", meaningJp:"以前、昔", emoji:"⏮️", context:"人们很早很早以前就想看个明白。", tag:"重点词语"},
-  {id:"ci2", zh:"明白", py:"míngbai", meaning:"to understand / clear", meaningJp:"わかる、明白である", emoji:"💡", context:"人们很早很早以前就想看个明白。", tag:"重点词语"},
-  {id:"ci3", zh:"宇航员", py:"yǔhángyuán", meaning:"astronaut", meaningJp:"宇宙飛行士", emoji:"🧑‍🚀", context:"美国宇航员第一次登上了月球。", tag:"重点词语"},
-  {id:"ci4", zh:"人类", py:"rénlèi", meaning:"humankind", meaningJp:"人類", emoji:"🌍", context:"实现了人类登月的梦想。", tag:"重点词语"},
-  {id:"ci5", zh:"梦想", py:"mèngxiǎng", meaning:"dream / aspiration", meaningJp:"夢、夢想", emoji:"💭", context:"实现了人类登月的梦想。", tag:"重点词语"},
-  {id:"ci6", zh:"到达", py:"dàodá", meaning:"to arrive / to reach", meaningJp:"到達する", emoji:"🎯", context:"飞了三天多才到达月球。", tag:"重点词语"},
-  {id:"ci7", zh:"荒凉", py:"huāngliáng", meaning:"desolate", meaningJp:"荒涼とした", emoji:"🏜️", context:"月球是一个荒凉的世界。", tag:"重点词语"},
-  {id:"ci8", zh:"植物", py:"zhíwù", meaning:"plant", meaningJp:"植物", emoji:"🌱", context:"没有动物和植物。", tag:"重点词语"},
-  {id:"ci9", zh:"安全", py:"ānquán", meaning:"safe / safety", meaningJp:"安全", emoji:"🦺", context:"安全回到了地球。", tag:"重点词语"},
-  {id:"ci10", zh:"正式", py:"zhèngshì", meaning:"official / formal", meaningJp:"正式な", emoji:"📋", context:"中国正式开展嫦娥探月工程。", tag:"重点词语"},
-  {id:"ci11", zh:"开展", py:"kāizhǎn", meaning:"to launch / to carry out", meaningJp:"展開する、行う", emoji:"🚀", context:"中国正式开展嫦娥探月工程。", tag:"重点词语"},
-  {id:"ci12", zh:"实现", py:"shíxiàn", meaning:"to realize / to achieve", meaningJp:"実現する", emoji:"🏆", context:"实现了人类登月的梦想。", tag:"重点词语"},
-  {id:"ci13", zh:"美国", py:"Měiguó", meaning:"the United States", meaningJp:"アメリカ", emoji:"🇺🇸", context:"美国宇航员第一次登上了月球。", tag:"专有名词"},
-  {id:"ci14", zh:"阿波罗号", py:"Ābōluóhào", meaning:"Apollo (spacecraft)", meaningJp:"アポロ号", emoji:"🚀", context:"他们坐“阿波罗号”飞船离开了地球。", tag:"专有名词"},
-  {id:"ci15", zh:"嫦娥探月工程", py:"Cháng'é tànyuè gōngchéng", meaning:"the Chang'e Lunar Exploration Program", meaningJp:"嫦娥探月工程", emoji:"🌕", context:"中国正式开展嫦娥探月工程。", tag:"专有名词"},
-  {id:"ci16", zh:"嫦娥四号", py:"Cháng'é sìhào", meaning:"Chang'e-4 (lunar probe)", meaningJp:"嫦娥四号", emoji:"🛰️", context:"“嫦娥四号”实现了人类航天器首次在月球背面着陆。", tag:"专有名词"}
+  {id:"ci1", zh:"以前", py:"yǐqián", meaning:"before / in the past", meaningJp:"以前、昔", meaningKo:"이전, 예전", emoji:"⏮️", context:"人们很早很早以前就想看个明白。", tag:"重点词语"},
+  {id:"ci2", zh:"明白", py:"míngbai", meaning:"to understand / clear", meaningJp:"わかる、明白である", meaningKo:"이해하다, 분명하다", emoji:"💡", context:"人们很早很早以前就想看个明白。", tag:"重点词语"},
+  {id:"ci3", zh:"宇航员", py:"yǔhángyuán", meaning:"astronaut", meaningJp:"宇宙飛行士", meaningKo:"우주비행사", emoji:"🧑‍🚀", context:"美国宇航员第一次登上了月球。", tag:"重点词语"},
+  {id:"ci4", zh:"人类", py:"rénlèi", meaning:"humankind", meaningJp:"人類", meaningKo:"인류", emoji:"🌍", context:"实现了人类登月的梦想。", tag:"重点词语"},
+  {id:"ci5", zh:"梦想", py:"mèngxiǎng", meaning:"dream / aspiration", meaningJp:"夢、夢想", meaningKo:"꿈, 이상", emoji:"💭", context:"实现了人类登月的梦想。", tag:"重点词语"},
+  {id:"ci6", zh:"到达", py:"dàodá", meaning:"to arrive / to reach", meaningJp:"到達する", meaningKo:"도달하다", emoji:"🎯", context:"飞了三天多才到达月球。", tag:"重点词语"},
+  {id:"ci7", zh:"荒凉", py:"huāngliáng", meaning:"desolate", meaningJp:"荒涼とした", meaningKo:"황량하다", emoji:"🏜️", context:"月球是一个荒凉的世界。", tag:"重点词语"},
+  {id:"ci8", zh:"植物", py:"zhíwù", meaning:"plant", meaningJp:"植物", meaningKo:"식물", emoji:"🌱", context:"没有动物和植物。", tag:"重点词语"},
+  {id:"ci9", zh:"安全", py:"ānquán", meaning:"safe / safety", meaningJp:"安全", meaningKo:"안전", emoji:"🦺", context:"安全回到了地球。", tag:"重点词语"},
+  {id:"ci10", zh:"正式", py:"zhèngshì", meaning:"official / formal", meaningJp:"正式な", meaningKo:"정식의, 공식적인", emoji:"📋", context:"中国正式开展嫦娥探月工程。", tag:"重点词语"},
+  {id:"ci11", zh:"开展", py:"kāizhǎn", meaning:"to launch / to carry out", meaningJp:"展開する、行う", meaningKo:"전개하다, 펼치다", emoji:"🚀", context:"中国正式开展嫦娥探月工程。", tag:"重点词语"},
+  {id:"ci12", zh:"实现", py:"shíxiàn", meaning:"to realize / to achieve", meaningJp:"実現する", meaningKo:"실현하다", emoji:"🏆", context:"实现了人类登月的梦想。", tag:"重点词语"},
+  {id:"ci13", zh:"美国", py:"Měiguó", meaning:"the United States", meaningJp:"アメリカ", meaningKo:"미국", emoji:"🇺🇸", context:"美国宇航员第一次登上了月球。", tag:"专有名词"},
+  {id:"ci14", zh:"阿波罗号", py:"Ābōluóhào", meaning:"Apollo (spacecraft)", meaningJp:"アポロ号", meaningKo:"아폴로호", emoji:"🚀", context:"他们坐“阿波罗号”飞船离开了地球。", tag:"专有名词"},
+  {id:"ci15", zh:"嫦娥探月工程", py:"Cháng'é tànyuè gōngchéng", meaning:"the Chang'e Lunar Exploration Program", meaningJp:"嫦娥探月工程", meaningKo:"창어 탐월 프로젝트", emoji:"🌕", context:"中国正式开展嫦娥探月工程。", tag:"专有名词"},
+  {id:"ci16", zh:"嫦娥四号", py:"Cháng'é sìhào", meaning:"Chang'e-4 (lunar probe)", meaningJp:"嫦娥四号", meaningKo:"창어 4호", emoji:"🛰️", context:"“嫦娥四号”实现了人类航天器首次在月球背面着陆。", tag:"专有名词"}
 ];
 
 const ALL_VOCAB = WORDS;
@@ -838,7 +848,7 @@ const CLOZE_QUESTIONS = [
     after: "就想看个明白。",
     py: "Rénmen hěn zǎo hěn zǎo yǐqián jiù xiǎng kàn ge míngbai.",
     en: "People have wanted to find out clearly for a very, very long time.",
-    jp: "人々はとても昔からそれをはっきり知りたいと思っていました。",
+    jp: "人々はとても昔からそれをはっきり知りたいと思っていました。", ko:"사람들은 아주 오래전부터 그것을 분명히 알고 싶어 했습니다.",
     answerPy: "yǐ qián",
     options: ["以前", "以后", "现在", "当时"],
     hint: "课文原句 · 课后词语「以前」",
@@ -852,7 +862,7 @@ const CLOZE_QUESTIONS = [
     after: "第一次登上了月球，",
     py: "Yī jiǔ liù jiǔ nián qī yuè èrshíyī rì Měiguó yǔhángyuán dì yī cì dēng shang le yuèqiú.",
     en: "On July 21, 1969, American astronauts stepped onto the moon for the first time.",
-    jp: "1969年7月21日、アメリカの宇宙飛行士が初めて月面に降り立ちました。",
+    jp: "1969年7月21日、アメリカの宇宙飛行士が初めて月面に降り立ちました。", ko:"1969년 7월 21일, 미국 우주비행사가 처음으로 달에 올라섰습니다.",
     answerPy: "yǔ háng yuán",
     options: ["宇航员", "飞行员", "科学家", "运动员"],
     hint: "课文原句 · 课后词语「宇航员」",
@@ -866,7 +876,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Zài yuèqiú shang liú xià le rénlèi dì yī ge jiǎoyìn, shíxiàn le rénlèi dēng yuè de mèngxiǎng.",
     en: "They left humanity's first footprint on the moon, fulfilling humankind's dream of landing there.",
-    jp: "月面に人類最初の足跡を残し、人類の月面着陸の夢を実現しました。",
+    jp: "月面に人類最初の足跡を残し、人類の月面着陸の夢を実現しました。", ko:"달에 인류 최초의 발자국을 남기며 인류의 달 착륙의 꿈을 실현했습니다.",
     answerPy: "mèng xiǎng",
     options: ["梦想", "愿望", "计划", "目标"],
     hint: "课文原句 · 课后词语「梦想」",
@@ -880,7 +890,7 @@ const CLOZE_QUESTIONS = [
     after: "月球。",
     py: "Tāmen zuò \"Ābōluóhào\" fēichuán líkāi le dìqiú, fēi le sān tiān duō cái dàodá yuèqiú.",
     en: "They left Earth aboard the \"Apollo\" spacecraft, flying for more than three days before reaching the moon.",
-    jp: "彼らは「アポロ号」の宇宙船に乗って地球を離れ、3日余り飛行してようやく月に到達しました。",
+    jp: "彼らは「アポロ号」の宇宙船に乗って地球を離れ、3日余り飛行してようやく月に到達しました。", ko:"그들은 \"아폴로호\" 우주선을 타고 지구를 떠나 3일 넘게 비행한 후에야 달에 도착했습니다.",
     answerPy: "dào dá",
     options: ["到达", "离开", "来到", "回到"],
     hint: "课文原句 · 课后词语「到达」",
@@ -894,7 +904,7 @@ const CLOZE_QUESTIONS = [
     after: "的世界，到处都是石头和泥土。",
     py: "Yǔhángyuán fāxiàn yuèqiú shì yí ge huāngliáng de shìjiè, dàochù dōu shì shítou hé nítǔ.",
     en: "The astronauts discovered that the moon is a desolate world — everywhere is rock and dust.",
-    jp: "宇宙飛行士たちは、月が荒涼とした世界であることを発見しました——至る所が石と泥です。",
+    jp: "宇宙飛行士たちは、月が荒涼とした世界であることを発見しました——至る所が石と泥です。", ko:"우주비행사들은 달이 황량한 세계라는 것을 발견했습니다. 곳곳이 돌과 흙뿐입니다.",
     answerPy: "huāng liáng",
     options: ["荒凉", "美丽", "热闹", "温暖"],
     hint: "课文原句 · 课后词语「荒凉」",
@@ -908,7 +918,7 @@ const CLOZE_QUESTIONS = [
     after: "，听不到一点儿声音。",
     py: "Méiyǒu shuǐ, méiyǒu dòngwù hé zhíwù, tīng bu dào yìdiǎnr shēngyīn.",
     en: "There is no water, no animals or plants, and not a single sound can be heard.",
-    jp: "水もなく、動物も植物もなく、物音一つ聞こえませんでした。",
+    jp: "水もなく、動物も植物もなく、物音一つ聞こえませんでした。", ko:"물도 없고, 동물과 식물도 없으며, 아무 소리도 들리지 않았습니다.",
     answerPy: "zhí wù",
     options: ["植物", "昆虫", "河流", "声音"],
     hint: "课文原句 · 课后词语「植物」",
@@ -922,7 +932,7 @@ const CLOZE_QUESTIONS = [
     after: "回到了地球。",
     py: "Tāmen dài zhe yuèqiú shang de nítǔ hé shíkuài, ānquán huí dào le dìqiú.",
     en: "They brought back lunar soil and rock samples and returned safely to Earth.",
-    jp: "彼らは月の泥や石を持って、無事に地球に帰りました。",
+    jp: "彼らは月の泥や石を持って、無事に地球に帰りました。", ko:"그들은 달의 흙과 돌을 가지고 안전하게 지구로 돌아왔습니다.",
     answerPy: "ān quán",
     options: ["安全", "顺利", "平安", "快速"],
     hint: "课文原句 · 课后词语「安全」",
@@ -936,7 +946,7 @@ const CLOZE_QUESTIONS = [
     after: "开展嫦娥探月工程。",
     py: "Èr líng líng sì nián, Zhōngguó zhèngshì kāizhǎn Cháng'é tànyuè gōngchéng.",
     en: "In 2004, China officially launched the Chang'e Lunar Exploration Program.",
-    jp: "2004年、中国は正式に「嫦娥探月工程」を開始しました。",
+    jp: "2004年、中国は正式に「嫦娥探月工程」を開始しました。", ko:"2004년, 중국은 정식으로 창어 탐월 프로젝트를 시작했습니다.",
     answerPy: "zhèng shì",
     options: ["正式", "开始", "准备", "计划"],
     hint: "课文原句 · 课后词语「正式」",
@@ -950,7 +960,7 @@ const CLOZE_QUESTIONS = [
     after: "了。",
     py: "Zhè dào tí lǎoshī jiǎng le hǎo jǐ biàn, wǒ zhōngyú míngbai le.",
     en: "The teacher explained this problem several times, and I finally understood it.",
-    jp: "この問題は先生が何度も説明してくれて、私はついに理解しました。",
+    jp: "この問題は先生が何度も説明してくれて、私はついに理解しました。", ko:"이 문제는 선생님이 여러 번 설명해 주셔서 저는 마침내 이해했습니다.",
     answerPy: "míng bai",
     options: ["明白", "忘记", "写错", "害怕"],
     hint: "微情境拓展 · 懂得了意思",
@@ -965,7 +975,7 @@ const CLOZE_QUESTIONS = [
     after: "共同的责任。",
     py: "Bǎohù huánjìng shì quán rénlèi gòngtóng de zérèn.",
     en: "Protecting the environment is the shared responsibility of all humankind.",
-    jp: "環境を守ることは全人類共通の責任です。",
+    jp: "環境を守ることは全人類共通の責任です。", ko:"환경을 보호하는 것은 전 인류 공동의 책임입니다.",
     answerPy: "rén lèi",
     options: ["人类", "动物", "植物", "国家"],
     hint: "微情境拓展 · 全体人的合称",
@@ -980,7 +990,7 @@ const CLOZE_QUESTIONS = [
     after: "一次读书活动。",
     py: "Xuéxiào xià zhōu jiāng kāizhǎn yí cì dúshū huódòng.",
     en: "The school will launch a reading activity next week.",
-    jp: "学校は来週、読書活動を行う予定です。",
+    jp: "学校は来週、読書活動を行う予定です。", ko:"학교는 다음 주에 독서 활동을 진행할 예정입니다.",
     answerPy: "kāi zhǎn",
     options: ["开展", "结束", "取消", "忘记"],
     hint: "微情境拓展 · 组织进行某项活动",
@@ -995,7 +1005,7 @@ const CLOZE_QUESTIONS = [
     after: "了自己的梦想。",
     py: "Jīngguò nǔlì, tā zhōngyú shíxiàn le zìjǐ de mèngxiǎng.",
     en: "After much effort, he finally achieved his own dream.",
-    jp: "努力の末、彼はついに自分の夢を実現しました。",
+    jp: "努力の末、彼はついに自分の夢を実現しました。", ko:"많은 노력 끝에 그는 마침내 자신의 꿈을 실현했습니다.",
     answerPy: "shí xiàn",
     options: ["实现", "放弃", "忘记", "失去"],
     hint: "微情境拓展 · 使愿望变成现实",
@@ -1007,7 +1017,7 @@ const CLOZE_QUESTIONS = [
 
 
 /* ---------------- STATE ---------------- */
-let storyIdx = 0, showPy = true, showEn = true, showJp = true;
+let storyIdx = 0, showPy = true, showEn = true, showJp = true, showKo = true;
 let charIdx = 0;
 let flashIdx = 0;
 let matchMode = 'chars'; // chars, words, all
@@ -1073,7 +1083,7 @@ let currentAudio = null;
 function playClip(id, fallbackText, onEnded, lang){
   stopClip();
   lang = lang || 'zh-CN';
-  const dir = lang === 'en-US' ? 'audio/tanyue_en/' : (lang === 'ja-JP' ? 'audio/tanyue_ja/' : 'audio/tanyue/');
+  const dir = lang === 'en-US' ? 'audio/tanyue_en/' : (lang === 'ja-JP' ? 'audio/tanyue_ja/' : (lang === 'ko-KR' ? 'audio/tanyue_ko/' : 'audio/tanyue/'));
   if(!id) {
     speakText(fallbackText, onEnded, lang);
     return;
@@ -1103,7 +1113,7 @@ function stopClip(){
     window.speechSynthesis.cancel();
   }
 }
-let zhVoice = null, enVoice = null, jaVoice = null;
+let zhVoice = null, enVoice = null, jaVoice = null, koVoice = null;
 function pickVoice(){
   if(!('speechSynthesis' in window)) return;
   const voices = speechSynthesis.getVoices();
@@ -1115,6 +1125,7 @@ function pickVoice(){
     || null;
   jaVoice = voices.find(v=>/^ja/i.test(v.lang||''))
     || null;
+  koVoice = voices.find(v=>/^ko/i.test(v.lang||'')) || null;
 }
 if('speechSynthesis' in window){
   pickVoice();
@@ -1123,7 +1134,7 @@ if('speechSynthesis' in window){
   const voicePollTimer = setInterval(()=>{
     pickVoice();
     voicePolls++;
-    if((zhVoice && enVoice && jaVoice) || voicePolls > 8) clearInterval(voicePollTimer);
+    if((zhVoice && enVoice && jaVoice && koVoice) || voicePolls > 8) clearInterval(voicePollTimer);
   }, 400);
 }
 function speakText(text, onEnded, lang){
@@ -1133,8 +1144,8 @@ function speakText(text, onEnded, lang){
     return;
   }
   window.speechSynthesis.cancel();
-  let voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^en/i.test(lang) ? enVoice : null;
-  if(!voice){ pickVoice(); voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^en/i.test(lang) ? enVoice : null; }
+  let voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^ko/i.test(lang) ? koVoice : /^en/i.test(lang) ? enVoice : null;
+  if(!voice){ pickVoice(); voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^ko/i.test(lang) ? koVoice : /^en/i.test(lang) ? enVoice : null; }
   const u = new SpeechSynthesisUtterance(text);
   u.lang = lang;
   if(voice) u.voice = voice;
@@ -1205,11 +1216,14 @@ function renderStory(){
   document.getElementById('storyPy').textContent = s.py;
   document.getElementById('storyEn').textContent = s.en;
   document.getElementById('storyJp').textContent = s.jp || '';
+  document.getElementById('storyKo').textContent = s.ko || '';
   document.getElementById('storyPy').style.display = showPy ? 'block' : 'none';
   document.getElementById('storyEn').style.display = showEn ? 'block' : 'none';
   document.getElementById('storyJp').style.display = showJp ? 'block' : 'none';
+  document.getElementById('storyKo').style.display = showKo ? 'block' : 'none';
   const enRow = document.getElementById('storyEnRow'); if(enRow) enRow.style.display = showEn ? 'flex' : 'none';
   const jpRow = document.getElementById('storyJpRow'); if(jpRow) jpRow.style.display = (showJp && s.jp) ? 'flex' : 'none';
+  const koRow = document.getElementById('storyKoRow'); if(koRow) koRow.style.display = (showKo && s.ko) ? 'flex' : 'none';
   updateStoryVoiceUI();
 }
 function storyPrev(){ if(storyIdx > 0){ storyIdx--; renderStory(); playClip(STORY[storyIdx].id, STORY[storyIdx].zh); } }
@@ -1217,9 +1231,10 @@ function storyNext(){ if(storyIdx < STORY.length - 1){ storyIdx++; renderStory()
 function toggleStoryPy(){ showPy = !showPy; document.getElementById('chipPy').classList.toggle('active', showPy); renderStory(); }
 function toggleStoryEn(){ showEn = !showEn; document.getElementById('chipEn').classList.toggle('active', showEn); renderStory(); }
 function toggleStoryJp(){ showJp = !showJp; document.getElementById('chipJp').classList.toggle('active', showJp); renderStory(); }
+function toggleStoryKo(){ showKo = !showKo; document.getElementById('chipKo').classList.toggle('active', showKo); renderStory(); }
 
 /* ---------------- FULL TEXT (全文朗读与配音) ---------------- */
-let fullPlaying = false, fullPlayIdx = 0, fullShowPy = true, fullShowEn = true, fullShowJp = true;
+let fullPlaying = false, fullPlayIdx = 0, fullShowPy = true, fullShowEn = true, fullShowJp = true, fullShowKo = true;
 let fullMyPlaying = false;
 
 function renderFullText(){
@@ -1239,6 +1254,10 @@ function renderFullText(){
       <div style="display:${(fullShowJp && s.jp)?'flex':'none'};align-items:center;justify-content:center;gap:6px;">
         <div class="sentence-jp">${s.jp||''}</div>
         <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[${idx}].id, STORY[${idx}].jp||'', null, 'ja-JP');" title="播放日文发音">🔊</button>
+      </div>
+      <div style="display:${(fullShowKo && s.ko)?'flex':'none'};align-items:center;justify-content:center;gap:6px;">
+        <div class="sentence-ko">${s.ko||''}</div>
+        <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[${idx}].id, STORY[${idx}].ko||'', null, 'ko-KR');" title="播放韩文发音">🔊</button>
       </div>
       <div class="full-sent-voice-bar" id="full-voice-bar-${idx}">
         <span class="sent-voice-tag" id="voice-tag-${idx}">加载录音中...</span>
@@ -1286,6 +1305,7 @@ async function updateFullTextVoiceBars(){
 function toggleFullPy(){ fullShowPy = !fullShowPy; document.getElementById('chipFullPy').classList.toggle('active', fullShowPy); renderFullText(); }
 function toggleFullEn(){ fullShowEn = !fullShowEn; document.getElementById('chipFullEn').classList.toggle('active', fullShowEn); renderFullText(); }
 function toggleFullJp(){ fullShowJp = !fullShowJp; document.getElementById('chipFullJp').classList.toggle('active', fullShowJp); renderFullText(); }
+function toggleFullKo(){ fullShowKo = !fullShowKo; document.getElementById('chipFullKo').classList.toggle('active', fullShowKo); renderFullText(); }
 
 function highlightFullSentence(idx){
   document.querySelectorAll('.full-sentence').forEach((el, i)=>{
@@ -1434,7 +1454,7 @@ function renderChar(){
   document.getElementById('charPyBack').textContent = c.py;
   document.getElementById('charRadical').textContent = '偏旁部首: ' + c.radical;
   document.getElementById('charWords').innerHTML = '<strong>组词:</strong> ' + c.words;
-  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + ' · ' + c.context;
+  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + (c.meaningKo ? ' / ' + c.meaningKo : '') + ' · ' + c.context;
   document.getElementById('charCounter').textContent = (charIdx+1) + ' / ' + CHARACTERS.length;
 
   const badgeBox = document.getElementById('charRadicalBadgeContainer');
@@ -1594,7 +1614,7 @@ function renderFlash(){
   document.getElementById('flashZh').textContent = w.zh;
   document.getElementById('flashZhBack').textContent = w.zh;
   document.getElementById('flashPy').textContent = w.py;
-  document.getElementById('flashMeaning').textContent = w.meaning + (w.meaningJp ? ' / ' + w.meaningJp : '');
+  document.getElementById('flashMeaning').textContent = w.meaning + (w.meaningJp ? ' / ' + w.meaningJp : '') + (w.meaningKo ? ' / ' + w.meaningKo : '');
   document.getElementById('flashContext').textContent = '例句: ' + w.context;
   document.getElementById('flashCounter').textContent = (flashIdx + 1) + ' / ' + WORDS.length;
 }
@@ -2126,6 +2146,7 @@ function loadClozeQuestion(){
   document.getElementById('clozeAfter').textContent = q.after;
   document.getElementById('clozeEn').textContent = q.en;
   document.getElementById('clozeJp').textContent = q.jp || '';
+  document.getElementById('clozeKo').textContent = q.ko || '';
   document.getElementById('clozeHint').textContent = '💡 ' + q.hint;
 
   const slot = document.getElementById('clozeSlot');

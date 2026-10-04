@@ -88,6 +88,7 @@
   .sentence-py{font-size:15px;color:var(--camel-dark);text-align:center;font-weight:700;min-height:20px;}
   .sentence-en{font-size:13px;color:var(--muted);text-align:center;}
   .sentence-jp{font-size:13px;color:#8b5cf6;text-align:center;}
+  .sentence-ko{font-size:13px;color:#059669;text-align:center;}
   .mini-speak-btn{border:none;background:none;font-size:13px;cursor:pointer;line-height:1;padding:2px 3px;border-radius:50%;flex-shrink:0;opacity:.75;}
   .mini-speak-btn:active{opacity:1;transform:scale(1.15);}
   .story-nav{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;max-width:560px;}
@@ -130,6 +131,7 @@
   .full-sentence .sentence-py{font-size:13px;text-align:left;color:var(--camel-dark);min-height:0;}
   .full-sentence .sentence-en{font-size:12px;text-align:left;color:var(--muted);margin-top:2px;}
   .full-sentence .sentence-jp{font-size:12px;text-align:left;color:#8b5cf6;margin-top:2px;}
+  .full-sentence .sentence-ko{font-size:12px;text-align:left;color:#059669;margin-top:2px;}
 
   /* character tian-zi-ge card */
   .char-wrap{width:100%;max-width:340px;perspective:1000px;}
@@ -242,6 +244,7 @@
   @keyframes popIn{from{transform:scale(0.85);opacity:0;}to{transform:scale(1);opacity:1;}}
   .cloze-en{font-size:12px;color:var(--blue-sky);font-style:italic;text-align:center;}
   .cloze-jp{font-size:12px;color:#8b5cf6;font-style:italic;text-align:center;}
+  .cloze-ko{font-size:12px;color:#059669;font-style:italic;text-align:center;}
   .cloze-hint-row{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 4px;}
   .cloze-hint-pill{font-size:12px;color:var(--muted);background:#f5f5f4;padding:3px 10px;border-radius:12px;}
   .cloze-speak-btn{background:#fff;border:1px solid #cbd5e1;border-radius:14px;padding:3px 10px;font-size:12px;font-weight:700;
@@ -432,6 +435,10 @@
           <div class="sentence-jp" id="storyJp"></div>
           <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].jp||'', null, 'ja-JP')" title="播放日文发音">🔊</button>
         </div>
+        <div class="lang-line-row" id="storyKoRow" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+          <div class="sentence-ko" id="storyKo"></div>
+          <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].ko||'', null, 'ko-KR')" title="播放韩文发音">🔊</button>
+        </div>
       </div>
       <!-- VOICE WAVE VISUALIZER -->
       <div class="voice-wave-panel" id="storyVoiceWave">
@@ -460,6 +467,7 @@
         <div class="chip active" id="chipPy" onclick="toggleStoryPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipEn" onclick="toggleStoryEn()">English</div>
         <div class="chip active" id="chipJp" onclick="toggleStoryJp()">日本語</div>
+        <div class="chip active" id="chipKo" onclick="toggleStoryKo()">한국어</div>
         <div class="chip" onclick="goFull()">📜 全文朗读</div>
       </div>
       <button class="btn ghost" onclick="goHome()">返回菜单</button>
@@ -473,6 +481,7 @@
         <div class="chip active" id="chipFullPy" onclick="toggleFullPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipFullEn" onclick="toggleFullEn()">English</div>
         <div class="chip active" id="chipFullJp" onclick="toggleFullJp()">日本語</div>
+        <div class="chip active" id="chipFullKo" onclick="toggleFullKo()">한국어</div>
         <button class="btn clay small" id="fullPlayBtn" onclick="toggleFullPlay()">▶️ 原声连续朗读</button>
         <button class="btn gold small" id="fullMyPlayBtn" onclick="toggleFullMyPlay()">🎙️ 播放我的全文配音</button>
       </div>
@@ -632,6 +641,7 @@
           </div>
           <div class="cloze-en" id="clozeEn"></div>
           <div class="cloze-jp" id="clozeJp"></div>
+          <div class="cloze-ko" id="clozeKo"></div>
           <div class="cloze-hint-row">
             <span class="cloze-hint-pill" id="clozeHint"></span>
             <button class="cloze-speak-btn" id="clozeSpeakBtn" onclick="speakClozeSentence()">🔊 朗读句子</button>
@@ -729,50 +739,50 @@
 /* ---------------- DATA ---------------- */
 // 1. 课文《地球清洁工》（教材原版逐字转写，第10课）
 const STORY = [
-  {id:"st1", zh:"地球公公在一棵树上挂了一块牌子，牌子上写着“地球清洁工报名处”。", py:"Dìqiú gōnggong zài yì kē shù shang guà le yí kuài páizi, páizi shang xiě zhe \"Dìqiú qīngjiégōng bàomíngchù\".", en:"Grandpa Earth hung a sign on a tree. The sign read, \"Earth Cleaners — Sign Up Here.\"", jp:"地球じいさんは一本の木に一枚の看板をかけました。看板には「地球清掃員募集」と書いてありました。"},
-  {id:"st2", zh:"不到半天时间，就来了许多报名的动物。", py:"Bú dào bàntiān shíjiān, jiù lái le xǔduō bàomíng de dòngwù.", en:"In less than half a day, many animals came to sign up.", jp:"半日もたたないうちに、たくさんの動物が応募しに来ました。"},
-  {id:"st3", zh:"海鸥说：“我是海面清洁工，我能把海面上漂着的死鱼，人们倒在海里的剩饭、剩菜什么的都吃掉，海面就干净了。”", py:"Hǎi'ōu shuō: \"Wǒ shì hǎimiàn qīngjiégōng, wǒ néng bǎ hǎimiàn shang piāozhe de sǐ yú, rénmen dào zài hǎi lǐ de shèngfàn, shèngcài shénme de dōu chīdiào, hǎimiàn jiù gānjìng le.\"", en:"The seagull said, \"I'm the sea-surface cleaner. I can eat up the dead fish floating on the sea, and the leftover food people dump into the sea — then the sea surface becomes clean.\"", jp:"カモメが言いました。「私は海面清掃員です。海に浮かぶ死んだ魚や、人が捨てた残り物を食べてしまいます。そうすれば海面はきれいになります。」"},
-  {id:"st4", zh:"河里的清道夫鱼从水中伸出头来说：“我生活在淡水里，河里的水草、水虫和垃圾都是我的食物，河水被我打扫得干干净净。”", py:"Hé lǐ de qīngdàofū yú cóng shuǐ zhōng shēnchū tóu lái shuō: \"Wǒ shēnghuó zài dànshuǐ lǐ, hé lǐ de shuǐcǎo, shuǐchóng hé lājī dōu shì wǒ de shíwù, héshuǐ bèi wǒ dǎsǎo de gāngān jìngjìng.\"", en:"The plecostomus fish in the river poked its head out of the water and said, \"I live in fresh water. The river weeds, water bugs, and rubbish are all my food — the river water is swept spotlessly clean by me.\"", jp:"川の掃除人魚が水の中から頭を出して言いました。「私は淡水にすんでいます。川の水草や水生昆虫、ゴミはみんな私の食べ物です。川の水は私がきれいに掃除します。」"},
-  {id:"st5", zh:"穿着一身黑衣的乌鸦说话了：“我也会打扫。我可以吃掉苍蝇啊、小虫啊，还有落在地面上的各种东西，这样地面就会干净多了。”", py:"Chuānzhe yìshēn hēiyī de wūyā shuōhuà le: \"Wǒ yě huì dǎsǎo. Wǒ kěyǐ chīdiào cāngying a, xiǎochóng a, hái yǒu luò zài dìmiàn shang de gèzhǒng dōngxi, zhèyàng dìmiàn jiù huì gānjìng duō le.\"", en:"The crow, dressed all in black, spoke up: \"I can clean too. I can eat flies, little bugs, and all kinds of things that fall on the ground — that way the ground becomes much cleaner.\"", jp:"真っ黒な服を着たカラスが話しました。「私も掃除ができます。ハエや小さな虫、それに地面に落ちたいろいろなものを食べてしまいます。そうすれば地面はずっときれいになります。」"},
-  {id:"st6", zh:"蚯蚓静静地从泥土里钻出头来，说：“我在地下吃的是垃圾，经过我的消化后，垃圾就变成了肥料。”", py:"Qiūyǐn jìngjìng de cóng nítǔ lǐ zuān chū tóu lái, shuō: \"Wǒ zài dìxià chī de shì lājī, jīngguò wǒ de xiāohuà hòu, lājī jiù biàn chéng le féiliào.\"", en:"The earthworm quietly poked its head out of the soil and said, \"Underground I eat rubbish. After it passes through my digestion, the rubbish turns into fertilizer.\"", jp:"ミミズが静かに土の中から頭を出して言いました。「私は地下でゴミを食べます。私が消化した後、ゴミは肥料に変わります。」"},
-  {id:"st7", zh:"地球公公听了，笑着说：“你们都是了不起的地球清洁工，", py:"Dìqiú gōnggong tīng le, xiàozhe shuō: \"Nǐmen dōu shì liǎobuqǐ de dìqiú qīngjiégōng,", en:"Grandpa Earth listened, then said with a smile, \"You are all amazing Earth Cleaners.", jp:"地球じいさんはそれを聞いて、笑って言いました。「あなたたちはみんな立派な地球清掃員です。"},
-  {id:"st8", zh:"大家一起努力，地球环境才能变得更好。谢谢你们！”", py:"Dàjiā yìqǐ nǔlì, dìqiú huánjìng cái néng biàn de gèng hǎo. Xièxie nǐmen!\"", en:"Only when everyone works hard together can Earth's environment become better. Thank you all!\"", jp:"みんなで力を合わせてこそ、地球の環境はもっと良くなります。ありがとう！」"}
+  {id:"st1", zh:"地球公公在一棵树上挂了一块牌子，牌子上写着“地球清洁工报名处”。", py:"Dìqiú gōnggong zài yì kē shù shang guà le yí kuài páizi, páizi shang xiě zhe \"Dìqiú qīngjiégōng bàomíngchù\".", en:"Grandpa Earth hung a sign on a tree. The sign read, \"Earth Cleaners — Sign Up Here.\"", jp:"地球じいさんは一本の木に一枚の看板をかけました。看板には「地球清掃員募集」と書いてありました。", ko:"지구 할아버지가 나무 한 그루에 팻말을 걸었습니다. 팻말에는 \"지구 청소부 모집\"이라고 쓰여 있었습니다."},
+  {id:"st2", zh:"不到半天时间，就来了许多报名的动物。", py:"Bú dào bàntiān shíjiān, jiù lái le xǔduō bàomíng de dòngwù.", en:"In less than half a day, many animals came to sign up.", jp:"半日もたたないうちに、たくさんの動物が応募しに来ました。", ko:"반나절도 안 되어 많은 동물들이 신청하러 왔습니다."},
+  {id:"st3", zh:"海鸥说：“我是海面清洁工，我能把海面上漂着的死鱼，人们倒在海里的剩饭、剩菜什么的都吃掉，海面就干净了。”", py:"Hǎi'ōu shuō: \"Wǒ shì hǎimiàn qīngjiégōng, wǒ néng bǎ hǎimiàn shang piāozhe de sǐ yú, rénmen dào zài hǎi lǐ de shèngfàn, shèngcài shénme de dōu chīdiào, hǎimiàn jiù gānjìng le.\"", en:"The seagull said, \"I'm the sea-surface cleaner. I can eat up the dead fish floating on the sea, and the leftover food people dump into the sea — then the sea surface becomes clean.\"", jp:"カモメが言いました。「私は海面清掃員です。海に浮かぶ死んだ魚や、人が捨てた残り物を食べてしまいます。そうすれば海面はきれいになります。」", ko:"갈매기가 말했습니다. \"저는 해수면 청소부예요. 바다에 떠 있는 죽은 물고기와 사람들이 바다에 버린 남은 밥과 반찬 같은 것들을 다 먹어 치울 수 있어요. 그러면 해수면이 깨끗해져요.\""},
+  {id:"st4", zh:"河里的清道夫鱼从水中伸出头来说：“我生活在淡水里，河里的水草、水虫和垃圾都是我的食物，河水被我打扫得干干净净。”", py:"Hé lǐ de qīngdàofū yú cóng shuǐ zhōng shēnchū tóu lái shuō: \"Wǒ shēnghuó zài dànshuǐ lǐ, hé lǐ de shuǐcǎo, shuǐchóng hé lājī dōu shì wǒ de shíwù, héshuǐ bèi wǒ dǎsǎo de gāngān jìngjìng.\"", en:"The plecostomus fish in the river poked its head out of the water and said, \"I live in fresh water. The river weeds, water bugs, and rubbish are all my food — the river water is swept spotlessly clean by me.\"", jp:"川の掃除人魚が水の中から頭を出して言いました。「私は淡水にすんでいます。川の水草や水生昆虫、ゴミはみんな私の食べ物です。川の水は私がきれいに掃除します。」", ko:"강에 사는 청소부 물고기가 물속에서 머리를 내밀고 말했습니다. \"저는 민물에 살아요. 강의 물풀, 물벌레, 쓰레기가 모두 제 먹이예요. 강물은 제가 깨끗하게 청소해요.\""},
+  {id:"st5", zh:"穿着一身黑衣的乌鸦说话了：“我也会打扫。我可以吃掉苍蝇啊、小虫啊，还有落在地面上的各种东西，这样地面就会干净多了。”", py:"Chuānzhe yìshēn hēiyī de wūyā shuōhuà le: \"Wǒ yě huì dǎsǎo. Wǒ kěyǐ chīdiào cāngying a, xiǎochóng a, hái yǒu luò zài dìmiàn shang de gèzhǒng dōngxi, zhèyàng dìmiàn jiù huì gānjìng duō le.\"", en:"The crow, dressed all in black, spoke up: \"I can clean too. I can eat flies, little bugs, and all kinds of things that fall on the ground — that way the ground becomes much cleaner.\"", jp:"真っ黒な服を着たカラスが話しました。「私も掃除ができます。ハエや小さな虫、それに地面に落ちたいろいろなものを食べてしまいます。そうすれば地面はずっときれいになります。」", ko:"온몸을 검은 옷으로 두른 까마귀가 말했습니다. \"저도 청소할 수 있어요. 저는 파리나 작은 벌레, 그리고 땅에 떨어진 여러 가지 물건들을 먹을 수 있어요. 그러면 땅이 훨씬 깨끗해져요.\""},
+  {id:"st6", zh:"蚯蚓静静地从泥土里钻出头来，说：“我在地下吃的是垃圾，经过我的消化后，垃圾就变成了肥料。”", py:"Qiūyǐn jìngjìng de cóng nítǔ lǐ zuān chū tóu lái, shuō: \"Wǒ zài dìxià chī de shì lājī, jīngguò wǒ de xiāohuà hòu, lājī jiù biàn chéng le féiliào.\"", en:"The earthworm quietly poked its head out of the soil and said, \"Underground I eat rubbish. After it passes through my digestion, the rubbish turns into fertilizer.\"", jp:"ミミズが静かに土の中から頭を出して言いました。「私は地下でゴミを食べます。私が消化した後、ゴミは肥料に変わります。」", ko:"지렁이가 조용히 흙 속에서 머리를 내밀며 말했습니다. \"저는 땅속에서 쓰레기를 먹어요. 제 소화를 거치면 쓰레기는 비료로 변해요.\""},
+  {id:"st7", zh:"地球公公听了，笑着说：“你们都是了不起的地球清洁工，", py:"Dìqiú gōnggong tīng le, xiàozhe shuō: \"Nǐmen dōu shì liǎobuqǐ de dìqiú qīngjiégōng,", en:"Grandpa Earth listened, then said with a smile, \"You are all amazing Earth Cleaners.", jp:"地球じいさんはそれを聞いて、笑って言いました。「あなたたちはみんな立派な地球清掃員です。", ko:"지구 할아버지는 듣고 웃으며 말했습니다. \"너희들은 모두 훌륭한 지구 청소부구나,"},
+  {id:"st8", zh:"大家一起努力，地球环境才能变得更好。谢谢你们！”", py:"Dàjiā yìqǐ nǔlì, dìqiú huánjìng cái néng biàn de gèng hǎo. Xièxie nǐmen!\"", en:"Only when everyone works hard together can Earth's environment become better. Thank you all!\"", jp:"みんなで力を合わせてこそ、地球の環境はもっと良くなります。ありがとう！」", ko:"모두가 함께 노력해야만 지구 환경이 더 좋아질 수 있어. 고마워!\""}
 ];
 
 // 2. 课后生字表 (14 Characters - 课本原图)
 const CHARACTERS = [
-  {id:"zi1", zh:"球", py:"qiú", radical:"王 (斜玉旁)", radicalBadge:null, words:"地球、球场、篮球", meaning:"ball / globe", meaningJp:"球、地球", context:"地球公公在一棵树上挂了一块牌子"},
-  {id:"zi2", zh:"洁", py:"jié", radical:"氵 (三点水)", radicalBadge:null, words:"清洁、洁白、洁净", meaning:"clean", meaningJp:"清潔", context:"地球清洁工报名处"},
-  {id:"zi3", zh:"牌", py:"pái", radical:"片 (片字旁)", radicalBadge:"片 —— 牌", words:"牌子、门牌、金牌", meaning:"sign / plaque", meaningJp:"札、プレート", context:"地球公公在一棵树上挂了一块牌子"},
-  {id:"zi4", zh:"报", py:"bào", radical:"扌 (提手旁)", radicalBadge:null, words:"报名、海报、报告", meaning:"report / register", meaningJp:"報告する、申し込む", context:"地球清洁工报名处"},
-  {id:"zi5", zh:"半", py:"bàn", radical:"十 (十字头)", radicalBadge:null, words:"半天、一半、半夜", meaning:"half", meaningJp:"半分", context:"不到半天时间，就来了许多报名的动物"},
-  {id:"zi6", zh:"漂", py:"piāo", radical:"氵 (三点水)", radicalBadge:null, words:"漂着、漂亮、漂浮", meaning:"float", meaningJp:"漂う", context:"海面上漂着的死鱼"},
-  {id:"zi7", zh:"剩", py:"shèng", radical:"刂 (立刀旁)", radicalBadge:null, words:"剩饭、剩菜、剩下", meaning:"leftover / remaining", meaningJp:"残り", context:"人们倒在海里的剩饭、剩菜什么的都吃掉"},
-  {id:"zi8", zh:"夫", py:"fū", radical:"大 (大字头)", radicalBadge:null, words:"清道夫、丈夫、夫妻", meaning:"man (as in 清道夫 street-cleaner)", meaningJp:"～する人、夫", context:"河里的清道夫鱼从水中伸出头来"},
-  {id:"zi9", zh:"鸦", py:"yā", radical:"鸟 (鸟字旁)", radicalBadge:"鸟 —— 鸦", words:"乌鸦、鸦片、鸦雀无声", meaning:"crow", meaningJp:"カラス", context:"穿着一身黑衣的乌鸦说话了"},
-  {id:"zi10", zh:"泥", py:"ní", radical:"氵 (三点水)", radicalBadge:null, words:"泥土、泥巴、水泥", meaning:"mud / soil", meaningJp:"泥、土", context:"蚯蚓静静地从泥土里钻出头来"},
-  {id:"zi11", zh:"肥", py:"féi", radical:"月 (肉月旁)", radicalBadge:null, words:"肥料、肥胖、化肥", meaning:"fertilizer / fat", meaningJp:"肥料、太った", context:"垃圾就变成了肥料"},
-  {id:"zi12", zh:"料", py:"liào", radical:"米 (米字旁)", radicalBadge:null, words:"肥料、材料、料理", meaning:"material / ingredient", meaningJp:"材料、肥料", context:"垃圾就变成了肥料"},
-  {id:"zi13", zh:"环", py:"huán", radical:"王 (斜玉旁)", radicalBadge:null, words:"环境、环节、环绕", meaning:"ring / surrounding", meaningJp:"環境、輪", context:"地球环境才能变得更好"},
-  {id:"zi14", zh:"境", py:"jìng", radical:"土 (提土旁)", radicalBadge:null, words:"环境、境界、边境", meaning:"environment / boundary", meaningJp:"環境、境界", context:"地球环境才能变得更好"}
+  {id:"zi1", zh:"球", py:"qiú", radical:"王 (斜玉旁)", radicalBadge:null, words:"地球、球场、篮球", meaning:"ball / globe", meaningJp:"球、地球", meaningKo:"공, 지구", context:"地球公公在一棵树上挂了一块牌子"},
+  {id:"zi2", zh:"洁", py:"jié", radical:"氵 (三点水)", radicalBadge:null, words:"清洁、洁白、洁净", meaning:"clean", meaningJp:"清潔", meaningKo:"깨끗하다", context:"地球清洁工报名处"},
+  {id:"zi3", zh:"牌", py:"pái", radical:"片 (片字旁)", radicalBadge:"片 —— 牌", words:"牌子、门牌、金牌", meaning:"sign / plaque", meaningJp:"札、プレート", meaningKo:"팻말, 판", context:"地球公公在一棵树上挂了一块牌子"},
+  {id:"zi4", zh:"报", py:"bào", radical:"扌 (提手旁)", radicalBadge:null, words:"报名、海报、报告", meaning:"report / register", meaningJp:"報告する、申し込む", meaningKo:"보고하다, 신청하다", context:"地球清洁工报名处"},
+  {id:"zi5", zh:"半", py:"bàn", radical:"十 (十字头)", radicalBadge:null, words:"半天、一半、半夜", meaning:"half", meaningJp:"半分", meaningKo:"반, 절반", context:"不到半天时间，就来了许多报名的动物"},
+  {id:"zi6", zh:"漂", py:"piāo", radical:"氵 (三点水)", radicalBadge:null, words:"漂着、漂亮、漂浮", meaning:"float", meaningJp:"漂う", meaningKo:"떠다니다", context:"海面上漂着的死鱼"},
+  {id:"zi7", zh:"剩", py:"shèng", radical:"刂 (立刀旁)", radicalBadge:null, words:"剩饭、剩菜、剩下", meaning:"leftover / remaining", meaningJp:"残り", meaningKo:"남다, 남은 것", context:"人们倒在海里的剩饭、剩菜什么的都吃掉"},
+  {id:"zi8", zh:"夫", py:"fū", radical:"大 (大字头)", radicalBadge:null, words:"清道夫、丈夫、夫妻", meaning:"man (as in 清道夫 street-cleaner)", meaningJp:"～する人、夫", meaningKo:"~하는 사람, 남편", context:"河里的清道夫鱼从水中伸出头来"},
+  {id:"zi9", zh:"鸦", py:"yā", radical:"鸟 (鸟字旁)", radicalBadge:"鸟 —— 鸦", words:"乌鸦、鸦片、鸦雀无声", meaning:"crow", meaningJp:"カラス", meaningKo:"까마귀", context:"穿着一身黑衣的乌鸦说话了"},
+  {id:"zi10", zh:"泥", py:"ní", radical:"氵 (三点水)", radicalBadge:null, words:"泥土、泥巴、水泥", meaning:"mud / soil", meaningJp:"泥、土", meaningKo:"진흙, 흙", context:"蚯蚓静静地从泥土里钻出头来"},
+  {id:"zi11", zh:"肥", py:"féi", radical:"月 (肉月旁)", radicalBadge:null, words:"肥料、肥胖、化肥", meaning:"fertilizer / fat", meaningJp:"肥料、太った", meaningKo:"비료, 살찌다", context:"垃圾就变成了肥料"},
+  {id:"zi12", zh:"料", py:"liào", radical:"米 (米字旁)", radicalBadge:null, words:"肥料、材料、料理", meaning:"material / ingredient", meaningJp:"材料、肥料", meaningKo:"재료, 비료", context:"垃圾就变成了肥料"},
+  {id:"zi13", zh:"环", py:"huán", radical:"王 (斜玉旁)", radicalBadge:null, words:"环境、环节、环绕", meaning:"ring / surrounding", meaningJp:"環境、輪", meaningKo:"고리, 환경", context:"地球环境才能变得更好"},
+  {id:"zi14", zh:"境", py:"jìng", radical:"土 (提土旁)", radicalBadge:null, words:"环境、境界、边境", meaning:"environment / boundary", meaningJp:"環境、境界", meaningKo:"환경, 경계", context:"地球环境才能变得更好"}
 ];
 
 // 3. 课后词语表 (14 Words - 课本原图)
 const WORDS = [
-  {id:"ci1", zh:"时间", py:"shíjiān", meaning:"time", meaningJp:"時間", emoji:"⏳", context:"不到半天时间，就来了许多报名的动物", tag:"重点词语"},
-  {id:"ci2", zh:"动物", py:"dòngwù", meaning:"animal", meaningJp:"動物", emoji:"🐾", context:"不到半天时间，就来了许多报名的动物", tag:"重点词语"},
-  {id:"ci3", zh:"海鸥", py:"hǎi'ōu", meaning:"seagull", meaningJp:"カモメ", emoji:"🕊️", context:"海鸥说：“我是海面清洁工”", tag:"重点词语"},
-  {id:"ci4", zh:"生活", py:"shēnghuó", meaning:"life / to live", meaningJp:"生活", emoji:"🏡", context:"我生活在淡水里", tag:"重点词语"},
-  {id:"ci5", zh:"垃圾", py:"lājī", meaning:"garbage / rubbish", meaningJp:"ゴミ", emoji:"🗑️", context:"河里的水草、水虫和垃圾都是我的食物", tag:"重点词语"},
-  {id:"ci6", zh:"食物", py:"shíwù", meaning:"food", meaningJp:"食べ物", emoji:"🍽️", context:"河里的水草、水虫和垃圾都是我的食物", tag:"重点词语"},
-  {id:"ci7", zh:"乌鸦", py:"wūyā", meaning:"crow", meaningJp:"カラス", emoji:"🐦‍⬛", context:"穿着一身黑衣的乌鸦说话了", tag:"重点词语"},
-  {id:"ci8", zh:"说话", py:"shuōhuà", meaning:"to speak", meaningJp:"話す", emoji:"💬", context:"穿着一身黑衣的乌鸦说话了", tag:"重点词语"},
-  {id:"ci9", zh:"苍蝇", py:"cāngying", meaning:"fly (insect)", meaningJp:"ハエ", emoji:"🪰", context:"我可以吃掉苍蝇啊、小虫啊", tag:"重点词语"},
-  {id:"ci10", zh:"地面", py:"dìmiàn", meaning:"ground / floor", meaningJp:"地面", emoji:"🟫", context:"落在地面上的各种东西", tag:"重点词语"},
-  {id:"ci11", zh:"蚯蚓", py:"qiūyǐn", meaning:"earthworm", meaningJp:"ミミズ", emoji:"🪱", context:"蚯蚓静静地从泥土里钻出头来", tag:"重点词语"},
-  {id:"ci12", zh:"经过", py:"jīngguò", meaning:"to pass through / after", meaningJp:"経過する", emoji:"➡️", context:"经过我的消化后，垃圾就变成了肥料", tag:"重点词语"},
-  {id:"ci13", zh:"消化", py:"xiāohuà", meaning:"to digest", meaningJp:"消化", emoji:"🌀", context:"经过我的消化后，垃圾就变成了肥料", tag:"重点词语"},
-  {id:"ci14", zh:"了不起", py:"liǎobuqǐ", meaning:"amazing / terrific", meaningJp:"すごい、立派だ", emoji:"👍", context:"你们都是了不起的地球清洁工", tag:"重点词语"}
+  {id:"ci1", zh:"时间", py:"shíjiān", meaning:"time", meaningJp:"時間", meaningKo:"시간", emoji:"⏳", context:"不到半天时间，就来了许多报名的动物", tag:"重点词语"},
+  {id:"ci2", zh:"动物", py:"dòngwù", meaning:"animal", meaningJp:"動物", meaningKo:"동물", emoji:"🐾", context:"不到半天时间，就来了许多报名的动物", tag:"重点词语"},
+  {id:"ci3", zh:"海鸥", py:"hǎi'ōu", meaning:"seagull", meaningJp:"カモメ", meaningKo:"갈매기", emoji:"🕊️", context:"海鸥说：“我是海面清洁工”", tag:"重点词语"},
+  {id:"ci4", zh:"生活", py:"shēnghuó", meaning:"life / to live", meaningJp:"生活", meaningKo:"생활, 살다", emoji:"🏡", context:"我生活在淡水里", tag:"重点词语"},
+  {id:"ci5", zh:"垃圾", py:"lājī", meaning:"garbage / rubbish", meaningJp:"ゴミ", meaningKo:"쓰레기", emoji:"🗑️", context:"河里的水草、水虫和垃圾都是我的食物", tag:"重点词语"},
+  {id:"ci6", zh:"食物", py:"shíwù", meaning:"food", meaningJp:"食べ物", meaningKo:"음식, 먹이", emoji:"🍽️", context:"河里的水草、水虫和垃圾都是我的食物", tag:"重点词语"},
+  {id:"ci7", zh:"乌鸦", py:"wūyā", meaning:"crow", meaningJp:"カラス", meaningKo:"까마귀", emoji:"🐦‍⬛", context:"穿着一身黑衣的乌鸦说话了", tag:"重点词语"},
+  {id:"ci8", zh:"说话", py:"shuōhuà", meaning:"to speak", meaningJp:"話す", meaningKo:"말하다", emoji:"💬", context:"穿着一身黑衣的乌鸦说话了", tag:"重点词语"},
+  {id:"ci9", zh:"苍蝇", py:"cāngying", meaning:"fly (insect)", meaningJp:"ハエ", meaningKo:"파리", emoji:"🪰", context:"我可以吃掉苍蝇啊、小虫啊", tag:"重点词语"},
+  {id:"ci10", zh:"地面", py:"dìmiàn", meaning:"ground / floor", meaningJp:"地面", meaningKo:"지면, 땅바닥", emoji:"🟫", context:"落在地面上的各种东西", tag:"重点词语"},
+  {id:"ci11", zh:"蚯蚓", py:"qiūyǐn", meaning:"earthworm", meaningJp:"ミミズ", meaningKo:"지렁이", emoji:"🪱", context:"蚯蚓静静地从泥土里钻出头来", tag:"重点词语"},
+  {id:"ci12", zh:"经过", py:"jīngguò", meaning:"to pass through / after", meaningJp:"経過する", meaningKo:"거치다, 지나다", emoji:"➡️", context:"经过我的消化后，垃圾就变成了肥料", tag:"重点词语"},
+  {id:"ci13", zh:"消化", py:"xiāohuà", meaning:"to digest", meaningJp:"消化", meaningKo:"소화하다", emoji:"🌀", context:"经过我的消化后，垃圾就变成了肥料", tag:"重点词语"},
+  {id:"ci14", zh:"了不起", py:"liǎobuqǐ", meaning:"amazing / terrific", meaningJp:"すごい、立派だ", meaningKo:"대단하다, 훌륭하다", emoji:"👍", context:"你们都是了不起的地球清洁工", tag:"重点词语"}
 ];
 
 const ALL_VOCAB = WORDS;
@@ -836,7 +846,7 @@ const CLOZE_QUESTIONS = [
     after: "，牌子上写着“地球清洁工报名处”。",
     py: "Dìqiú gōnggong zài yì kē shù shang guà le yí kuài páizi.",
     en: "Grandpa Earth hung a sign on a tree.",
-    jp: "地球じいさんは一本の木に一枚の看板をかけました。",
+    jp: "地球じいさんは一本の木に一枚の看板をかけました。", ko:"지구 할아버지가 나무 한 그루에 팻말을 걸었습니다.",
     answerPy: "pái zi",
     options: ["牌子", "旗子", "灯笼", "镜子"],
     hint: "课文首句 · 课后生字「牌」",
@@ -850,7 +860,7 @@ const CLOZE_QUESTIONS = [
     after: "的动物。",
     py: "Bú dào bàntiān shíjiān, jiù lái le xǔduō bàomíng de dòngwù.",
     en: "In less than half a day, many animals came to sign up.",
-    jp: "半日もたたないうちに、たくさんの動物が応募しに来ました。",
+    jp: "半日もたたないうちに、たくさんの動物が応募しに来ました。", ko:"반나절도 안 되어 많은 동물들이 신청하러 왔습니다.",
     answerPy: "bào míng",
     options: ["报名", "上班", "开会", "比赛"],
     hint: "课文原句 · 课后生字「报」",
@@ -864,7 +874,7 @@ const CLOZE_QUESTIONS = [
     after: "，我能把海面上漂着的死鱼都吃掉，海面就干净了。”",
     py: "Hǎi'ōu shuō: Wǒ shì hǎimiàn qīngjiégōng.",
     en: "The seagull said, \"I'm the sea-surface cleaner.\"",
-    jp: "カモメが言いました。「私は海面清掃員です。」",
+    jp: "カモメが言いました。「私は海面清掃員です。」", ko:"갈매기가 말했습니다. \"저는 해수면 청소부예요.\"",
     answerPy: "qīng jié gōng",
     options: ["清洁工", "服务员", "保安", "导游"],
     hint: "课文原句 · 课后生字「洁」组成的词",
@@ -878,7 +888,7 @@ const CLOZE_QUESTIONS = [
     after: "里，河里的水草、水虫和垃圾都是我的食物。",
     py: "Wǒ shēnghuó zài dànshuǐ lǐ, hé lǐ de shuǐcǎo, shuǐchóng hé lājī dōu shì wǒ de shíwù.",
     en: "I live in fresh water. The river weeds, water bugs, and rubbish are all my food.",
-    jp: "私は淡水にすんでいます。川の水草や水生昆虫、ゴミはみんな私の食べ物です。",
+    jp: "私は淡水にすんでいます。川の水草や水生昆虫、ゴミはみんな私の食べ物です。", ko:"저는 민물에 살아요. 강의 물풀, 물벌레, 쓰레기가 모두 제 먹이예요.",
     answerPy: "dàn shuǐ",
     options: ["淡水", "盐水", "热水", "雨水"],
     hint: "课文原句 · 清道夫鱼的自述",
@@ -892,7 +902,7 @@ const CLOZE_QUESTIONS = [
     after: "说话了：“我也会打扫。”",
     py: "Chuānzhe yìshēn hēiyī de wūyā shuōhuà le: Wǒ yě huì dǎsǎo.",
     en: "The crow, dressed all in black, spoke up: \"I can clean too.\"",
-    jp: "真っ黒な服を着たカラスが話しました。「私も掃除ができます。」",
+    jp: "真っ黒な服を着たカラスが話しました。「私も掃除ができます。」", ko:"온몸을 검은 옷으로 두른 까마귀가 말했습니다. \"저도 청소할 수 있어요.\"",
     answerPy: "wū yā",
     options: ["乌鸦", "海鸥", "麻雀", "燕子"],
     hint: "课后生字「鸦」（鸟部）",
@@ -906,7 +916,7 @@ const CLOZE_QUESTIONS = [
     after: "里钻出头来，说：“我在地下吃的是垃圾。”",
     py: "Qiūyǐn jìngjìng de cóng nítǔ lǐ zuān chū tóu lái.",
     en: "The earthworm quietly poked its head out of the soil.",
-    jp: "ミミズが静かに土の中から頭を出しました。",
+    jp: "ミミズが静かに土の中から頭を出しました。", ko:"지렁이가 조용히 흙 속에서 머리를 내밀었습니다.",
     answerPy: "ní tǔ",
     options: ["泥土", "石头", "树叶", "沙子"],
     hint: "课后生字「泥」",
@@ -920,7 +930,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Jīngguò wǒ de xiāohuà hòu, lājī jiù biàn chéng le féiliào.",
     en: "After it passes through my digestion, the rubbish turns into fertilizer.",
-    jp: "私が消化した後、ゴミは肥料に変わります。",
+    jp: "私が消化した後、ゴミは肥料に変わります。", ko:"제 소화를 거치면 쓰레기는 비료로 변해요.",
     answerPy: "féi liào",
     options: ["肥料", "清水", "石油", "燃料"],
     hint: "课文点睛之笔 · 课后生字「肥」「料」",
@@ -934,7 +944,7 @@ const CLOZE_QUESTIONS = [
     after: "才能变得更好。谢谢你们！",
     py: "Nǐmen dōu shì liǎobuqǐ de dìqiú qīngjiégōng, dàjiā yìqǐ nǔlì, dìqiú huánjìng cái néng biàn de gèng hǎo.",
     en: "You are all amazing Earth Cleaners. Only when everyone works hard together can Earth's environment become better.",
-    jp: "あなたたちはみんな立派な地球清掃員です。みんなで力を合わせてこそ、地球の環境はもっと良くなります。",
+    jp: "あなたたちはみんな立派な地球清掃員です。みんなで力を合わせてこそ、地球の環境はもっと良くなります。", ko:"너희들은 모두 훌륭한 지구 청소부구나. 모두가 함께 노력해야만 지구 환경이 더 좋아질 수 있어.",
     answerPy: "huán jìng",
     options: ["环境", "天气", "温度", "颜色"],
     hint: "课文结尾 · 课后生字「环」「境」",
@@ -948,7 +958,7 @@ const CLOZE_QUESTIONS = [
     after: "不好，要细嚼慢咽。",
     py: "Chīfàn tài kuài duì xiāohuà bù hǎo, yào xì jiáo màn yàn.",
     en: "Eating too fast is bad for digestion; you should chew slowly.",
-    jp: "早食いは消化に良くないので、よく噛んでゆっくり食べましょう。",
+    jp: "早食いは消化に良くないので、よく噛んでゆっくり食べましょう。", ko:"빨리 먹으면 소화에 좋지 않으니 천천히 씹어서 먹어야 합니다.",
     answerPy: "xiāo huà",
     options: ["消化", "呼吸", "运动", "睡觉"],
     hint: "微情境拓展 · 食物在体内分解",
@@ -963,7 +973,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Tā tiàowǔ tiào de zhēn hǎo, dàjiā dōu shuō tā liǎobuqǐ.",
     en: "She dances so well that everyone says she's amazing.",
-    jp: "彼女はダンスがとても上手で、みんな彼女はすごいと言います。",
+    jp: "彼女はダンスがとても上手で、みんな彼女はすごいと言います。", ko:"그녀는 춤을 아주 잘 춰서 모두가 그녀를 대단하다고 말합니다.",
     answerPy: "liǎo bu qǐ",
     options: ["了不起", "不错过", "没关系", "差不多"],
     hint: "微情境拓展 · 形容人很厉害",
@@ -978,7 +988,7 @@ const CLOZE_QUESTIONS = [
     after: "公园的时候，看见很多人在放风筝。",
     py: "Wǒmen jīngguò gōngyuán de shíhou, kànjiàn hěn duō rén zài fàng fēngzheng.",
     en: "When we passed by the park, we saw many people flying kites.",
-    jp: "公園を通り過ぎるとき、たくさんの人が凧を揚げているのを見ました。",
+    jp: "公園を通り過ぎるとき、たくさんの人が凧を揚げているのを見ました。", ko:"공원을 지나갈 때 많은 사람들이 연을 날리는 것을 보았습니다.",
     answerPy: "jīng guò",
     options: ["经过", "离开", "打扫", "建造"],
     hint: "微情境拓展 · 路过某个地方",
@@ -993,7 +1003,7 @@ const CLOZE_QUESTIONS = [
     after: "扔进了垃圾桶。",
     py: "Kàn wán diànyǐng, wǒmen bǎ lājī rēng jìn le lājītǒng.",
     en: "After watching the movie, we threw the trash into the trash can.",
-    jp: "映画を見終わって、私たちはゴミをゴミ箱に捨てました。",
+    jp: "映画を見終わって、私たちはゴミをゴミ箱に捨てました。", ko:"영화를 다 보고 나서 우리는 쓰레기를 쓰레기통에 버렸습니다.",
     answerPy: "lā jī",
     options: ["垃圾", "书包", "衣服", "雨伞"],
     hint: "微情境拓展 · 课后词语「垃圾」",
@@ -1004,7 +1014,7 @@ const CLOZE_QUESTIONS = [
 
 
 /* ---------------- STATE ---------------- */
-let storyIdx = 0, showPy = true, showEn = true, showJp = true;
+let storyIdx = 0, showPy = true, showEn = true, showJp = true, showKo = true;
 let charIdx = 0;
 let flashIdx = 0;
 let matchMode = 'chars'; // chars, words, all
@@ -1070,7 +1080,7 @@ let currentAudio = null;
 function playClip(id, fallbackText, onEnded, lang){
   stopClip();
   lang = lang || 'zh-CN';
-  const dir = lang === 'en-US' ? 'audio/diqiu_en/' : (lang === 'ja-JP' ? 'audio/diqiu_ja/' : 'audio/diqiu/');
+  const dir = lang === 'en-US' ? 'audio/diqiu_en/' : (lang === 'ja-JP' ? 'audio/diqiu_ja/' : (lang === 'ko-KR' ? 'audio/diqiu_ko/' : 'audio/diqiu/'));
   if(!id) {
     speakText(fallbackText, onEnded, lang);
     return;
@@ -1100,7 +1110,7 @@ function stopClip(){
     window.speechSynthesis.cancel();
   }
 }
-let zhVoice = null, enVoice = null, jaVoice = null;
+let zhVoice = null, enVoice = null, jaVoice = null, koVoice = null;
 function pickVoice(){
   if(!('speechSynthesis' in window)) return;
   const voices = speechSynthesis.getVoices();
@@ -1112,6 +1122,7 @@ function pickVoice(){
     || null;
   jaVoice = voices.find(v=>/^ja/i.test(v.lang||''))
     || null;
+  koVoice = voices.find(v=>/^ko/i.test(v.lang||'')) || null;
 }
 if('speechSynthesis' in window){
   pickVoice();
@@ -1120,7 +1131,7 @@ if('speechSynthesis' in window){
   const voicePollTimer = setInterval(()=>{
     pickVoice();
     voicePolls++;
-    if((zhVoice && enVoice && jaVoice) || voicePolls > 8) clearInterval(voicePollTimer);
+    if((zhVoice && enVoice && jaVoice && koVoice) || voicePolls > 8) clearInterval(voicePollTimer);
   }, 400);
 }
 function speakText(text, onEnded, lang){
@@ -1130,8 +1141,8 @@ function speakText(text, onEnded, lang){
     return;
   }
   window.speechSynthesis.cancel();
-  let voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^en/i.test(lang) ? enVoice : null;
-  if(!voice){ pickVoice(); voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^en/i.test(lang) ? enVoice : null; }
+  let voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^ko/i.test(lang) ? koVoice : /^en/i.test(lang) ? enVoice : null;
+  if(!voice){ pickVoice(); voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^ko/i.test(lang) ? koVoice : /^en/i.test(lang) ? enVoice : null; }
   const u = new SpeechSynthesisUtterance(text);
   u.lang = lang;
   if(voice) u.voice = voice;
@@ -1202,11 +1213,14 @@ function renderStory(){
   document.getElementById('storyPy').textContent = s.py;
   document.getElementById('storyEn').textContent = s.en;
   document.getElementById('storyJp').textContent = s.jp || '';
+  document.getElementById('storyKo').textContent = s.ko || '';
   document.getElementById('storyPy').style.display = showPy ? 'block' : 'none';
   document.getElementById('storyEn').style.display = showEn ? 'block' : 'none';
   document.getElementById('storyJp').style.display = showJp ? 'block' : 'none';
+  document.getElementById('storyKo').style.display = showKo ? 'block' : 'none';
   const enRow = document.getElementById('storyEnRow'); if(enRow) enRow.style.display = showEn ? 'flex' : 'none';
   const jpRow = document.getElementById('storyJpRow'); if(jpRow) jpRow.style.display = (showJp && s.jp) ? 'flex' : 'none';
+  const koRow = document.getElementById('storyKoRow'); if(koRow) koRow.style.display = (showKo && s.ko) ? 'flex' : 'none';
   updateStoryVoiceUI();
 }
 function storyPrev(){ if(storyIdx > 0){ storyIdx--; renderStory(); playClip(STORY[storyIdx].id, STORY[storyIdx].zh); } }
@@ -1214,9 +1228,10 @@ function storyNext(){ if(storyIdx < STORY.length - 1){ storyIdx++; renderStory()
 function toggleStoryPy(){ showPy = !showPy; document.getElementById('chipPy').classList.toggle('active', showPy); renderStory(); }
 function toggleStoryEn(){ showEn = !showEn; document.getElementById('chipEn').classList.toggle('active', showEn); renderStory(); }
 function toggleStoryJp(){ showJp = !showJp; document.getElementById('chipJp').classList.toggle('active', showJp); renderStory(); }
+function toggleStoryKo(){ showKo = !showKo; document.getElementById('chipKo').classList.toggle('active', showKo); renderStory(); }
 
 /* ---------------- FULL TEXT (全文朗读与配音) ---------------- */
-let fullPlaying = false, fullPlayIdx = 0, fullShowPy = true, fullShowEn = true, fullShowJp = true;
+let fullPlaying = false, fullPlayIdx = 0, fullShowPy = true, fullShowEn = true, fullShowJp = true, fullShowKo = true;
 let fullMyPlaying = false;
 
 function renderFullText(){
@@ -1236,6 +1251,10 @@ function renderFullText(){
       <div style="display:${(fullShowJp && s.jp)?'flex':'none'};align-items:center;justify-content:center;gap:6px;">
         <div class="sentence-jp">${s.jp||''}</div>
         <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[${idx}].id, STORY[${idx}].jp||'', null, 'ja-JP');" title="播放日文发音">🔊</button>
+      </div>
+      <div style="display:${(fullShowKo && s.ko)?'flex':'none'};align-items:center;justify-content:center;gap:6px;">
+        <div class="sentence-ko">${s.ko||''}</div>
+        <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[${idx}].id, STORY[${idx}].ko||'', null, 'ko-KR');" title="播放韩文发音">🔊</button>
       </div>
       <div class="full-sent-voice-bar" id="full-voice-bar-${idx}">
         <span class="sent-voice-tag" id="voice-tag-${idx}">加载录音中...</span>
@@ -1283,6 +1302,7 @@ async function updateFullTextVoiceBars(){
 function toggleFullPy(){ fullShowPy = !fullShowPy; document.getElementById('chipFullPy').classList.toggle('active', fullShowPy); renderFullText(); }
 function toggleFullEn(){ fullShowEn = !fullShowEn; document.getElementById('chipFullEn').classList.toggle('active', fullShowEn); renderFullText(); }
 function toggleFullJp(){ fullShowJp = !fullShowJp; document.getElementById('chipFullJp').classList.toggle('active', fullShowJp); renderFullText(); }
+function toggleFullKo(){ fullShowKo = !fullShowKo; document.getElementById('chipFullKo').classList.toggle('active', fullShowKo); renderFullText(); }
 
 function highlightFullSentence(idx){
   document.querySelectorAll('.full-sentence').forEach((el, i)=>{
@@ -1431,7 +1451,7 @@ function renderChar(){
   document.getElementById('charPyBack').textContent = c.py;
   document.getElementById('charRadical').textContent = '偏旁部首: ' + c.radical;
   document.getElementById('charWords').innerHTML = '<strong>组词:</strong> ' + c.words;
-  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + ' · ' + c.context;
+  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + (c.meaningKo ? ' / ' + c.meaningKo : '') + ' · ' + c.context;
   document.getElementById('charCounter').textContent = (charIdx+1) + ' / ' + CHARACTERS.length;
 
   const badgeBox = document.getElementById('charRadicalBadgeContainer');
@@ -1591,7 +1611,7 @@ function renderFlash(){
   document.getElementById('flashZh').textContent = w.zh;
   document.getElementById('flashZhBack').textContent = w.zh;
   document.getElementById('flashPy').textContent = w.py;
-  document.getElementById('flashMeaning').textContent = w.meaning + (w.meaningJp ? ' / ' + w.meaningJp : '');
+  document.getElementById('flashMeaning').textContent = w.meaning + (w.meaningJp ? ' / ' + w.meaningJp : '') + (w.meaningKo ? ' / ' + w.meaningKo : '');
   document.getElementById('flashContext').textContent = '例句: ' + w.context;
   document.getElementById('flashCounter').textContent = (flashIdx + 1) + ' / ' + WORDS.length;
 }
@@ -2123,6 +2143,7 @@ function loadClozeQuestion(){
   document.getElementById('clozeAfter').textContent = q.after;
   document.getElementById('clozeEn').textContent = q.en;
   document.getElementById('clozeJp').textContent = q.jp || '';
+  document.getElementById('clozeKo').textContent = q.ko || '';
   document.getElementById('clozeHint').textContent = '💡 ' + q.hint;
 
   const slot = document.getElementById('clozeSlot');

@@ -86,6 +86,7 @@
   .sentence-py{font-size:15px;color:var(--lake-blue);text-align:center;font-weight:700;min-height:20px;}
   .sentence-en{font-size:13px;color:var(--muted);text-align:center;}
   .sentence-jp{font-size:13px;color:#8b5cf6;text-align:center;}
+  .sentence-ko{font-size:13px;color:#059669;text-align:center;}
   .mini-speak-btn{border:none;background:none;font-size:13px;cursor:pointer;line-height:1;padding:2px 3px;border-radius:50%;flex-shrink:0;opacity:.75;}
   .mini-speak-btn:active{opacity:1;transform:scale(1.15);}
   .story-nav{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;max-width:560px;}
@@ -124,6 +125,7 @@
   .full-sentence .sentence-py{font-size:13px;text-align:left;color:var(--lake-blue);min-height:0;}
   .full-sentence .sentence-en{font-size:12px;text-align:left;color:var(--muted);margin-top:2px;}
   .full-sentence .sentence-jp{font-size:12px;text-align:left;color:#8b5cf6;margin-top:2px;}
+  .full-sentence .sentence-ko{font-size:12px;text-align:left;color:#059669;margin-top:2px;}
 
   /* character tian-zi-ge card */
   .char-wrap{width:100%;max-width:340px;perspective:1000px;}
@@ -269,6 +271,7 @@
   .cloze-slot.wrong{color:#dc2626;border-color:#dc2626;background:#fee2e2;}
   .cloze-en{font-size:12px;color:var(--lake-blue);font-style:italic;text-align:center;}
   .cloze-jp{font-size:12px;color:#8b5cf6;font-style:italic;text-align:center;}
+  .cloze-ko{font-size:12px;color:#059669;font-style:italic;text-align:center;}
   .cloze-hint-row{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 4px;}
   .cloze-hint-pill{font-size:12px;color:var(--muted);background:#f5f5f4;padding:3px 10px;border-radius:12px;}
   .cloze-speak-btn{background:#fff;border:1px solid #cbd5e1;border-radius:14px;padding:3px 10px;font-size:12px;font-weight:700;
@@ -425,6 +428,10 @@
           <div class="sentence-jp" id="storyJp"></div>
           <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].jp||'', null, 'ja-JP')" title="播放日文发音">🔊</button>
         </div>
+        <div class="lang-line-row" id="storyKoRow" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+          <div class="sentence-ko" id="storyKo"></div>
+          <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].ko||'', null, 'ko-KR')" title="播放韩文发音">🔊</button>
+        </div>
       </div>
       <!-- VOICE WAVE VISUALIZER -->
       <div class="voice-wave-panel" id="storyVoiceWave">
@@ -453,6 +460,7 @@
         <div class="chip active" id="chipPy" onclick="toggleStoryPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipEn" onclick="toggleStoryEn()">English</div>
         <div class="chip active" id="chipJp" onclick="toggleStoryJp()">日本語</div>
+        <div class="chip active" id="chipKo" onclick="toggleStoryKo()">한국어</div>
         <div class="chip" onclick="goFull()">📜 全文朗读</div>
       </div>
       <button class="btn ghost" onclick="goHome()">返回菜单</button>
@@ -466,6 +474,7 @@
         <div class="chip active" id="chipFullPy" onclick="toggleFullPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipFullEn" onclick="toggleFullEn()">English</div>
         <div class="chip active" id="chipFullJp" onclick="toggleFullJp()">日本語</div>
+        <div class="chip active" id="chipFullKo" onclick="toggleFullKo()">한국어</div>
         <button class="btn teal small" id="fullPlayBtn" onclick="toggleFullPlay()">▶️ 原声连续朗读</button>
         <button class="btn primary small" id="fullMyPlayBtn" onclick="toggleFullMyPlay()">🎙️ 播放我的全文配音</button>
       </div>
@@ -631,6 +640,7 @@
           </div>
           <div class="cloze-en" id="clozeEn"></div>
           <div class="cloze-jp" id="clozeJp"></div>
+          <div class="cloze-ko" id="clozeKo"></div>
           <div class="cloze-hint-row">
             <span class="cloze-hint-pill" id="clozeHint"></span>
             <button class="cloze-speak-btn" id="clozeSpeakBtn" onclick="speakClozeSentence()">🔊 朗读句子</button>
@@ -729,58 +739,58 @@
 /* ---------------- DATA ---------------- */
 // 1. 课文《颐和园》（教材原版逐字转写）
 const STORY = [
-  {id:"st1", zh:"今年寒假，我终于来到了向往已久的颐和园。", py:"Jīnnián hánjià, wǒ zhōngyú láidào le xiàngwǎng yǐjiǔ de Yíhé Yuán.", en:"This winter vacation, I finally came to the Summer Palace that I had longed for for so long.", jp:"今年の冬休み、私はずっと憧れていた頤和園にとうとうやって来ました。"},
-  {id:"st2", zh:"走进颐和园的东门，就能见到昆明湖。", py:"Zǒujìn Yíhé Yuán de dōngmén, jiù néng jiàndào Kūnmíng Hú.", en:"Entering through the East Gate of the Summer Palace, one can see Kunming Lake.", jp:"頤和園の東門を入ると、すぐに昆明湖が見えます。"},
-  {id:"st3", zh:"站在湖边，能看到湖底的水草，有时还能看见小鱼呢。", py:"Zhàn zài húbiān, néng kàndào húdǐ de shuǐcǎo, yǒushí hái néng kànjiàn xiǎoyú ne.", en:"Standing by the lake, one can see the water plants at the bottom of the lake, and sometimes even little fish.", jp:"湖のほとりに立つと、湖底の水草が見え、時には小さな魚も見えます。"},
-  {id:"st4", zh:"湖中心有个美丽的小岛。", py:"Hú zhōngxīn yǒu ge měilì de xiǎodǎo.", en:"In the center of the lake is a beautiful small island.", jp:"湖の中央には美しい小島があります。"},
-  {id:"st5", zh:"从湖边到湖中心的小岛，要走过一座长长的石桥。", py:"Cóng húbiān dào hú zhōngxīn de xiǎodǎo, yào zǒuguò yí zuò chángcháng de shíqiáo.", en:"From the lakeshore to the small island in the center, one must cross a long stone bridge.", jp:"湖岸から湖中央の小島まで、長い石橋を渡らなければなりません。"},
-  {id:"st6", zh:"这座桥有十七个桥洞，叫十七孔桥。", py:"Zhè zuò qiáo yǒu shíqī ge qiáodòng, jiào Shíqī-kǒng Qiáo.", en:"This bridge has seventeen arches and is called the Seventeen-Arch Bridge.", jp:"この橋には17個のアーチがあり、十七孔橋と呼ばれています。"},
-  {id:"st7", zh:"桥两边的石柱上有许多小石狮子。", py:"Qiáo liǎngbiān de shízhù shang yǒu xǔduō xiǎo shíshīzi.", en:"On the stone pillars on both sides of the bridge are many little stone lions.", jp:"橋の両側の石柱には、たくさんの小さな石の獅子があります。"},
-  {id:"st8", zh:"它们都很生动，十分可爱。", py:"Tāmen dōu hěn shēngdòng, shífēn kě'ài.", en:"They are all very lively and extremely cute.", jp:"それらはどれも生き生きとしていて、とても愛らしいです。"},
-  {id:"st9", zh:"走在著名的长廊上，绿色的柱子，红色的栏杆，一眼望不到头。", py:"Zǒu zài zhùmíng de chángláng shang, lǜsè de zhùzi, hóngsè de lángān, yìyǎn wàngbúdàotóu.", en:"Walking along the famous Long Corridor, with its green pillars and red railings, one cannot see the end at a single glance.", jp:"有名な長廊を歩くと、緑の柱と赤い欄干が、一目では端まで見渡せません。"},
-  {id:"st10", zh:"走完长廊，就来到了万寿山脚下。", py:"Zǒuwán chángláng, jiù láidào le Wànshòu Shān jiǎoxià.", en:"Having walked the length of the Long Corridor, one arrives at the foot of Longevity Hill.", jp:"長廊を歩き終えると、万寿山のふもとに着きます。"},
-  {id:"st11", zh:"登上万寿山，颐和园的景色尽收眼底。", py:"Dēng shang Wànshòu Shān, Yíhé Yuán de jǐngsè jìnshōuyǎndǐ.", en:"Climbing up Longevity Hill, the panoramic scenery of the Summer Palace is completely taken in at a glance.", jp:"万寿山に登ると、頤和園の景色が一望のもとに見渡せます。"},
-  {id:"st12", zh:"颐和园到处都有美丽的景色，让人十分难忘。", py:"Yíhé Yuán dàochù dōu yǒu měilì de jǐngsè, ràng rén shífēn nánwàng.", en:"There is beautiful scenery everywhere in the Summer Palace, making it truly unforgettable.", jp:"頤和園にはいたるところに美しい景色があり、とても忘れがたいものです。"}
+  {id:"st1", zh:"今年寒假，我终于来到了向往已久的颐和园。", py:"Jīnnián hánjià, wǒ zhōngyú láidào le xiàngwǎng yǐjiǔ de Yíhé Yuán.", en:"This winter vacation, I finally came to the Summer Palace that I had longed for for so long.", jp:"今年の冬休み、私はずっと憧れていた頤和園にとうとうやって来ました。", ko:"올해 겨울 방학에 저는 오랫동안 그리워하던 이화원에 드디어 왔습니다."},
+  {id:"st2", zh:"走进颐和园的东门，就能见到昆明湖。", py:"Zǒujìn Yíhé Yuán de dōngmén, jiù néng jiàndào Kūnmíng Hú.", en:"Entering through the East Gate of the Summer Palace, one can see Kunming Lake.", jp:"頤和園の東門を入ると、すぐに昆明湖が見えます。", ko:"이화원의 동문으로 들어가면 바로 쿤밍호를 볼 수 있습니다."},
+  {id:"st3", zh:"站在湖边，能看到湖底的水草，有时还能看见小鱼呢。", py:"Zhàn zài húbiān, néng kàndào húdǐ de shuǐcǎo, yǒushí hái néng kànjiàn xiǎoyú ne.", en:"Standing by the lake, one can see the water plants at the bottom of the lake, and sometimes even little fish.", jp:"湖のほとりに立つと、湖底の水草が見え、時には小さな魚も見えます。", ko:"호숫가에 서면 호수 바닥의 물풀이 보이고, 때로는 작은 물고기도 볼 수 있습니다."},
+  {id:"st4", zh:"湖中心有个美丽的小岛。", py:"Hú zhōngxīn yǒu ge měilì de xiǎodǎo.", en:"In the center of the lake is a beautiful small island.", jp:"湖の中央には美しい小島があります。", ko:"호수 중심에는 아름다운 작은 섬이 있습니다."},
+  {id:"st5", zh:"从湖边到湖中心的小岛，要走过一座长长的石桥。", py:"Cóng húbiān dào hú zhōngxīn de xiǎodǎo, yào zǒuguò yí zuò chángcháng de shíqiáo.", en:"From the lakeshore to the small island in the center, one must cross a long stone bridge.", jp:"湖岸から湖中央の小島まで、長い石橋を渡らなければなりません。", ko:"호숫가에서 호수 중심의 작은 섬까지 가려면 긴 돌다리를 건너야 합니다."},
+  {id:"st6", zh:"这座桥有十七个桥洞，叫十七孔桥。", py:"Zhè zuò qiáo yǒu shíqī ge qiáodòng, jiào Shíqī-kǒng Qiáo.", en:"This bridge has seventeen arches and is called the Seventeen-Arch Bridge.", jp:"この橋には17個のアーチがあり、十七孔橋と呼ばれています。", ko:"이 다리에는 열일곱 개의 아치가 있어서 십칠공교라고 부릅니다."},
+  {id:"st7", zh:"桥两边的石柱上有许多小石狮子。", py:"Qiáo liǎngbiān de shízhù shang yǒu xǔduō xiǎo shíshīzi.", en:"On the stone pillars on both sides of the bridge are many little stone lions.", jp:"橋の両側の石柱には、たくさんの小さな石の獅子があります。", ko:"다리 양쪽의 돌기둥에는 작은 돌사자들이 많이 있습니다."},
+  {id:"st8", zh:"它们都很生动，十分可爱。", py:"Tāmen dōu hěn shēngdòng, shífēn kě'ài.", en:"They are all very lively and extremely cute.", jp:"それらはどれも生き生きとしていて、とても愛らしいです。", ko:"그것들은 모두 생동감 있고 매우 귀엽습니다."},
+  {id:"st9", zh:"走在著名的长廊上，绿色的柱子，红色的栏杆，一眼望不到头。", py:"Zǒu zài zhùmíng de chángláng shang, lǜsè de zhùzi, hóngsè de lángān, yìyǎn wàngbúdàotóu.", en:"Walking along the famous Long Corridor, with its green pillars and red railings, one cannot see the end at a single glance.", jp:"有名な長廊を歩くと、緑の柱と赤い欄干が、一目では端まで見渡せません。", ko:"유명한 긴 복도를 걸으면 초록빛 기둥과 붉은 난간이 한눈에 끝이 보이지 않습니다."},
+  {id:"st10", zh:"走完长廊，就来到了万寿山脚下。", py:"Zǒuwán chángláng, jiù láidào le Wànshòu Shān jiǎoxià.", en:"Having walked the length of the Long Corridor, one arrives at the foot of Longevity Hill.", jp:"長廊を歩き終えると、万寿山のふもとに着きます。", ko:"긴 복도를 다 걸으면 만수산 기슭에 도착합니다."},
+  {id:"st11", zh:"登上万寿山，颐和园的景色尽收眼底。", py:"Dēng shang Wànshòu Shān, Yíhé Yuán de jǐngsè jìnshōuyǎndǐ.", en:"Climbing up Longevity Hill, the panoramic scenery of the Summer Palace is completely taken in at a glance.", jp:"万寿山に登ると、頤和園の景色が一望のもとに見渡せます。", ko:"만수산에 올라가면 이화원의 풍경이 한눈에 다 들어옵니다."},
+  {id:"st12", zh:"颐和园到处都有美丽的景色，让人十分难忘。", py:"Yíhé Yuán dàochù dōu yǒu měilì de jǐngsè, ràng rén shífēn nánwàng.", en:"There is beautiful scenery everywhere in the Summer Palace, making it truly unforgettable.", jp:"頤和園にはいたるところに美しい景色があり、とても忘れがたいものです。", ko:"이화원에는 곳곳에 아름다운 풍경이 있어 사람들을 매우 잊지 못하게 합니다."}
 ];
 
 // 2. 课后生字表 (18 Characters - 课本原图)
 const CHARACTERS = [
-  {id:"zi1", zh:"颐", py:"yí", radical:"页 (页字旁)", radicalBadge:null, words:"颐和园、休养、颐养", meaning:"nourish / cheeks / Summer Palace", meaningJp:"養う／頬／頤和園", context:"向往已久的颐和园"},
-  {id:"zi2", zh:"园", py:"yuán", radical:"囗 (大口框)", radicalBadge:null, words:"颐和园、公园、花园", meaning:"garden / park", meaningJp:"庭園、公園", context:"向往已久的颐和园"},
-  {id:"zi3", zh:"久", py:"jiǔ", radical:"丿 (撇)", radicalBadge:null, words:"已久、很久、长久", meaning:"long time / duration", meaningJp:"長い時間、久しい", context:"向往已久的颐和园"},
-  {id:"zi4", zh:"站", py:"zhàn", radical:"立 (立字旁)", radicalBadge:"立 —— 站", words:"站立、站在湖边、车站", meaning:"stand / station", meaningJp:"立つ、駅", context:"站在湖边，能看到湖底的水草"},
-  {id:"zi5", zh:"底", py:"dǐ", radical:"广 (广字头)", radicalBadge:null, words:"湖底、尽收眼底、底下", meaning:"bottom / base", meaningJp:"底、下部", context:"能看到湖底的水草 / 尽收眼底"},
-  {id:"zi6", zh:"岛", py:"dǎo", radical:"山 (山字底)", radicalBadge:null, words:"小岛、海岛、岛屿", meaning:"island / isle", meaningJp:"島", context:"湖中心有个美丽的小岛"},
-  {id:"zi7", zh:"桥", py:"qiáo", radical:"木 (木字旁)", radicalBadge:null, words:"石桥、十七孔桥、桥梁", meaning:"bridge", meaningJp:"橋", context:"走过一座长长的石桥"},
-  {id:"zi8", zh:"洞", py:"dòng", radical:"氵 (三点水)", radicalBadge:null, words:"桥洞、十七个桥洞、山洞", meaning:"hole / arch / cave", meaningJp:"穴、アーチ、洞窟", context:"这座桥有十七个桥洞"},
-  {id:"zi9", zh:"孔", py:"kǒng", radical:"子 (子字旁)", radicalBadge:null, words:"十七孔桥、孔洞、面孔", meaning:"hole / opening / arch", meaningJp:"穴、アーチ", context:"叫十七孔桥"},
-  {id:"zi10", zh:"柱", py:"zhù", radical:"木 (木字旁)", radicalBadge:null, words:"石柱、柱子、支柱", meaning:"pillar / column / post", meaningJp:"柱", context:"桥两边的石柱上 / 绿色的柱子"},
-  {id:"zi11", zh:"狮", py:"shī", radical:"犭 (反犬旁)", radicalBadge:null, words:"石狮子、狮子、雄狮", meaning:"lion", meaningJp:"ライオン、獅子", context:"有许多小石狮子"},
-  {id:"zi12", zh:"分", py:"fēn", radical:"刀 (刀字底)", radicalBadge:null, words:"十分、十分可爱、十分难忘", meaning:"divide / very / extremely", meaningJp:"分ける／とても", context:"十分可爱 / 让人十分难忘"},
-  {id:"zi13", zh:"廊", py:"láng", radical:"广 (广字头)", radicalBadge:null, words:"长廊、走廊、画廊", meaning:"corridor / veranda", meaningJp:"廊下、回廊", context:"走在著名的长廊上"},
-  {id:"zi14", zh:"眼", py:"yǎn", radical:"目 (目字旁)", radicalBadge:null, words:"一眼、尽收眼底、眼睛", meaning:"eye / glance", meaningJp:"目、一目", context:"一眼望不到头 / 尽收眼底"},
-  {id:"zi15", zh:"万", py:"wàn", radical:"一 / 勹", radicalBadge:null, words:"万寿山、万里、万分", meaning:"ten thousand / myriad", meaningJp:"一万、非常に多い", context:"来到了万寿山脚下"},
-  {id:"zi16", zh:"寿", py:"shòu", radical:"寸 (寸字底)", radicalBadge:"寸 —— 寿", words:"万寿山、长寿、寿辰", meaning:"longevity / life", meaningJp:"長寿、命", context:"来到了万寿山脚下"},
-  {id:"zi17", zh:"脚", py:"jiǎo", radical:"月 (月字旁)", radicalBadge:null, words:"山脚、山脚下、脚步", meaning:"foot / base of a hill", meaningJp:"足、山のふもと", context:"来到了万寿山脚下"},
-  {id:"zi18", zh:"收", py:"shōu", radical:"攵 (反文旁)", radicalBadge:null, words:"尽收眼底、收获、收集", meaning:"receive / gather / take in", meaningJp:"受け取る、収める", context:"颐和园的景色尽收眼底"}
+  {id:"zi1", zh:"颐", py:"yí", radical:"页 (页字旁)", radicalBadge:null, words:"颐和园、休养、颐养", meaning:"nourish / cheeks / Summer Palace", meaningJp:"養う／頬／頤和園", meaningKo:"기르다 / 턱 / 이화원", context:"向往已久的颐和园"},
+  {id:"zi2", zh:"园", py:"yuán", radical:"囗 (大口框)", radicalBadge:null, words:"颐和园、公园、花园", meaning:"garden / park", meaningJp:"庭園、公園", meaningKo:"정원, 공원", context:"向往已久的颐和园"},
+  {id:"zi3", zh:"久", py:"jiǔ", radical:"丿 (撇)", radicalBadge:null, words:"已久、很久、长久", meaning:"long time / duration", meaningJp:"長い時間、久しい", meaningKo:"오래다, 오랜 시간", context:"向往已久的颐和园"},
+  {id:"zi4", zh:"站", py:"zhàn", radical:"立 (立字旁)", radicalBadge:"立 —— 站", words:"站立、站在湖边、车站", meaning:"stand / station", meaningJp:"立つ、駅", meaningKo:"서다 / 역", context:"站在湖边，能看到湖底的水草"},
+  {id:"zi5", zh:"底", py:"dǐ", radical:"广 (广字头)", radicalBadge:null, words:"湖底、尽收眼底、底下", meaning:"bottom / base", meaningJp:"底、下部", meaningKo:"바닥, 밑", context:"能看到湖底的水草 / 尽收眼底"},
+  {id:"zi6", zh:"岛", py:"dǎo", radical:"山 (山字底)", radicalBadge:null, words:"小岛、海岛、岛屿", meaning:"island / isle", meaningJp:"島", meaningKo:"섬", context:"湖中心有个美丽的小岛"},
+  {id:"zi7", zh:"桥", py:"qiáo", radical:"木 (木字旁)", radicalBadge:null, words:"石桥、十七孔桥、桥梁", meaning:"bridge", meaningJp:"橋", meaningKo:"다리", context:"走过一座长长的石桥"},
+  {id:"zi8", zh:"洞", py:"dòng", radical:"氵 (三点水)", radicalBadge:null, words:"桥洞、十七个桥洞、山洞", meaning:"hole / arch / cave", meaningJp:"穴、アーチ、洞窟", meaningKo:"구멍, 아치, 동굴", context:"这座桥有十七个桥洞"},
+  {id:"zi9", zh:"孔", py:"kǒng", radical:"子 (子字旁)", radicalBadge:null, words:"十七孔桥、孔洞、面孔", meaning:"hole / opening / arch", meaningJp:"穴、アーチ", meaningKo:"구멍, 아치", context:"叫十七孔桥"},
+  {id:"zi10", zh:"柱", py:"zhù", radical:"木 (木字旁)", radicalBadge:null, words:"石柱、柱子、支柱", meaning:"pillar / column / post", meaningJp:"柱", meaningKo:"기둥", context:"桥两边的石柱上 / 绿色的柱子"},
+  {id:"zi11", zh:"狮", py:"shī", radical:"犭 (反犬旁)", radicalBadge:null, words:"石狮子、狮子、雄狮", meaning:"lion", meaningJp:"ライオン、獅子", meaningKo:"사자", context:"有许多小石狮子"},
+  {id:"zi12", zh:"分", py:"fēn", radical:"刀 (刀字底)", radicalBadge:null, words:"十分、十分可爱、十分难忘", meaning:"divide / very / extremely", meaningJp:"分ける／とても", meaningKo:"나누다 / 매우", context:"十分可爱 / 让人十分难忘"},
+  {id:"zi13", zh:"廊", py:"láng", radical:"广 (广字头)", radicalBadge:null, words:"长廊、走廊、画廊", meaning:"corridor / veranda", meaningJp:"廊下、回廊", meaningKo:"복도, 회랑", context:"走在著名的长廊上"},
+  {id:"zi14", zh:"眼", py:"yǎn", radical:"目 (目字旁)", radicalBadge:null, words:"一眼、尽收眼底、眼睛", meaning:"eye / glance", meaningJp:"目、一目", meaningKo:"눈, 한눈", context:"一眼望不到头 / 尽收眼底"},
+  {id:"zi15", zh:"万", py:"wàn", radical:"一 / 勹", radicalBadge:null, words:"万寿山、万里、万分", meaning:"ten thousand / myriad", meaningJp:"一万、非常に多い", meaningKo:"만, 아주 많음", context:"来到了万寿山脚下"},
+  {id:"zi16", zh:"寿", py:"shòu", radical:"寸 (寸字底)", radicalBadge:"寸 —— 寿", words:"万寿山、长寿、寿辰", meaning:"longevity / life", meaningJp:"長寿、命", meaningKo:"장수, 목숨", context:"来到了万寿山脚下"},
+  {id:"zi17", zh:"脚", py:"jiǎo", radical:"月 (月字旁)", radicalBadge:null, words:"山脚、山脚下、脚步", meaning:"foot / base of a hill", meaningJp:"足、山のふもと", meaningKo:"발, 산기슭", context:"来到了万寿山脚下"},
+  {id:"zi18", zh:"收", py:"shōu", radical:"攵 (反文旁)", radicalBadge:null, words:"尽收眼底、收获、收集", meaning:"receive / gather / take in", meaningJp:"受け取る、収める", meaningKo:"받다, 거두다", context:"颐和园的景色尽收眼底"}
 ];
 
 // 3. 课后词语表 (6 Words - 课本原图)
 const WORDS = [
-  {id:"ci1", zh:"中心", py:"zhōngxīn", meaning:"center / middle", meaningJp:"中心", emoji:"🎯", context:"湖中心有个美丽的小岛", tag:"词语"},
-  {id:"ci2", zh:"美丽", py:"měilì", meaning:"beautiful / lovely", meaningJp:"美しい", emoji:"🌸", context:"湖中心有个美丽的小岛 / 美丽的景色", tag:"词语"},
-  {id:"ci3", zh:"生动", py:"shēngdòng", meaning:"vivid / lively", meaningJp:"生き生きとした", emoji:"✨", context:"它们都很生动，十分可爱", tag:"词语"},
-  {id:"ci4", zh:"十分", py:"shífēn", meaning:"very / extremely", meaningJp:"とても、非常に", emoji:"💯", context:"十分可爱 / 让人十分难忘", tag:"词语"},
-  {id:"ci5", zh:"栏杆", py:"lángān", meaning:"railing / banister", meaningJp:"欄干、手すり", emoji:"🪵", context:"绿色的柱子，红色的栏杆", tag:"词语"},
-  {id:"ci6", zh:"景色", py:"jǐngsè", meaning:"scenery / landscape", meaningJp:"景色、風景", emoji:"🏞️", context:"颐和园的景色尽收眼底", tag:"词语"}
+  {id:"ci1", zh:"中心", py:"zhōngxīn", meaning:"center / middle", meaningJp:"中心", meaningKo:"중심, 가운데", emoji:"🎯", context:"湖中心有个美丽的小岛", tag:"词语"},
+  {id:"ci2", zh:"美丽", py:"měilì", meaning:"beautiful / lovely", meaningJp:"美しい", meaningKo:"아름답다", emoji:"🌸", context:"湖中心有个美丽的小岛 / 美丽的景色", tag:"词语"},
+  {id:"ci3", zh:"生动", py:"shēngdòng", meaning:"vivid / lively", meaningJp:"生き生きとした", meaningKo:"생동감 있다, 생생하다", emoji:"✨", context:"它们都很生动，十分可爱", tag:"词语"},
+  {id:"ci4", zh:"十分", py:"shífēn", meaning:"very / extremely", meaningJp:"とても、非常に", meaningKo:"매우, 아주", emoji:"💯", context:"十分可爱 / 让人十分难忘", tag:"词语"},
+  {id:"ci5", zh:"栏杆", py:"lángān", meaning:"railing / banister", meaningJp:"欄干、手すり", meaningKo:"난간", emoji:"🪵", context:"绿色的柱子，红色的栏杆", tag:"词语"},
+  {id:"ci6", zh:"景色", py:"jǐngsè", meaning:"scenery / landscape", meaningJp:"景色、風景", meaningKo:"풍경, 경치", emoji:"🏞️", context:"颐和园的景色尽收眼底", tag:"词语"}
 ];
 
 // 4. 课后专有名词表 (4 Proper Nouns - 课本原图)
 const PROPER_NOUNS = [
-  {id:"pn1", zh:"颐和园", py:"Yíhé Yuán", meaning:"the Summer Palace", meaningJp:"頤和園", emoji:"🏯", context:"向往已久的颐和园", tag:"专有名词"},
-  {id:"pn2", zh:"昆明湖", py:"Kūnmíng Hú", meaning:"Kunming Lake", meaningJp:"昆明湖", emoji:"🌊", context:"走进东门，就能见到昆明湖", tag:"专有名词"},
-  {id:"pn3", zh:"十七孔桥", py:"Shíqī-kǒng Qiáo", meaning:"Seventeen-Arch Bridge", meaningJp:"十七孔橋", emoji:"🌉", context:"这座桥有十七个桥洞，叫十七孔桥", tag:"专有名词"},
-  {id:"pn4", zh:"万寿山", py:"Wànshòu Shān", meaning:"Longevity Hill", meaningJp:"万寿山", emoji:"⛰️", context:"走完长廊，就来到了万寿山脚下", tag:"专有名词"}
+  {id:"pn1", zh:"颐和园", py:"Yíhé Yuán", meaning:"the Summer Palace", meaningJp:"頤和園", meaningKo:"이화원", emoji:"🏯", context:"向往已久的颐和园", tag:"专有名词"},
+  {id:"pn2", zh:"昆明湖", py:"Kūnmíng Hú", meaning:"Kunming Lake", meaningJp:"昆明湖", meaningKo:"쿤밍호", emoji:"🌊", context:"走进东门，就能见到昆明湖", tag:"专有名词"},
+  {id:"pn3", zh:"十七孔桥", py:"Shíqī-kǒng Qiáo", meaning:"Seventeen-Arch Bridge", meaningJp:"十七孔橋", meaningKo:"십칠공교", emoji:"🌉", context:"这座桥有十七个桥洞，叫十七孔桥", tag:"专有名词"},
+  {id:"pn4", zh:"万寿山", py:"Wànshòu Shān", meaning:"Longevity Hill", meaningJp:"万寿山", meaningKo:"만수산", emoji:"⛰️", context:"走完长廊，就来到了万寿山脚下", tag:"专有名词"}
 ];
 
 // 合并生词表 (10项)
@@ -838,7 +848,7 @@ const CLOZE_QUESTIONS = [
     after: "的颐和园。",
     py: "Jīnnián hánjià, wǒ zhōngyú láidàole xiàngwǎng yǐjiǔ de Yíhéyuán.",
     en: "This winter vacation, I finally came to the long-cherished Summer Palace.",
-    jp: "今年の冬休み、私はついに憧れの頤和園にやって来ました。",
+    jp: "今年の冬休み、私はついに憧れの頤和園にやって来ました。", ko:"올해 겨울 방학, 저는 드디어 그리워하던 이화원에 왔습니다.",
     answerPy: "yǐ jiǔ",
     options: ["已久", "十分", "美丽", "生动"],
     hint: "课后重点句子 · 课后生字「久」的组词",
@@ -852,7 +862,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Zǒujìn Yíhéyuán de dōngmén, jiù néng jiàndào Kūnmíng Hú.",
     en: "Entering the east gate, you can see Kunming Lake.",
-    jp: "東門を入ると、昆明湖が見えます。",
+    jp: "東門を入ると、昆明湖が見えます。", ko:"동문으로 들어가면 쿤밍호가 보입니다.",
     answerPy: "Kūn míng Hú",
     options: ["昆明湖", "万寿山", "长廊", "十七孔桥"],
     hint: "课文原句 · 颐和园最著名的湖泊",
@@ -866,7 +876,7 @@ const CLOZE_QUESTIONS = [
     after: "的水草，有时还能看见小鱼呢。",
     py: "Zhàn zài hú biān, néng kàndào hú dǐ de shuǐcǎo...",
     en: "Standing by the lake, one can see water weeds at the bottom of the lake...",
-    jp: "湖のほとりに立つと、湖底の水草が見え……",
+    jp: "湖のほとりに立つと、湖底の水草が見え……", ko:"호숫가에 서면 호수 바닥의 물풀이 보이고……",
     answerPy: "dǐ",
     options: ["底", "面", "边", "上"],
     hint: "课文原句 · 课后生字「底」",
@@ -880,7 +890,7 @@ const CLOZE_QUESTIONS = [
     after: "有个美丽的小岛。",
     py: "Hú zhōngxīn yǒu gè měilì de xiǎodǎo.",
     en: "In the center of the lake there is a beautiful small island.",
-    jp: "湖の中央には美しい小島があります。",
+    jp: "湖の中央には美しい小島があります。", ko:"호수 중심에는 아름다운 작은 섬이 있습니다.",
     answerPy: "zhōng xīn",
     options: ["中心", "两边", "门口", "旁边"],
     hint: "课文原句 · 课后重点词语",
@@ -894,7 +904,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Zhè zuò qiáo yǒu shíqī gè qiáodòng, jiào Shíqī-kǒng Qiáo.",
     en: "This bridge has 17 arches, called Seventeen-Arch Bridge.",
-    jp: "この橋には17個のアーチがあり、十七孔橋と呼ばれています。",
+    jp: "この橋には17個のアーチがあり、十七孔橋と呼ばれています。", ko:"이 다리에는 열일곱 개의 아치가 있어서 십칠공교라고 부릅니다.",
     answerPy: "Shí qī kǒng Qiáo",
     options: ["十七孔桥", "赵州桥", "卢沟桥", "立交桥"],
     hint: "课文原句 · 课后专有名词与生字「桥」「孔」",
@@ -908,7 +918,7 @@ const CLOZE_QUESTIONS = [
     after: "，十分可爱。",
     py: "Qiáo liǎngbiān de shízhù shang yǒu xǔduō xiǎo shíshīzi, tāmen dōu hěn shēngdòng...",
     en: "The stone lions on the pillars are very vivid and lovely.",
-    jp: "橋の石獅子はとても生き生きとして可愛らしい。",
+    jp: "橋の石獅子はとても生き生きとして可愛らしい。", ko:"다리 위의 돌사자는 매우 생동감 있고 귀엽습니다.",
     answerPy: "shēng dòng",
     options: ["生动", "安静", "古老", "高大"],
     hint: "课文原句 · 课后重点词语",
@@ -922,7 +932,7 @@ const CLOZE_QUESTIONS = [
     after: "上，绿色的柱子，红色的栏杆，一眼望不到头。",
     py: "Zǒu zài zhùmíng de chángláng shang, lǜsè de zhùzi, hóngsè de lángān...",
     en: "Walking in the famous Long Corridor, green pillars and red railings...",
-    jp: "有名な長廊を歩くと、緑の柱と赤い欄干……",
+    jp: "有名な長廊を歩くと、緑の柱と赤い欄干……", ko:"유명한 긴 복도를 걸으면 초록빛 기둥과 붉은 난간이……",
     answerPy: "cháng láng",
     options: ["长廊", "大殿", "小岛", "石桥"],
     hint: "课文原句 · 课后生字「廊」的组词",
@@ -936,7 +946,7 @@ const CLOZE_QUESTIONS = [
     after: "尽收眼底。",
     py: "Dēngshàng Wànshòushān, Yíhéyuán de jǐngsè jìnshōu yǎndǐ.",
     en: "Climbing Longevity Hill, the scenery of the Summer Palace is in full view.",
-    jp: "万寿山に登ると、頤和園の景色が一望できます。",
+    jp: "万寿山に登ると、頤和園の景色が一望できます。", ko:"만수산에 오르면 이화원의 풍경이 한눈에 들어옵니다.",
     answerPy: "jǐng sè",
     options: ["景色", "房屋", "水草", "石狮"],
     hint: "课文原句 · 课后重点词语与生字「收」「眼」",
@@ -950,7 +960,7 @@ const CLOZE_QUESTIONS = [
     after: "让人流连忘返。",
     py: "Chūntiān lái le, gōngyuán lǐ bǎihuā qífàng, mírén de jǐngsè...",
     en: "Spring has arrived, the charming scenery makes people linger.",
-    jp: "春が来て、公園の魅力的な景色に人々は立ち去りがたい。",
+    jp: "春が来て、公園の魅力的な景色に人々は立ち去りがたい。", ko:"봄이 오자 매력적인 풍경에 사람들이 떠나기 싫어합니다.",
     answerPy: "jǐng sè",
     options: ["景色", "栏杆", "桥洞", "石柱"],
     hint: "微情境拓展 · 自然风光与美丽景象",
@@ -965,7 +975,7 @@ const CLOZE_QUESTIONS = [
     after: "认真。",
     py: "Lǎoshī jiǎng de gùshì miàoqù-héngshēng, xiǎopéngyǒu tīng de shífēn rènzhēn.",
     en: "The teacher's story was vivid, and the kids listened very attentively.",
-    jp: "先生の話はとても生き生きしていて、子供たちはとても真剣に聞いていました。",
+    jp: "先生の話はとても生き生きしていて、子供たちはとても真剣に聞いていました。", ko:"선생님의 이야기는 매우 생동감이 있어서 아이들이 아주 집중해서 들었습니다.",
     answerPy: "shí fēn",
     options: ["十分", "中心", "已久", "长廊"],
     hint: "微情境拓展 · 非常、特别的意思",
@@ -980,7 +990,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Huàjiā huà chū de bēnmǎ xǔxǔ-rúshēng, xíngtài fēicháng shēngdòng.",
     en: "The galloping horses painted by the artist are very vivid.",
-    jp: "画家が描いた駆ける馬はとても生き生きとしています。",
+    jp: "画家が描いた駆ける馬はとても生き生きとしています。", ko:"화가가 그린 달리는 말은 매우 생동감이 있습니다.",
     answerPy: "shēng dòng",
     options: ["生动", "美丽", "栏杆", "向往"],
     hint: "微情境拓展 · 富有生命力、神采奕奕",
@@ -995,7 +1005,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Dàjiā dēngshàng shāndǐng, zhuànglì de yúnhǎi qíguān jìnshōu yǎndǐ.",
     en: "Climbing to the top, the magnificent cloud sea was in full view.",
-    jp: "頂上に登ると、壮大な雲海が一望のもとに見渡せました。",
+    jp: "頂上に登ると、壮大な雲海が一望のもとに見渡せました。", ko:"정상에 오르자 장엄한 구름바다가 한눈에 들어왔습니다.",
     answerPy: "jìn shōu yǎn dǐ",
     options: ["尽收眼底", "向往已久", "一眼望去", "十分生动"],
     hint: "微情境拓展 · 极目远眺，美景全都看在眼里",
@@ -1005,7 +1015,7 @@ const CLOZE_QUESTIONS = [
 ];
 
 /* ---------------- STATE ---------------- */
-let storyIdx = 0, showPy = true, showEn = true, showJp = true;
+let storyIdx = 0, showPy = true, showEn = true, showJp = true, showKo = true;
 let charIdx = 0;
 let vocabFilter = 'all'; // all, words, proper
 let currentVocabList = ALL_VOCAB;
@@ -1111,13 +1121,14 @@ function goReview(){ switchReviewTab('quiz'); showScreen('screen-review'); }
 const AUDIO_DIR = 'audio/yiheyuan/';
 const AUDIO_DIR_EN = 'audio/yiheyuan_en/';
 const AUDIO_DIR_JA = 'audio/yiheyuan_ja/';
+const AUDIO_DIR_KO = 'audio/yiheyuan_ko/';
 const audioCache = {};
 let currentClip = null;
 
 function playClip(id, text, onend, lang){
   stopClip();
   lang = lang || 'zh-CN';
-  const dir = lang === 'en-US' ? AUDIO_DIR_EN : (lang === 'ja-JP' ? AUDIO_DIR_JA : AUDIO_DIR);
+  const dir = lang === 'en-US' ? AUDIO_DIR_EN : (lang === 'ja-JP' ? AUDIO_DIR_JA : (lang === 'ko-KR' ? AUDIO_DIR_KO : AUDIO_DIR));
   if(!id){ speak(text, onend, lang); return; }
   const key = lang + ':' + id;
   let a = audioCache[key];
@@ -1141,6 +1152,7 @@ function stopClip(){
 let zhVoice = null;
 let enVoice = null;
 let jaVoice = null;
+let koVoice = null;
 let currentUtterance = null;
 let resumeWatchdog = null;
 function pickVoice(){
@@ -1154,6 +1166,7 @@ function pickVoice(){
     || null;
   jaVoice = voices.find(v=>/^ja/i.test(v.lang||''))
     || null;
+  koVoice = voices.find(v=>/^ko/i.test(v.lang||'')) || null;
 }
 if('speechSynthesis' in window){
   pickVoice();
@@ -1162,7 +1175,7 @@ if('speechSynthesis' in window){
   const voicePollTimer = setInterval(()=>{
     pickVoice();
     voicePolls++;
-    if((zhVoice && enVoice && jaVoice) || voicePolls > 8) clearInterval(voicePollTimer);
+    if((zhVoice && enVoice && jaVoice && koVoice) || voicePolls > 8) clearInterval(voicePollTimer);
   }, 400);
 
   const unlockSpeech = ()=>{
@@ -1183,8 +1196,8 @@ function speak(text, onend, lang){
   try{
     if(resumeWatchdog){ clearInterval(resumeWatchdog); resumeWatchdog = null; }
     speechSynthesis.cancel();
-    let voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^en/i.test(lang) ? enVoice : null;
-    if(!voice){ pickVoice(); voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^en/i.test(lang) ? enVoice : null; }
+    let voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^ko/i.test(lang) ? koVoice : /^en/i.test(lang) ? enVoice : null;
+    if(!voice){ pickVoice(); voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^ko/i.test(lang) ? koVoice : /^en/i.test(lang) ? enVoice : null; }
     const u = new SpeechSynthesisUtterance(text);
     u.lang = lang;
     if(voice) u.voice = voice;
@@ -1230,17 +1243,20 @@ function renderStory(){
   document.getElementById('storyPy').textContent = showPy ? s.py : '';
   document.getElementById('storyEn').textContent = showEn ? s.en : '';
   document.getElementById('storyJp').textContent = showJp ? (s.jp || '') : '';
+  document.getElementById('storyKo').textContent = showKo ? (s.ko || '') : '';
   const enRow = document.getElementById('storyEnRow'); if(enRow) enRow.style.display = showEn ? 'flex' : 'none';
   const jpRow = document.getElementById('storyJpRow'); if(jpRow) jpRow.style.display = (showJp && s.jp) ? 'flex' : 'none';
+  const koRow = document.getElementById('storyKoRow'); if(koRow) koRow.style.display = (showKo && s.ko) ? 'flex' : 'none';
 }
 function storyNext(){ storyIdx = (storyIdx+1) % STORY.length; renderStory(); }
 function storyPrev(){ storyIdx = (storyIdx-1+STORY.length) % STORY.length; renderStory(); }
 function toggleStoryPy(){ showPy = !showPy; document.getElementById('chipPy').classList.toggle('active', showPy); renderStory(); }
 function toggleStoryEn(){ showEn = !showEn; document.getElementById('chipEn').classList.toggle('active', showEn); renderStory(); }
 function toggleStoryJp(){ showJp = !showJp; document.getElementById('chipJp').classList.toggle('active', showJp); renderStory(); }
+function toggleStoryKo(){ showKo = !showKo; document.getElementById('chipKo').classList.toggle('active', showKo); renderStory(); }
 
 /* ---------------- FULL TEXT (view + continuous read-aloud) ---------------- */
-let fullPy = true, fullEn = true, fullJp = true;
+let fullPy = true, fullEn = true, fullJp = true, fullKo = true;
 let fullPlaying = false, fullPlayIdx = 0;
 function renderFullText(){
   const list = document.getElementById('fullTextList');
@@ -1254,6 +1270,7 @@ function renderFullText(){
       '<div class="sentence-zh">'+s.zh+'</div>' +
       (fullEn ? '<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><div class="sentence-en">'+s.en+'</div><button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY['+i+'].id, STORY['+i+'].en, null, \'en-US\');" title="播放英文发音">🔊</button></div>' : '') +
       (fullJp && s.jp ? '<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><div class="sentence-jp">'+s.jp+'</div><button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY['+i+'].id, STORY['+i+'].jp||\'\', null, \'ja-JP\');" title="播放日文发音">🔊</button></div>' : '') +
+      (fullKo && s.ko ? '<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><div class="sentence-ko">'+s.ko+'</div><button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY['+i+'].id, STORY['+i+'].ko||\'\', null, \'ko-KR\');" title="播放韩文发音">🔊</button></div>' : '') +
       '<div class="full-sent-voice-bar">' +
         '<button class="sent-action-btn" onclick="event.stopPropagation(); stopFullPlay(); stopFullMyPlay(); playClip(\''+s.id+'\',\''+s.zh+'\');" title="听原声示范">🔊 原声</button>' +
         '<span id="sent-voice-slot-'+i+'"></span>' +
@@ -1289,6 +1306,7 @@ async function updateFullTextVoiceStatus(){
 function toggleFullPy(){ fullPy = !fullPy; document.getElementById('chipFullPy').classList.toggle('active', fullPy); renderFullText(); }
 function toggleFullEn(){ fullEn = !fullEn; document.getElementById('chipFullEn').classList.toggle('active', fullEn); renderFullText(); }
 function toggleFullJp(){ fullJp = !fullJp; document.getElementById('chipFullJp').classList.toggle('active', fullJp); renderFullText(); }
+function toggleFullKo(){ fullKo = !fullKo; document.getElementById('chipFullKo').classList.toggle('active', fullKo); renderFullText(); }
 function toggleFullPlay(){ if(fullPlaying) stopFullPlay(); else startFullPlay(); }
 
 function startFullPlay(){
@@ -1421,7 +1439,7 @@ function renderChar(){
   document.getElementById('charPyBack').textContent = c.py;
   document.getElementById('charRadical').textContent = '偏旁部首: ' + c.radical;
   document.getElementById('charWords').innerHTML = '<strong>组词:</strong> ' + c.words;
-  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + ' · ' + c.context;
+  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + (c.meaningKo ? ' / ' + c.meaningKo : '') + ' · ' + c.context;
   document.getElementById('charCounter').textContent = (charIdx+1) + ' / ' + CHARACTERS.length;
 
   const badgeBox = document.getElementById('charRadicalBadgeContainer');
@@ -1661,7 +1679,7 @@ function renderFlash(){
   document.getElementById('flashTag').textContent = v.tag;
   document.getElementById('flashZhBack').textContent = v.zh;
   document.getElementById('flashPy').textContent = v.py;
-  document.getElementById('flashMeaning').textContent = v.meaning + (v.meaningJp ? ' / ' + v.meaningJp : '');
+  document.getElementById('flashMeaning').textContent = v.meaning + (v.meaningJp ? ' / ' + v.meaningJp : '') + (v.meaningKo ? ' / ' + v.meaningKo : '');
   document.getElementById('flashContext').textContent = '“' + v.context + '”';
   document.getElementById('flashCounter').textContent = (flashIdx+1) + ' / ' + currentVocabList.length;
 }
@@ -2308,6 +2326,7 @@ function renderClozeQuestion(){
   document.getElementById('clozeAfter').textContent = q.after;
   document.getElementById('clozeEn').textContent = q.en || '';
   document.getElementById('clozeJp').textContent = q.jp || '';
+  document.getElementById('clozeKo').textContent = q.ko || '';
   document.getElementById('clozeHint').textContent = q.hint || (q.type === 'text' ? '课文原句' : '情境拓展');
 
   const optsContainer = document.getElementById('clozeOpts');

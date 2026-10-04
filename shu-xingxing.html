@@ -88,6 +88,7 @@
   .sentence-py{font-size:15px;color:var(--camel-dark);text-align:center;font-weight:700;min-height:20px;}
   .sentence-en{font-size:13px;color:var(--muted);text-align:center;}
   .sentence-jp{font-size:13px;color:#8b5cf6;text-align:center;}
+  .sentence-ko{font-size:13px;color:#059669;text-align:center;}
   .mini-speak-btn{border:none;background:none;font-size:13px;cursor:pointer;line-height:1;padding:2px 3px;border-radius:50%;flex-shrink:0;opacity:.75;}
   .mini-speak-btn:active{opacity:1;transform:scale(1.15);}
   .story-nav{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;max-width:560px;}
@@ -130,6 +131,7 @@
   .full-sentence .sentence-py{font-size:13px;text-align:left;color:var(--camel-dark);min-height:0;}
   .full-sentence .sentence-en{font-size:12px;text-align:left;color:var(--muted);margin-top:2px;}
   .full-sentence .sentence-jp{font-size:12px;text-align:left;color:#8b5cf6;margin-top:2px;}
+  .full-sentence .sentence-ko{font-size:12px;text-align:left;color:#059669;margin-top:2px;}
 
   /* character tian-zi-ge card */
   .char-wrap{width:100%;max-width:340px;perspective:1000px;}
@@ -242,6 +244,7 @@
   @keyframes popIn{from{transform:scale(0.85);opacity:0;}to{transform:scale(1);opacity:1;}}
   .cloze-en{font-size:12px;color:var(--blue-sky);font-style:italic;text-align:center;}
   .cloze-jp{font-size:12px;color:#8b5cf6;font-style:italic;text-align:center;}
+  .cloze-ko{font-size:12px;color:#059669;font-style:italic;text-align:center;}
   .cloze-hint-row{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 4px;}
   .cloze-hint-pill{font-size:12px;color:var(--muted);background:#eff6ff;padding:3px 10px;border-radius:12px;}
   .cloze-speak-btn{background:#fff;border:1px solid #cbd5e1;border-radius:14px;padding:3px 10px;font-size:12px;font-weight:700;
@@ -432,6 +435,10 @@
           <div class="sentence-jp" id="storyJp"></div>
           <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].jp||'', null, 'ja-JP')" title="播放日文发音">🔊</button>
         </div>
+        <div class="lang-line-row" id="storyKoRow" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+          <div class="sentence-ko" id="storyKo"></div>
+          <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].ko||'', null, 'ko-KR')" title="播放韩文发音">🔊</button>
+        </div>
       </div>
       <!-- VOICE WAVE VISUALIZER -->
       <div class="voice-wave-panel" id="storyVoiceWave">
@@ -460,6 +467,7 @@
         <div class="chip active" id="chipPy" onclick="toggleStoryPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipEn" onclick="toggleStoryEn()">English</div>
         <div class="chip active" id="chipJp" onclick="toggleStoryJp()">日本語</div>
+        <div class="chip active" id="chipKo" onclick="toggleStoryKo()">한국어</div>
         <div class="chip" onclick="goFull()">📜 全文朗读</div>
       </div>
       <button class="btn ghost" onclick="goHome()">返回菜单</button>
@@ -473,6 +481,7 @@
         <div class="chip active" id="chipFullPy" onclick="toggleFullPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipFullEn" onclick="toggleFullEn()">English</div>
         <div class="chip active" id="chipFullJp" onclick="toggleFullJp()">日本語</div>
+        <div class="chip active" id="chipFullKo" onclick="toggleFullKo()">한국어</div>
         <button class="btn clay small" id="fullPlayBtn" onclick="toggleFullPlay()">▶️ 原声连续朗读</button>
         <button class="btn gold small" id="fullMyPlayBtn" onclick="toggleFullMyPlay()">🎙️ 播放我的全文配音</button>
       </div>
@@ -632,6 +641,7 @@
           </div>
           <div class="cloze-en" id="clozeEn"></div>
           <div class="cloze-jp" id="clozeJp"></div>
+          <div class="cloze-ko" id="clozeKo"></div>
           <div class="cloze-hint-row">
             <span class="cloze-hint-pill" id="clozeHint"></span>
             <button class="cloze-speak-btn" id="clozeSpeakBtn" onclick="speakClozeSentence()">🔊 朗读句子</button>
@@ -729,42 +739,42 @@
 /* ---------------- DATA ---------------- */
 // 1. 课文《数星星的孩子》（教材原版逐字转写，第8课）
 const STORY = [
-  {id:"st1", zh:"夏天的夜晚，天空布满了明亮的星星。", py:"Xiàtiān de yèwǎn, tiānkōng bùmǎn le míngliàng de xīngxing.", en:"On summer nights, the sky was filled with bright stars.", jp:"夏の夜、空には明るい星がいっぱいでした。"},
-  {id:"st2", zh:"一个孩子坐在院子里，靠着奶奶，仰着头数天上的星星。", py:"Yí ge háizi zuò zài yuànzi lǐ, kào zhe nǎinai, yǎng zhe tóu shǔ tiān shang de xīngxing.", en:"A child sat in the yard, leaning against his grandmother, tilting his head back to count the stars in the sky.", jp:"一人の子供が庭に座り、おばあさんに寄りかかりながら、頭を上げて空の星を数えていました。"},
-  {id:"st3", zh:"他一颗一颗地数，数了很久，还是数不完。", py:"Tā yì kē yì kē de shǔ, shǔ le hěn jiǔ, háishi shǔ bu wán.", en:"He counted them one by one; he counted for a long time, but still couldn't finish.", jp:"彼は一つ一つ数えましたが、長い時間数えても、まだ数え終わりませんでした。"},
-  {id:"st4", zh:"奶奶笑着说：“那么多星星，你能数得清吗？”", py:"Nǎinai xiào zhe shuō: \"Nàme duō xīngxing, nǐ néng shǔ de qīng ma?\"", en:"Grandmother smiled and said, \"There are so many stars — can you really count them all?\"", jp:"おばあさんは笑って言いました。「あんなにたくさんの星、数えきれるの？」"},
-  {id:"st5", zh:"孩子说：“看得见就能数得清。”", py:"Háizi shuō: \"Kàn de jiàn jiù néng shǔ de qīng.\"", en:"The child said, \"If I can see them, I can count them.\"", jp:"子供は言いました。「見えるものなら、数えられるよ。」"},
-  {id:"st6", zh:"爷爷过来了，说：“孩子，你看，那七颗星连起来像一把勺子，那是北斗星。离它不远的那颗星，叫北极星。”", py:"Yéye guò lái le, shuō: \"Háizi, nǐ kàn, nà qī kē xīng lián qǐlái xiàng yì bǎ sháozi, nà shì Běidǒuxīng. Lí tā bù yuǎn de nà kē xīng, jiào Běijíxīng.\"", en:"Grandfather came over and said, \"Look, child — those seven stars joined together look like a ladle; that's the Big Dipper. The star not far from it is called the North Star.\"", jp:"おじいさんがやって来て言いました。「坊や、見てごらん、あの七つの星をつなげると柄杓のように見えるだろう、あれが北斗七星だよ。その近くにあるあの星は北極星というんだ。」"},
-  {id:"st7", zh:"这个数星星的孩子叫张衡，是一千九百多年前的中国人。", py:"Zhè ge shǔ xīngxing de háizi jiào Zhāng Héng, shì yìqiān jiǔbǎi duō nián qián de Zhōngguó rén.", en:"This star-counting child was named Zhang Heng, a Chinese person who lived more than 1,900 years ago.", jp:"この星を数えていた子供の名前は張衡といい、今から千九百年以上前の中国の人でした。"},
-  {id:"st8", zh:"他努力学习，长大后成了著名的天文学家。", py:"Tā nǔlì xuéxí, zhǎng dà hòu chéng le zhùmíng de tiānwén xuéjiā.", en:"He studied hard, and when he grew up he became a famous astronomer.", jp:"彼は一生懸命勉強し、大人になると有名な天文学者になりました。"}
+  {id:"st1", zh:"夏天的夜晚，天空布满了明亮的星星。", py:"Xiàtiān de yèwǎn, tiānkōng bùmǎn le míngliàng de xīngxing.", en:"On summer nights, the sky was filled with bright stars.", jp:"夏の夜、空には明るい星がいっぱいでした。", ko:"여름밤, 하늘에는 밝은 별들이 가득했습니다."},
+  {id:"st2", zh:"一个孩子坐在院子里，靠着奶奶，仰着头数天上的星星。", py:"Yí ge háizi zuò zài yuànzi lǐ, kào zhe nǎinai, yǎng zhe tóu shǔ tiān shang de xīngxing.", en:"A child sat in the yard, leaning against his grandmother, tilting his head back to count the stars in the sky.", jp:"一人の子供が庭に座り、おばあさんに寄りかかりながら、頭を上げて空の星を数えていました。", ko:"한 아이가 뜰에 앉아 할머니에게 기대어 고개를 들고 하늘의 별을 세고 있었습니다."},
+  {id:"st3", zh:"他一颗一颗地数，数了很久，还是数不完。", py:"Tā yì kē yì kē de shǔ, shǔ le hěn jiǔ, háishi shǔ bu wán.", en:"He counted them one by one; he counted for a long time, but still couldn't finish.", jp:"彼は一つ一つ数えましたが、長い時間数えても、まだ数え終わりませんでした。", ko:"그는 하나하나 세었지만 오랫동안 세어도 다 셀 수 없었습니다."},
+  {id:"st4", zh:"奶奶笑着说：“那么多星星，你能数得清吗？”", py:"Nǎinai xiào zhe shuō: \"Nàme duō xīngxing, nǐ néng shǔ de qīng ma?\"", en:"Grandmother smiled and said, \"There are so many stars — can you really count them all?\"", jp:"おばあさんは笑って言いました。「あんなにたくさんの星、数えきれるの？」", ko:"할머니가 웃으며 말했습니다. \"그렇게 많은 별을 다 셀 수 있겠니?\""},
+  {id:"st5", zh:"孩子说：“看得见就能数得清。”", py:"Háizi shuō: \"Kàn de jiàn jiù néng shǔ de qīng.\"", en:"The child said, \"If I can see them, I can count them.\"", jp:"子供は言いました。「見えるものなら、数えられるよ。」", ko:"아이가 말했습니다. \"보이는 거라면 셀 수 있어요.\""},
+  {id:"st6", zh:"爷爷过来了，说：“孩子，你看，那七颗星连起来像一把勺子，那是北斗星。离它不远的那颗星，叫北极星。”", py:"Yéye guò lái le, shuō: \"Háizi, nǐ kàn, nà qī kē xīng lián qǐlái xiàng yì bǎ sháozi, nà shì Běidǒuxīng. Lí tā bù yuǎn de nà kē xīng, jiào Běijíxīng.\"", en:"Grandfather came over and said, \"Look, child — those seven stars joined together look like a ladle; that's the Big Dipper. The star not far from it is called the North Star.\"", jp:"おじいさんがやって来て言いました。「坊や、見てごらん、あの七つの星をつなげると柄杓のように見えるだろう、あれが北斗七星だよ。その近くにあるあの星は北極星というんだ。」", ko:"할아버지가 다가와서 말했습니다. \"얘야, 저 일곱 개의 별을 이으면 국자처럼 보이지, 저게 북두성이야. 거기서 멀지 않은 저 별은 북극성이라고 한단다.\""},
+  {id:"st7", zh:"这个数星星的孩子叫张衡，是一千九百多年前的中国人。", py:"Zhè ge shǔ xīngxing de háizi jiào Zhāng Héng, shì yìqiān jiǔbǎi duō nián qián de Zhōngguó rén.", en:"This star-counting child was named Zhang Heng, a Chinese person who lived more than 1,900 years ago.", jp:"この星を数えていた子供の名前は張衡といい、今から千九百年以上前の中国の人でした。", ko:"이 별을 세던 아이의 이름은 장형이고, 지금으로부터 천구백여 년 전의 중국 사람이었습니다."},
+  {id:"st8", zh:"他努力学习，长大后成了著名的天文学家。", py:"Tā nǔlì xuéxí, zhǎng dà hòu chéng le zhùmíng de tiānwén xuéjiā.", en:"He studied hard, and when he grew up he became a famous astronomer.", jp:"彼は一生懸命勉強し、大人になると有名な天文学者になりました。", ko:"그는 열심히 공부해서 자라서 유명한 천문학자가 되었습니다."}
 ];
 
 // 2. 课后生字表 (11 Characters - 课本原图)
 const CHARACTERS = [
-  {id:"zi1", zh:"数", py:"shǔ", radical:"攵 (反文旁)", radicalBadge:null, words:"数星星、数数、数学", meaning:"to count", meaningJp:"数える", context:"仰着头数天上的星星"},
-  {id:"zi2", zh:"靠", py:"kào", radical:"非 (非字旁)", radicalBadge:"非 —— 靠", words:"靠着、依靠、可靠", meaning:"to lean on / to rely on", meaningJp:"寄りかかる、頼る", context:"靠着奶奶"},
-  {id:"zi3", zh:"仰", py:"yǎng", radical:"亻 (单人旁)", radicalBadge:null, words:"仰着、仰望、信仰", meaning:"to look up / to raise one's head", meaningJp:"仰ぐ、見上げる", context:"仰着头数天上的星星"},
-  {id:"zi4", zh:"颗", py:"kē", radical:"页 (页字旁)", radicalBadge:null, words:"一颗、颗粒、几颗", meaning:"(measure word for small round things, e.g. stars)", meaningJp:"（小さく丸い物を数える量詞）～粒", context:"他一颗一颗地数"},
-  {id:"zi5", zh:"连", py:"lián", radical:"辶 (走之旁)", radicalBadge:null, words:"连起来、连接、连忙", meaning:"to link / to connect", meaningJp:"つながる、連なる", context:"那七颗星连起来像一把勺子"},
-  {id:"zi6", zh:"勺", py:"sháo", radical:"勹 (包字头)", radicalBadge:null, words:"勺子、汤勺、一勺", meaning:"ladle / spoon", meaningJp:"柄杓（ひしゃく）、さじ", context:"像一把勺子"},
-  {id:"zi7", zh:"斗", py:"dǒu", radical:"斗 (斗字旁)", radicalBadge:"斗 —— 斗", words:"北斗星、斗篷、烟斗", meaning:"dipper / a unit of dry measure", meaningJp:"ひしゃく型、升（ます）", context:"那是北斗星"},
-  {id:"zi8", zh:"离", py:"lí", radical:"离 (离字旁)", radicalBadge:null, words:"离开、距离、离别", meaning:"to leave / away from; distance", meaningJp:"離れる", context:"离它不远的那颗星"},
-  {id:"zi9", zh:"远", py:"yuǎn", radical:"辶 (走之旁)", radicalBadge:null, words:"远近、远方、永远", meaning:"far", meaningJp:"遠い", context:"离它不远的那颗星"},
-  {id:"zi10", zh:"衡", py:"héng", radical:"行 (行字框)", radicalBadge:null, words:"平衡、衡量、张衡", meaning:"to weigh / balance; (used in the name Zhang Heng)", meaningJp:"均衡、（人名用字）", context:"这个数星星的孩子叫张衡"},
-  {id:"zi11", zh:"努", py:"nǔ", radical:"力 (力字旁)", radicalBadge:null, words:"努力、努力工作", meaning:"to exert effort", meaningJp:"努力する、力を尽くす", context:"他努力学习"}
+  {id:"zi1", zh:"数", py:"shǔ", radical:"攵 (反文旁)", radicalBadge:null, words:"数星星、数数、数学", meaning:"to count", meaningJp:"数える", meaningKo:"세다", context:"仰着头数天上的星星"},
+  {id:"zi2", zh:"靠", py:"kào", radical:"非 (非字旁)", radicalBadge:"非 —— 靠", words:"靠着、依靠、可靠", meaning:"to lean on / to rely on", meaningJp:"寄りかかる、頼る", meaningKo:"기대다, 의지하다", context:"靠着奶奶"},
+  {id:"zi3", zh:"仰", py:"yǎng", radical:"亻 (单人旁)", radicalBadge:null, words:"仰着、仰望、信仰", meaning:"to look up / to raise one's head", meaningJp:"仰ぐ、見上げる", meaningKo:"고개를 들다, 우러러보다", context:"仰着头数天上的星星"},
+  {id:"zi4", zh:"颗", py:"kē", radical:"页 (页字旁)", radicalBadge:null, words:"一颗、颗粒、几颗", meaning:"(measure word for small round things, e.g. stars)", meaningJp:"（小さく丸い物を数える量詞）～粒", meaningKo:"알, 개(양사)", context:"他一颗一颗地数"},
+  {id:"zi5", zh:"连", py:"lián", radical:"辶 (走之旁)", radicalBadge:null, words:"连起来、连接、连忙", meaning:"to link / to connect", meaningJp:"つながる、連なる", meaningKo:"잇다, 연결하다", context:"那七颗星连起来像一把勺子"},
+  {id:"zi6", zh:"勺", py:"sháo", radical:"勹 (包字头)", radicalBadge:null, words:"勺子、汤勺、一勺", meaning:"ladle / spoon", meaningJp:"柄杓（ひしゃく）、さじ", meaningKo:"국자, 숟가락", context:"像一把勺子"},
+  {id:"zi7", zh:"斗", py:"dǒu", radical:"斗 (斗字旁)", radicalBadge:"斗 —— 斗", words:"北斗星、斗篷、烟斗", meaning:"dipper / a unit of dry measure", meaningJp:"ひしゃく型、升（ます）", meaningKo:"말, 됫박", context:"那是北斗星"},
+  {id:"zi8", zh:"离", py:"lí", radical:"离 (离字旁)", radicalBadge:null, words:"离开、距离、离别", meaning:"to leave / away from; distance", meaningJp:"離れる", meaningKo:"떠나다, ~로부터", context:"离它不远的那颗星"},
+  {id:"zi9", zh:"远", py:"yuǎn", radical:"辶 (走之旁)", radicalBadge:null, words:"远近、远方、永远", meaning:"far", meaningJp:"遠い", meaningKo:"멀다", context:"离它不远的那颗星"},
+  {id:"zi10", zh:"衡", py:"héng", radical:"行 (行字框)", radicalBadge:null, words:"平衡、衡量、张衡", meaning:"to weigh / balance; (used in the name Zhang Heng)", meaningJp:"均衡、（人名用字）", meaningKo:"균형, (인명자)", context:"这个数星星的孩子叫张衡"},
+  {id:"zi11", zh:"努", py:"nǔ", radical:"力 (力字旁)", radicalBadge:null, words:"努力、努力工作", meaning:"to exert effort", meaningJp:"努力する、力を尽くす", meaningKo:"힘쓰다, 노력하다", context:"他努力学习"}
 ];
 
 // 3. 课后词语表 (6 Words + 3 专有名词 - 课本原图)
 const WORDS = [
-  {id:"ci1", zh:"星星", py:"xīngxing", meaning:"star(s)", meaningJp:"星", emoji:"🌟", context:"天空布满了明亮的星星。", tag:"重点词语"},
-  {id:"ci2", zh:"夜晚", py:"yèwǎn", meaning:"night", meaningJp:"夜", emoji:"🌙", context:"夏天的夜晚，天空布满了明亮的星星。", tag:"重点词语"},
-  {id:"ci3", zh:"天空", py:"tiānkōng", meaning:"sky", meaningJp:"空", emoji:"🌌", context:"天空布满了明亮的星星。", tag:"重点词语"},
-  {id:"ci4", zh:"明亮", py:"míngliàng", meaning:"bright", meaningJp:"明るい", emoji:"✨", context:"天空布满了明亮的星星。", tag:"重点词语"},
-  {id:"ci5", zh:"院子", py:"yuànzi", meaning:"yard / courtyard", meaningJp:"庭", emoji:"🏡", context:"一个孩子坐在院子里", tag:"重点词语"},
-  {id:"ci6", zh:"努力", py:"nǔlì", meaning:"to work hard / diligent", meaningJp:"努力する", emoji:"💪", context:"他努力学习，长大后成了著名的天文学家。", tag:"重点词语"},
-  {id:"ci7", zh:"北斗星", py:"Běidǒuxīng", meaning:"the Big Dipper", meaningJp:"北斗七星", emoji:"🥄", context:"那七颗星连起来像一把勺子，那是北斗星。", tag:"专有名词"},
-  {id:"ci8", zh:"北极星", py:"Běijíxīng", meaning:"the North Star / Polaris", meaningJp:"北極星", emoji:"⭐", context:"离它不远的那颗星，叫北极星。", tag:"专有名词"},
-  {id:"ci9", zh:"张衡", py:"Zhāng Héng", meaning:"Zhang Heng (Han-dynasty Chinese astronomer)", meaningJp:"張衡（人名、天文学者）", emoji:"🔭", context:"这个数星星的孩子叫张衡。", tag:"专有名词"}
+  {id:"ci1", zh:"星星", py:"xīngxing", meaning:"star(s)", meaningJp:"星", meaningKo:"별", emoji:"🌟", context:"天空布满了明亮的星星。", tag:"重点词语"},
+  {id:"ci2", zh:"夜晚", py:"yèwǎn", meaning:"night", meaningJp:"夜", meaningKo:"밤", emoji:"🌙", context:"夏天的夜晚，天空布满了明亮的星星。", tag:"重点词语"},
+  {id:"ci3", zh:"天空", py:"tiānkōng", meaning:"sky", meaningJp:"空", meaningKo:"하늘", emoji:"🌌", context:"天空布满了明亮的星星。", tag:"重点词语"},
+  {id:"ci4", zh:"明亮", py:"míngliàng", meaning:"bright", meaningJp:"明るい", meaningKo:"밝다", emoji:"✨", context:"天空布满了明亮的星星。", tag:"重点词语"},
+  {id:"ci5", zh:"院子", py:"yuànzi", meaning:"yard / courtyard", meaningJp:"庭", meaningKo:"뜰, 정원", emoji:"🏡", context:"一个孩子坐在院子里", tag:"重点词语"},
+  {id:"ci6", zh:"努力", py:"nǔlì", meaning:"to work hard / diligent", meaningJp:"努力する", meaningKo:"노력하다", emoji:"💪", context:"他努力学习，长大后成了著名的天文学家。", tag:"重点词语"},
+  {id:"ci7", zh:"北斗星", py:"Běidǒuxīng", meaning:"the Big Dipper", meaningJp:"北斗七星", meaningKo:"북두성(북두칠성)", emoji:"🥄", context:"那七颗星连起来像一把勺子，那是北斗星。", tag:"专有名词"},
+  {id:"ci8", zh:"北极星", py:"Běijíxīng", meaning:"the North Star / Polaris", meaningJp:"北極星", meaningKo:"북극성", emoji:"⭐", context:"离它不远的那颗星，叫北极星。", tag:"专有名词"},
+  {id:"ci9", zh:"张衡", py:"Zhāng Héng", meaning:"Zhang Heng (Han-dynasty Chinese astronomer)", meaningJp:"張衡（人名、天文学者）", meaningKo:"장형(인명, 천문학자)", emoji:"🔭", context:"这个数星星的孩子叫张衡。", tag:"专有名词"}
 ];
 
 const ALL_VOCAB = WORDS;
@@ -827,7 +837,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Xiàtiān de yèwǎn, tiānkōng bùmǎn le míngliàng de xīngxing.",
     en: "On summer nights, the sky was filled with bright stars.",
-    jp: "夏の夜、空には明るい星がいっぱいでした。",
+    jp: "夏の夜、空には明るい星がいっぱいでした。", ko:"여름밤, 하늘에는 밝은 별들이 가득했습니다.",
     answerPy: "xīng xing",
     options: ["星星", "云朵", "月亮", "风"],
     hint: "课文首句 · 课后词语「星星」",
@@ -841,7 +851,7 @@ const CLOZE_QUESTIONS = [
     after: "，天空布满了明亮的星星。",
     py: "Xiàtiān de yèwǎn, tiānkōng bùmǎn le míngliàng de xīngxing.",
     en: "On summer nights, the sky was filled with bright stars.",
-    jp: "夏の夜、空には明るい星がいっぱいでした。",
+    jp: "夏の夜、空には明るい星がいっぱいでした。", ko:"여름밤, 하늘에는 밝은 별들이 가득했습니다.",
     answerPy: "yè wǎn",
     options: ["夜晚", "早晨", "中午", "黄昏"],
     hint: "课文原句 · 课后词语「夜晚」",
@@ -855,7 +865,7 @@ const CLOZE_QUESTIONS = [
     after: "布满了明亮的星星。",
     py: "Xiàtiān de yèwǎn, tiānkōng bùmǎn le míngliàng de xīngxing.",
     en: "On summer nights, the sky was filled with bright stars.",
-    jp: "夏の夜、空には明るい星がいっぱいでした。",
+    jp: "夏の夜、空には明るい星がいっぱいでした。", ko:"여름밤, 하늘에는 밝은 별들이 가득했습니다.",
     answerPy: "tiān kōng",
     options: ["天空", "大地", "院子", "河边"],
     hint: "课文原句 · 课后词语「天空」",
@@ -869,7 +879,7 @@ const CLOZE_QUESTIONS = [
     after: "的星星。",
     py: "Xiàtiān de yèwǎn, tiānkōng bùmǎn le míngliàng de xīngxing.",
     en: "On summer nights, the sky was filled with bright stars.",
-    jp: "夏の夜、空には明るい星がいっぱいでした。",
+    jp: "夏の夜、空には明るい星がいっぱいでした。", ko:"여름밤, 하늘에는 밝은 별들이 가득했습니다.",
     answerPy: "míng liàng",
     options: ["明亮", "漆黑", "遥远", "模糊"],
     hint: "课文原句 · 课后词语「明亮」",
@@ -883,7 +893,7 @@ const CLOZE_QUESTIONS = [
     after: "里，靠着奶奶，仰着头数天上的星星。",
     py: "Yí ge háizi zuò zài yuànzi lǐ, kào zhe nǎinai, yǎng zhe tóu shǔ tiān shang de xīngxing.",
     en: "A child sat in the yard, leaning against his grandmother, tilting his head back to count the stars in the sky.",
-    jp: "一人の子供が庭に座り、おばあさんに寄りかかりながら、頭を上げて空の星を数えていました。",
+    jp: "一人の子供が庭に座り、おばあさんに寄りかかりながら、頭を上げて空の星を数えていました。", ko:"한 아이가 뜰에 앉아 할머니에게 기대어 고개를 들고 하늘의 별을 세고 있었습니다.",
     answerPy: "yuàn zi",
     options: ["院子", "教室", "花园", "操场"],
     hint: "课文原句 · 课后词语「院子」",
@@ -897,7 +907,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Yéye guò lái le, shuō: \"Háizi, nǐ kàn, nà qī kē xīng lián qǐlái xiàng yì bǎ sháozi, nà shì Běidǒuxīng. Lí tā bù yuǎn de nà kē xīng, jiào Běijíxīng.\"",
     en: "Grandfather came over and said, \"Look, child — those seven stars joined together look like a ladle; that's the Big Dipper. The star not far from it is called the North Star.\"",
-    jp: "おじいさんがやって来て言いました。「坊や、見てごらん、あの七つの星をつなげると柄杓のように見えるだろう、あれが北斗七星だよ。その近くにあるあの星は北極星というんだ。」",
+    jp: "おじいさんがやって来て言いました。「坊や、見てごらん、あの七つの星をつなげると柄杓のように見えるだろう、あれが北斗七星だよ。その近くにあるあの星は北極星というんだ。」", ko:"할아버지가 다가와서 말했습니다. \"얘야, 저 일곱 개의 별을 이으면 국자처럼 보이지, 저게 북두성이야. 거기서 멀지 않은 저 별은 북극성이라고 한단다.\"",
     answerPy: "Běi dǒu xīng",
     options: ["北斗星", "北极星", "启明星", "牛郎星"],
     hint: "课文原句 · 专有名词「北斗星」",
@@ -911,7 +921,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Yéye guò lái le, shuō: \"Háizi, nǐ kàn, nà qī kē xīng lián qǐlái xiàng yì bǎ sháozi, nà shì Běidǒuxīng. Lí tā bù yuǎn de nà kē xīng, jiào Běijíxīng.\"",
     en: "Grandfather came over and said, \"Look, child — those seven stars joined together look like a ladle; that's the Big Dipper. The star not far from it is called the North Star.\"",
-    jp: "おじいさんがやって来て言いました。「坊や、見てごらん、あの七つの星をつなげると柄杓のように見えるだろう、あれが北斗七星だよ。その近くにあるあの星は北極星というんだ。」",
+    jp: "おじいさんがやって来て言いました。「坊や、見てごらん、あの七つの星をつなげると柄杓のように見えるだろう、あれが北斗七星だよ。その近くにあるあの星は北極星というんだ。」", ko:"할아버지가 다가와서 말했습니다. \"얘야, 저 일곱 개의 별을 이으면 국자처럼 보이지, 저게 북두성이야. 거기서 멀지 않은 저 별은 북극성이라고 한단다.\"",
     answerPy: "Běi jí xīng",
     options: ["北极星", "北斗星", "织女星", "启明星"],
     hint: "课文原句 · 专有名词「北极星」",
@@ -925,7 +935,7 @@ const CLOZE_QUESTIONS = [
     after: "学习，长大后成了著名的天文学家。",
     py: "Tā nǔlì xuéxí, zhǎng dà hòu chéng le zhùmíng de tiānwén xuéjiā.",
     en: "He studied hard, and when he grew up he became a famous astronomer.",
-    jp: "彼は一生懸命勉強し、大人になると有名な天文学者になりました。",
+    jp: "彼は一生懸命勉強し、大人になると有名な天文学者になりました。", ko:"그는 열심히 공부해서 자라서 유명한 천문학자가 되었습니다.",
     answerPy: "nǔ lì",
     options: ["努力", "认真", "马虎", "懒惰"],
     hint: "课文原句 · 课后词语「努力」",
@@ -939,7 +949,7 @@ const CLOZE_QUESTIONS = [
     after: "，一颗颗星星都看得很清楚。",
     py: "Jīntiān de xīngkōng tèbié míngliàng, yì kē kē xīngxing dōu kàn de hěn qīngchu.",
     en: "Tonight's starry sky is especially bright — every single star can be seen clearly.",
-    jp: "今夜の星空はとても明るく、星の一つ一つがはっきり見えます。",
+    jp: "今夜の星空はとても明るく、星の一つ一つがはっきり見えます。", ko:"오늘 밤 별하늘이 유난히 밝아서 별 하나하나가 또렷하게 보입니다.",
     answerPy: "míng liàng",
     options: ["明亮", "黑暗", "模糊", "遥远"],
     hint: "微情境拓展 · 形容光线强",
@@ -954,7 +964,7 @@ const CLOZE_QUESTIONS = [
     after: "里玩耍。",
     py: "Fàngxué hòu, wǒ yí ge rén zài yuànzi lǐ wánshuǎ.",
     en: "After school, I played alone in the yard.",
-    jp: "放課後、私は一人で庭で遊びました。",
+    jp: "放課後、私は一人で庭で遊びました。", ko:"방과 후 저는 혼자 뜰에서 놀았습니다.",
     answerPy: "yuàn zi",
     options: ["院子", "教室", "操场", "厨房"],
     hint: "微情境拓展 · 家门口的空地",
@@ -969,7 +979,7 @@ const CLOZE_QUESTIONS = [
     after: "地想了出来。",
     py: "Zhè dào shùxué tí hěn nán, dàn tā háishi nǔlì de xiǎng le chūlái.",
     en: "This math problem was hard, but he still worked hard and figured it out.",
-    jp: "この数学の問題は難しかったですが、彼はそれでも努力して解き明かしました。",
+    jp: "この数学の問題は難しかったですが、彼はそれでも努力して解き明かしました。", ko:"이 수학 문제는 어려웠지만 그는 그래도 노력해서 풀어냈습니다.",
     answerPy: "nǔ lì",
     options: ["努力", "随便", "马虎", "匆忙"],
     hint: "微情境拓展 · 不放弃地用心做",
@@ -984,7 +994,7 @@ const CLOZE_QUESTIONS = [
     after: "，路灯一盏一盏地亮了起来。",
     py: "Dào le yèwǎn, lùdēng yì zhǎn yì zhǎn de liàng le qǐlái.",
     en: "When night fell, the streetlights came on one by one.",
-    jp: "夜になると、街灯が一つずつ灯り始めました。",
+    jp: "夜になると、街灯が一つずつ灯り始めました。", ko:"밤이 되자 가로등이 하나씩 켜지기 시작했습니다.",
     answerPy: "yè wǎn",
     options: ["夜晚", "中午", "清晨", "傍晚"],
     hint: "微情境拓展 · 天黑以后的时间",
@@ -996,7 +1006,7 @@ const CLOZE_QUESTIONS = [
 
 
 /* ---------------- STATE ---------------- */
-let storyIdx = 0, showPy = true, showEn = true, showJp = true;
+let storyIdx = 0, showPy = true, showEn = true, showJp = true, showKo = true;
 let charIdx = 0;
 let flashIdx = 0;
 let matchMode = 'chars'; // chars, words, all
@@ -1062,7 +1072,7 @@ let currentAudio = null;
 function playClip(id, fallbackText, onEnded, lang){
   stopClip();
   lang = lang || 'zh-CN';
-  const dir = lang === 'en-US' ? 'audio/xingxing_en/' : (lang === 'ja-JP' ? 'audio/xingxing_ja/' : 'audio/xingxing/');
+  const dir = lang === 'en-US' ? 'audio/xingxing_en/' : (lang === 'ja-JP' ? 'audio/xingxing_ja/' : (lang === 'ko-KR' ? 'audio/xingxing_ko/' : 'audio/xingxing/'));
   if(!id) {
     speakText(fallbackText, onEnded, lang);
     return;
@@ -1092,7 +1102,7 @@ function stopClip(){
     window.speechSynthesis.cancel();
   }
 }
-let zhVoice = null, enVoice = null, jaVoice = null;
+let zhVoice = null, enVoice = null, jaVoice = null, koVoice = null;
 function pickVoice(){
   if(!('speechSynthesis' in window)) return;
   const voices = speechSynthesis.getVoices();
@@ -1104,6 +1114,7 @@ function pickVoice(){
     || null;
   jaVoice = voices.find(v=>/^ja/i.test(v.lang||''))
     || null;
+  koVoice = voices.find(v=>/^ko/i.test(v.lang||'')) || null;
 }
 if('speechSynthesis' in window){
   pickVoice();
@@ -1112,7 +1123,7 @@ if('speechSynthesis' in window){
   const voicePollTimer = setInterval(()=>{
     pickVoice();
     voicePolls++;
-    if((zhVoice && enVoice && jaVoice) || voicePolls > 8) clearInterval(voicePollTimer);
+    if((zhVoice && enVoice && jaVoice && koVoice) || voicePolls > 8) clearInterval(voicePollTimer);
   }, 400);
 }
 function speakText(text, onEnded, lang){
@@ -1122,8 +1133,8 @@ function speakText(text, onEnded, lang){
     return;
   }
   window.speechSynthesis.cancel();
-  let voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^en/i.test(lang) ? enVoice : null;
-  if(!voice){ pickVoice(); voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^en/i.test(lang) ? enVoice : null; }
+  let voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^ko/i.test(lang) ? koVoice : /^en/i.test(lang) ? enVoice : null;
+  if(!voice){ pickVoice(); voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^ko/i.test(lang) ? koVoice : /^en/i.test(lang) ? enVoice : null; }
   const u = new SpeechSynthesisUtterance(text);
   u.lang = lang;
   if(voice) u.voice = voice;
@@ -1194,11 +1205,14 @@ function renderStory(){
   document.getElementById('storyPy').textContent = s.py;
   document.getElementById('storyEn').textContent = s.en;
   document.getElementById('storyJp').textContent = s.jp || '';
+  document.getElementById('storyKo').textContent = s.ko || '';
   document.getElementById('storyPy').style.display = showPy ? 'block' : 'none';
   document.getElementById('storyEn').style.display = showEn ? 'block' : 'none';
   document.getElementById('storyJp').style.display = showJp ? 'block' : 'none';
+  document.getElementById('storyKo').style.display = showKo ? 'block' : 'none';
   const enRow = document.getElementById('storyEnRow'); if(enRow) enRow.style.display = showEn ? 'flex' : 'none';
   const jpRow = document.getElementById('storyJpRow'); if(jpRow) jpRow.style.display = (showJp && s.jp) ? 'flex' : 'none';
+  const koRow = document.getElementById('storyKoRow'); if(koRow) koRow.style.display = (showKo && s.ko) ? 'flex' : 'none';
   updateStoryVoiceUI();
 }
 function storyPrev(){ if(storyIdx > 0){ storyIdx--; renderStory(); playClip(STORY[storyIdx].id, STORY[storyIdx].zh); } }
@@ -1206,9 +1220,10 @@ function storyNext(){ if(storyIdx < STORY.length - 1){ storyIdx++; renderStory()
 function toggleStoryPy(){ showPy = !showPy; document.getElementById('chipPy').classList.toggle('active', showPy); renderStory(); }
 function toggleStoryEn(){ showEn = !showEn; document.getElementById('chipEn').classList.toggle('active', showEn); renderStory(); }
 function toggleStoryJp(){ showJp = !showJp; document.getElementById('chipJp').classList.toggle('active', showJp); renderStory(); }
+function toggleStoryKo(){ showKo = !showKo; document.getElementById('chipKo').classList.toggle('active', showKo); renderStory(); }
 
 /* ---------------- FULL TEXT (全文朗读与配音) ---------------- */
-let fullPlaying = false, fullPlayIdx = 0, fullShowPy = true, fullShowEn = true, fullShowJp = true;
+let fullPlaying = false, fullPlayIdx = 0, fullShowPy = true, fullShowEn = true, fullShowJp = true, fullShowKo = true;
 let fullMyPlaying = false;
 
 function renderFullText(){
@@ -1228,6 +1243,10 @@ function renderFullText(){
       <div style="display:${(fullShowJp && s.jp)?'flex':'none'};align-items:center;justify-content:center;gap:6px;">
         <div class="sentence-jp">${s.jp||''}</div>
         <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[${idx}].id, STORY[${idx}].jp||'', null, 'ja-JP');" title="播放日文发音">🔊</button>
+      </div>
+      <div style="display:${(fullShowKo && s.ko)?'flex':'none'};align-items:center;justify-content:center;gap:6px;">
+        <div class="sentence-ko">${s.ko||''}</div>
+        <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[${idx}].id, STORY[${idx}].ko||'', null, 'ko-KR');" title="播放韩文发音">🔊</button>
       </div>
       <div class="full-sent-voice-bar" id="full-voice-bar-${idx}">
         <span class="sent-voice-tag" id="voice-tag-${idx}">加载录音中...</span>
@@ -1275,6 +1294,7 @@ async function updateFullTextVoiceBars(){
 function toggleFullPy(){ fullShowPy = !fullShowPy; document.getElementById('chipFullPy').classList.toggle('active', fullShowPy); renderFullText(); }
 function toggleFullEn(){ fullShowEn = !fullShowEn; document.getElementById('chipFullEn').classList.toggle('active', fullShowEn); renderFullText(); }
 function toggleFullJp(){ fullShowJp = !fullShowJp; document.getElementById('chipFullJp').classList.toggle('active', fullShowJp); renderFullText(); }
+function toggleFullKo(){ fullShowKo = !fullShowKo; document.getElementById('chipFullKo').classList.toggle('active', fullShowKo); renderFullText(); }
 
 function highlightFullSentence(idx){
   document.querySelectorAll('.full-sentence').forEach((el, i)=>{
@@ -1423,7 +1443,7 @@ function renderChar(){
   document.getElementById('charPyBack').textContent = c.py;
   document.getElementById('charRadical').textContent = '偏旁部首: ' + c.radical;
   document.getElementById('charWords').innerHTML = '<strong>组词:</strong> ' + c.words;
-  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + ' · ' + c.context;
+  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + (c.meaningKo ? ' / ' + c.meaningKo : '') + ' · ' + c.context;
   document.getElementById('charCounter').textContent = (charIdx+1) + ' / ' + CHARACTERS.length;
 
   const badgeBox = document.getElementById('charRadicalBadgeContainer');
@@ -1583,7 +1603,7 @@ function renderFlash(){
   document.getElementById('flashZh').textContent = w.zh;
   document.getElementById('flashZhBack').textContent = w.zh;
   document.getElementById('flashPy').textContent = w.py;
-  document.getElementById('flashMeaning').textContent = w.meaning + (w.meaningJp ? ' / ' + w.meaningJp : '');
+  document.getElementById('flashMeaning').textContent = w.meaning + (w.meaningJp ? ' / ' + w.meaningJp : '') + (w.meaningKo ? ' / ' + w.meaningKo : '');
   document.getElementById('flashContext').textContent = '例句: ' + w.context;
   document.getElementById('flashCounter').textContent = (flashIdx + 1) + ' / ' + WORDS.length;
 }
@@ -2115,6 +2135,7 @@ function loadClozeQuestion(){
   document.getElementById('clozeAfter').textContent = q.after;
   document.getElementById('clozeEn').textContent = q.en;
   document.getElementById('clozeJp').textContent = q.jp || '';
+  document.getElementById('clozeKo').textContent = q.ko || '';
   document.getElementById('clozeHint').textContent = '💡 ' + q.hint;
 
   const slot = document.getElementById('clozeSlot');

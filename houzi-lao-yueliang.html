@@ -88,6 +88,7 @@
   .sentence-py{font-size:15px;color:var(--camel-dark);text-align:center;font-weight:700;min-height:20px;}
   .sentence-en{font-size:13px;color:var(--muted);text-align:center;}
   .sentence-jp{font-size:13px;color:#8b5cf6;text-align:center;}
+  .sentence-ko{font-size:13px;color:#059669;text-align:center;}
   .mini-speak-btn{border:none;background:none;font-size:13px;cursor:pointer;line-height:1;padding:2px 3px;border-radius:50%;flex-shrink:0;opacity:.75;}
   .mini-speak-btn:active{opacity:1;transform:scale(1.15);}
   .story-nav{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;max-width:560px;}
@@ -130,6 +131,7 @@
   .full-sentence .sentence-py{font-size:13px;text-align:left;color:var(--camel-dark);min-height:0;}
   .full-sentence .sentence-en{font-size:12px;text-align:left;color:var(--muted);margin-top:2px;}
   .full-sentence .sentence-jp{font-size:12px;text-align:left;color:#8b5cf6;margin-top:2px;}
+  .full-sentence .sentence-ko{font-size:12px;text-align:left;color:#059669;margin-top:2px;}
 
   /* character tian-zi-ge card */
   .char-wrap{width:100%;max-width:340px;perspective:1000px;}
@@ -242,6 +244,7 @@
   @keyframes popIn{from{transform:scale(0.85);opacity:0;}to{transform:scale(1);opacity:1;}}
   .cloze-en{font-size:12px;color:var(--blue-sky);font-style:italic;text-align:center;}
   .cloze-jp{font-size:12px;color:#8b5cf6;font-style:italic;text-align:center;}
+  .cloze-ko{font-size:12px;color:#059669;font-style:italic;text-align:center;}
   .cloze-hint-row{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 4px;}
   .cloze-hint-pill{font-size:12px;color:var(--muted);background:#f5f5f4;padding:3px 10px;border-radius:12px;}
   .cloze-speak-btn{background:#fff;border:1px solid #cbd5e1;border-radius:14px;padding:3px 10px;font-size:12px;font-weight:700;
@@ -432,6 +435,10 @@
           <div class="sentence-jp" id="storyJp"></div>
           <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].jp||'', null, 'ja-JP')" title="播放日文发音">🔊</button>
         </div>
+        <div class="lang-line-row" id="storyKoRow" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+          <div class="sentence-ko" id="storyKo"></div>
+          <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].ko||'', null, 'ko-KR')" title="播放韩文发音">🔊</button>
+        </div>
       </div>
       <!-- VOICE WAVE VISUALIZER -->
       <div class="voice-wave-panel" id="storyVoiceWave">
@@ -460,6 +467,7 @@
         <div class="chip active" id="chipPy" onclick="toggleStoryPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipEn" onclick="toggleStoryEn()">English</div>
         <div class="chip active" id="chipJp" onclick="toggleStoryJp()">日本語</div>
+        <div class="chip active" id="chipKo" onclick="toggleStoryKo()">한국어</div>
         <div class="chip" onclick="goFull()">📜 全文朗读</div>
       </div>
       <button class="btn ghost" onclick="goHome()">返回菜单</button>
@@ -473,6 +481,7 @@
         <div class="chip active" id="chipFullPy" onclick="toggleFullPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipFullEn" onclick="toggleFullEn()">English</div>
         <div class="chip active" id="chipFullJp" onclick="toggleFullJp()">日本語</div>
+        <div class="chip active" id="chipFullKo" onclick="toggleFullKo()">한국어</div>
         <button class="btn clay small" id="fullPlayBtn" onclick="toggleFullPlay()">▶️ 原声连续朗读</button>
         <button class="btn gold small" id="fullMyPlayBtn" onclick="toggleFullMyPlay()">🎙️ 播放我的全文配音</button>
       </div>
@@ -632,6 +641,7 @@
           </div>
           <div class="cloze-en" id="clozeEn"></div>
           <div class="cloze-jp" id="clozeJp"></div>
+          <div class="cloze-ko" id="clozeKo"></div>
           <div class="cloze-hint-row">
             <span class="cloze-hint-pill" id="clozeHint"></span>
             <button class="cloze-speak-btn" id="clozeSpeakBtn" onclick="speakClozeSentence()">🔊 朗读句子</button>
@@ -729,37 +739,37 @@
 /* ---------------- DATA ---------------- */
 // 1. 课文《猴子捞月亮》（教材原版逐字转写，第6课）
 const STORY = [
-  {id:"st1", zh:"有一天晚上，一群猴子在湖边的树上玩儿。", py:"Yǒu yìtiān wǎnshang, yìqún hóuzi zài húbiān de shù shang wánr.", en:"One evening, a group of monkeys were playing in a tree by the lake.", jp:"ある晩、一群れの猿が湖のほとりの木の上で遊んでいました。"},
-  {id:"st2", zh:"突然，一只小猴子喊起来：“不好啦，月亮掉到水里了！”", py:"Tūrán, yìzhī xiǎo hóuzi hǎn qǐlái: \"Bù hǎo la, yuèliang diào dào shuǐ lǐ le!\"", en:"Suddenly, a little monkey shouted, \"Oh no, the moon has fallen into the water!\"", jp:"突然、一匹の子猿が叫びました。「大変だ、月が水の中に落ちた！」"},
-  {id:"st3", zh:"大猴子一看，也叫了起来：“不好啦，月亮真的掉到水里了！”", py:"Dà hóuzi yí kàn, yě jiào le qǐlái: \"Bù hǎo la, yuèliang zhēn de diào dào shuǐ lǐ le!\"", en:"The big monkey looked and also cried out, \"Oh no, the moon has really fallen into the water!\"", jp:"大猿はそれを見て、やはり叫びました。「大変だ、月が本当に水の中に落ちた！」"},
-  {id:"st4", zh:"一群猴子看了后都跟着说：“是啊，月亮怎么掉到水里了？”", py:"Yìqún hóuzi kàn le hòu dōu gēnzhe shuō: \"Shì a, yuèliang zěnme diào dào shuǐ lǐ le?\"", en:"After the other monkeys looked, they all agreed, saying, \"That's right, how did the moon fall into the water?\"", jp:"猿たちはそれを見て、みな口をそろえて言いました。「本当だ、月はどうして水の中に落ちたんだろう？」"},
-  {id:"st5", zh:"大猴子说：“我们把月亮捞上来吧！”", py:"Dà hóuzi shuō: \"Wǒmen bǎ yuèliang lāo shànglái ba!\"", en:"The big monkey said, \"Let's fish the moon out of the water!\"", jp:"大猿が言いました。「みんなで月をすくい上げよう！」"},
-  {id:"st6", zh:"于是，猴子们爬到树上，一只拉着一只，一直接到水里。", py:"Yúshì, hóuzimen pá dào shù shang, yìzhī lāzhe yìzhī, yìzhí jiē dào shuǐ lǐ.", en:"So the monkeys climbed up the tree, one holding onto another, linking all the way down to the water.", jp:"そこで猿たちは木に登り、一匹また一匹とつながって、水面までつながりました。"},
-  {id:"st7", zh:"挂在最下面的小猴子伸手去捞月亮。他的手刚碰到水，月亮就不见了。", py:"Guà zài zuì xiàmiàn de xiǎo hóuzi shēnshǒu qù lāo yuèliang. Tā de shǒu gāng pèng dào shuǐ, yuèliang jiù bú jiàn le.", en:"The little monkey hanging at the very bottom reached out to scoop up the moon. The moment his hand touched the water, the moon disappeared.", jp:"一番下にぶら下がった子猿が手を伸ばして月をすくおうとしました。手が水に触れたとたん、月は消えてしまいました。"},
-  {id:"st8", zh:"猴子们觉得很奇怪。这时，大猴子抬头一看，突然叫了起来：“月亮不是还在天上吗？”", py:"Hóuzimen juéde hěn qíguài. Zhè shí, dà hóuzi táitóu yí kàn, tūrán jiào le qǐlái: \"Yuèliang bú shì hái zài tiān shang ma?\"", en:"The monkeys thought this was very strange. At that moment, the big monkey looked up and suddenly cried out, \"Isn't the moon still up in the sky?\"", jp:"猿たちはとても不思議に思いました。その時、大猿が頭を上げて見ると、突然叫びました。「月はまだ空にあるじゃないか！」"}
+  {id:"st1", zh:"有一天晚上，一群猴子在湖边的树上玩儿。", py:"Yǒu yìtiān wǎnshang, yìqún hóuzi zài húbiān de shù shang wánr.", en:"One evening, a group of monkeys were playing in a tree by the lake.", jp:"ある晩、一群れの猿が湖のほとりの木の上で遊んでいました。", ko:"어느 날 밤, 한 무리의 원숭이들이 호숫가 나무 위에서 놀고 있었습니다."},
+  {id:"st2", zh:"突然，一只小猴子喊起来：“不好啦，月亮掉到水里了！”", py:"Tūrán, yìzhī xiǎo hóuzi hǎn qǐlái: \"Bù hǎo la, yuèliang diào dào shuǐ lǐ le!\"", en:"Suddenly, a little monkey shouted, \"Oh no, the moon has fallen into the water!\"", jp:"突然、一匹の子猿が叫びました。「大変だ、月が水の中に落ちた！」", ko:"갑자기 작은 원숭이 한 마리가 외쳤습니다. \"큰일 났다, 달이 물에 떨어졌어!\""},
+  {id:"st3", zh:"大猴子一看，也叫了起来：“不好啦，月亮真的掉到水里了！”", py:"Dà hóuzi yí kàn, yě jiào le qǐlái: \"Bù hǎo la, yuèliang zhēn de diào dào shuǐ lǐ le!\"", en:"The big monkey looked and also cried out, \"Oh no, the moon has really fallen into the water!\"", jp:"大猿はそれを見て、やはり叫びました。「大変だ、月が本当に水の中に落ちた！」", ko:"큰 원숭이가 보고는 역시 외쳤습니다. \"큰일 났다, 달이 정말로 물에 떨어졌어!\""},
+  {id:"st4", zh:"一群猴子看了后都跟着说：“是啊，月亮怎么掉到水里了？”", py:"Yìqún hóuzi kàn le hòu dōu gēnzhe shuō: \"Shì a, yuèliang zěnme diào dào shuǐ lǐ le?\"", en:"After the other monkeys looked, they all agreed, saying, \"That's right, how did the moon fall into the water?\"", jp:"猿たちはそれを見て、みな口をそろえて言いました。「本当だ、月はどうして水の中に落ちたんだろう？」", ko:"다른 원숭이들도 보고 나서 모두 따라 말했습니다. \"그래, 달이 어쩌다 물에 떨어졌지?\""},
+  {id:"st5", zh:"大猴子说：“我们把月亮捞上来吧！”", py:"Dà hóuzi shuō: \"Wǒmen bǎ yuèliang lāo shànglái ba!\"", en:"The big monkey said, \"Let's fish the moon out of the water!\"", jp:"大猿が言いました。「みんなで月をすくい上げよう！」", ko:"큰 원숭이가 말했습니다. \"우리 달을 건져 올리자!\""},
+  {id:"st6", zh:"于是，猴子们爬到树上，一只拉着一只，一直接到水里。", py:"Yúshì, hóuzimen pá dào shù shang, yìzhī lāzhe yìzhī, yìzhí jiē dào shuǐ lǐ.", en:"So the monkeys climbed up the tree, one holding onto another, linking all the way down to the water.", jp:"そこで猿たちは木に登り、一匹また一匹とつながって、水面までつながりました。", ko:"그래서 원숭이들은 나무 위로 올라가 서로 손을 잡고 매달려 물까지 이어졌습니다."},
+  {id:"st7", zh:"挂在最下面的小猴子伸手去捞月亮。他的手刚碰到水，月亮就不见了。", py:"Guà zài zuì xiàmiàn de xiǎo hóuzi shēnshǒu qù lāo yuèliang. Tā de shǒu gāng pèng dào shuǐ, yuèliang jiù bú jiàn le.", en:"The little monkey hanging at the very bottom reached out to scoop up the moon. The moment his hand touched the water, the moon disappeared.", jp:"一番下にぶら下がった子猿が手を伸ばして月をすくおうとしました。手が水に触れたとたん、月は消えてしまいました。", ko:"맨 아래에 매달린 작은 원숭이가 손을 뻗어 달을 건지려 했습니다. 손이 물에 닿자마자 달은 사라져 버렸습니다."},
+  {id:"st8", zh:"猴子们觉得很奇怪。这时，大猴子抬头一看，突然叫了起来：“月亮不是还在天上吗？”", py:"Hóuzimen juéde hěn qíguài. Zhè shí, dà hóuzi táitóu yí kàn, tūrán jiào le qǐlái: \"Yuèliang bú shì hái zài tiān shang ma?\"", en:"The monkeys thought this was very strange. At that moment, the big monkey looked up and suddenly cried out, \"Isn't the moon still up in the sky?\"", jp:"猿たちはとても不思議に思いました。その時、大猿が頭を上げて見ると、突然叫びました。「月はまだ空にあるじゃないか！」", ko:"원숭이들은 매우 이상하다고 생각했습니다. 그때, 큰 원숭이가 고개를 들어 보고는 갑자기 외쳤습니다. \"달은 아직 하늘에 있지 않아?\""}
 ];
 
 // 2. 课后生字表 (8 Characters - 课本原图)
 const CHARACTERS = [
-  {id:"zi1", zh:"猴", py:"hóu", radical:"犭 (反犬旁)", radicalBadge:null, words:"猴子、猴年、耍猴", meaning:"monkey", meaningJp:"猿", context:"一群猴子在湖边的树上玩儿"},
-  {id:"zi2", zh:"捞", py:"lāo", radical:"扌 (提手旁)", radicalBadge:null, words:"捞月亮、打捞、捞鱼", meaning:"scoop up / fish out", meaningJp:"すくい上げる", context:"我们把月亮捞上来吧"},
-  {id:"zi3", zh:"晚", py:"wǎn", radical:"日 (日字旁)", radicalBadge:null, words:"晚上、晚会、傍晚", meaning:"evening / late", meaningJp:"夜、遅い", context:"有一天晚上"},
-  {id:"zi4", zh:"群", py:"qún", radical:"羊 (羊字旁)", radicalBadge:"羊 —— 群", words:"一群、群众、羊群", meaning:"group / flock", meaningJp:"群れ", context:"一群猴子在湖边的树上玩儿"},
-  {id:"zi5", zh:"跟", py:"gēn", radical:"⻊ (足字旁)", radicalBadge:null, words:"跟着、跟随、脚跟", meaning:"follow / with", meaningJp:"ついていく、～と", context:"一群猴子看了后都跟着说"},
-  {id:"zi6", zh:"啊", py:"a", radical:"口 (口字旁)", radicalBadge:null, words:"是啊、啊呀、好啊", meaning:"ah (exclamation particle)", meaningJp:"ああ（感嘆詞）", context:"是啊，月亮怎么掉到水里了"},
-  {id:"zi7", zh:"接", py:"jiē", radical:"扌 (提手旁)", radicalBadge:null, words:"接着、连接、接住", meaning:"connect / catch", meaningJp:"つなぐ、受け取る", context:"一只拉着一只，一直接到水里"},
-  {id:"zi8", zh:"碰", py:"pèng", radical:"石 (石字旁)", radicalBadge:"石 —— 碰", words:"碰到、碰见、碰撞", meaning:"touch / bump into", meaningJp:"触れる、ぶつかる", context:"他的手刚碰到水"}
+  {id:"zi1", zh:"猴", py:"hóu", radical:"犭 (反犬旁)", radicalBadge:null, words:"猴子、猴年、耍猴", meaning:"monkey", meaningJp:"猿", meaningKo:"원숭이", context:"一群猴子在湖边的树上玩儿"},
+  {id:"zi2", zh:"捞", py:"lāo", radical:"扌 (提手旁)", radicalBadge:null, words:"捞月亮、打捞、捞鱼", meaning:"scoop up / fish out", meaningJp:"すくい上げる", meaningKo:"건져내다, 떠내다", context:"我们把月亮捞上来吧"},
+  {id:"zi3", zh:"晚", py:"wǎn", radical:"日 (日字旁)", radicalBadge:null, words:"晚上、晚会、傍晚", meaning:"evening / late", meaningJp:"夜、遅い", meaningKo:"밤, 늦다", context:"有一天晚上"},
+  {id:"zi4", zh:"群", py:"qún", radical:"羊 (羊字旁)", radicalBadge:"羊 —— 群", words:"一群、群众、羊群", meaning:"group / flock", meaningJp:"群れ", meaningKo:"무리, 떼", context:"一群猴子在湖边的树上玩儿"},
+  {id:"zi5", zh:"跟", py:"gēn", radical:"⻊ (足字旁)", radicalBadge:null, words:"跟着、跟随、脚跟", meaning:"follow / with", meaningJp:"ついていく、～と", meaningKo:"따라가다, ~와", context:"一群猴子看了后都跟着说"},
+  {id:"zi6", zh:"啊", py:"a", radical:"口 (口字旁)", radicalBadge:null, words:"是啊、啊呀、好啊", meaning:"ah (exclamation particle)", meaningJp:"ああ（感嘆詞）", meaningKo:"아 (감탄 어조사)", context:"是啊，月亮怎么掉到水里了"},
+  {id:"zi7", zh:"接", py:"jiē", radical:"扌 (提手旁)", radicalBadge:null, words:"接着、连接、接住", meaning:"connect / catch", meaningJp:"つなぐ、受け取る", meaningKo:"잇다, 받다", context:"一只拉着一只，一直接到水里"},
+  {id:"zi8", zh:"碰", py:"pèng", radical:"石 (石字旁)", radicalBadge:"石 —— 碰", words:"碰到、碰见、碰撞", meaning:"touch / bump into", meaningJp:"触れる、ぶつかる", meaningKo:"닿다, 부딪히다", context:"他的手刚碰到水"}
 ];
 
 // 3. 课后词语表 (7 Words - 课本原图)
 const WORDS = [
-  {id:"ci1", zh:"月亮", py:"yuèliang", meaning:"the moon", meaningJp:"月", emoji:"🌕", context:"月亮掉到水里了！", tag:"重点词语"},
-  {id:"ci2", zh:"晚上", py:"wǎnshang", meaning:"evening / night", meaningJp:"夜、晩", emoji:"🌆", context:"有一天晚上，一群猴子在湖边的树上玩儿", tag:"重点词语"},
-  {id:"ci3", zh:"跟着", py:"gēnzhe", meaning:"to follow", meaningJp:"ついていく", emoji:"🚶", context:"一群猴子看了后都跟着说", tag:"重点词语"},
-  {id:"ci4", zh:"于是", py:"yúshì", meaning:"thereupon / so", meaningJp:"そこで", emoji:"➡️", context:"大猴子说完，于是猴子们爬到树上", tag:"重点词语"},
-  {id:"ci5", zh:"下面", py:"xiàmiàn", meaning:"below / underneath", meaningJp:"下、下方", emoji:"⬇️", context:"挂在最下面的小猴子伸手去捞月亮", tag:"重点词语"},
-  {id:"ci6", zh:"伸手", py:"shēnshǒu", meaning:"to reach out (a hand)", meaningJp:"手を伸ばす", emoji:"🖐️", context:"小猴子伸手去捞月亮", tag:"重点词语"},
-  {id:"ci7", zh:"这时", py:"zhèshí", meaning:"at this moment", meaningJp:"この時", emoji:"⏰", context:"这时，大猴子抬头一看", tag:"重点词语"}
+  {id:"ci1", zh:"月亮", py:"yuèliang", meaning:"the moon", meaningJp:"月", meaningKo:"달", emoji:"🌕", context:"月亮掉到水里了！", tag:"重点词语"},
+  {id:"ci2", zh:"晚上", py:"wǎnshang", meaning:"evening / night", meaningJp:"夜、晩", meaningKo:"밤, 저녁", emoji:"🌆", context:"有一天晚上，一群猴子在湖边的树上玩儿", tag:"重点词语"},
+  {id:"ci3", zh:"跟着", py:"gēnzhe", meaning:"to follow", meaningJp:"ついていく", meaningKo:"따라가다", emoji:"🚶", context:"一群猴子看了后都跟着说", tag:"重点词语"},
+  {id:"ci4", zh:"于是", py:"yúshì", meaning:"thereupon / so", meaningJp:"そこで", meaningKo:"그래서", emoji:"➡️", context:"大猴子说完，于是猴子们爬到树上", tag:"重点词语"},
+  {id:"ci5", zh:"下面", py:"xiàmiàn", meaning:"below / underneath", meaningJp:"下、下方", meaningKo:"아래, 밑", emoji:"⬇️", context:"挂在最下面的小猴子伸手去捞月亮", tag:"重点词语"},
+  {id:"ci6", zh:"伸手", py:"shēnshǒu", meaning:"to reach out (a hand)", meaningJp:"手を伸ばす", meaningKo:"손을 뻗다", emoji:"🖐️", context:"小猴子伸手去捞月亮", tag:"重点词语"},
+  {id:"ci7", zh:"这时", py:"zhèshí", meaning:"at this moment", meaningJp:"この時", meaningKo:"이때, 그때", emoji:"⏰", context:"这时，大猴子抬头一看", tag:"重点词语"}
 ];
 
 const ALL_VOCAB = WORDS;
@@ -822,7 +832,7 @@ const CLOZE_QUESTIONS = [
     after: "，一群猴子在湖边的树上玩儿。",
     py: "Yǒu yìtiān wǎnshang, yìqún hóuzi zài húbiān de shù shang wánr.",
     en: "One evening, a group of monkeys were playing in a tree by the lake.",
-    jp: "ある晩、一群れの猿が湖のほとりの木の上で遊んでいました。",
+    jp: "ある晩、一群れの猿が湖のほとりの木の上で遊んでいました。", ko:"어느 날 밤, 한 무리의 원숭이들이 호숫가 나무 위에서 놀고 있었습니다.",
     answerPy: "wǎn shang",
     options: ["晚上", "早上", "中午", "半夜"],
     hint: "课文首句 · 课后生字「晚」",
@@ -836,7 +846,7 @@ const CLOZE_QUESTIONS = [
     after: "猴子在湖边的树上玩儿。",
     py: "Yǒu yìtiān wǎnshang, yìqún hóuzi zài húbiān de shù shang wánr.",
     en: "One evening, a group of monkeys were playing in a tree by the lake.",
-    jp: "ある晩、一群れの猿が湖のほとりの木の上で遊んでいました。",
+    jp: "ある晩、一群れの猿が湖のほとりの木の上で遊んでいました。", ko:"어느 날 밤, 한 무리의 원숭이들이 호숫가 나무 위에서 놀고 있었습니다.",
     answerPy: "qún",
     options: ["群", "伙", "帮", "堆"],
     hint: "课文原句 · 课后生字「群」（羊部）",
@@ -850,7 +860,7 @@ const CLOZE_QUESTIONS = [
     after: "掉到水里了！”",
     py: "Tūrán, yìzhī xiǎo hóuzi hǎn qǐlái: Bù hǎo la, yuèliang diào dào shuǐ lǐ le!",
     en: "A little monkey shouted, \"Oh no, the moon has fallen into the water!\"",
-    jp: "一匹の子猿が叫びました。「大変だ、月が水の中に落ちた！」",
+    jp: "一匹の子猿が叫びました。「大変だ、月が水の中に落ちた！」", ko:"작은 원숭이 한 마리가 외쳤습니다. \"큰일 났다, 달이 물에 떨어졌어!\"",
     answerPy: "yuè liang",
     options: ["月亮", "星星", "太阳", "云朵"],
     hint: "课文原句 · 课后词语「月亮」",
@@ -864,7 +874,7 @@ const CLOZE_QUESTIONS = [
     after: "说：“是啊，月亮怎么掉到水里了？”",
     py: "Yìqún hóuzi kàn le hòu dōu gēnzhe shuō: Shì a, yuèliang zěnme diào dào shuǐ lǐ le?",
     en: "The other monkeys all agreed, saying, \"That's right, how did the moon fall into the water?\"",
-    jp: "猿たちはみな口をそろえて言いました。「本当だ、月はどうして水の中に落ちたんだろう？」",
+    jp: "猿たちはみな口をそろえて言いました。「本当だ、月はどうして水の中に落ちたんだろう？」", ko:"다른 원숭이들도 모두 따라 말했습니다. \"그래, 달이 어쩌다 물에 떨어졌지?\"",
     answerPy: "gēn zhe",
     options: ["跟着", "接着", "突然", "于是"],
     hint: "课文原句 · 课后词语「跟着」",
@@ -878,7 +888,7 @@ const CLOZE_QUESTIONS = [
     after: "，猴子们爬到树上，一只拉着一只，一直接到水里。",
     py: "Dà hóuzi shuō: Wǒmen bǎ yuèliang lāo shànglái ba! Yúshì, hóuzimen pá dào shù shang.",
     en: "The big monkey said, \"Let's fish the moon out!\" So the monkeys climbed up the tree.",
-    jp: "大猿が言いました。「月をすくい上げよう！」そこで猿たちは木に登りました。",
+    jp: "大猿が言いました。「月をすくい上げよう！」そこで猿たちは木に登りました。", ko:"큰 원숭이가 말했습니다. \"달을 건져 올리자!\" 그래서 원숭이들은 나무 위로 올라갔습니다.",
     answerPy: "yú shì",
     options: ["于是", "但是", "虽然", "因为"],
     hint: "课文原句 · 课后词语「于是」",
@@ -892,7 +902,7 @@ const CLOZE_QUESTIONS = [
     after: "的小猴子伸手去捞月亮。",
     py: "Guà zài zuì xiàmiàn de xiǎo hóuzi shēnshǒu qù lāo yuèliang.",
     en: "The little monkey hanging at the very bottom reached out to scoop up the moon.",
-    jp: "一番下にぶら下がった子猿が手を伸ばして月をすくおうとしました。",
+    jp: "一番下にぶら下がった子猿が手を伸ばして月をすくおうとしました。", ko:"맨 아래에 매달린 작은 원숭이가 손을 뻗어 달을 건지려 했습니다.",
     answerPy: "xià miàn",
     options: ["下面", "上面", "中间", "外面"],
     hint: "课文原句 · 课后词语「下面」",
@@ -906,7 +916,7 @@ const CLOZE_QUESTIONS = [
     after: "到水，月亮就不见了。",
     py: "Tā de shǒu gāng pèng dào shuǐ, yuèliang jiù bú jiàn le.",
     en: "The moment his hand touched the water, the moon disappeared.",
-    jp: "手が水に触れたとたん、月は消えてしまいました。",
+    jp: "手が水に触れたとたん、月は消えてしまいました。", ko:"손이 물에 닿자마자 달은 사라져 버렸습니다.",
     answerPy: "pèng",
     options: ["碰", "摸", "打", "抓"],
     hint: "课文原句 · 课后生字「碰」（石部）",
@@ -920,7 +930,7 @@ const CLOZE_QUESTIONS = [
     after: "，大猴子抬头一看，突然叫了起来：“月亮不是还在天上吗？”",
     py: "Hóuzimen juéde hěn qíguài. Zhè shí, dà hóuzi táitóu yí kàn.",
     en: "The monkeys thought this was very strange. At that moment, the big monkey looked up.",
-    jp: "猿たちはとても不思議に思いました。その時、大猿が頭を上げて見ました。",
+    jp: "猿たちはとても不思議に思いました。その時、大猿が頭を上げて見ました。", ko:"원숭이들은 매우 이상하다고 생각했습니다. 그때, 큰 원숭이가 고개를 들어 보았습니다.",
     answerPy: "zhè shí",
     options: ["这时", "那时", "当时", "这样"],
     hint: "课文点睛之笔 · 课后词语「这时」",
@@ -934,7 +944,7 @@ const CLOZE_QUESTIONS = [
     after: "喂了它一点食物。",
     py: "Kàndào xiǎomāo è de zhí jiào, wǒ shēnshǒu wèi le tā yìdiǎn shíwù.",
     en: "Seeing the kitten crying with hunger, I reached out and fed it some food.",
-    jp: "子猫がお腹をすかせて鳴いているのを見て、私は手を伸ばして少し食べ物をあげました。",
+    jp: "子猫がお腹をすかせて鳴いているのを見て、私は手を伸ばして少し食べ物をあげました。", ko:"새끼 고양이가 배고파 우는 것을 보고 저는 손을 뻗어 먹을 것을 조금 주었습니다.",
     answerPy: "shēn shǒu",
     options: ["伸手", "跺脚", "摇头", "转身"],
     hint: "微情境拓展 · 伸出手去做某事",
@@ -949,7 +959,7 @@ const CLOZE_QUESTIONS = [
     after: "他一起走。",
     py: "Gēge wǎng qián zǒu, wǒ jiù gēnzhe tā yìqǐ zǒu.",
     en: "My brother walked ahead, and I followed along with him.",
-    jp: "兄が前へ歩いて行き、私はついていきました。",
+    jp: "兄が前へ歩いて行き、私はついていきました。", ko:"형이 앞서 걸어갔고, 저는 그를 따라갔습니다.",
     answerPy: "gēn zhe",
     options: ["跟着", "跑着", "坐着", "躺着"],
     hint: "微情境拓展 · 紧跟在后面",
@@ -964,7 +974,7 @@ const CLOZE_QUESTIONS = [
     after: "，忽然下起雨来。",
     py: "Wǒmen zhèngzài gōngyuán lǐ wán, zhè shí, hūrán xià qǐ yǔ lái.",
     en: "We were playing in the park when, at that moment, it suddenly started to rain.",
-    jp: "私たちは公園で遊んでいました。その時、突然雨が降り出しました。",
+    jp: "私たちは公園で遊んでいました。その時、突然雨が降り出しました。", ko:"우리가 공원에서 놀고 있을 때, 그때 갑자기 비가 내리기 시작했습니다.",
     answerPy: "zhè shí",
     options: ["这时", "那么", "于是", "突然"],
     hint: "微情境拓展 · 正当那个时候",
@@ -979,7 +989,7 @@ const CLOZE_QUESTIONS = [
     after: "我们打开了手电筒。",
     py: "Tiān hēi le, lùdēng hái méi liàng, yúshì wǒmen dǎkāi le shǒudiàntǒng.",
     en: "It got dark and the streetlights weren't on yet, so we turned on our flashlight.",
-    jp: "空が暗くなり、街灯もまだついていなかったので、私たちは懐中電灯をつけました。",
+    jp: "空が暗くなり、街灯もまだついていなかったので、私たちは懐中電灯をつけました。", ko:"날이 어두워졌는데 가로등도 아직 켜지지 않아서 우리는 손전등을 켰습니다.",
     answerPy: "yú shì",
     options: ["于是", "可是", "虽然", "除非"],
     hint: "微情境拓展 · 因此、就这样",
@@ -990,7 +1000,7 @@ const CLOZE_QUESTIONS = [
 
 
 /* ---------------- STATE ---------------- */
-let storyIdx = 0, showPy = true, showEn = true, showJp = true;
+let storyIdx = 0, showPy = true, showEn = true, showJp = true, showKo = true;
 let charIdx = 0;
 let flashIdx = 0;
 let matchMode = 'chars'; // chars, words, all
@@ -1056,7 +1066,7 @@ let currentAudio = null;
 function playClip(id, fallbackText, onEnded, lang){
   stopClip();
   lang = lang || 'zh-CN';
-  const dir = lang === 'en-US' ? 'audio/houzi_en/' : (lang === 'ja-JP' ? 'audio/houzi_ja/' : 'audio/houzi/');
+  const dir = lang === 'en-US' ? 'audio/houzi_en/' : (lang === 'ja-JP' ? 'audio/houzi_ja/' : (lang === 'ko-KR' ? 'audio/houzi_ko/' : 'audio/houzi/'));
   if(!id) {
     speakText(fallbackText, onEnded, lang);
     return;
@@ -1086,7 +1096,7 @@ function stopClip(){
     window.speechSynthesis.cancel();
   }
 }
-let zhVoice = null, enVoice = null, jaVoice = null;
+let zhVoice = null, enVoice = null, jaVoice = null, koVoice = null;
 function pickVoice(){
   if(!('speechSynthesis' in window)) return;
   const voices = speechSynthesis.getVoices();
@@ -1098,6 +1108,7 @@ function pickVoice(){
     || null;
   jaVoice = voices.find(v=>/^ja/i.test(v.lang||''))
     || null;
+  koVoice = voices.find(v=>/^ko/i.test(v.lang||'')) || null;
 }
 if('speechSynthesis' in window){
   pickVoice();
@@ -1106,7 +1117,7 @@ if('speechSynthesis' in window){
   const voicePollTimer = setInterval(()=>{
     pickVoice();
     voicePolls++;
-    if((zhVoice && enVoice && jaVoice) || voicePolls > 8) clearInterval(voicePollTimer);
+    if((zhVoice && enVoice && jaVoice && koVoice) || voicePolls > 8) clearInterval(voicePollTimer);
   }, 400);
 }
 function speakText(text, onEnded, lang){
@@ -1116,8 +1127,8 @@ function speakText(text, onEnded, lang){
     return;
   }
   window.speechSynthesis.cancel();
-  let voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^en/i.test(lang) ? enVoice : null;
-  if(!voice){ pickVoice(); voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^en/i.test(lang) ? enVoice : null; }
+  let voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^ko/i.test(lang) ? koVoice : /^en/i.test(lang) ? enVoice : null;
+  if(!voice){ pickVoice(); voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^ko/i.test(lang) ? koVoice : /^en/i.test(lang) ? enVoice : null; }
   const u = new SpeechSynthesisUtterance(text);
   u.lang = lang;
   if(voice) u.voice = voice;
@@ -1188,11 +1199,14 @@ function renderStory(){
   document.getElementById('storyPy').textContent = s.py;
   document.getElementById('storyEn').textContent = s.en;
   document.getElementById('storyJp').textContent = s.jp || '';
+  document.getElementById('storyKo').textContent = s.ko || '';
   document.getElementById('storyPy').style.display = showPy ? 'block' : 'none';
   document.getElementById('storyEn').style.display = showEn ? 'block' : 'none';
   document.getElementById('storyJp').style.display = showJp ? 'block' : 'none';
+  document.getElementById('storyKo').style.display = showKo ? 'block' : 'none';
   const enRow = document.getElementById('storyEnRow'); if(enRow) enRow.style.display = showEn ? 'flex' : 'none';
   const jpRow = document.getElementById('storyJpRow'); if(jpRow) jpRow.style.display = (showJp && s.jp) ? 'flex' : 'none';
+  const koRow = document.getElementById('storyKoRow'); if(koRow) koRow.style.display = (showKo && s.ko) ? 'flex' : 'none';
   updateStoryVoiceUI();
 }
 function storyPrev(){ if(storyIdx > 0){ storyIdx--; renderStory(); playClip(STORY[storyIdx].id, STORY[storyIdx].zh); } }
@@ -1200,9 +1214,10 @@ function storyNext(){ if(storyIdx < STORY.length - 1){ storyIdx++; renderStory()
 function toggleStoryPy(){ showPy = !showPy; document.getElementById('chipPy').classList.toggle('active', showPy); renderStory(); }
 function toggleStoryEn(){ showEn = !showEn; document.getElementById('chipEn').classList.toggle('active', showEn); renderStory(); }
 function toggleStoryJp(){ showJp = !showJp; document.getElementById('chipJp').classList.toggle('active', showJp); renderStory(); }
+function toggleStoryKo(){ showKo = !showKo; document.getElementById('chipKo').classList.toggle('active', showKo); renderStory(); }
 
 /* ---------------- FULL TEXT (全文朗读与配音) ---------------- */
-let fullPlaying = false, fullPlayIdx = 0, fullShowPy = true, fullShowEn = true, fullShowJp = true;
+let fullPlaying = false, fullPlayIdx = 0, fullShowPy = true, fullShowEn = true, fullShowJp = true, fullShowKo = true;
 let fullMyPlaying = false;
 
 function renderFullText(){
@@ -1222,6 +1237,10 @@ function renderFullText(){
       <div style="display:${(fullShowJp && s.jp)?'flex':'none'};align-items:center;justify-content:center;gap:6px;">
         <div class="sentence-jp">${s.jp||''}</div>
         <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[${idx}].id, STORY[${idx}].jp||'', null, 'ja-JP');" title="播放日文发音">🔊</button>
+      </div>
+      <div style="display:${(fullShowKo && s.ko)?'flex':'none'};align-items:center;justify-content:center;gap:6px;">
+        <div class="sentence-ko">${s.ko||''}</div>
+        <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[${idx}].id, STORY[${idx}].ko||'', null, 'ko-KR');" title="播放韩文发音">🔊</button>
       </div>
       <div class="full-sent-voice-bar" id="full-voice-bar-${idx}">
         <span class="sent-voice-tag" id="voice-tag-${idx}">加载录音中...</span>
@@ -1269,6 +1288,7 @@ async function updateFullTextVoiceBars(){
 function toggleFullPy(){ fullShowPy = !fullShowPy; document.getElementById('chipFullPy').classList.toggle('active', fullShowPy); renderFullText(); }
 function toggleFullEn(){ fullShowEn = !fullShowEn; document.getElementById('chipFullEn').classList.toggle('active', fullShowEn); renderFullText(); }
 function toggleFullJp(){ fullShowJp = !fullShowJp; document.getElementById('chipFullJp').classList.toggle('active', fullShowJp); renderFullText(); }
+function toggleFullKo(){ fullShowKo = !fullShowKo; document.getElementById('chipFullKo').classList.toggle('active', fullShowKo); renderFullText(); }
 
 function highlightFullSentence(idx){
   document.querySelectorAll('.full-sentence').forEach((el, i)=>{
@@ -1417,7 +1437,7 @@ function renderChar(){
   document.getElementById('charPyBack').textContent = c.py;
   document.getElementById('charRadical').textContent = '偏旁部首: ' + c.radical;
   document.getElementById('charWords').innerHTML = '<strong>组词:</strong> ' + c.words;
-  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + ' · ' + c.context;
+  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + (c.meaningKo ? ' / ' + c.meaningKo : '') + ' · ' + c.context;
   document.getElementById('charCounter').textContent = (charIdx+1) + ' / ' + CHARACTERS.length;
 
   const badgeBox = document.getElementById('charRadicalBadgeContainer');
@@ -1577,7 +1597,7 @@ function renderFlash(){
   document.getElementById('flashZh').textContent = w.zh;
   document.getElementById('flashZhBack').textContent = w.zh;
   document.getElementById('flashPy').textContent = w.py;
-  document.getElementById('flashMeaning').textContent = w.meaning + (w.meaningJp ? ' / ' + w.meaningJp : '');
+  document.getElementById('flashMeaning').textContent = w.meaning + (w.meaningJp ? ' / ' + w.meaningJp : '') + (w.meaningKo ? ' / ' + w.meaningKo : '');
   document.getElementById('flashContext').textContent = '例句: ' + w.context;
   document.getElementById('flashCounter').textContent = (flashIdx + 1) + ' / ' + WORDS.length;
 }
@@ -2109,6 +2129,7 @@ function loadClozeQuestion(){
   document.getElementById('clozeAfter').textContent = q.after;
   document.getElementById('clozeEn').textContent = q.en;
   document.getElementById('clozeJp').textContent = q.jp || '';
+  document.getElementById('clozeKo').textContent = q.ko || '';
   document.getElementById('clozeHint').textContent = '💡 ' + q.hint;
 
   const slot = document.getElementById('clozeSlot');

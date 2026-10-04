@@ -88,6 +88,7 @@
   .sentence-py{font-size:15px;color:var(--camel-dark);text-align:center;font-weight:700;min-height:20px;}
   .sentence-en{font-size:13px;color:var(--muted);text-align:center;}
   .sentence-jp{font-size:13px;color:#8b5cf6;text-align:center;}
+  .sentence-ko{font-size:13px;color:#059669;text-align:center;}
   .mini-speak-btn{border:none;background:none;font-size:13px;cursor:pointer;line-height:1;padding:2px 3px;border-radius:50%;flex-shrink:0;opacity:.75;}
   .mini-speak-btn:active{opacity:1;transform:scale(1.15);}
   .story-nav{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;max-width:560px;}
@@ -130,6 +131,7 @@
   .full-sentence .sentence-py{font-size:13px;text-align:left;color:var(--camel-dark);min-height:0;}
   .full-sentence .sentence-en{font-size:12px;text-align:left;color:var(--muted);margin-top:2px;}
   .full-sentence .sentence-jp{font-size:12px;text-align:left;color:#8b5cf6;margin-top:2px;}
+  .full-sentence .sentence-ko{font-size:12px;text-align:left;color:#059669;margin-top:2px;}
 
   /* character tian-zi-ge card */
   .char-wrap{width:100%;max-width:340px;perspective:1000px;}
@@ -242,6 +244,7 @@
   @keyframes popIn{from{transform:scale(0.85);opacity:0;}to{transform:scale(1);opacity:1;}}
   .cloze-en{font-size:12px;color:var(--blue-sky);font-style:italic;text-align:center;}
   .cloze-jp{font-size:12px;color:#8b5cf6;font-style:italic;text-align:center;}
+  .cloze-ko{font-size:12px;color:#059669;font-style:italic;text-align:center;}
   .cloze-hint-row{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 4px;}
   .cloze-hint-pill{font-size:12px;color:var(--muted);background:#f5f5f4;padding:3px 10px;border-radius:12px;}
   .cloze-speak-btn{background:#fff;border:1px solid #cbd5e1;border-radius:14px;padding:3px 10px;font-size:12px;font-weight:700;
@@ -432,6 +435,10 @@
           <div class="sentence-jp" id="storyJp"></div>
           <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].jp||'', null, 'ja-JP')" title="播放日文发音">🔊</button>
         </div>
+        <div class="lang-line-row" id="storyKoRow" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+          <div class="sentence-ko" id="storyKo"></div>
+          <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].ko||'', null, 'ko-KR')" title="播放韩文发音">🔊</button>
+        </div>
       </div>
       <!-- VOICE WAVE VISUALIZER -->
       <div class="voice-wave-panel" id="storyVoiceWave">
@@ -460,6 +467,7 @@
         <div class="chip active" id="chipPy" onclick="toggleStoryPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipEn" onclick="toggleStoryEn()">English</div>
         <div class="chip active" id="chipJp" onclick="toggleStoryJp()">日本語</div>
+        <div class="chip active" id="chipKo" onclick="toggleStoryKo()">한국어</div>
         <div class="chip" onclick="goFull()">📜 全文朗读</div>
       </div>
       <button class="btn ghost" onclick="goHome()">返回菜单</button>
@@ -473,6 +481,7 @@
         <div class="chip active" id="chipFullPy" onclick="toggleFullPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipFullEn" onclick="toggleFullEn()">English</div>
         <div class="chip active" id="chipFullJp" onclick="toggleFullJp()">日本語</div>
+        <div class="chip active" id="chipFullKo" onclick="toggleFullKo()">한국어</div>
         <button class="btn clay small" id="fullPlayBtn" onclick="toggleFullPlay()">▶️ 原声连续朗读</button>
         <button class="btn gold small" id="fullMyPlayBtn" onclick="toggleFullMyPlay()">🎙️ 播放我的全文配音</button>
       </div>
@@ -632,6 +641,7 @@
           </div>
           <div class="cloze-en" id="clozeEn"></div>
           <div class="cloze-jp" id="clozeJp"></div>
+          <div class="cloze-ko" id="clozeKo"></div>
           <div class="cloze-hint-row">
             <span class="cloze-hint-pill" id="clozeHint"></span>
             <button class="cloze-speak-btn" id="clozeSpeakBtn" onclick="speakClozeSentence()">🔊 朗读句子</button>
@@ -729,39 +739,39 @@
 /* ---------------- DATA ---------------- */
 // 1. 课文《小马过河》（教材原版逐字转写，第5课）
 const STORY = [
-  {id:"st1", zh:"小马要过河，看见一头老牛在喝水。", py:"Xiǎomǎ yào guòhé, kànjiàn yìtóu lǎoniú zài hēshuǐ.", en:"The pony wanted to cross the river and saw an old ox drinking water.", jp:"子馬は川を渡ろうとして、水を飲んでいる年老いた牛を見ました。"},
-  {id:"st2", zh:"小马问：“牛伯伯，我要过河，水深吗？”", py:"Xiǎomǎ wèn: \"Niú bóbo, wǒ yào guòhé, shuǐ shēn ma?\"", en:"The pony asked, \"Uncle Ox, I want to cross the river. Is the water deep?\"", jp:"子馬は尋ねました。「牛のおじさん、川を渡りたいのですが、水は深いですか？」"},
-  {id:"st3", zh:"老牛说：“水很浅，你过得去。”", py:"Lǎoniú shuō: \"Shuǐ hěn qiǎn, nǐ guò de qù.\"", en:"The old ox said, \"The water is shallow, you can cross it.\"", jp:"年老いた牛は言いました。「水はとても浅いよ、渡れるよ。」"},
-  {id:"st4", zh:"小马听了老牛的话，正要过河，突然，一只小松鼠从树上跳下来，大声说：“小马，别过河！水深得很呢！你会淹死的！”", py:"Xiǎomǎ tīng le lǎoniú de huà, zhèng yào guòhé, tūrán, yìzhī xiǎo sōngshǔ cóng shù shang tiào xiàlái, dàshēng shuō: \"Xiǎomǎ, bié guòhé! Shuǐ shēn de hěn ne! Nǐ huì yānsǐ de!\"", en:"The pony listened to the old ox and was about to cross, when suddenly a little squirrel jumped down from a tree and shouted, \"Pony, don't cross! The water is very deep! You'll drown!\"", jp:"子馬は年老いた牛の話を聞いて、まさに川を渡ろうとしたとき、突然、一匹の小さなリスが木から飛び降りてきて、大声で言いました。「子馬さん、川を渡らないで！水はとても深いよ！溺れ死んじゃうよ！」"},
-  {id:"st5", zh:"听了小松鼠的话，小马不知道该怎么办，只好回家问妈妈。", py:"Tīng le xiǎo sōngshǔ de huà, xiǎomǎ bù zhīdào gāi zěnme bàn, zhǐhǎo huí jiā wèn māma.", en:"After hearing the squirrel, the pony didn't know what to do, so he had to go home and ask his mother.", jp:"小さなリスの話を聞いて、子馬はどうすればいいか分からず、仕方なく家に帰ってお母さんに聞きました。"},
-  {id:"st6", zh:"妈妈说：“孩子，老牛又高又大，他会觉得水很浅；松鼠那么小，他一定会说水很深。河水是深还是浅，最好你自己去试试。”", py:"Māma shuō: \"Háizi, lǎoniú yòu gāo yòu dà, tā huì juéde shuǐ hěn qiǎn; sōngshǔ nàme xiǎo, tā yídìng huì shuō shuǐ hěn shēn. Héshuǐ shì shēn háishi qiǎn, zuìhǎo nǐ zìjǐ qù shìshi.\"", en:"Mother said, \"My child, the ox is tall and big, so he feels the water is shallow; the squirrel is so small, so he's sure to say the water is deep. Whether the river is deep or shallow, you'd best go try it yourself.\"", jp:"お母さんは言いました。「坊や、牛は背が高くて大きいから、水を浅いと感じるのよ。リスはあんなに小さいから、きっと水は深いと言うでしょう。川の水が深いか浅いか、自分で試してみるのが一番よ。」"},
-  {id:"st7", zh:"小马听了妈妈的话，又跑到河边，小心地过了河。", py:"Xiǎomǎ tīng le māma de huà, yòu pǎo dào hébiān, xiǎoxīn de guò le hé.", en:"The pony listened to his mother, ran back to the riverbank, and carefully crossed the river.", jp:"子馬はお母さんの話を聞いて、また川辺に走って行き、注意深く川を渡りました。"},
-  {id:"st8", zh:"原来，河水既不像老牛说的那样浅，也不像松鼠说的那样深。", py:"Yuánlái, héshuǐ jì bú xiàng lǎoniú shuō de nàyàng qiǎn, yě bú xiàng sōngshǔ shuō de nàyàng shēn.", en:"It turned out that the river was neither as shallow as the ox had said, nor as deep as the squirrel had said.", jp:"なんと、川の水は牛が言ったほど浅くもなく、リスが言ったほど深くもありませんでした。"}
+  {id:"st1", zh:"小马要过河，看见一头老牛在喝水。", py:"Xiǎomǎ yào guòhé, kànjiàn yìtóu lǎoniú zài hēshuǐ.", en:"The pony wanted to cross the river and saw an old ox drinking water.", jp:"子馬は川を渡ろうとして、水を飲んでいる年老いた牛を見ました。", ko:"조랑말이 강을 건너려다가 물을 마시고 있는 늙은 소를 보았습니다."},
+  {id:"st2", zh:"小马问：“牛伯伯，我要过河，水深吗？”", py:"Xiǎomǎ wèn: \"Niú bóbo, wǒ yào guòhé, shuǐ shēn ma?\"", en:"The pony asked, \"Uncle Ox, I want to cross the river. Is the water deep?\"", jp:"子馬は尋ねました。「牛のおじさん、川を渡りたいのですが、水は深いですか？」", ko:"조랑말이 물었습니다. \"소 아저씨, 저는 강을 건너고 싶은데 물이 깊은가요?\""},
+  {id:"st3", zh:"老牛说：“水很浅，你过得去。”", py:"Lǎoniú shuō: \"Shuǐ hěn qiǎn, nǐ guò de qù.\"", en:"The old ox said, \"The water is shallow, you can cross it.\"", jp:"年老いた牛は言いました。「水はとても浅いよ、渡れるよ。」", ko:"늙은 소가 말했습니다. \"물이 아주 얕아서 건널 수 있어.\""},
+  {id:"st4", zh:"小马听了老牛的话，正要过河，突然，一只小松鼠从树上跳下来，大声说：“小马，别过河！水深得很呢！你会淹死的！”", py:"Xiǎomǎ tīng le lǎoniú de huà, zhèng yào guòhé, tūrán, yìzhī xiǎo sōngshǔ cóng shù shang tiào xiàlái, dàshēng shuō: \"Xiǎomǎ, bié guòhé! Shuǐ shēn de hěn ne! Nǐ huì yānsǐ de!\"", en:"The pony listened to the old ox and was about to cross, when suddenly a little squirrel jumped down from a tree and shouted, \"Pony, don't cross! The water is very deep! You'll drown!\"", jp:"子馬は年老いた牛の話を聞いて、まさに川を渡ろうとしたとき、突然、一匹の小さなリスが木から飛び降りてきて、大声で言いました。「子馬さん、川を渡らないで！水はとても深いよ！溺れ死んじゃうよ！」", ko:"조랑말은 늙은 소의 말을 듣고 막 강을 건너려던 참이었는데, 갑자기 작은 다람쥐 한 마리가 나무에서 뛰어내려와 큰 소리로 말했습니다. \"조랑말아, 건너지 마! 물이 아주 깊어! 너는 물에 빠져 죽을 거야!\""},
+  {id:"st5", zh:"听了小松鼠的话，小马不知道该怎么办，只好回家问妈妈。", py:"Tīng le xiǎo sōngshǔ de huà, xiǎomǎ bù zhīdào gāi zěnme bàn, zhǐhǎo huí jiā wèn māma.", en:"After hearing the squirrel, the pony didn't know what to do, so he had to go home and ask his mother.", jp:"小さなリスの話を聞いて、子馬はどうすればいいか分からず、仕方なく家に帰ってお母さんに聞きました。", ko:"작은 다람쥐의 말을 듣고 조랑말은 어떻게 해야 할지 몰라서 할 수 없이 집에 돌아가 엄마에게 물었습니다."},
+  {id:"st6", zh:"妈妈说：“孩子，老牛又高又大，他会觉得水很浅；松鼠那么小，他一定会说水很深。河水是深还是浅，最好你自己去试试。”", py:"Māma shuō: \"Háizi, lǎoniú yòu gāo yòu dà, tā huì juéde shuǐ hěn qiǎn; sōngshǔ nàme xiǎo, tā yídìng huì shuō shuǐ hěn shēn. Héshuǐ shì shēn háishi qiǎn, zuìhǎo nǐ zìjǐ qù shìshi.\"", en:"Mother said, \"My child, the ox is tall and big, so he feels the water is shallow; the squirrel is so small, so he's sure to say the water is deep. Whether the river is deep or shallow, you'd best go try it yourself.\"", jp:"お母さんは言いました。「坊や、牛は背が高くて大きいから、水を浅いと感じるのよ。リスはあんなに小さいから、きっと水は深いと言うでしょう。川の水が深いか浅いか、自分で試してみるのが一番よ。」", ko:"엄마가 말했습니다. \"아이야, 늙은 소는 키가 크고 몸집이 커서 물이 얕다고 느낄 거야. 다람쥐는 그렇게 작으니까 틀림없이 물이 깊다고 말할 거야. 강물이 깊은지 얕은지는 네가 직접 가서 시험해 보는 것이 가장 좋아.\""},
+  {id:"st7", zh:"小马听了妈妈的话，又跑到河边，小心地过了河。", py:"Xiǎomǎ tīng le māma de huà, yòu pǎo dào hébiān, xiǎoxīn de guò le hé.", en:"The pony listened to his mother, ran back to the riverbank, and carefully crossed the river.", jp:"子馬はお母さんの話を聞いて、また川辺に走って行き、注意深く川を渡りました。", ko:"조랑말은 엄마의 말을 듣고 다시 강가로 달려가 조심스럽게 강을 건넜습니다."},
+  {id:"st8", zh:"原来，河水既不像老牛说的那样浅，也不像松鼠说的那样深。", py:"Yuánlái, héshuǐ jì bú xiàng lǎoniú shuō de nàyàng qiǎn, yě bú xiàng sōngshǔ shuō de nàyàng shēn.", en:"It turned out that the river was neither as shallow as the ox had said, nor as deep as the squirrel had said.", jp:"なんと、川の水は牛が言ったほど浅くもなく、リスが言ったほど深くもありませんでした。", ko:"알고 보니 강물은 늙은 소가 말한 것처럼 그렇게 얕지도 않았고, 다람쥐가 말한 것처럼 그렇게 깊지도 않았습니다."}
 ];
 
 // 2. 课后生字表 (10 Characters - 课本原图)
 const CHARACTERS = [
-  {id:"zi1", zh:"喝", py:"hē", radical:"口 (口字旁)", radicalBadge:null, words:"喝水、喝茶、大喝一声", meaning:"drink / shout", meaningJp:"飲む／大声を出す", context:"看见一头老牛在喝水"},
-  {id:"zi2", zh:"伯", py:"bó", radical:"亻 (单人旁)", radicalBadge:null, words:"伯伯、大伯、伯父", meaning:"uncle (father's elder brother)", meaningJp:"おじさん、伯父", context:"牛伯伯，我要过河"},
-  {id:"zi3", zh:"深", py:"shēn", radical:"氵 (三点水)", radicalBadge:"氵 —— 深", words:"水深、深浅、深夜", meaning:"deep", meaningJp:"深い", context:"我要过河，水深吗"},
-  {id:"zi4", zh:"浅", py:"qiǎn", radical:"氵 (三点水)", radicalBadge:null, words:"深浅、浅水、浅显", meaning:"shallow", meaningJp:"浅い", context:"水很浅，你过得去"},
-  {id:"zi5", zh:"正", py:"zhèng", radical:"一 (横担部)", radicalBadge:null, words:"正要、正好、正确", meaning:"just about to / correct", meaningJp:"ちょうど～するところ、正しい", context:"正要过河，突然……"},
-  {id:"zi6", zh:"突", py:"tū", radical:"穴 (穴宝盖)", radicalBadge:"穴 —— 突", words:"突然、突出、突破", meaning:"sudden", meaningJp:"突然", context:"突然，一只小松鼠从树上跳下来"},
-  {id:"zi7", zh:"松", py:"sōng", radical:"木 (木字旁)", radicalBadge:null, words:"松鼠、松树、轻松", meaning:"pine / relaxed", meaningJp:"松、リラックスする", context:"一只小松鼠从树上跳下来"},
-  {id:"zi8", zh:"鼠", py:"shǔ", radical:"鼠 (鼠字部)", radicalBadge:"鼠 —— 鼠", words:"松鼠、老鼠、鼠标", meaning:"mouse / rodent", meaningJp:"ねずみ", context:"一只小松鼠从树上跳下来"},
-  {id:"zi9", zh:"淹", py:"yān", radical:"氵 (三点水)", radicalBadge:null, words:"淹死、淹没、被水淹", meaning:"drown / flood", meaningJp:"溺れる、水没する", context:"你会淹死的"},
-  {id:"zi10", zh:"定", py:"dìng", radical:"宀 (宝盖头)", radicalBadge:null, words:"一定、决定、定要", meaning:"certain / decide", meaningJp:"きっと、決める", context:"他一定会说水很深"}
+  {id:"zi1", zh:"喝", py:"hē", radical:"口 (口字旁)", radicalBadge:null, words:"喝水、喝茶、大喝一声", meaning:"drink / shout", meaningJp:"飲む／大声を出す", meaningKo:"마시다 / 외치다", context:"看见一头老牛在喝水"},
+  {id:"zi2", zh:"伯", py:"bó", radical:"亻 (单人旁)", radicalBadge:null, words:"伯伯、大伯、伯父", meaning:"uncle (father's elder brother)", meaningJp:"おじさん、伯父", meaningKo:"아저씨, 큰아버지", context:"牛伯伯，我要过河"},
+  {id:"zi3", zh:"深", py:"shēn", radical:"氵 (三点水)", radicalBadge:"氵 —— 深", words:"水深、深浅、深夜", meaning:"deep", meaningJp:"深い", meaningKo:"깊다", context:"我要过河，水深吗"},
+  {id:"zi4", zh:"浅", py:"qiǎn", radical:"氵 (三点水)", radicalBadge:null, words:"深浅、浅水、浅显", meaning:"shallow", meaningJp:"浅い", meaningKo:"얕다", context:"水很浅，你过得去"},
+  {id:"zi5", zh:"正", py:"zhèng", radical:"一 (横担部)", radicalBadge:null, words:"正要、正好、正确", meaning:"just about to / correct", meaningJp:"ちょうど～するところ、正しい", meaningKo:"마침, ~하려던 참 / 옳다", context:"正要过河，突然……"},
+  {id:"zi6", zh:"突", py:"tū", radical:"穴 (穴宝盖)", radicalBadge:"穴 —— 突", words:"突然、突出、突破", meaning:"sudden", meaningJp:"突然", meaningKo:"갑작스럽다", context:"突然，一只小松鼠从树上跳下来"},
+  {id:"zi7", zh:"松", py:"sōng", radical:"木 (木字旁)", radicalBadge:null, words:"松鼠、松树、轻松", meaning:"pine / relaxed", meaningJp:"松、リラックスする", meaningKo:"소나무 / 느긋하다", context:"一只小松鼠从树上跳下来"},
+  {id:"zi8", zh:"鼠", py:"shǔ", radical:"鼠 (鼠字部)", radicalBadge:"鼠 —— 鼠", words:"松鼠、老鼠、鼠标", meaning:"mouse / rodent", meaningJp:"ねずみ", meaningKo:"쥐", context:"一只小松鼠从树上跳下来"},
+  {id:"zi9", zh:"淹", py:"yān", radical:"氵 (三点水)", radicalBadge:null, words:"淹死、淹没、被水淹", meaning:"drown / flood", meaningJp:"溺れる、水没する", meaningKo:"물에 잠기다, 빠지다", context:"你会淹死的"},
+  {id:"zi10", zh:"定", py:"dìng", radical:"宀 (宝盖头)", radicalBadge:null, words:"一定、决定、定要", meaning:"certain / decide", meaningJp:"きっと、決める", meaningKo:"틀림없이, 반드시 / 정하다", context:"他一定会说水很深"}
 ];
 
 // 3. 课后词语表 (7 Words - 课本原图)
 const WORDS = [
-  {id:"ci1", zh:"伯伯", py:"bóbo", meaning:"uncle (respectful term for an older man)", meaningJp:"おじさん", emoji:"👨", context:"牛伯伯，我要过河，水深吗？", tag:"重点词语"},
-  {id:"ci2", zh:"突然", py:"tūrán", meaning:"suddenly", meaningJp:"突然", emoji:"⚡", context:"突然，一只小松鼠从树上跳下来", tag:"重点词语"},
-  {id:"ci3", zh:"只好", py:"zhǐhǎo", meaning:"have no choice but to", meaningJp:"仕方なく", emoji:"🤷", context:"小马不知道该怎么办，只好回家问妈妈", tag:"重点词语"},
-  {id:"ci4", zh:"那么", py:"nàme", meaning:"so / to that degree", meaningJp:"あんなに、それほど", emoji:"👉", context:"松鼠那么小，他一定会说水很深", tag:"重点词语"},
-  {id:"ci5", zh:"一定", py:"yídìng", meaning:"surely / certainly", meaningJp:"きっと、必ず", emoji:"✅", context:"他一定会说水很深", tag:"重点词语"},
-  {id:"ci6", zh:"最好", py:"zuìhǎo", meaning:"had better / best of all", meaningJp:"一番いい、～するのが一番", emoji:"🌟", context:"最好你自己去试试", tag:"重点词语"},
-  {id:"ci7", zh:"那样", py:"nàyàng", meaning:"like that / that way", meaningJp:"あのように、そのように", emoji:"👈", context:"也不像松鼠说的那样深", tag:"重点词语"}
+  {id:"ci1", zh:"伯伯", py:"bóbo", meaning:"uncle (respectful term for an older man)", meaningJp:"おじさん", meaningKo:"아저씨(아버지 또래 남성을 부르는 말)", emoji:"👨", context:"牛伯伯，我要过河，水深吗？", tag:"重点词语"},
+  {id:"ci2", zh:"突然", py:"tūrán", meaning:"suddenly", meaningJp:"突然", meaningKo:"갑자기", emoji:"⚡", context:"突然，一只小松鼠从树上跳下来", tag:"重点词语"},
+  {id:"ci3", zh:"只好", py:"zhǐhǎo", meaning:"have no choice but to", meaningJp:"仕方なく", meaningKo:"할 수 없이, 어쩔 수 없이", emoji:"🤷", context:"小马不知道该怎么办，只好回家问妈妈", tag:"重点词语"},
+  {id:"ci4", zh:"那么", py:"nàme", meaning:"so / to that degree", meaningJp:"あんなに、それほど", meaningKo:"그렇게, 저렇게", emoji:"👉", context:"松鼠那么小，他一定会说水很深", tag:"重点词语"},
+  {id:"ci5", zh:"一定", py:"yídìng", meaning:"surely / certainly", meaningJp:"きっと、必ず", meaningKo:"반드시, 틀림없이", emoji:"✅", context:"他一定会说水很深", tag:"重点词语"},
+  {id:"ci6", zh:"最好", py:"zuìhǎo", meaning:"had better / best of all", meaningJp:"一番いい、～するのが一番", meaningKo:"~하는 것이 가장 좋다", emoji:"🌟", context:"最好你自己去试试", tag:"重点词语"},
+  {id:"ci7", zh:"那样", py:"nàyàng", meaning:"like that / that way", meaningJp:"あのように、そのように", meaningKo:"그렇게, 그런 식으로", emoji:"👈", context:"也不像松鼠说的那样深", tag:"重点词语"}
 ];
 
 const ALL_VOCAB = WORDS;
@@ -824,7 +834,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Xiǎomǎ yào guòhé, kànjiàn yìtóu lǎoniú zài hēshuǐ.",
     en: "The pony wanted to cross the river and saw an old ox drinking water.",
-    jp: "子馬は川を渡ろうとして、水を飲んでいる年老いた牛を見ました。",
+    jp: "子馬は川を渡ろうとして、水を飲んでいる年老いた牛を見ました。", ko:"조랑말이 강을 건너려다가 물을 마시고 있는 늙은 소를 보았습니다.",
     answerPy: "hē shuǐ",
     options: ["喝水", "喝茶", "洗澡", "睡觉"],
     hint: "课文首句 · 课后生字「喝」",
@@ -838,7 +848,7 @@ const CLOZE_QUESTIONS = [
     after: "，我要过河，水深吗？”",
     py: "Xiǎomǎ wèn: Niú bóbo, wǒ yào guòhé, shuǐ shēn ma?",
     en: "The pony asked: Uncle Ox, I want to cross the river, is the water deep?",
-    jp: "子馬は尋ねました。「牛のおじさん、川を渡りたいのですが、水は深いですか？」",
+    jp: "子馬は尋ねました。「牛のおじさん、川を渡りたいのですが、水は深いですか？」", ko:"조랑말이 물었습니다. \"소 아저씨, 강을 건너려는데 물이 깊은가요?\"",
     answerPy: "bó bo",
     options: ["伯伯", "哥哥", "伯父", "叔叔"],
     hint: "课文原句 · 课后生字「伯」",
@@ -852,7 +862,7 @@ const CLOZE_QUESTIONS = [
     after: "，你过得去。”",
     py: "Lǎoniú shuō: Shuǐ hěn qiǎn, nǐ guò de qù.",
     en: "The old ox said: The water is shallow, you can cross it.",
-    jp: "年老いた牛は言いました。「水はとても浅いよ、渡れるよ。」",
+    jp: "年老いた牛は言いました。「水はとても浅いよ、渡れるよ。」", ko:"늙은 소가 말했습니다. \"물이 아주 얕아서 건널 수 있어.\"",
     answerPy: "qiǎn",
     options: ["浅", "深", "急", "脏"],
     hint: "课文原句 · 课后生字「浅」「深」对比",
@@ -866,7 +876,7 @@ const CLOZE_QUESTIONS = [
     after: "，一只小松鼠从树上跳下来。",
     py: "Xiǎomǎ tīng le lǎoniú de huà, zhèng yào guòhé, tūrán, yìzhī xiǎo sōngshǔ cóng shù shang tiào xiàlái.",
     en: "The pony was about to cross when suddenly a little squirrel jumped down from a tree.",
-    jp: "子馬がまさに川を渡ろうとしたとき、突然、一匹の小さなリスが木から飛び降りてきました。",
+    jp: "子馬がまさに川を渡ろうとしたとき、突然、一匹の小さなリスが木から飛び降りてきました。", ko:"조랑말이 막 강을 건너려던 때, 갑자기 작은 다람쥐 한 마리가 나무에서 뛰어내려왔습니다.",
     answerPy: "tū rán",
     options: ["突然", "渐渐", "终于", "仍然"],
     hint: "课文原句 · 课后词语「突然」",
@@ -880,7 +890,7 @@ const CLOZE_QUESTIONS = [
     after: "的！”",
     py: "Xiǎo sōngshǔ dàshēng shuō: Shuǐ shēn de hěn ne! Nǐ huì yānsǐ de!",
     en: "The little squirrel shouted: The water is very deep! You'll drown!",
-    jp: "小さなリスは大声で言いました。「水はとても深いよ！溺れ死んじゃうよ！」",
+    jp: "小さなリスは大声で言いました。「水はとても深いよ！溺れ死んじゃうよ！」", ko:"작은 다람쥐가 큰 소리로 말했습니다. \"물이 아주 깊어! 너는 물에 빠져 죽을 거야!\"",
     answerPy: "yān sǐ",
     options: ["淹死", "跌倒", "迷路", "生病"],
     hint: "课文原句 · 课后生字「淹」",
@@ -894,7 +904,7 @@ const CLOZE_QUESTIONS = [
     after: "回家问妈妈。",
     py: "Tīng le xiǎo sōngshǔ de huà, xiǎomǎ bù zhīdào gāi zěnme bàn, zhǐhǎo huí jiā wèn māma.",
     en: "After hearing the squirrel, the pony didn't know what to do, so he had to go home and ask his mother.",
-    jp: "小さなリスの話を聞いて、子馬はどうすればいいか分からず、仕方なく家に帰ってお母さんに聞きました。",
+    jp: "小さなリスの話を聞いて、子馬はどうすればいいか分からず、仕方なく家に帰ってお母さんに聞きました。", ko:"작은 다람쥐의 말을 듣고 조랑말은 어떻게 해야 할지 몰라서 할 수 없이 집에 돌아가 엄마에게 물었습니다.",
     answerPy: "zhǐ hǎo",
     options: ["只好", "立刻", "从来", "居然"],
     hint: "课文原句 · 课后词语「只好」",
@@ -908,7 +918,7 @@ const CLOZE_QUESTIONS = [
     after: "小，他一定会说水很深。”",
     py: "Māma shuō: Sōngshǔ nàme xiǎo, tā yídìng huì shuō shuǐ hěn shēn.",
     en: "Mother said: The squirrel is so small, so he's sure to say the water is deep.",
-    jp: "お母さんは言いました。「リスはあんなに小さいから、きっと水は深いと言うでしょう。」",
+    jp: "お母さんは言いました。「リスはあんなに小さいから、きっと水は深いと言うでしょう。」", ko:"엄마가 말했습니다. \"다람쥐가 저렇게 작으니 틀림없이 물이 깊다고 말할 거야.\"",
     answerPy: "nà me",
     options: ["那么", "这么", "多么", "什么"],
     hint: "课文原句 · 课后词语「那么」",
@@ -922,7 +932,7 @@ const CLOZE_QUESTIONS = [
     after: "你自己去试试。",
     py: "Héshuǐ shì shēn háishi qiǎn, zuìhǎo nǐ zìjǐ qù shìshi.",
     en: "Whether the river is deep or shallow, you'd best go try it yourself.",
-    jp: "川の水が深いか浅いか、自分で試してみるのが一番よ。",
+    jp: "川の水が深いか浅いか、自分で試してみるのが一番よ。", ko:"강물이 깊은지 얕은지는 네가 직접 가서 시험해 보는 것이 가장 좋아.",
     answerPy: "zuì hǎo",
     options: ["最好", "一定", "只好", "不如"],
     hint: "课文点睛之笔 · 课后词语「最好」",
@@ -936,7 +946,7 @@ const CLOZE_QUESTIONS = [
     after: "下起了大雨。",
     py: "Wǒmen zhèngzài cāochǎng shang pǎobù, tiānkōng tūrán xià qǐ le dàyǔ.",
     en: "We were running on the playground when the sky suddenly poured rain.",
-    jp: "私たちは校庭で走っていたとき、空が突然大雨になりました。",
+    jp: "私たちは校庭で走っていたとき、空が突然大雨になりました。", ko:"우리가 운동장에서 뛰고 있을 때 갑자기 하늘에서 비가 쏟아졌습니다.",
     answerPy: "tū rán",
     options: ["突然", "那么", "一定", "那样"],
     hint: "微情境拓展 · 事情发生得很急、没有预料到",
@@ -951,7 +961,7 @@ const CLOZE_QUESTIONS = [
     after: "走路回家。",
     py: "Gōngjiāochē yǐjīng kāi zǒu le, wǒmen zhǐhǎo zǒulù huí jiā.",
     en: "The bus had already left, so we had no choice but to walk home.",
-    jp: "バスはもう出発してしまったので、私たちは仕方なく歩いて家に帰りました。",
+    jp: "バスはもう出発してしまったので、私たちは仕方なく歩いて家に帰りました。", ko:"버스가 이미 떠나버려서 우리는 할 수 없이 걸어서 집에 돌아갔습니다.",
     answerPy: "zhǐ hǎo",
     options: ["只好", "突然", "最好", "那样"],
     hint: "微情境拓展 · 没有别的办法，不得不",
@@ -966,7 +976,7 @@ const CLOZE_QUESTIONS = [
     after: "会越写越好。",
     py: "Zhǐyào nǐ měitiān rènzhēn liànxí, yídìng huì yuè xiě yuè hǎo.",
     en: "As long as you practice seriously every day, you will surely get better and better.",
-    jp: "毎日まじめに練習しさえすれば、きっとどんどん上手になります。",
+    jp: "毎日まじめに練習しさえすれば、きっとどんどん上手になります。", ko:"매일 열심히 연습하기만 하면 분명히 점점 더 잘하게 될 거예요.",
     answerPy: "yí dìng",
     options: ["一定", "只好", "那么", "那样"],
     hint: "微情境拓展 · 很有把握、必定",
@@ -981,7 +991,7 @@ const CLOZE_QUESTIONS = [
     after: "左右看看，注意安全。",
     py: "Guò mǎlù de shíhou, zuìhǎo zuǒyòu kànkan, zhùyì ānquán.",
     en: "When crossing the street, it's best to look both ways and pay attention to safety.",
-    jp: "道路を渡るとき、左右をよく見て、安全に気をつけるのが一番です。",
+    jp: "道路を渡るとき、左右をよく見て、安全に気をつけるのが一番です。", ko:"길을 건널 때는 좌우를 잘 살피고 안전에 주의하는 것이 가장 좋습니다.",
     answerPy: "zuì hǎo",
     options: ["最好", "一定", "突然", "那样"],
     hint: "微情境拓展 · 这样做比较好、建议",
@@ -992,7 +1002,7 @@ const CLOZE_QUESTIONS = [
 
 
 /* ---------------- STATE ---------------- */
-let storyIdx = 0, showPy = true, showEn = true, showJp = true;
+let storyIdx = 0, showPy = true, showEn = true, showJp = true, showKo = true;
 let charIdx = 0;
 let flashIdx = 0;
 let matchMode = 'chars'; // chars, words, all
@@ -1058,7 +1068,7 @@ let currentAudio = null;
 function playClip(id, fallbackText, onEnded, lang){
   stopClip();
   lang = lang || 'zh-CN';
-  const dir = lang === 'en-US' ? 'audio/xiaoma_en/' : (lang === 'ja-JP' ? 'audio/xiaoma_ja/' : 'audio/xiaoma/');
+  const dir = lang === 'en-US' ? 'audio/xiaoma_en/' : (lang === 'ja-JP' ? 'audio/xiaoma_ja/' : (lang === 'ko-KR' ? 'audio/xiaoma_ko/' : 'audio/xiaoma/'));
   if(!id) {
     speakText(fallbackText, onEnded, lang);
     return;
@@ -1088,7 +1098,7 @@ function stopClip(){
     window.speechSynthesis.cancel();
   }
 }
-let zhVoice = null, enVoice = null, jaVoice = null;
+let zhVoice = null, enVoice = null, jaVoice = null, koVoice = null;
 function pickVoice(){
   if(!('speechSynthesis' in window)) return;
   const voices = speechSynthesis.getVoices();
@@ -1100,6 +1110,7 @@ function pickVoice(){
     || null;
   jaVoice = voices.find(v=>/^ja/i.test(v.lang||''))
     || null;
+  koVoice = voices.find(v=>/^ko/i.test(v.lang||'')) || null;
 }
 if('speechSynthesis' in window){
   pickVoice();
@@ -1108,7 +1119,7 @@ if('speechSynthesis' in window){
   const voicePollTimer = setInterval(()=>{
     pickVoice();
     voicePolls++;
-    if((zhVoice && enVoice && jaVoice) || voicePolls > 8) clearInterval(voicePollTimer);
+    if((zhVoice && enVoice && jaVoice && koVoice) || voicePolls > 8) clearInterval(voicePollTimer);
   }, 400);
 }
 function speakText(text, onEnded, lang){
@@ -1118,8 +1129,8 @@ function speakText(text, onEnded, lang){
     return;
   }
   window.speechSynthesis.cancel();
-  let voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^en/i.test(lang) ? enVoice : null;
-  if(!voice){ pickVoice(); voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^en/i.test(lang) ? enVoice : null; }
+  let voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^ko/i.test(lang) ? koVoice : /^en/i.test(lang) ? enVoice : null;
+  if(!voice){ pickVoice(); voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^ko/i.test(lang) ? koVoice : /^en/i.test(lang) ? enVoice : null; }
   const u = new SpeechSynthesisUtterance(text);
   u.lang = lang;
   if(voice) u.voice = voice;
@@ -1190,11 +1201,14 @@ function renderStory(){
   document.getElementById('storyPy').textContent = s.py;
   document.getElementById('storyEn').textContent = s.en;
   document.getElementById('storyJp').textContent = s.jp || '';
+  document.getElementById('storyKo').textContent = s.ko || '';
   document.getElementById('storyPy').style.display = showPy ? 'block' : 'none';
   document.getElementById('storyEn').style.display = showEn ? 'block' : 'none';
   document.getElementById('storyJp').style.display = showJp ? 'block' : 'none';
+  document.getElementById('storyKo').style.display = showKo ? 'block' : 'none';
   const enRow = document.getElementById('storyEnRow'); if(enRow) enRow.style.display = showEn ? 'flex' : 'none';
   const jpRow = document.getElementById('storyJpRow'); if(jpRow) jpRow.style.display = (showJp && s.jp) ? 'flex' : 'none';
+  const koRow = document.getElementById('storyKoRow'); if(koRow) koRow.style.display = (showKo && s.ko) ? 'flex' : 'none';
   updateStoryVoiceUI();
 }
 function storyPrev(){ if(storyIdx > 0){ storyIdx--; renderStory(); playClip(STORY[storyIdx].id, STORY[storyIdx].zh); } }
@@ -1202,9 +1216,10 @@ function storyNext(){ if(storyIdx < STORY.length - 1){ storyIdx++; renderStory()
 function toggleStoryPy(){ showPy = !showPy; document.getElementById('chipPy').classList.toggle('active', showPy); renderStory(); }
 function toggleStoryEn(){ showEn = !showEn; document.getElementById('chipEn').classList.toggle('active', showEn); renderStory(); }
 function toggleStoryJp(){ showJp = !showJp; document.getElementById('chipJp').classList.toggle('active', showJp); renderStory(); }
+function toggleStoryKo(){ showKo = !showKo; document.getElementById('chipKo').classList.toggle('active', showKo); renderStory(); }
 
 /* ---------------- FULL TEXT (全文朗读与配音) ---------------- */
-let fullPlaying = false, fullPlayIdx = 0, fullShowPy = true, fullShowEn = true, fullShowJp = true;
+let fullPlaying = false, fullPlayIdx = 0, fullShowPy = true, fullShowEn = true, fullShowJp = true, fullShowKo = true;
 let fullMyPlaying = false;
 
 function renderFullText(){
@@ -1224,6 +1239,10 @@ function renderFullText(){
       <div style="display:${(fullShowJp && s.jp)?'flex':'none'};align-items:center;justify-content:center;gap:6px;">
         <div class="sentence-jp">${s.jp||''}</div>
         <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[${idx}].id, STORY[${idx}].jp||'', null, 'ja-JP');" title="播放日文发音">🔊</button>
+      </div>
+      <div style="display:${(fullShowKo && s.ko)?'flex':'none'};align-items:center;justify-content:center;gap:6px;">
+        <div class="sentence-ko">${s.ko||''}</div>
+        <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[${idx}].id, STORY[${idx}].ko||'', null, 'ko-KR');" title="播放韩文发音">🔊</button>
       </div>
       <div class="full-sent-voice-bar" id="full-voice-bar-${idx}">
         <span class="sent-voice-tag" id="voice-tag-${idx}">加载录音中...</span>
@@ -1271,6 +1290,7 @@ async function updateFullTextVoiceBars(){
 function toggleFullPy(){ fullShowPy = !fullShowPy; document.getElementById('chipFullPy').classList.toggle('active', fullShowPy); renderFullText(); }
 function toggleFullEn(){ fullShowEn = !fullShowEn; document.getElementById('chipFullEn').classList.toggle('active', fullShowEn); renderFullText(); }
 function toggleFullJp(){ fullShowJp = !fullShowJp; document.getElementById('chipFullJp').classList.toggle('active', fullShowJp); renderFullText(); }
+function toggleFullKo(){ fullShowKo = !fullShowKo; document.getElementById('chipFullKo').classList.toggle('active', fullShowKo); renderFullText(); }
 
 function highlightFullSentence(idx){
   document.querySelectorAll('.full-sentence').forEach((el, i)=>{
@@ -1419,7 +1439,7 @@ function renderChar(){
   document.getElementById('charPyBack').textContent = c.py;
   document.getElementById('charRadical').textContent = '偏旁部首: ' + c.radical;
   document.getElementById('charWords').innerHTML = '<strong>组词:</strong> ' + c.words;
-  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + ' · ' + c.context;
+  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + (c.meaningKo ? ' / ' + c.meaningKo : '') + ' · ' + c.context;
   document.getElementById('charCounter').textContent = (charIdx+1) + ' / ' + CHARACTERS.length;
 
   const badgeBox = document.getElementById('charRadicalBadgeContainer');
@@ -1579,7 +1599,7 @@ function renderFlash(){
   document.getElementById('flashZh').textContent = w.zh;
   document.getElementById('flashZhBack').textContent = w.zh;
   document.getElementById('flashPy').textContent = w.py;
-  document.getElementById('flashMeaning').textContent = w.meaning + (w.meaningJp ? ' / ' + w.meaningJp : '');
+  document.getElementById('flashMeaning').textContent = w.meaning + (w.meaningJp ? ' / ' + w.meaningJp : '') + (w.meaningKo ? ' / ' + w.meaningKo : '');
   document.getElementById('flashContext').textContent = '例句: ' + w.context;
   document.getElementById('flashCounter').textContent = (flashIdx + 1) + ' / ' + WORDS.length;
 }
@@ -2111,6 +2131,7 @@ function loadClozeQuestion(){
   document.getElementById('clozeAfter').textContent = q.after;
   document.getElementById('clozeEn').textContent = q.en;
   document.getElementById('clozeJp').textContent = q.jp || '';
+  document.getElementById('clozeKo').textContent = q.ko || '';
   document.getElementById('clozeHint').textContent = '💡 ' + q.hint;
 
   const slot = document.getElementById('clozeSlot');

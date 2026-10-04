@@ -88,6 +88,7 @@
   .sentence-py{font-size:15px;color:var(--camel-dark);text-align:center;font-weight:700;min-height:20px;}
   .sentence-en{font-size:13px;color:var(--muted);text-align:center;}
   .sentence-jp{font-size:13px;color:#8b5cf6;text-align:center;}
+  .sentence-ko{font-size:13px;color:#059669;text-align:center;}
   .mini-speak-btn{border:none;background:none;font-size:13px;cursor:pointer;line-height:1;padding:2px 3px;border-radius:50%;flex-shrink:0;opacity:.75;}
   .mini-speak-btn:active{opacity:1;transform:scale(1.15);}
   .story-nav{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;max-width:560px;}
@@ -130,6 +131,7 @@
   .full-sentence .sentence-py{font-size:13px;text-align:left;color:var(--camel-dark);min-height:0;}
   .full-sentence .sentence-en{font-size:12px;text-align:left;color:var(--muted);margin-top:2px;}
   .full-sentence .sentence-jp{font-size:12px;text-align:left;color:#8b5cf6;margin-top:2px;}
+  .full-sentence .sentence-ko{font-size:12px;text-align:left;color:#059669;margin-top:2px;}
 
   /* character tian-zi-ge card */
   .char-wrap{width:100%;max-width:340px;perspective:1000px;}
@@ -242,6 +244,7 @@
   @keyframes popIn{from{transform:scale(0.85);opacity:0;}to{transform:scale(1);opacity:1;}}
   .cloze-en{font-size:12px;color:var(--blue-sky);font-style:italic;text-align:center;}
   .cloze-jp{font-size:12px;color:#8b5cf6;font-style:italic;text-align:center;}
+  .cloze-ko{font-size:12px;color:#059669;font-style:italic;text-align:center;}
   .cloze-hint-row{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 4px;}
   .cloze-hint-pill{font-size:12px;color:var(--muted);background:#f5f5f4;padding:3px 10px;border-radius:12px;}
   .cloze-speak-btn{background:#fff;border:1px solid #cbd5e1;border-radius:14px;padding:3px 10px;font-size:12px;font-weight:700;
@@ -432,6 +435,10 @@
           <div class="sentence-jp" id="storyJp"></div>
           <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].jp||'', null, 'ja-JP')" title="播放日文发音">🔊</button>
         </div>
+        <div class="lang-line-row" id="storyKoRow" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+          <div class="sentence-ko" id="storyKo"></div>
+          <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].ko||'', null, 'ko-KR')" title="播放韩文发音">🔊</button>
+        </div>
       </div>
       <!-- VOICE WAVE VISUALIZER -->
       <div class="voice-wave-panel" id="storyVoiceWave">
@@ -460,6 +467,7 @@
         <div class="chip active" id="chipPy" onclick="toggleStoryPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipEn" onclick="toggleStoryEn()">English</div>
         <div class="chip active" id="chipJp" onclick="toggleStoryJp()">日本語</div>
+        <div class="chip active" id="chipKo" onclick="toggleStoryKo()">한국어</div>
         <div class="chip" onclick="goFull()">📜 全文朗读</div>
       </div>
       <button class="btn ghost" onclick="goHome()">返回菜单</button>
@@ -473,6 +481,7 @@
         <div class="chip active" id="chipFullPy" onclick="toggleFullPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipFullEn" onclick="toggleFullEn()">English</div>
         <div class="chip active" id="chipFullJp" onclick="toggleFullJp()">日本語</div>
+        <div class="chip active" id="chipFullKo" onclick="toggleFullKo()">한국어</div>
         <button class="btn clay small" id="fullPlayBtn" onclick="toggleFullPlay()">▶️ 原声连续朗读</button>
         <button class="btn gold small" id="fullMyPlayBtn" onclick="toggleFullMyPlay()">🎙️ 播放我的全文配音</button>
       </div>
@@ -632,6 +641,7 @@
           </div>
           <div class="cloze-en" id="clozeEn"></div>
           <div class="cloze-jp" id="clozeJp"></div>
+          <div class="cloze-ko" id="clozeKo"></div>
           <div class="cloze-hint-row">
             <span class="cloze-hint-pill" id="clozeHint"></span>
             <button class="cloze-speak-btn" id="clozeSpeakBtn" onclick="speakClozeSentence()">🔊 朗读句子</button>
@@ -729,43 +739,43 @@
 /* ---------------- DATA ---------------- */
 // 1. 课文《大自然的语言》（教材原版逐字转写，第11课）
 const STORY = [
-  {id:"st1", zh:"人有语言，大自然也有语言吗？", py:"Rén yǒu yǔyán, dà zìrán yě yǒu yǔyán ma?", en:"Humans have language — does nature have language too?", jp:"人には言葉があります。大自然にも言葉があるのでしょうか？"},
-  {id:"st2", zh:"有的，大自然的语言可丰富了。", py:"Yǒu de, dà zìrán de yǔyán kě fēngfù le.", en:"Yes, it does — nature's language is very rich indeed.", jp:"あります。大自然の言葉はとても豊かです。"},
-  {id:"st3", zh:"你看，白云飘在高高的蓝天上，明天一定是个晴天，你可以去公园游玩了。", py:"Nǐ kàn, bái yún piāo zài gāogāo de lántiān shang, míngtiān yídìng shì ge qíngtiān, nǐ kěyǐ qù gōngyuán yóuwán le.", en:"Look, white clouds are floating high up in the blue sky — tomorrow is sure to be a sunny day, and you can go play in the park.", jp:"見て、白い雲が高い青空に浮かんでいます。明日はきっと晴れですから、公園に遊びに行けますよ。"},
-  {id:"st4", zh:"你看，地上的蚂蚁正在忙着搬家呢，天很快就要下雨了，你出门可要带上雨伞啊。", py:"Nǐ kàn, dìshang de mǎyǐ zhèngzài mángzhe bānjiā ne, tiān hěn kuài jiù yào xià yǔ le, nǐ chūmén kě yào dàishang yǔsǎn a.", en:"Look, the ants on the ground are busy moving house — it's going to rain very soon, so when you go out you must bring an umbrella!", jp:"見て、地面のアリたちが忙しく引っ越しをしています。もうすぐ雨が降りますから、外出するときは傘を持って行かなくてはいけませんよ。"},
-  {id:"st5", zh:"你再看，河里的冰化了，地上的草绿了，树叶长出来了，这是春天来了。", py:"Nǐ zài kàn, hé lǐ de bīng huà le, dìshang de cǎo lǜ le, shùyè zhǎng chūlái le, zhè shì chūntiān lái le.", en:"Look again — the ice in the river has melted, the grass on the ground has turned green, the leaves have grown out — this means spring has come.", jp:"もう一度見て、川の氷が溶け、地面の草が緑になり、木の葉が出てきました。これは春が来たということです。"},
-  {id:"st6", zh:"大自然的语言多么丰富、多么奇妙啊！", py:"Dà zìrán de yǔyán duōme fēngfù, duōme qímiào a!", en:"Nature's language is so rich, so wonderful!", jp:"大自然の言葉はなんと豊かで、なんと不思議なことでしょう！"},
-  {id:"st7", zh:"只有认真学习、细心观察，你才能看得见、听得懂。", py:"Zhǐyǒu rènzhēn xuéxí, xìxīn guānchá, nǐ cáinéng kàndejiàn, tīngdedǒng.", en:"Only by studying earnestly and observing carefully can you see it and understand it.", jp:"まじめに学び、注意深く観察してこそ、見て、聞いて理解できるようになります。"},
-  {id:"st8", zh:"让我们做个爱学习、爱思考的好学生吧。", py:"Ràng wǒmen zuò ge ài xuéxí, ài sīkǎo de hǎo xuésheng ba.", en:"Let's be good students who love to learn and love to think.", jp:"私たちは学ぶことが好きで、考えることが好きな良い生徒になりましょう。"}
+  {id:"st1", zh:"人有语言，大自然也有语言吗？", py:"Rén yǒu yǔyán, dà zìrán yě yǒu yǔyán ma?", en:"Humans have language — does nature have language too?", jp:"人には言葉があります。大自然にも言葉があるのでしょうか？", ko:"사람에게 말이 있다면, 대자연에도 말이 있을까요?"},
+  {id:"st2", zh:"有的，大自然的语言可丰富了。", py:"Yǒu de, dà zìrán de yǔyán kě fēngfù le.", en:"Yes, it does — nature's language is very rich indeed.", jp:"あります。大自然の言葉はとても豊かです。", ko:"있습니다, 대자연의 말은 정말 풍부합니다."},
+  {id:"st3", zh:"你看，白云飘在高高的蓝天上，明天一定是个晴天，你可以去公园游玩了。", py:"Nǐ kàn, bái yún piāo zài gāogāo de lántiān shang, míngtiān yídìng shì ge qíngtiān, nǐ kěyǐ qù gōngyuán yóuwán le.", en:"Look, white clouds are floating high up in the blue sky — tomorrow is sure to be a sunny day, and you can go play in the park.", jp:"見て、白い雲が高い青空に浮かんでいます。明日はきっと晴れですから、公園に遊びに行けますよ。", ko:"보세요, 하얀 구름이 높고 푸른 하늘에 떠 있으면, 내일은 분명 맑은 날일 거예요. 공원에 놀러 갈 수 있어요."},
+  {id:"st4", zh:"你看，地上的蚂蚁正在忙着搬家呢，天很快就要下雨了，你出门可要带上雨伞啊。", py:"Nǐ kàn, dìshang de mǎyǐ zhèngzài mángzhe bānjiā ne, tiān hěn kuài jiù yào xià yǔ le, nǐ chūmén kě yào dàishang yǔsǎn a.", en:"Look, the ants on the ground are busy moving house — it's going to rain very soon, so when you go out you must bring an umbrella!", jp:"見て、地面のアリたちが忙しく引っ越しをしています。もうすぐ雨が降りますから、外出するときは傘を持って行かなくてはいけませんよ。", ko:"보세요, 땅 위의 개미들이 바쁘게 이사를 하고 있으면, 곧 비가 올 거예요. 외출할 때 우산을 챙기세요."},
+  {id:"st5", zh:"你再看，河里的冰化了，地上的草绿了，树叶长出来了，这是春天来了。", py:"Nǐ zài kàn, hé lǐ de bīng huà le, dìshang de cǎo lǜ le, shùyè zhǎng chūlái le, zhè shì chūntiān lái le.", en:"Look again — the ice in the river has melted, the grass on the ground has turned green, the leaves have grown out — this means spring has come.", jp:"もう一度見て、川の氷が溶け、地面の草が緑になり、木の葉が出てきました。これは春が来たということです。", ko:"다시 보세요, 강의 얼음이 녹고 땅의 풀이 푸르러지고 나뭇잎이 돋아나면, 이것은 봄이 왔다는 뜻입니다."},
+  {id:"st6", zh:"大自然的语言多么丰富、多么奇妙啊！", py:"Dà zìrán de yǔyán duōme fēngfù, duōme qímiào a!", en:"Nature's language is so rich, so wonderful!", jp:"大自然の言葉はなんと豊かで、なんと不思議なことでしょう！", ko:"대자연의 말은 얼마나 풍부하고 얼마나 신기한지요!"},
+  {id:"st7", zh:"只有认真学习、细心观察，你才能看得见、听得懂。", py:"Zhǐyǒu rènzhēn xuéxí, xìxīn guānchá, nǐ cáinéng kàndejiàn, tīngdedǒng.", en:"Only by studying earnestly and observing carefully can you see it and understand it.", jp:"まじめに学び、注意深く観察してこそ、見て、聞いて理解できるようになります。", ko:"열심히 공부하고 세심하게 관찰해야만 비로소 보고 들을 수 있습니다."},
+  {id:"st8", zh:"让我们做个爱学习、爱思考的好学生吧。", py:"Ràng wǒmen zuò ge ài xuéxí, ài sīkǎo de hǎo xuésheng ba.", en:"Let's be good students who love to learn and love to think.", jp:"私たちは学ぶことが好きで、考えることが好きな良い生徒になりましょう。", ko:"우리 공부를 좋아하고 생각하기를 좋아하는 좋은 학생이 되어 봅시다."}
 ];
 
 // 2. 课后生字表 (11 Characters - 课本原图)
 const CHARACTERS = [
-  {id:"zi1", zh:"言", py:"yán", radical:"言 (言字旁)", radicalBadge:null, words:"语言、言语、名言", meaning:"speech / words", meaningJp:"言葉", context:"人有语言，大自然也有语言吗？"},
-  {id:"zi2", zh:"丰", py:"fēng", radical:"丨 (独体字)", radicalBadge:null, words:"丰富、丰收、丰满", meaning:"abundant / plentiful", meaningJp:"豊か", context:"大自然的语言可丰富了"},
-  {id:"zi3", zh:"富", py:"fù", radical:"宀 (宝盖头)", radicalBadge:null, words:"丰富、富有、富裕", meaning:"rich / abundant", meaningJp:"豊富、裕福", context:"大自然的语言可丰富了"},
-  {id:"zi4", zh:"晴", py:"qíng", radical:"日 (日字旁)", radicalBadge:null, words:"晴天、晴朗、放晴", meaning:"sunny / clear weather", meaningJp:"晴れ", context:"明天一定是个晴天"},
-  {id:"zi5", zh:"蚂", py:"mǎ", radical:"虫 (虫字旁)", radicalBadge:"虫 —— 蚂", words:"蚂蚁、蚂蚱", meaning:"(in 蚂蚁 ant)", meaningJp:"アリ（蚂蚁）", context:"地上的蚂蚁正在忙着搬家呢"},
-  {id:"zi6", zh:"蚁", py:"yǐ", radical:"虫 (虫字旁)", radicalBadge:null, words:"蚂蚁、蚁穴", meaning:"ant", meaningJp:"アリ", context:"地上的蚂蚁正在忙着搬家呢"},
-  {id:"zi7", zh:"搬", py:"bān", radical:"扌 (提手旁)", radicalBadge:null, words:"搬家、搬动、搬运", meaning:"to move / to carry", meaningJp:"運ぶ、引っ越す", context:"地上的蚂蚁正在忙着搬家呢"},
-  {id:"zi8", zh:"伞", py:"sǎn", radical:"人 (独体字)", radicalBadge:null, words:"雨伞、伞兵、太阳伞", meaning:"umbrella", meaningJp:"傘", context:"你出门可要带上雨伞啊"},
-  {id:"zi9", zh:"察", py:"chá", radical:"宀 (宝盖头)", radicalBadge:null, words:"观察、察觉、考察", meaning:"to observe / to examine", meaningJp:"観察する", context:"只有认真学习、细心观察"},
-  {id:"zi10", zh:"懂", py:"dǒng", radical:"忄 (竖心旁)", radicalBadge:null, words:"懂得、看懂、听懂", meaning:"to understand", meaningJp:"理解する、わかる", context:"你才能看得见、听得懂"},
-  {id:"zi11", zh:"考", py:"kǎo", radical:"耂 (老字头)", radicalBadge:"耂 —— 考", words:"思考、考试、考虑", meaning:"to think / to examine", meaningJp:"考える、試験", context:"让我们做个爱学习、爱思考的好学生吧"}
+  {id:"zi1", zh:"言", py:"yán", radical:"言 (言字旁)", radicalBadge:null, words:"语言、言语、名言", meaning:"speech / words", meaningJp:"言葉", meaningKo:"말, 언어", context:"人有语言，大自然也有语言吗？"},
+  {id:"zi2", zh:"丰", py:"fēng", radical:"丨 (独体字)", radicalBadge:null, words:"丰富、丰收、丰满", meaning:"abundant / plentiful", meaningJp:"豊か", meaningKo:"풍성하다", context:"大自然的语言可丰富了"},
+  {id:"zi3", zh:"富", py:"fù", radical:"宀 (宝盖头)", radicalBadge:null, words:"丰富、富有、富裕", meaning:"rich / abundant", meaningJp:"豊富、裕福", meaningKo:"풍부하다, 부유하다", context:"大自然的语言可丰富了"},
+  {id:"zi4", zh:"晴", py:"qíng", radical:"日 (日字旁)", radicalBadge:null, words:"晴天、晴朗、放晴", meaning:"sunny / clear weather", meaningJp:"晴れ", meaningKo:"맑다", context:"明天一定是个晴天"},
+  {id:"zi5", zh:"蚂", py:"mǎ", radical:"虫 (虫字旁)", radicalBadge:"虫 —— 蚂", words:"蚂蚁、蚂蚱", meaning:"(in 蚂蚁 ant)", meaningJp:"アリ（蚂蚁）", meaningKo:"개미(蚂蚁)", context:"地上的蚂蚁正在忙着搬家呢"},
+  {id:"zi6", zh:"蚁", py:"yǐ", radical:"虫 (虫字旁)", radicalBadge:null, words:"蚂蚁、蚁穴", meaning:"ant", meaningJp:"アリ", meaningKo:"개미", context:"地上的蚂蚁正在忙着搬家呢"},
+  {id:"zi7", zh:"搬", py:"bān", radical:"扌 (提手旁)", radicalBadge:null, words:"搬家、搬动、搬运", meaning:"to move / to carry", meaningJp:"運ぶ、引っ越す", meaningKo:"옮기다, 이사하다", context:"地上的蚂蚁正在忙着搬家呢"},
+  {id:"zi8", zh:"伞", py:"sǎn", radical:"人 (独体字)", radicalBadge:null, words:"雨伞、伞兵、太阳伞", meaning:"umbrella", meaningJp:"傘", meaningKo:"우산", context:"你出门可要带上雨伞啊"},
+  {id:"zi9", zh:"察", py:"chá", radical:"宀 (宝盖头)", radicalBadge:null, words:"观察、察觉、考察", meaning:"to observe / to examine", meaningJp:"観察する", meaningKo:"관찰하다", context:"只有认真学习、细心观察"},
+  {id:"zi10", zh:"懂", py:"dǒng", radical:"忄 (竖心旁)", radicalBadge:null, words:"懂得、看懂、听懂", meaning:"to understand", meaningJp:"理解する、わかる", meaningKo:"이해하다, 알다", context:"你才能看得见、听得懂"},
+  {id:"zi11", zh:"考", py:"kǎo", radical:"耂 (老字头)", radicalBadge:"耂 —— 考", words:"思考、考试、考虑", meaning:"to think / to examine", meaningJp:"考える、試験", meaningKo:"생각하다, 시험", context:"让我们做个爱学习、爱思考的好学生吧"}
 ];
 
 // 3. 课后词语表 (10 Words - 课本原图)
 const WORDS = [
-  {id:"ci1", zh:"大自然", py:"dàzìrán", meaning:"nature", meaningJp:"大自然", emoji:"🌿", context:"大自然的语言多么丰富、多么奇妙啊！", tag:"重点词语"},
-  {id:"ci2", zh:"语言", py:"yǔyán", meaning:"language", meaningJp:"言葉", emoji:"💬", context:"人有语言，大自然也有语言吗？", tag:"重点词语"},
-  {id:"ci3", zh:"丰富", py:"fēngfù", meaning:"rich / abundant", meaningJp:"豊か", emoji:"🎁", context:"大自然的语言可丰富了。", tag:"重点词语"},
-  {id:"ci4", zh:"晴天", py:"qíngtiān", meaning:"sunny day", meaningJp:"晴れの日", emoji:"☀️", context:"明天一定是个晴天", tag:"重点词语"},
-  {id:"ci5", zh:"公园", py:"gōngyuán", meaning:"park", meaningJp:"公園", emoji:"🏞️", context:"你可以去公园游玩了。", tag:"重点词语"},
-  {id:"ci6", zh:"搬家", py:"bānjiā", meaning:"to move house", meaningJp:"引っ越し", emoji:"📦", context:"地上的蚂蚁正在忙着搬家呢", tag:"重点词语"},
-  {id:"ci7", zh:"多么", py:"duōme", meaning:"how (exclamatory)", meaningJp:"なんと", emoji:"❗", context:"大自然的语言多么丰富、多么奇妙啊！", tag:"重点词语"},
-  {id:"ci8", zh:"认真", py:"rènzhēn", meaning:"conscientious / earnest", meaningJp:"まじめ", emoji:"✏️", context:"只有认真学习、细心观察", tag:"重点词语"},
-  {id:"ci9", zh:"观察", py:"guānchá", meaning:"to observe", meaningJp:"観察する", emoji:"🔍", context:"只有认真学习、细心观察", tag:"重点词语"},
-  {id:"ci10", zh:"思考", py:"sīkǎo", meaning:"to think / to ponder", meaningJp:"考える", emoji:"🤔", context:"让我们做个爱学习、爱思考的好学生吧。", tag:"重点词语"}
+  {id:"ci1", zh:"大自然", py:"dàzìrán", meaning:"nature", meaningJp:"大自然", meaningKo:"대자연", emoji:"🌿", context:"大自然的语言多么丰富、多么奇妙啊！", tag:"重点词语"},
+  {id:"ci2", zh:"语言", py:"yǔyán", meaning:"language", meaningJp:"言葉", meaningKo:"언어, 말", emoji:"💬", context:"人有语言，大自然也有语言吗？", tag:"重点词语"},
+  {id:"ci3", zh:"丰富", py:"fēngfù", meaning:"rich / abundant", meaningJp:"豊か", meaningKo:"풍부하다", emoji:"🎁", context:"大自然的语言可丰富了。", tag:"重点词语"},
+  {id:"ci4", zh:"晴天", py:"qíngtiān", meaning:"sunny day", meaningJp:"晴れの日", meaningKo:"맑은 날", emoji:"☀️", context:"明天一定是个晴天", tag:"重点词语"},
+  {id:"ci5", zh:"公园", py:"gōngyuán", meaning:"park", meaningJp:"公園", meaningKo:"공원", emoji:"🏞️", context:"你可以去公园游玩了。", tag:"重点词语"},
+  {id:"ci6", zh:"搬家", py:"bānjiā", meaning:"to move house", meaningJp:"引っ越し", meaningKo:"이사하다", emoji:"📦", context:"地上的蚂蚁正在忙着搬家呢", tag:"重点词语"},
+  {id:"ci7", zh:"多么", py:"duōme", meaning:"how (exclamatory)", meaningJp:"なんと", meaningKo:"얼마나(감탄)", emoji:"❗", context:"大自然的语言多么丰富、多么奇妙啊！", tag:"重点词语"},
+  {id:"ci8", zh:"认真", py:"rènzhēn", meaning:"conscientious / earnest", meaningJp:"まじめ", meaningKo:"성실하다, 진지하다", emoji:"✏️", context:"只有认真学习、细心观察", tag:"重点词语"},
+  {id:"ci9", zh:"观察", py:"guānchá", meaning:"to observe", meaningJp:"観察する", meaningKo:"관찰하다", emoji:"🔍", context:"只有认真学习、细心观察", tag:"重点词语"},
+  {id:"ci10", zh:"思考", py:"sīkǎo", meaning:"to think / to ponder", meaningJp:"考える", meaningKo:"생각하다, 사고하다", emoji:"🤔", context:"让我们做个爱学习、爱思考的好学生吧。", tag:"重点词语"}
 ];
 
 const ALL_VOCAB = WORDS;
@@ -829,7 +839,7 @@ const CLOZE_QUESTIONS = [
     after: "也有语言吗？",
     py: "Rén yǒu yǔyán, dà zìrán yě yǒu yǔyán ma?",
     en: "Humans have language — does nature have language too?",
-    jp: "人には言葉があります。大自然にも言葉があるのでしょうか？",
+    jp: "人には言葉があります。大自然にも言葉があるのでしょうか？", ko:"사람에게 말이 있다면, 대자연에도 말이 있을까요?",
     answerPy: "dà zì rán",
     options: ["大自然", "小动物", "大城市", "小朋友"],
     hint: "课文首句",
@@ -843,7 +853,7 @@ const CLOZE_QUESTIONS = [
     after: "了。",
     py: "Yǒu de, dà zìrán de yǔyán kě fēngfù le.",
     en: "Yes it does — nature's language is so rich!",
-    jp: "あります。大自然の言葉はとても豊かです。",
+    jp: "あります。大自然の言葉はとても豊かです。", ko:"있습니다, 대자연의 말은 정말 풍부해요!",
     answerPy: "fēng fù",
     options: ["丰富", "无聊", "简单", "安静"],
     hint: "课后生字「丰」「富」组成的词",
@@ -857,7 +867,7 @@ const CLOZE_QUESTIONS = [
     after: "，你可以去公园游玩了。",
     py: "Nǐ kàn, bái yún piāo zài gāogāo de lántiān shang, míngtiān yídìng shì ge qíngtiān.",
     en: "Look, white clouds are floating high in the blue sky — tomorrow will surely be a sunny day.",
-    jp: "見て、白い雲が高い青空に浮かんでいます。明日はきっと晴れです。",
+    jp: "見て、白い雲が高い青空に浮かんでいます。明日はきっと晴れです。", ko:"보세요, 하얀 구름이 높고 푸른 하늘에 떠 있으면, 내일은 분명 맑은 날일 거예요.",
     answerPy: "qíng tiān",
     options: ["晴天", "雨天", "雪天", "阴天"],
     hint: "课后生字「晴」组成的词",
@@ -871,7 +881,7 @@ const CLOZE_QUESTIONS = [
     after: "正在忙着搬家呢，天很快就要下雨了。",
     py: "Nǐ kàn, dìshang de mǎyǐ zhèngzài mángzhe bānjiā ne, tiān hěn kuài jiù yào xià yǔ le.",
     en: "Look, the ants on the ground are busy moving house — it's going to rain soon.",
-    jp: "見て、地面のアリが忙しく引っ越しをしています。もうすぐ雨が降りますよ。",
+    jp: "見て、地面のアリが忙しく引っ越しをしています。もうすぐ雨が降りますよ。", ko:"보세요, 땅 위의 개미들이 바쁘게 이사를 하고 있으면, 곧 비가 올 거예요.",
     answerPy: "mǎ yǐ",
     options: ["蚂蚁", "蜜蜂", "蝴蝶", "瓢虫"],
     hint: "课后生字「蚂」「蚁」组成的词",
@@ -885,7 +895,7 @@ const CLOZE_QUESTIONS = [
     after: "啊。",
     py: "Nǐ chūmén kě yào dàishang yǔsǎn a.",
     en: "When you go out you must bring an umbrella!",
-    jp: "外出するときは傘を持って行かなくてはいけませんよ。",
+    jp: "外出するときは傘を持って行かなくてはいけませんよ。", ko:"외출할 때 우산을 챙기세요.",
     answerPy: "yǔ sǎn",
     options: ["雨伞", "帽子", "手套", "围巾"],
     hint: "课后生字「伞」组成的词",
@@ -899,7 +909,7 @@ const CLOZE_QUESTIONS = [
     after: "来了。",
     py: "Nǐ zài kàn, hé lǐ de bīng huà le, dìshang de cǎo lǜ le, shùyè zhǎng chūlái le, zhè shì chūntiān lái le.",
     en: "Look again — the ice in the river has melted, the grass has turned green, the leaves have grown — spring has come.",
-    jp: "もう一度見て、川の氷が溶け、地面の草が緑になり、木の葉が出てきました。春が来たのです。",
+    jp: "もう一度見て、川の氷が溶け、地面の草が緑になり、木の葉が出てきました。春が来たのです。", ko:"다시 보세요, 강의 얼음이 녹고 풀이 푸르러지고 나뭇잎이 돋아났어요. 봄이 온 것입니다.",
     answerPy: "chūn tiān",
     options: ["春天", "夏天", "秋天", "冬天"],
     hint: "课文情境 · 季节变化",
@@ -913,7 +923,7 @@ const CLOZE_QUESTIONS = [
     after: "啊！",
     py: "Dà zìrán de yǔyán duōme fēngfù, duōme qímiào a!",
     en: "Nature's language is so rich, so wonderful!",
-    jp: "大自然の言葉はなんと豊かで、なんと不思議なことでしょう！",
+    jp: "大自然の言葉はなんと豊かで、なんと不思議なことでしょう！", ko:"대자연의 말은 얼마나 풍부하고 얼마나 신기한지요!",
     answerPy: "qí miào",
     options: ["奇妙", "无聊", "可怕", "普通"],
     hint: "课文点睛之笔",
@@ -927,7 +937,7 @@ const CLOZE_QUESTIONS = [
     after: "，你才能看得见、听得懂。",
     py: "Zhǐyǒu rènzhēn xuéxí, xìxīn guānchá, nǐ cáinéng kàndejiàn, tīngdedǒng.",
     en: "Only by studying earnestly and observing carefully can you see and understand it.",
-    jp: "まじめに学び、注意深く観察してこそ、見えて聞き取れるようになります。",
+    jp: "まじめに学び、注意深く観察してこそ、見えて聞き取れるようになります。", ko:"열심히 공부하고 세심하게 관찰해야만 보고 들을 수 있습니다.",
     answerPy: "guān chá",
     options: ["观察", "睡觉", "唱歌", "跑步"],
     hint: "课后词语「观察」· 课文重点句",
@@ -941,7 +951,7 @@ const CLOZE_QUESTIONS = [
     after: "了，新家离公园很近。",
     py: "Wǒmen jiā shàng ge xīngqī bānjiā le, xīn jiā lí gōngyuán hěn jìn.",
     en: "Our family moved house last week; the new home is very close to the park.",
-    jp: "私たちの家は先週引っ越しました。新しい家は公園にとても近いです。",
+    jp: "私たちの家は先週引っ越しました。新しい家は公園にとても近いです。", ko:"우리 집은 지난주에 이사했는데, 새 집은 공원에서 매우 가깝습니다.",
     answerPy: "bān jiā",
     options: ["搬家", "上学", "旅行", "做饭"],
     hint: "微情境拓展 · 课后词语「搬家」",
@@ -956,7 +966,7 @@ const CLOZE_QUESTIONS = [
     after: "玩，那里的花开得很漂亮。",
     py: "Zhōumò, bàba māma dài wǒ qù gōngyuán wán, nàlǐ de huā kāi de hěn piàoliang.",
     en: "On the weekend, my parents took me to the park to play; the flowers there are blooming beautifully.",
-    jp: "週末、両親は私を公園に連れて行って遊ばせてくれました。そこの花はとてもきれいに咲いています。",
+    jp: "週末、両親は私を公園に連れて行って遊ばせてくれました。そこの花はとてもきれいに咲いています。", ko:"주말에 부모님이 저를 공원에 데려가 놀게 해주셨어요. 그곳의 꽃들이 아름답게 피어 있습니다.",
     answerPy: "gōng yuán",
     options: ["公园", "医院", "超市", "学校"],
     hint: "微情境拓展 · 课后词语「公园」",
@@ -971,7 +981,7 @@ const CLOZE_QUESTIONS = [
     after: "听讲，不能玩铅笔。",
     py: "Shàngkè de shíhou yào rènzhēn tīngjiǎng, bùnéng wán qiānbǐ.",
     en: "During class you must listen attentively and not play with your pencil.",
-    jp: "授業中はまじめに話を聞かなければなりません、鉛筆で遊んではいけません。",
+    jp: "授業中はまじめに話を聞かなければなりません、鉛筆で遊んではいけません。", ko:"수업 중에는 집중해서 들어야 하고, 연필을 가지고 놀면 안 됩니다.",
     answerPy: "rèn zhēn",
     options: ["认真", "调皮", "害怕", "着急"],
     hint: "微情境拓展 · 课后词语「认真」",
@@ -986,7 +996,7 @@ const CLOZE_QUESTIONS = [
     after: "，不要急着问答案。",
     py: "Yùdào nántí, wǒmen yào duō sīkǎo, bùyào jízhe wèn dá'àn.",
     en: "When we meet a difficult problem, we should think more, not rush to ask for the answer.",
-    jp: "難しい問題に出会ったら、たくさん考えるべきで、急いで答えを聞いてはいけません。",
+    jp: "難しい問題に出会ったら、たくさん考えるべきで、急いで答えを聞いてはいけません。", ko:"어려운 문제를 만나면 많이 생각해야 하고, 서둘러 답을 물어서는 안 됩니다.",
     answerPy: "sī kǎo",
     options: ["思考", "放弃", "抄袭", "睡觉"],
     hint: "微情境拓展 · 课后生字「考」组成的词",
@@ -997,7 +1007,7 @@ const CLOZE_QUESTIONS = [
 
 
 /* ---------------- STATE ---------------- */
-let storyIdx = 0, showPy = true, showEn = true, showJp = true;
+let storyIdx = 0, showPy = true, showEn = true, showJp = true, showKo = true;
 let charIdx = 0;
 let flashIdx = 0;
 let matchMode = 'chars'; // chars, words, all
@@ -1063,7 +1073,7 @@ let currentAudio = null;
 function playClip(id, fallbackText, onEnded, lang){
   stopClip();
   lang = lang || 'zh-CN';
-  const dir = lang === 'en-US' ? 'audio/daziran_en/' : (lang === 'ja-JP' ? 'audio/daziran_ja/' : 'audio/daziran/');
+  const dir = lang === 'en-US' ? 'audio/daziran_en/' : (lang === 'ja-JP' ? 'audio/daziran_ja/' : (lang === 'ko-KR' ? 'audio/daziran_ko/' : 'audio/daziran/'));
   if(!id) {
     speakText(fallbackText, onEnded, lang);
     return;
@@ -1093,7 +1103,7 @@ function stopClip(){
     window.speechSynthesis.cancel();
   }
 }
-let zhVoice = null, enVoice = null, jaVoice = null;
+let zhVoice = null, enVoice = null, jaVoice = null, koVoice = null;
 function pickVoice(){
   if(!('speechSynthesis' in window)) return;
   const voices = speechSynthesis.getVoices();
@@ -1105,6 +1115,7 @@ function pickVoice(){
     || null;
   jaVoice = voices.find(v=>/^ja/i.test(v.lang||''))
     || null;
+  koVoice = voices.find(v=>/^ko/i.test(v.lang||'')) || null;
 }
 if('speechSynthesis' in window){
   pickVoice();
@@ -1113,7 +1124,7 @@ if('speechSynthesis' in window){
   const voicePollTimer = setInterval(()=>{
     pickVoice();
     voicePolls++;
-    if((zhVoice && enVoice && jaVoice) || voicePolls > 8) clearInterval(voicePollTimer);
+    if((zhVoice && enVoice && jaVoice && koVoice) || voicePolls > 8) clearInterval(voicePollTimer);
   }, 400);
 }
 function speakText(text, onEnded, lang){
@@ -1123,8 +1134,8 @@ function speakText(text, onEnded, lang){
     return;
   }
   window.speechSynthesis.cancel();
-  let voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^en/i.test(lang) ? enVoice : null;
-  if(!voice){ pickVoice(); voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^en/i.test(lang) ? enVoice : null; }
+  let voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^ko/i.test(lang) ? koVoice : /^en/i.test(lang) ? enVoice : null;
+  if(!voice){ pickVoice(); voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^ko/i.test(lang) ? koVoice : /^en/i.test(lang) ? enVoice : null; }
   const u = new SpeechSynthesisUtterance(text);
   u.lang = lang;
   if(voice) u.voice = voice;
@@ -1195,11 +1206,14 @@ function renderStory(){
   document.getElementById('storyPy').textContent = s.py;
   document.getElementById('storyEn').textContent = s.en;
   document.getElementById('storyJp').textContent = s.jp || '';
+  document.getElementById('storyKo').textContent = s.ko || '';
   document.getElementById('storyPy').style.display = showPy ? 'block' : 'none';
   document.getElementById('storyEn').style.display = showEn ? 'block' : 'none';
   document.getElementById('storyJp').style.display = showJp ? 'block' : 'none';
+  document.getElementById('storyKo').style.display = showKo ? 'block' : 'none';
   const enRow = document.getElementById('storyEnRow'); if(enRow) enRow.style.display = showEn ? 'flex' : 'none';
   const jpRow = document.getElementById('storyJpRow'); if(jpRow) jpRow.style.display = (showJp && s.jp) ? 'flex' : 'none';
+  const koRow = document.getElementById('storyKoRow'); if(koRow) koRow.style.display = (showKo && s.ko) ? 'flex' : 'none';
   updateStoryVoiceUI();
 }
 function storyPrev(){ if(storyIdx > 0){ storyIdx--; renderStory(); playClip(STORY[storyIdx].id, STORY[storyIdx].zh); } }
@@ -1207,9 +1221,10 @@ function storyNext(){ if(storyIdx < STORY.length - 1){ storyIdx++; renderStory()
 function toggleStoryPy(){ showPy = !showPy; document.getElementById('chipPy').classList.toggle('active', showPy); renderStory(); }
 function toggleStoryEn(){ showEn = !showEn; document.getElementById('chipEn').classList.toggle('active', showEn); renderStory(); }
 function toggleStoryJp(){ showJp = !showJp; document.getElementById('chipJp').classList.toggle('active', showJp); renderStory(); }
+function toggleStoryKo(){ showKo = !showKo; document.getElementById('chipKo').classList.toggle('active', showKo); renderStory(); }
 
 /* ---------------- FULL TEXT (全文朗读与配音) ---------------- */
-let fullPlaying = false, fullPlayIdx = 0, fullShowPy = true, fullShowEn = true, fullShowJp = true;
+let fullPlaying = false, fullPlayIdx = 0, fullShowPy = true, fullShowEn = true, fullShowJp = true, fullShowKo = true;
 let fullMyPlaying = false;
 
 function renderFullText(){
@@ -1229,6 +1244,10 @@ function renderFullText(){
       <div style="display:${(fullShowJp && s.jp)?'flex':'none'};align-items:center;justify-content:center;gap:6px;">
         <div class="sentence-jp">${s.jp||''}</div>
         <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[${idx}].id, STORY[${idx}].jp||'', null, 'ja-JP');" title="播放日文发音">🔊</button>
+      </div>
+      <div style="display:${(fullShowKo && s.ko)?'flex':'none'};align-items:center;justify-content:center;gap:6px;">
+        <div class="sentence-ko">${s.ko||''}</div>
+        <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[${idx}].id, STORY[${idx}].ko||'', null, 'ko-KR');" title="播放韩文发音">🔊</button>
       </div>
       <div class="full-sent-voice-bar" id="full-voice-bar-${idx}">
         <span class="sent-voice-tag" id="voice-tag-${idx}">加载录音中...</span>
@@ -1276,6 +1295,7 @@ async function updateFullTextVoiceBars(){
 function toggleFullPy(){ fullShowPy = !fullShowPy; document.getElementById('chipFullPy').classList.toggle('active', fullShowPy); renderFullText(); }
 function toggleFullEn(){ fullShowEn = !fullShowEn; document.getElementById('chipFullEn').classList.toggle('active', fullShowEn); renderFullText(); }
 function toggleFullJp(){ fullShowJp = !fullShowJp; document.getElementById('chipFullJp').classList.toggle('active', fullShowJp); renderFullText(); }
+function toggleFullKo(){ fullShowKo = !fullShowKo; document.getElementById('chipFullKo').classList.toggle('active', fullShowKo); renderFullText(); }
 
 function highlightFullSentence(idx){
   document.querySelectorAll('.full-sentence').forEach((el, i)=>{
@@ -1424,7 +1444,7 @@ function renderChar(){
   document.getElementById('charPyBack').textContent = c.py;
   document.getElementById('charRadical').textContent = '偏旁部首: ' + c.radical;
   document.getElementById('charWords').innerHTML = '<strong>组词:</strong> ' + c.words;
-  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + ' · ' + c.context;
+  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + (c.meaningKo ? ' / ' + c.meaningKo : '') + ' · ' + c.context;
   document.getElementById('charCounter').textContent = (charIdx+1) + ' / ' + CHARACTERS.length;
 
   const badgeBox = document.getElementById('charRadicalBadgeContainer');
@@ -1584,7 +1604,7 @@ function renderFlash(){
   document.getElementById('flashZh').textContent = w.zh;
   document.getElementById('flashZhBack').textContent = w.zh;
   document.getElementById('flashPy').textContent = w.py;
-  document.getElementById('flashMeaning').textContent = w.meaning + (w.meaningJp ? ' / ' + w.meaningJp : '');
+  document.getElementById('flashMeaning').textContent = w.meaning + (w.meaningJp ? ' / ' + w.meaningJp : '') + (w.meaningKo ? ' / ' + w.meaningKo : '');
   document.getElementById('flashContext').textContent = '例句: ' + w.context;
   document.getElementById('flashCounter').textContent = (flashIdx + 1) + ' / ' + WORDS.length;
 }
@@ -2116,6 +2136,7 @@ function loadClozeQuestion(){
   document.getElementById('clozeAfter').textContent = q.after;
   document.getElementById('clozeEn').textContent = q.en;
   document.getElementById('clozeJp').textContent = q.jp || '';
+  document.getElementById('clozeKo').textContent = q.ko || '';
   document.getElementById('clozeHint').textContent = '💡 ' + q.hint;
 
   const slot = document.getElementById('clozeSlot');

@@ -83,6 +83,7 @@
   .sentence-py{font-size:15px;color:var(--blue);text-align:center;font-weight:700;min-height:20px;}
   .sentence-en{font-size:13px;color:var(--muted);text-align:center;}
   .sentence-jp{font-size:13px;color:#8b5cf6;text-align:center;}
+  .sentence-ko{font-size:13px;color:#059669;text-align:center;}
   .mini-speak-btn{border:none;background:none;font-size:13px;cursor:pointer;line-height:1;padding:2px 3px;border-radius:50%;flex-shrink:0;opacity:.75;}
   .mini-speak-btn:active{opacity:1;transform:scale(1.15);}
   .sent-action-btn.lang-voice{background:#f0f4ff;border-color:#a3bffa;color:#3b4fd8;}
@@ -226,6 +227,7 @@
   .full-sentence .sentence-py{font-size:13px;text-align:left;}
   .full-sentence .sentence-en{font-size:12px;text-align:left;}
   .full-sentence .sentence-jp{font-size:12px;text-align:left;color:#8b5cf6;}
+  .full-sentence .sentence-ko{font-size:12px;text-align:left;color:#059669;margin-top:2px;}
   .full-sentence.playing{background:var(--gold-soft);border-color:var(--imperial-gold);}
 
   /* audio challenge */
@@ -264,6 +266,7 @@
   .cloze-slot.wrong{color:#dc2626;border-color:#dc2626;background:#fee2e2;}
   .cloze-en{font-size:12px;color:var(--blue);font-style:italic;text-align:center;}
   .cloze-jp{font-size:12px;color:#8b5cf6;font-style:italic;text-align:center;}
+  .cloze-ko{font-size:12px;color:#059669;font-style:italic;text-align:center;}
   .cloze-hint-row{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 4px;}
   .cloze-hint-pill{font-size:12px;color:var(--muted);background:#f5f5f4;padding:3px 10px;border-radius:12px;}
   .cloze-speak-btn{background:#fff;border:1px solid #cbd5e1;border-radius:14px;padding:3px 10px;font-size:12px;font-weight:700;
@@ -430,6 +433,7 @@
         <div class="chip active" id="chipPy" onclick="toggleStoryPy()">拼音</div>
         <div class="chip active" id="chipEn" onclick="toggleStoryEn()">English</div>
         <div class="chip active" id="chipJp" onclick="toggleStoryJp()">日本語</div>
+        <div class="chip active" id="chipKo" onclick="toggleStoryKo()">한국어</div>
         <div class="chip" onclick="goFull()">📜 全文朗读</div>
       </div>
       <div class="story-card">
@@ -443,6 +447,10 @@
         <div class="lang-line-row" id="storyJpRow" style="display:flex;align-items:center;justify-content:center;gap:6px;">
           <div class="sentence-jp" id="storyJp"></div>
           <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].jp||'', null, 'ja-JP')" title="播放日文发音">🔊</button>
+        </div>
+        <div class="lang-line-row" id="storyKoRow" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+          <div class="sentence-ko" id="storyKo"></div>
+          <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].ko||'', null, 'ko-KR')" title="播放韩文发音">🔊</button>
         </div>
       </div>
       <!-- VOICE WAVE VISUALIZER -->
@@ -479,6 +487,7 @@
         <div class="chip active" id="chipFullPy" onclick="toggleFullPy()">拼音</div>
         <div class="chip active" id="chipFullEn" onclick="toggleFullEn()">English</div>
         <div class="chip active" id="chipFullJp" onclick="toggleFullJp()">日本語</div>
+        <div class="chip active" id="chipFullKo" onclick="toggleFullKo()">한국어</div>
       </div>
       <div class="story-card" style="align-items:stretch;gap:12px;">
         <div id="fullTextList" style="display:flex;flex-direction:column;gap:12px;"></div>
@@ -650,6 +659,7 @@
           </div>
           <div class="cloze-en" id="clozeEn"></div>
           <div class="cloze-jp" id="clozeJp"></div>
+          <div class="cloze-ko" id="clozeKo"></div>
           <div class="cloze-hint-row">
             <span class="cloze-hint-pill" id="clozeHint"></span>
             <button class="cloze-speak-btn" id="clozeSpeakBtn" onclick="speakClozeSentence()">🔊 朗读句子</button>
@@ -748,56 +758,56 @@
 /* ---------------- DATA ---------------- */
 // 1. 课文《故宫》（教材原版逐字转写）
 const STORY = [
-  {id:"st1", zh:"今天妈妈带我去游故宫。", py:"Jīntiān māma dài wǒ qù yóu Gùgōng.", en:"Today Mom took me to tour the Forbidden City.", jp:"今日、お母さんが私を故宮見学に連れて行ってくれました。"},
-  {id:"st2", zh:"故宫是中国明朝和清朝的皇宫，又叫紫禁城，一共有二十四位皇帝在这里居住过。", py:"Gùgōng shì Zhōngguó Míngcháo hé Qīngcháo de huánggōng, yòu jiào Zǐjìnchéng, yígòng yǒu èrshísì wèi huángdì zài zhèlǐ jūzhù guo.", en:"The Forbidden City was the imperial palace of China's Ming and Qing dynasties, also known as the Forbidden City; 24 emperors in total lived here.", jp:"故宮は中国の明・清両王朝の皇居で、紫禁城とも呼ばれ、24人の皇帝がここに住んでいました。"},
-  {id:"st3", zh:"故宫已经有六百多年的历史了，是中国最大的古代宫殿，也是世界上最大的古代宫殿。", py:"Gùgōng yǐjīng yǒu liùbǎi duō nián de lìshǐ le, shì Zhōngguó zuìdà de gǔdài gōngdiàn, yě shì shìjiè shang zuìdà de gǔdài gōngdiàn.", en:"The Forbidden City already has over 600 years of history; it is the largest ancient palace in China, and also the largest ancient palace in the world.", jp:"故宮はすでに600年以上の歴史があり、中国最大の古代宮殿であり、世界最大の古代宮殿でもあります。"},
-  {id:"st4", zh:"我们以天安门为起点，一路向北，从午门进入故宫。", py:"Wǒmen yǐ Tiān'ānmén wéi qǐdiǎn, yílù xiàng běi, cóng Wǔmén jìnrù Gùgōng.", en:"Starting from Tiananmen, we headed north all the way and entered the Forbidden City through the Meridian Gate.", jp:"私たちは天安門を出発点として、まっすぐ北へ進み、午門から故宮に入りました。"},
-  {id:"st5", zh:"故宫一共有九千多间房屋，都是用木头建造的，是中国古代建筑艺术的代表。", py:"Gùgōng yígòng yǒu jiǔqiān duō jiān fángwū, dōu shì yòng mùtou jiànzào de, shì Zhōngguó gǔdài jiànzhù yìshù de dàibiǎo.", en:"The Forbidden City has over 9,000 rooms in total, all built of wood, and is a masterpiece of ancient Chinese architectural art.", jp:"故宮には全部で9000あまりの部屋があり、すべて木で建てられていて、中国古代建築芸術の代表です。"},
-  {id:"st6", zh:"故宫里收藏了许多珍贵的历史文物，有许多展览，吸引了许多国内外的游客前去参观。", py:"Gùgōng lǐ shōucángle xǔduō zhēnguì de lìshǐ wénwù, yǒu hěnduō zhǎnlǎn, xīyǐnle xǔduō guónèiwài de yóukè qiánqù cānguān.", en:"The Forbidden City houses many precious historical relics and has many exhibitions, attracting many domestic and international tourists to visit.", jp:"故宮には貴重な歴史的文化財が数多く収蔵されており、多くの展覧会が開かれ、国内外から大勢の観光客を引きつけています。"},
-  {id:"st7", zh:"故宫真的很大，今天我们只参观了它最著名的三座大殿：太和殿、中和殿和保和殿。", py:"Gùgōng zhēn de hěn dà, jīntiān wǒmen zhǐ cānguānle tā zuì zhùmíng de sān zuò dàdiàn: Tàihédiàn, Zhōnghédiàn hé Bǎohédiàn.", en:"The Forbidden City is truly huge; today we only visited its three most famous great halls: the Hall of Supreme Harmony, the Hall of Central Harmony, and the Hall of Preserving Harmony.", jp:"故宮は本当に広く、今日私たちは最も有名な三つの大広間――太和殿・中和殿・保和殿――しか見学できませんでした。"},
-  {id:"st8", zh:"我对妈妈说，以后有机会我还要来故宫逛逛。", py:"Wǒ duì māma shuō, yǐhòu yǒu jīhuì wǒ hái yào lái Gùgōng guàngguang.", en:"I said to Mom that if there is a chance in the future, I want to come stroll around the Forbidden City again.", jp:"私はお母さんに、今度機会があればまた故宮に遊びに来たいと言いました。"}
+  {id:"st1", zh:"今天妈妈带我去游故宫。", py:"Jīntiān māma dài wǒ qù yóu Gùgōng.", en:"Today Mom took me to tour the Forbidden City.", jp:"今日、お母さんが私を故宮見学に連れて行ってくれました。", ko:"오늘 엄마가 저를 데리고 고궁(자금성)을 구경하러 갔습니다."},
+  {id:"st2", zh:"故宫是中国明朝和清朝的皇宫，又叫紫禁城，一共有二十四位皇帝在这里居住过。", py:"Gùgōng shì Zhōngguó Míngcháo hé Qīngcháo de huánggōng, yòu jiào Zǐjìnchéng, yígòng yǒu èrshísì wèi huángdì zài zhèlǐ jūzhù guo.", en:"The Forbidden City was the imperial palace of China's Ming and Qing dynasties, also known as the Forbidden City; 24 emperors in total lived here.", jp:"故宮は中国の明・清両王朝の皇居で、紫禁城とも呼ばれ、24人の皇帝がここに住んでいました。", ko:"고궁은 중국 명나라와 청나라의 황궁으로, 자금성이라고도 불리며, 모두 24명의 황제가 이곳에 거주한 적이 있습니다."},
+  {id:"st3", zh:"故宫已经有六百多年的历史了，是中国最大的古代宫殿，也是世界上最大的古代宫殿。", py:"Gùgōng yǐjīng yǒu liùbǎi duō nián de lìshǐ le, shì Zhōngguó zuìdà de gǔdài gōngdiàn, yě shì shìjiè shang zuìdà de gǔdài gōngdiàn.", en:"The Forbidden City already has over 600 years of history; it is the largest ancient palace in China, and also the largest ancient palace in the world.", jp:"故宮はすでに600年以上の歴史があり、中国最大の古代宮殿であり、世界最大の古代宮殿でもあります。", ko:"고궁은 이미 600여 년의 역사를 가지고 있으며, 중국 최대의 고대 궁전이자 세계에서 가장 큰 고대 궁전입니다."},
+  {id:"st4", zh:"我们以天安门为起点，一路向北，从午门进入故宫。", py:"Wǒmen yǐ Tiān'ānmén wéi qǐdiǎn, yílù xiàng běi, cóng Wǔmén jìnrù Gùgōng.", en:"Starting from Tiananmen, we headed north all the way and entered the Forbidden City through the Meridian Gate.", jp:"私たちは天安門を出発点として、まっすぐ北へ進み、午門から故宮に入りました。", ko:"우리는 천안문을 출발점으로 삼아 쭉 북쪽으로 가서 오문을 통해 고궁에 들어갔습니다."},
+  {id:"st5", zh:"故宫一共有九千多间房屋，都是用木头建造的，是中国古代建筑艺术的代表。", py:"Gùgōng yígòng yǒu jiǔqiān duō jiān fángwū, dōu shì yòng mùtou jiànzào de, shì Zhōngguó gǔdài jiànzhù yìshù de dàibiǎo.", en:"The Forbidden City has over 9,000 rooms in total, all built of wood, and is a masterpiece of ancient Chinese architectural art.", jp:"故宮には全部で9000あまりの部屋があり、すべて木で建てられていて、中国古代建築芸術の代表です。", ko:"고궁에는 모두 9천여 칸의 방이 있는데, 모두 나무로 지어졌으며 중국 고대 건축 예술의 대표작입니다."},
+  {id:"st6", zh:"故宫里收藏了许多珍贵的历史文物，有许多展览，吸引了许多国内外的游客前去参观。", py:"Gùgōng lǐ shōucángle xǔduō zhēnguì de lìshǐ wénwù, yǒu hěnduō zhǎnlǎn, xīyǐnle xǔduō guónèiwài de yóukè qiánqù cānguān.", en:"The Forbidden City houses many precious historical relics and has many exhibitions, attracting many domestic and international tourists to visit.", jp:"故宮には貴重な歴史的文化財が数多く収蔵されており、多くの展覧会が開かれ、国内外から大勢の観光客を引きつけています。", ko:"고궁에는 많은 귀중한 역사 문물이 소장되어 있고 많은 전시회가 열려, 국내외의 많은 관광객을 끌어들여 참관하게 합니다."},
+  {id:"st7", zh:"故宫真的很大，今天我们只参观了它最著名的三座大殿：太和殿、中和殿和保和殿。", py:"Gùgōng zhēn de hěn dà, jīntiān wǒmen zhǐ cānguānle tā zuì zhùmíng de sān zuò dàdiàn: Tàihédiàn, Zhōnghédiàn hé Bǎohédiàn.", en:"The Forbidden City is truly huge; today we only visited its three most famous great halls: the Hall of Supreme Harmony, the Hall of Central Harmony, and the Hall of Preserving Harmony.", jp:"故宮は本当に広く、今日私たちは最も有名な三つの大広間――太和殿・中和殿・保和殿――しか見学できませんでした。", ko:"고궁은 정말 커서, 오늘 우리는 가장 유명한 세 개의 큰 전각, 즉 태화전, 중화전, 보화전만 둘러보았습니다."},
+  {id:"st8", zh:"我对妈妈说，以后有机会我还要来故宫逛逛。", py:"Wǒ duì māma shuō, yǐhòu yǒu jīhuì wǒ hái yào lái Gùgōng guàngguang.", en:"I said to Mom that if there is a chance in the future, I want to come stroll around the Forbidden City again.", jp:"私はお母さんに、今度機会があればまた故宮に遊びに来たいと言いました。", ko:"저는 엄마에게 나중에 기회가 되면 다시 고궁에 와서 구경하고 싶다고 말했습니다."}
 ];
 
 // 2. 课后生字表 (12 Characters - 课本原图)
 const CHARACTERS = [
-  {id:"zi1", zh:"朝", py:"cháo", radical:"月 / 𠦝", radicalBadge:null, words:"明朝、清朝、朝代", meaning:"dynasty / imperial court", meaningJp:"王朝・朝廷", context:"中国明朝和清朝的皇宫"},
-  {id:"zi2", zh:"清", py:"qīng", radical:"氵 (三点水)", radicalBadge:null, words:"清朝、清代、清楚", meaning:"clear / Qing Dynasty", meaningJp:"清らか／清王朝", context:"中国明朝和清朝的皇宫"},
-  {id:"zi3", zh:"皇", py:"huáng", radical:"白 (白字头)", radicalBadge:null, words:"皇帝、皇宫、皇家", meaning:"imperial / emperor", meaningJp:"皇帝の、天子", context:"明朝和清朝的皇宫"},
-  {id:"zi4", zh:"位", py:"wèi", radical:"亻 (单人旁)", radicalBadge:null, words:"二十四位皇帝、位子", meaning:"position / measure word for people", meaningJp:"位／人を数える量詞", context:"二十四位皇帝"},
-  {id:"zi5", zh:"帝", py:"dì", radical:"巾 (巾字底)", radicalBadge:null, words:"皇帝、帝王、帝国", meaning:"emperor / monarch", meaningJp:"皇帝、帝王", context:"二十四位皇帝"},
-  {id:"zi6", zh:"居", py:"jū", radical:"尸 (尸字头)", radicalBadge:"尸 —— 居", words:"居住、定居、居民", meaning:"reside / live", meaningJp:"住む、居住する", context:"在这里居住过"},
-  {id:"zi7", zh:"殿", py:"diàn", radical:"殳 (殳字旁)", radicalBadge:"殳 —— 殿", words:"大殿、太和殿、保和殿", meaning:"palace hall", meaningJp:"宮殿の大広間", context:"最著名的三座大殿"},
-  {id:"zi8", zh:"间", py:"jiān", radical:"门 (门字框)", radicalBadge:null, words:"九千多间、房间、中间", meaning:"room / measure word for rooms", meaningJp:"部屋／部屋を数える量詞", context:"九千多间房屋"},
-  {id:"zi9", zh:"筑", py:"zhù", radical:"竹 (竹字头)", radicalBadge:null, words:"建筑、建筑艺术、建造", meaning:"build / construct", meaningJp:"建てる、築く", context:"古代建筑艺术的代表"},
-  {id:"zi10", zh:"藏", py:"cáng", radical:"艹 (草字头)", radicalBadge:null, words:"收藏、珍藏、宝藏", meaning:"store / collect", meaningJp:"しまう、収蔵する", context:"收藏了许多珍贵文物"},
-  {id:"zi11", zh:"内", py:"nèi", radical:"冂 (同字框)", radicalBadge:null, words:"国内、国内外、内部", meaning:"inside / domestic", meaningJp:"内側、国内", context:"吸引了许多国内外的游客"},
-  {id:"zi12", zh:"外", py:"wài", radical:"夕 (夕字旁)", radicalBadge:null, words:"国外、国内外、外部", meaning:"outside / international", meaningJp:"外側、国外", context:"吸引了许多国内外的游客"}
+  {id:"zi1", zh:"朝", py:"cháo", radical:"月 / 𠦝", radicalBadge:null, words:"明朝、清朝、朝代", meaning:"dynasty / imperial court", meaningJp:"王朝・朝廷", meaningKo:"왕조 / 조정", context:"中国明朝和清朝的皇宫"},
+  {id:"zi2", zh:"清", py:"qīng", radical:"氵 (三点水)", radicalBadge:null, words:"清朝、清代、清楚", meaning:"clear / Qing Dynasty", meaningJp:"清らか／清王朝", meaningKo:"맑다 / 청나라", context:"中国明朝和清朝的皇宫"},
+  {id:"zi3", zh:"皇", py:"huáng", radical:"白 (白字头)", radicalBadge:null, words:"皇帝、皇宫、皇家", meaning:"imperial / emperor", meaningJp:"皇帝の、天子", meaningKo:"황제의, 제왕의", context:"明朝和清朝的皇宫"},
+  {id:"zi4", zh:"位", py:"wèi", radical:"亻 (单人旁)", radicalBadge:null, words:"二十四位皇帝、位子", meaning:"position / measure word for people", meaningJp:"位／人を数える量詞", meaningKo:"자리 / 사람을 세는 양사", context:"二十四位皇帝"},
+  {id:"zi5", zh:"帝", py:"dì", radical:"巾 (巾字底)", radicalBadge:null, words:"皇帝、帝王、帝国", meaning:"emperor / monarch", meaningJp:"皇帝、帝王", meaningKo:"황제, 제왕", context:"二十四位皇帝"},
+  {id:"zi6", zh:"居", py:"jū", radical:"尸 (尸字头)", radicalBadge:"尸 —— 居", words:"居住、定居、居民", meaning:"reside / live", meaningJp:"住む、居住する", meaningKo:"거주하다, 살다", context:"在这里居住过"},
+  {id:"zi7", zh:"殿", py:"diàn", radical:"殳 (殳字旁)", radicalBadge:"殳 —— 殿", words:"大殿、太和殿、保和殿", meaning:"palace hall", meaningJp:"宮殿の大広間", meaningKo:"궁전의 큰 전각", context:"最著名的三座大殿"},
+  {id:"zi8", zh:"间", py:"jiān", radical:"门 (门字框)", radicalBadge:null, words:"九千多间、房间、中间", meaning:"room / measure word for rooms", meaningJp:"部屋／部屋を数える量詞", meaningKo:"칸, 방 / 방을 세는 양사", context:"九千多间房屋"},
+  {id:"zi9", zh:"筑", py:"zhù", radical:"竹 (竹字头)", radicalBadge:null, words:"建筑、建筑艺术、建造", meaning:"build / construct", meaningJp:"建てる、築く", meaningKo:"짓다, 건축하다", context:"古代建筑艺术的代表"},
+  {id:"zi10", zh:"藏", py:"cáng", radical:"艹 (草字头)", radicalBadge:null, words:"收藏、珍藏、宝藏", meaning:"store / collect", meaningJp:"しまう、収蔵する", meaningKo:"소장하다, 저장하다", context:"收藏了许多珍贵文物"},
+  {id:"zi11", zh:"内", py:"nèi", radical:"冂 (同字框)", radicalBadge:null, words:"国内、国内外、内部", meaning:"inside / domestic", meaningJp:"内側、国内", meaningKo:"안, 내부 / 국내", context:"吸引了许多国内外的游客"},
+  {id:"zi12", zh:"外", py:"wài", radical:"夕 (夕字旁)", radicalBadge:null, words:"国外、国内外、外部", meaning:"outside / international", meaningJp:"外側、国外", meaningKo:"밖, 외부 / 국외", context:"吸引了许多国内外的游客"}
 ];
 
 // 3. 课后词语表 (12 Words - 课本原图)
 const WORDS = [
-  {id:"ci1", zh:"这里", py:"zhèlǐ", meaning:"here", meaningJp:"ここ", emoji:"📍", context:"二十四位皇帝在这里居住过", tag:"词语"},
-  {id:"ci2", zh:"居住", py:"jūzhù", meaning:"reside / live", meaningJp:"居住する、住む", emoji:"🏡", context:"二十四位皇帝在这里居住过", tag:"词语"},
-  {id:"ci3", zh:"世界", py:"shìjiè", meaning:"world", meaningJp:"世界", emoji:"🌍", context:"也是世界上最大的古代宫殿", tag:"词语"},
-  {id:"ci4", zh:"艺术", py:"yìshù", meaning:"art", meaningJp:"芸術", emoji:"🎨", context:"是中国古代建筑艺术的代表", tag:"词语"},
-  {id:"ci5", zh:"代表", py:"dàibiǎo", meaning:"representative / masterpiece", meaningJp:"代表、傑作", emoji:"🌟", context:"中国古代建筑艺术的代表", tag:"词语"},
-  {id:"ci6", zh:"珍贵", py:"zhēnguì", meaning:"precious / valuable", meaningJp:"貴重な", emoji:"💎", context:"收藏了许多珍贵的历史文物", tag:"词语"},
-  {id:"ci7", zh:"展览", py:"zhǎnlǎn", meaning:"exhibition", meaningJp:"展覧会", emoji:"🖼️", context:"有许多展览，吸引了游客", tag:"词语"},
-  {id:"ci8", zh:"吸引", py:"xīyǐn", meaning:"attract", meaningJp:"引きつける", emoji:"🧲", context:"吸引了许多国内外的游客", tag:"词语"},
-  {id:"ci9", zh:"游客", py:"yóukè", meaning:"tourist / visitor", meaningJp:"観光客", emoji:"🧳", context:"吸引了许多国内外的游客", tag:"词语"},
-  {id:"ci10", zh:"参观", py:"cānguān", meaning:"visit / tour", meaningJp:"見学する", emoji:"🚶", context:"前去参观 / 参观了三座大殿", tag:"词语"},
-  {id:"ci11", zh:"著名", py:"zhùmíng", meaning:"famous / renowned", meaningJp:"有名な", emoji:"⭐", context:"它最著名的三座大殿", tag:"词语"},
-  {id:"ci12", zh:"机会", py:"jīhuì", meaning:"opportunity / chance", meaningJp:"機会", emoji:"🎯", context:"以后有机会我还要来故宫逛逛", tag:"词语"}
+  {id:"ci1", zh:"这里", py:"zhèlǐ", meaning:"here", meaningJp:"ここ", meaningKo:"여기", emoji:"📍", context:"二十四位皇帝在这里居住过", tag:"词语"},
+  {id:"ci2", zh:"居住", py:"jūzhù", meaning:"reside / live", meaningJp:"居住する、住む", meaningKo:"거주하다, 살다", emoji:"🏡", context:"二十四位皇帝在这里居住过", tag:"词语"},
+  {id:"ci3", zh:"世界", py:"shìjiè", meaning:"world", meaningJp:"世界", meaningKo:"세계", emoji:"🌍", context:"也是世界上最大的古代宫殿", tag:"词语"},
+  {id:"ci4", zh:"艺术", py:"yìshù", meaning:"art", meaningJp:"芸術", meaningKo:"예술", emoji:"🎨", context:"是中国古代建筑艺术的代表", tag:"词语"},
+  {id:"ci5", zh:"代表", py:"dàibiǎo", meaning:"representative / masterpiece", meaningJp:"代表、傑作", meaningKo:"대표(작)", emoji:"🌟", context:"中国古代建筑艺术的代表", tag:"词语"},
+  {id:"ci6", zh:"珍贵", py:"zhēnguì", meaning:"precious / valuable", meaningJp:"貴重な", meaningKo:"귀중하다, 소중하다", emoji:"💎", context:"收藏了许多珍贵的历史文物", tag:"词语"},
+  {id:"ci7", zh:"展览", py:"zhǎnlǎn", meaning:"exhibition", meaningJp:"展覧会", meaningKo:"전시회", emoji:"🖼️", context:"有许多展览，吸引了游客", tag:"词语"},
+  {id:"ci8", zh:"吸引", py:"xīyǐn", meaning:"attract", meaningJp:"引きつける", meaningKo:"끌어당기다, 매료시키다", emoji:"🧲", context:"吸引了许多国内外的游客", tag:"词语"},
+  {id:"ci9", zh:"游客", py:"yóukè", meaning:"tourist / visitor", meaningJp:"観光客", meaningKo:"관광객", emoji:"🧳", context:"吸引了许多国内外的游客", tag:"词语"},
+  {id:"ci10", zh:"参观", py:"cānguān", meaning:"visit / tour", meaningJp:"見学する", meaningKo:"참관하다, 견학하다", emoji:"🚶", context:"前去参观 / 参观了三座大殿", tag:"词语"},
+  {id:"ci11", zh:"著名", py:"zhùmíng", meaning:"famous / renowned", meaningJp:"有名な", meaningKo:"유명하다", emoji:"⭐", context:"它最著名的三座大殿", tag:"词语"},
+  {id:"ci12", zh:"机会", py:"jīhuì", meaning:"opportunity / chance", meaningJp:"機会", meaningKo:"기회", emoji:"🎯", context:"以后有机会我还要来故宫逛逛", tag:"词语"}
 ];
 
 // 4. 课后专有名词表 (6 Proper Nouns - 课本原图)
 const PROPER_NOUNS = [
-  {id:"pn1", zh:"明朝", py:"Míngcháo", meaning:"Ming Dynasty (1368–1644)", meaningJp:"明王朝（1368～1644年）", emoji:"📜", context:"中国明朝和清朝的皇宫", tag:"专有名词"},
-  {id:"pn2", zh:"清朝", py:"Qīngcháo", meaning:"Qing Dynasty (1644–1912)", meaningJp:"清王朝（1644～1912年）", emoji:"🏮", context:"中国明朝和清朝的皇宫", tag:"专有名词"},
-  {id:"pn3", zh:"紫禁城", py:"Zǐjìnchéng", meaning:"the Forbidden City", meaningJp:"紫禁城", emoji:"🏯", context:"又叫紫禁城", tag:"专有名词"},
-  {id:"pn4", zh:"太和殿", py:"Tàihé Diàn", meaning:"Hall of Supreme Harmony", meaningJp:"太和殿", emoji:"⛩️", context:"最著名的三座大殿之一", tag:"专有名词"},
-  {id:"pn5", zh:"中和殿", py:"Zhōnghé Diàn", meaning:"Hall of Central Harmony", meaningJp:"中和殿", emoji:"⛩️", context:"最著名的三座大殿之一", tag:"专有名词"},
-  {id:"pn6", zh:"保和殿", py:"Bǎohé Diàn", meaning:"Hall of Preserving Harmony", meaningJp:"保和殿", emoji:"⛩️", context:"最著名的三座大殿之一", tag:"专有名词"}
+  {id:"pn1", zh:"明朝", py:"Míngcháo", meaning:"Ming Dynasty (1368–1644)", meaningJp:"明王朝（1368～1644年）", meaningKo:"명나라(1368~1644)", emoji:"📜", context:"中国明朝和清朝的皇宫", tag:"专有名词"},
+  {id:"pn2", zh:"清朝", py:"Qīngcháo", meaning:"Qing Dynasty (1644–1912)", meaningJp:"清王朝（1644～1912年）", meaningKo:"청나라(1644~1912)", emoji:"🏮", context:"中国明朝和清朝的皇宫", tag:"专有名词"},
+  {id:"pn3", zh:"紫禁城", py:"Zǐjìnchéng", meaning:"the Forbidden City", meaningJp:"紫禁城", meaningKo:"자금성", emoji:"🏯", context:"又叫紫禁城", tag:"专有名词"},
+  {id:"pn4", zh:"太和殿", py:"Tàihé Diàn", meaning:"Hall of Supreme Harmony", meaningJp:"太和殿", meaningKo:"태화전", emoji:"⛩️", context:"最著名的三座大殿之一", tag:"专有名词"},
+  {id:"pn5", zh:"中和殿", py:"Zhōnghé Diàn", meaning:"Hall of Central Harmony", meaningJp:"中和殿", meaningKo:"중화전", emoji:"⛩️", context:"最著名的三座大殿之一", tag:"专有名词"},
+  {id:"pn6", zh:"保和殿", py:"Bǎohé Diàn", meaning:"Hall of Preserving Harmony", meaningJp:"保和殿", meaningKo:"보화전", emoji:"⛩️", context:"最著名的三座大殿之一", tag:"专有名词"}
 ];
 
 // 合并生词表 (18项)
@@ -855,7 +865,7 @@ const CLOZE_QUESTIONS = [
     after: "，一共有二十四位皇帝在这里居住过。",
     py: "Gùgōng shì Zhōngguó Míngcháo hé Qīngcháo de huánggōng, yòu jiào Zǐjìnchéng...",
     en: "The Forbidden City was also called the Purple Forbidden City...",
-    jp: "故宮は紫禁城とも呼ばれ……",
+    jp: "故宮は紫禁城とも呼ばれ……", ko:"고궁은 중국 명나라와 청나라의 황궁으로, 자금성이라고도 불리며, 모두 24명의 황제가 이곳에 거주한 적이 있습니다.",
     answerPy: "Zǐ jìn chéng",
     options: ["紫禁城", "颐和园", "天安门", "圆明园"],
     hint: "课文原句 · 明清皇宫的别名",
@@ -869,7 +879,7 @@ const CLOZE_QUESTIONS = [
     after: "过。",
     py: "Yígòng yǒu èrshísì wèi huángdì zài zhèlǐ jūzhù guo.",
     en: "24 emperors lived here.",
-    jp: "24人の皇帝がここに住んでいました。",
+    jp: "24人の皇帝がここに住んでいました。", ko:"고궁에는 모두 24명의 황제가 이곳에 거주한 적이 있습니다.",
     answerPy: "jū zhù",
     options: ["居住", "建筑", "收藏", "参观"],
     hint: "课文原句 · 课后生字「居」的组词",
@@ -883,7 +893,7 @@ const CLOZE_QUESTIONS = [
     after: "，也是世界上最大的古代宫殿。",
     py: "Gùgōng yǐjīng yǒu liùbǎi duō nián de lìshǐ le, shì Zhōngguó zuìdà de gǔdài gōngdiàn...",
     en: "The largest ancient palace in China and the world.",
-    jp: "中国と世界で最大の古代宮殿。",
+    jp: "中国と世界で最大の古代宮殿。", ko:"고궁은 이미 600여 년의 역사를 가지고 있으며, 중국 최대의 고대 궁전이자 세계 최대의 고대 궁전입니다.",
     answerPy: "gōng diàn",
     options: ["宫殿", "花园", "房屋", "长廊"],
     hint: "课文原句 · 课后生字「殿」的组词",
@@ -897,7 +907,7 @@ const CLOZE_QUESTIONS = [
     after: "的代表。",
     py: "Dōu shì yòng mùtou jiànzào de, shì Zhōngguó gǔdài jiànzhù yìshù de dàibiǎo.",
     en: "A masterpiece of ancient Chinese architectural art.",
-    jp: "中国古代建築芸術の代表作。",
+    jp: "中国古代建築芸術の代表作。", ko:"고궁에는 모두 9천여 칸의 방이 있는데, 모두 나무로 지어졌으며 중국 고대 건축 예술의 대표작입니다.",
     answerPy: "jiàn zhù yì shù",
     options: ["建筑艺术", "现代科技", "书法艺术", "自然风光"],
     hint: "课文原句 · 课后生字「筑」与词语「艺术」",
@@ -911,7 +921,7 @@ const CLOZE_QUESTIONS = [
     after: "了许多珍贵的历史文物，有许多展览。",
     py: "Gùgōng lǐ shōucángle xǔduō zhēnguì de lìshǐ wénwù...",
     en: "The Forbidden City houses many precious historical relics...",
-    jp: "故宮には貴重な歴史的文化財が収蔵されている……",
+    jp: "故宮には貴重な歴史的文化財が収蔵されている……", ko:"고궁에는 많은 귀중한 역사 문물이 소장되어 있고, 많은 전시회가 있습니다.",
     answerPy: "shōu cáng",
     options: ["收藏", "居住", "吸引", "制造"],
     hint: "课文原句 · 课后生字「藏」的组词",
@@ -925,7 +935,7 @@ const CLOZE_QUESTIONS = [
     after: "的游客前去参观。",
     py: "Xīyǐnle xǔduō guónèiwài de yóukè qiánqù cānguān.",
     en: "Attracting many domestic and international tourists...",
-    jp: "国内外から大勢の観光客を引きつける……",
+    jp: "国内外から大勢の観光客を引きつける……", ko:"고궁에는 많은 전시회가 있어, 국내외의 많은 관광객을 끌어들여 참관하게 합니다.",
     answerPy: "guó nèi wài",
     options: ["国内外", "全中国", "老北京", "天安门"],
     hint: "课文原句 · 课后生字「内」与「外」的组词",
@@ -939,7 +949,7 @@ const CLOZE_QUESTIONS = [
     after: "的三座大殿：太和殿、中和殿和保和殿。",
     py: "Jīntiān wǒmen zhǐ cānguānle tā zuì zhùmíng de sān zuò dàdiàn...",
     en: "Today we only visited its three most famous great halls...",
-    jp: "今日は最も有名な三つの大広間だけを見学した……",
+    jp: "今日は最も有名な三つの大広間だけを見学した……", ko:"오늘 우리는 고궁에서 가장 유명한 세 개의 큰 전각, 즉 태화전, 중화전, 보화전만 둘러보았습니다.",
     answerPy: "zhù míng",
     options: ["著名", "古老", "珍贵", "美丽"],
     hint: "课文原句 · 课后重点词语",
@@ -953,7 +963,7 @@ const CLOZE_QUESTIONS = [
     after: "我还要来故宫逛逛。",
     py: "Wǒ duì māma shuō, yǐhòu yǒu jīhuì wǒ hái yào lái Gùgōng guàngguang.",
     en: "If there is a chance in the future, I want to come stroll around again.",
-    jp: "今度機会があればまた遊びに来たい。",
+    jp: "今度機会があればまた遊びに来たい。", ko:"저는 엄마에게 나중에 기회가 되면 다시 고궁에 와서 구경하고 싶다고 말했습니다.",
     answerPy: "jī huì",
     options: ["机会", "时间", "原因", "习惯"],
     hint: "课后重点句子 · 重点词语「机会」",
@@ -967,7 +977,7 @@ const CLOZE_QUESTIONS = [
     after: "的历史文物，大家都赞叹不已。",
     py: "Guójiā bówùguǎn lǐ zhǎnchūle xǔduō zhēnguì de lìshǐ wénwù...",
     en: "Many precious historical relics were exhibited...",
-    jp: "たくさんの貴重な文化財が展示された……",
+    jp: "たくさんの貴重な文化財が展示された……", ko:"국립박물관에는 많은 귀중한 역사 문물이 전시되어 있어서, 모두가 감탄을 금치 못했습니다.",
     answerPy: "zhēn guì",
     options: ["珍贵", "方便", "古怪", "难忘"],
     hint: "微情境拓展 · 价值高、很有意义的物品",
@@ -982,7 +992,7 @@ const CLOZE_QUESTIONS = [
     after: "了成千上万的中外游客前来观看。",
     py: "Kě'ài de guóbǎo dàxióngmāo, xīyǐnle chéngqiān-shàngwàn de zhōngwài yóukè...",
     en: "The lovely giant pandas attracted thousands of tourists...",
-    jp: "かわいいパンダが何千人もの観光客を引きつけた……",
+    jp: "かわいいパンダが何千人もの観光客を引きつけた……", ko:"귀여운 국보 판다가 수천수만 명의 중국 안팎 관광객을 끌어들여 보러 오게 했습니다.",
     answerPy: "xī yǐn",
     options: ["吸引", "收藏", "居住", "建造"],
     hint: "微情境拓展 · 把人的注意力引过来",
@@ -997,7 +1007,7 @@ const CLOZE_QUESTIONS = [
     after: "的伟大建筑奇迹。",
     py: "Chángchéng shì shìjiè shang zhùmíng de wěidà jiànzhù qíjì.",
     en: "The Great Wall is a famous architectural wonder in the world.",
-    jp: "万里の長城は世界的に有名な建築の驚異です。",
+    jp: "万里の長城は世界的に有名な建築の驚異です。", ko:"만리장성은 세계적으로 유명한 위대한 건축의 기적입니다.",
     answerPy: "zhù míng",
     options: ["著名", "机会", "展览", "居住"],
     hint: "微情境拓展 · 大家都知道的、很有名气",
@@ -1012,7 +1022,7 @@ const CLOZE_QUESTIONS = [
     after: "儿童绘画展览。",
     py: "Zhōumò bàba māma dài wǒ qù měishùguǎn cānguān értóng huìhuà zhǎnlǎn.",
     en: "Mom and Dad took me to visit the children's painting exhibition.",
-    jp: "お父さんとお母さんが私を子供絵画展の見学に連れて行ってくれました。",
+    jp: "お父さんとお母さんが私を子供絵画展の見学に連れて行ってくれました。", ko:"주말에 아빠와 엄마가 저를 데리고 미술관에 가서 어린이 그림 전시회를 관람했습니다.",
     answerPy: "cān guān",
     options: ["参观", "收藏", "居住", "代表"],
     hint: "微情境拓展 · 实地去观看与体验",
@@ -1022,7 +1032,7 @@ const CLOZE_QUESTIONS = [
 ];
 
 /* ---------------- STATE ---------------- */
-let storyIdx = 0, showPy = true, showEn = true, showJp = true;
+let storyIdx = 0, showPy = true, showEn = true, showJp = true, showKo = true;
 let charIdx = 0;
 let vocabFilter = 'all'; // all, words, proper
 let currentVocabList = ALL_VOCAB;
@@ -1127,13 +1137,14 @@ function goReview(){ switchReviewTab('quiz'); showScreen('screen-review'); }
 const AUDIO_DIR = 'audio/gugong/';
 const AUDIO_DIR_EN = 'audio/gugong_en/';
 const AUDIO_DIR_JA = 'audio/gugong_ja/';
+const AUDIO_DIR_KO = 'audio/gugong_ko/';
 const audioCache = {};
 let currentClip = null;
 
 function playClip(id, text, onend, lang){
   stopClip();
   lang = lang || 'zh-CN';
-  const dir = lang === 'en-US' ? AUDIO_DIR_EN : (lang === 'ja-JP' ? AUDIO_DIR_JA : AUDIO_DIR);
+  const dir = lang === 'en-US' ? AUDIO_DIR_EN : (lang === 'ja-JP' ? AUDIO_DIR_JA : (lang === 'ko-KR' ? AUDIO_DIR_KO : AUDIO_DIR));
   if(!id){ speak(text, onend, lang); return; }
   const key = lang + ':' + id;
   let a = audioCache[key];
@@ -1157,6 +1168,7 @@ function stopClip(){
 let zhVoice = null;
 let enVoice = null;
 let jaVoice = null;
+let koVoice = null;
 let currentUtterance = null;
 let resumeWatchdog = null;
 function pickVoice(){
@@ -1170,6 +1182,7 @@ function pickVoice(){
     || null;
   jaVoice = voices.find(v=>/^ja/i.test(v.lang||''))
     || null;
+  koVoice = voices.find(v=>/^ko/i.test(v.lang||'')) || null;
 }
 if('speechSynthesis' in window){
   pickVoice();
@@ -1178,7 +1191,7 @@ if('speechSynthesis' in window){
   const voicePollTimer = setInterval(()=>{
     pickVoice();
     voicePolls++;
-    if((zhVoice && enVoice && jaVoice) || voicePolls > 8) clearInterval(voicePollTimer);
+    if((zhVoice && enVoice && jaVoice && koVoice) || voicePolls > 8) clearInterval(voicePollTimer);
   }, 400);
 
   const unlockSpeech = ()=>{
@@ -1199,8 +1212,8 @@ function speak(text, onend, lang){
   try{
     if(resumeWatchdog){ clearInterval(resumeWatchdog); resumeWatchdog = null; }
     speechSynthesis.cancel();
-    let voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^en/i.test(lang) ? enVoice : null;
-    if(!voice){ pickVoice(); voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^en/i.test(lang) ? enVoice : null; }
+    let voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^ko/i.test(lang) ? koVoice : /^en/i.test(lang) ? enVoice : null;
+    if(!voice){ pickVoice(); voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^ko/i.test(lang) ? koVoice : /^en/i.test(lang) ? enVoice : null; }
     const u = new SpeechSynthesisUtterance(text);
     u.lang = lang;
     if(voice) u.voice = voice;
@@ -1246,17 +1259,20 @@ function renderStory(){
   document.getElementById('storyPy').textContent = showPy ? s.py : '';
   document.getElementById('storyEn').textContent = showEn ? s.en : '';
   document.getElementById('storyJp').textContent = showJp ? (s.jp || '') : '';
+  document.getElementById('storyKo').textContent = showKo ? (s.ko || '') : '';
   const enRow = document.getElementById('storyEnRow'); if(enRow) enRow.style.display = showEn ? 'flex' : 'none';
   const jpRow = document.getElementById('storyJpRow'); if(jpRow) jpRow.style.display = (showJp && s.jp) ? 'flex' : 'none';
+  const koRow = document.getElementById('storyKoRow'); if(koRow) koRow.style.display = (showKo && s.ko) ? 'flex' : 'none';
 }
 function storyNext(){ storyIdx = (storyIdx+1) % STORY.length; renderStory(); }
 function storyPrev(){ storyIdx = (storyIdx-1+STORY.length) % STORY.length; renderStory(); }
 function toggleStoryPy(){ showPy = !showPy; document.getElementById('chipPy').classList.toggle('active', showPy); renderStory(); }
 function toggleStoryEn(){ showEn = !showEn; document.getElementById('chipEn').classList.toggle('active', showEn); renderStory(); }
 function toggleStoryJp(){ showJp = !showJp; document.getElementById('chipJp').classList.toggle('active', showJp); renderStory(); }
+function toggleStoryKo(){ showKo = !showKo; document.getElementById('chipKo').classList.toggle('active', showKo); renderStory(); }
 
 /* ---------------- FULL TEXT (view + continuous read-aloud) ---------------- */
-let fullPy = true, fullEn = true, fullJp = true;
+let fullPy = true, fullEn = true, fullJp = true, fullKo = true;
 let fullPlaying = false, fullPlayIdx = 0;
 function renderFullText(){
   const list = document.getElementById('fullTextList');
@@ -1270,6 +1286,7 @@ function renderFullText(){
       '<div class="sentence-zh">'+s.zh+'</div>' +
       (fullEn ? '<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><div class="sentence-en">'+s.en+'</div><button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY['+i+'].id, STORY['+i+'].en, null, \'en-US\');" title="播放英文发音">🔊</button></div>' : '') +
       (fullJp && s.jp ? '<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><div class="sentence-jp">'+s.jp+'</div><button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY['+i+'].id, STORY['+i+'].jp||\'\', null, \'ja-JP\');" title="播放日文发音">🔊</button></div>' : '') +
+      (fullKo && s.ko ? '<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><div class="sentence-ko">'+s.ko+'</div><button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY['+i+'].id, STORY['+i+'].ko||\'\', null, \'ko-KR\');" title="播放韩文发音">🔊</button></div>' : '') +
       '<div class="full-sent-voice-bar">' +
         '<button class="sent-action-btn" onclick="event.stopPropagation(); stopFullPlay(); stopFullMyPlay(); playClip(\''+s.id+'\',\''+s.zh+'\');" title="听原声示范">🔊 原声</button>' +
         '<span id="sent-voice-slot-'+i+'"></span>' +
@@ -1305,6 +1322,7 @@ async function updateFullTextVoiceStatus(){
 function toggleFullPy(){ fullPy = !fullPy; document.getElementById('chipFullPy').classList.toggle('active', fullPy); renderFullText(); }
 function toggleFullEn(){ fullEn = !fullEn; document.getElementById('chipFullEn').classList.toggle('active', fullEn); renderFullText(); }
 function toggleFullJp(){ fullJp = !fullJp; document.getElementById('chipFullJp').classList.toggle('active', fullJp); renderFullText(); }
+function toggleFullKo(){ fullKo = !fullKo; document.getElementById('chipFullKo').classList.toggle('active', fullKo); renderFullText(); }
 function toggleFullPlay(){ if(fullPlaying) stopFullPlay(); else startFullPlay(); }
 
 function startFullPlay(){
@@ -1437,7 +1455,7 @@ function renderChar(){
   document.getElementById('charPyBack').textContent = c.py;
   document.getElementById('charRadical').textContent = '偏旁部首: ' + c.radical;
   document.getElementById('charWords').innerHTML = '<strong>组词:</strong> ' + c.words;
-  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + ' · ' + c.context;
+  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + (c.meaningKo ? ' / ' + c.meaningKo : '') + ' · ' + c.context;
   document.getElementById('charCounter').textContent = (charIdx+1) + ' / ' + CHARACTERS.length;
 
   const badgeBox = document.getElementById('charRadicalBadgeContainer');
@@ -1677,7 +1695,7 @@ function renderFlash(){
   document.getElementById('flashTag').textContent = v.tag;
   document.getElementById('flashZhBack').textContent = v.zh;
   document.getElementById('flashPy').textContent = v.py;
-  document.getElementById('flashMeaning').textContent = v.meaning + (v.meaningJp ? ' / ' + v.meaningJp : '');
+  document.getElementById('flashMeaning').textContent = v.meaning + (v.meaningJp ? ' / ' + v.meaningJp : '') + (v.meaningKo ? ' / ' + v.meaningKo : '');
   document.getElementById('flashContext').textContent = '“' + v.context + '”';
   document.getElementById('flashCounter').textContent = (flashIdx+1) + ' / ' + currentVocabList.length;
 }
@@ -2324,6 +2342,7 @@ function renderClozeQuestion(){
   document.getElementById('clozeAfter').textContent = q.after;
   document.getElementById('clozeEn').textContent = q.en || '';
   document.getElementById('clozeJp').textContent = q.jp || '';
+  document.getElementById('clozeKo').textContent = q.ko || '';
   document.getElementById('clozeHint').textContent = q.hint || (q.type === 'text' ? '课文原句' : '情境拓展');
 
   const optsContainer = document.getElementById('clozeOpts');

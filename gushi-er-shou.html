@@ -88,6 +88,7 @@
   .sentence-py{font-size:15px;color:var(--camel-dark);text-align:center;font-weight:700;min-height:20px;}
   .sentence-en{font-size:13px;color:var(--muted);text-align:center;}
   .sentence-jp{font-size:13px;color:#8b5cf6;text-align:center;}
+  .sentence-ko{font-size:13px;color:#059669;text-align:center;}
   .mini-speak-btn{border:none;background:none;font-size:13px;cursor:pointer;line-height:1;padding:2px 3px;border-radius:50%;flex-shrink:0;opacity:.75;}
   .mini-speak-btn:active{opacity:1;transform:scale(1.15);}
   .story-nav{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;max-width:560px;}
@@ -130,6 +131,7 @@
   .full-sentence .sentence-py{font-size:13px;text-align:left;color:var(--camel-dark);min-height:0;}
   .full-sentence .sentence-en{font-size:12px;text-align:left;color:var(--muted);margin-top:2px;}
   .full-sentence .sentence-jp{font-size:12px;text-align:left;color:#8b5cf6;margin-top:2px;}
+  .full-sentence .sentence-ko{font-size:12px;text-align:left;color:#059669;margin-top:2px;}
 
   /* character tian-zi-ge card */
   .char-wrap{width:100%;max-width:340px;perspective:1000px;}
@@ -242,6 +244,7 @@
   @keyframes popIn{from{transform:scale(0.85);opacity:0;}to{transform:scale(1);opacity:1;}}
   .cloze-en{font-size:12px;color:var(--blue-sky);font-style:italic;text-align:center;}
   .cloze-jp{font-size:12px;color:#8b5cf6;font-style:italic;text-align:center;}
+  .cloze-ko{font-size:12px;color:#059669;font-style:italic;text-align:center;}
   .cloze-hint-row{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 4px;}
   .cloze-hint-pill{font-size:12px;color:var(--muted);background:#fff1f2;padding:3px 10px;border-radius:12px;}
   .cloze-speak-btn{background:#fff;border:1px solid #cbd5e1;border-radius:14px;padding:3px 10px;font-size:12px;font-weight:700;
@@ -432,6 +435,10 @@
           <div class="sentence-jp" id="storyJp"></div>
           <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].jp||'', null, 'ja-JP')" title="播放日文发音">🔊</button>
         </div>
+        <div class="lang-line-row" id="storyKoRow" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+          <div class="sentence-ko" id="storyKo"></div>
+          <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].ko||'', null, 'ko-KR')" title="播放韩文发音">🔊</button>
+        </div>
       </div>
       <!-- VOICE WAVE VISUALIZER -->
       <div class="voice-wave-panel" id="storyVoiceWave">
@@ -460,6 +467,7 @@
         <div class="chip active" id="chipPy" onclick="toggleStoryPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipEn" onclick="toggleStoryEn()">English</div>
         <div class="chip active" id="chipJp" onclick="toggleStoryJp()">日本語</div>
+        <div class="chip active" id="chipKo" onclick="toggleStoryKo()">한국어</div>
         <div class="chip" onclick="goFull()">📜 全文朗读</div>
       </div>
       <button class="btn ghost" onclick="goHome()">返回菜单</button>
@@ -473,6 +481,7 @@
         <div class="chip active" id="chipFullPy" onclick="toggleFullPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipFullEn" onclick="toggleFullEn()">English</div>
         <div class="chip active" id="chipFullJp" onclick="toggleFullJp()">日本語</div>
+        <div class="chip active" id="chipFullKo" onclick="toggleFullKo()">한국어</div>
         <button class="btn clay small" id="fullPlayBtn" onclick="toggleFullPlay()">▶️ 原声连续朗读</button>
         <button class="btn gold small" id="fullMyPlayBtn" onclick="toggleFullMyPlay()">🎙️ 播放我的全文配音</button>
       </div>
@@ -632,6 +641,7 @@
           </div>
           <div class="cloze-en" id="clozeEn"></div>
           <div class="cloze-jp" id="clozeJp"></div>
+          <div class="cloze-ko" id="clozeKo"></div>
           <div class="cloze-hint-row">
             <span class="cloze-hint-pill" id="clozeHint"></span>
             <button class="cloze-speak-btn" id="clozeSpeakBtn" onclick="speakClozeSentence()">🔊 朗读句子</button>
@@ -729,42 +739,42 @@
 /* ---------------- DATA ---------------- */
 // 1. 课文《古诗二首》——《春晓》(孟浩然) + 《悯农》(李绅)（教材原版逐字转写，第9课）
 const STORY = [
-  {id:"st1", zh:"春晓 （唐）孟浩然", py:"Chūn Xiǎo (Táng) Mèng Hàorán", en:"\"Spring Dawn\" — by Meng Haoran (Tang Dynasty)", jp:"「春暁」（唐）孟浩然"},
-  {id:"st2", zh:"春眠不觉晓，处处闻啼鸟。", py:"Chūn mián bù jué xiǎo, chù chù wén tí niǎo.", en:"In spring I sleep so soundly I don't notice dawn breaking; everywhere I hear the cries of birds.", jp:"春の眠りは心地よく、夜が明けたのにも気づかない。あちこちで鳥の鳴く声が聞こえる。"},
-  {id:"st3", zh:"夜来风雨声，花落知多少。", py:"Yè lái fēng yǔ shēng, huā luò zhī duō shǎo.", en:"Last night came the sound of wind and rain — who knows how many blossoms have fallen?", jp:"夜には風と雨の音がしていた。花はいったいどれほど散ってしまっただろうか。"},
-  {id:"st4", zh:"悯农 （唐）李绅", py:"Mǐn Nóng (Táng) Lǐ Shēn", en:"\"Sympathy for the Farmers\" — by Li Shen (Tang Dynasty)", jp:"「憫農」（唐）李紳"},
-  {id:"st5", zh:"锄禾日当午，汗滴禾下土。", py:"Chú hé rì dāng wǔ, hàn dī hé xià tǔ.", en:"Hoeing the crops at high noon, sweat drips down onto the soil beneath them.", jp:"真昼どきに畑の作物を耕していると、汗が苗の下の土にしたたり落ちる。"},
-  {id:"st6", zh:"谁知盘中餐，粒粒皆辛苦。", py:"Shéi zhī pán zhōng cān, lì lì jiē xīn kǔ.", en:"Who knows that the food upon our plates — every single grain — comes from hard toil?", jp:"お皿の中のご飯が、一粒一粒すべて苦労の末にできたものだと、いったい誰が知っているだろうか。"}
+  {id:"st1", zh:"春晓 （唐）孟浩然", py:"Chūn Xiǎo (Táng) Mèng Hàorán", en:"\"Spring Dawn\" — by Meng Haoran (Tang Dynasty)", jp:"「春暁」（唐）孟浩然", ko:"춘효(春曉) (당) 맹호연"},
+  {id:"st2", zh:"春眠不觉晓，处处闻啼鸟。", py:"Chūn mián bù jué xiǎo, chù chù wén tí niǎo.", en:"In spring I sleep so soundly I don't notice dawn breaking; everywhere I hear the cries of birds.", jp:"春の眠りは心地よく、夜が明けたのにも気づかない。あちこちで鳥の鳴く声が聞こえる。", ko:"봄잠에 빠져 새벽인 줄도 몰랐는데, 곳곳에서 새 우는 소리 들려오네."},
+  {id:"st3", zh:"夜来风雨声，花落知多少。", py:"Yè lái fēng yǔ shēng, huā luò zhī duō shǎo.", en:"Last night came the sound of wind and rain — who knows how many blossoms have fallen?", jp:"夜には風と雨の音がしていた。花はいったいどれほど散ってしまっただろうか。", ko:"밤사이 비바람 소리 들렸으니, 꽃은 얼마나 떨어졌을까."},
+  {id:"st4", zh:"悯农 （唐）李绅", py:"Mǐn Nóng (Táng) Lǐ Shēn", en:"\"Sympathy for the Farmers\" — by Li Shen (Tang Dynasty)", jp:"「憫農」（唐）李紳", ko:"민농(憫農) (당) 이신"},
+  {id:"st5", zh:"锄禾日当午，汗滴禾下土。", py:"Chú hé rì dāng wǔ, hàn dī hé xià tǔ.", en:"Hoeing the crops at high noon, sweat drips down onto the soil beneath them.", jp:"真昼どきに畑の作物を耕していると、汗が苗の下の土にしたたり落ちる。", ko:"호미로 밭을 가니 해는 한낮인데, 땀방울은 벼 아래 흙으로 떨어지네."},
+  {id:"st6", zh:"谁知盘中餐，粒粒皆辛苦。", py:"Shéi zhī pán zhōng cān, lì lì jiē xīn kǔ.", en:"Who knows that the food upon our plates — every single grain — comes from hard toil?", jp:"お皿の中のご飯が、一粒一粒すべて苦労の末にできたものだと、いったい誰が知っているだろうか。", ko:"밥상 위의 쌀밥이, 알알이 모두 고생의 결실임을 누가 알리오."}
 ];
 
 // 2. 课后生字表 (13 Characters - 课本原图)
 const CHARACTERS = [
-  {id:"zi1", zh:"晓", py:"xiǎo", radical:"日 (日字旁)", radicalBadge:null, words:"知晓、破晓、晓得", meaning:"dawn / to know", meaningJp:"夜明け、知る", context:"春眠不觉晓"},
-  {id:"zi2", zh:"孟", py:"mèng", radical:"皿 (皿字底)", radicalBadge:"皿 —— 孟", words:"孟浩然、孟月", meaning:"(surname; used in the poet's name Meng Haoran)", meaningJp:"（人名用字、孟浩然）", context:"（唐）孟浩然"},
-  {id:"zi3", zh:"浩", py:"hào", radical:"氵 (三点水)", radicalBadge:null, words:"浩大、浩瀚、孟浩然", meaning:"vast / grand", meaningJp:"広大な、（人名用字）", context:"（唐）孟浩然"},
-  {id:"zi4", zh:"眠", py:"mián", radical:"目 (目字旁)", radicalBadge:null, words:"睡眠、冬眠、失眠", meaning:"to sleep", meaningJp:"眠る、睡眠", context:"春眠不觉晓"},
-  {id:"zi5", zh:"啼", py:"tí", radical:"口 (口字旁)", radicalBadge:null, words:"啼哭、鸡啼、悲啼", meaning:"to cry / to chirp", meaningJp:"鳴く、泣く", context:"处处闻啼鸟"},
-  {id:"zi6", zh:"悯", py:"mǐn", radical:"忄 (竖心旁)", radicalBadge:null, words:"怜悯、悯农、悯惜", meaning:"to pity / to sympathize", meaningJp:"哀れむ、同情する", context:"悯农 （唐）李绅"},
-  {id:"zi7", zh:"农", py:"nóng", radical:"冖 (秃宝盖)", radicalBadge:null, words:"农民、农田、农业", meaning:"agriculture / farming", meaningJp:"農業、農民", context:"悯农 （唐）李绅"},
-  {id:"zi8", zh:"绅", py:"shēn", radical:"纟 (绞丝旁)", radicalBadge:null, words:"绅士、乡绅、李绅", meaning:"gentleman / gentry", meaningJp:"紳士、（人名用字）", context:"（唐）李绅"},
-  {id:"zi9", zh:"锄", py:"chú", radical:"钅 (金字旁)", radicalBadge:null, words:"锄头、锄地、锄草", meaning:"hoe (tool) / to hoe", meaningJp:"鍬（くわ）、耕す", context:"锄禾日当午"},
-  {id:"zi10", zh:"粒", py:"lì", radical:"米 (米字旁)", radicalBadge:null, words:"米粒、颗粒、一粒", meaning:"grain (measure word)", meaningJp:"粒、～粒（量詞）", context:"粒粒皆辛苦"},
-  {id:"zi11", zh:"皆", py:"jiē", radical:"白 (白字底)", radicalBadge:"白、比 —— 皆", words:"皆是、皆大欢喜、人人皆知", meaning:"all / every", meaningJp:"すべて、皆", context:"粒粒皆辛苦"},
-  {id:"zi12", zh:"辛", py:"xīn", radical:"辛 (辛字旁)", radicalBadge:null, words:"辛苦、辛劳、辛勤", meaning:"toilsome / hard", meaningJp:"辛い、骨が折れる", context:"粒粒皆辛苦"},
-  {id:"zi13", zh:"苦", py:"kǔ", radical:"艹 (草字头)", radicalBadge:null, words:"苦难、吃苦、苦学", meaning:"bitter / hard", meaningJp:"苦い、苦しい", context:"粒粒皆辛苦"}
+  {id:"zi1", zh:"晓", py:"xiǎo", radical:"日 (日字旁)", radicalBadge:null, words:"知晓、破晓、晓得", meaning:"dawn / to know", meaningJp:"夜明け、知る", meaningKo:"새벽, 깨닫다", context:"春眠不觉晓"},
+  {id:"zi2", zh:"孟", py:"mèng", radical:"皿 (皿字底)", radicalBadge:"皿 —— 孟", words:"孟浩然、孟月", meaning:"(surname; used in the poet's name Meng Haoran)", meaningJp:"（人名用字、孟浩然）", meaningKo:"성씨, (인명자: 맹호연)", context:"（唐）孟浩然"},
+  {id:"zi3", zh:"浩", py:"hào", radical:"氵 (三点水)", radicalBadge:null, words:"浩大、浩瀚、孟浩然", meaning:"vast / grand", meaningJp:"広大な、（人名用字）", meaningKo:"넓다, (인명자)", context:"（唐）孟浩然"},
+  {id:"zi4", zh:"眠", py:"mián", radical:"目 (目字旁)", radicalBadge:null, words:"睡眠、冬眠、失眠", meaning:"to sleep", meaningJp:"眠る、睡眠", meaningKo:"잠들다, 수면", context:"春眠不觉晓"},
+  {id:"zi5", zh:"啼", py:"tí", radical:"口 (口字旁)", radicalBadge:null, words:"啼哭、鸡啼、悲啼", meaning:"to cry / to chirp", meaningJp:"鳴く、泣く", meaningKo:"울다, 지저귀다", context:"处处闻啼鸟"},
+  {id:"zi6", zh:"悯", py:"mǐn", radical:"忄 (竖心旁)", radicalBadge:null, words:"怜悯、悯农、悯惜", meaning:"to pity / to sympathize", meaningJp:"哀れむ、同情する", meaningKo:"불쌍히 여기다, 동정하다", context:"悯农 （唐）李绅"},
+  {id:"zi7", zh:"农", py:"nóng", radical:"冖 (秃宝盖)", radicalBadge:null, words:"农民、农田、农业", meaning:"agriculture / farming", meaningJp:"農業、農民", meaningKo:"농업, 농민", context:"悯农 （唐）李绅"},
+  {id:"zi8", zh:"绅", py:"shēn", radical:"纟 (绞丝旁)", radicalBadge:null, words:"绅士、乡绅、李绅", meaning:"gentleman / gentry", meaningJp:"紳士、（人名用字）", meaningKo:"신사, (인명자)", context:"（唐）李绅"},
+  {id:"zi9", zh:"锄", py:"chú", radical:"钅 (金字旁)", radicalBadge:null, words:"锄头、锄地、锄草", meaning:"hoe (tool) / to hoe", meaningJp:"鍬（くわ）、耕す", meaningKo:"호미, 김매다", context:"锄禾日当午"},
+  {id:"zi10", zh:"粒", py:"lì", radical:"米 (米字旁)", radicalBadge:null, words:"米粒、颗粒、一粒", meaning:"grain (measure word)", meaningJp:"粒、～粒（量詞）", meaningKo:"알, 톨(양사)", context:"粒粒皆辛苦"},
+  {id:"zi11", zh:"皆", py:"jiē", radical:"白 (白字底)", radicalBadge:"白、比 —— 皆", words:"皆是、皆大欢喜、人人皆知", meaning:"all / every", meaningJp:"すべて、皆", meaningKo:"모두, 다", context:"粒粒皆辛苦"},
+  {id:"zi12", zh:"辛", py:"xīn", radical:"辛 (辛字旁)", radicalBadge:null, words:"辛苦、辛劳、辛勤", meaning:"toilsome / hard", meaningJp:"辛い、骨が折れる", meaningKo:"고생스럽다, 힘들다", context:"粒粒皆辛苦"},
+  {id:"zi13", zh:"苦", py:"kǔ", radical:"艹 (草字头)", radicalBadge:null, words:"苦难、吃苦、苦学", meaning:"bitter / hard", meaningJp:"苦い、苦しい", meaningKo:"쓰다, 괴롭다", context:"粒粒皆辛苦"}
 ];
 
 // 3. 课后词语表 (7 Words + 2 专有名词 - 从诗句中提炼，课本仅提供生字表/专有名词表)
 const WORDS = [
-  {id:"ci1", zh:"孟浩然", py:"Mèng Hàorán", meaning:"Meng Haoran (Tang-dynasty poet, author of \"Spring Dawn\")", meaningJp:"孟浩然（唐代の詩人）", emoji:"📜", context:"春晓 （唐）孟浩然", tag:"专有名词"},
-  {id:"ci2", zh:"李绅", py:"Lǐ Shēn", meaning:"Li Shen (Tang-dynasty poet, author of \"Sympathy for the Farmers\")", meaningJp:"李紳（唐代の詩人）", emoji:"📜", context:"悯农 （唐）李绅", tag:"专有名词"},
-  {id:"ci3", zh:"不觉", py:"bùjué", meaning:"without noticing / unaware", meaningJp:"気づかないうちに", emoji:"😴", context:"春眠不觉晓", tag:"重点词语"},
-  {id:"ci4", zh:"处处", py:"chùchù", meaning:"everywhere", meaningJp:"あちこち", emoji:"📍", context:"处处闻啼鸟", tag:"重点词语"},
-  {id:"ci5", zh:"风雨", py:"fēngyǔ", meaning:"wind and rain", meaningJp:"風雨", emoji:"🌧️", context:"夜来风雨声", tag:"重点词语"},
-  {id:"ci6", zh:"多少", py:"duōshǎo", meaning:"how much / how many", meaningJp:"どれほど", emoji:"❓", context:"花落知多少", tag:"重点词语"},
-  {id:"ci7", zh:"日当午", py:"rì dāng wǔ", meaning:"when the sun is at noon / high noon", meaningJp:"太陽が真上にある正午どき", emoji:"☀️", context:"锄禾日当午", tag:"重点词语"},
-  {id:"ci8", zh:"盘中餐", py:"pánzhōngcān", meaning:"the food on one's plate", meaningJp:"お皿の中のご飯", emoji:"🍚", context:"谁知盘中餐", tag:"重点词语"},
-  {id:"ci9", zh:"辛苦", py:"xīnkǔ", meaning:"hard work / toil", meaningJp:"苦労、骨折り", emoji:"💦", context:"粒粒皆辛苦", tag:"重点词语"}
+  {id:"ci1", zh:"孟浩然", py:"Mèng Hàorán", meaning:"Meng Haoran (Tang-dynasty poet, author of \"Spring Dawn\")", meaningJp:"孟浩然（唐代の詩人）", meaningKo:"맹호연(당나라 시인)", emoji:"📜", context:"春晓 （唐）孟浩然", tag:"专有名词"},
+  {id:"ci2", zh:"李绅", py:"Lǐ Shēn", meaning:"Li Shen (Tang-dynasty poet, author of \"Sympathy for the Farmers\")", meaningJp:"李紳（唐代の詩人）", meaningKo:"이신(당나라 시인)", emoji:"📜", context:"悯农 （唐）李绅", tag:"专有名词"},
+  {id:"ci3", zh:"不觉", py:"bùjué", meaning:"without noticing / unaware", meaningJp:"気づかないうちに", meaningKo:"모르는 사이에", emoji:"😴", context:"春眠不觉晓", tag:"重点词语"},
+  {id:"ci4", zh:"处处", py:"chùchù", meaning:"everywhere", meaningJp:"あちこち", meaningKo:"곳곳에", emoji:"📍", context:"处处闻啼鸟", tag:"重点词语"},
+  {id:"ci5", zh:"风雨", py:"fēngyǔ", meaning:"wind and rain", meaningJp:"風雨", meaningKo:"비바람", emoji:"🌧️", context:"夜来风雨声", tag:"重点词语"},
+  {id:"ci6", zh:"多少", py:"duōshǎo", meaning:"how much / how many", meaningJp:"どれほど", meaningKo:"얼마나", emoji:"❓", context:"花落知多少", tag:"重点词语"},
+  {id:"ci7", zh:"日当午", py:"rì dāng wǔ", meaning:"when the sun is at noon / high noon", meaningJp:"太陽が真上にある正午どき", meaningKo:"해가 정오에 있을 때, 한낮", emoji:"☀️", context:"锄禾日当午", tag:"重点词语"},
+  {id:"ci8", zh:"盘中餐", py:"pánzhōngcān", meaning:"the food on one's plate", meaningJp:"お皿の中のご飯", meaningKo:"밥상 위의 음식", emoji:"🍚", context:"谁知盘中餐", tag:"重点词语"},
+  {id:"ci9", zh:"辛苦", py:"xīnkǔ", meaning:"hard work / toil", meaningJp:"苦労、骨折り", meaningKo:"고생, 수고", emoji:"💦", context:"粒粒皆辛苦", tag:"重点词语"}
 ];
 
 const ALL_VOCAB = WORDS;
@@ -819,7 +829,7 @@ const CLOZE_QUESTIONS = [
     after: "晓，处处闻啼鸟。",
     py: "Chūn mián bù jué xiǎo, chù chù wén tí niǎo.",
     en: "In spring I sleep so soundly I don't notice dawn breaking; everywhere I hear the cries of birds.",
-    jp: "春の眠りは心地よく、夜が明けたのにも気づかない。あちこちで鳥の鳴く声が聞こえる。",
+    jp: "春の眠りは心地よく、夜が明けたのにも気づかない。あちこちで鳥の鳴く声が聞こえる。", ko:"봄잠에 빠져 새벽인 줄도 몰랐는데, 곳곳에서 새 우는 소리 들려오네.",
     answerPy: "bù jué",
     options: ["不觉", "不知", "不理", "不愿"],
     hint: "课文原句 · 课后词语「不觉」",
@@ -833,7 +843,7 @@ const CLOZE_QUESTIONS = [
     after: "闻啼鸟。",
     py: "Chūn mián bù jué xiǎo, chù chù wén tí niǎo.",
     en: "In spring I sleep so soundly I don't notice dawn breaking; everywhere I hear the cries of birds.",
-    jp: "春の眠りは心地よく、夜が明けたのにも気づかない。あちこちで鳥の鳴く声が聞こえる。",
+    jp: "春の眠りは心地よく、夜が明けたのにも気づかない。あちこちで鳥の鳴く声が聞こえる。", ko:"봄잠에 빠져 새벽인 줄도 몰랐는데, 곳곳에서 새 우는 소리 들려오네.",
     answerPy: "chù chù",
     options: ["处处", "远远", "常常", "偶尔"],
     hint: "课文原句 · 课后词语「处处」",
@@ -847,7 +857,7 @@ const CLOZE_QUESTIONS = [
     after: "声，花落知多少。",
     py: "Yè lái fēng yǔ shēng, huā luò zhī duō shǎo.",
     en: "Last night came the sound of wind and rain — who knows how many blossoms have fallen?",
-    jp: "夜には風と雨の音がしていた。花はいったいどれほど散ってしまっただろうか。",
+    jp: "夜には風と雨の音がしていた。花はいったいどれほど散ってしまっただろうか。", ko:"밤사이 비바람 소리 들렸으니, 꽃은 얼마나 떨어졌을까.",
     answerPy: "fēng yǔ",
     options: ["风雨", "雷电", "鸟鸣", "流水"],
     hint: "课文原句 · 课后词语「风雨」",
@@ -861,7 +871,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Yè lái fēng yǔ shēng, huā luò zhī duō shǎo.",
     en: "Last night came the sound of wind and rain — who knows how many blossoms have fallen?",
-    jp: "夜には風と雨の音がしていた。花はいったいどれほど散ってしまっただろうか。",
+    jp: "夜には風と雨の音がしていた。花はいったいどれほど散ってしまっただろうか。", ko:"밤사이 비바람 소리 들렸으니, 꽃은 얼마나 떨어졌을까.",
     answerPy: "duō shǎo",
     options: ["多少", "几时", "何处", "如何"],
     hint: "课文原句 · 课后词语「多少」",
@@ -875,7 +885,7 @@ const CLOZE_QUESTIONS = [
     after: "，汗滴禾下土。",
     py: "Chú hé rì dāng wǔ, hàn dī hé xià tǔ.",
     en: "Hoeing the crops at high noon, sweat drips down onto the soil beneath them.",
-    jp: "真昼どきに畑の作物を耕していると、汗が苗の下の土にしたたり落ちる。",
+    jp: "真昼どきに畑の作物を耕していると、汗が苗の下の土にしたたり落ちる。", ko:"호미로 밭을 가니 해는 한낮인데, 땀방울은 벼 아래 흙으로 떨어지네.",
     answerPy: "rì dāng wǔ",
     options: ["日当午", "日将暮", "日初升", "日已落"],
     hint: "课文原句 · 课后词语「日当午」",
@@ -889,7 +899,7 @@ const CLOZE_QUESTIONS = [
     after: "，粒粒皆辛苦。",
     py: "Shéi zhī pán zhōng cān, lì lì jiē xīn kǔ.",
     en: "Who knows that the food upon our plates — every single grain — comes from hard toil?",
-    jp: "お皿の中のご飯が、一粒一粒すべて苦労の末にできたものだと、いったい誰が知っているだろうか。",
+    jp: "お皿の中のご飯が、一粒一粒すべて苦労の末にできたものだと、いったい誰が知っているだろうか。", ko:"밥상 위의 쌀밥이, 알알이 모두 고생의 결실임을 누가 알리오.",
     answerPy: "pán zhōng cān",
     options: ["盘中餐", "田中禾", "锅中米", "地上土"],
     hint: "课文原句 · 课后词语「盘中餐」",
@@ -903,7 +913,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Shéi zhī pán zhōng cān, lì lì jiē xīn kǔ.",
     en: "Who knows that the food upon our plates — every single grain — comes from hard toil?",
-    jp: "お皿の中のご飯が、一粒一粒すべて苦労の末にできたものだと、いったい誰が知っているだろうか。",
+    jp: "お皿の中のご飯が、一粒一粒すべて苦労の末にできたものだと、いったい誰が知っているだろうか。", ko:"밥상 위의 쌀밥이, 알알이 모두 고생의 결실임을 누가 알리오.",
     answerPy: "xīn kǔ",
     options: ["辛苦", "甘甜", "轻松", "幸运"],
     hint: "课文原句 · 课后词语「辛苦」（生字「辛」「苦」）",
@@ -917,7 +927,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Chūn Xiǎo (Táng) Mèng Hàorán",
     en: "\"Spring Dawn\" — by Meng Haoran (Tang Dynasty)",
-    jp: "「春暁」（唐）孟浩然",
+    jp: "「春暁」（唐）孟浩然", ko:"춘효(春曉) (당) 맹호연",
     answerPy: "Mèng Hàorán",
     options: ["孟浩然", "李绅", "李白", "王维"],
     hint: "课文原句 · 专有名词「孟浩然」",
@@ -931,7 +941,7 @@ const CLOZE_QUESTIONS = [
     after: "了。",
     py: "Māma měitiān zuòfàn, dǎsǎo wèishēng, zhēnshi tài xīnkǔ le.",
     en: "Mom cooks and cleans every day — it's really hard work.",
-    jp: "お母さんは毎日料理や掃除をしていて、本当に大変です。",
+    jp: "お母さんは毎日料理や掃除をしていて、本当に大変です。", ko:"엄마는 매일 요리하고 청소하시니, 정말 힘든 일입니다.",
     answerPy: "xīn kǔ",
     options: ["辛苦", "轻松", "快乐", "无聊"],
     hint: "微情境拓展 · 形容劳动辛劳",
@@ -946,7 +956,7 @@ const CLOZE_QUESTIONS = [
     after: "都开满了鲜花。",
     py: "Chūntiān lái le, gōngyuán lǐ chùchù dōu kāi mǎn le xiānhuā.",
     en: "Spring has come — flowers are blooming everywhere in the park.",
-    jp: "春が来て、公園のあちこちに花が咲いています。",
+    jp: "春が来て、公園のあちこちに花が咲いています。", ko:"봄이 와서 공원 곳곳에 꽃이 피었습니다.",
     answerPy: "chù chù",
     options: ["处处", "偶尔", "很少", "从不"],
     hint: "微情境拓展 · 表示「到处、每个地方」",
@@ -961,7 +971,7 @@ const CLOZE_QUESTIONS = [
     after: "，他都坚持走路上学。",
     py: "Wúlùn guā duō dà de fēngyǔ, tā dōu jiānchí zǒulù shàngxué.",
     en: "No matter how strong the wind and rain, he insists on walking to school.",
-    jp: "どんなに風雨が強くても、彼は歩いて学校に通い続けます。",
+    jp: "どんなに風雨が強くても、彼は歩いて学校に通い続けます。", ko:"비바람이 아무리 거세도 그는 끝까지 걸어서 학교에 다닙니다.",
     answerPy: "fēng yǔ",
     options: ["风雨", "阳光", "彩虹", "白雪"],
     hint: "微情境拓展 · 恶劣天气",
@@ -976,7 +986,7 @@ const CLOZE_QUESTIONS = [
     after: "个，我们一起数一数。",
     py: "Zhèxiē píngguǒ yígòng yǒu duōshǎo ge, wǒmen yìqǐ shǔ yi shǔ.",
     en: "How many apples are there in total? Let's count them together.",
-    jp: "このリンゴは全部でいくつありますか。一緒に数えてみましょう。",
+    jp: "このリンゴは全部でいくつありますか。一緒に数えてみましょう。", ko:"이 사과는 모두 몇 개입니까? 함께 세어 봅시다.",
     answerPy: "duō shǎo",
     options: ["多少", "几时", "哪里", "怎样"],
     hint: "微情境拓展 · 询问数量",
@@ -988,7 +998,7 @@ const CLOZE_QUESTIONS = [
 
 
 /* ---------------- STATE ---------------- */
-let storyIdx = 0, showPy = true, showEn = true, showJp = true;
+let storyIdx = 0, showPy = true, showEn = true, showJp = true, showKo = true;
 let charIdx = 0;
 let flashIdx = 0;
 let matchMode = 'chars'; // chars, words, all
@@ -1054,7 +1064,7 @@ let currentAudio = null;
 function playClip(id, fallbackText, onEnded, lang){
   stopClip();
   lang = lang || 'zh-CN';
-  const dir = lang === 'en-US' ? 'audio/gushi_en/' : (lang === 'ja-JP' ? 'audio/gushi_ja/' : 'audio/gushi/');
+  const dir = lang === 'en-US' ? 'audio/gushi_en/' : (lang === 'ja-JP' ? 'audio/gushi_ja/' : (lang === 'ko-KR' ? 'audio/gushi_ko/' : 'audio/gushi/'));
   if(!id) {
     speakText(fallbackText, onEnded, lang);
     return;
@@ -1084,7 +1094,7 @@ function stopClip(){
     window.speechSynthesis.cancel();
   }
 }
-let zhVoice = null, enVoice = null, jaVoice = null;
+let zhVoice = null, enVoice = null, jaVoice = null, koVoice = null;
 function pickVoice(){
   if(!('speechSynthesis' in window)) return;
   const voices = speechSynthesis.getVoices();
@@ -1096,6 +1106,7 @@ function pickVoice(){
     || null;
   jaVoice = voices.find(v=>/^ja/i.test(v.lang||''))
     || null;
+  koVoice = voices.find(v=>/^ko/i.test(v.lang||'')) || null;
 }
 if('speechSynthesis' in window){
   pickVoice();
@@ -1104,7 +1115,7 @@ if('speechSynthesis' in window){
   const voicePollTimer = setInterval(()=>{
     pickVoice();
     voicePolls++;
-    if((zhVoice && enVoice && jaVoice) || voicePolls > 8) clearInterval(voicePollTimer);
+    if((zhVoice && enVoice && jaVoice && koVoice) || voicePolls > 8) clearInterval(voicePollTimer);
   }, 400);
 }
 function speakText(text, onEnded, lang){
@@ -1114,8 +1125,8 @@ function speakText(text, onEnded, lang){
     return;
   }
   window.speechSynthesis.cancel();
-  let voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^en/i.test(lang) ? enVoice : null;
-  if(!voice){ pickVoice(); voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^en/i.test(lang) ? enVoice : null; }
+  let voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^ko/i.test(lang) ? koVoice : /^en/i.test(lang) ? enVoice : null;
+  if(!voice){ pickVoice(); voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^ko/i.test(lang) ? koVoice : /^en/i.test(lang) ? enVoice : null; }
   const u = new SpeechSynthesisUtterance(text);
   u.lang = lang;
   if(voice) u.voice = voice;
@@ -1186,11 +1197,14 @@ function renderStory(){
   document.getElementById('storyPy').textContent = s.py;
   document.getElementById('storyEn').textContent = s.en;
   document.getElementById('storyJp').textContent = s.jp || '';
+  document.getElementById('storyKo').textContent = s.ko || '';
   document.getElementById('storyPy').style.display = showPy ? 'block' : 'none';
   document.getElementById('storyEn').style.display = showEn ? 'block' : 'none';
   document.getElementById('storyJp').style.display = showJp ? 'block' : 'none';
+  document.getElementById('storyKo').style.display = showKo ? 'block' : 'none';
   const enRow = document.getElementById('storyEnRow'); if(enRow) enRow.style.display = showEn ? 'flex' : 'none';
   const jpRow = document.getElementById('storyJpRow'); if(jpRow) jpRow.style.display = (showJp && s.jp) ? 'flex' : 'none';
+  const koRow = document.getElementById('storyKoRow'); if(koRow) koRow.style.display = (showKo && s.ko) ? 'flex' : 'none';
   updateStoryVoiceUI();
 }
 function storyPrev(){ if(storyIdx > 0){ storyIdx--; renderStory(); playClip(STORY[storyIdx].id, STORY[storyIdx].zh); } }
@@ -1198,9 +1212,10 @@ function storyNext(){ if(storyIdx < STORY.length - 1){ storyIdx++; renderStory()
 function toggleStoryPy(){ showPy = !showPy; document.getElementById('chipPy').classList.toggle('active', showPy); renderStory(); }
 function toggleStoryEn(){ showEn = !showEn; document.getElementById('chipEn').classList.toggle('active', showEn); renderStory(); }
 function toggleStoryJp(){ showJp = !showJp; document.getElementById('chipJp').classList.toggle('active', showJp); renderStory(); }
+function toggleStoryKo(){ showKo = !showKo; document.getElementById('chipKo').classList.toggle('active', showKo); renderStory(); }
 
 /* ---------------- FULL TEXT (全文朗读与配音) ---------------- */
-let fullPlaying = false, fullPlayIdx = 0, fullShowPy = true, fullShowEn = true, fullShowJp = true;
+let fullPlaying = false, fullPlayIdx = 0, fullShowPy = true, fullShowEn = true, fullShowJp = true, fullShowKo = true;
 let fullMyPlaying = false;
 
 function renderFullText(){
@@ -1220,6 +1235,10 @@ function renderFullText(){
       <div style="display:${(fullShowJp && s.jp)?'flex':'none'};align-items:center;justify-content:center;gap:6px;">
         <div class="sentence-jp">${s.jp||''}</div>
         <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[${idx}].id, STORY[${idx}].jp||'', null, 'ja-JP');" title="播放日文发音">🔊</button>
+      </div>
+      <div style="display:${(fullShowKo && s.ko)?'flex':'none'};align-items:center;justify-content:center;gap:6px;">
+        <div class="sentence-ko">${s.ko||''}</div>
+        <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[${idx}].id, STORY[${idx}].ko||'', null, 'ko-KR');" title="播放韩文发音">🔊</button>
       </div>
       <div class="full-sent-voice-bar" id="full-voice-bar-${idx}">
         <span class="sent-voice-tag" id="voice-tag-${idx}">加载录音中...</span>
@@ -1267,6 +1286,7 @@ async function updateFullTextVoiceBars(){
 function toggleFullPy(){ fullShowPy = !fullShowPy; document.getElementById('chipFullPy').classList.toggle('active', fullShowPy); renderFullText(); }
 function toggleFullEn(){ fullShowEn = !fullShowEn; document.getElementById('chipFullEn').classList.toggle('active', fullShowEn); renderFullText(); }
 function toggleFullJp(){ fullShowJp = !fullShowJp; document.getElementById('chipFullJp').classList.toggle('active', fullShowJp); renderFullText(); }
+function toggleFullKo(){ fullShowKo = !fullShowKo; document.getElementById('chipFullKo').classList.toggle('active', fullShowKo); renderFullText(); }
 
 function highlightFullSentence(idx){
   document.querySelectorAll('.full-sentence').forEach((el, i)=>{
@@ -1415,7 +1435,7 @@ function renderChar(){
   document.getElementById('charPyBack').textContent = c.py;
   document.getElementById('charRadical').textContent = '偏旁部首: ' + c.radical;
   document.getElementById('charWords').innerHTML = '<strong>组词:</strong> ' + c.words;
-  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + ' · ' + c.context;
+  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + (c.meaningKo ? ' / ' + c.meaningKo : '') + ' · ' + c.context;
   document.getElementById('charCounter').textContent = (charIdx+1) + ' / ' + CHARACTERS.length;
 
   const badgeBox = document.getElementById('charRadicalBadgeContainer');
@@ -1575,7 +1595,7 @@ function renderFlash(){
   document.getElementById('flashZh').textContent = w.zh;
   document.getElementById('flashZhBack').textContent = w.zh;
   document.getElementById('flashPy').textContent = w.py;
-  document.getElementById('flashMeaning').textContent = w.meaning + (w.meaningJp ? ' / ' + w.meaningJp : '');
+  document.getElementById('flashMeaning').textContent = w.meaning + (w.meaningJp ? ' / ' + w.meaningJp : '') + (w.meaningKo ? ' / ' + w.meaningKo : '');
   document.getElementById('flashContext').textContent = '例句: ' + w.context;
   document.getElementById('flashCounter').textContent = (flashIdx + 1) + ' / ' + WORDS.length;
 }
@@ -2107,6 +2127,7 @@ function loadClozeQuestion(){
   document.getElementById('clozeAfter').textContent = q.after;
   document.getElementById('clozeEn').textContent = q.en;
   document.getElementById('clozeJp').textContent = q.jp || '';
+  document.getElementById('clozeKo').textContent = q.ko || '';
   document.getElementById('clozeHint').textContent = '💡 ' + q.hint;
 
   const slot = document.getElementById('clozeSlot');

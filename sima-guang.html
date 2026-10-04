@@ -88,6 +88,7 @@
   .sentence-py{font-size:15px;color:var(--camel-dark);text-align:center;font-weight:700;min-height:20px;}
   .sentence-en{font-size:13px;color:var(--muted);text-align:center;}
   .sentence-jp{font-size:13px;color:#8b5cf6;text-align:center;}
+  .sentence-ko{font-size:13px;color:#059669;text-align:center;}
   .mini-speak-btn{border:none;background:none;font-size:13px;cursor:pointer;line-height:1;padding:2px 3px;border-radius:50%;flex-shrink:0;opacity:.75;}
   .mini-speak-btn:active{opacity:1;transform:scale(1.15);}
   .story-nav{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;max-width:560px;}
@@ -130,6 +131,7 @@
   .full-sentence .sentence-py{font-size:13px;text-align:left;color:var(--camel-dark);min-height:0;}
   .full-sentence .sentence-en{font-size:12px;text-align:left;color:var(--muted);margin-top:2px;}
   .full-sentence .sentence-jp{font-size:12px;text-align:left;color:#8b5cf6;margin-top:2px;}
+  .full-sentence .sentence-ko{font-size:12px;text-align:left;color:#059669;margin-top:2px;}
 
   /* character tian-zi-ge card */
   .char-wrap{width:100%;max-width:340px;perspective:1000px;}
@@ -242,6 +244,7 @@
   @keyframes popIn{from{transform:scale(0.85);opacity:0;}to{transform:scale(1);opacity:1;}}
   .cloze-en{font-size:12px;color:var(--blue-sky);font-style:italic;text-align:center;}
   .cloze-jp{font-size:12px;color:#8b5cf6;font-style:italic;text-align:center;}
+  .cloze-ko{font-size:12px;color:#059669;font-style:italic;text-align:center;}
   .cloze-hint-row{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 4px;}
   .cloze-hint-pill{font-size:12px;color:var(--muted);background:#f5f5f4;padding:3px 10px;border-radius:12px;}
   .cloze-speak-btn{background:#fff;border:1px solid #cbd5e1;border-radius:14px;padding:3px 10px;font-size:12px;font-weight:700;
@@ -432,6 +435,10 @@
           <div class="sentence-jp" id="storyJp"></div>
           <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].jp||'', null, 'ja-JP')" title="播放日文发音">🔊</button>
         </div>
+        <div class="lang-line-row" id="storyKoRow" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+          <div class="sentence-ko" id="storyKo"></div>
+          <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].ko||'', null, 'ko-KR')" title="播放韩文发音">🔊</button>
+        </div>
       </div>
       <!-- VOICE WAVE VISUALIZER -->
       <div class="voice-wave-panel" id="storyVoiceWave">
@@ -460,6 +467,7 @@
         <div class="chip active" id="chipPy" onclick="toggleStoryPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipEn" onclick="toggleStoryEn()">English</div>
         <div class="chip active" id="chipJp" onclick="toggleStoryJp()">日本語</div>
+        <div class="chip active" id="chipKo" onclick="toggleStoryKo()">한국어</div>
         <div class="chip" onclick="goFull()">📜 全文朗读</div>
       </div>
       <button class="btn ghost" onclick="goHome()">返回菜单</button>
@@ -473,6 +481,7 @@
         <div class="chip active" id="chipFullPy" onclick="toggleFullPy()">拼音 (Pinyin)</div>
         <div class="chip active" id="chipFullEn" onclick="toggleFullEn()">English</div>
         <div class="chip active" id="chipFullJp" onclick="toggleFullJp()">日本語</div>
+        <div class="chip active" id="chipFullKo" onclick="toggleFullKo()">한국어</div>
         <button class="btn clay small" id="fullPlayBtn" onclick="toggleFullPlay()">▶️ 原声连续朗读</button>
         <button class="btn gold small" id="fullMyPlayBtn" onclick="toggleFullMyPlay()">🎙️ 播放我的全文配音</button>
       </div>
@@ -632,6 +641,7 @@
           </div>
           <div class="cloze-en" id="clozeEn"></div>
           <div class="cloze-jp" id="clozeJp"></div>
+          <div class="cloze-ko" id="clozeKo"></div>
           <div class="cloze-hint-row">
             <span class="cloze-hint-pill" id="clozeHint"></span>
             <button class="cloze-speak-btn" id="clozeSpeakBtn" onclick="speakClozeSentence()">🔊 朗读句子</button>
@@ -729,45 +739,45 @@
 /* ---------------- DATA ---------------- */
 // 1. 课文《司马光》（教材原版逐字转写，第7课）
 const STORY = [
-  {id:"st1", zh:"中国古代有一个聪明的孩子，叫司马光。", py:"Zhōngguó gǔdài yǒu yí ge cōngming de háizi, jiào Sīmǎ Guāng.", en:"In ancient China there was a clever child named Sima Guang.", jp:"昔の中国に、聡明な子供がいました。名前を司馬光といいます。"},
-  {id:"st2", zh:"一天，他和小朋友们在花园里玩儿，有的做游戏，有的爬树。", py:"Yìtiān, tā hé xiǎopéngyoumen zài huāyuán lǐ wánr, yǒude zuò yóuxì, yǒude pá shù.", en:"One day, he was playing in the garden with his friends — some played games, others climbed trees.", jp:"ある日、彼は友達と庭で遊んでいました。ゲームをする子もいれば、木に登る子もいました。"},
-  {id:"st3", zh:"突然，大家听到“扑通”一声。", py:"Tūrán, dàjiā tīngdào \"pūtōng\" yì shēng.", en:"Suddenly, everyone heard a loud \"splash.\"", jp:"突然、みんなは「ドボン」という音を聞きました。"},
-  {id:"st4", zh:"原来，树下有一个大水缸，有个小朋友不小心从树上掉到水缸里了。", py:"Yuánlái, shù xià yǒu yí ge dà shuǐgāng, yǒu ge xiǎopéngyou bù xiǎoxīn cóng shù shang diào dào shuǐgāng lǐ le.", en:"It turned out there was a big water vat under the tree, and a friend had accidentally fallen from the tree into it.", jp:"実は木の下に大きな水がめがあり、一人の友達がうっかり木から水がめの中に落ちてしまったのです。"},
-  {id:"st5", zh:"水缸又大又深，里面装满了水，别的小朋友都吓哭了，不知道怎么办，只有司马光不惊慌。", py:"Shuǐgāng yòu dà yòu shēn, lǐmiàn zhuāng mǎn le shuǐ, bié de xiǎopéngyou dōu xià kū le, bù zhīdào zěnme bàn, zhǐyǒu Sīmǎ Guāng bù jīnghuāng.", en:"The vat was big and deep, filled with water. The other children were so scared they cried and didn't know what to do — only Sima Guang stayed calm.", jp:"水がめは大きくて深く、中には水がいっぱい入っていました。他の友達はみな驚いて泣き出し、どうしたらよいか分かりませんでしたが、司馬光だけは慌てませんでした。"},
-  {id:"st6", zh:"他很快想出了一个办法，找来一块大石头，使劲向水缸砸去。", py:"Tā hěn kuài xiǎng chū le yí ge bànfǎ, zhǎo lái yí kuài dà shítou, shǐjìn xiàng shuǐgāng zá qù.", en:"He quickly thought of a solution — he found a big rock and threw it hard at the vat.", jp:"彼はすぐに一つの方法を思いつき、大きな石を持ってきて、力いっぱい水がめに投げつけました。"},
-  {id:"st7", zh:"水缸破了，水流了出来，那个小朋友得救了。", py:"Shuǐgāng pò le, shuǐ liú le chūlái, nà ge xiǎopéngyou déjiù le.", en:"The vat broke, the water flowed out, and the friend was saved.", jp:"水がめは割れて水が流れ出し、その友達は助かりました。"},
-  {id:"st8", zh:"大家都说：“司马光真聪明！”", py:"Dàjiā dōu shuō: \"Sīmǎ Guāng zhēn cōngming!\"", en:"Everyone said, \"Sima Guang is really clever!\"", jp:"みんなは口をそろえて言いました。「司馬光は本当に賢いね！」"}
+  {id:"st1", zh:"中国古代有一个聪明的孩子，叫司马光。", py:"Zhōngguó gǔdài yǒu yí ge cōngming de háizi, jiào Sīmǎ Guāng.", en:"In ancient China there was a clever child named Sima Guang.", jp:"昔の中国に、聡明な子供がいました。名前を司馬光といいます。", ko:"중국 고대에 사마광이라는 총명한 아이가 있었습니다."},
+  {id:"st2", zh:"一天，他和小朋友们在花园里玩儿，有的做游戏，有的爬树。", py:"Yìtiān, tā hé xiǎopéngyoumen zài huāyuán lǐ wánr, yǒude zuò yóuxì, yǒude pá shù.", en:"One day, he was playing in the garden with his friends — some played games, others climbed trees.", jp:"ある日、彼は友達と庭で遊んでいました。ゲームをする子もいれば、木に登る子もいました。", ko:"어느 날 그는 친구들과 정원에서 놀고 있었는데, 어떤 아이는 게임을 하고 어떤 아이는 나무에 올라갔습니다."},
+  {id:"st3", zh:"突然，大家听到“扑通”一声。", py:"Tūrán, dàjiā tīngdào \"pūtōng\" yì shēng.", en:"Suddenly, everyone heard a loud \"splash.\"", jp:"突然、みんなは「ドボン」という音を聞きました。", ko:"갑자기 모두가 \"퍽\" 하는 소리를 들었습니다."},
+  {id:"st4", zh:"原来，树下有一个大水缸，有个小朋友不小心从树上掉到水缸里了。", py:"Yuánlái, shù xià yǒu yí ge dà shuǐgāng, yǒu ge xiǎopéngyou bù xiǎoxīn cóng shù shang diào dào shuǐgāng lǐ le.", en:"It turned out there was a big water vat under the tree, and a friend had accidentally fallen from the tree into it.", jp:"実は木の下に大きな水がめがあり、一人の友達がうっかり木から水がめの中に落ちてしまったのです。", ko:"알고 보니 나무 아래에 큰 물독이 있었고, 한 친구가 조심하지 않아 나무에서 물독 속으로 떨어졌습니다."},
+  {id:"st5", zh:"水缸又大又深，里面装满了水，别的小朋友都吓哭了，不知道怎么办，只有司马光不惊慌。", py:"Shuǐgāng yòu dà yòu shēn, lǐmiàn zhuāng mǎn le shuǐ, bié de xiǎopéngyou dōu xià kū le, bù zhīdào zěnme bàn, zhǐyǒu Sīmǎ Guāng bù jīnghuāng.", en:"The vat was big and deep, filled with water. The other children were so scared they cried and didn't know what to do — only Sima Guang stayed calm.", jp:"水がめは大きくて深く、中には水がいっぱい入っていました。他の友達はみな驚いて泣き出し、どうしたらよいか分かりませんでしたが、司馬光だけは慌てませんでした。", ko:"물독은 크고 깊었으며 안에 물이 가득 차 있었습니다. 다른 친구들은 모두 놀라서 울며 어찌할 바를 몰랐지만, 사마광만은 당황하지 않았습니다."},
+  {id:"st6", zh:"他很快想出了一个办法，找来一块大石头，使劲向水缸砸去。", py:"Tā hěn kuài xiǎng chū le yí ge bànfǎ, zhǎo lái yí kuài dà shítou, shǐjìn xiàng shuǐgāng zá qù.", en:"He quickly thought of a solution — he found a big rock and threw it hard at the vat.", jp:"彼はすぐに一つの方法を思いつき、大きな石を持ってきて、力いっぱい水がめに投げつけました。", ko:"그는 재빨리 방법을 생각해내어 큰 돌을 가져와 힘껏 물독에 던졌습니다."},
+  {id:"st7", zh:"水缸破了，水流了出来，那个小朋友得救了。", py:"Shuǐgāng pò le, shuǐ liú le chūlái, nà ge xiǎopéngyou déjiù le.", en:"The vat broke, the water flowed out, and the friend was saved.", jp:"水がめは割れて水が流れ出し、その友達は助かりました。", ko:"물독이 깨지고 물이 흘러나와 그 친구는 구조되었습니다."},
+  {id:"st8", zh:"大家都说：“司马光真聪明！”", py:"Dàjiā dōu shuō: \"Sīmǎ Guāng zhēn cōngming!\"", en:"Everyone said, \"Sima Guang is really clever!\"", jp:"みんなは口をそろえて言いました。「司馬光は本当に賢いね！」", ko:"모두가 말했습니다. \"사마광은 정말 총명하구나!\""}
 ];
 
 // 2. 课后生字表 (13 Characters - 课本原图)
 const CHARACTERS = [
-  {id:"zi1", zh:"司", py:"sī", radical:"口 (口字底)", radicalBadge:null, words:"司马光、公司、司机", meaning:"to take charge of / department", meaningJp:"司る、~を管理する", context:"叫司马光"},
-  {id:"zi2", zh:"聪", py:"cōng", radical:"耳 (耳字旁)", radicalBadge:"耳 —— 聪", words:"聪明、聪慧、失聪", meaning:"clever / bright", meaningJp:"賢い、聡明", context:"司马光真聪明！"},
-  {id:"zi3", zh:"扑", py:"pū", radical:"扌 (提手旁)", radicalBadge:null, words:"扑通、扑灭、扑向", meaning:"to pounce / splash (sound)", meaningJp:"飛びつく、パタン（擬音）", context:"大家听到“扑通”一声"},
-  {id:"zi4", zh:"缸", py:"gāng", radical:"缶 (缶字旁)", radicalBadge:null, words:"水缸、鱼缸、缸子", meaning:"vat / jar", meaningJp:"甕（かめ）", context:"树下有一个大水缸"},
-  {id:"zi5", zh:"装", py:"zhuāng", radical:"衣 (衣字底)", radicalBadge:"衣 —— 装", words:"装满、安装、假装", meaning:"to fill / to install / to pretend", meaningJp:"詰める、装う", context:"里面装满了水"},
-  {id:"zi6", zh:"吓", py:"xià", radical:"口 (口字旁)", radicalBadge:null, words:"吓哭、吓一跳、害怕", meaning:"to scare / to frighten", meaningJp:"驚かす、怖がらせる", context:"别的小朋友都吓哭了"},
-  {id:"zi7", zh:"哭", py:"kū", radical:"口 (口字底)", radicalBadge:null, words:"哭了、大哭、哭泣", meaning:"to cry", meaningJp:"泣く", context:"别的小朋友都吓哭了"},
-  {id:"zi8", zh:"慌", py:"huāng", radical:"忄 (竖心旁)", radicalBadge:null, words:"惊慌、慌张、不慌不忙", meaning:"panic / flustered", meaningJp:"慌てる", context:"只有司马光不惊慌"},
-  {id:"zi9", zh:"法", py:"fǎ", radical:"氵 (三点水)", radicalBadge:null, words:"办法、方法、法律", meaning:"method / law", meaningJp:"方法、法律", context:"他很快想出了一个办法"},
-  {id:"zi10", zh:"块", py:"kuài", radical:"土 (提土旁)", radicalBadge:null, words:"一块、石块、块头", meaning:"piece / lump (measure word)", meaningJp:"塊、～個（量詞）", context:"找来一块大石头"},
-  {id:"zi11", zh:"使", py:"shǐ", radical:"亻 (单人旁)", radicalBadge:null, words:"使劲、使用、使者", meaning:"to use / to make (someone do)", meaningJp:"使う、～させる", context:"使劲向水缸砸去"},
-  {id:"zi12", zh:"劲", py:"jìn", radical:"力 (力字旁)", radicalBadge:null, words:"使劲、劲头、有劲", meaning:"strength / force", meaningJp:"力、力み", context:"使劲向水缸砸去"},
-  {id:"zi13", zh:"砸", py:"zá", radical:"石 (石字旁)", radicalBadge:null, words:"砸碎、砸开、砸中", meaning:"to smash / to pound", meaningJp:"叩き割る、ぶつける", context:"使劲向水缸砸去"}
+  {id:"zi1", zh:"司", py:"sī", radical:"口 (口字底)", radicalBadge:null, words:"司马光、公司、司机", meaning:"to take charge of / department", meaningJp:"司る、~を管理する", meaningKo:"맡다, 관장하다", context:"叫司马光"},
+  {id:"zi2", zh:"聪", py:"cōng", radical:"耳 (耳字旁)", radicalBadge:"耳 —— 聪", words:"聪明、聪慧、失聪", meaning:"clever / bright", meaningJp:"賢い、聡明", meaningKo:"총명하다", context:"司马光真聪明！"},
+  {id:"zi3", zh:"扑", py:"pū", radical:"扌 (提手旁)", radicalBadge:null, words:"扑通、扑灭、扑向", meaning:"to pounce / splash (sound)", meaningJp:"飛びつく、パタン（擬音）", meaningKo:"달려들다, 퍽(소리)", context:"大家听到“扑通”一声"},
+  {id:"zi4", zh:"缸", py:"gāng", radical:"缶 (缶字旁)", radicalBadge:null, words:"水缸、鱼缸、缸子", meaning:"vat / jar", meaningJp:"甕（かめ）", meaningKo:"독, 항아리", context:"树下有一个大水缸"},
+  {id:"zi5", zh:"装", py:"zhuāng", radical:"衣 (衣字底)", radicalBadge:"衣 —— 装", words:"装满、安装、假装", meaning:"to fill / to install / to pretend", meaningJp:"詰める、装う", meaningKo:"담다, 설치하다, ~인 척하다", context:"里面装满了水"},
+  {id:"zi6", zh:"吓", py:"xià", radical:"口 (口字旁)", radicalBadge:null, words:"吓哭、吓一跳、害怕", meaning:"to scare / to frighten", meaningJp:"驚かす、怖がらせる", meaningKo:"놀라게 하다", context:"别的小朋友都吓哭了"},
+  {id:"zi7", zh:"哭", py:"kū", radical:"口 (口字底)", radicalBadge:null, words:"哭了、大哭、哭泣", meaning:"to cry", meaningJp:"泣く", meaningKo:"울다", context:"别的小朋友都吓哭了"},
+  {id:"zi8", zh:"慌", py:"huāng", radical:"忄 (竖心旁)", radicalBadge:null, words:"惊慌、慌张、不慌不忙", meaning:"panic / flustered", meaningJp:"慌てる", meaningKo:"당황하다", context:"只有司马光不惊慌"},
+  {id:"zi9", zh:"法", py:"fǎ", radical:"氵 (三点水)", radicalBadge:null, words:"办法、方法、法律", meaning:"method / law", meaningJp:"方法、法律", meaningKo:"방법, 법", context:"他很快想出了一个办法"},
+  {id:"zi10", zh:"块", py:"kuài", radical:"土 (提土旁)", radicalBadge:null, words:"一块、石块、块头", meaning:"piece / lump (measure word)", meaningJp:"塊、～個（量詞）", meaningKo:"덩어리, 개(양사)", context:"找来一块大石头"},
+  {id:"zi11", zh:"使", py:"shǐ", radical:"亻 (单人旁)", radicalBadge:null, words:"使劲、使用、使者", meaning:"to use / to make (someone do)", meaningJp:"使う、～させる", meaningKo:"사용하다, ~하게 하다", context:"使劲向水缸砸去"},
+  {id:"zi12", zh:"劲", py:"jìn", radical:"力 (力字旁)", radicalBadge:null, words:"使劲、劲头、有劲", meaning:"strength / force", meaningJp:"力、力み", meaningKo:"힘", context:"使劲向水缸砸去"},
+  {id:"zi13", zh:"砸", py:"zá", radical:"石 (石字旁)", radicalBadge:null, words:"砸碎、砸开、砸中", meaning:"to smash / to pound", meaningJp:"叩き割る、ぶつける", meaningKo:"내려치다, 부딪다", context:"使劲向水缸砸去"}
 ];
 
 // 3. 课后词语表 (9 Words + 1 专有名词 - 课本原图)
 const WORDS = [
-  {id:"ci1", zh:"司马光", py:"Sīmǎ Guāng", meaning:"Sima Guang (historical figure, Song-dynasty scholar)", meaningJp:"司馬光（人名）", emoji:"🧒", context:"中国古代有一个聪明的孩子，叫司马光。", tag:"专有名词"},
-  {id:"ci2", zh:"聪明", py:"cōngming", meaning:"clever / smart", meaningJp:"賢い", emoji:"🧠", context:"司马光真聪明！", tag:"重点词语"},
-  {id:"ci3", zh:"花园", py:"huāyuán", meaning:"garden", meaningJp:"庭園", emoji:"🌷", context:"他和小朋友们在花园里玩儿", tag:"重点词语"},
-  {id:"ci4", zh:"扑通", py:"pūtōng", meaning:"splash (sound)", meaningJp:"ドボン（擬音）", emoji:"💦", context:"大家听到“扑通”一声", tag:"重点词语"},
-  {id:"ci5", zh:"小心", py:"xiǎoxīn", meaning:"careful", meaningJp:"気をつける", emoji:"⚠️", context:"有个小朋友不小心掉到水缸里了", tag:"重点词语"},
-  {id:"ci6", zh:"只有", py:"zhǐyǒu", meaning:"only", meaningJp:"～だけ", emoji:"1️⃣", context:"只有司马光不惊慌", tag:"重点词语"},
-  {id:"ci7", zh:"惊慌", py:"jīnghuāng", meaning:"to panic", meaningJp:"慌てる、動揺する", emoji:"😱", context:"只有司马光不惊慌", tag:"重点词语"},
-  {id:"ci8", zh:"办法", py:"bànfǎ", meaning:"method / solution", meaningJp:"方法", emoji:"💡", context:"他很快想出了一个办法", tag:"重点词语"},
-  {id:"ci9", zh:"石头", py:"shítou", meaning:"stone / rock", meaningJp:"石", emoji:"🪨", context:"找来一块大石头", tag:"重点词语"},
-  {id:"ci10", zh:"使劲", py:"shǐjìn", meaning:"to use force / to exert strength", meaningJp:"力を込める", emoji:"💪", context:"使劲向水缸砸去", tag:"重点词语"}
+  {id:"ci1", zh:"司马光", py:"Sīmǎ Guāng", meaning:"Sima Guang (historical figure, Song-dynasty scholar)", meaningJp:"司馬光（人名）", meaningKo:"사마광(인명)", emoji:"🧒", context:"中国古代有一个聪明的孩子，叫司马光。", tag:"专有名词"},
+  {id:"ci2", zh:"聪明", py:"cōngming", meaning:"clever / smart", meaningJp:"賢い", meaningKo:"총명하다, 똑똑하다", emoji:"🧠", context:"司马光真聪明！", tag:"重点词语"},
+  {id:"ci3", zh:"花园", py:"huāyuán", meaning:"garden", meaningJp:"庭園", meaningKo:"정원, 화원", emoji:"🌷", context:"他和小朋友们在花园里玩儿", tag:"重点词语"},
+  {id:"ci4", zh:"扑通", py:"pūtōng", meaning:"splash (sound)", meaningJp:"ドボン（擬音）", meaningKo:"퍽, 풍덩(소리)", emoji:"💦", context:"大家听到“扑通”一声", tag:"重点词语"},
+  {id:"ci5", zh:"小心", py:"xiǎoxīn", meaning:"careful", meaningJp:"気をつける", meaningKo:"조심하다", emoji:"⚠️", context:"有个小朋友不小心掉到水缸里了", tag:"重点词语"},
+  {id:"ci6", zh:"只有", py:"zhǐyǒu", meaning:"only", meaningJp:"～だけ", meaningKo:"오직, ~만", emoji:"1️⃣", context:"只有司马光不惊慌", tag:"重点词语"},
+  {id:"ci7", zh:"惊慌", py:"jīnghuāng", meaning:"to panic", meaningJp:"慌てる、動揺する", meaningKo:"놀라서 당황하다", emoji:"😱", context:"只有司马光不惊慌", tag:"重点词语"},
+  {id:"ci8", zh:"办法", py:"bànfǎ", meaning:"method / solution", meaningJp:"方法", meaningKo:"방법", emoji:"💡", context:"他很快想出了一个办法", tag:"重点词语"},
+  {id:"ci9", zh:"石头", py:"shítou", meaning:"stone / rock", meaningJp:"石", meaningKo:"돌", emoji:"🪨", context:"找来一块大石头", tag:"重点词语"},
+  {id:"ci10", zh:"使劲", py:"shǐjìn", meaning:"to use force / to exert strength", meaningJp:"力を込める", meaningKo:"힘을 쓰다", emoji:"💪", context:"使劲向水缸砸去", tag:"重点词语"}
 ];
 
 const ALL_VOCAB = WORDS;
@@ -830,7 +840,7 @@ const CLOZE_QUESTIONS = [
     after: "的孩子，叫司马光。",
     py: "Zhōngguó gǔdài yǒu yí ge cōngming de háizi, jiào Sīmǎ Guāng.",
     en: "In ancient China there was a clever child named Sima Guang.",
-    jp: "昔の中国に、聡明な子供がいました。名前を司馬光といいます。",
+    jp: "昔の中国に、聡明な子供がいました。名前を司馬光といいます。", ko:"중국 고대에 사마광이라는 총명한 아이가 있었습니다.",
     answerPy: "cōng ming",
     options: ["聪明", "调皮", "活泼", "可爱"],
     hint: "课文首句 · 课后词语「聪明」",
@@ -844,7 +854,7 @@ const CLOZE_QUESTIONS = [
     after: "里玩儿，有的做游戏，有的爬树。",
     py: "Yìtiān, tā hé xiǎopéngyoumen zài huāyuán lǐ wánr, yǒude zuò yóuxì, yǒude pá shù.",
     en: "One day, he was playing in the garden with his friends — some played games, others climbed trees.",
-    jp: "ある日、彼は友達と庭で遊んでいました。ゲームをする子もいれば、木に登る子もいました。",
+    jp: "ある日、彼は友達と庭で遊んでいました。ゲームをする子もいれば、木に登る子もいました。", ko:"어느 날 그는 친구들과 정원에서 놀고 있었는데, 어떤 아이는 게임을 하고 어떤 아이는 나무에 올라갔습니다.",
     answerPy: "huā yuán",
     options: ["花园", "学校", "院子", "操场"],
     hint: "课文原句 · 课后词语「花园」",
@@ -858,7 +868,7 @@ const CLOZE_QUESTIONS = [
     after: "”一声。",
     py: "Tūrán, dàjiā tīngdào \"pūtōng\" yì shēng.",
     en: "Suddenly, everyone heard a loud \"splash.\"",
-    jp: "突然、みんなは「ドボン」という音を聞きました。",
+    jp: "突然、みんなは「ドボン」という音を聞きました。", ko:"갑자기 모두가 \"퍽\" 하는 소리를 들었습니다.",
     answerPy: "pū tōng",
     options: ["扑通", "轰隆", "哗啦", "咚咚"],
     hint: "课文原句 · 课后词语「扑通」",
@@ -872,7 +882,7 @@ const CLOZE_QUESTIONS = [
     after: "从树上掉到水缸里了。",
     py: "Yǒu ge xiǎopéngyou bù xiǎoxīn cóng shù shang diào dào shuǐgāng lǐ le.",
     en: "A friend accidentally fell from the tree into the vat.",
-    jp: "一人の友達がうっかり木から水がめの中に落ちてしまいました。",
+    jp: "一人の友達がうっかり木から水がめの中に落ちてしまいました。", ko:"한 친구가 조심하지 않아 나무에서 물독 속으로 떨어졌습니다.",
     answerPy: "xiǎo xīn",
     options: ["小心", "开心", "放心", "细心"],
     hint: "课文原句 · 课后词语「小心」",
@@ -886,7 +896,7 @@ const CLOZE_QUESTIONS = [
     after: "司马光不惊慌。",
     py: "Bié de xiǎopéngyou dōu xià kū le, bù zhīdào zěnme bàn, zhǐyǒu Sīmǎ Guāng bù jīnghuāng.",
     en: "The other children were so scared they cried and didn't know what to do — only Sima Guang stayed calm.",
-    jp: "他の友達はみな驚いて泣き出しましたが、司馬光だけは慌てませんでした。",
+    jp: "他の友達はみな驚いて泣き出しましたが、司馬光だけは慌てませんでした。", ko:"다른 친구들은 모두 놀라서 울며 어찌할 바를 몰랐지만, 사마광만은 당황하지 않았습니다.",
     answerPy: "zhǐ yǒu",
     options: ["只有", "还有", "没有", "只好"],
     hint: "课文原句 · 课后词语「只有」",
@@ -900,7 +910,7 @@ const CLOZE_QUESTIONS = [
     after: "。",
     py: "Bié de xiǎopéngyou dōu xià kū le, bù zhīdào zěnme bàn, zhǐyǒu Sīmǎ Guāng bù jīnghuāng.",
     en: "The other children panicked, but Sima Guang did not.",
-    jp: "他の友達は慌てましたが、司馬光は慌てませんでした。",
+    jp: "他の友達は慌てましたが、司馬光は慌てませんでした。", ko:"다른 친구들은 당황했지만 사마광은 당황하지 않았습니다.",
     answerPy: "jīng huāng",
     options: ["惊慌", "高兴", "惊讶", "害羞"],
     hint: "课文原句 · 课后词语「惊慌」（生字「慌」忄部）",
@@ -914,7 +924,7 @@ const CLOZE_QUESTIONS = [
     after: "，找来一块大石头，使劲向水缸砸去。",
     py: "Tā hěn kuài xiǎng chū le yí ge bànfǎ, zhǎo lái yí kuài dà shítou, shǐjìn xiàng shuǐgāng zá qù.",
     en: "He quickly thought of a solution — he found a big rock and threw it hard at the vat.",
-    jp: "彼はすぐに一つの方法を思いつき、大きな石を持ってきて、力いっぱい水がめに投げつけました。",
+    jp: "彼はすぐに一つの方法を思いつき、大きな石を持ってきて、力いっぱい水がめに投げつけました。", ko:"그는 재빨리 방법을 생각해내어 큰 돌을 가져와 힘껏 물독에 던졌습니다.",
     answerPy: "bàn fǎ",
     options: ["办法", "主意", "计划", "念头"],
     hint: "课文原句 · 课后词语「办法」",
@@ -928,7 +938,7 @@ const CLOZE_QUESTIONS = [
     after: "，使劲向水缸砸去。",
     py: "Tā hěn kuài xiǎng chū le yí ge bànfǎ, zhǎo lái yí kuài dà shítou, shǐjìn xiàng shuǐgāng zá qù.",
     en: "He found a big rock and threw it hard at the vat.",
-    jp: "彼は大きな石を持ってきて、力いっぱい水がめに投げつけました。",
+    jp: "彼は大きな石を持ってきて、力いっぱい水がめに投げつけました。", ko:"그는 큰 돌을 가져와 힘껏 물독에 던졌습니다.",
     answerPy: "shí tou",
     options: ["石头", "木头", "砖头", "板凳"],
     hint: "课文原句 · 课后词语「石头」",
@@ -942,7 +952,7 @@ const CLOZE_QUESTIONS = [
     after: "，只好去问老师。",
     py: "Zhè dào tí tài nán le, wǒ xiǎng bù chū bànfǎ, zhǐhǎo qù wèn lǎoshī.",
     en: "This problem was too hard — I couldn't think of a solution, so I asked the teacher.",
-    jp: "この問題は難しすぎて、方法が思いつかなかったので、先生に聞きました。",
+    jp: "この問題は難しすぎて、方法が思いつかなかったので、先生に聞きました。", ko:"이 문제는 너무 어려워서 방법이 생각나지 않아 선생님께 물었습니다.",
     answerPy: "bàn fǎ",
     options: ["办法", "石头", "花园", "力气"],
     hint: "微情境拓展 · 解决问题的方式",
@@ -957,7 +967,7 @@ const CLOZE_QUESTIONS = [
     after: "，认真地做完了每一道题。",
     py: "Kǎoshì de shíhou, wǒ yìdiǎnr yě bù jīnghuāng, rènzhēn de zuò wán le měi yí dào tí.",
     en: "During the exam, I didn't panic at all and calmly finished every question.",
-    jp: "試験の時、私は少しも慌てず、真剣にすべての問題を解き終えました。",
+    jp: "試験の時、私は少しも慌てず、真剣にすべての問題を解き終えました。", ko:"시험 때 저는 전혀 당황하지 않고 차분하게 모든 문제를 다 풀었습니다.",
     answerPy: "jīng huāng",
     options: ["惊慌", "开心", "骄傲", "难过"],
     hint: "微情境拓展 · 遇事慌张",
@@ -972,7 +982,7 @@ const CLOZE_QUESTIONS = [
     after: "一推，桌子就动了。",
     py: "Bān zhuōzi de shíhou, tā shǐjìn yì tuī, zhuōzi jiù dòng le.",
     en: "While moving the table, he gave it a hard push and it moved.",
-    jp: "机を運ぶ時、彼が力を込めて押すと、机は動きました。",
+    jp: "机を運ぶ時、彼が力を込めて押すと、机は動きました。", ko:"책상을 옮길 때 그가 힘껏 밀자 책상이 움직였습니다.",
     answerPy: "shǐ jìn",
     options: ["使劲", "轻轻", "慢慢", "悄悄"],
     hint: "微情境拓展 · 用力气",
@@ -987,7 +997,7 @@ const CLOZE_QUESTIONS = [
     after: "，我们绕开了它。",
     py: "Lù shang yǒu yí kuài dà shítou, wǒmen ràokāi le tā.",
     en: "There was a big rock on the road, and we went around it.",
-    jp: "道に大きな石があったので、私たちはそれを避けて通りました。",
+    jp: "道に大きな石があったので、私たちはそれを避けて通りました。", ko:"길에 큰 돌이 있어서 우리는 그것을 피해서 지나갔습니다.",
     answerPy: "shí tou",
     options: ["石头", "水缸", "花园", "木块"],
     hint: "微情境拓展 · 坚硬的岩块",
@@ -999,7 +1009,7 @@ const CLOZE_QUESTIONS = [
 
 
 /* ---------------- STATE ---------------- */
-let storyIdx = 0, showPy = true, showEn = true, showJp = true;
+let storyIdx = 0, showPy = true, showEn = true, showJp = true, showKo = true;
 let charIdx = 0;
 let flashIdx = 0;
 let matchMode = 'chars'; // chars, words, all
@@ -1065,7 +1075,7 @@ let currentAudio = null;
 function playClip(id, fallbackText, onEnded, lang){
   stopClip();
   lang = lang || 'zh-CN';
-  const dir = lang === 'en-US' ? 'audio/sima_en/' : (lang === 'ja-JP' ? 'audio/sima_ja/' : 'audio/sima/');
+  const dir = lang === 'en-US' ? 'audio/sima_en/' : (lang === 'ja-JP' ? 'audio/sima_ja/' : (lang === 'ko-KR' ? 'audio/sima_ko/' : 'audio/sima/'));
   if(!id) {
     speakText(fallbackText, onEnded, lang);
     return;
@@ -1095,7 +1105,7 @@ function stopClip(){
     window.speechSynthesis.cancel();
   }
 }
-let zhVoice = null, enVoice = null, jaVoice = null;
+let zhVoice = null, enVoice = null, jaVoice = null, koVoice = null;
 function pickVoice(){
   if(!('speechSynthesis' in window)) return;
   const voices = speechSynthesis.getVoices();
@@ -1107,6 +1117,7 @@ function pickVoice(){
     || null;
   jaVoice = voices.find(v=>/^ja/i.test(v.lang||''))
     || null;
+  koVoice = voices.find(v=>/^ko/i.test(v.lang||'')) || null;
 }
 if('speechSynthesis' in window){
   pickVoice();
@@ -1115,7 +1126,7 @@ if('speechSynthesis' in window){
   const voicePollTimer = setInterval(()=>{
     pickVoice();
     voicePolls++;
-    if((zhVoice && enVoice && jaVoice) || voicePolls > 8) clearInterval(voicePollTimer);
+    if((zhVoice && enVoice && jaVoice && koVoice) || voicePolls > 8) clearInterval(voicePollTimer);
   }, 400);
 }
 function speakText(text, onEnded, lang){
@@ -1125,8 +1136,8 @@ function speakText(text, onEnded, lang){
     return;
   }
   window.speechSynthesis.cancel();
-  let voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^en/i.test(lang) ? enVoice : null;
-  if(!voice){ pickVoice(); voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^en/i.test(lang) ? enVoice : null; }
+  let voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^ko/i.test(lang) ? koVoice : /^en/i.test(lang) ? enVoice : null;
+  if(!voice){ pickVoice(); voice = /^zh/i.test(lang) ? zhVoice : /^ja/i.test(lang) ? jaVoice : /^ko/i.test(lang) ? koVoice : /^en/i.test(lang) ? enVoice : null; }
   const u = new SpeechSynthesisUtterance(text);
   u.lang = lang;
   if(voice) u.voice = voice;
@@ -1197,11 +1208,14 @@ function renderStory(){
   document.getElementById('storyPy').textContent = s.py;
   document.getElementById('storyEn').textContent = s.en;
   document.getElementById('storyJp').textContent = s.jp || '';
+  document.getElementById('storyKo').textContent = s.ko || '';
   document.getElementById('storyPy').style.display = showPy ? 'block' : 'none';
   document.getElementById('storyEn').style.display = showEn ? 'block' : 'none';
   document.getElementById('storyJp').style.display = showJp ? 'block' : 'none';
+  document.getElementById('storyKo').style.display = showKo ? 'block' : 'none';
   const enRow = document.getElementById('storyEnRow'); if(enRow) enRow.style.display = showEn ? 'flex' : 'none';
   const jpRow = document.getElementById('storyJpRow'); if(jpRow) jpRow.style.display = (showJp && s.jp) ? 'flex' : 'none';
+  const koRow = document.getElementById('storyKoRow'); if(koRow) koRow.style.display = (showKo && s.ko) ? 'flex' : 'none';
   updateStoryVoiceUI();
 }
 function storyPrev(){ if(storyIdx > 0){ storyIdx--; renderStory(); playClip(STORY[storyIdx].id, STORY[storyIdx].zh); } }
@@ -1209,9 +1223,10 @@ function storyNext(){ if(storyIdx < STORY.length - 1){ storyIdx++; renderStory()
 function toggleStoryPy(){ showPy = !showPy; document.getElementById('chipPy').classList.toggle('active', showPy); renderStory(); }
 function toggleStoryEn(){ showEn = !showEn; document.getElementById('chipEn').classList.toggle('active', showEn); renderStory(); }
 function toggleStoryJp(){ showJp = !showJp; document.getElementById('chipJp').classList.toggle('active', showJp); renderStory(); }
+function toggleStoryKo(){ showKo = !showKo; document.getElementById('chipKo').classList.toggle('active', showKo); renderStory(); }
 
 /* ---------------- FULL TEXT (全文朗读与配音) ---------------- */
-let fullPlaying = false, fullPlayIdx = 0, fullShowPy = true, fullShowEn = true, fullShowJp = true;
+let fullPlaying = false, fullPlayIdx = 0, fullShowPy = true, fullShowEn = true, fullShowJp = true, fullShowKo = true;
 let fullMyPlaying = false;
 
 function renderFullText(){
@@ -1231,6 +1246,10 @@ function renderFullText(){
       <div style="display:${(fullShowJp && s.jp)?'flex':'none'};align-items:center;justify-content:center;gap:6px;">
         <div class="sentence-jp">${s.jp||''}</div>
         <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[${idx}].id, STORY[${idx}].jp||'', null, 'ja-JP');" title="播放日文发音">🔊</button>
+      </div>
+      <div style="display:${(fullShowKo && s.ko)?'flex':'none'};align-items:center;justify-content:center;gap:6px;">
+        <div class="sentence-ko">${s.ko||''}</div>
+        <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[${idx}].id, STORY[${idx}].ko||'', null, 'ko-KR');" title="播放韩文发音">🔊</button>
       </div>
       <div class="full-sent-voice-bar" id="full-voice-bar-${idx}">
         <span class="sent-voice-tag" id="voice-tag-${idx}">加载录音中...</span>
@@ -1278,6 +1297,7 @@ async function updateFullTextVoiceBars(){
 function toggleFullPy(){ fullShowPy = !fullShowPy; document.getElementById('chipFullPy').classList.toggle('active', fullShowPy); renderFullText(); }
 function toggleFullEn(){ fullShowEn = !fullShowEn; document.getElementById('chipFullEn').classList.toggle('active', fullShowEn); renderFullText(); }
 function toggleFullJp(){ fullShowJp = !fullShowJp; document.getElementById('chipFullJp').classList.toggle('active', fullShowJp); renderFullText(); }
+function toggleFullKo(){ fullShowKo = !fullShowKo; document.getElementById('chipFullKo').classList.toggle('active', fullShowKo); renderFullText(); }
 
 function highlightFullSentence(idx){
   document.querySelectorAll('.full-sentence').forEach((el, i)=>{
@@ -1426,7 +1446,7 @@ function renderChar(){
   document.getElementById('charPyBack').textContent = c.py;
   document.getElementById('charRadical').textContent = '偏旁部首: ' + c.radical;
   document.getElementById('charWords').innerHTML = '<strong>组词:</strong> ' + c.words;
-  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + ' · ' + c.context;
+  document.getElementById('charMeaning').textContent = c.meaning + (c.meaningJp ? ' / ' + c.meaningJp : '') + (c.meaningKo ? ' / ' + c.meaningKo : '') + ' · ' + c.context;
   document.getElementById('charCounter').textContent = (charIdx+1) + ' / ' + CHARACTERS.length;
 
   const badgeBox = document.getElementById('charRadicalBadgeContainer');
@@ -1586,7 +1606,7 @@ function renderFlash(){
   document.getElementById('flashZh').textContent = w.zh;
   document.getElementById('flashZhBack').textContent = w.zh;
   document.getElementById('flashPy').textContent = w.py;
-  document.getElementById('flashMeaning').textContent = w.meaning + (w.meaningJp ? ' / ' + w.meaningJp : '');
+  document.getElementById('flashMeaning').textContent = w.meaning + (w.meaningJp ? ' / ' + w.meaningJp : '') + (w.meaningKo ? ' / ' + w.meaningKo : '');
   document.getElementById('flashContext').textContent = '例句: ' + w.context;
   document.getElementById('flashCounter').textContent = (flashIdx + 1) + ' / ' + WORDS.length;
 }
@@ -2118,6 +2138,7 @@ function loadClozeQuestion(){
   document.getElementById('clozeAfter').textContent = q.after;
   document.getElementById('clozeEn').textContent = q.en;
   document.getElementById('clozeJp').textContent = q.jp || '';
+  document.getElementById('clozeKo').textContent = q.ko || '';
   document.getElementById('clozeHint').textContent = '💡 ' + q.hint;
 
   const slot = document.getElementById('clozeSlot');
