@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-Y1P7PMMM6V');
+  </script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>本地图片工坊 · 纯前端离线压缩与格式互转</title>
+  <meta name="description" content="100% 浏览器本地运行的图片处理工具。批量图片压缩、WebP/JPG/PNG 格式互转、尺寸缩放与隐私 EXIF 清除，零数据上传，保护隐私。">
+  <style>
+    :root {
+      --bg-base: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --border-color: #e2e8f0;
+      --border-focus: #0284c7;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --primary-subtle: #e0f2fe;
+      --success: #10b981;
+      --success-subtle: #d1fae5;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --radius-sm: 6px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+      --radius-pill: 9999px;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+      --shadow-lg: 0 10px 20px -3px rgba(0, 0, 0, 0.08);
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --bg-base: #0b1120;
+      --bg-surface: #1e293b;
+      --bg-subtle: #0f172a;
+      --border-color: #334155;
+      --border-focus: #38bdf8;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-light: #64748b;
+      --primary: #38bdf8;
+      --primary-hover: #0ea5e9;
+      --primary-subtle: rgba(56, 189, 248, 0.15);
+      --success-subtle: rgba(16, 185, 129, 0.15);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color 0.2s, color 0.2s;
+    }
+
+    header.app-header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      padding: 10px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: var(--shadow-sm);
+    }
+    .header-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .back-link {
+      display: inline-flex; align-items: center; gap: 4px; padding: 6px 10px;
+      font-size: 13px; font-weight: 600; color: var(--text-muted);
+      text-decoration: none; background: var(--bg-base);
+      border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+      transition: all 0.15s;
+    }
+    .back-link:hover { color: var(--primary); border-color: var(--primary); }
+    .app-brand { display: flex; align-items: center; gap: 8px; margin-right: 4px; }
+    .brand-icon { font-size: 22px; line-height: 1; }
+    .brand-title { font-size: 16px; font-weight: 800; letter-spacing: -0.3px; }
+    .peer-nav { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+    .theme-btn {
+      padding: 6px 12px; font-size: 13px; font-weight: 600;
+      border-radius: var(--radius-sm); border: 1px solid var(--border-color);
+      background: var(--bg-surface); color: var(--text-muted);
+      cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+      transition: all 0.15s;
+    }
+    .theme-btn:hover { color: var(--text-main); background: var(--bg-base); }
+
+    main.container {
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* 顶部拖拽上传大卡片 */
+    .drop-card {
+      background: var(--bg-surface);
+      border: 2px dashed var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 44px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+    .drop-card:hover, .drop-card.dragover {
+      border-color: var(--primary);
+      background: var(--primary-subtle);
+      transform: translateY(-2px);
+    }
+    .drop-icon { font-size: 48px; line-height: 1; margin-bottom: 14px; }
+    .drop-title { font-size: 18px; font-weight: 800; margin-bottom: 8px; color: var(--text-main); }
+    .drop-subtitle { font-size: 13px; color: var(--text-muted); max-width: 500px; margin: 0 auto 16px; line-height: 1.5; }
+    .drop-badges {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .drop-badge {
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill);
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+    .drop-badge.secure {
+      background: var(--success-subtle);
+      color: var(--success);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    /* 全局配置控制面板 */
+    .config-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .config-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 12px;
+    }
+    .config-title { font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    .config-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-label { font-size: 13px; font-weight: 700; color: var(--text-main); display: flex; justify-content: space-between; }
+    .form-select, .form-input {
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      background: var(--bg-base);
+      color: var(--text-main);
+      font-family: inherit;
+    }
+    .form-select:focus, .form-input:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--primary-subtle);
+    }
+
+    .range-box { display: flex; align-items: center; gap: 10px; }
+    .range-slider { flex: 1; accent-color: var(--primary); }
+    .range-val { font-family: var(--font-mono); font-size: 13px; font-weight: 800; min-width: 44px; text-align: right; }
+
+    /* 批量操作工具条 */
+    .batch-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+    }
+    .batch-summary { font-size: 13px; color: var(--text-muted); font-weight: 600; }
+    .batch-summary strong { color: var(--text-main); }
+    .batch-actions { display: flex; gap: 8px; }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 8px 14px; font-size: 13px; font-weight: 700; border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color); background: var(--bg-surface); color: var(--text-main);
+      cursor: pointer; transition: all 0.15s; user-select: none;
+    }
+    .btn:hover { background: var(--bg-subtle); border-color: var(--primary); }
+    .btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-danger { color: var(--danger); }
+    .btn-danger:hover { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+
+    /* 图片列表卡片 */
+    .images-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .image-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      display: grid;
+      grid-template-columns: 76px 1fr auto auto;
+      align-items: center;
+      gap: 16px;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.15s;
+    }
+    .image-item:hover { border-color: var(--border-focus); }
+
+    .item-thumb-box {
+      width: 76px;
+      height: 76px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .item-thumb { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+    .item-meta { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .item-name {
+      font-size: 14px; font-weight: 700; color: var(--text-main);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .item-info-line {
+      font-size: 12px; color: var(--text-muted); display: flex; gap: 10px; flex-wrap: wrap;
+    }
+
+    .item-stats {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      min-width: 130px;
+    }
+    .size-orig { font-size: 12px; color: var(--text-muted); text-decoration: line-through; }
+    .size-new { font-size: 14px; font-weight: 800; font-family: var(--font-mono); color: var(--text-main); }
+    .size-diff-badge {
+      font-size: 11px; font-weight: 800; padding: 2px 6px; border-radius: var(--radius-pill);
+      background: var(--success-subtle); color: var(--success);
+    }
+
+    .item-actions { display: flex; align-items: center; gap: 6px; }
+
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* 对比弹窗 Modal */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px); z-index: 100;
+      display: none; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      max-width: 900px;
+      width: 100%;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+    .modal-header {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-title { font-size: 15px; font-weight: 800; }
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    .compare-side {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .compare-side img {
+      max-width: 100%;
+      max-height: 400px;
+      object-fit: contain;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      background: var(--bg-subtle);
+    }
+    .compare-label { font-size: 13px; font-weight: 700; color: var(--text-muted); }
+
+    /* Toast */
+    .toast-msg {
+      position: fixed; bottom: 30px; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(15, 23, 42, 0.9); color: #fff;
+      padding: 8px 18px; border-radius: 9999px;
+      font-size: 13px; font-weight: 600; opacity: 0; pointer-events: none;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+    .toast-msg.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    @media (max-width: 760px) {
+      .image-item {
+        grid-template-columns: 60px 1fr;
+        gap: 10px;
+      }
+      .item-stats {
+        grid-column: 2 / 3;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .item-actions {
+        grid-column: 1 / 3;
+        justify-content: flex-end;
+      }
+      .modal-body { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 顶部导航 -->
+  <header class="app-header">
+    <div class="header-left">
+      <a href="index.html" class="back-link" title="返回大厅">
+        <span>←</span>
+        <span>大厅</span>
+      </a>
+      <div class="app-brand">
+        <span class="brand-icon">🖼️</span>
+        <span class="brand-title">本地图片工坊</span>
+      </div>
+      <nav class="peer-nav" aria-label="同级实用工具">
+        <a href="tools.html" class="back-link" style="font-weight:700;">🛠️ 工具箱</a>
+        <a href="notepad.html" class="back-link">📝 便签</a>
+        <a href="calculator.html" class="back-link">🧮 计算器</a>
+        <a href="unit-converter.html" class="back-link">📐 换算器</a>
+        <a href="currency.html" class="back-link">💱 汇率</a>
+        <a href="weather.html" class="back-link">🌤️ 天气</a>
+        <a href="qrcode.html" class="back-link">📱 二维码</a>
+        <a href="pomodoro.html" class="back-link">🍅 番茄钟</a>
+        <a href="password.html" class="back-link">🔐 密码</a>
+      </nav>
+    </div>
+
+    <div>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="切换深色/浅色模式">🌓 主题</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- 拖拽上传区 -->
+    <div class="drop-card" id="dropCard" onclick="document.getElementById('fileInput').click()">
+      <div class="drop-icon">📤</div>
+      <div class="drop-title">拖拽图片至此，或点击批量选择</div>
+      <div class="drop-subtitle">
+        支持多图同时处理 · 也可在当前页面直接按 <strong>Ctrl+V</strong> 粘贴剪贴板截图
+      </div>
+      <div class="drop-badges">
+        <span class="drop-badge secure">🔒 100% 浏览器客户端处理 · 零上传</span>
+        <span class="drop-badge">WebP / JPG / PNG / GIF / BMP</span>
+        <span class="drop-badge">自动清除 EXIF 地理隐私</span>
+      </div>
+      <input type="file" id="fileInput" multiple accept="image/*" style="display:none;" onchange="handleFiles(this.files)">
+    </div>
+
+    <!-- 处理配置面板 -->
+    <div class="config-card">
+      <div class="config-header">
+        <div class="config-title">
+          <span>⚙️ 转换与压缩参数配置</span>
+        </div>
+        <div style="font-size:12px; color:var(--text-muted);">
+          修改参数将自动重算所有图片
+        </div>
+      </div>
+
+      <div class="config-grid">
+        <!-- 目标格式 -->
+        <div class="form-group">
+          <label class="form-label">输出目标格式</label>
+          <select id="cfgFormat" class="form-select" onchange="applyConfigToAll()">
+            <option value="image/webp" selected>WebP (推荐，极限体积压缩)</option>
+            <option value="image/jpeg">JPEG (通用兼容标准)</option>
+            <option value="image/png">PNG (保留无损与透明通道)</option>
+          </select>
+        </div>
+
+        <!-- 压缩质量 -->
+        <div class="form-group">
+          <div class="form-label">
+            <span>画质压缩率</span>
+            <span id="qualityLabel" class="range-val">80%</span>
+          </div>
+          <div class="range-box">
+            <input type="range" id="cfgQuality" class="range-slider" min="10" max="100" step="5" value="80" oninput="updateQualityLabel(); applyConfigToAll();">
+          </div>
+        </div>
+
+        <!-- 尺寸缩放比例 -->
+        <div class="form-group">
+          <label class="form-label">尺寸缩放 (Resize)</label>
+          <select id="cfgResize" class="form-select" onchange="applyConfigToAll()">
+            <option value="1" selected>保持原始分辨率 (100%)</option>
+            <option value="0.75">等比缩小至 75%</option>
+            <option value="0.5">等比缩小至 50%</option>
+            <option value="0.25">等比缩小至 25%</option>
+            <option value="max1920">限制最长边不超过 1920px (全高清)</option>
+            <option value="max1280">限制最长边不超过 1280px (高清)</option>
+            <option value="max800">限制最长边不超过 800px (网页常用)</option>
+          </select>
+        </div>
+
+        <!-- 附加处理 -->
+        <div class="form-group">
+          <label class="form-label">旋转与翻转</label>
+          <div style="display:flex; gap:6px;">
+            <button class="btn" style="flex:1; padding:6px 0;" onclick="rotateAll(90)" title="顺时针旋转90度">↻ 顺转90°</button>
+            <button class="btn" style="flex:1; padding:6px 0;" onclick="flipAll('h')" title="水平镜像翻转">⇄ 水平翻转</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 批量工具栏 -->
+    <div class="batch-bar" id="batchBar" style="display:none;">
+      <div class="batch-summary">
+        已加载 <strong id="totalCount">0</strong> 张图片 · 原总计 <strong id="totalOrigSize">0 MB</strong> → 压缩后 <strong id="totalNewSize" style="color:var(--success)">0 MB</strong> (<span id="totalSavingsBadge">-0%</span>)
+      </div>
+      <div class="batch-actions">
+        <button class="btn btn-primary" onclick="downloadAll()">📦 批量下载全部图片</button>
+        <button class="btn btn-danger" onclick="clearAll()">🗑️ 清空列表</button>
+      </div>
+    </div>
+
+    <!-- 图片列表 -->
+    <div class="images-list" id="imagesList">
+      <div class="empty-state" id="emptyPlaceholder">
+        暂无待处理图片，请点击上方区域或将图片拖拽进浏览器开始处理
+      </div>
+    </div>
+  </main>
+
+  <!-- 对比弹窗 Modal -->
+  <div class="modal-overlay" id="compareModal" onclick="closeModal(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title" id="modalFileName">原图 vs 压缩后画质比对</div>
+        <button class="btn" style="padding:4px 8px;" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="compare-side">
+          <div class="compare-label" id="modalOrigMeta">原图</div>
+          <img id="modalOrigImg" src="" alt="原图">
+        </div>
+        <div class="compare-side">
+          <div class="compare-label" id="modalNewMeta">压缩后</div>
+          <img id="modalNewImg" src="" alt="压缩后">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-msg" id="toastMsg"></div>
+
+  <script>
+    // 主题逻辑
+    function initTheme() {
+      const savedTheme = localStorage.getItem('app_theme');
+      if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    }
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const target = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', target);
+      localStorage.setItem('app_theme', target);
+    }
+    initTheme();
+
+    function showToast(msg) {
+      const el = document.getElementById('toastMsg');
+      el.textContent = msg;
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2200);
+    }
+
+    function updateQualityLabel() {
+      document.getElementById('qualityLabel').textContent = document.getElementById('cfgQuality').value + '%';
+    }
+
+    // 拖拽与剪贴板处理
+    const dropCard = document.getElementById('dropCard');
+    dropCard.addEventListener('dragover', (e) => { e.preventDefault(); dropCard.classList.add('dragover'); });
+    dropCard.addEventListener('dragleave', () => dropCard.classList.remove('dragover'));
+    dropCard.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropCard.classList.remove('dragover');
+      if (e.dataTransfer.files && e.dataTransfer.files.length) {
+        handleFiles(e.dataTransfer.files);
+      }
+    });
+
+    window.addEventListener('paste', (e) => {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      const files = [];
+      for (let item of items) {
+        if (item.type.indexOf('image') !== -1) {
+          files.push(item.getAsFile());
+        }
+      }
+      if (files.length) {
+        handleFiles(files);
+        showToast(`已从剪贴板接收 ${files.length} 张图片`);
+      }
+    });
+
+    // 图片数据模型
+    let imageItems = [];
+    let rotationAngle = 0;
+    let flipH = false;
+
+    function formatBytes(bytes) {
+      if (!bytes || bytes === 0) return '0 B';
+      const k = 1024;
+      const sizes = ['B', 'KB', 'MB', 'GB'];
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+      return (bytes / Math.pow(k, i)).toFixed(1) + ' ' + sizes[i];
+    }
+
+    function handleFiles(files) {
+      const validFiles = Array.from(files).filter(f => f.type.startsWith('image/'));
+      if (!validFiles.length) {
+        showToast('请选择有效的图片文件');
+        return;
+      }
+
+      validFiles.forEach(file => {
+        const id = 'img_' + Math.random().toString(36).substr(2, 9);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const origSrc = e.target.result;
+          const img = new Image();
+          img.onload = () => {
+            const item = {
+              id,
+              name: file.name,
+              origSize: file.size,
+              origWidth: img.naturalWidth,
+              origHeight: img.naturalHeight,
+              origType: file.type,
+              origSrc: origSrc,
+              imgElement: img,
+              processedBlob: null,
+              processedSrc: null,
+              processedSize: 0,
+              processedWidth: 0,
+              processedHeight: 0
+            };
+            imageItems.push(item);
+            processItem(item);
+            updateUI();
+          };
+          img.src = origSrc;
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function processItem(item) {
+      const format = document.getElementById('cfgFormat').value;
+      const quality = parseInt(document.getElementById('cfgQuality').value, 10) / 100;
+      const resizeVal = document.getElementById('cfgResize').value;
+
+      let targetW = item.origWidth;
+      let targetH = item.origHeight;
+
+      if (resizeVal.startsWith('max')) {
+        const maxDim = parseInt(resizeVal.replace('max', ''), 10);
+        if (targetW > maxDim || targetH > maxDim) {
+          if (targetW >= targetH) {
+            targetH = Math.round((targetH * maxDim) / targetW);
+            targetW = maxDim;
+          } else {
+            targetW = Math.round((targetW * maxDim) / targetH);
+            targetH = maxDim;
+          }
+        }
+      } else {
+        const scale = parseFloat(resizeVal);
+        targetW = Math.round(targetW * scale);
+        targetH = Math.round(targetH * scale);
+      }
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      const isRotated90 = (rotationAngle % 180 !== 0);
+      canvas.width = isRotated90 ? targetH : targetW;
+      canvas.height = isRotated90 ? targetW : targetH;
+
+      ctx.save();
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate((rotationAngle * Math.PI) / 180);
+      if (flipH) ctx.scale(-1, 1);
+
+      if (format === 'image/jpeg') {
+        // JPEG 填充白色底
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(-targetW / 2, -targetH / 2, targetW, targetH);
+      }
+
+      ctx.drawImage(item.imgElement, -targetW / 2, -targetH / 2, targetW, targetH);
+      ctx.restore();
+
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        if (item.processedSrc) URL.revokeObjectURL(item.processedSrc);
+        item.processedBlob = blob;
+        item.processedSrc = URL.createObjectURL(blob);
+        item.processedSize = blob.size;
+        item.processedWidth = canvas.width;
+        item.processedHeight = canvas.height;
+        updateUI();
+      }, format, quality);
+    }
+
+    function applyConfigToAll() {
+      imageItems.forEach(item => processItem(item));
+    }
+
+    function rotateAll(deg) {
+      rotationAngle = (rotationAngle + deg) % 360;
+      applyConfigToAll();
+      showToast(`已旋转 ${rotationAngle}°`);
+    }
+
+    function flipAll(dir) {
+      if (dir === 'h') flipH = !flipH;
+      applyConfigToAll();
+      showToast(flipH ? '已开启水平镜像' : '已恢复正常水平');
+    }
+
+    function updateUI() {
+      const placeholder = document.getElementById('emptyPlaceholder');
+      const batchBar = document.getElementById('batchBar');
+      const listEl = document.getElementById('imagesList');
+
+      if (!imageItems.length) {
+        placeholder.style.display = 'block';
+        batchBar.style.display = 'none';
+        listEl.innerHTML = '';
+        listEl.appendChild(placeholder);
+        return;
+      }
+
+      placeholder.style.display = 'none';
+      batchBar.style.display = 'flex';
+
+      // 计算统计
+      let totalOrig = 0;
+      let totalNew = 0;
+      imageItems.forEach(it => {
+        totalOrig += it.origSize;
+        totalNew += (it.processedSize || it.origSize);
+      });
+
+      document.getElementById('totalCount').textContent = imageItems.length;
+      document.getElementById('totalOrigSize').textContent = formatBytes(totalOrig);
+      document.getElementById('totalNewSize').textContent = formatBytes(totalNew);
+
+      const diff = totalOrig - totalNew;
+      const pct = totalOrig > 0 ? Math.round((diff / totalOrig) * 100) : 0;
+      const badge = document.getElementById('totalSavingsBadge');
+      if (pct > 0) {
+        badge.textContent = `节省 ${pct}%`;
+        badge.style.color = 'var(--success)';
+      } else {
+        badge.textContent = `增大 ${Math.abs(pct)}%`;
+        badge.style.color = 'var(--warning)';
+      }
+
+      // 渲染列表
+      listEl.innerHTML = imageItems.map((item, idx) => {
+        const itemDiff = item.origSize - item.processedSize;
+        const itemPct = item.origSize > 0 ? Math.round((itemDiff / item.origSize) * 100) : 0;
+        const ext = getOutputExtension();
+
+        return `
+          <div class="image-item" id="${item.id}">
+            <div class="item-thumb-box" onclick="openCompareModal('${item.id}')" title="点击对比画质">
+              <img class="item-thumb" src="${item.processedSrc || item.origSrc}" alt="${item.name}">
+            </div>
+
+            <div class="item-meta">
+              <div class="item-name" title="${item.name}">${item.name}</div>
+              <div class="item-info-line">
+                <span>原图: ${item.origWidth}×${item.origHeight}</span>
+                <span>•</span>
+                <span>目标: ${item.processedWidth || item.origWidth}×${item.processedHeight || item.origHeight} (${ext.toUpperCase()})</span>
+              </div>
+            </div>
+
+            <div class="item-stats">
+              <span class="size-orig">${formatBytes(item.origSize)}</span>
+              <span class="size-new">${formatBytes(item.processedSize)}</span>
+              <span class="size-diff-badge" style="background:${itemPct >= 0 ? 'var(--success-subtle)' : 'rgba(245,158,11,0.15)'}; color:${itemPct >= 0 ? 'var(--success)' : 'var(--warning)'};">
+                ${itemPct >= 0 ? `-${itemPct}%` : `+${Math.abs(itemPct)}%`}
+              </span>
+            </div>
+
+            <div class="item-actions">
+              <button class="btn" style="padding:6px 10px;" onclick="openCompareModal('${item.id}')" title="原图与压缩图比对">🔍 对比</button>
+              <button class="btn btn-primary" style="padding:6px 10px;" onclick="downloadSingle('${item.id}')" title="下载此图">📥 下载</button>
+              <button class="btn btn-danger" style="padding:6px 8px;" onclick="removeItem('${item.id}')" title="移除此图">✕</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function getOutputExtension() {
+      const format = document.getElementById('cfgFormat').value;
+      if (format === 'image/webp') return 'webp';
+      if (format === 'image/jpeg') return 'jpg';
+      return 'png';
+    }
+
+    function downloadSingle(id) {
+      const item = imageItems.find(it => it.id === id);
+      if (!item || !item.processedBlob) return;
+      const ext = getOutputExtension();
+      const baseName = item.name.substring(0, item.name.lastIndexOf('.')) || item.name;
+      const fileName = `${baseName}_optimized.${ext}`;
+
+      const a = document.createElement('a');
+      a.href = item.processedSrc;
+      a.download = fileName;
+      a.click();
+      showToast(`已下载 ${fileName}`);
+    }
+
+    function downloadAll() {
+      if (!imageItems.length) return;
+      showToast('正在依次批量保存图片...');
+      imageItems.forEach((item, index) => {
+        setTimeout(() => downloadSingle(item.id), index * 250);
+      });
+    }
+
+    function removeItem(id) {
+      const item = imageItems.find(it => it.id === id);
+      if (item && item.processedSrc) URL.revokeObjectURL(item.processedSrc);
+      imageItems = imageItems.filter(it => it.id !== id);
+      updateUI();
+    }
+
+    function clearAll() {
+      imageItems.forEach(it => {
+        if (it.processedSrc) URL.revokeObjectURL(it.processedSrc);
+      });
+      imageItems = [];
+      updateUI();
+      showToast('图片列表已清空');
+    }
+
+    // 画质比对弹窗
+    function openCompareModal(id) {
+      const item = imageItems.find(it => it.id === id);
+      if (!item) return;
+
+      document.getElementById('modalFileName').textContent = item.name + ' · 画质比对';
+      document.getElementById('modalOrigMeta').textContent = `原图 (${item.origWidth}×${item.origHeight} · ${formatBytes(item.origSize)})`;
+      document.getElementById('modalNewMeta').textContent = `压缩后 (${item.processedWidth}×${item.processedHeight} · ${formatBytes(item.processedSize)})`;
+
+      document.getElementById('modalOrigImg').src = item.origSrc;
+      document.getElementById('modalNewImg').src = item.processedSrc;
+
+      document.getElementById('compareModal').classList.add('show');
+    }
+
+    function closeModal(e) {
+      document.getElementById('compareModal').classList.remove('show');
+    }
+  </script>
+</body>
+</html>
