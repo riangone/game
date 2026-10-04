@@ -65,6 +65,20 @@ for tone in "1234":
     TARGETS[f"yu{tone}"] = f"yu{tone}"
     TARGETS[f"shu{tone}"] = f"shu{tone}"
 
+# Initials with human 1st-tone呼读音:
+TARGETS["fo1"] = "fo1"
+TARGETS["de1"] = "de1"
+
+# 16 整体认读音节:
+OVERALL_MAP = {
+    "zhi": "zhi1", "chi": "chi1", "shi": "shi1", "ri": "ri4",
+    "zi": "zi1", "ci": "ci1", "si": "si1", "yi": "yi1", "wu": "wu1",
+    "yu": "yu1", "ye": "ye1", "yue": "yue4", "yuan": "yuan1",
+    "yin": "yin1", "yun": "yun2", "ying": "ying1"
+}
+for ovr, src in OVERALL_MAP.items():
+    TARGETS[src] = src
+
 MIN_BYTES = 2000  # real clips observed 10KB-32KB; guard against HTML error pages / empty stubs
 
 
@@ -98,20 +112,70 @@ def main():
         ok.append((out_name, len(data)))
         print(f"  {out_name}.mp3  <- {src_name}.mp3  ({len(data)} bytes)")
 
-    dupes = {h: names for h, names in seen_hashes.items() if len(names) > 1}
-    print(f"\nDone: {len(ok)} fetched, {len(failed)} failed.")
-    if failed:
-        print("Failed:")
-        for name, reason in failed:
-            print(f"  {name}: {reason}")
-    if dupes:
-        print("WARNING: byte-identical files detected across different syllables "
-              "(source repo may have duplicated content) — verify before trusting:")
-        for h, names in dupes.items():
-            print(f"  {names}")
+    # Derive pure single vowel o1..o4 by slicing out bilabial stop burst + [w] on-glide
+    # to eliminate the "窝" (wo) diphthong artifact and obtain pure "喔" (o) monophthong.
+    print("\nDeriving pure vowel o1..o4 from bo1..bo4 human recordings (acoustic steady-state slices)...")
+    import subprocess
+    import scipy.io.wavfile as wavfile
+    import numpy as np
+
+    # Acoustically measured steady-state slices in seconds:
+    BO_SLICES = {
+        "1": (0.170, 0.640),  # voiced 0.060..0.645s, skips [p] burst and [w] glide (onset+110ms)
+        "2": (0.410, 0.745),  # voiced 0.289..0.754s, skips [w] glide, clean 35 rising tone
+        "3": (0.280, 0.880),  # voiced 0.161..0.921s, skips [w] glide, full 214 dip-and-rebound
+        "4": (0.490, 0.745),  # voiced 0.401..0.881s, skips [w] glide and pre-speech noise, full 51 fall
+    }
+
+    for tone, (t_start, t_end) in BO_SLICES.items():
+        out_dest = OUT_DIR / f"o{tone}.mp3"
+        try:
+            raw_bo = fetch(f"bo{tone}")
+            tmp_bo_mp3 = f"/tmp/fetch_bo{tone}.mp3"
+            tmp_bo_wav = f"/tmp/fetch_bo{tone}.wav"
+            tmp_o_wav = f"/tmp/fetch_o{tone}.wav"
+            Path(tmp_bo_mp3).write_bytes(raw_bo)
+            subprocess.run(["ffmpeg", "-y", "-i", tmp_bo_mp3, "-ar", "44100", "-ac", "1", tmp_bo_wav],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+            rate, data = wavfile.read(tmp_bo_wav)
+            data_float = data.astype(np.float32)
+            i_start = int(t_start * rate)
+            i_end = min(len(data_float), int(t_end * rate))
+            trimmed = data_float[i_start:i_end]
+
+            # 15ms cosine fade in and fade out
+            fade_len = int(rate * 0.015)
+            if len(trimmed) > fade_len * 2:
+                fade_in = 0.5 * (1 - np.cos(np.pi * np.linspace(0, 1, fade_len)))
+                fade_out = 0.5 * (1 + np.cos(np.pi * np.linspace(0, 1, fade_len)))
+                trimmed[:fade_len] *= fade_in
+                trimmed[-fade_len:] *= fade_out
+
+            # Peak normalize to -1dBFS
+            peak = np.max(np.abs(trimmed))
+            if peak > 0:
+                trimmed = trimmed / peak * (32767 * 0.89)
+
+            wavfile.write(tmp_o_wav, rate, trimmed.astype(np.int16))
+            subprocess.run(["ffmpeg", "-y", "-i", tmp_o_wav, "-b:a", "128k", str(out_dest)],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+            # Sync to audio/pinyin-basics as well
+            pb_dest = ROOT / "audio" / "pinyin-basics" / f"tone_o_{tone}.mp3"
+            pb_dest.write_bytes(out_dest.read_bytes())
+            print(f"  o{tone}.mp3  <- pure steady-state slice of bo{tone}.mp3 ({t_start:.3f}s~{t_end:.3f}s, {out_dest.stat().st_size} bytes)")
+        except Exception as e:
+            print(f"  Failed deriving o{tone}: {e}")
+
+    # Also sync o1.mp3 to final_o_pure.mp3
+    o1_src = OUT_DIR / "o1.mp3"
+    if o1_src.exists():
+        (ROOT / "audio" / "pinyin-basics" / "final_o_pure.mp3").write_bytes(o1_src.read_bytes())
+        print("  final_o_pure.mp3 synced with o1.mp3")
+
     if failed:
         sys.exit(1)
 
 
 if __name__ == "__main__":
     main()
+

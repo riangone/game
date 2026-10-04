@@ -49,8 +49,8 @@ INITIALS = [
     ("b", "波", "爸爸"),
     ("p", "坡", "皮球"),
     ("m", "摸", "妈妈"),
-    ("f", "佛", "飞机"),
-    ("d", "得", "蛋糕"),
+    ("f", "fō", "飞机"),
+    ("d", "dē", "蛋糕"),
     ("t", "特", "兔子"),
     ("n", "讷", "牛奶"),
     ("l", "了", "老虎"),
@@ -100,13 +100,26 @@ FINALS = [
     ("ong", None, "熊"),
 ]
 
-# ---------------------------------------------------------------- 声调 4 families
-# Scheme B: 采用语境引导(Contextual Prompting)，3声利用促升语境「？」打破神经TTS半三声缺陷，发音饱满先降后升(214)
+# ---------------------------------------------------------------- 声调练习 (单韵母与音节家族)
 TONES = [
+    ("a", [("1", "啊——"), ("2", "啊？"), ("3", "哑？"), ("4", "啊！")]),
+    ("o", [("1", "喔——"), ("2", "喔？"), ("3", "哦……"), ("4", "哦！")]),
+    ("e", [("1", "婀——"), ("2", "鹅"), ("3", "恶"), ("4", "饿")]),
+    ("i", [("1", "一"), ("2", "姨"), ("3", "椅？"), ("4", "意")]),
+    ("u", [("1", "乌"), ("2", "无"), ("3", "五？"), ("4", "雾")]),
+    ("v", [("1", "淤"), ("2", "鱼"), ("3", "雨？"), ("4", "玉")]),
     ("ma", [("1", "妈"), ("2", "麻"), ("3", "马？"), ("4", "骂"), ("0", "吗")]),
     ("yi", [("1", "一"), ("2", "姨"), ("3", "椅？"), ("4", "意")]),
     ("wu", [("1", "乌"), ("2", "无"), ("3", "五？"), ("4", "雾")]),
     ("shu", [("1", "书"), ("2", "熟"), ("3", "鼠？"), ("4", "树")]),
+]
+
+# ---------------------------------------------------------------- 16 整体认读音节
+OVERALL_SYLLABLES = [
+    ("zhi", "知"), ("chi", "吃"), ("shi", "诗"), ("ri", "日"),
+    ("zi", "资"), ("ci", "刺"), ("si", "思"), ("yi", "衣"),
+    ("wu", "屋"), ("yu", "鱼"), ("ye", "耶"), ("yue", "月"),
+    ("yuan", "圆"), ("yin", "因"), ("yun", "云"), ("ying", "英"),
 ]
 
 # ---------------------------------------------------------------- 拼读练习 24
@@ -117,6 +130,23 @@ SPELL_ITEMS = [
     ("shi4", "是"), ("ri4", "日"), ("zai4", "在"), ("cao3", "草"),
     ("san1", "三"), ("yang2", "羊"), ("wan2", "玩"), ("niu2", "牛"),
     ("lao3", "老"), ("fei1", "飞"), ("ping2", "瓶"), ("da4", "大"),
+]
+
+# ---------------------------------------------------------------- 拼音儿歌口诀
+CHANTS = [
+    ("chant_a", "张大嘴巴 ɑ ɑ ɑ，圆圆嘴巴 o o o，白鹅倒影 e e e，牙齿对齐 i i i，嘴巴突出 u u u，吹起口哨 ü ü ü。"),
+    ("chant_b", "右下半圆 b b b，右上半圆 p p p，两个门洞 m m m，一根拐棍 f f f，左下半圆 d d d，伞柄朝下 t t t，一个门洞 n n n，一根小棍 l l l。"),
+    ("chant_tone", "一声平平高又高，二声就像上山坡，三声下坡又上坡，四声就像下山坡。"),
+    ("chant_mark", "有 a 不放过，没 a 找 o、e，i、u 并列标在后，单个韵母不用说。"),
+    ("chant_jqx", "小 ü 见到 j q x，脱帽行礼笑嘻嘻，去掉两点还读 ü。"),
+    ("chant_zh", "zh、ch、sh、r 舌尖翘，z、c、s 舌尖平。"),
+]
+
+# ---------------------------------------------------------------- 田字格描红标杆字
+CHARS = [
+    ("b", "八，拼音 bā"), ("p", "皮，拼音 pí"), ("m", "马，拼音 mǎ"), ("f", "飞，拼音 fēi"),
+    ("d", "大，拼音 dà"), ("t", "土，拼音 tǔ"), ("a", "啊，拼音 à"), ("o", "哦，拼音 ó"),
+    ("e", "鹅，拼音 é"), ("i", "衣，拼音 yī"), ("u", "乌，拼音 wū"), ("v", "鱼，拼音 yú")
 ]
 
 ITEMS = []
@@ -135,6 +165,12 @@ for base, entries in TONES:
         TONE_FAMILY_KEYS.add(key)
 for key, char in SPELL_ITEMS:
     ITEMS.append((f"syl_{key}", char))
+for ovr, char in OVERALL_SYLLABLES:
+    ITEMS.append((f"overall_{ovr}", char))
+for cid, text in CHANTS:
+    ITEMS.append((cid, text))
+for letter, text in CHARS:
+    ITEMS.append((f"char_{letter}", text))
 
 
 async def main():
@@ -143,6 +179,13 @@ async def main():
 
     async def generate_one(fname, text):
         target = OUT_DIR / f"{fname}.mp3"
+        # Protect human-derived audio assets from being clobbered by lower-quality TTS
+        if fname.startswith("tone_o_") or fname == "final_o_pure":
+            human_o = ROOT / "audio" / "human-pinyin" / (f"o{fname[-1]}.mp3" if fname.startswith("tone_o_") else "o1.mp3")
+            if human_o.exists():
+                target.write_bytes(human_o.read_bytes())
+                print(f"SKIP (Preserved human-derived) {fname}.mp3")
+                return
         voice = TONE_VOICE if fname in TONE_FAMILY_KEYS else VOICE
         try:
             async with sem:

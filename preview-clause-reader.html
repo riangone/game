@@ -1,0 +1,1698 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>课文分句细化跟读与音频进度条 - 预览体验版 (Preview Prototype)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=M+PLUS+Rounded+1c:wght@600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --brand-teal: #0891b2;
+    --brand-dark: #155e75;
+    --brand-soft: #cffafe;
+    --gold: #d97706;
+    --gold-soft: #fef3c7;
+    --grass: #16a34a;
+    --grass-soft: #dcfce7;
+    --coral: #e11d48;
+    --coral-soft: #ffe4e6;
+    --ink: #1e293b;
+    --muted: #64748b;
+    --paper: #fffdfa;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --radius-xl: 24px;
+    --radius-lg: 18px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+    --shadow-card: 0 12px 28px rgba(15, 23, 42, 0.08);
+    --shadow-pop: 0 4px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html, body {
+    width: 100%;
+    min-height: 100%;
+    background: linear-gradient(165deg, #f0fdf4 0%, #fefce8 45%, #eff6ff 100%);
+    font-family: "M PLUS Rounded 1c", "PingFang SC", system-ui, -apple-system, sans-serif;
+    color: var(--ink);
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 120px;
+  }
+
+  /* TOP HEADER */
+  header.top-nav {
+    width: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid #bae6fd;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .nav-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #fff;
+    border: 2px solid #38bdf8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    text-decoration: none;
+    color: var(--ink);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+    flex-shrink: 0;
+  }
+  .header-titles {
+    flex: 1;
+    text-align: center;
+  }
+  .header-titles h1 {
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--brand-dark);
+  }
+  .header-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 8px;
+    background: #fef08a;
+    color: #854d0e;
+    border-radius: 999px;
+    border: 1px solid #facc15;
+    margin-top: 2px;
+  }
+
+  /* PREVIEW BANNER */
+  .preview-notice {
+    width: calc(100% - 32px);
+    max-width: 680px;
+    margin: 14px 16px 6px;
+    padding: 10px 14px;
+    background: #eff6ff;
+    border: 1.5px dashed #3b82f6;
+    border-radius: var(--radius-md);
+    font-size: 12px;
+    color: #1e40af;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.5;
+  }
+  .preview-notice strong {
+    color: #1d4ed8;
+  }
+
+  /* TAB CONTROLS */
+  .view-tabs {
+    display: flex;
+    gap: 6px;
+    width: calc(100% - 32px);
+    max-width: 680px;
+    margin: 10px 16px 14px;
+    background: #e2e8f0;
+    padding: 4px;
+    border-radius: 16px;
+  }
+  .tab-btn {
+    flex: 1;
+    border: none;
+    background: none;
+    padding: 9px 4px;
+    font-size: 13px;
+    font-weight: 800;
+    border-radius: 12px;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+  .tab-btn.active {
+    background: #fff;
+    color: var(--brand-dark);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+
+  /* MAIN CONTAINER */
+  main {
+    width: calc(100% - 32px);
+    max-width: 680px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .screen-pane {
+    display: none;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+  }
+  .screen-pane.active {
+    display: flex;
+  }
+
+  /* CARD STYLE */
+  .panel-card {
+    background: var(--card);
+    border: 2px solid #bae6fd;
+    border-radius: var(--radius-xl);
+    padding: 18px 16px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+  }
+
+  /* SENTENCE HEADER & NAV */
+  .sent-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .sent-pill {
+    background: var(--brand-soft);
+    color: var(--brand-dark);
+    font-weight: 800;
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: 999px;
+  }
+  .sent-granularity-toggle {
+    display: inline-flex;
+    background: #f1f5f9;
+    border-radius: 20px;
+    padding: 2px;
+    gap: 2px;
+  }
+  .mode-switch-btn {
+    border: none;
+    background: none;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 16px;
+    cursor: pointer;
+    color: var(--muted);
+  }
+  .mode-switch-btn.active {
+    background: var(--brand-dark);
+    color: #fff;
+  }
+
+  /* CLAUSES DISPLAY AREA */
+  .sentence-display {
+    background: #fafaf9;
+    border: 1.5px solid #e7e5e4;
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .clause-flow-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    line-height: 1.8;
+  }
+  .clause-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    font-size: 20px;
+    font-weight: 800;
+    border-radius: 10px;
+    background: #fff;
+    border: 2px solid #cbd5e1;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 2px 0 rgba(0,0,0,0.04);
+  }
+  .clause-pill:hover {
+    border-color: var(--brand-teal);
+    background: #ecfeff;
+    transform: translateY(-1px);
+  }
+  .clause-pill.active {
+    background: linear-gradient(135deg, #fef08a 0%, #fde047 100%);
+    border-color: #ca8a04;
+    color: #713f12;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(234, 179, 8, 0.35);
+  }
+  .clause-pill .pill-speaker {
+    font-size: 13px;
+    margin-left: 4px;
+    opacity: 0.6;
+  }
+  .clause-pill.active .pill-speaker {
+    opacity: 1;
+    animation: speakerBounce 0.8s infinite alternate;
+  }
+  @keyframes speakerBounce {
+    from { transform: scale(1); }
+    to { transform: scale(1.3); }
+  }
+
+  /* ACTIVE CLAUSE FOCUS BOX */
+  .active-clause-focus {
+    background: #fff;
+    border: 2px solid #fde047;
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: 0 4px 10px rgba(250, 204, 21, 0.15);
+  }
+  .focus-tag {
+    font-size: 11px;
+    font-weight: 800;
+    color: #a16207;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .focus-py {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--brand-dark);
+  }
+  .focus-zh {
+    font-size: 24px;
+    font-weight: 900;
+    color: #1e293b;
+    line-height: 1.4;
+  }
+  .focus-trans-row {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 4px;
+    padding-top: 6px;
+    border-top: 1px dashed #e2e8f0;
+  }
+  .focus-en {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .focus-jp {
+    font-size: 12px;
+    color: #7c3aed;
+  }
+
+  /* AUDIO PROGRESS BAR WITH MARKERS (KEY FEATURE) */
+  .audio-player-card {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .progress-time-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+  }
+  .progress-time-row .curr-title {
+    color: var(--brand-dark);
+    font-weight: 900;
+  }
+
+  .scrub-container {
+    position: relative;
+    width: 100%;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  .scrub-track {
+    width: 100%;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    position: relative;
+    overflow: visible;
+  }
+  .scrub-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #06b6d4, #0891b2);
+    border-radius: 999px;
+    width: 0%;
+    transition: width 0.06s linear;
+  }
+  .scrub-thumb {
+    position: absolute;
+    top: 50%;
+    left: 0%;
+    transform: translate(-50%, -50%);
+    width: 20px;
+    height: 20px;
+    background: #ffffff;
+    border: 3px solid #0891b2;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    cursor: grab;
+    transition: left 0.06s linear;
+    z-index: 10;
+  }
+  .scrub-thumb:active {
+    cursor: grabbing;
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+
+  /* CHAPTER / CLAUSE TICK MARKS */
+  .clause-marker {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 2px solid #f59e0b;
+    z-index: 5;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .clause-marker:hover {
+    transform: translate(-50%, -50%) scale(1.6);
+    background: #fef08a;
+    border-color: #b45309;
+  }
+  .clause-marker.passed {
+    border-color: #0284c7;
+    background: #bae6fd;
+  }
+
+  /* PLAYER CONTROL BUTTONS */
+  .player-buttons-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .ctrl-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .icon-ctrl-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid #bae6fd;
+    background: #fff;
+    font-size: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.06);
+    transition: transform 0.08s;
+  }
+  .icon-ctrl-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.06);
+  }
+  .icon-ctrl-btn.primary {
+    width: 52px;
+    height: 52px;
+    background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+    color: #fff;
+    border-color: #0284c7;
+    font-size: 22px;
+  }
+  .icon-ctrl-btn.active-loop {
+    background: #fef08a;
+    border-color: #f59e0b;
+    color: #78350f;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
+  }
+
+  .tag-btn {
+    border: 1.5px solid #cbd5e1;
+    background: #fff;
+    padding: 6px 12px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    color: var(--ink);
+  }
+  .tag-btn.active {
+    background: var(--brand-dark);
+    color: #fff;
+    border-color: var(--brand-dark);
+  }
+
+  /* SENTENCE NAVIGATION BUTTONS */
+  .sentence-nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .nav-step-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    background: #fff;
+    border: 2px solid #bae6fd;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--brand-dark);
+    cursor: pointer;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.06);
+  }
+  .nav-step-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* RECORD / SHADOWING PANEL */
+  .shadow-mic-card {
+    background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 100%);
+    border: 2px solid #fed7aa;
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .mic-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 800;
+    color: #9a3412;
+  }
+  .mic-action-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .mic-record-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    background: #ea580c;
+    color: #fff;
+    border: none;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #9a3412;
+  }
+  .mic-record-btn.recording {
+    background: #dc2626;
+    animation: recPulse 1s infinite alternate;
+  }
+  @keyframes recPulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.05); box-shadow: 0 0 12px rgba(220, 38, 38, 0.5); }
+  }
+
+  /* TAB 2: FULL TEXT SCREEN */
+  .full-text-container {
+    background: #fff;
+    border: 2px solid #bae6fd;
+    border-radius: var(--radius-xl);
+    padding: 20px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .full-sent-item {
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    background: #fafaf9;
+    border-left: 4px solid transparent;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .full-sent-item.playing-sent {
+    background: #eff6ff;
+    border-left-color: #0284c7;
+  }
+  .full-sent-zh {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.8;
+  }
+  .full-clause-span {
+    padding: 2px 4px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .full-clause-span:hover {
+    background: #e0f2fe;
+  }
+  .full-clause-span.active {
+    background: #fde047;
+    color: #713f12;
+    font-weight: 800;
+    border-bottom: 2px solid #ca8a04;
+  }
+  .full-sent-py {
+    font-size: 13px;
+    color: var(--brand-dark);
+    font-weight: 700;
+  }
+  .full-sent-trans {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  /* STICKY BOTTOM PLAYER BAR (FOR FULL TEXT) */
+  .sticky-bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+    border-top: 2px solid #38bdf8;
+    box-shadow: 0 -8px 24px rgba(0,0,0,0.08);
+    padding: 10px 16px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .sticky-content {
+    width: 100%;
+    max-width: 680px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .bottom-info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .bottom-playing-text {
+    color: var(--brand-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70%;
+  }
+
+  /* TAB 3: ARCHITECTURE INSIGHT PANEL */
+  .arch-card {
+    background: #fff;
+    border: 2px solid #cbd5e1;
+    border-radius: var(--radius-xl);
+    padding: 20px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .arch-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .arch-section h3 {
+    font-size: 15px;
+    color: var(--brand-dark);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .arch-section p, .arch-section ul {
+    font-size: 13px;
+    color: #334155;
+    line-height: 1.6;
+  }
+  .arch-section ul {
+    padding-left: 20px;
+  }
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-top: 6px;
+  }
+  .comparison-table th, .comparison-table td {
+    border: 1px solid #cbd5e1;
+    padding: 8px 10px;
+    text-align: left;
+  }
+  .comparison-table th {
+    background: #f1f5f9;
+    color: #0f172a;
+  }
+  .badge-rec {
+    background: #16a34a;
+    color: #fff;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 800;
+  }
+</style>
+</head>
+<body>
+
+  <!-- TOP HEADER -->
+  <header class="top-nav">
+    <a href="/xiaoma-guohe.html" class="nav-btn" title="查看现有课文原版">🔙</a>
+    <div class="header-titles">
+      <h1>《小马过河》标点细分跟读 & 进度条预览</h1>
+      <span class="header-badge">🔬 Architect Prototype · 课文原版未变动</span>
+    </div>
+    <a href="/zw-index.html" class="nav-btn" title="返回课文总目录">🏠</a>
+  </header>
+
+  <!-- NOTICE BANNER -->
+  <div class="preview-notice">
+    <span>💡</span>
+    <div>
+      <strong>架构师预览说明：</strong>本页面为新功能独立预览版，现有 <code>xiaoma-guohe.html</code> 课文完全保留未作任何改动。在此体验<strong>按标点/逗号细分小短句跟读</strong>与<strong>带断点锚点的可定位音频进度条</strong>。
+    </div>
+  </div>
+
+  <!-- TAB SWITCHER -->
+  <div class="view-tabs">
+    <button class="tab-btn active" onclick="switchTab('screen-story')">📖 读课文 (逐句/分句跟读)</button>
+    <button class="tab-btn" onclick="switchTab('screen-full')">📜 朗读全文 (全局进度条)</button>
+    <button class="tab-btn" onclick="switchTab('screen-arch')">🏗️ 架构与对比说明</button>
+  </div>
+
+  <!-- MAIN VIEW CONTAINER -->
+  <main>
+
+    <!-- SCREEN 1: 读课文 (逐句 / 逐分句精读) -->
+    <section class="screen-pane active" id="screen-story">
+      <div class="panel-card">
+        
+        <!-- Sentence Header -->
+        <div class="sent-header">
+          <div class="sent-pill" id="sentenceIndicator">第 1 / 8 句</div>
+          <div class="sent-granularity-toggle">
+            <button class="mode-switch-btn" id="modeOriginalBtn" onclick="setGranularity('original')">🎵 原来整句播放</button>
+            <button class="mode-switch-btn active" id="modeClauseBtn" onclick="setGranularity('clause')">🔹 逗号分句细读</button>
+            <button class="mode-switch-btn" id="modeSentenceBtn" onclick="setGranularity('sentence')">🔸 整句连续听</button>
+          </div>
+        </div>
+
+        <!-- Sentence Display Box (Interactive Clauses) -->
+        <div class="sentence-display">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:2px;">
+            👇 点击下方任意小分句可单独点读：
+          </div>
+          <div class="clause-flow-wrap" id="clauseContainer">
+            <!-- Dynamically injected clause pills -->
+          </div>
+        </div>
+
+        <!-- Currently Active Clause Highlight Card -->
+        <div class="active-clause-focus" id="focusClauseCard">
+          <div class="focus-tag">
+            <span>🎯 当前精读小分句：</span>
+            <span id="focusClauseNum">分句 1/2</span>
+          </div>
+          <div class="focus-py" id="focusClausePy">Xiǎomǎ yào guòhé,</div>
+          <div class="focus-zh" id="focusClauseZh">小马要过河，</div>
+          <div class="focus-trans-row">
+            <div class="focus-en" id="focusClauseEn">The pony wanted to cross the river,</div>
+            <div class="focus-jp" id="focusClauseJp">子馬は川を渡ろうとして、</div>
+          </div>
+        </div>
+
+        <!-- Audio Progress Bar with Chapter Ticks (KEY REQUIREMENT) -->
+        <div class="audio-player-card">
+          <div class="progress-time-row">
+            <span class="curr-title" id="playerStatusTitle">就绪</span>
+            <span id="playerTimerDisplay">00:00 / 00:04.9</span>
+          </div>
+
+          <!-- Draggable / Clickable Scrub Bar with Clause Anchor Pins -->
+          <div class="scrub-container" id="scrubContainer" onclick="handleScrubClick(event)">
+            <div class="scrub-track" id="scrubTrack">
+              <div class="scrub-fill" id="scrubFill"></div>
+              <div class="scrub-thumb" id="scrubThumb"></div>
+              <!-- Clause Tick Marks will be injected here -->
+            </div>
+          </div>
+
+          <!-- Player Controls -->
+          <div class="player-buttons-row">
+            <div class="ctrl-group">
+              <button class="icon-ctrl-btn" onclick="prevClause()" title="上一分句 (Previous Clause)">⏮️</button>
+              <button class="icon-ctrl-btn primary" id="mainPlayBtn" onclick="togglePlay()" title="播放 / 暂停">▶️</button>
+              <button class="icon-ctrl-btn" onclick="nextClause()" title="下一分句 (Next Clause)">⏭️</button>
+            </div>
+
+            <div class="ctrl-group">
+              <button class="tag-btn" id="loopClauseBtn" onclick="toggleClauseLoop()" title="单分句无限循环跟读">🔁 循环当前句</button>
+              <button class="tag-btn" id="rateBtn" onclick="toggleRate()">⚡ 1.0x</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sentence Stepper Navigation -->
+        <div class="sentence-nav-row">
+          <button class="nav-step-btn" id="prevSentBtn" onclick="prevSentence()">⬅️ 上一句</button>
+          <button class="nav-step-btn" id="nextSentBtn" onclick="nextSentence()">下一句 ➡️</button>
+        </div>
+
+        <!-- Mic Shadowing Panel (Preserved for Lesson Integration) -->
+        <div class="shadow-mic-card">
+          <div class="mic-header">
+            <span>🎙️ 麦克风分句跟读 (语音练习)</span>
+            <span style="font-size:11px;color:#c2410c;">听完上面的分句，尝试大声读出来</span>
+          </div>
+          <div class="mic-action-row">
+            <button class="mic-record-btn" id="micSimBtn" onclick="toggleMicSim()">
+              <span>🔴</span>
+              <span id="micBtnLabel">录制当前分句</span>
+            </button>
+            <span style="font-size:12px;color:#78350f;" id="micStatusTip">点击录音，支持逐个短句反复练习</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SCREEN 2: 朗读全文 (全篇阅览与全局进度条) -->
+    <section class="screen-pane" id="screen-full">
+      <div class="full-text-container">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <h2 style="font-size:18px;font-weight:900;color:var(--brand-dark);">📜 《小马过河》全文逐分句对照</h2>
+          <div style="font-size:12px;color:var(--muted);">共 8 句 · 34 个标点短句</div>
+        </div>
+        <div id="fullTextArticlesList" style="display:flex;flex-direction:column;gap:12px;">
+          <!-- Dynamically injected full text sentences -->
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 3: 架构方案与对比说明 -->
+    <section class="screen-pane" id="screen-arch">
+      <div class="arch-card">
+        <div class="arch-section">
+          <h3>📐 1. 为什么推荐“按标点/逗号细分”？</h3>
+          <p>在现有页面中，课文按<strong>句号（。！？）</strong>进行整句切分。然而中文寓言及课文常有复合长句。以《小马过河》为例：</p>
+          <ul>
+            <li><strong>第4句：</strong>长达 45 个字，包含 8 个小意群；</li>
+            <li><strong>第6句（妈妈的话）：</strong>长达 54 个字，包含 8 个分句。</li>
+          </ul>
+          <p>低龄学生与二语学习者的短期工作记忆容量通常仅为 <strong>5~7 个音节/词语</strong>。整句一口气播放 7~9 秒，孩子听完前半句就已遗忘，录音跟读时畏难感极强。将其以逗号、分号细分后，每个片段仅 3~10 字，符合认知负荷理论（Cognitive Load Theory）的支架式教学理念。</p>
+        </div>
+
+        <div class="arch-section">
+          <h3>📊 2. 新旧方案多维度对比</h3>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>对比维度</th>
+                <th>原有方案 (按整句切割)</th>
+                <th>细化方案 (按逗号/标点细分) <span class="badge-rec">推荐</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>单次跟读长度</strong></td>
+                <td>15 ~ 54 字（过长）</td>
+                <td>3 ~ 10 字（符合认知最佳区间）</td>
+              </tr>
+              <tr>
+                <td><strong>跟读挫败率</strong></td>
+                <td>高（长句易漏字、卡壳）</td>
+                <td>极低（小步快跑，易得成就感）</td>
+              </tr>
+              <tr>
+                <td><strong>音频进度条</strong></td>
+                <td>无进度条或仅显示句子序号</td>
+                <td><strong>具备拖拽轨道 + 分句断点锚点</strong></td>
+              </tr>
+              <tr>
+                <td><strong>定位便利性</strong></td>
+                <td>只能从长句开头重播</td>
+                <td><strong>可点击任意逗号短句直接精准定位</strong></td>
+              </tr>
+              <tr>
+                <td><strong>循环练习</strong></td>
+                <td>只能整句大循环</td>
+                <td><strong>支持难点小短句单句无限循环 (Loop)</strong></td>
+              </tr>
+              <tr>
+                <td><strong>对现有系统的兼容</strong></td>
+                <td>-</td>
+                <td><strong>完全向前兼容</strong>：数据结构平滑升级，保留整句模式开关</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="arch-section">
+          <h3>🛠️ 3. 进度条与定位技术实现架构</h3>
+          <p>本次设计的音频定位进度条具备三层能力：</p>
+          <ul>
+            <li><strong>时间连续轴 (Continuous Timeline)：</strong>记录当前时间与总时长，支持鼠标拖拽或触屏平滑 Seek。</li>
+            <li><strong>章节/分句吸附锚点 (Clause Tick Marks)：</strong>根据每个分句的起止时间在进度条上标注黄色小圆点。学生点击圆点即可瞬间定位到对应分句。</li>
+            <li><strong>音画卡拉OK同步 (Karaoke Highlighting)：</strong>音频播放到哪一个分句，界面上的文字药丸卡片即时呈现黄色光晕与呼吸动效。</li>
+          </ul>
+        </div>
+
+        <div class="arch-section">
+          <h3>🚀 4. 全站推广与迁移路线</h3>
+          <p>通过独立 Python 脚本批量读取现存 12 篇课文的 <code>const STORY</code> 数组，通过自然标点分词正则（<code>r'[^，。！？；：]+[，。！？；：”’]?'</code>）自动抽取分句并生成高质量 Edge-TTS 音频，无需人工手工剪辑，预计半天内即可批量应用到全部课文。</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- STICKY BOTTOM PLAYER BAR (VISIBLE IN SCREEN 2 FULL TEXT) -->
+  <div class="sticky-bottom-bar" id="stickyBottomBar" style="display:none;">
+    <div class="sticky-content">
+      <div class="bottom-info-row">
+        <span class="bottom-playing-text" id="stickyTrackName">未在播放</span>
+        <span id="stickyTimeDisplay">00:00 / 01:16</span>
+      </div>
+      <div class="scrub-container" style="height:24px;" onclick="handleGlobalScrubClick(event)">
+        <div class="scrub-track" id="globalScrubTrack">
+          <div class="scrub-fill" id="globalScrubFill"></div>
+          <div class="scrub-thumb" id="globalScrubThumb"></div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="icon-ctrl-btn" style="width:36px;height:36px;font-size:14px;" onclick="stepGlobalClause(-1)">⏮️</button>
+          <button class="icon-ctrl-btn primary" style="width:40px;height:40px;font-size:16px;" id="stickyPlayBtn" onclick="toggleGlobalPlay()">▶️</button>
+          <button class="icon-ctrl-btn" style="width:36px;height:36px;font-size:14px;" onclick="stepGlobalClause(1)">⏭️</button>
+        </div>
+        <div style="font-size:11px;color:var(--muted);">点击全文中任意分句可快速跳转</div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ---------------- 课文数据结构 (已按标点细分) ---------------- */
+const LESSON_DATA = [
+  {
+    sentId: "st1",
+    zh: "小马要过河，看见一头老牛在喝水。",
+    py: "Xiǎomǎ yào guòhé, kànjiàn yìtóu lǎoniú zài hēshuǐ.",
+    en: "The pony wanted to cross the river and saw an old ox drinking water.",
+    jp: "子馬は川を渡ろうとして、水を飲んでいる年老いた牛を見ました。",
+    clauses: [
+      { id: "st1_c1", zh: "小马要过河，", py: "Xiǎomǎ yào guòhé,", en: "The pony wanted to cross the river,", jp: "子馬は川を渡ろうとして、", audioUrl: "audio/xiaoma_clause/st1_c1.mp3", duration: 2.16 },
+      { id: "st1_c2", zh: "看见一头老牛在喝水。", py: "kànjiàn yìtóu lǎoniú zài hēshuǐ.", en: "and saw an old ox drinking water.", jp: "水を飲んでいる年老いた牛を見ました。", audioUrl: "audio/xiaoma_clause/st1_c2.mp3", duration: 2.736 }
+    ]
+  },
+  {
+    sentId: "st2",
+    zh: "小马问：“牛伯伯，我要过河，水深吗？”",
+    py: "Xiǎomǎ wèn: \"Niú bóbo, wǒ yào guòhé, shuǐ shēn ma?\"",
+    en: "The pony asked, \"Uncle Ox, I want to cross the river. Is the water deep?\"",
+    jp: "子馬は尋ねました。「牛のおじさん、川を渡りたいのですが、水は深いですか？」",
+    clauses: [
+      { id: "st2_c1", zh: "小马问：", py: "Xiǎomǎ wèn:", en: "The pony asked,", jp: "子馬は尋ねました。", audioUrl: "audio/xiaoma_clause/st2_c1.mp3", duration: 1.488 },
+      { id: "st2_c2", zh: "“牛伯伯，", py: "“Niú bóbo,", en: "“Uncle Ox,", jp: "「牛のおじさん、", audioUrl: "audio/xiaoma_clause/st2_c2.mp3", duration: 1.776 },
+      { id: "st2_c3", zh: "我要过河，", py: "wǒ yào guòhé,", en: "I want to cross the river.", jp: "川を渡りたいのですが、", audioUrl: "audio/xiaoma_clause/st2_c3.mp3", duration: 1.968 },
+      { id: "st2_c4", zh: "水深吗？”", py: "shuǐ shēn ma?”", en: "Is the water deep?”", jp: "水は深いですか？」", audioUrl: "audio/xiaoma_clause/st2_c4.mp3", duration: 2.256 }
+    ]
+  },
+  {
+    sentId: "st3",
+    zh: "老牛说：“水很浅，你过得去。”",
+    py: "Lǎoniú shuō: \"Shuǐ hěn qiǎn, nǐ guò de qù.\"",
+    en: "The old ox said, \"The water is shallow, you can cross it.\"",
+    jp: "年老いた牛は言いました。「水はとても浅いよ、渡れるよ。」",
+    clauses: [
+      { id: "st3_c1", zh: "老牛说：", py: "Lǎoniú shuō:", en: "The old ox said,", jp: "年老いた牛は言いました。", audioUrl: "audio/xiaoma_clause/st3_c1.mp3", duration: 1.632 },
+      { id: "st3_c2", zh: "“水很浅，", py: "“Shuǐ hěn qiǎn,", en: "“The water is shallow,", jp: "「水はとても浅いよ、", audioUrl: "audio/xiaoma_clause/st3_c2.mp3", duration: 1.872 },
+      { id: "st3_c3", zh: "你过得去。”", py: "nǐ guò de qù.”", en: "you can cross it.”", jp: "渡れるよ。」", audioUrl: "audio/xiaoma_clause/st3_c3.mp3", duration: 1.824 }
+    ]
+  },
+  {
+    sentId: "st4",
+    zh: "小马听了老牛的话，正要过河，突然，一只小松鼠从树上跳下来，大声说：“小马，别过河！水深得很呢！你会淹死的！”",
+    py: "Xiǎomǎ tīng le lǎoniú de huà, zhèng yào guòhé, tūrán, yìzhī xiǎo sōngshǔ cóng shù shang tiào xiàlái, dàshēng shuō: \"Xiǎomǎ, bié guòhé! Shuǐ shēn de hěn ne! Nǐ huì yānsǐ de!\"",
+    en: "The pony listened to the old ox and was about to cross, when suddenly a little squirrel jumped down from a tree and shouted, \"Pony, don't cross! The water is very deep! You'll drown!\"",
+    jp: "子馬は年老いた牛の話を聞いて、まさに川を渡ろうとしたとき、突然、一匹の小さなリスが木から飛び降りてきて、大声で言いました。「子馬さん、川を渡らないで！水はとても深いよ！溺れ死んじゃうよ！」",
+    clauses: [
+      { id: "st4_c1", zh: "小马听了老牛的话，", py: "Xiǎomǎ tīng le lǎoniú de huà,", en: "The pony listened to the old ox,", jp: "子馬は年老いた牛の話を聞いて、", audioUrl: "audio/xiaoma_clause/st4_c1.mp3", duration: 2.784 },
+      { id: "st4_c2", zh: "正要过河，", py: "zhèng yào guòhé,", en: "and was about to cross,", jp: "まさに川を渡ろうとしたとき、", audioUrl: "audio/xiaoma_clause/st4_c2.mp3", duration: 1.632 },
+      { id: "st4_c3", zh: "突然，", py: "tūrán,", en: "suddenly,", jp: "突然、", audioUrl: "audio/xiaoma_clause/st4_c3.mp3", duration: 1.344 },
+      { id: "st4_c4", zh: "一只小松鼠从树上跳下来，", py: "yìzhī xiǎo sōngshǔ cóng shù shang tiào xiàlái,", en: "a little squirrel jumped down from a tree,", jp: "一匹の小さなリスが木から飛び降りてきて、", audioUrl: "audio/xiaoma_clause/st4_c4.mp3", duration: 3.168 },
+      { id: "st4_c5", zh: "大声说：", py: "dàshēng shuō:", en: "and shouted:", jp: "大声で言いました。", audioUrl: "audio/xiaoma_clause/st4_c5.mp3", duration: 1.488 },
+      { id: "st4_c6", zh: "“小马，别过河！", py: "“Xiǎomǎ, bié guòhé!", en: "“Pony, don't cross!", jp: "「子馬さん、川を渡らないで！", audioUrl: "audio/xiaoma_clause/st4_c6.mp3", duration: 2.112 },
+      { id: "st4_c7", zh: "水深得很呢！", py: "shuǐ shēn de hěn ne!", en: "The water is very deep!", jp: "水はとても深いよ！", audioUrl: "audio/xiaoma_clause/st4_c7.mp3", duration: 1.968 },
+      { id: "st4_c8", zh: "你会淹死的！”", py: "nǐ huì yānsǐ de!”", en: "You'll drown!”", jp: "溺れ死んじゃうよ！」", audioUrl: "audio/xiaoma_clause/st4_c8.mp3", duration: 2.16 }
+    ]
+  },
+  {
+    sentId: "st5",
+    zh: "听了小松鼠的话，小马不知道该怎么办，只好回家问妈妈。",
+    py: "Tīng le xiǎo sōngshǔ de huà, xiǎomǎ bù zhīdào gāi zěnme bàn, zhǐhǎo huí jiā wèn māma.",
+    en: "After hearing the squirrel, the pony didn't know what to do, so he had to go home and ask his mother.",
+    jp: "小さなリスの話を聞いて、子馬はどうすればいいか分からず、仕方なく家に帰ってお母さんに聞きました。",
+    clauses: [
+      { id: "st5_c1", zh: "听了小松鼠的话，", py: "Tīng le xiǎo sōngshǔ de huà,", en: "Hearing what the squirrel said,", jp: "小さなリスの話を聞いて、", audioUrl: "audio/xiaoma_clause/st5_c1.mp3", duration: 2.304 },
+      { id: "st5_c2", zh: "小马不知道该怎么办，", py: "xiǎomǎ bù zhīdào gāi zěnme bàn,", en: "the pony didn't know what to do,", jp: "子馬はどうすればいいか分からず、", audioUrl: "audio/xiaoma_clause/st5_c2.mp3", duration: 2.496 },
+      { id: "st5_c3", zh: "只好回家问妈妈。", py: "zhǐhǎo huí jiā wèn māma.", en: "so he had to go home and ask his mother.", jp: "仕方なく家に帰ってお母さんに聞きました。", audioUrl: "audio/xiaoma_clause/st5_c3.mp3", duration: 2.352 }
+    ]
+  },
+  {
+    sentId: "st6",
+    zh: "妈妈说：“孩子，老牛又高又大，他会觉得水很浅；松鼠那么小，他一定会说水很深。河水是深还是浅，最好你自己去试试。”",
+    py: "Māma shuō: \"Háizi, lǎoniú yòu gāo yòu dà, tā huì juéde shuǐ hěn qiǎn; sōngshǔ nàme xiǎo, tā yídìng huì shuō shuǐ hěn shēn. Héshuǐ shì shēn háishi qiǎn, zuìhǎo nǐ zìjǐ qù shìshi.\"",
+    en: "Mother said, \"My child, the ox is tall and big, so he feels the water is shallow; the squirrel is so small, so he's sure to say the water is deep. Whether the river is deep or shallow, you'd best go try it yourself.\"",
+    jp: "お母さんは言いました。「坊や、牛は背が高くて大きいから、水を浅いと感じるのよ。リスはあんなに小さいから、きっと水は深いと言うでしょう。川の水が深いか浅いか、自分で試してみるのが一番よ。」",
+    clauses: [
+      { id: "st6_c1", zh: "妈妈说：", py: "Māma shuō:", en: "Mother said,", jp: "お母さんは言いました。", audioUrl: "audio/xiaoma_clause/st6_c1.mp3", duration: 1.584 },
+      { id: "st6_c2", zh: "“孩子，", py: "“Háizi,", en: "“My child,", jp: "「坊や、", audioUrl: "audio/xiaoma_clause/st6_c2.mp3", duration: 1.392 },
+      { id: "st6_c3", zh: "老牛又高又大，", py: "lǎoniú yòu gāo yòu dà,", en: "the ox is tall and big,", jp: "牛は背が高くて大きいから、", audioUrl: "audio/xiaoma_clause/st6_c3.mp3", duration: 2.112 },
+      { id: "st6_c4", zh: "他会觉得水很浅；", py: "tā huì juéde shuǐ hěn qiǎn;", en: "so he feels the water is shallow;", jp: "水を浅いと感じるのよ。", audioUrl: "audio/xiaoma_clause/st6_c4.mp3", duration: 2.256 },
+      { id: "st6_c5", zh: "松鼠那么小，", py: "sōngshǔ nàme xiǎo,", en: "the squirrel is so small,", jp: "リスはあんなに小さいから、", audioUrl: "audio/xiaoma_clause/st6_c5.mp3", duration: 1.92 },
+      { id: "st6_c6", zh: "他一定会说水很深。", py: "tā yídìng huì shuō shuǐ hěn shēn.", en: "he is sure to say the water is deep.", jp: "きっと水は深いと言うでしょう。", audioUrl: "audio/xiaoma_clause/st6_c6.mp3", duration: 2.448 },
+      { id: "st6_c7", zh: "河水是深还是浅，", py: "Héshuǐ shì shēn háishi qiǎn,", en: "Whether the river is deep or shallow,", jp: "川の水が深いか浅いか、", audioUrl: "audio/xiaoma_clause/st6_c7.mp3", duration: 2.256 },
+      { id: "st6_c8", zh: "最好你自己去试试。”", py: "zuìhǎo nǐ zìjǐ qù shìshi.”", en: "you'd best go try it yourself.”", jp: "自分で試してみるのが一番よ。」", audioUrl: "audio/xiaoma_clause/st6_c8.mp3", duration: 2.4 }
+    ]
+  },
+  {
+    sentId: "st7",
+    zh: "小马听了妈妈的话，又跑到河边，小心地过了河。",
+    py: "Xiǎomǎ tīng le māma de huà, yòu pǎo dào hébiān, xiǎoxīn de guò le hé.",
+    en: "The pony listened to his mother, ran back to the riverbank, and carefully crossed the river.",
+    jp: "子馬はお母さんの話を聞いて、また川辺に走って行き、注意深く川を渡りました。",
+    clauses: [
+      { id: "st7_c1", zh: "小马听了妈妈的话，", py: "Xiǎomǎ tīng le māma de huà,", en: "The pony listened to his mother,", jp: "子馬はお母さんの話を聞いて、", audioUrl: "audio/xiaoma_clause/st7_c1.mp3", duration: 2.4 },
+      { id: "st7_c2", zh: "又跑到河边，", py: "yòu pǎo dào hébiān,", en: "ran back to the riverbank,", jp: "また川辺に走って行き、", audioUrl: "audio/xiaoma_clause/st7_c2.mp3", duration: 1.824 },
+      { id: "st7_c3", zh: "小心地过了河。", py: "xiǎoxīn de guò le hé.", en: "and carefully crossed the river.", jp: "注意深く川を渡りました。", audioUrl: "audio/xiaoma_clause/st7_c3.mp3", duration: 2.112 }
+    ]
+  },
+  {
+    sentId: "st8",
+    zh: "原来，河水既不像老牛说的那样浅，也不像松鼠说的那样深。",
+    py: "Yuánlái, héshuǐ jì bú xiàng lǎoniú shuō de nàyàng qiǎn, yě bú xiàng sōngshǔ shuō de nàyàng shēn.",
+    en: "It turned out that the river was neither as shallow as the ox had said, nor as deep as the squirrel had said.",
+    jp: "なんと、川の水は牛が言ったほど浅くもなく、リスが言ったほど深くもありませんでした。",
+    clauses: [
+      { id: "st8_c1", zh: "原来，", py: "Yuánlái,", en: "It turned out that,", jp: "なんと、", audioUrl: "audio/xiaoma_clause/st8_c1.mp3", duration: 1.2 },
+      { id: "st8_c2", zh: "河水既不像老牛说的那样浅，", py: "héshuǐ jì bú xiàng lǎoniú shuō de nàyàng qiǎn,", en: "the river was neither as shallow as the ox had said,", jp: "川の水は牛が言ったほど浅くもなく、", audioUrl: "audio/xiaoma_clause/st8_c2.mp3", duration: 3.12 },
+      { id: "st8_c3", zh: "也不像松鼠说的那样深。", py: "yě bú xiàng sōngshǔ shuō de nàyàng shēn.", en: "nor as deep as the squirrel had said.", jp: "リスが言ったほど深くもありませんでした。", audioUrl: "audio/xiaoma_clause/st8_c3.mp3", duration: 2.688 }
+    ]
+  }
+];
+
+// Precompute cumulative offsets for sentences and the entire article
+let totalArticleDuration = 0;
+LESSON_DATA.forEach((sent, sIdx) => {
+  let sentDur = 0;
+  sent.clauses.forEach((c, cIdx) => {
+    c.sentOffsetStart = sentDur;
+    c.sentOffsetEnd = sentDur + c.duration;
+    c.globalOffsetStart = totalArticleDuration;
+    c.globalOffsetEnd = totalArticleDuration + c.duration;
+    sentDur += c.duration;
+    totalArticleDuration += c.duration;
+  });
+  sent.duration = sentDur;
+});
+
+/* ---------------- STATE MANAGEMENT ---------------- */
+let currentSentIdx = 0;
+let currentClauseIdx = 0;
+let granularityMode = 'clause'; // 'clause' | 'sentence'
+let isPlaying = false;
+let isClauseLoop = false;
+let playbackRate = 1.0;
+let activeAudio = null;
+let animFrameId = null;
+
+// Speech synthesis fallback helper
+function speakFallback(text, onEnd) {
+  if (!('speechSynthesis' in window)) { if (onEnd) onEnd(); return; }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'zh-CN';
+  u.rate = playbackRate * 0.9;
+  u.onend = () => { if (onEnd) onEnd(); };
+  u.onerror = () => { if (onEnd) onEnd(); };
+  window.speechSynthesis.speak(u);
+}
+
+/* ---------------- AUDIO PLAYBACK ENGINE ---------------- */
+function stopAudio() {
+  if (activeAudio) {
+    activeAudio.pause();
+    activeAudio.onended = null;
+    activeAudio.onerror = null;
+    activeAudio = null;
+  }
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+  }
+  if (animFrameId) {
+    cancelAnimationFrame(animFrameId);
+    animFrameId = null;
+  }
+  isPlaying = false;
+  updatePlayButtonUI();
+}
+
+function playClauseAudio(sIdx, cIdx, onEnded) {
+  stopAudio();
+  const sent = LESSON_DATA[sIdx];
+  const clause = sent.clauses[cIdx];
+  isPlaying = true;
+  updatePlayButtonUI();
+  document.getElementById('playerStatusTitle').textContent = `正在朗读：${clause.zh}`;
+
+  activeAudio = new Audio(clause.audioUrl);
+  activeAudio.playbackRate = playbackRate;
+
+  const startTime = Date.now();
+  const durSec = clause.duration / playbackRate;
+
+  function tickProgress() {
+    if (!isPlaying) return;
+    const elapsed = activeAudio ? activeAudio.currentTime : (Date.now() - startTime) / 1000;
+    const progressInClause = Math.min(elapsed / (clause.duration || 1), 1.0);
+    const sentTime = clause.sentOffsetStart + (progressInClause * clause.duration);
+    
+    updateScrubUI(sentTime, sent.duration);
+    
+    // Also update global scrub if in full-screen view
+    const globalTime = clause.globalOffsetStart + (progressInClause * clause.duration);
+    updateGlobalScrubUI(globalTime, totalArticleDuration);
+
+    if (elapsed < durSec + 0.1) {
+      animFrameId = requestAnimationFrame(tickProgress);
+    }
+  }
+
+  activeAudio.onplay = () => {
+    animFrameId = requestAnimationFrame(tickProgress);
+  };
+
+  activeAudio.onended = () => {
+    activeAudio = null;
+    isPlaying = false;
+    updatePlayButtonUI();
+    if (onEnded) onEnded();
+  };
+
+  activeAudio.onerror = () => {
+    console.warn('Clause audio not found, fallback to Web Speech:', clause.audioUrl);
+    activeAudio = null;
+    animFrameId = requestAnimationFrame(tickProgress);
+    speakFallback(clause.zh, () => {
+      isPlaying = false;
+      updatePlayButtonUI();
+      if (onEnded) onEnded();
+    });
+  };
+
+  activeAudio.play().catch(err => {
+    console.warn('Autoplay blocked or audio err, fallback:', err);
+    speakFallback(clause.zh, () => {
+      isPlaying = false;
+      updatePlayButtonUI();
+      if (onEnded) onEnded();
+    });
+  });
+}
+
+/* ---------------- PLAYBACK CONTROLLERS ---------------- */
+function togglePlay() {
+  if (isPlaying) {
+    stopAudio();
+    document.getElementById('playerStatusTitle').textContent = '已暂停';
+  } else {
+    if (granularityMode === 'original') {
+      playOriginalSentenceMode();
+    } else if (granularityMode === 'clause') {
+      playCurrentClauseMode();
+    } else {
+      playSentenceContinuousMode(currentClauseIdx);
+    }
+  }
+}
+
+function playOriginalSentenceMode(startTimeOffset) {
+  stopAudio();
+  const sent = LESSON_DATA[currentSentIdx];
+  isPlaying = true;
+  updatePlayButtonUI();
+  document.getElementById('playerStatusTitle').textContent = `正在朗读原整句：${sent.zh}`;
+
+  const audioUrl = `audio/xiaoma/${sent.id}.mp3`;
+  activeAudio = new Audio(audioUrl);
+  activeAudio.playbackRate = playbackRate;
+
+  let estDur = sent.duration || 5.0;
+
+  activeAudio.onloadedmetadata = () => {
+    if (activeAudio.duration && !isNaN(activeAudio.duration) && activeAudio.duration > 0) {
+      estDur = activeAudio.duration;
+    }
+    if (typeof startTimeOffset === 'number' && startTimeOffset > 0 && startTimeOffset < estDur) {
+      try { activeAudio.currentTime = startTimeOffset; } catch(e) {}
+    }
+    updateScrubUI(activeAudio.currentTime, estDur);
+  };
+
+  function tickProgress() {
+    if (!isPlaying || !activeAudio) return;
+    const cur = activeAudio.currentTime || 0;
+    const dur = (activeAudio.duration && !isNaN(activeAudio.duration) && activeAudio.duration > 0)
+      ? activeAudio.duration : estDur;
+    updateScrubUI(cur, dur);
+
+    const clauses = sent.clauses || [];
+    for (let i = 0; i < clauses.length; i++) {
+      if (cur >= clauses[i].sentOffsetStart && cur <= clauses[i].sentOffsetEnd) {
+        if (currentClauseIdx !== i) {
+          currentClauseIdx = i;
+          updateClauseHighlightUI();
+        }
+        break;
+      }
+    }
+    animFrameId = requestAnimationFrame(tickProgress);
+  }
+
+  activeAudio.onplay = () => {
+    animFrameId = requestAnimationFrame(tickProgress);
+  };
+
+  activeAudio.onended = () => {
+    activeAudio = null;
+    isPlaying = false;
+    updatePlayButtonUI();
+    if (isClauseLoop && granularityMode === 'original') {
+      setTimeout(() => { if (isClauseLoop && granularityMode === 'original') playOriginalSentenceMode(); }, 400);
+    } else {
+      document.getElementById('playerStatusTitle').textContent = '原整句朗读完毕 🎉';
+    }
+  };
+
+  activeAudio.onerror = () => {
+    console.warn('Original audio failed, fallback:', audioUrl);
+    activeAudio = null;
+    speakFallback(sent.zh, () => {
+      isPlaying = false;
+      updatePlayButtonUI();
+    });
+  };
+
+  activeAudio.play().catch(err => {
+    console.warn('Playback error:', err);
+    speakFallback(sent.zh, () => {
+      isPlaying = false;
+      updatePlayButtonUI();
+    });
+  });
+}
+
+function playCurrentClauseMode() {
+  playClauseAudio(currentSentIdx, currentClauseIdx, () => {
+    if (isClauseLoop && granularityMode === 'clause') {
+      setTimeout(() => { if (isClauseLoop && granularityMode === 'clause') playCurrentClauseMode(); }, 400);
+    } else {
+      document.getElementById('playerStatusTitle').textContent = '已读完 (可重听或点击下一个)';
+    }
+  });
+}
+
+function playSentenceContinuousMode(startCIdx = 0) {
+  const sent = LESSON_DATA[currentSentIdx];
+  let cIdx = startCIdx;
+  if (cIdx >= sent.clauses.length) cIdx = 0;
+  
+  selectClause(cIdx, false);
+
+  function playStep() {
+    if (cIdx >= sent.clauses.length) {
+      stopAudio();
+      if (isClauseLoop && granularityMode === 'sentence') {
+        setTimeout(() => { if (isClauseLoop && granularityMode === 'sentence') playSentenceContinuousMode(0); }, 500);
+      } else {
+        document.getElementById('playerStatusTitle').textContent = '整句朗读完毕 🎉';
+      }
+      return;
+    }
+    selectClause(cIdx, false);
+    playClauseAudio(currentSentIdx, cIdx, () => {
+      cIdx++;
+      setTimeout(playStep, 250);
+    });
+  }
+
+  playStep();
+}
+
+function prevClause() {
+  stopAudio();
+  if (granularityMode === 'original') {
+    prevSentence();
+  } else if (currentClauseIdx > 0) {
+    selectClause(currentClauseIdx - 1);
+    if (granularityMode === 'clause') playCurrentClauseMode();
+    else playSentenceContinuousMode(currentClauseIdx);
+  } else if (currentSentIdx > 0) {
+    prevSentence();
+  }
+}
+
+function nextClause() {
+  stopAudio();
+  const sent = LESSON_DATA[currentSentIdx];
+  if (granularityMode === 'original') {
+    nextSentence();
+  } else if (currentClauseIdx < sent.clauses.length - 1) {
+    selectClause(currentClauseIdx + 1);
+    if (granularityMode === 'clause') playCurrentClauseMode();
+    else playSentenceContinuousMode(currentClauseIdx);
+  } else if (currentSentIdx < LESSON_DATA.length - 1) {
+    nextSentence();
+  }
+}
+
+function prevSentence() {
+  stopAudio();
+  if (currentSentIdx > 0) {
+    currentSentIdx--;
+    currentClauseIdx = 0;
+    renderSentenceView();
+    if (granularityMode === 'original') playOriginalSentenceMode();
+    else if (granularityMode === 'clause') playCurrentClauseMode();
+    else playSentenceContinuousMode(0);
+  }
+}
+
+function nextSentence() {
+  stopAudio();
+  if (currentSentIdx < LESSON_DATA.length - 1) {
+    currentSentIdx++;
+    currentClauseIdx = 0;
+    renderSentenceView();
+    if (granularityMode === 'original') playOriginalSentenceMode();
+    else if (granularityMode === 'clause') playCurrentClauseMode();
+    else playSentenceContinuousMode(0);
+  }
+}
+
+function selectClause(cIdx, triggerPlay = true) {
+  currentClauseIdx = cIdx;
+  updateClauseHighlightUI();
+  updateFocusCardUI();
+  
+  const sent = LESSON_DATA[currentSentIdx];
+  const clause = sent.clauses[cIdx];
+  updateScrubUI(clause.sentOffsetStart, sent.duration);
+
+  if (triggerPlay) {
+    playCurrentClauseMode();
+  }
+}
+
+/* ---------------- PROGRESS BAR & SEEK INTERACTION ---------------- */
+function updateScrubUI(currentTime, duration) {
+  const percent = Math.min((currentTime / (duration || 1)) * 100, 100);
+  document.getElementById('scrubFill').style.width = percent + '%';
+  document.getElementById('scrubThumb').style.left = percent + '%';
+  document.getElementById('playerTimerDisplay').textContent = 
+    `${formatSec(currentTime)} / ${formatSec(duration)}`;
+}
+
+function updateGlobalScrubUI(currentTime, duration) {
+  const percent = Math.min((currentTime / (duration || 1)) * 100, 100);
+  const fill = document.getElementById('globalScrubFill');
+  const thumb = document.getElementById('globalScrubThumb');
+  if (fill) fill.style.width = percent + '%';
+  if (thumb) thumb.style.left = percent + '%';
+  const timeEl = document.getElementById('stickyTimeDisplay');
+  if (timeEl) timeEl.textContent = `${formatSec(currentTime)} / ${formatSec(duration)}`;
+}
+
+function formatSec(s) {
+  const mins = Math.floor(s / 60);
+  const secs = (s % 60).toFixed(1);
+  return `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+}
+
+function handleScrubClick(e) {
+  const track = document.getElementById('scrubTrack');
+  const rect = track.getBoundingClientRect();
+  const clickX = e.clientX - rect.left;
+  const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+  
+  const sent = LESSON_DATA[currentSentIdx];
+  if (granularityMode === 'original') {
+    const dur = (activeAudio && !isNaN(activeAudio.duration) && activeAudio.duration > 0) ? activeAudio.duration : (sent.duration || 5.0);
+    const targetTime = ratio * dur;
+    if (activeAudio) {
+      try { activeAudio.currentTime = targetTime; } catch(err) {}
+      updateScrubUI(targetTime, dur);
+    } else {
+      playOriginalSentenceMode(targetTime);
+    }
+    return;
+  }
+
+  const targetTime = ratio * sent.duration;
+
+  // Find corresponding clause for this timestamp
+  let matchedIdx = 0;
+  for (let i = 0; i < sent.clauses.length; i++) {
+    if (targetTime >= sent.clauses[i].sentOffsetStart && targetTime < sent.clauses[i].sentOffsetEnd) {
+      matchedIdx = i;
+      break;
+    }
+  }
+  selectClause(matchedIdx, true);
+}
+
+function handleGlobalScrubClick(e) {
+  const track = document.getElementById('globalScrubTrack');
+  const rect = track.getBoundingClientRect();
+  const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  const targetGlobalTime = ratio * totalArticleDuration;
+
+  // Find corresponding sentence and clause
+  for (let sIdx = 0; sIdx < LESSON_DATA.length; sIdx++) {
+    const sent = LESSON_DATA[sIdx];
+    for (let cIdx = 0; cIdx < sent.clauses.length; cIdx++) {
+      const c = sent.clauses[cIdx];
+      if (targetGlobalTime >= c.globalOffsetStart && targetGlobalTime < c.globalOffsetEnd) {
+        jumpToGlobalClause(sIdx, cIdx);
+        return;
+      }
+    }
+  }
+}
+
+/* ---------------- UI RENDERING ---------------- */
+function renderSentenceView() {
+  const sent = LESSON_DATA[currentSentIdx];
+  document.getElementById('sentenceIndicator').textContent = `第 ${currentSentIdx + 1} / ${LESSON_DATA.length} 句`;
+  document.getElementById('prevSentBtn').disabled = currentSentIdx === 0;
+  document.getElementById('nextSentBtn').disabled = currentSentIdx === LESSON_DATA.length - 1;
+
+  // Render clause pills
+  const container = document.getElementById('clauseContainer');
+  container.innerHTML = '';
+  sent.clauses.forEach((c, idx) => {
+    const pill = document.createElement('div');
+    pill.className = `clause-pill ${idx === currentClauseIdx ? 'active' : ''}`;
+    pill.id = `clause-pill-${idx}`;
+    pill.innerHTML = `
+      <span>${c.zh}</span>
+      <span class="pill-speaker">🔊</span>
+    `;
+    pill.onclick = () => selectClause(idx, true);
+    container.appendChild(pill);
+  });
+
+  // Render Clause Anchor Pins on the Scrub Track (Ticks)
+  const track = document.getElementById('scrubTrack');
+  // Remove existing markers
+  track.querySelectorAll('.clause-marker').forEach(el => el.remove());
+  sent.clauses.forEach((c, idx) => {
+    const marker = document.createElement('div');
+    marker.className = 'clause-marker';
+    const percent = (c.sentOffsetStart / (sent.duration || 1)) * 100;
+    marker.style.left = percent + '%';
+    marker.title = `跳转到分句: ${c.zh} (${formatSec(c.sentOffsetStart)})`;
+    marker.onclick = (e) => {
+      e.stopPropagation();
+      selectClause(idx, true);
+    };
+    track.appendChild(marker);
+  });
+
+  updateClauseHighlightUI();
+  updateFocusCardUI();
+  updateScrubUI(0, sent.duration);
+}
+
+function updateClauseHighlightUI() {
+  const sent = LESSON_DATA[currentSentIdx];
+  sent.clauses.forEach((c, idx) => {
+    const el = document.getElementById(`clause-pill-${idx}`);
+    if (el) el.classList.toggle('active', idx === currentClauseIdx);
+  });
+}
+
+function updateFocusCardUI() {
+  const sent = LESSON_DATA[currentSentIdx];
+  const clause = sent.clauses[currentClauseIdx];
+  document.getElementById('focusClauseNum').textContent = `分句 ${currentClauseIdx + 1}/${sent.clauses.length}`;
+  document.getElementById('focusClausePy').textContent = clause.py;
+  document.getElementById('focusClauseZh').textContent = clause.zh;
+  document.getElementById('focusClauseEn').textContent = clause.en;
+  document.getElementById('focusClauseJp').textContent = clause.jp || '';
+}
+
+function updatePlayButtonUI() {
+  const mainBtn = document.getElementById('mainPlayBtn');
+  const stickyBtn = document.getElementById('stickyPlayBtn');
+  const icon = isPlaying ? '⏸️' : '▶️';
+  if (mainBtn) mainBtn.textContent = icon;
+  if (stickyBtn) stickyBtn.textContent = icon;
+}
+
+function toggleClauseLoop() {
+  isClauseLoop = !isClauseLoop;
+  const btn = document.getElementById('loopClauseBtn');
+  btn.classList.toggle('active-loop', isClauseLoop);
+  btn.textContent = isClauseLoop ? (granularityMode === 'clause' ? '🔁 循环分句中' : '🔁 循环整句中') : '🔁 循环当前句';
+}
+
+function toggleRate() {
+  if (playbackRate === 1.0) playbackRate = 0.8;
+  else if (playbackRate === 0.8) playbackRate = 1.2;
+  else playbackRate = 1.0;
+  document.getElementById('rateBtn').textContent = `⚡ ${playbackRate}x`;
+  if (activeAudio) activeAudio.playbackRate = playbackRate;
+}
+
+function setGranularity(mode) {
+  granularityMode = mode;
+  const btnOrig = document.getElementById('modeOriginalBtn');
+  const btnClause = document.getElementById('modeClauseBtn');
+  const btnSent = document.getElementById('modeSentenceBtn');
+  if (btnOrig) btnOrig.classList.toggle('active', mode === 'original');
+  if (btnClause) btnClause.classList.toggle('active', mode === 'clause');
+  if (btnSent) btnSent.classList.toggle('active', mode === 'sentence');
+  stopAudio();
+  if (mode === 'original') {
+    playOriginalSentenceMode();
+  } else if (mode === 'sentence') {
+    playSentenceContinuousMode(0);
+  } else {
+    playCurrentClauseMode();
+  }
+}
+
+/* ---------------- FULL TEXT ARTICLES RENDERING ---------------- */
+function renderFullTextView() {
+  const list = document.getElementById('fullTextArticlesList');
+  list.innerHTML = '';
+  LESSON_DATA.forEach((sent, sIdx) => {
+    const div = document.createElement('div');
+    div.className = 'full-sent-item';
+    div.id = `full-sent-${sIdx}`;
+
+    let zhHtml = `<span style="font-weight:900;color:var(--brand-dark);margin-right:6px;">${sIdx + 1}.</span>`;
+    sent.clauses.forEach((c, cIdx) => {
+      zhHtml += `<span class="full-clause-span" id="full-clause-${sIdx}-${cIdx}" onclick="jumpToGlobalClause(${sIdx}, ${cIdx})">${c.zh}</span>`;
+    });
+
+    div.innerHTML = `
+      <div class="full-sent-py">${sent.py}</div>
+      <div class="full-sent-zh">${zhHtml}</div>
+      <div class="full-sent-trans">${sent.en}</div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function jumpToGlobalClause(sIdx, cIdx) {
+  currentSentIdx = sIdx;
+  currentClauseIdx = cIdx;
+  renderSentenceView();
+  
+  // Highlight in full text
+  document.querySelectorAll('.full-sent-item').forEach((el, idx) => {
+    el.classList.toggle('playing-sent', idx === sIdx);
+  });
+  document.querySelectorAll('.full-clause-span').forEach(el => el.classList.remove('active'));
+  const targetSpan = document.getElementById(`full-clause-${sIdx}-${cIdx}`);
+  if (targetSpan) {
+    targetSpan.classList.add('active');
+    targetSpan.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  const clause = LESSON_DATA[sIdx].clauses[cIdx];
+  document.getElementById('stickyTrackName').textContent = `第${sIdx + 1}句 [${cIdx + 1}/${LESSON_DATA[sIdx].clauses.length}]: ${clause.zh}`;
+
+  playClauseAudio(sIdx, cIdx, () => {
+    stepGlobalClause(1);
+  });
+}
+
+function toggleGlobalPlay() {
+  if (isPlaying) {
+    stopAudio();
+  } else {
+    jumpToGlobalClause(currentSentIdx, currentClauseIdx);
+  }
+}
+
+function stepGlobalClause(delta) {
+  const sent = LESSON_DATA[currentSentIdx];
+  let nextC = currentClauseIdx + delta;
+  let nextS = currentSentIdx;
+
+  if (nextC < 0) {
+    if (nextS > 0) {
+      nextS--;
+      nextC = LESSON_DATA[nextS].clauses.length - 1;
+    } else {
+      stopAudio();
+      return;
+    }
+  } else if (nextC >= sent.clauses.length) {
+    if (nextS < LESSON_DATA.length - 1) {
+      nextS++;
+      nextC = 0;
+    } else {
+      stopAudio();
+      document.getElementById('stickyTrackName').textContent = '🎉 全篇课文朗读完毕！';
+      return;
+    }
+  }
+
+  jumpToGlobalClause(nextS, nextC);
+}
+
+/* ---------------- TAB NAVIGATION ---------------- */
+function switchTab(screenId) {
+  stopAudio();
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.screen-pane').forEach(p => p.classList.remove('active'));
+  
+  const target = document.getElementById(screenId);
+  if (target) target.classList.add('active');
+
+  const idx = ['screen-story', 'screen-full', 'screen-arch'].indexOf(screenId);
+  if (idx !== -1) document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+
+  const stickyBar = document.getElementById('stickyBottomBar');
+  if (screenId === 'screen-full') {
+    stickyBar.style.display = 'flex';
+    renderFullTextView();
+  } else {
+    stickyBar.style.display = 'none';
+  }
+}
+
+/* ---------------- MIC SIMULATION ---------------- */
+let isRecordingSim = false;
+let recordTimer = null;
+function toggleMicSim() {
+  const btn = document.getElementById('micSimBtn');
+  const tip = document.getElementById('micStatusTip');
+  const label = document.getElementById('micBtnLabel');
+
+  if (!isRecordingSim) {
+    isRecordingSim = true;
+    btn.classList.add('recording');
+    label.textContent = '停止录音 (00:03)';
+    tip.textContent = '🎙️ 正在清晰录音中...';
+    let sec = 3;
+    recordTimer = setInterval(() => {
+      sec--;
+      if (sec <= 0) {
+        clearInterval(recordTimer);
+        stopMicSimSuccess();
+      } else {
+        label.textContent = `停止录音 (00:0${sec})`;
+      }
+    }, 1000);
+  } else {
+    clearInterval(recordTimer);
+    stopMicSimSuccess();
+  }
+}
+
+function stopMicSimSuccess() {
+  isRecordingSim = false;
+  const btn = document.getElementById('micSimBtn');
+  const tip = document.getElementById('micStatusTip');
+  const label = document.getElementById('micBtnLabel');
+  btn.classList.remove('recording');
+  label.textContent = '重新录制';
+  tip.innerHTML = '<span style="color:#16a34a;font-weight:800;">✓ 录音成功！发音评分：98分 ⭐⭐⭐</span>';
+}
+
+/* ---------------- INITIALIZATION ---------------- */
+window.addEventListener('DOMContentLoaded', () => {
+  renderSentenceView();
+  renderFullTextView();
+});
+</script>
+</body>
+</html>

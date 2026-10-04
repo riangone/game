@@ -216,7 +216,22 @@
   .opt-btn{background:#fff;border:2px solid #f3d9ad;border-radius:var(--radius-md);padding:12px 14px;font-size:15px;font-weight:700;
     text-align:left;cursor:pointer;box-shadow:var(--shadow-pop);}
   .opt-btn.correct{background:var(--green-soft)!important;border-color:var(--green)!important;color:#065f46!important;}
-  .opt-btn.wrong{background:var(--red-soft)!important;border-color:var(--red)!important;color:#dc2626!important;animation:shake .3s;opacity:0.75;}
+  /* tones screen */
+  .tone-curve-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(82px, 1fr));gap:8px;width:100%;max-width:520px;}
+  .tone-cell{background:var(--card);border:2px solid #f3d9ad;border-radius:var(--radius-md);padding:10px 4px;text-align:center;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:4px;box-shadow:var(--shadow-pop);transition:all .15s;}
+  .tone-cell:active{transform:scale(0.95);}
+  .tone-cell.active{border-color:var(--red);background:var(--red-soft);transform:scale(1.02);}
+  .tone-cell .curve{font-size:20px;color:var(--red);font-weight:900;}
+  .tone-cell .ch{font-size:24px;font-weight:900;color:var(--ink);font-family:"Outfit",sans-serif;}
+  .tone-cell .py{font-size:12px;color:var(--blue);font-weight:700;}
+  .tone-cell .num{font-size:11px;color:var(--muted);font-weight:800;}
+  .tone-detail{background:var(--paper);border:2px solid #f3d9ad;border-radius:var(--radius-lg);padding:14px;width:100%;max-width:520px;
+    text-align:center;box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:6px;align-items:center;}
+  .tone-detail .name{font-size:18px;font-weight:900;color:var(--red-dark);}
+  .tone-detail .desc{font-size:13px;color:var(--muted);line-height:1.6;}
+  .tone-quiz-box{width:100%;max-width:520px;background:var(--paper);border:2px solid #f3d9ad;border-radius:var(--radius-lg);padding:16px;
+    box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:12px;align-items:center;}
 
   /* navigation control bar */
   .control-nav-bar{display:flex;align-items:center;justify-content:center;gap:12px;margin:10px 0 4px;width:100%;max-width:520px;}
@@ -233,6 +248,23 @@
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:20px;
     font-size:13px;font-weight:700;opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;z-index:99;text-align:center;max-width:85%;}
   .toast.show{opacity:0.95;transform:translateX(-50%) translateY(-6px);}
+
+  /* ================= AUDIO SCHEME SWITCHER ================= */
+  .audio-scheme-bar{background:rgba(255,255,255,0.92);backdrop-filter:blur(8px);border-bottom:2px solid #f3d9ad;padding:7px 14px;
+    display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;z-index:15;box-shadow:0 2px 8px rgba(120,60,20,0.05);}
+  .audio-scheme-inner{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;}
+  .audio-scheme-label{font-size:12px;font-weight:800;color:var(--ink);display:inline-flex;align-items:center;gap:4px;}
+  .audio-scheme-toggle{display:inline-flex;background:#f1f5f9;border:1.5px solid #e2e8f0;border-radius:20px;padding:2px;gap:2px;}
+  .scheme-btn{border:none;background:transparent;padding:5px 12px;border-radius:16px;font-size:12px;font-weight:800;color:#64748b;
+    cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all 0.15s ease;white-space:nowrap;}
+  .scheme-btn:hover{color:#0f172a;}
+  .scheme-btn.active#btnSchemeA1M{background:#10b981;color:#fff;box-shadow:0 2px 6px rgba(16,185,129,0.35);}
+  .scheme-btn.active#btnSchemeA1{background:#0284c7;color:#fff;box-shadow:0 2px 6px rgba(2,132,199,0.35);}
+  .scheme-badge{background:#fef08a;color:#854d0e;font-size:10px;font-weight:800;padding:1px 5px;border-radius:8px;}
+  .scheme-btn.active#btnSchemeA1M .scheme-badge{background:#fff;color:#065f46;}
+  .audio-scheme-desc{font-size:11px;color:var(--muted);text-align:center;line-height:1.3;}
+  .tones-scheme-hint{display:flex;align-items:center;justify-content:center;gap:8px;background:#fff;border:1.5px solid #f3d9ad;
+    border-radius:18px;padding:5px 12px;font-size:12px;color:var(--ink);margin:4px 0 2px;box-shadow:0 2px 4px rgba(0,0,0,0.03);}
 </style>
 </head>
 <body>
@@ -243,6 +275,25 @@
     <h1 id="headerTitle">拼音基础 · 声母韵母声调</h1>
     <span class="stars" id="starTotal">⭐ 0</span>
   </header>
+
+  <!-- 全局发音方案切换条 -->
+  <div class="audio-scheme-bar" id="audioSchemeBar">
+    <div class="audio-scheme-inner">
+      <span class="audio-scheme-label">🗣️ 发音方案：</span>
+      <div class="audio-scheme-toggle">
+        <button type="button" class="scheme-btn active" id="btnSchemeA1M" onclick="setAudioScheme('a1m')" title="教学黄金延展版，适合跟读与听辨">
+          <span>🌟 方案 A1-M (适度延长版)</span>
+          <span class="scheme-badge">⭐推荐</span>
+        </button>
+        <button type="button" class="scheme-btn" id="btnSchemeA1" onclick="setAudioScheme('a1')" title="标准紧凑版，干脆利落">
+          <span>① 原方案 A1 (原版较短)</span>
+        </button>
+      </div>
+    </div>
+    <div class="audio-scheme-desc" id="audioSchemeDesc">
+      当前模式：<strong>🌟 方案 A1-M (适度延长版 ⭐推荐)</strong> · +35% 教学黄金延展，声调舒展饱满，单韵母 o 纯正喔音、e/u 彻底消除颤音，极度适合跟读模仿。
+    </div>
+  </div>
 
   <main>
     <!-- HOME MENU -->
@@ -261,6 +312,12 @@
           <div class="ico">📜</div>
           <div class="name">拼音总表</div>
           <div class="desc">23声母 · 24韵母 · 16整体认读全览与连读</div>
+        </div>
+        <div class="menu-card" onclick="goTones()">
+          <div class="ico">🎵</div>
+          <div class="name">四声魔法</div>
+          <div class="desc">四声走势 · 听音辨调挑战</div>
+          <div class="badge" id="badgeTones" style="display:none;"></div>
         </div>
         <div class="menu-card" onclick="goChars()">
           <div class="ico">✍️</div>
@@ -360,6 +417,47 @@
         <button class="btn gold" id="btnFullPlay" onclick="toggleFullTablePlay()">▶️ 原声连续朗读</button>
         <button class="btn ghost" onclick="stopTablePlay(); goHome();">返回菜单</button>
       </div>
+    </section>
+
+    <!-- TONES (四声魔法棒) -->
+    <section class="screen" id="screen-tones">
+      <h2 class="title">🎵 四声魔法棒</h2>
+      <p class="sub">汉语拼音有四个声调：一声平(ˉ)、二声扬(ˊ)、三声转折(ˇ)、四声降(ˋ)。点击听范读，直观掌握音调起伏！</p>
+      
+      <!-- Tone Scheme Switcher in Tones module -->
+      <div class="tones-scheme-hint">
+        <span>当前发音方案：<strong id="toneSchemeIndicator">🌟 方案 A1-M (适度延长版)</strong></span>
+        <button type="button" class="btn small ghost" onclick="toggleSchemeQuick()" style="padding:2px 10px; font-size:12px; border-radius:12px; border-color:#cbd5e1;">🔄 一键切换并试听对比</button>
+      </div>
+
+      <!-- Tone family tabs -->
+      <div class="toggle-row" id="toneBaseTabs"></div>
+
+      <!-- Tone cards grid -->
+      <div class="tone-curve-grid" id="toneGrid" style="margin-top:6px;"></div>
+
+      <!-- Detail card -->
+      <div class="tone-detail" id="toneDetail"></div>
+
+      <!-- Tone controls -->
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+        <button class="btn red small" onclick="playToneCurrent()">🔊 播放此声调</button>
+        <button class="btn blue small" id="btnTonePlayAll" onclick="playToneSequence()">▶️ 连续朗读四声</button>
+        <button class="btn gold small" onclick="toggleToneQuiz()">🎧 听音辨调挑战</button>
+      </div>
+
+      <!-- Tone Quiz Box -->
+      <div class="tone-quiz-box" id="toneQuizBox" style="display:none;">
+        <div style="display:flex;justify-content:space-between;width:100%;align-items:center;">
+          <span style="font-size:13px;font-weight:800;color:var(--muted);" id="toneQuizProgress">第 1 / 6 题</span>
+          <span style="font-size:13px;font-weight:800;color:var(--gold);" id="toneQuizScore">答对 0 题</span>
+        </div>
+        <div class="audio-speaker-btn" id="toneQuizSpeaker" onclick="playToneQuizAudio()" title="点击播放">🔊</div>
+        <div style="font-size:14px;font-weight:800;color:var(--ink);">仔细听，这是第几声？</div>
+        <div class="audio-opts" id="toneQuizOpts"></div>
+      </div>
+
+      <button class="btn ghost" onclick="goHome()">返回菜单</button>
     </section>
 
     <!-- WRITING (CHARS) -->
@@ -568,11 +666,11 @@ const INITIALS = [
   {code:'b',demo:'波',demoPy:'bō',word:'爸爸',wordPy:'bàba',en:'dad',jp:'お父さん',tip:'双唇音：双唇紧闭突然张开，气流弱，不送气。'},
   {code:'p',demo:'坡',demoPy:'pō',word:'皮球',wordPy:'píqiú',en:'ball',jp:'ボール',tip:'双唇音：双唇紧闭突然张开，气流强冲出，送气。'},
   {code:'m',demo:'摸',demoPy:'mō',word:'妈妈',wordPy:'māma',en:'mom',jp:'お母さん',tip:'双唇鼻音：双唇闭合，气流从鼻腔通过。'},
-  {code:'f',demo:'佛',demoPy:'fó',word:'飞机',wordPy:'fēijī',en:'airplane',jp:'飛行機',tip:'唇齿音：上齿轻贴下唇，气流从缝隙摩擦而出。'},
-  {code:'d',demo:'得',demoPy:'dé',word:'蛋糕',wordPy:'dàngāo',en:'cake',jp:'ケーキ',tip:'舌尖抵上齿龈突然放开，气流较弱，不送气。'},
-  {code:'t',demo:'特',demoPy:'tè',word:'兔子',wordPy:'tùzi',en:'rabbit',jp:'うさぎ',tip:'舌尖抵上齿龈突然放开，气流较强，送气。'},
-  {code:'n',demo:'讷',demoPy:'nè',word:'牛奶',wordPy:'niúnǎi',en:'milk',jp:'牛乳',tip:'舌尖抵上齿龈，气流由鼻孔出来，声带振动。'},
-  {code:'l',demo:'了',demoPy:'le',word:'老虎',wordPy:'lǎohǔ',en:'tiger',jp:'虎',tip:'舌尖抵上齿龈，气流从舌头两边流出（边音）。'},
+  {code:'f',demo:'fō',demoPy:'fō',word:'飞机',wordPy:'fēijī',en:'airplane',jp:'飛行機',tip:'唇齿音：上齿轻贴下唇，气流从缝隙摩擦而出。呼读音为第一声 fō。'},
+  {code:'d',demo:'dē',demoPy:'dē',word:'蛋糕',wordPy:'dàngāo',en:'cake',jp:'ケーキ',tip:'舌尖抵上齿龈突然放开，气流较弱，不送气。呼读音为第一声 dē。'},
+  {code:'t',demo:'tē',demoPy:'tē',word:'兔子',wordPy:'tùzi',en:'rabbit',jp:'うさぎ',tip:'舌尖抵上齿龈突然放开，气流较强，送气。呼读音为第一声 tē。'},
+  {code:'n',demo:'nē',demoPy:'nē',word:'牛奶',wordPy:'niúnǎi',en:'milk',jp:'牛乳',tip:'舌尖抵上齿龈，气流由鼻孔出来，声带振动。呼读音为第一声 nē。'},
+  {code:'l',demo:'lē',demoPy:'lē',word:'老虎',wordPy:'lǎohǔ',en:'tiger',jp:'虎',tip:'舌尖抵上齿龈，气流从舌头两边流出（边音）。呼读音为第一声 lē。'},
   {code:'g',demo:'哥',demoPy:'gē',word:'哥哥',wordPy:'gēge',en:'brother',jp:'お兄さん',tip:'舌根抵软腭突然放开，不送气。'},
   {code:'k',demo:'科',demoPy:'kē',word:'咖啡',wordPy:'kāfēi',en:'coffee',jp:'コーヒー',tip:'舌根抵软腭突然放开，气流强，送气。'},
   {code:'h',demo:'喝',demoPy:'hē',word:'河马',wordPy:'hémǎ',en:'hippo',jp:'カバ',tip:'舌根接近软腭，气流从窄缝摩擦而出。'},
@@ -582,7 +680,7 @@ const INITIALS = [
   {code:'zh',demo:'知',demoPy:'zhī',word:'蜘蛛',wordPy:'zhīzhū',en:'spider',jp:'クモ',tip:'舌尖翘起抵硬腭前部，不送气（翘舌音）。'},
   {code:'ch',demo:'吃',demoPy:'chī',word:'长城',wordPy:'chángchéng',en:'Great Wall',jp:'万里の長城',tip:'舌尖翘起抵硬腭前部，气流强（翘舌音）。'},
   {code:'sh',demo:'诗',demoPy:'shī',word:'狮子',wordPy:'shīzi',en:'lion',jp:'ライオン',tip:'舌尖翘起接近硬腭前部，摩擦成声（翘舌音）。'},
-  {code:'r',demo:'日',demoPy:'rì',word:'人',wordPy:'rén',en:'person',jp:'人',tip:'舌尖翘起接近硬腭前部，声带振动。'},
+  {code:'r',demo:'rī',demoPy:'rī',word:'人',wordPy:'rén',en:'person',jp:'人',tip:'舌尖翘起接近硬腭前部，声带振动。呼读音为第一声 rī。'},
   {code:'z',demo:'资',demoPy:'zī',word:'足球',wordPy:'zúqiú',en:'soccer',jp:'サッカー',tip:'舌尖抵上齿背，不送气（平舌音）。'},
   {code:'c',demo:'疵',demoPy:'cī',word:'草莓',wordPy:'cǎoméi',en:'strawberry',jp:'いちご',tip:'舌尖抵上齿背，气流强（平舌音）。'},
   {code:'s',demo:'思',demoPy:'sī',word:'松鼠',wordPy:'sōngshǔ',en:'squirrel',jp:'リス',tip:'舌尖接近上齿背，摩擦成声（平舌音）。'},
@@ -591,36 +689,58 @@ const INITIALS = [
 ];
 
 const FINALS = [
-  {code:'a',group:'单韵母',pure:'啊',purePy:'à',word:'阿姨',wordPy:'āyí',en:'auntie',jp:'おばさん'},
-  {code:'o',group:'单韵母',pure:'哦',purePy:'ò',word:'菠萝',wordPy:'bōluó',en:'pineapple',jp:'パイナップル'},
-  {code:'e',group:'单韵母',pure:'鹅',purePy:'é',word:'天鹅',wordPy:'tiāné',en:'swan',jp:'白鳥'},
+  {code:'a',group:'单韵母',pure:'啊',purePy:'ā',word:'阿姨',wordPy:'āyí',en:'auntie',jp:'おばさん'},
+  {code:'o',group:'单韵母',pure:'喔',purePy:'ō',word:'菠萝',wordPy:'bōluó',en:'pineapple',jp:'パイナップル'},
+  {code:'e',group:'单韵母',pure:'婀',purePy:'ē',word:'天鹅',wordPy:'tiāné',en:'swan',jp:'白鳥'},
   {code:'i',group:'单韵母',pure:'衣',purePy:'yī',word:'衣服',wordPy:'yīfu',en:'clothes',jp:'服'},
   {code:'u',group:'单韵母',pure:'屋',purePy:'wū',word:'五角星',wordPy:'wǔjiǎoxīng',en:'star',jp:'五角星'},
   {code:'v',group:'单韵母',pure:'淤',purePy:'yū',word:'金鱼',wordPy:'jīnyú',en:'goldfish',jp:'金魚',display:'ü'},
   {code:'ai',group:'复韵母',pure:'哀',purePy:'āi',word:'奶奶',wordPy:'nǎinai',en:'grandma',jp:'おばあちゃん'},
-  {code:'ei',group:'复韵母',pure:'诶',purePy:'éi',word:'黑板',wordPy:'hēibǎn',en:'blackboard',jp:'黒板'},
+  {code:'ei',group:'复韵母',pure:'ēi',purePy:'ēi',word:'黑板',wordPy:'hēibǎn',en:'blackboard',jp:'黒板'},
   {code:'ui',group:'复韵母',pure:'威',purePy:'wēi',word:'开水',wordPy:'kāishuǐ',en:'water',jp:'お湯'},
-  {code:'ao',group:'复韵母',pure:'熬',purePy:'áo',word:'花猫',wordPy:'huāmāo',en:'cat',jp:'猫'},
+  {code:'ao',group:'复韵母',pure:'凹',purePy:'āo',word:'花猫',wordPy:'huāmāo',en:'cat',jp:'猫'},
   {code:'ou',group:'复韵母',pure:'欧',purePy:'ōu',word:'猴子',wordPy:'hóuzi',en:'monkey',jp:'猿'},
   {code:'iu',group:'复韵母',pure:'忧',purePy:'yōu',word:'黄牛',wordPy:'huángniú',en:'cow',jp:'牛'},
   {code:'ie',group:'复韵母',pure:'耶',purePy:'yē',word:'蝴蝶',wordPy:'húdié',en:'butterfly',jp:'蝶'},
   {code:'ve',group:'复韵母',pure:'约',purePy:'yuē',word:'雪花',wordPy:'xuěhuā',en:'snow',jp:'雪',display:'üe'},
-  {code:'er',group:'特殊韵母',pure:'儿',purePy:'ér',word:'耳朵',wordPy:'ěrduo',en:'ear',jp:'耳'},
+  {code:'er',group:'特殊韵母',pure:'ēr',purePy:'ēr',word:'耳朵',wordPy:'ěrduo',en:'ear',jp:'耳'},
   {code:'an',group:'前鼻韵母',pure:'安',purePy:'ān',word:'三只',wordPy:'sānzhī',en:'three',jp:'三つ'},
   {code:'en',group:'前鼻韵母',pure:'恩',purePy:'ēn',word:'大门',wordPy:'dàmén',en:'door',jp:'ドア'},
   {code:'in',group:'前鼻韵母',pure:'因',purePy:'yīn',word:'爱心',wordPy:'àixīn',en:'heart',jp:'心'},
   {code:'un',group:'前鼻韵母',pure:'温',purePy:'wēn',word:'白云',wordPy:'báiyún',en:'cloud',jp:'雲'},
   {code:'vn',group:'前鼻韵母',pure:'晕',purePy:'yūn',word:'裙子',wordPy:'qúnzi',en:'skirt',jp:'スカート',display:'ün'},
-  {code:'ang',group:'后鼻韵母',pure:'昂',purePy:'áng',word:'大象',wordPy:'dàxiàng',en:'elephant',jp:'象'},
+  {code:'ang',group:'后鼻韵母',pure:'肮',purePy:'āng',word:'大象',wordPy:'dàxiàng',en:'elephant',jp:'象'},
   {code:'eng',group:'后鼻韵母',pure:'鞥',purePy:'ēng',word:'大风',wordPy:'dàfēng',en:'wind',jp:'風'},
   {code:'ing',group:'后鼻韵母',pure:'英',purePy:'yīng',word:'星星',wordPy:'xīngxing',en:'star',jp:'星'},
-  {code:'ong',group:'后鼻韵母',pure:'轰',purePy:'hōng',word:'小熊',wordPy:'xiǎoxióng',en:'bear',jp:'クマ'}
+  {code:'ong',group:'后鼻韵母',pure:'ōng',purePy:'ōng',word:'小熊',wordPy:'xiǎoxióng',en:'bear',jp:'クマ'}
 ];
 
 const OVERALL_SYLLABLES = [
   'zhi','chi','shi','ri','zi','ci','si',
   'yi','wu','yu','ye','yue','yuan','yin','yun','ying'
 ];
+
+// 2.1 四声调声韵体系数据
+const TONE_INFO = [
+  {num:'1',mark:'ˉ',name:'第一声',curve:'ˉ',desc:'高平调（55），从头到尾高而平稳，像拉长音唱歌一样。'},
+  {num:'2',mark:'ˊ',name:'第二声',curve:'╱',desc:'中升调（35），由中向高升起，像疑问地问“啊？”。'},
+  {num:'3',mark:'ˇ',name:'第三声',curve:'╲╱',desc:'降升调（214），先降后升，声音要转个弯。'},
+  {num:'4',mark:'ˋ',name:'第四声',curve:'╲',desc:'全降调（51），从最高猛降到底，干脆利落像下命令。'},
+  {num:'0',mark:'',name:'轻声',curve:'·',desc:'又轻又短，不标调号，读得短促微弱。'}
+];
+
+const TONE_BASES = {
+  a: {label:'单韵母 a', entries:[{n:'1',ch:'ā',py:'ā',desc:'第一声（阴平 55）高平调'},{n:'2',ch:'á',py:'á',desc:'第二声（阳平 35）上扬调'},{n:'3',ch:'ǎ',py:'ǎ',desc:'第三声（上声 214）降升调'},{n:'4',ch:'à',py:'à',desc:'第四声（去声 51）全降调'}]},
+  o: {label:'单韵母 o', entries:[{n:'1',ch:'ō',py:'ō',desc:'第一声（阴平 55）高平调'},{n:'2',ch:'ó',py:'ó',desc:'第二声（阳平 35）上扬调'},{n:'3',ch:'ǒ',py:'ǒ',desc:'第三声（上声 214）降升调'},{n:'4',ch:'ò',py:'ò',desc:'第四声（去声 51）全降调'}]},
+  e: {label:'单韵母 e', entries:[{n:'1',ch:'ē',py:'ē',desc:'第一声（阴平 55）高平调'},{n:'2',ch:'é',py:'é',desc:'第二声（阳平 35）上扬调'},{n:'3',ch:'ě',py:'ě',desc:'第三声（上声 214）降升调'},{n:'4',ch:'è',py:'è',desc:'第四声（去声 51）全降调'}]},
+  i: {label:'单韵母 i', entries:[{n:'1',ch:'ī',py:'ī',desc:'第一声（阴平 55）高平调'},{n:'2',ch:'í',py:'í',desc:'第二声（阳平 35）上扬调'},{n:'3',ch:'ǐ',py:'ǐ',desc:'第三声（上声 214）降升调'},{n:'4',ch:'ì',py:'ì',desc:'第四声（去声 51）全降调'}]},
+  u: {label:'单韵母 u', entries:[{n:'1',ch:'ū',py:'ū',desc:'第一声（阴平 55）高平调'},{n:'2',ch:'ú',py:'ú',desc:'第二声（阳平 35）上扬调'},{n:'3',ch:'ǔ',py:'ǔ',desc:'第三声（上声 214）降升调'},{n:'4',ch:'ù',py:'ù',desc:'第四声（去声 51）全降调'}]},
+  v: {label:'单韵母 ü', entries:[{n:'1',ch:'ǖ',py:'ǖ',desc:'第一声（阴平 55）高平调'},{n:'2',ch:'ǘ',py:'ǘ',desc:'第二声（阳平 35）上扬调'},{n:'3',ch:'ǚ',py:'ǚ',desc:'第三声（上声 214）降升调'},{n:'4',ch:'ǜ',py:'ǜ',desc:'第四声（去声 51）全降调'}]},
+  ma: {label:'ma (妈麻马骂)', entries:[{n:'1',ch:'妈',py:'mā',desc:'一声平平高又高 · 母亲'},{n:'2',ch:'麻',py:'má',desc:'二声就像上山坡 · 芝麻/麻烦'},{n:'3',ch:'马',py:'mǎ',desc:'三声下坡又上坡 · 奔马'},{n:'4',ch:'骂',py:'mà',desc:'四声就像下山坡 · 责备'},{n:'0',ch:'吗',py:'ma',desc:'轻声又轻又短 · 疑问词'}]},
+  yi: {label:'yi (一姨椅意)', entries:[{n:'1',ch:'一',py:'yī',desc:'第一声 高平调 · 数字1'},{n:'2',ch:'姨',py:'yí',desc:'第二声 上扬调 · 阿姨'},{n:'3',ch:'椅',py:'yǐ',desc:'第三声 降升调 · 椅子'},{n:'4',ch:'意',py:'yì',desc:'第四声 全降调 · 意思'}]},
+  wu: {label:'wu (乌无五雾)', entries:[{n:'1',ch:'乌',py:'wū',desc:'第一声 高平调 · 乌龟/乌云'},{n:'2',ch:'无',py:'wú',desc:'第二声 上扬调 · 无论/无有'},{n:'3',ch:'五',py:'wǔ',desc:'第三声 降升调 · 数字5'},{n:'4',ch:'雾',py:'wù',desc:'第四声 全降调 · 大雾'}]},
+  shu: {label:'shu (书熟鼠树)', entries:[{n:'1',ch:'书',py:'shū',desc:'第一声 高平调 · 读书'},{n:'2',ch:'熟',py:'shú',desc:'第二声 上扬调 · 熟悉/熟透'},{n:'3',ch:'鼠',py:'shǔ',desc:'第三声 降升调 · 小松鼠'},{n:'4',ch:'树',py:'shù',desc:'第四声 全降调 · 大树'}]}
+};
 
 // 3. 标杆汉字田字格描红与拼音笔画指导
 const CHARS_WRITING = [
@@ -713,12 +833,60 @@ const QUIZ_ITEMS = [
   {q:'“四声就像下山坡，从最高猛地降到最低”描述的是哪一声？', options:['第四声（全降调）','第一声','第二声','第三声'], answer:0, tip:'第四声（ˋ）干脆果断，从 5 度猛降到 1 度（如：bà、dà、shì）。'}
 ];
 
-/* ================= AUDIO ENGINE ================= */
+/* ================= AUDIO ENGINE (DUAL SCHEMES) ================= */
+const SCHEME_DIRS = {
+  a1m: 'audio/pinyin-basics-a1m/',
+  a1: 'audio/pinyin-basics-a1/'
+};
 const AUDIO_DIR = 'audio/pinyin-basics/';
 const HUMAN_AUDIO_DIR = 'audio/human-pinyin/';
+let currentAudioScheme = localStorage.getItem('pinyin_audio_scheme') || 'a1m';
 const audioCache = {};
 let currentClip = null;
 let appAudioCtx = null;
+
+function setAudioScheme(scheme){
+  if(scheme !== 'a1' && scheme !== 'a1m') scheme = 'a1m';
+  currentAudioScheme = scheme;
+  try{ localStorage.setItem('pinyin_audio_scheme', scheme); }catch(e){}
+  stopClip();
+  updateSchemeUI();
+  toast(scheme === 'a1m' ? '已切换至：🌟 方案 A1-M (适度延长版 ⭐推荐)' : '已切换至：① 原方案 A1 (原版较短)');
+}
+
+function updateSchemeUI(){
+  const btnA1M = document.getElementById('btnSchemeA1M');
+  const btnA1 = document.getElementById('btnSchemeA1');
+  const desc = document.getElementById('audioSchemeDesc');
+  const toneInd = document.getElementById('toneSchemeIndicator');
+  
+  if(btnA1M && btnA1){
+    if(currentAudioScheme === 'a1m'){
+      btnA1M.classList.add('active');
+      btnA1.classList.remove('active');
+      if(desc){
+        desc.innerHTML = '当前模式：<strong>🌟 方案 A1-M (适度延长版 ⭐推荐)</strong> · +35% 教学黄金延展，声调舒展饱满，单韵母 o 纯正喔音、e/u 彻底消除颤音，极度适合跟读模仿。';
+      }
+    } else {
+      btnA1.classList.add('active');
+      btnA1M.classList.remove('active');
+      if(desc){
+        desc.innerHTML = '当前模式：<strong>① 原方案 A1 (原版较短)</strong> · 纯净现代音色 + 严格五度制调值，干脆利落，单韵母 o 纯正喔音、e/u 彻底消除颤音，适合快速认读。';
+      }
+    }
+  }
+  if(toneInd){
+    toneInd.textContent = currentAudioScheme === 'a1m' ? '🌟 方案 A1-M (适度延长版)' : '① 原方案 A1 (原版较短)';
+  }
+}
+
+function toggleSchemeQuick(){
+  setAudioScheme(currentAudioScheme === 'a1m' ? 'a1' : 'a1m');
+  const screenTones = document.getElementById('screen-tones');
+  if(screenTones && screenTones.classList.contains('active')){
+    playToneCurrent();
+  }
+}
 
 function getAppAudioCtx(){
   if(!appAudioCtx){
@@ -789,12 +957,24 @@ function stopClip(){
   if('speechSynthesis' in window) speechSynthesis.cancel();
 }
 
-function playFile(fileName, fallbackText, onend){
-  stopClip();
-  if(!fileName){ speak(fallbackText, onend); return; }
+function humanKeyFor(file){
+  if(!file) return null;
+  // Tone families: tone_ma_1..4, tone_yi_1..4, tone_wu_1..4, tone_shu_1..4
+  const m1 = /^tone_(ma|yi|wu|shu)_([1-4])$/.exec(file);
+  if(m1) return m1[1] + m1[2];
+  // Vowel tone families: tone_a_1..4, tone_o_1..4, tone_e_1..4, tone_i_1..4, tone_u_1..4, tone_v_1..4
+  const m2 = /^tone_([aeiouv])_([1-4])$/.exec(file);
+  if(m2){
+    const alias = {a:'a', o:'o', e:'e', i:'yi', u:'wu', v:'yu'};
+    return alias[m2[1]] + m2[2];
+  }
+  return null;
+}
+
+function playTtsFile(fileName, fallbackText, onend){
   let filePath = AUDIO_DIR + fileName + '.mp3';
-  let a = audioCache[fileName];
-  if(!a){ a = new Audio(filePath); audioCache[fileName] = a; }
+  let a = audioCache['tts:' + fileName];
+  if(!a){ a = new Audio(filePath); audioCache['tts:' + fileName] = a; }
   a.currentTime = 0;
   let done = false;
   const finish = ()=>{ if(done) return; done = true; if(currentClip === a) currentClip = null; if(onend) onend(); };
@@ -813,6 +993,79 @@ function playFile(fileName, fallbackText, onend){
       done = true;
       currentClip = null;
       speak(fallbackText, onend);
+    });
+  }
+}
+
+function playFallbackFile(fileName, fallbackText, onend){
+  const humanKey = humanKeyFor(fileName);
+  if(humanKey){
+    const hCacheKey = 'human:' + humanKey;
+    let ha = audioCache[hCacheKey];
+    if(!ha){
+      ha = new Audio(HUMAN_AUDIO_DIR + encodeURIComponent(humanKey) + '.mp3');
+      audioCache[hCacheKey] = ha;
+    }
+    ha.currentTime = 0;
+    let done = false;
+    const finish = ()=>{ if(done) return; done = true; if(currentClip === ha) currentClip = null; if(onend) onend(); };
+    ha.onended = finish;
+    ha.onerror = ()=>{
+      if(done) return;
+      done = true;
+      if(currentClip === ha) currentClip = null;
+      playTtsFile(fileName, fallbackText, onend);
+    };
+    currentClip = ha;
+    const p = ha.play();
+    if(p && typeof p.catch === 'function'){
+      p.catch(()=>{
+        if(done) return;
+        done = true;
+        currentClip = null;
+        playTtsFile(fileName, fallbackText, onend);
+      });
+    }
+    return;
+  }
+  playTtsFile(fileName, fallbackText, onend);
+}
+
+// Playback routing:
+// ① Selected Scheme (audio/pinyin-basics-a1m/ or audio/pinyin-basics-a1/)
+// ② Fallback to human audio or default audio/pinyin-basics/
+// ③ Fallback to Web Speech API
+function playFile(fileName, fallbackText, onend){
+  stopClip();
+  if(!fileName){ speak(fallbackText, onend); return; }
+  
+  const baseDir = SCHEME_DIRS[currentAudioScheme] || SCHEME_DIRS.a1m;
+  const filePath = baseDir + encodeURIComponent(fileName) + '.mp3';
+  const cacheKey = currentAudioScheme + ':' + fileName;
+  
+  let a = audioCache[cacheKey];
+  if(!a){
+    a = new Audio(filePath);
+    audioCache[cacheKey] = a;
+  }
+  a.currentTime = 0;
+  let done = false;
+  const finish = ()=>{ if(done) return; done = true; if(currentClip === a) currentClip = null; if(onend) onend(); };
+  a.onended = finish;
+  a.onerror = ()=>{
+    if(done) return;
+    done = true;
+    if(currentClip === a) currentClip = null;
+    playFallbackFile(fileName, fallbackText, onend);
+  };
+  currentClip = a;
+  const p = a.play();
+  if(p && typeof p.catch === 'function'){
+    p.catch(()=>{
+      if(done) return;
+      done = true;
+      currentClip = null;
+      playFallbackFile(fileName, fallbackText, onend);
     });
   }
 }
@@ -911,6 +1164,7 @@ const SCREEN_TITLES = {
   home: '拼音基础 · 声母韵母声调',
   chants: '📖 拼音口诀歌',
   table: '📜 拼音总表',
+  tones: '🎵 四声魔法棒',
   chars: '✍️ 写拼音与标杆字',
   flash: '🀄 拼音卡片',
   match: '🧩 拼音配对',
@@ -932,6 +1186,7 @@ function goScreen(name){
 
   if(name === 'chants') renderChant();
   if(name === 'table') renderFullTable();
+  if(name === 'tones') renderTones();
   if(name === 'chars') renderChars();
   if(name === 'flash') renderFlash();
   if(name === 'match') initMatch();
@@ -942,9 +1197,10 @@ function goScreen(name){
   if(name === 'review') renderReview();
 }
 
-function goHome(){ goScreen('home'); }
+function goHome(){ goScreen('home'); updateHomeBadges(); updateSchemeUI(); }
 function goChants(){ goScreen('chants'); }
-function goFullTable(){ goScreen('table'); }
+function goFullTable(){ goScreen('table'); updateSchemeUI(); }
+function goTones(){ goScreen('tones'); updateSchemeUI(); }
 function goChars(){ goScreen('chars'); }
 function goFlash(){ goScreen('flash'); }
 function goMatch(){ goScreen('match'); }
@@ -979,7 +1235,8 @@ function chantPrev(){ chantIdx = (chantIdx - 1 + CHANTS.length) % CHANTS.length;
 function chantNext(){ chantIdx = (chantIdx + 1) % CHANTS.length; renderChant(); }
 function playChantCurrent(){
   const c = CHANTS[chantIdx];
-  speak(c.audioText);
+  stopClip();
+  playFile(c.id, c.audioText);
 }
 // Voice recording for Chant
 const voiceMgr = (typeof AppVoiceManager !== 'undefined') ? new AppVoiceManager() : null;
@@ -1049,7 +1306,7 @@ function renderFullTable(){
     const c = document.createElement('div');
     c.className = 'table-cell';
     c.innerHTML = '<div class="letter">' + s + '</div><div class="tip">整体读</div>';
-    c.onclick = ()=>speak(s);
+    c.onclick = ()=>playFile('overall_' + s, s);
     gOvr.appendChild(c);
   });
 }
@@ -1061,7 +1318,7 @@ function toggleFullTablePlay(){
   tablePlayList = [
     ...INITIALS.map(x=>({name:x.code, file:'init_'+x.code+'_demo', fb:x.demo})),
     ...FINALS.map(x=>({name:x.display||x.code, file:x.pure ? 'final_'+x.code+'_pure' : 'final_'+x.code+'_word', fb:x.pure||x.word})),
-    ...OVERALL_SYLLABLES.map(x=>({name:x, file:null, fb:x}))
+    ...OVERALL_SYLLABLES.map(x=>({name:x, file:'overall_'+x, fb:x}))
   ];
   tablePlayIdx = 0;
   playNextInTable();
@@ -1082,6 +1339,204 @@ function stopTablePlay(){
   const btn = document.getElementById('btnFullPlay');
   if(btn) btn.textContent = '▶️ 原声连续朗读';
   stopClip();
+}
+
+/* ================= MODULE 2.5: TONES (四声魔法棒) ================= */
+let toneBaseKey = 'a';
+let toneCellIdx = 0;
+let toneSeqTimer = null;
+
+function renderToneBaseTabs(){
+  const wrap = document.getElementById('toneBaseTabs');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  Object.keys(TONE_BASES).forEach(k=>{
+    const c = document.createElement('div');
+    c.className = 'chip' + (k === toneBaseKey ? ' active' : '');
+    c.textContent = TONE_BASES[k].label;
+    c.onclick = ()=>{
+      if(toneSeqTimer){ clearTimeout(toneSeqTimer); toneSeqTimer = null; }
+      toneBaseKey = k;
+      toneCellIdx = 0;
+      renderToneBaseTabs();
+      renderTones();
+    };
+    wrap.appendChild(c);
+  });
+}
+
+function renderTones(){
+  renderToneBaseTabs();
+  const baseObj = TONE_BASES[toneBaseKey] || TONE_BASES['a'];
+  const entries = baseObj.entries;
+  const grid = document.getElementById('toneGrid');
+  if(!grid) return;
+  grid.innerHTML = '';
+
+  if(toneCellIdx >= entries.length) toneCellIdx = 0;
+
+  entries.forEach((e, i)=>{
+    const info = TONE_INFO.find(t=>t.num === e.n) || {};
+    const cell = document.createElement('div');
+    cell.className = 'tone-cell' + (i === toneCellIdx ? ' active' : '');
+    cell.innerHTML = '<span class="curve">' + (info.curve || '') + '</span>' +
+                     '<span class="ch">' + e.ch + '</span>' +
+                     '<span class="py">' + e.py + '</span>' +
+                     '<span class="num">' + (info.name || '') + '</span>';
+    cell.onclick = ()=>{
+      if(toneSeqTimer){ clearTimeout(toneSeqTimer); toneSeqTimer = null; }
+      toneCellIdx = i;
+      renderTones();
+      playToneCurrent();
+    };
+    grid.appendChild(cell);
+  });
+
+  const cur = entries[toneCellIdx];
+  const info = TONE_INFO.find(t=>t.num === cur.n) || {};
+  const det = document.getElementById('toneDetail');
+  if(det){
+    det.innerHTML = '<div class="name">' + (info.name || '') + ' ' + (info.mark || '') + ' · ' + cur.ch + ' (' + cur.py + ')</div>' +
+                    '<div class="desc">' + (cur.desc || info.desc || '') + '</div>';
+  }
+}
+
+function playToneCurrent(){
+  const baseObj = TONE_BASES[toneBaseKey] || TONE_BASES['a'];
+  const cur = baseObj.entries[toneCellIdx];
+  if(!cur) return;
+  playFile('tone_' + toneBaseKey + '_' + cur.n, cur.ch);
+}
+
+function playToneSequence(){
+  if(toneSeqTimer){ clearTimeout(toneSeqTimer); toneSeqTimer = null; }
+  const baseObj = TONE_BASES[toneBaseKey] || TONE_BASES['a'];
+  const entries = baseObj.entries;
+  let idx = 0;
+  function step(){
+    if(idx >= entries.length) return;
+    toneCellIdx = idx;
+    renderTones();
+    const cur = entries[idx];
+    idx++;
+    playFile('tone_' + toneBaseKey + '_' + cur.n, cur.ch, ()=>{
+      toneSeqTimer = setTimeout(step, 450);
+    });
+  }
+  step();
+}
+
+/* Tone Quiz */
+let toneQuizScore = {right:0, total:0, streak:0};
+let toneQuizTarget = null;
+let toneQuizAnswered = false;
+
+function toggleToneQuiz(){
+  const box = document.getElementById('toneQuizBox');
+  if(!box) return;
+  if(box.style.display === 'none'){
+    box.style.display = 'flex';
+    startToneQuiz();
+  } else {
+    box.style.display = 'none';
+  }
+}
+
+function startToneQuiz(){
+  toneQuizScore = {right:0, total:0, streak:0};
+  nextToneQuizQ();
+}
+
+function nextToneQuizQ(){
+  toneQuizAnswered = false;
+  if(toneQuizScore.total >= 6){
+    const starsWon = toneQuizScore.right >= 5 ? 2 : (toneQuizScore.right >= 3 ? 1 : 0);
+    if(starsWon > 0) addStars(starsWon);
+    document.getElementById('toneQuizOpts').innerHTML =
+      '<div style="grid-column:1/3;text-align:center;padding:12px;">' +
+      '<div style="font-size:18px;font-weight:900;color:var(--green);">🎉 挑战完成！答对 ' + toneQuizScore.right + ' / 6 题</div>' +
+      '<button class="btn gold small" style="margin-top:10px;" onclick="startToneQuiz()">🔁 再来一轮</button>' +
+      '</div>';
+    return;
+  }
+
+  const pool = [];
+  Object.keys(TONE_BASES).forEach(bk=>{
+    TONE_BASES[bk].entries.filter(e=>e.n !== '0').forEach(e=>{
+      pool.push({base:bk, entry:e});
+    });
+  });
+  toneQuizTarget = pool[Math.floor(Math.random() * pool.length)];
+
+  document.getElementById('toneQuizProgress').textContent = '第 ' + (toneQuizScore.total + 1) + ' / 6 题';
+  document.getElementById('toneQuizScore').textContent = '答对 ' + toneQuizScore.right + ' 题 · 连对 ' + toneQuizScore.streak;
+
+  const optsWrap = document.getElementById('toneQuizOpts');
+  optsWrap.innerHTML = '';
+
+  const opts = [
+    {n:'1', label:'第一声 ˉ (高平)'},
+    {n:'2', label:'第二声 ˊ (上扬)'},
+    {n:'3', label:'第三声 ˇ (转折)'},
+    {n:'4', label:'第四声 ˋ (全降)'}
+  ];
+
+  opts.forEach(opt=>{
+    const btn = document.createElement('div');
+    btn.className = 'audio-opt-btn';
+    btn.innerHTML = '<div class="opt-main">' + opt.label.split(' ')[0] + ' ' + opt.label.split(' ')[1] + '</div>' +
+                    '<div class="opt-sub">' + opt.label.split(' ')[2] + '</div>';
+    btn.onclick = ()=>answerToneQuiz(opt.n, btn);
+    optsWrap.appendChild(btn);
+  });
+
+  playToneQuizAudio();
+}
+
+function playToneQuizAudio(){
+  if(!toneQuizTarget) return;
+  const s = document.getElementById('toneQuizSpeaker');
+  if(s) s.classList.add('playing');
+  playFile('tone_' + toneQuizTarget.base + '_' + toneQuizTarget.entry.n, toneQuizTarget.entry.ch, ()=>{
+    if(s) s.classList.remove('playing');
+  });
+}
+
+function answerToneQuiz(chosenNum, btnEl){
+  if(toneQuizAnswered) return;
+  toneQuizAnswered = true;
+  toneQuizScore.total++;
+  const correctNum = toneQuizTarget.entry.n;
+  const isRight = (chosenNum === correctNum);
+  const correctInfo = TONE_INFO.find(t=>t.num === correctNum) || {};
+
+  if(isRight){
+    btnEl.classList.add('correct');
+    toneQuizScore.right++;
+    toneQuizScore.streak++;
+    playCorrectTone();
+    toast('🎉 答对了！这是' + correctInfo.name + ' (' + toneQuizTarget.entry.ch + ')');
+    addStars(1);
+    recordCorrectReview('tone_' + toneQuizTarget.base + '_' + correctNum);
+  } else {
+    btnEl.classList.add('wrong');
+    toneQuizScore.streak = 0;
+    playWrongTone();
+    document.querySelectorAll('#toneQuizOpts .audio-opt-btn').forEach(b=>{
+      if(b.textContent.includes(correctInfo.name)) b.classList.add('correct');
+    });
+    toast('❌ 这是' + correctInfo.name + ' (' + toneQuizTarget.entry.ch + ' ' + toneQuizTarget.entry.py + ')');
+    addToReview({
+      id: 'tone_' + toneQuizTarget.base + '_' + correctNum,
+      title: '四声辨析：' + toneQuizTarget.entry.ch + ' (' + correctInfo.name + ')',
+      type: 'tone',
+      item: toneQuizTarget
+    });
+  }
+
+  setTimeout(()=>{
+    nextToneQuizQ();
+  }, 1200);
 }
 
 /* ================= MODULE 3: CHARACTERS (写拼音与标杆字) ================= */
@@ -1200,7 +1655,9 @@ function charPrev(){ charIdx = (charIdx - 1 + CHARS_WRITING.length) % CHARS_WRIT
 function charNext(){ charIdx = (charIdx + 1) % CHARS_WRITING.length; renderChars(); }
 function playCharSound(){
   const it = CHARS_WRITING[charIdx];
-  speak(it.char + '，拼音 ' + it.letter);
+  stopClip();
+  const ltr = it.letter === 'ü' ? 'v' : it.letter;
+  playFile('char_' + ltr, it.char + '，拼音 ' + it.py);
 }
 
 /* ================= MODULE 4: FLASHCARDS (拼音卡片) ================= */
@@ -1725,6 +2182,12 @@ function practiceReviewItem(idx){
     wsIdx = SPELL_ITEMS.findIndex(x=>'ws_'+x.key===it.id);
     if(wsIdx === -1) wsIdx = 0;
     goWorkshop();
+  } else if(it.type === 'tone'){
+    if(it.item && it.item.base) toneBaseKey = it.item.base;
+    goTones();
+    const box = document.getElementById('toneQuizBox');
+    if(box) box.style.display = 'flex';
+    startToneQuiz();
   } else {
     goQuiz();
   }
@@ -1737,9 +2200,19 @@ function removeReviewItem(idx){
   toast('已从错题本移除该项');
 }
 
+function updateHomeBadges(){
+  const badgeRev = document.getElementById('badgeReview');
+  if(badgeRev){
+    badgeRev.textContent = reviewItems.length ? String(reviewItems.length) : '';
+    badgeRev.style.display = reviewItems.length ? 'inline-block' : 'none';
+  }
+}
+
 /* ================= INIT ON DOM READY ================= */
 document.addEventListener('DOMContentLoaded', ()=>{
   updateStarDisplay();
+  updateHomeBadges();
+  updateSchemeUI();
 });
 </script>
 </body>
