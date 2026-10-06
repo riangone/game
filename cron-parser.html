@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Cron 表达式可视化工坊 · 纯前端免安装工具</title>
+<meta name="description" content="Cron 表达式双向可视化生成与语义翻译，支持 5 段与 6 段标准语法，推算未来 10 次执行时间。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--purple:#8b5cf6;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,.06);--shadow-lg:0 10px 15px -3px rgba(0,0,0,.08);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:1100px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.tab-btn{padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-muted);font-size:13px;font-weight:700;cursor:pointer;transition:.2s;}
+.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.panel{display:none;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);}
+.panel.active{display:block;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;}
+.btn:hover{background:var(--primary-hover);}
+.btn-subtle{background:var(--bg-subtle);color:var(--text-main);border:1px solid var(--border-color);}
+.btn-subtle:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+input[type=text],input[type=number],textarea,select{width:100%;padding:10px 12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;outline:none;}
+input:focus,textarea:focus,select:focus{border-color:var(--border-focus);}
+label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;}
+.badge{display:inline-block;padding:3px 8px;border-radius:var(--radius-pill);font-size:11px;font-weight:700;}
+.badge-success{background:rgba(16,185,129,.15);color:var(--success);}
+.badge-warning{background:rgba(245,158,11,.15);color:var(--warning);}
+.badge-primary{background:var(--primary-subtle);color:var(--primary);}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/cron-parser.html">
+</head>
+<style>
+.cron-input-box{display:flex;gap:10px;align-items:center;background:var(--bg-subtle);padding:14px;border-radius:var(--radius-lg);border:1px solid var(--border-color);margin-bottom:16px;}
+.cron-field{flex:1;font-family:var(--font-mono);font-size:20px;font-weight:800;letter-spacing:2px;padding:8px 12px;}
+.explain-card{background:var(--primary-subtle);border:1px solid var(--primary);border-radius:var(--radius-lg);padding:16px;margin-bottom:20px;display:flex;align-items:center;gap:12px;}
+.explain-text{font-size:16px;font-weight:700;color:var(--text-main);}
+.time-list{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;margin-top:10px;}
+.time-item{background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:10px 14px;font-size:13px;display:flex;justify-content:space-between;align-items:center;}
+.time-item b{font-family:var(--font-mono);color:var(--primary);}
+.preset-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+</style>
+
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>⏰</span><span>Cron 表达式工坊</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="markdown-editor.html">📝 Markdown排版</option>
+      <option value="uuid-generator.html">🆔 唯一标识生成</option>
+      <option value="json-csv-tool.html">🔄 JSON/CSV互转</option>
+      <option value="cron-parser.html">⏰ Cron表达式</option>
+      <option value="css-generator.html">🎨 CSS视觉工坊</option>
+      <option value="ascii-art.html">🔤 字符画艺术</option>
+      <option value="tools.html">🏠 返回全部工具</option>
+    </select>
+    <button class="theme-btn" onclick="toggleTheme()" title="切换明暗主题">🌓</button>
+  </div>
+</header>
+<main class="container">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+    <div>
+      <h1 class="page-title">⏰ Cron 表达式可视化工坊</h1>
+      <p class="page-sub">标准 5 段与 6 段 Cron 语法即时翻译为自然语言说明，精确推演未来多次执行时序。</p>
+    </div>
+    <button class="btn" onclick="copyCron()">📋 复制表达式</button>
+  </div>
+
+  <div class="preset-grid">
+    <button class="btn btn-subtle btn-sm" onclick="setPreset('* * * * *')">每分钟</button>
+    <button class="btn btn-subtle btn-sm" onclick="setPreset('0 * * * *')">每小时整点</button>
+    <button class="btn btn-subtle btn-sm" onclick="setPreset('0 0 * * *')">每天午夜 00:00</button>
+    <button class="btn btn-subtle btn-sm" onclick="setPreset('30 9 * * 1-5')">工作日 09:30</button>
+    <button class="btn btn-subtle btn-sm" onclick="setPreset('0 2 * * 0')">每周日凌晨 02:00</button>
+    <button class="btn btn-subtle btn-sm" onclick="setPreset('0 0 1 * *')">每月 1 日午夜</button>
+    <button class="btn btn-subtle btn-sm" onclick="setPreset('*/15 * * * *')">每 15 分钟</button>
+  </div>
+
+  <div class="cron-input-box">
+    <input type="text" id="cronInput" class="cron-field" value="*/15 9-18 * * 1-5" oninput="parseCron()">
+    <button class="btn btn-subtle" onclick="parseCron()">解析</button>
+  </div>
+
+  <div class="explain-card">
+    <span style="font-size:24px;">💡</span>
+    <div>
+      <div style="font-size:12px;color:var(--text-muted);font-weight:600;margin-bottom:2px;">自然语言翻译</div>
+      <div class="explain-text" id="explainText">加载中...</div>
+    </div>
+  </div>
+
+  <div class="panel active" style="margin-bottom:20px;">
+    <h3 style="font-size:15px;margin-bottom:12px;font-weight:700;">📅 未来 10 次执行时间预测</h3>
+    <ul class="time-list" id="timeList"></ul>
+  </div>
+</main>
+
+<script>
+function setPreset(val) {
+  document.getElementById('cronInput').value = val;
+  parseCron();
+}
+
+function parsePart(part, name, min, max) {
+  if (part === '*') return '每' + name;
+  if (part.includes('/')) {
+    const [, step] = part.split('/');
+    return '每隔 ' + step + ' ' + name;
+  }
+  if (part.includes('-')) {
+    const [start, end] = part.split('-');
+    return '在第 ' + start + ' 到 ' + end + ' ' + name;
+  }
+  if (part.includes(',')) {
+    return '在第 ' + part + ' ' + name;
+  }
+  return '第 ' + part + ' ' + name;
+}
+
+function explainCronExpression(expr) {
+  const parts = expr.trim().split(/\s+/);
+  if (parts.length < 5 || parts.length > 6) return '无效的 Cron 表达式格式（应为 5 段或 6 段，空格分隔）';
+  
+  let sec = parts.length === 6 ? parts[0] : null;
+  let min = parts.length === 6 ? parts[1] : parts[0];
+  let hour = parts[2 - (parts.length === 6 ? 0 : 1)];
+  let day = parts[3 - (parts.length === 6 ? 0 : 1)];
+  let month = parts[4 - (parts.length === 6 ? 0 : 1)];
+  let week = parts[5 - (parts.length === 6 ? 0 : 1)];
+
+  let desc = '';
+  // Month
+  if (month !== '*') desc += parsePart(month, '月', 1, 12) + '，';
+  // Week & Day
+  if (week !== '*') {
+    const weekMap = { '0':'周日','1':'周一','2':'周二','3':'周三','4':'周四','5':'周五','6':'周六','7':'周日' };
+    let weekDesc = week;
+    for (const k in weekMap) weekDesc = weekDesc.replace(new RegExp(k, 'g'), weekMap[k]);
+    desc += weekDesc + '，';
+  }
+  if (day !== '*') desc += parsePart(day, '日', 1, 31) + '，';
+
+  // Hour & Min
+  if (hour.includes('-')) desc += '在 ' + hour + ' 点之间，';
+  else if (hour !== '*') desc += hour + ' 点，';
+  else desc += '每小时，';
+
+  if (min.includes('/')) desc += '每隔 ' + min.split('/')[1] + ' 分钟';
+  else if (min === '*') desc += '每分钟';
+  else desc += min + ' 分';
+
+  if (sec && sec !== '0') desc += ' ' + sec + ' 秒';
+  desc += ' 执行';
+  return desc;
+}
+
+function matchCronField(val, fieldExpr, min, max) {
+  if (fieldExpr === '*') return true;
+  if (fieldExpr.includes('/')) {
+    const [base, stepStr] = fieldExpr.split('/');
+    const step = parseInt(stepStr, 10);
+    const start = base === '*' ? min : parseInt(base, 10);
+    return (val >= start) && ((val - start) % step === 0);
+  }
+  if (fieldExpr.includes('-')) {
+    const [start, end] = fieldExpr.split('-').map(Number);
+    return val >= start && val <= end;
+  }
+  if (fieldExpr.includes(',')) {
+    return fieldExpr.split(',').map(Number).includes(val);
+  }
+  return parseInt(fieldExpr, 10) === val;
+}
+
+function calculateNextRuns(expr, count = 10) {
+  const parts = expr.trim().split(/\s+/);
+  if (parts.length < 5 || parts.length > 6) return [];
+  const is6 = parts.length === 6;
+  const secP = is6 ? parts[0] : '0';
+  const minP = is6 ? parts[1] : parts[0];
+  const hourP = is6 ? parts[2] : parts[1];
+  const dayP = is6 ? parts[3] : parts[2];
+  const monP = is6 ? parts[4] : parts[3];
+  const weekP = is6 ? parts[5] : parts[4];
+
+  const results = [];
+  let cur = new Date();
+  cur.setMilliseconds(0);
+  cur.setSeconds(cur.getSeconds() + 1);
+
+  let iterations = 0;
+  while (results.length < count && iterations < 50000) {
+    iterations++;
+    const s = cur.getSeconds();
+    const m = cur.getMinutes();
+    const h = cur.getHours();
+    const d = cur.getDate();
+    const mon = cur.getMonth() + 1;
+    const w = cur.getDay();
+
+    if (matchCronField(mon, monP, 1, 12) &&
+        matchCronField(d, dayP, 1, 31) &&
+        matchCronField(w, weekP, 0, 6) &&
+        matchCronField(h, hourP, 0, 23) &&
+        matchCronField(m, minP, 0, 59) &&
+        matchCronField(s, secP, 0, 59)) {
+      results.push(new Date(cur));
+    }
+    cur.setSeconds(cur.getSeconds() + (is6 ? 1 : 60));
+    if (!is6) cur.setSeconds(0);
+  }
+  return results;
+}
+
+function parseCron() {
+  const expr = document.getElementById('cronInput').value.trim();
+  const exp = explainCronExpression(expr);
+  document.getElementById('explainText').textContent = exp;
+
+  const list = document.getElementById('timeList');
+  list.innerHTML = '';
+  const runs = calculateNextRuns(expr, 10);
+  if (runs.length === 0) {
+    list.innerHTML = '<li style="color:var(--text-muted);font-size:13px;">无法计算下一次执行时间，请检查表达式语法。</li>';
+    return;
+  }
+
+  runs.forEach((r, idx) => {
+    const pad = n => String(n).padStart(2, '0');
+    const timeStr = r.getFullYear() + '-' + pad(r.getMonth() + 1) + '-' + pad(r.getDate()) + ' ' + pad(r.getHours()) + ':' + pad(r.getMinutes()) + ':' + pad(r.getSeconds());
+    const li = document.createElement('li');
+    li.className = 'time-item';
+    li.innerHTML = '<span>#' + (idx + 1) + '</span><b>' + timeStr + '</b>';
+    list.appendChild(li);
+  });
+}
+
+function copyCron() {
+  const val = document.getElementById('cronInput').value;
+  navigator.clipboard.writeText(val).then(() => showToast('Cron 表达式已复制: ' + val));
+}
+
+window.addEventListener('DOMContentLoaded', parseCron);
+</script>
+
+<script>
+function initTheme(){
+  const saved=localStorage.getItem('app_theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved);}
+  else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.setAttribute('data-theme','dark');}
+}
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  const target=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',target);
+  localStorage.setItem('app_theme',target);
+}
+initTheme();
+function showToast(msg, duration=2200){
+  const el=document.createElement('div');
+  el.textContent=msg;
+  el.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:9999px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 10px 25px rgba(0,0,0,.2);transition:opacity .3s;';
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},duration);
+}
+</script>
+</body>
+</html>

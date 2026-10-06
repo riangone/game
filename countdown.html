@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>倒数日 · 纪念日与事件倒计时</title>
+<meta name="description" content="纯前端多事件倒数日工具，支持纪念日、考试、节日等多张倒计时卡片，本地持久化保存。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--danger:#ef4444;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--shadow-hover:0 12px 24px -4px rgba(15,23,42,.12);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:1000px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.add-bar{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:14px;box-shadow:var(--shadow-sm);}
+.add-bar input{padding:10px 12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;}
+.add-bar input[type=text]{flex:1;min-width:140px;}
+.add-bar select{padding:10px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);}
+.add-bar button{padding:10px 20px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:800;cursor:pointer;}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.cd-card{position:relative;border-radius:var(--radius-lg);padding:22px;color:#fff;box-shadow:var(--shadow-sm);overflow:hidden;transition:transform .2s;}
+.cd-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-hover);}
+.cd-emoji{font-size:28px;}
+.cd-name{font-size:16px;font-weight:800;margin:8px 0 2px;}
+.cd-date{font-size:12px;opacity:.85;}
+.cd-days{font-size:40px;font-weight:900;margin-top:14px;line-height:1;}
+.cd-unit{font-size:13px;opacity:.9;}
+.cd-del{position:absolute;top:10px;right:10px;background:rgba(255,255,255,0.25);border:none;color:#fff;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:13px;}
+.empty-state{text-align:center;padding:50px;color:var(--text-light);}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/countdown.html">
+</head>
+<body>
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>⏳</span><span>倒数日</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="countdown.html">⏳ 倒数日</option>
+      <option value="time-tool.html">🕐 时间工具箱</option>
+      <option value="habit-tracker.html">🔥 习惯打卡</option>
+      <option value="todolist.html">✅ 待办清单</option>
+      <option value="expense-tracker.html">💰 记账本</option>
+      <option value="loan-calculator.html">🏦 贷款计算器</option>
+      <option value="color-tool.html">🎨 颜色工具箱</option>
+      <option value="drawing-board.html">🖌️ 简易画板</option>
+      <option value="img-to-pdf.html">📄 图片转PDF</option>
+      <option value="network-info.html">🌐 网络信息</option>
+      <option value="pomodoro.html">🍅 番茄钟</option>
+          <option value="calendar.html">📅 万年历</option>
+</select>
+    <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+  </div>
+</header>
+
+<main class="container">
+  <h1 class="page-title">⏳ 倒数日</h1>
+  <p class="page-sub">纪念日、考试、节日多事件倒计时，支持正计时（已过去）与倒计时（未到来）自动识别。</p>
+
+  <div class="add-bar">
+    <input type="text" id="evName" placeholder="事件名称，如：生日 / 高考 / 旅行">
+    <input type="date" id="evDate">
+    <select id="evEmoji">
+      <option value="🎂">🎂 生日</option>
+      <option value="🎓">🎓 考试</option>
+      <option value="✈️">✈️ 旅行</option>
+      <option value="💍">💍 纪念日</option>
+      <option value="🎉">🎉 节日</option>
+      <option value="📅">📅 其他</option>
+    </select>
+    <button onclick="addEvent()">+ 添加倒数日</button>
+  </div>
+
+  <div class="cards-grid" id="cardsGrid"></div>
+</main>
+
+<script>
+(function(){const t=localStorage.getItem('app_theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');})();
+function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme');const next=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);localStorage.setItem('app_theme',next);}
+
+const STORAGE_KEY = 'countdown_events_v1';
+let events = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+const GRADIENTS = [
+  'linear-gradient(135deg,#0284c7,#06b6d4)',
+  'linear-gradient(135deg,#8b5cf6,#d946ef)',
+  'linear-gradient(135deg,#f59e0b,#ef4444)',
+  'linear-gradient(135deg,#10b981,#059669)',
+  'linear-gradient(135deg,#ec4899,#f43f5e)',
+  'linear-gradient(135deg,#6366f1,#3b82f6)'
+];
+
+document.getElementById('evDate').value = new Date().toISOString().slice(0,10);
+
+function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(events)); render(); }
+
+function addEvent(){
+  const name = document.getElementById('evName').value.trim();
+  const date = document.getElementById('evDate').value;
+  const emoji = document.getElementById('evEmoji').value;
+  if(!name || !date){ alert('请输入事件名称和日期'); return; }
+  events.push({ id: Date.now(), name, date, emoji });
+  document.getElementById('evName').value = '';
+  save();
+}
+function removeEvent(id){ events = events.filter(e=>e.id!==id); save(); }
+
+function diffDays(dateStr){
+  const target = new Date(dateStr + 'T00:00:00');
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.round((target - todayStart) / 86400000);
+}
+
+function render(){
+  const grid = document.getElementById('cardsGrid');
+  if(events.length === 0){
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;">暂无倒数日事件，添加一个开始期待吧 🎈</div>';
+    return;
+  }
+  const sorted = [...events].sort((a,b)=>diffDays(a.date)-diffDays(b.date));
+  grid.innerHTML = sorted.map((e,i) => {
+    const d = diffDays(e.date);
+    let text, unit;
+    if(d === 0){ text = '🎉'; unit = '就是今天！'; }
+    else if(d > 0){ text = d; unit = '天后'; }
+    else { text = Math.abs(d); unit = '天前'; }
+    return `
+      <div class="cd-card" style="background:${GRADIENTS[i % GRADIENTS.length]}">
+        <button class="cd-del" onclick="removeEvent(${e.id})">✕</button>
+        <div class="cd-emoji">${e.emoji}</div>
+        <div class="cd-name">${escapeHtml(e.name)}</div>
+        <div class="cd-date">${e.date}</div>
+        <div class="cd-days">${text}</div>
+        <div class="cd-unit">${unit}</div>
+      </div>`;
+  }).join('');
+}
+function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+render();
+setInterval(render, 60000);
+</script>
+</body>
+</html>

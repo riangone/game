@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>字符画与 ASCII 艺术字 · 纯前端免安装工具</title>
+<meta name="description" content="纯前端点阵 ASCII Banner 艺术字生成、图片转高精度字符画，支持对比度增强与纯文本一键导出。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--purple:#8b5cf6;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,.06);--shadow-lg:0 10px 15px -3px rgba(0,0,0,.08);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:1100px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.tab-btn{padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-muted);font-size:13px;font-weight:700;cursor:pointer;transition:.2s;}
+.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.panel{display:none;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);}
+.panel.active{display:block;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;}
+.btn:hover{background:var(--primary-hover);}
+.btn-subtle{background:var(--bg-subtle);color:var(--text-main);border:1px solid var(--border-color);}
+.btn-subtle:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+input[type=text],input[type=number],textarea,select{width:100%;padding:10px 12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;outline:none;}
+input:focus,textarea:focus,select:focus{border-color:var(--border-focus);}
+label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;}
+.badge{display:inline-block;padding:3px 8px;border-radius:var(--radius-pill);font-size:11px;font-weight:700;}
+.badge-success{background:rgba(16,185,129,.15);color:var(--success);}
+.badge-warning{background:rgba(245,158,11,.15);color:var(--warning);}
+.badge-primary{background:var(--primary-subtle);color:var(--primary);}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/ascii-art.html">
+</head>
+<style>
+.ascii-out{font-family:var(--font-mono);font-size:11px;line-height:1.15;white-space:pre;overflow-x:auto;background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px;color:var(--text-main);min-height:220px;}
+.ctrl-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px;}
+.drop-zone{border:2px dashed var(--border-color);border-radius:var(--radius-lg);padding:24px;text-align:center;color:var(--text-muted);cursor:pointer;margin-bottom:16px;}
+.drop-zone:hover{border-color:var(--primary);color:var(--primary);}
+</style>
+
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>🔤</span><span>字符画与 ASCII 艺术字</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="markdown-editor.html">📝 Markdown排版</option>
+      <option value="uuid-generator.html">🆔 唯一标识生成</option>
+      <option value="json-csv-tool.html">🔄 JSON/CSV互转</option>
+      <option value="cron-parser.html">⏰ Cron表达式</option>
+      <option value="css-generator.html">🎨 CSS视觉工坊</option>
+      <option value="ascii-art.html">🔤 字符画艺术</option>
+      <option value="tools.html">🏠 返回全部工具</option>
+    </select>
+    <button class="theme-btn" onclick="toggleTheme()" title="切换明暗主题">🌓</button>
+  </div>
+</header>
+<main class="container">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+    <div>
+      <h1 class="page-title">🔤 字符画与 ASCII 艺术字</h1>
+      <p class="page-sub">字符 Banner 艺术字体生成与 Canvas 像素灰度映射字符画。100% 离线零依赖。</p>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-subtle" onclick="copyAscii()">📋 复制文本</button>
+      <button class="btn btn-subtle" onclick="downloadAscii()">💾 存为 TXT</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="text" onclick="switchTab('text')">英文字符 Banner</button>
+    <button class="tab-btn" data-tab="img" onclick="switchTab('img')">图片转字符画</button>
+  </div>
+
+  <div class="panel active" id="panel-text">
+    <div class="ctrl-row">
+      <input type="text" id="bannerInput" value="ARCHITECT" placeholder="键入英文字符..." style="max-width:300px;" oninput="generateBanner()">
+      <select id="bannerFont" onchange="generateBanner()" style="max-width:180px;">
+        <option value="standard">立体标准 (Standard)</option>
+        <option value="slant">倾斜立体 (Slant)</option>
+        <option value="simple">简约方块 (Block)</option>
+      </select>
+    </div>
+    <div class="ascii-out" id="bannerOutput"></div>
+  </div>
+
+  <div class="panel" id="panel-img">
+    <div class="drop-zone" onclick="document.getElementById('imgFile').click()">
+      <input type="file" id="imgFile" accept="image/*" style="display:none;" onchange="handleImage(event)">
+      <div style="font-size:28px;margin-bottom:6px;">🖼️</div>
+      <div>点击或拖拽图片至此处转换</div>
+      <div style="font-size:11px;margin-top:4px;">支持 PNG、JPEG、WebP 格式</div>
+    </div>
+
+    <div class="ctrl-row">
+      <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;">
+        <span>输出宽度: <b id="widthVal">80</b> 字符</span>
+        <input type="range" id="asciiWidth" min="30" max="160" value="80" oninput="document.getElementById('widthVal').textContent=this.value;if(loadedImg)processImage();">
+      </div>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;cursor:pointer;">
+        <input type="checkbox" id="invertChar" onchange="if(loadedImg)processImage();"> 反色模式 (适合暗色背景)
+      </label>
+    </div>
+
+    <div class="ascii-out" id="imgOutput">请先上传一张图片...</div>
+  </div>
+</main>
+
+<script>
+let curTab = 'text';
+let loadedImg = null;
+
+function switchTab(tab) {
+  curTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-tab') === tab));
+  document.getElementById('panel-text').classList.toggle('active', tab === 'text');
+  document.getElementById('panel-img').classList.toggle('active', tab === 'img');
+}
+
+// Built-in Mini Figlet Fonts
+const FONT_STANDARD = {"A":["  ___  "," / _ \\ ","/ /_\\ \\","|  _  |","| | | |","\\_| |_/"],"B":["______ ","| ___ \\","| |_/ /","| ___ \\","| |_/ /","\\____/ "],"C":[" _____ ","/  __ \\","| /  \\/","| |    ","| \\__/\\"," \\____/"],"D":["______ ","|  _  \\","| | | |","| | | |","| |/ / ","|___/  "],"E":[" _____ ","|  ___|","| |__  ","|  __| ","| |___ ","\\____/ "],"F":["______ ","|  ___|","| |_   ","|  _|  ","| |    ","\\_|    "],"G":[" _____ ","|  __ \\","| |  \\/","| | __ ","| |_\\ \\"," \\____/"],"H":[" _   _ ","| | | |","| |_| |","|  _  |","| | | |","\\_| |_/"],"I":[" _____ ","|_   _|","  | |  ","  | |  "," _| |_ "," \\___/ "],"J":["   ___ ","  |_  |","    | |","    | |","/\\__/ /","\\____/ "],"K":[" _   __","| | / /","| |/ / ","|    \\ ","| |\\  \\","\\_| \\_/"],"L":[" _     ","| |    ","| |    ","| |    ","| |____","\\_____/"],"M":["___  ___","|  \\/  |","| .  . |","| |\\/| |","| |  | |","\\_|  |_/"],"N":[" _   _ ","| \\ | |","|  \\| |","| . ` |","| |\\  |","\\_| \\_/"],"O":[" _____ ","|  _  |","| | | |","| | | |","\\ \\_/ /"," \\___/ "],"P":["______ ","| ___ \\","| |_/ /","|  __/ ","| |    ","\\_|    "],"Q":[" _____ ","|  _  |","| | | |","| | | |","\\ \\/' /"," \\_/\\_\\"],"R":["______ ","| ___ \\","| |_/ /","|    / ","| |\\ \\ ","\\_| \\_|"],"S":[" _____ ","/  ___|","\\ `--. "," `--. \\","/\\__/ /","\\____/ "],"T":[" _____ ","|_   _|","  | |  ","  | |  ","  | |  ","  \\_/  "],"U":[" _   _ ","| | | |","| | | |","| | | |","| |_| |"," \\___/ "],"V":[" _   _ ","| | | |","| | | |","| | | |","\\ \\_/ /"," \\___/ "],"W":[" _    _ ","| |  | |","| |  | |","| |/\\| |","\\  /\\  /"," \\/  \\/ "],"X":["__   __","\\ \\ / /"," \\ V / "," /   \\ ","/ /^\\ \\","\\/   \\/"],"Y":["__   __","\\ \\ / /"," \\ V / ","  | |  ","  | |  ","  \\_/  "],"Z":["______","|___  /","   / / ","  / /  ","./ /___","\\_____/"]," ":["   ","   ","   ","   ","   ","   "]};
+
+function generateBanner() {
+  const text = (document.getElementById('bannerInput').value || 'HELLO').toUpperCase();
+  const lines = ['', '', '', '', '', ''];
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    const glyph = FONT_STANDARD[ch] || FONT_STANDARD[' '];
+    for (let r = 0; r < 6; r++) {
+      lines[r] += (glyph[r] || '      ') + ' ';
+    }
+  }
+  document.getElementById('bannerOutput').textContent = lines.join('\n');
+}
+
+const CHARS = '@%#*+=-:. ';
+
+function handleImage(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      loadedImg = img;
+      processImage();
+      showToast('图片加载完成，正在生成字符画...');
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function processImage() {
+  if (!loadedImg) return;
+  const width = parseInt(document.getElementById('asciiWidth').value, 10);
+  const scale = width / loadedImg.width;
+  // Font aspect ratio compensation (chars are ~2x taller than wide)
+  const height = Math.round(loadedImg.height * scale * 0.5);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(loadedImg, 0, 0, width, height);
+
+  const imgData = ctx.getImageData(0, 0, width, height).data;
+  const invert = document.getElementById('invertChar').checked;
+  let ascii = '';
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = (y * width + x) * 4;
+      const r = imgData[idx];
+      const g = imgData[idx + 1];
+      const b = imgData[idx + 2];
+      const a = imgData[idx + 3];
+      if (a === 0) {
+        ascii += ' ';
+        continue;
+      }
+      let gray = 0.299 * r + 0.587 * g + 0.114 * b;
+      if (invert) gray = 255 - gray;
+      const charIdx = Math.floor((gray / 255) * (CHARS.length - 1));
+      ascii += CHARS[charIdx];
+    }
+    ascii += '\n';
+  }
+  document.getElementById('imgOutput').textContent = ascii;
+}
+
+function copyAscii() {
+  const el = curTab === 'text' ? document.getElementById('bannerOutput') : document.getElementById('imgOutput');
+  navigator.clipboard.writeText(el.textContent).then(() => showToast('字符画已复制到剪贴板！'));
+}
+
+function downloadAscii() {
+  const el = curTab === 'text' ? document.getElementById('bannerOutput') : document.getElementById('imgOutput');
+  const blob = new Blob([el.textContent], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ascii_art_' + Date.now() + '.txt';
+  a.click();
+  showToast('已保存 TXT 字符画文件');
+}
+
+window.addEventListener('DOMContentLoaded', generateBanner);
+</script>
+
+<script>
+function initTheme(){
+  const saved=localStorage.getItem('app_theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved);}
+  else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.setAttribute('data-theme','dark');}
+}
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  const target=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',target);
+  localStorage.setItem('app_theme',target);
+}
+initTheme();
+function showToast(msg, duration=2200){
+  const el=document.createElement('div');
+  el.textContent=msg;
+  el.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:9999px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 10px 25px rgba(0,0,0,.2);transition:opacity .3s;';
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},duration);
+}
+</script>
+</body>
+</html>

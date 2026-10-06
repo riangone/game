@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>图片转 PDF · 多图合并导出</title>
+<meta name="description" content="纯前端图片转PDF工具，手写最简PDF二进制结构生成器，不依赖pdf.js，多图合并为单个PDF文件，100%本地计算。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--danger:#ef4444;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:860px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.dropzone{border:2px dashed var(--border-color);border-radius:var(--radius-lg);padding:30px;text-align:center;color:var(--text-muted);cursor:pointer;margin-bottom:16px;}
+.dropzone.drag{border-color:var(--primary);background:var(--primary-subtle);color:var(--primary);}
+.img-list{display:flex;flex-direction:column;gap:8px;margin-bottom:18px;}
+.img-row{display:flex;align-items:center;gap:12px;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:8px 12px;box-shadow:var(--shadow-sm);}
+.img-row img{width:48px;height:48px;object-fit:cover;border-radius:8px;flex-shrink:0;}
+.img-row .fname{flex:1;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.img-row .fsize{font-size:11px;color:var(--text-muted);flex-shrink:0;}
+.icon-btn{border:none;background:var(--bg-subtle);border-radius:8px;width:28px;height:28px;cursor:pointer;flex-shrink:0;}
+.icon-btn:hover{background:var(--primary-subtle);}
+.card{background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:18px;box-shadow:var(--shadow-sm);margin-bottom:16px;}
+.row{display:flex;gap:16px;align-items:center;flex-wrap:wrap;}
+label.small{font-size:12px;color:var(--text-muted);font-weight:700;}
+.btn{padding:13px 22px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:800;cursor:pointer;font-size:14px;width:100%;}
+.btn:disabled{opacity:0.5;cursor:not-allowed;}
+.empty-state{text-align:center;color:var(--text-light);padding:20px;}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/img-to-pdf.html">
+</head>
+<body>
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>📄</span><span>图片转 PDF</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="img-to-pdf.html">📄 图片转PDF</option>
+      <option value="image-tool.html">🖼️ 图片工坊</option>
+      <option value="drawing-board.html">🖌️ 简易画板</option>
+      <option value="color-tool.html">🎨 颜色工具箱</option>
+      <option value="qrcode.html">📱 二维码</option>
+          <option value="calendar.html">📅 万年历</option>
+</select>
+    <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+  </div>
+</header>
+
+<main class="container">
+  <h1 class="page-title">📄 图片转 PDF</h1>
+  <p class="page-sub">手写最简 PDF 二进制结构生成器（不依赖 pdf.js），多张图片自动按 A4 纸张合并为单个 PDF，纯本地计算零上传。</p>
+
+  <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+    📁 拖拽多张图片到此处，或点击选择（支持 JPG/PNG/WebP，可多选）
+    <input type="file" id="fileInput" accept="image/*" multiple style="display:none" onchange="handleFiles(this.files)">
+  </div>
+
+  <div class="img-list" id="imgList"></div>
+
+  <div class="card">
+    <div class="row">
+      <div style="flex:1;">
+        <label class="small">JPEG 压缩质量</label>
+        <input type="range" id="quality" min="0.3" max="1" step="0.05" value="0.85" style="width:100%;">
+      </div>
+      <div><span id="qualityLabel">85%</span></div>
+    </div>
+  </div>
+
+  <button class="btn" id="genBtn" onclick="generatePdf()" disabled>📄 生成并下载 PDF (0 张图片)</button>
+</main>
+
+<script>
+(function(){const t=localStorage.getItem('app_theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');})();
+function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme');const next=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);localStorage.setItem('app_theme',next);}
+
+let images = []; // {id, file, url, name, size}
+
+document.getElementById('quality').addEventListener('input', e => {
+  document.getElementById('qualityLabel').textContent = Math.round(e.target.value*100) + '%';
+});
+
+const dropzone = document.getElementById('dropzone');
+['dragover','dragenter'].forEach(ev => dropzone.addEventListener(ev, e=>{e.preventDefault(); dropzone.classList.add('drag');}));
+['dragleave','drop'].forEach(ev => dropzone.addEventListener(ev, e=>{e.preventDefault(); dropzone.classList.remove('drag');}));
+dropzone.addEventListener('drop', e=>{ handleFiles(e.dataTransfer.files); });
+
+function fmtBytes(n){
+  if(n<1024) return n+' B';
+  if(n<1048576) return (n/1024).toFixed(1)+' KB';
+  return (n/1048576).toFixed(2)+' MB';
+}
+
+function handleFiles(fileList){
+  [...fileList].filter(f=>f.type.startsWith('image/')).forEach(f => {
+    images.push({ id: Date.now()+Math.random(), file: f, url: URL.createObjectURL(f), name: f.name, size: f.size });
+  });
+  render();
+}
+
+function removeImage(id){ images = images.filter(i=>i.id!==id); render(); }
+function moveImage(id, dir){
+  const idx = images.findIndex(i=>i.id===id);
+  const newIdx = idx + dir;
+  if(newIdx < 0 || newIdx >= images.length) return;
+  [images[idx], images[newIdx]] = [images[newIdx], images[idx]];
+  render();
+}
+
+function render(){
+  const list = document.getElementById('imgList');
+  if(images.length === 0){
+    list.innerHTML = '<div class="empty-state">尚未添加图片</div>';
+  } else {
+    list.innerHTML = images.map((img,i) => `
+      <div class="img-row">
+        <img src="${img.url}">
+        <span class="fname">${i+1}. ${escapeHtml(img.name)}</span>
+        <span class="fsize">${fmtBytes(img.size)}</span>
+        <button class="icon-btn" onclick="moveImage(${img.id},-1)">↑</button>
+        <button class="icon-btn" onclick="moveImage(${img.id},1)">↓</button>
+        <button class="icon-btn" onclick="removeImage(${img.id})">✕</button>
+      </div>`).join('');
+  }
+  const btn = document.getElementById('genBtn');
+  btn.disabled = images.length === 0;
+  btn.textContent = `📄 生成并下载 PDF (${images.length} 张图片)`;
+}
+function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+function loadImage(url){
+  return new Promise((resolve,reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+function dataUrlToBytes(dataUrl){
+  const base64 = dataUrl.split(',')[1];
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+  for(let i=0;i<binary.length;i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
+async function imageToJpegPage(imgEntry, quality){
+  const img = await loadImage(imgEntry.url);
+  const MAX_DIM = 2000;
+  let w = img.naturalWidth, h = img.naturalHeight;
+  if(Math.max(w,h) > MAX_DIM){
+    const scale = MAX_DIM / Math.max(w,h);
+    w = Math.round(w*scale); h = Math.round(h*scale);
+  }
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0,0,w,h);
+  ctx.drawImage(img, 0, 0, w, h);
+  const dataUrl = canvas.toDataURL('image/jpeg', quality);
+  const jpegBytes = dataUrlToBytes(dataUrl);
+  return { jpegBytes, pxWidth: w, pxHeight: h };
+}
+
+// ---- 最简 PDF 二进制生成器 ----
+function buildPdf(pages){
+  const PAGE_W = 595.28, PAGE_H = 841.89, MARGIN = 24;
+  const enc = new TextEncoder();
+  const chunks = [];
+  let offset = 0;
+  const objOffsets = {};
+  function write(data){
+    const bytes = typeof data === 'string' ? enc.encode(data) : data;
+    chunks.push(bytes);
+    offset += bytes.length;
+  }
+  function beginObj(num){ objOffsets[num] = offset; write(num + ' 0 obj\n'); }
+  function endObj(){ write('endobj\n'); }
+
+  write('%PDF-1.4\n');
+
+  const N = pages.length;
+  const kids = [];
+  for(let i=0;i<N;i++) kids.push(3 + i*3);
+  const totalObjs = 2 + N*3;
+
+  beginObj(1); write('<< /Type /Catalog /Pages 2 0 R >>\n'); endObj();
+  beginObj(2); write('<< /Type /Pages /Kids [' + kids.map(n=>n+' 0 R').join(' ') + '] /Count ' + N + ' >>\n'); endObj();
+
+  pages.forEach((p, i) => {
+    const pageObj = 3 + i*3, contentObj = 4 + i*3, imageObj = 5 + i*3;
+    const availW = PAGE_W - MARGIN*2, availH = PAGE_H - MARGIN*2;
+    const scale = Math.min(availW/p.pxWidth, availH/p.pxHeight);
+    const w = p.pxWidth * scale, h = p.pxHeight * scale;
+    const x = (PAGE_W - w) / 2, y = (PAGE_H - h) / 2;
+    const contentStr = `q\n${w.toFixed(2)} 0 0 ${h.toFixed(2)} ${x.toFixed(2)} ${y.toFixed(2)} cm\n/Im${i} Do\nQ`;
+    const contentBytes = enc.encode(contentStr);
+
+    beginObj(pageObj);
+    write(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${PAGE_W} ${PAGE_H}] /Resources << /XObject << /Im${i} ${imageObj} 0 R >> >> /Contents ${contentObj} 0 R >>\n`);
+    endObj();
+
+    beginObj(contentObj);
+    write(`<< /Length ${contentBytes.length} >>\nstream\n`);
+    write(contentBytes);
+    write('\nendstream\n');
+    endObj();
+
+    beginObj(imageObj);
+    write(`<< /Type /XObject /Subtype /Image /Width ${p.pxWidth} /Height ${p.pxHeight} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${p.jpegBytes.length} >>\nstream\n`);
+    write(p.jpegBytes);
+    write('\nendstream\n');
+    endObj();
+  });
+
+  const xrefOffset = offset;
+  write('xref\n');
+  write('0 ' + (totalObjs+1) + '\n');
+  write('0000000000 65535 f \n');
+  for(let i=1;i<=totalObjs;i++){
+    write(String(objOffsets[i]).padStart(10,'0') + ' 00000 n \n');
+  }
+  write('trailer\n<< /Size ' + (totalObjs+1) + ' /Root 1 0 R >>\nstartxref\n' + xrefOffset + '\n%%EOF');
+
+  return new Blob(chunks, { type: 'application/pdf' });
+}
+
+async function generatePdf(){
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  const originalText = btn.textContent;
+  btn.textContent = '⏳ 正在生成...';
+  try{
+    const quality = parseFloat(document.getElementById('quality').value);
+    const pages = [];
+    for(const img of images){
+      pages.push(await imageToJpegPage(img, quality));
+    }
+    const blob = buildPdf(pages);
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'images-' + Date.now() + '.pdf';
+    link.click();
+  }catch(e){
+    alert('生成失败：' + e.message);
+  }
+  btn.disabled = false;
+  render();
+}
+
+render();
+</script>
+</body>
+</html>

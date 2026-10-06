@@ -384,6 +384,7 @@
       .modal-body { grid-template-columns: 1fr; }
     }
   </style>
+    <link rel="canonical" href="https://tool.0101.click/image-tool.html">
 </head>
 <body>
 
@@ -494,6 +495,7 @@
     <div class="batch-bar" id="batchBar" style="display:none;">
       <div class="batch-summary">
         已加载 <strong id="totalCount">0</strong> 张图片 · 原总计 <strong id="totalOrigSize">0 MB</strong> → 压缩后 <strong id="totalNewSize" style="color:var(--success)">0 MB</strong> (<span id="totalSavingsBadge">-0%</span>)
+        <div id="globalSizeWarning" style="display:none; margin-top:6px; font-size:13px; color:var(--warning);"></div>
       </div>
       <div class="batch-actions">
         <button class="btn btn-primary" onclick="downloadAll()">📦 批量下载全部图片</button>
@@ -617,6 +619,7 @@
             const item = {
               id,
               name: file.name,
+              origFile: file,
               origSize: file.size,
               origWidth: img.naturalWidth,
               origHeight: img.naturalHeight,
@@ -627,7 +630,9 @@
               processedSrc: null,
               processedSize: 0,
               processedWidth: 0,
-              processedHeight: 0
+              processedHeight: 0,
+              isLarger: false,
+              formatSuggestion: null
             };
             imageItems.push(item);
             processItem(item);
@@ -693,6 +698,21 @@
         item.processedSize = blob.size;
         item.processedWidth = canvas.width;
         item.processedHeight = canvas.height;
+
+        // Smart Fallback Guard：体积兜底保护与智能格式建议
+        item.isLarger = blob.size >= item.origSize;
+        item.formatSuggestion = null;
+        if (item.isLarger) {
+          const isPhotoSource = (item.origType === 'image/jpeg' || item.origType === 'image/webp');
+          if (format === 'image/png' && isPhotoSource) {
+            item.formatSuggestion = '检测到照片类图片，PNG 为无损格式通常更大，建议改选 WebP 或 JPEG';
+          } else if (format === 'image/jpeg' || format === 'image/webp') {
+            item.formatSuggestion = '该图片原始编码已足够高效，重新编码后体积不降反增，建议直接使用原图';
+          } else {
+            item.formatSuggestion = '压缩后体积大于原图，建议调整画质或改选其他格式';
+          }
+        }
+
         updateUI();
       }, format, quality);
     }
@@ -752,6 +772,20 @@
         badge.style.color = 'var(--warning)';
       }
 
+      // Smart Fallback Guard：全局兜底提醒横幅
+      const globalWarning = document.getElementById('globalSizeWarning');
+      const largerItems = imageItems.filter(it => it.isLarger);
+      if (largerItems.length > 0) {
+        const pngPhotoCase = largerItems.find(it => it.formatSuggestion && it.formatSuggestion.includes('WebP 或 JPEG'));
+        globalWarning.style.display = 'block';
+        globalWarning.textContent = pngPhotoCase
+          ? `⚠️ 有 ${largerItems.length} 张图片压缩后体积不降反增：${pngPhotoCase.formatSuggestion}（下载时将自动保留原图）`
+          : `⚠️ 有 ${largerItems.length} 张图片压缩后体积不降反增，下载时将自动保留原图以避免"伪压缩"`;
+      } else {
+        globalWarning.style.display = 'none';
+        globalWarning.textContent = '';
+      }
+
       // 渲染列表
       listEl.innerHTML = imageItems.map((item, idx) => {
         const itemDiff = item.origSize - item.processedSize;
@@ -771,19 +805,20 @@
                 <span>•</span>
                 <span>目标: ${item.processedWidth || item.origWidth}×${item.processedHeight || item.origHeight} (${ext.toUpperCase()})</span>
               </div>
+              ${item.isLarger ? `<div class="item-warning-line" style="color:var(--warning); font-size:12px; margin-top:4px;">⚠️ ${item.formatSuggestion}</div>` : ''}
             </div>
 
             <div class="item-stats">
               <span class="size-orig">${formatBytes(item.origSize)}</span>
               <span class="size-new">${formatBytes(item.processedSize)}</span>
-              <span class="size-diff-badge" style="background:${itemPct >= 0 ? 'var(--success-subtle)' : 'rgba(245,158,11,0.15)'}; color:${itemPct >= 0 ? 'var(--success)' : 'var(--warning)'};">
-                ${itemPct >= 0 ? `-${itemPct}%` : `+${Math.abs(itemPct)}%`}
+              <span class="size-diff-badge" style="background:${itemPct >= 0 ? 'var(--success-subtle)' : 'rgba(245,158,11,0.15)'}; color:${itemPct >= 0 ? 'var(--success)' : 'var(--warning)'};" title="${item.isLarger ? '该格式更大，建议调整' : ''}">
+                ${item.isLarger ? '⚠️ ' : ''}${itemPct >= 0 ? `-${itemPct}%` : `+${Math.abs(itemPct)}%`}
               </span>
             </div>
 
             <div class="item-actions">
               <button class="btn" style="padding:6px 10px;" onclick="openCompareModal('${item.id}')" title="原图与压缩图比对">🔍 对比</button>
-              <button class="btn btn-primary" style="padding:6px 10px;" onclick="downloadSingle('${item.id}')" title="下载此图">📥 下载</button>
+              <button class="btn btn-primary" style="padding:6px 10px;" onclick="downloadSingle('${item.id}')" title="${item.isLarger ? '压缩后更大，将自动下载原图' : '下载此图'}">${item.isLarger ? '📥 下载原图' : '📥 下载'}</button>
               <button class="btn btn-danger" style="padding:6px 8px;" onclick="removeItem('${item.id}')" title="移除此图">✕</button>
             </div>
           </div>
@@ -801,8 +836,23 @@
     function downloadSingle(id) {
       const item = imageItems.find(it => it.id === id);
       if (!item || !item.processedBlob) return;
-      const ext = getOutputExtension();
       const baseName = item.name.substring(0, item.name.lastIndexOf('.')) || item.name;
+
+      // Smart Fallback Guard：若重新编码后体积不降反增，自动改为下载原图，避免"伪压缩"
+      if (item.isLarger && item.origFile) {
+        const origExt = (item.name.substring(item.name.lastIndexOf('.') + 1) || 'jpg').toLowerCase();
+        const fileName = `${baseName}_original.${origExt}`;
+        const url = URL.createObjectURL(item.origFile);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showToast(`⚠️ 该格式压缩后体积更大，已为您自动保留原图：${fileName}`);
+        return;
+      }
+
+      const ext = getOutputExtension();
       const fileName = `${baseName}_optimized.${ext}`;
 
       const a = document.createElement('a');

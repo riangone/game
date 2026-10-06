@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>九宫格切图工坊 · 纯前端免安装工具</title>
+<meta name="description" content="纯前端社交媒体九宫格、四宫格、长图三联屏无损切图，一键导出序号序列，100% 离线。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--purple:#8b5cf6;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,.06);--shadow-lg:0 10px 15px -3px rgba(0,0,0,.08);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:1100px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.tab-btn{padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-muted);font-size:13px;font-weight:700;cursor:pointer;transition:.2s;}
+.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.panel{display:none;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);}
+.panel.active{display:block;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;}
+.btn:hover{background:var(--primary-hover);}
+.btn-subtle{background:var(--bg-subtle);color:var(--text-main);border:1px solid var(--border-color);}
+.btn-subtle:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+input[type=text],input[type=number],textarea,select{width:100%;padding:10px 12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;outline:none;}
+input:focus,textarea:focus,select:focus{border-color:var(--border-focus);}
+label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/image-grid-splitter.html">
+</head>
+<style>
+.splitter-layout{display:grid;grid-template-columns:300px 1fr;gap:24px;align-items:start;}
+@media(max-width:768px){.splitter-layout{grid-template-columns:1fr;}}
+.grid-preview{display:grid;gap:6px;background:var(--bg-subtle);padding:14px;border-radius:var(--radius-lg);border:1px solid var(--border-color);max-width:440px;margin:0 auto;}
+.slice-cell{position:relative;border-radius:6px;overflow:hidden;aspect-ratio:1/1;background:#fff;border:1px solid var(--border-color);box-shadow:var(--shadow-sm);}
+.slice-cell canvas{width:100%;height:100%;display:block;}
+.slice-num{position:absolute;top:4px;left:4px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;font-weight:800;padding:2px 6px;border-radius:4px;}
+</style>
+
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>🧩</span><span>九宫格切图工坊</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="favicon-generator.html">🌐 Favicon图标生成</option>
+      <option value="image-grid-splitter.html">🧩 九宫格切图工坊</option>
+      <option value="metronome.html">⏱️ 电子节拍器与鼓机</option>
+      <option value="font-previewer.html">🔤 字体预览工坊</option>
+      <option value="tools.html">🏠 全部工具大厅</option>
+    </select>
+    <button class="theme-btn" onclick="toggleTheme()" title="切换明暗主题">🌓</button>
+  </div>
+</header>
+<main class="container">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+    <div>
+      <h1 class="page-title">🧩 九宫格切图工坊</h1>
+      <p class="page-sub">朋友圈、微博九宫格、三联屏横图与小红书竖拼一键裁切分割，按顺序批量下载。</p>
+    </div>
+    <button class="btn" onclick="downloadAllSlices()">💾 批量下载所有切片</button>
+  </div>
+
+  <div class="splitter-layout">
+    <div class="panel active">
+      <div style="margin-bottom:14px;">
+        <label class="field-label">选择切图图片</label>
+        <input type="file" id="srcImgFile" accept="image/*" onchange="handleImage(event)">
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label class="field-label">宫格版式</label>
+        <select id="gridType" onchange="updateGrid()">
+          <option value="3x3" selected>3 × 3 九宫格 (朋友圈/微博)</option>
+          <option value="3x1">3 × 1 三联横图 (横屏连贯)</option>
+          <option value="1x3">1 × 3 三格竖图 (小红书/海报)</option>
+          <option value="2x2">2 × 2 四宫格</option>
+          <option value="3x2">3 × 2 六宫格</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label class="field-label">裁剪模式</label>
+        <select id="cropMode" onchange="updateGrid()">
+          <option value="square" selected>居中智能正方形 (1:1)</option>
+          <option value="original">保持原图完整比例</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="panel active" style="text-align:center;">
+      <div id="gridPreview" class="grid-preview" style="grid-template-columns:repeat(3,1fr);"></div>
+      <div style="margin-top:14px;font-size:12px;color:var(--text-muted);">点击任意单张可单独保存</div>
+    </div>
+  </div>
+</main>
+
+<script>
+let loadedImg = null;
+
+function handleImage(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      loadedImg = img;
+      updateGrid();
+      showToast('图片加载成功！');
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function updateGrid() {
+  if (!loadedImg) return;
+  const type = document.getElementById('gridType').value;
+  const mode = document.getElementById('cropMode').value;
+  const [cols, rows] = type.split('x').map(Number);
+
+  const container = document.getElementById('gridPreview');
+  container.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)';
+  container.innerHTML = '';
+
+  let srcX = 0, srcY = 0, srcW = loadedImg.width, srcH = loadedImg.height;
+
+  if (mode === 'square') {
+    const minDim = Math.min(srcW, srcH);
+    srcX = (srcW - minDim) / 2;
+    srcY = (srcH - minDim) / 2;
+    srcW = minDim;
+    srcH = minDim;
+  }
+
+  const sliceW = srcW / cols;
+  const sliceH = srcH / rows;
+  let counter = 1;
+
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const cell = document.createElement('div');
+      cell.className = 'slice-cell';
+
+      const cv = document.createElement('canvas');
+      cv.width = sliceW;
+      cv.height = sliceH;
+      const ctx = cv.getContext('2d');
+      ctx.drawImage(loadedImg, srcX + c * sliceW, srcY + r * sliceH, sliceW, sliceH, 0, 0, sliceW, sliceH);
+
+      const num = counter++;
+      cell.appendChild(cv);
+      cell.innerHTML += '<div class="slice-num">#' + num + '</div>';
+      cell.onclick = () => downloadSingle(cv, num);
+      container.appendChild(cell);
+    }
+  }
+}
+
+function downloadSingle(canvas, num) {
+  const a = document.createElement('a');
+  a.href = canvas.toDataURL('image/png');
+  a.download = 'grid_slice_' + String(num).padStart(2, '0') + '.png';
+  a.click();
+}
+
+function downloadAllSlices() {
+  const canvases = document.querySelectorAll('.slice-cell canvas');
+  if (canvases.length === 0) return showToast('请先选择一张图片！');
+  canvases.forEach((cv, idx) => {
+    setTimeout(() => {
+      downloadSingle(cv, idx + 1);
+    }, idx * 200);
+  });
+  showToast('正在按顺序批量下载 ' + canvases.length + ' 张切片...');
+}
+
+// Generate sample graphic on load
+window.addEventListener('DOMContentLoaded', () => {
+  const sampleCanvas = document.createElement('canvas');
+  sampleCanvas.width = 600;
+  sampleCanvas.height = 600;
+  const ctx = sampleCanvas.getContext('2d');
+  const grad = ctx.createLinearGradient(0, 0, 600, 600);
+  grad.addColorStop(0, '#0284c7');
+  grad.addColorStop(1, '#8b5cf6');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, 600, 600);
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 64px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('九宫格切图', 300, 280);
+  ctx.font = '32px sans-serif';
+  ctx.fillText('上传图片开始制作', 300, 360);
+
+  const img = new Image();
+  img.onload = () => {
+    loadedImg = img;
+    updateGrid();
+  };
+  img.src = sampleCanvas.toDataURL();
+});
+</script>
+
+<script>
+function initTheme(){
+  const saved=localStorage.getItem('app_theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved);}
+  else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.setAttribute('data-theme','dark');}
+}
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  const target=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',target);
+  localStorage.setItem('app_theme',target);
+}
+initTheme();
+function showToast(msg, duration=2200){
+  const el=document.createElement('div');
+  el.textContent=msg;
+  el.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:9999px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 10px 25px rgba(0,0,0,.2);transition:opacity .3s;';
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},duration);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>时间工具箱 · 时间戳/世界时钟/日期计算</title>
+<meta name="description" content="纯前端时间工具箱：Unix时间戳互转、多时区世界时钟、日期间隔计算器、年龄计算器，基于Intl.DateTimeFormat原生实现。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:1000px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.tab-btn{padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-muted);font-size:13px;font-weight:700;cursor:pointer;}
+.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.panel{display:none;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);}
+.panel.active{display:block;}
+input[type=text],input[type=number],input[type=date],input[type=datetime-local]{padding:10px 12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-family:var(--font-mono);}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+.btn{padding:10px 18px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:800;cursor:pointer;}
+label.small{font-size:12px;color:var(--text-muted);font-weight:700;display:block;margin-bottom:6px;}
+.result-box{background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px;font-family:var(--font-mono);font-size:13px;line-height:1.8;}
+.clock-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;}
+.clock-card{background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px;text-align:center;}
+.clock-card .city{font-weight:800;font-size:13px;}
+.clock-card .time{font-size:24px;font-weight:800;color:var(--primary);margin:8px 0 2px;font-family:var(--font-mono);}
+.clock-card .date{font-size:11px;color:var(--text-muted);}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-top:14px;}
+.stat-card{background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:12px;text-align:center;}
+.stat-card b{display:block;font-size:20px;color:var(--primary);}
+.stat-card span{font-size:11px;color:var(--text-muted);}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/time-tool.html">
+</head>
+<body>
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>🕐</span><span>时间工具箱</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="time-tool.html">🕐 时间工具箱</option>
+      <option value="countdown.html">⏳ 倒数日</option>
+      <option value="habit-tracker.html">🔥 习惯打卡</option>
+      <option value="todolist.html">✅ 待办清单</option>
+      <option value="loan-calculator.html">🏦 贷款计算器</option>
+      <option value="color-tool.html">🎨 颜色工具箱</option>
+      <option value="drawing-board.html">🖌️ 简易画板</option>
+      <option value="img-to-pdf.html">📄 图片转PDF</option>
+      <option value="network-info.html">🌐 网络信息</option>
+      <option value="pomodoro.html">🍅 番茄钟</option>
+          <option value="calendar.html">📅 万年历</option>
+</select>
+    <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+  </div>
+</header>
+
+<main class="container">
+  <h1 class="page-title">🕐 时间工具箱</h1>
+  <p class="page-sub">Unix 时间戳互转、多时区世界时钟、日期间隔计算、年龄计算器，基于浏览器原生 Intl API，纯本地计算。</p>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="ts" onclick="switchTab('ts')">时间戳转换</button>
+    <button class="tab-btn" data-tab="clock" onclick="switchTab('clock')">世界时钟</button>
+    <button class="tab-btn" data-tab="diff" onclick="switchTab('diff')">日期间隔</button>
+    <button class="tab-btn" data-tab="age" onclick="switchTab('age')">年龄计算</button>
+  </div>
+
+  <!-- 时间戳 -->
+  <section class="panel active" id="panel-ts">
+    <label class="small">Unix 时间戳（秒或毫秒）</label>
+    <div class="row">
+      <input type="text" id="tsInput" placeholder="输入时间戳..." style="flex:1;min-width:200px;">
+      <button class="btn" onclick="tsToDate()">→ 转为日期</button>
+      <button class="btn" style="background:var(--bg-subtle);color:var(--text-main);" onclick="useNowTs()">使用当前时间</button>
+    </div>
+    <label class="small">日期时间</label>
+    <div class="row">
+      <input type="datetime-local" id="dateInput" step="1" style="flex:1;min-width:200px;">
+      <button class="btn" onclick="dateToTs()">→ 转为时间戳</button>
+    </div>
+    <div class="result-box" id="tsResult">结果将显示在这里...</div>
+  </section>
+
+  <!-- 世界时钟 -->
+  <section class="panel" id="panel-clock">
+    <div class="clock-grid" id="clockGrid"></div>
+  </section>
+
+  <!-- 日期间隔 -->
+  <section class="panel" id="panel-diff">
+    <div class="row">
+      <div><label class="small">起始日期</label><input type="date" id="diffStart"></div>
+      <div><label class="small">结束日期</label><input type="date" id="diffEnd"></div>
+      <button class="btn" onclick="calcDiff()">计算间隔</button>
+    </div>
+    <div class="stat-grid" id="diffResult"></div>
+  </section>
+
+  <!-- 年龄 -->
+  <section class="panel" id="panel-age">
+    <div class="row">
+      <div><label class="small">出生日期</label><input type="date" id="birthDate"></div>
+      <button class="btn" onclick="calcAge()">计算年龄</button>
+    </div>
+    <div class="stat-grid" id="ageResult"></div>
+  </section>
+</main>
+
+<script>
+(function(){const t=localStorage.getItem('app_theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');})();
+function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme');const next=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);localStorage.setItem('app_theme',next);}
+
+function switchTab(id){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===id));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id==='panel-'+id));
+}
+
+function pad(n){ return String(n).padStart(2,'0'); }
+function toLocalInputValue(d){
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds());
+}
+
+function useNowTs(){
+  document.getElementById('tsInput').value = Date.now();
+  tsToDate();
+}
+
+function tsToDate(){
+  let v = document.getElementById('tsInput').value.trim();
+  if(!v){ return; }
+  let n = Number(v);
+  if(isNaN(n)){ document.getElementById('tsResult').textContent = '✗ 请输入有效数字'; return; }
+  if(String(Math.trunc(n)).length <= 10) n *= 1000; // 秒 -> 毫秒
+  const d = new Date(n);
+  if(isNaN(d.getTime())){ document.getElementById('tsResult').textContent = '✗ 无效的时间戳'; return; }
+  document.getElementById('dateInput').value = toLocalInputValue(d);
+  document.getElementById('tsResult').innerHTML =
+    '本地时间: ' + d.toLocaleString('zh-CN', {hour12:false}) + '<br>' +
+    'ISO 8601: ' + d.toISOString() + '<br>' +
+    'UTC 时间: ' + d.toUTCString() + '<br>' +
+    '秒级时间戳: ' + Math.floor(d.getTime()/1000) + '<br>' +
+    '毫秒级时间戳: ' + d.getTime();
+}
+
+function dateToTs(){
+  const v = document.getElementById('dateInput').value;
+  if(!v){ return; }
+  const d = new Date(v);
+  if(isNaN(d.getTime())){ document.getElementById('tsResult').textContent = '✗ 无效日期'; return; }
+  document.getElementById('tsInput').value = Math.floor(d.getTime()/1000);
+  document.getElementById('tsResult').innerHTML =
+    '秒级时间戳: ' + Math.floor(d.getTime()/1000) + '<br>' +
+    '毫秒级时间戳: ' + d.getTime() + '<br>' +
+    'ISO 8601: ' + d.toISOString() + '<br>' +
+    'UTC 时间: ' + d.toUTCString();
+}
+
+// 世界时钟
+const ZONES = [
+  {city:'北京',tz:'Asia/Shanghai',flag:'🇨🇳'}, {city:'东京',tz:'Asia/Tokyo',flag:'🇯🇵'},
+  {city:'首尔',tz:'Asia/Seoul',flag:'🇰🇷'}, {city:'新加坡',tz:'Asia/Singapore',flag:'🇸🇬'},
+  {city:'伦敦',tz:'Europe/London',flag:'🇬🇧'}, {city:'巴黎',tz:'Europe/Paris',flag:'🇫🇷'},
+  {city:'纽约',tz:'America/New_York',flag:'🇺🇸'}, {city:'洛杉矶',tz:'America/Los_Angeles',flag:'🇺🇸'},
+  {city:'悉尼',tz:'Australia/Sydney',flag:'🇦🇺'}, {city:'迪拜',tz:'Asia/Dubai',flag:'🇦🇪'},
+  {city:'莫斯科',tz:'Europe/Moscow',flag:'🇷🇺'}, {city:'UTC',tz:'UTC',flag:'🌐'}
+];
+function renderClocks(){
+  const grid = document.getElementById('clockGrid');
+  const now = new Date();
+  grid.innerHTML = ZONES.map(z => {
+    const timeStr = now.toLocaleTimeString('zh-CN', {timeZone:z.tz, hour12:false});
+    const dateStr = now.toLocaleDateString('zh-CN', {timeZone:z.tz, month:'2-digit', day:'2-digit', weekday:'short'});
+    return `<div class="clock-card"><div class="city">${z.flag} ${z.city}</div><div class="time">${timeStr}</div><div class="date">${dateStr}</div></div>`;
+  }).join('');
+}
+renderClocks();
+setInterval(renderClocks, 1000);
+
+// 日期间隔
+document.getElementById('diffStart').value = new Date().toISOString().slice(0,10);
+document.getElementById('diffEnd').value = new Date().toISOString().slice(0,10);
+function calcDiff(){
+  const s = new Date(document.getElementById('diffStart').value);
+  const e = new Date(document.getElementById('diffEnd').value);
+  if(isNaN(s) || isNaN(e)){ return; }
+  const ms = Math.abs(e - s);
+  const days = Math.round(ms / 86400000);
+  const weeks = (days/7).toFixed(1);
+  const months = Math.round(days/30.44);
+  const years = (days/365.25).toFixed(2);
+  document.getElementById('diffResult').innerHTML = `
+    <div class="stat-card"><b>${days}</b><span>总天数</span></div>
+    <div class="stat-card"><b>${weeks}</b><span>约等于周</span></div>
+    <div class="stat-card"><b>${months}</b><span>约等于月</span></div>
+    <div class="stat-card"><b>${years}</b><span>约等于年</span></div>
+    <div class="stat-card"><b>${days*24}</b><span>总小时数</span></div>
+    <div class="stat-card"><b>${days*86400}</b><span>总秒数</span></div>`;
+}
+
+// 年龄计算
+document.getElementById('birthDate').value = '2000-01-01';
+function calcAge(){
+  const b = new Date(document.getElementById('birthDate').value);
+  if(isNaN(b)){ return; }
+  const now = new Date();
+  let years = now.getFullYear() - b.getFullYear();
+  let months = now.getMonth() - b.getMonth();
+  let days = now.getDate() - b.getDate();
+  if(days < 0){ months--; days += new Date(now.getFullYear(), now.getMonth(), 0).getDate(); }
+  if(months < 0){ years--; months += 12; }
+  const totalDays = Math.floor((now - b)/86400000);
+  const nextBirthday = new Date(now.getFullYear(), b.getMonth(), b.getDate());
+  if(nextBirthday < now) nextBirthday.setFullYear(now.getFullYear()+1);
+  const daysToNext = Math.ceil((nextBirthday - now)/86400000);
+  document.getElementById('ageResult').innerHTML = `
+    <div class="stat-card"><b>${years}</b><span>周岁</span></div>
+    <div class="stat-card"><b>${years}年${months}月${days}天</b><span>精确年龄</span></div>
+    <div class="stat-card"><b>${totalDays}</b><span>总天数</span></div>
+    <div class="stat-card"><b>${Math.floor(totalDays/7)}</b><span>总周数</span></div>
+    <div class="stat-card"><b>${daysToNext}</b><span>距下次生日(天)</span></div>`;
+}
+</script>
+</body>
+</html>

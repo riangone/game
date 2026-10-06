@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>浏览器原生 DNS 探针 · DoH · 纯前端免安装工具</title>
+<meta name="description" content="基于 Cloudflare 与 Google DNS over HTTPS (DoH) 原生跨域查询，A/AAAA/CNAME/MX/TXT 全记录解析与 RTT 测速。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--purple:#8b5cf6;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,.06);--shadow-lg:0 10px 15px -3px rgba(0,0,0,.08);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:1100px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.tab-btn{padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-muted);font-size:13px;font-weight:700;cursor:pointer;transition:.2s;}
+.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.panel{display:none;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);}
+.panel.active{display:block;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;}
+.btn:hover{background:var(--primary-hover);}
+.btn-subtle{background:var(--bg-subtle);color:var(--text-main);border:1px solid var(--border-color);}
+.btn-subtle:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+input[type=text],input[type=number],textarea,select{width:100%;padding:10px 12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;outline:none;}
+input:focus,textarea:focus,select:focus{border-color:var(--border-focus);}
+label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;}
+.badge{display:inline-block;padding:3px 8px;border-radius:var(--radius-pill);font-size:11px;font-weight:700;}
+.badge-success{background:rgba(16,185,129,.15);color:var(--success);}
+.badge-warning{background:rgba(245,158,11,.15);color:var(--warning);}
+.badge-primary{background:var(--primary-subtle);color:var(--primary);}
+.stat-card{background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px;text-align:center;}
+.stat-card b{display:block;font-size:22px;color:var(--primary);font-weight:800;font-family:var(--font-mono);}
+.stat-card span{font-size:12px;color:var(--text-muted);}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/doh-lookup.html">
+</head>
+<style>
+.dns-result-table{width:100%;border-collapse:collapse;margin-top:14px;font-size:13px;}
+.dns-result-table th,.dns-result-table td{border:1px solid var(--border-color);padding:8px 12px;text-align:left;}
+.dns-result-table th{background:var(--bg-subtle);}
+.record-code{font-family:var(--font-mono);font-size:12px;word-break:break-all;}
+</style>
+
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>🔍</span><span>浏览器原生 DNS 探针</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="iss-tracker.html">🛰️ 空间站实时追踪</option>
+      <option value="bing-wallpaper.html">🖼️ 每日壁纸视界</option>
+      <option value="pokedex.html">⚡ 宝可梦图鉴</option>
+      <option value="quote-card.html">🖋️ 一言灵感排版</option>
+      <option value="country-explorer.html">🌍 世界地理百科</option>
+      <option value="doh-lookup.html">🔍 原生DNS探针</option>
+      <option value="github-card.html">🐙 GitHub名片工坊</option>
+      <option value="tools.html">🏠 全部工具大厅</option>
+    </select>
+    <button class="theme-btn" onclick="toggleTheme()" title="切换明暗主题">🌓</button>
+  </div>
+</header>
+<main class="container">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+    <div>
+      <h1 class="page-title">🔍 浏览器原生 DNS 探针 (DoH)</h1>
+      <p class="page-sub">通过 DNS over HTTPS (DoH) 跨域查询真实域名解析记录，检测 A、AAAA、CNAME、MX、TXT 与 RTT 耗时。</p>
+    </div>
+  </div>
+
+  <div class="panel active" style="margin-bottom:18px;">
+    <div style="display:grid;grid-template-columns:1fr 140px 180px 100px;gap:10px;align-items:center;">
+      <input type="text" id="domainInput" value="github.com" placeholder="输入域名 (如: google.com)">
+      <select id="recordType">
+        <option value="A" selected>A (IPv4)</option>
+        <option value="AAAA">AAAA (IPv6)</option>
+        <option value="CNAME">CNAME (别名)</option>
+        <option value="MX">MX (邮件)</option>
+        <option value="TXT">TXT (文本)</option>
+        <option value="NS">NS (域名服务器)</option>
+      </select>
+      <select id="dohProvider">
+        <option value="cloudflare">Cloudflare DoH</option>
+        <option value="google">Google DoH</option>
+      </select>
+      <button class="btn" onclick="queryDns()">查询</button>
+    </div>
+  </div>
+
+  <div class="panel active">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <h3 style="font-size:15px;font-weight:700;">📡 解析响应结果</h3>
+      <span class="badge badge-success" id="rttBadge">RTT: -- ms</span>
+    </div>
+    <div id="resultContent">点击查询开始探针测试...</div>
+  </div>
+</main>
+
+<script>
+async function queryDns() {
+  const domain = document.getElementById('domainInput').value.trim();
+  const type = document.getElementById('recordType').value;
+  const provider = document.getElementById('dohProvider').value;
+  if (!domain) return showToast('请输入要查询的域名！');
+
+  const resBox = document.getElementById('resultContent');
+  resBox.innerHTML = '<div style="color:var(--text-muted);padding:14px 0;">正在通过 ' + provider + ' DoH 查询中...</div>';
+
+  let url = '';
+  if (provider === 'cloudflare') {
+    url = 'https://cloudflare-dns.com/dns-query?name=' + encodeURIComponent(domain) + '&type=' + type;
+  } else {
+    url = 'https://dns.google/resolve?name=' + encodeURIComponent(domain) + '&type=' + type;
+  }
+
+  const start = performance.now();
+  try {
+    const res = await fetch(url, { headers: { 'Accept': 'application/dns-json' } });
+    const rtt = Math.round(performance.now() - start);
+    document.getElementById('rttBadge').textContent = 'RTT: ' + rtt + ' ms';
+
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+
+    if (!data.Answer || data.Answer.length === 0) {
+      resBox.innerHTML = '<div style="color:var(--warning);padding:10px 0;">未检索到 ' + type + ' 记录。</div>';
+      return;
+    }
+
+    let html = '<table class="dns-result-table"><thead><tr><th>记录名称</th><th>类型</th><th>TTL</th><th>解析数据 (Data)</th></tr></thead><tbody>';
+    data.Answer.forEach(ans => {
+      html += '<tr><td>' + ans.name + '</td><td>' + type + '</td><td>' + ans.TTL + 's</td><td class="record-code">' + ans.data + '</td></tr>';
+    });
+    html += '</tbody></table>';
+    resBox.innerHTML = html;
+  } catch (err) {
+    document.getElementById('rttBadge').textContent = '超时 / 降级';
+    // Fallback simulation
+    resBox.innerHTML = '<div style="color:var(--text-muted);padding:10px 0;">网络受限或跨域策略拦截，展示模拟解析样本：</div>' +
+      '<table class="dns-result-table"><thead><tr><th>记录名称</th><th>类型</th><th>TTL</th><th>解析数据 (Data)</th></tr></thead><tbody>' +
+      '<tr><td>' + domain + '.</td><td>' + type + '</td><td>300s</td><td class="record-code">140.82.113.4</td></tr>' +
+      '</tbody></table>';
+  }
+}
+
+window.addEventListener('DOMContentLoaded', queryDns);
+</script>
+
+<script>
+function initTheme(){
+  const saved=localStorage.getItem('app_theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved);}
+  else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.setAttribute('data-theme','dark');}
+}
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  const target=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',target);
+  localStorage.setItem('app_theme',target);
+}
+initTheme();
+function showToast(msg, duration=2200){
+  const el=document.createElement('div');
+  el.textContent=msg;
+  el.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:9999px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 10px 25px rgba(0,0,0,.2);transition:opacity .3s;';
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},duration);
+}
+</script>
+</body>
+</html>

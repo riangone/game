@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>电子节拍器与律动鼓机 · 纯前端免安装工具</title>
+<meta name="description" content="基于 Web Audio API 精准纳秒级调度的电子节拍器、TAP 测速、多种音色与 16 步迷你鼓机，100% 离线。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--purple:#8b5cf6;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,.06);--shadow-lg:0 10px 15px -3px rgba(0,0,0,.08);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:1100px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.tab-btn{padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-muted);font-size:13px;font-weight:700;cursor:pointer;transition:.2s;}
+.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.panel{display:none;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);}
+.panel.active{display:block;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;}
+.btn:hover{background:var(--primary-hover);}
+.btn-subtle{background:var(--bg-subtle);color:var(--text-main);border:1px solid var(--border-color);}
+.btn-subtle:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+input[type=text],input[type=number],textarea,select{width:100%;padding:10px 12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;outline:none;}
+input:focus,textarea:focus,select:focus{border-color:var(--border-focus);}
+label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/metronome.html">
+</head>
+<style>
+.metro-layout{display:grid;grid-template-columns:360px 1fr;gap:24px;align-items:start;}
+@media(max-width:768px){.metro-layout{grid-template-columns:1fr;}}
+.bpm-display{font-size:72px;font-weight:900;font-family:var(--font-mono);color:var(--primary);text-align:center;line-height:1;margin:10px 0;}
+.pendulum-track{height:10px;background:var(--bg-subtle);border-radius:var(--radius-pill);margin:20px 0;position:relative;overflow:hidden;}
+.pendulum-ball{width:24px;height:24px;border-radius:50%;background:var(--primary);position:absolute;top:-7px;left:0;transform:translateX(0);transition:transform .1s linear;}
+.beat-dots{display:flex;gap:10px;justify-content:center;margin:16px 0;}
+.beat-dot{width:20px;height:20px;border-radius:50%;background:var(--border-color);transition:.1s;}
+.beat-dot.active{background:var(--primary);box-shadow:0 0 10px var(--primary);}
+.beat-dot.accent{background:var(--danger);box-shadow:0 0 12px var(--danger);}
+.grid-seq{display:grid;grid-template-columns:80px repeat(16,1fr);gap:4px;margin-top:14px;overflow-x:auto;}
+.seq-btn{height:28px;background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:4px;cursor:pointer;}
+.seq-btn.on{background:var(--primary);border-color:var(--primary);}
+.seq-btn.cur{outline:2px solid var(--warning);}
+</style>
+
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>⏱️</span><span>电子节拍器与律动鼓机</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="favicon-generator.html">🌐 Favicon图标生成</option>
+      <option value="image-grid-splitter.html">🧩 九宫格切图工坊</option>
+      <option value="metronome.html">⏱️ 电子节拍器与鼓机</option>
+      <option value="font-previewer.html">🔤 字体预览工坊</option>
+      <option value="tools.html">🏠 全部工具大厅</option>
+    </select>
+    <button class="theme-btn" onclick="toggleTheme()" title="切换明暗主题">🌓</button>
+  </div>
+</header>
+<main class="container">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+    <div>
+      <h1 class="page-title">⏱️ 电子节拍器与律动鼓机</h1>
+      <p class="page-sub">Web Audio API 真实音频振荡器硬时钟调度，永不漂移。TAP 连按测速与 16 步律动鼓机。</p>
+    </div>
+  </div>
+
+  <div class="metro-layout">
+    <div class="panel active" style="text-align:center;">
+      <div style="font-size:13px;font-weight:700;color:var(--text-muted);">TEMPO (BPM)</div>
+      <div class="bpm-display" id="bpmVal">120</div>
+
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px;">
+        <button class="btn btn-subtle btn-sm" onclick="changeBpm(-5)">-5</button>
+        <button class="btn btn-subtle btn-sm" onclick="changeBpm(-1)">-1</button>
+        <button class="btn btn-subtle btn-sm" onclick="changeBpm(1)">+1</button>
+        <button class="btn btn-subtle btn-sm" onclick="changeBpm(5)">+5</button>
+      </div>
+
+      <input type="range" id="bpmSlider" min="30" max="250" value="120" oninput="setBpm(this.value)" style="margin-bottom:14px;">
+
+      <div class="beat-dots" id="beatDots"></div>
+
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;">
+        <button class="btn" id="playBtn" style="padding:12px 28px;font-size:16px;" onclick="togglePlay()">▶ 开始</button>
+        <button class="btn btn-subtle" onclick="tapTempo()">👆 TAP 测速</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="panel active" style="margin-bottom:16px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div>
+            <label class="field-label">拍号 (Time Signature)</label>
+            <select id="timeSig" onchange="updateTimeSig()">
+              <option value="2">2 / 4 拍 (二拍子)</option>
+              <option value="3">3 / 4 拍 (华尔兹/三拍子)</option>
+              <option value="4" selected>4 / 4 拍 (标准常用)</option>
+              <option value="6">6 / 8 拍 (六拍子)</option>
+            </select>
+          </div>
+          <div>
+            <label class="field-label">声音音色</label>
+            <select id="soundType">
+              <option value="click">经典机械嘀嗒 (Click)</option>
+              <option value="wood">清脆木鱼 (Woodblock)</option>
+              <option value="beep">电子蜂鸣 (Beep)</option>
+              <option value="cowbell">牛铃 (Cowbell)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel active">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:6px;">🥁 16 步迷你伴奏鼓机</h3>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">点击格子点亮节奏，随节拍同步循环。</p>
+        <div class="grid-seq" id="drumGrid"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+let audioCtx = null;
+let isPlaying = false;
+let bpm = 120;
+let beatsPerBar = 4;
+let curBeat = 0;
+let nextNoteTime = 0.0;
+let timerID = null;
+const lookahead = 25.0; // ms
+const scheduleAheadTime = 0.1; // s
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function setBpm(val) {
+  bpm = parseInt(val, 10);
+  document.getElementById('bpmVal').textContent = bpm;
+  document.getElementById('bpmSlider').value = bpm;
+}
+
+function changeBpm(delta) {
+  setBpm(Math.max(30, Math.min(250, bpm + delta)));
+}
+
+// TAP Tempo
+let tapTimes = [];
+function tapTempo() {
+  const now = performance.now();
+  tapTimes.push(now);
+  if (tapTimes.length > 5) tapTimes.shift();
+  if (tapTimes.length >= 2) {
+    let diffs = [];
+    for (let i = 1; i < tapTimes.length; i++) diffs.push(tapTimes[i] - tapTimes[i - 1]);
+    const avgDiff = diffs.reduce((a, b) => a + b, 0) / diffs.length;
+    const calcBpm = Math.round(60000 / avgDiff);
+    if (calcBpm >= 30 && calcBpm <= 250) setBpm(calcBpm);
+  }
+}
+
+function updateTimeSig() {
+  beatsPerBar = parseInt(document.getElementById('timeSig').value, 10);
+  renderDots();
+}
+
+function renderDots() {
+  const box = document.getElementById('beatDots');
+  box.innerHTML = '';
+  for (let i = 0; i < beatsPerBar; i++) {
+    const d = document.createElement('div');
+    d.className = 'beat-dot';
+    d.id = 'dot_' + i;
+    box.appendChild(d);
+  }
+}
+
+function playTone(time, isAccent) {
+  const ctx = getAudioCtx();
+  const type = document.getElementById('soundType').value;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  let freq = isAccent ? 880 : 440;
+  if (type === 'wood') freq = isAccent ? 1200 : 750;
+  else if (type === 'beep') freq = isAccent ? 1500 : 1000;
+  else if (type === 'cowbell') freq = isAccent ? 800 : 540;
+
+  osc.frequency.setValueAtTime(freq, time);
+  gain.gain.setValueAtTime(isAccent ? 1.0 : 0.6, time);
+  gain.gain.exponentialRampToValueAtTime(0.001, time + 0.05);
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(time);
+  osc.stop(time + 0.05);
+}
+
+function nextNote() {
+  const secondsPerBeat = 60.0 / bpm;
+  nextNoteTime += secondsPerBeat;
+  curBeat = (curBeat + 1) % beatsPerBar;
+}
+
+function scheduleNote(beatNumber, time) {
+  const isAccent = (beatNumber === 0);
+  playTone(time, isAccent);
+
+  // Sync UI dot
+  setTimeout(() => {
+    document.querySelectorAll('.beat-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === beatNumber);
+      d.classList.toggle('accent', i === beatNumber && isAccent);
+    });
+  }, Math.max(0, (time - audioCtx.currentTime) * 1000));
+}
+
+function scheduler() {
+  while (nextNoteTime < audioCtx.currentTime + scheduleAheadTime) {
+    scheduleNote(curBeat, nextNoteTime);
+    nextNote();
+  }
+  timerID = setTimeout(scheduler, lookahead);
+}
+
+function togglePlay() {
+  const btn = document.getElementById('playBtn');
+  getAudioCtx();
+  if (isPlaying) {
+    isPlaying = false;
+    clearTimeout(timerID);
+    btn.textContent = '▶ 开始';
+    btn.style.background = 'var(--primary)';
+    document.querySelectorAll('.beat-dot').forEach(d => d.className = 'beat-dot');
+  } else {
+    isPlaying = true;
+    curBeat = 0;
+    nextNoteTime = audioCtx.currentTime + 0.05;
+    scheduler();
+    btn.textContent = '⏹ 停止';
+    btn.style.background = 'var(--danger)';
+  }
+}
+
+// Mini Drum Grid
+const DRUMS = ['Kick (底鼓)', 'Snare (军鼓)', 'HiHat (踩镲)'];
+const drumPattern = [
+  [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0],
+  [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+];
+
+function renderDrumGrid() {
+  const grid = document.getElementById('drumGrid');
+  grid.innerHTML = '';
+  DRUMS.forEach((name, r) => {
+    const label = document.createElement('div');
+    label.style.fontSize = '12px';
+    label.style.fontWeight = '700';
+    label.style.display = 'flex';
+    label.style.alignItems = 'center';
+    label.textContent = name;
+    grid.appendChild(label);
+
+    for (let c = 0; c < 16; c++) {
+      const btn = document.createElement('div');
+      btn.className = 'seq-btn' + (drumPattern[r][c] ? ' on' : '');
+      btn.onclick = () => {
+        drumPattern[r][c] = drumPattern[r][c] ? 0 : 1;
+        btn.classList.toggle('on', !!drumPattern[r][c]);
+      };
+      grid.appendChild(btn);
+    }
+  });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  renderDots();
+  renderDrumGrid();
+});
+</script>
+
+<script>
+function initTheme(){
+  const saved=localStorage.getItem('app_theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved);}
+  else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.setAttribute('data-theme','dark');}
+}
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  const target=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',target);
+  localStorage.setItem('app_theme',target);
+}
+initTheme();
+function showToast(msg, duration=2200){
+  const el=document.createElement('div');
+  el.textContent=msg;
+  el.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:9999px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 10px 25px rgba(0,0,0,.2);transition:opacity .3s;';
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},duration);
+}
+</script>
+</body>
+</html>

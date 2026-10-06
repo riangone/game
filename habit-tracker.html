@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>习惯打卡 · 热力图追踪</title>
+<meta name="description" content="纯前端习惯打卡工具，类GitHub贡献热力图展示打卡记录，自动统计连续打卡天数与总打卡次数，数据本地持久化。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--danger:#ef4444;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:900px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.add-bar{display:flex;gap:8px;margin-bottom:18px;}
+.add-bar input{flex:1;padding:12px 14px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-main);font-size:14px;}
+.add-bar button{padding:12px 20px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:800;cursor:pointer;}
+.habit-card{background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:18px;box-shadow:var(--shadow-sm);margin-bottom:16px;}
+.habit-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.habit-name{font-weight:800;font-size:15px;}
+.habit-stats{font-size:12px;color:var(--text-muted);display:flex;gap:14px;}
+.habit-stats b{color:var(--primary);}
+.del-btn{border:none;background:transparent;color:var(--text-light);cursor:pointer;font-size:16px;}
+.del-btn:hover{color:var(--danger);}
+.heatmap{display:grid;grid-template-columns:repeat(26,1fr);grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:3px;overflow-x:auto;padding-bottom:4px;}
+.cell{width:13px;height:13px;border-radius:3px;background:var(--bg-subtle);cursor:pointer;border:1px solid var(--border-color);}
+.cell.done{background:var(--success);border-color:var(--success);}
+.cell.today{outline:2px solid var(--primary);outline-offset:1px;}
+.legend-row{display:flex;justify-content:flex-end;align-items:center;gap:6px;font-size:11px;color:var(--text-light);margin-top:8px;}
+.legend-row .cell{width:11px;height:11px;cursor:default;}
+.empty-state{text-align:center;padding:40px;color:var(--text-light);}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/habit-tracker.html">
+</head>
+<body>
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>🔥</span><span>习惯打卡</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="habit-tracker.html">🔥 习惯打卡</option>
+      <option value="todolist.html">✅ 待办清单</option>
+      <option value="expense-tracker.html">💰 记账本</option>
+      <option value="countdown.html">⏳ 倒数日</option>
+      <option value="time-tool.html">🕐 时间工具箱</option>
+      <option value="loan-calculator.html">🏦 贷款计算器</option>
+      <option value="color-tool.html">🎨 颜色工具箱</option>
+      <option value="drawing-board.html">🖌️ 简易画板</option>
+      <option value="img-to-pdf.html">📄 图片转PDF</option>
+      <option value="network-info.html">🌐 网络信息</option>
+      <option value="pomodoro.html">🍅 番茄钟</option>
+          <option value="calendar.html">📅 万年历</option>
+</select>
+    <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+  </div>
+</header>
+
+<main class="container">
+  <h1 class="page-title">🔥 习惯打卡</h1>
+  <p class="page-sub">类 GitHub 贡献热力图追踪每日打卡，自动统计连续打卡天数与累计总数。点击格子即可标记当天完成。</p>
+
+  <div class="add-bar">
+    <input type="text" id="newHabitName" placeholder="新建习惯，如：早起、阅读、健身..." onkeydown="if(event.key==='Enter')addHabit()">
+    <button onclick="addHabit()">+ 新建</button>
+  </div>
+
+  <div id="habitsContainer"></div>
+</main>
+
+<script>
+(function(){const t=localStorage.getItem('app_theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');})();
+function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme');const next=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);localStorage.setItem('app_theme',next);}
+
+const STORAGE_KEY = 'habit_tracker_v1';
+let habits = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); // [{id,name,log:{'YYYY-MM-DD':true}}]
+
+function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(habits)); render(); }
+
+function addHabit(){
+  const input = document.getElementById('newHabitName');
+  const name = input.value.trim();
+  if(!name) return;
+  habits.push({ id: Date.now(), name, log: {} });
+  input.value = '';
+  save();
+}
+function removeHabit(id){ if(!confirm('确定删除该习惯及其全部打卡记录？')) return; habits = habits.filter(h=>h.id!==id); save(); }
+
+function toDateStr(d){ return d.toISOString().slice(0,10); }
+
+function toggleDay(habitId, dateStr){
+  const h = habits.find(x=>x.id===habitId);
+  if(!h) return;
+  if(h.log[dateStr]) delete h.log[dateStr]; else h.log[dateStr] = true;
+  save();
+}
+
+function calcStreak(log){
+  let streak = 0;
+  let d = new Date();
+  while(true){
+    const key = toDateStr(d);
+    if(log[key]){ streak++; d.setDate(d.getDate()-1); } else break;
+  }
+  return streak;
+}
+
+function render(){
+  const container = document.getElementById('habitsContainer');
+  if(habits.length === 0){
+    container.innerHTML = '<div class="empty-state">还没有习惯，添加一个开始养成好习惯吧 🌱</div>';
+    return;
+  }
+  const today = new Date();
+  const totalDays = 182; // 26 weeks
+  container.innerHTML = habits.map(h => {
+    const days = [];
+    for(let i=totalDays-1;i>=0;i--){
+      const d = new Date(today); d.setDate(d.getDate()-i);
+      days.push(toDateStr(d));
+    }
+    const cells = days.map(dateStr => {
+      const isToday = dateStr === toDateStr(today);
+      const done = !!h.log[dateStr];
+      return `<div class="cell ${done?'done':''} ${isToday?'today':''}" title="${dateStr}" onclick="toggleDay(${h.id},'${dateStr}')"></div>`;
+    }).join('');
+    const streak = calcStreak(h.log);
+    const total = Object.keys(h.log).length;
+    return `
+      <div class="habit-card">
+        <div class="habit-head">
+          <div class="habit-name">${escapeHtml(h.name)}</div>
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div class="habit-stats"><span>🔥 连续 <b>${streak}</b> 天</span><span>✅ 累计 <b>${total}</b> 次</span></div>
+            <button class="del-btn" onclick="removeHabit(${h.id})">✕</button>
+          </div>
+        </div>
+        <div class="heatmap">${cells}</div>
+        <div class="legend-row">少 <div class="cell"></div><div class="cell done" style="opacity:.4"></div><div class="cell done" style="opacity:.7"></div><div class="cell done"></div> 多</div>
+      </div>`;
+  }).join('');
+}
+function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+render();
+</script>
+</body>
+</html>

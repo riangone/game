@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>文本差异对比 · Diff 工具</title>
+<meta name="description" content="纯前端文本差异对比工具，基于LCS最长公共子序列算法实现逐行与逐字高亮对比，类似git diff效果，100%本地计算。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--success-subtle:#d1fae5;--danger:#ef4444;--danger-subtle:#fee2e2;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);--success-subtle:rgba(16,185,129,.15);--danger-subtle:rgba(239,68,68,.18);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;transition:background-color .25s,color .25s;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:1200px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:860px){.grid2{grid-template-columns:1fr;}}
+textarea{width:100%;min-height:200px;font-family:var(--font-mono);font-size:13px;border:1px solid var(--border-color);border-radius:var(--radius-md);padding:12px;background:var(--bg-subtle);color:var(--text-main);resize:vertical;line-height:1.6;}
+label.small{font-size:12px;color:var(--text-muted);font-weight:700;display:block;margin-bottom:6px;}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0;align-items:center;}
+.btn{padding:10px 20px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--primary);color:#fff;font-size:14px;font-weight:700;cursor:pointer;}
+.btn.secondary{background:var(--bg-subtle);color:var(--text-main);}
+.seg{display:flex;background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:3px;}
+.seg button{border:none;background:transparent;padding:6px 14px;font-size:13px;font-weight:700;border-radius:var(--radius-sm);cursor:pointer;color:var(--text-muted);}
+.seg button.active{background:var(--bg-surface);color:var(--primary);box-shadow:var(--shadow-sm);}
+.diff-box{background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:4px;box-shadow:var(--shadow-sm);overflow-x:auto;}
+.diff-line{display:flex;font-family:var(--font-mono);font-size:13px;line-height:1.7;white-space:pre-wrap;word-break:break-all;}
+.diff-line .gutter{width:46px;flex-shrink:0;text-align:right;padding-right:10px;color:var(--text-light);user-select:none;}
+.diff-line .content{flex:1;padding:0 8px;border-radius:4px;}
+.diff-line.add .content{background:var(--success-subtle);}
+.diff-line.del .content{background:var(--danger-subtle);}
+.diff-line.add .gutter{background:var(--success-subtle);}
+.diff-line.del .gutter{background:var(--danger-subtle);}
+.ins{background:#86efac;border-radius:2px;}
+.del-char{background:#fca5a5;text-decoration:line-through;border-radius:2px;}
+[data-theme="dark"] .ins{background:#065f46;}
+[data-theme="dark"] .del-char{background:#7f1d1d;}
+.stat-pills{display:flex;gap:10px;margin-bottom:12px;font-size:12px;font-weight:700;}
+.pill-add{color:var(--success);}
+.pill-del{color:var(--danger);}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/diff-tool.html">
+</head>
+<body>
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>🪞</span><span>文本差异对比</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="text-tools.html">🔤 文本工具箱</option>
+      <option value="diff-tool.html">🪞 文本差异对比</option>
+      <option value="hash-tool.html">#️⃣ 哈希校验</option>
+      <option value="encrypt-tool.html">🛡️ 本地加解密</option>
+      <option value="todolist.html">✅ 待办清单</option>
+      <option value="expense-tracker.html">💰 记账本</option>
+      <option value="habit-tracker.html">🔥 习惯打卡</option>
+      <option value="countdown.html">⏳ 倒数日</option>
+      <option value="time-tool.html">🕐 时间工具箱</option>
+      <option value="loan-calculator.html">🏦 贷款计算器</option>
+      <option value="color-tool.html">🎨 颜色工具箱</option>
+      <option value="drawing-board.html">🖌️ 简易画板</option>
+      <option value="img-to-pdf.html">📄 图片转PDF</option>
+      <option value="network-info.html">🌐 网络信息</option>
+      <option value="notepad.html">📝 便签</option>
+      <option value="calculator.html">🧮 计算器</option>
+      <option value="password.html">🔐 密码</option>
+          <option value="calendar.html">📅 万年历</option>
+</select>
+    <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+  </div>
+</header>
+
+<main class="container">
+  <h1 class="page-title">🪞 文本差异对比 (Diff)</h1>
+  <p class="page-sub">基于 LCS（最长公共子序列）算法逐行比对，并对改动行做逐字高亮，类似 git diff 效果。100% 本地计算，内容不上传。</p>
+
+  <div class="grid2">
+    <div>
+      <label class="small">原始文本 (Original)</label>
+      <textarea id="textA" placeholder="粘贴原始版本文本..."></textarea>
+    </div>
+    <div>
+      <label class="small">对比文本 (Changed)</label>
+      <textarea id="textB" placeholder="粘贴修改后版本文本..."></textarea>
+    </div>
+  </div>
+
+  <div class="row">
+    <button class="btn" onclick="runDiff()">▶ 开始对比</button>
+    <button class="btn secondary" onclick="document.getElementById('textA').value='';document.getElementById('textB').value='';document.getElementById('diffResult').innerHTML='';">清空</button>
+    <div class="seg">
+      <button id="modeLine" class="active" onclick="setMode('line')">逐行对比</button>
+      <button id="modeChar" onclick="setMode('char')">逐字对比</button>
+    </div>
+  </div>
+
+  <div class="stat-pills" id="diffStats"></div>
+  <div class="diff-box"><div id="diffResult"></div></div>
+</main>
+
+<script>
+(function(){const t=localStorage.getItem('app_theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');})();
+function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme');const next=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);localStorage.setItem('app_theme',next);}
+
+let mode = 'line';
+function setMode(m){
+  mode = m;
+  document.getElementById('modeLine').classList.toggle('active', m==='line');
+  document.getElementById('modeChar').classList.toggle('active', m==='char');
+  runDiff();
+}
+
+function escapeHtml(s){return s.replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+
+// 通用 LCS diff，返回操作序列 [{type:'equal'|'add'|'del', value:...}]
+function lcsDiff(a, b){
+  const n = a.length, m = b.length;
+  const dp = Array.from({length:n+1}, () => new Int32Array(m+1));
+  for(let i=n-1;i>=0;i--){
+    for(let j=m-1;j>=0;j--){
+      dp[i][j] = a[i]===b[j] ? dp[i+1][j+1]+1 : Math.max(dp[i+1][j], dp[i][j+1]);
+    }
+  }
+  const ops = [];
+  let i=0, j=0;
+  while(i<n && j<m){
+    if(a[i]===b[j]){ ops.push({type:'equal', value:a[i]}); i++; j++; }
+    else if(dp[i+1][j] >= dp[i][j+1]){ ops.push({type:'del', value:a[i]}); i++; }
+    else { ops.push({type:'add', value:b[j]}); j++; }
+  }
+  while(i<n){ ops.push({type:'del', value:a[i]}); i++; }
+  while(j<m){ ops.push({type:'add', value:b[j]}); j++; }
+  return ops;
+}
+
+function charDiffHtml(oldLine, newLine){
+  const ops = lcsDiff(Array.from(oldLine), Array.from(newLine));
+  let oldHtml = '', newHtml = '';
+  for(const op of ops){
+    const c = escapeHtml(op.value);
+    if(op.type==='equal'){ oldHtml += c; newHtml += c; }
+    else if(op.type==='del'){ oldHtml += '<span class="del-char">'+c+'</span>'; }
+    else if(op.type==='add'){ newHtml += '<span class="ins">'+c+'</span>'; }
+  }
+  return {oldHtml, newHtml};
+}
+
+function runDiff(){
+  const a = document.getElementById('textA').value.split('\n');
+  const b = document.getElementById('textB').value.split('\n');
+  const ops = lcsDiff(a, b);
+  const result = document.getElementById('diffResult');
+  let html = '';
+  let lineNoA = 1, lineNoB = 1, addCount=0, delCount=0;
+
+  if(mode === 'line'){
+    for(const op of ops){
+      const content = escapeHtml(op.value) || ' ';
+      if(op.type==='equal'){
+        html += '<div class="diff-line"><div class="gutter">'+lineNoA+'</div><div class="content">'+content+'</div></div>';
+        lineNoA++; lineNoB++;
+      } else if(op.type==='del'){
+        html += '<div class="diff-line del"><div class="gutter">'+lineNoA+'</div><div class="content">− '+content+'</div></div>';
+        lineNoA++; delCount++;
+      } else {
+        html += '<div class="diff-line add"><div class="gutter">'+lineNoB+'</div><div class="content">+ '+content+'</div></div>';
+        lineNoB++; addCount++;
+      }
+    }
+  } else {
+    // 逐字模式：先按行配对相邻 del+add 做字符级 diff，其余按行渲染
+    let idx = 0;
+    while(idx < ops.length){
+      const op = ops[idx];
+      if(op.type==='equal'){
+        html += '<div class="diff-line"><div class="gutter">'+lineNoA+'</div><div class="content">'+(escapeHtml(op.value)||' ')+'</div></div>';
+        lineNoA++; lineNoB++; idx++;
+      } else if(op.type==='del' && ops[idx+1] && ops[idx+1].type==='add'){
+        const {oldHtml, newHtml} = charDiffHtml(op.value, ops[idx+1].value);
+        html += '<div class="diff-line del"><div class="gutter">'+lineNoA+'</div><div class="content">− '+(oldHtml||' ')+'</div></div>';
+        html += '<div class="diff-line add"><div class="gutter">'+lineNoB+'</div><div class="content">+ '+(newHtml||' ')+'</div></div>';
+        lineNoA++; lineNoB++; delCount++; addCount++; idx+=2;
+      } else if(op.type==='del'){
+        html += '<div class="diff-line del"><div class="gutter">'+lineNoA+'</div><div class="content">− '+(escapeHtml(op.value)||' ')+'</div></div>';
+        lineNoA++; delCount++; idx++;
+      } else {
+        html += '<div class="diff-line add"><div class="gutter">'+lineNoB+'</div><div class="content">+ '+(escapeHtml(op.value)||' ')+'</div></div>';
+        lineNoB++; addCount++; idx++;
+      }
+    }
+  }
+
+  result.innerHTML = html || '<div style="padding:20px;color:var(--text-muted);text-align:center;">请输入要对比的文本并点击"开始对比"</div>';
+  document.getElementById('diffStats').innerHTML =
+    '<span class="pill-add">+ 新增 '+addCount+' 行</span><span class="pill-del">− 删除 '+delCount+' 行</span>';
+}
+</script>
+</body>
+</html>

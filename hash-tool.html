@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>哈希校验工具 · MD5/SHA-1/SHA-256/SHA-512</title>
+<meta name="description" content="纯前端文本与文件哈希计算工具，支持MD5/SHA-1/SHA-256/SHA-512，用于文件完整性校验，全程浏览器内存计算，文件不上传。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--success-subtle:#d1fae5;--danger:#ef4444;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);--success-subtle:rgba(16,185,129,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:860px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.card{background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);margin-bottom:18px;}
+textarea{width:100%;min-height:110px;font-family:var(--font-mono);font-size:13px;border:1px solid var(--border-color);border-radius:var(--radius-md);padding:12px;background:var(--bg-subtle);color:var(--text-main);resize:vertical;}
+label.small{font-size:12px;color:var(--text-muted);font-weight:700;display:block;margin-bottom:6px;}
+.dropzone{border:2px dashed var(--border-color);border-radius:var(--radius-lg);padding:30px;text-align:center;color:var(--text-muted);cursor:pointer;transition:all .15s;}
+.dropzone.drag{border-color:var(--primary);background:var(--primary-subtle);color:var(--primary);}
+.hash-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border-color);}
+.hash-row:last-child{border-bottom:none;}
+.hash-row .algo{width:80px;font-weight:800;font-size:13px;color:var(--primary);flex-shrink:0;}
+.hash-row code{flex:1;font-family:var(--font-mono);font-size:12.5px;word-break:break-all;background:var(--bg-subtle);padding:8px 10px;border-radius:8px;}
+.copy-btn{border:none;background:var(--bg-subtle);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:12px;font-weight:700;color:var(--text-main);flex-shrink:0;}
+.progress{height:6px;border-radius:3px;background:var(--bg-subtle);overflow:hidden;margin-top:10px;display:none;}
+.progress-bar{height:100%;background:var(--primary);width:0%;transition:width .15s;}
+.file-meta{font-size:12px;color:var(--text-muted);margin-top:8px;}
+.compare-box{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+.compare-box input{font-family:var(--font-mono);font-size:12px;padding:10px;border-radius:8px;border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);width:100%;}
+.match-ok{color:var(--success);font-weight:700;font-size:13px;margin-top:8px;}
+.match-no{color:var(--danger);font-weight:700;font-size:13px;margin-top:8px;}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/hash-tool.html">
+</head>
+<body>
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>#️⃣</span><span>哈希校验工具</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="text-tools.html">🔤 文本工具箱</option>
+      <option value="diff-tool.html">🪞 文本差异对比</option>
+      <option value="hash-tool.html">#️⃣ 哈希校验</option>
+      <option value="encrypt-tool.html">🛡️ 本地加解密</option>
+      <option value="todolist.html">✅ 待办清单</option>
+      <option value="expense-tracker.html">💰 记账本</option>
+      <option value="habit-tracker.html">🔥 习惯打卡</option>
+      <option value="countdown.html">⏳ 倒数日</option>
+      <option value="time-tool.html">🕐 时间工具箱</option>
+      <option value="loan-calculator.html">🏦 贷款计算器</option>
+      <option value="color-tool.html">🎨 颜色工具箱</option>
+      <option value="drawing-board.html">🖌️ 简易画板</option>
+      <option value="img-to-pdf.html">📄 图片转PDF</option>
+      <option value="network-info.html">🌐 网络信息</option>
+      <option value="password.html">🔐 密码</option>
+          <option value="calendar.html">📅 万年历</option>
+</select>
+    <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+  </div>
+</header>
+
+<main class="container">
+  <h1 class="page-title">#️⃣ 哈希校验工具</h1>
+  <p class="page-sub">计算文本或文件的 MD5 / SHA-1 / SHA-256 / SHA-512 摘要，用于完整性校验。全程浏览器内存计算，文件绝不上传。</p>
+
+  <div class="card">
+    <label class="small">文本哈希</label>
+    <textarea id="textInput" oninput="hashText()" placeholder="输入文本，实时计算哈希..."></textarea>
+    <div id="textHashResult" style="margin-top:12px;"></div>
+  </div>
+
+  <div class="card">
+    <label class="small">文件哈希（拖拽或点击选择文件）</label>
+    <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+      📁 拖拽文件到此处，或点击选择文件
+      <input type="file" id="fileInput" style="display:none" onchange="handleFile(this.files[0])">
+    </div>
+    <div class="file-meta" id="fileMeta"></div>
+    <div class="progress" id="progressWrap"><div class="progress-bar" id="progressBar"></div></div>
+    <div id="fileHashResult" style="margin-top:12px;"></div>
+  </div>
+
+  <div class="card">
+    <label class="small">哈希值比对校验</label>
+    <div class="compare-box">
+      <input type="text" id="compareA" placeholder="哈希值 A（如官方提供的校验值）">
+      <input type="text" id="compareB" placeholder="哈希值 B（如本地计算的值，可点击上方复制按钮粘贴）">
+    </div>
+    <button class="copy-btn" style="margin-top:10px;" onclick="doCompare()">🔍 比对是否一致</button>
+    <div id="compareResult"></div>
+  </div>
+</main>
+
+<script>
+(function(){const t=localStorage.getItem('app_theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');})();
+function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme');const next=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);localStorage.setItem('app_theme',next);}
+
+function buf2hex(buf){ return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join(''); }
+
+async function sha(algo, data){
+  const digest = await crypto.subtle.digest(algo, data);
+  return buf2hex(digest);
+}
+
+// ---- 纯 JS MD5 实现 (SubtleCrypto 不支持 MD5) ----
+function md5(bytes){
+  function rotl(x,c){return (x<<c)|(x>>>(32-c));}
+  function toLE(n){return [n&0xff,(n>>>8)&0xff,(n>>>16)&0xff,(n>>>24)&0xff];}
+  const s = [7,12,17,22,7,12,17,22,7,12,17,22,7,12,17,22,
+             5,9,14,20,5,9,14,20,5,9,14,20,5,9,14,20,
+             4,11,16,23,4,11,16,23,4,11,16,23,4,11,16,23,
+             6,10,15,21,6,10,15,21,6,10,15,21,6,10,15,21];
+  const K = new Int32Array(64);
+  for(let i=0;i<64;i++) K[i] = (Math.floor(Math.abs(Math.sin(i+1)) * 4294967296)) | 0;
+  let a0=0x67452301, b0=0xefcdab89, c0=0x98badcfe, d0=0x10325476;
+  const msgLen = bytes.length;
+  const withOne = [...bytes, 0x80];
+  while(withOne.length % 64 !== 56) withOne.push(0);
+  const bitLenLow = (msgLen * 8) >>> 0;
+  const bitLenHigh = Math.floor(msgLen / 536870912);
+  withOne.push(...toLE(bitLenLow), ...toLE(bitLenHigh));
+  const data = new Uint8Array(withOne);
+  for(let chunkStart=0; chunkStart<data.length; chunkStart+=64){
+    const M = new Int32Array(16);
+    for(let i=0;i<16;i++){
+      M[i] = data[chunkStart+i*4] | (data[chunkStart+i*4+1]<<8) | (data[chunkStart+i*4+2]<<16) | (data[chunkStart+i*4+3]<<24);
+    }
+    let A=a0,B=b0,C=c0,D=d0;
+    for(let i=0;i<64;i++){
+      let F,g;
+      if(i<16){ F=(B&C)|(~B&D); g=i; }
+      else if(i<32){ F=(D&B)|(~D&C); g=(5*i+1)%16; }
+      else if(i<48){ F=B^C^D; g=(3*i+5)%16; }
+      else { F=C^(B|~D); g=(7*i)%16; }
+      F = (F + A + K[i] + M[g]) | 0;
+      A=D; D=C; C=B;
+      B = (B + rotl(F, s[i])) | 0;
+    }
+    a0=(a0+A)|0; b0=(b0+B)|0; c0=(c0+C)|0; d0=(d0+D)|0;
+  }
+  const out = [...toLE(a0), ...toLE(b0), ...toLE(c0), ...toLE(d0)];
+  return out.map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function renderHashes(container, results){
+  container.innerHTML = Object.entries(results).map(([algo, val]) =>
+    '<div class="hash-row"><div class="algo">'+algo+'</div><code>'+val+'</code><button class="copy-btn" onclick="navigator.clipboard.writeText(\''+val+'\')">📋</button></div>'
+  ).join('');
+}
+
+let hashTimer;
+function hashText(){
+  clearTimeout(hashTimer);
+  hashTimer = setTimeout(async ()=>{
+    const text = document.getElementById('textInput').value;
+    const bytes = new TextEncoder().encode(text);
+    const result = document.getElementById('textHashResult');
+    if(!text){ result.innerHTML=''; return; }
+    const [sha1, sha256, sha512] = await Promise.all([
+      sha('SHA-1', bytes), sha('SHA-256', bytes), sha('SHA-512', bytes)
+    ]);
+    renderHashes(result, { 'MD5': md5(bytes), 'SHA-1': sha1, 'SHA-256': sha256, 'SHA-512': sha512 });
+  }, 150);
+}
+
+const dropzone = document.getElementById('dropzone');
+['dragover','dragenter'].forEach(ev => dropzone.addEventListener(ev, e=>{ e.preventDefault(); dropzone.classList.add('drag'); }));
+['dragleave','drop'].forEach(ev => dropzone.addEventListener(ev, e=>{ e.preventDefault(); dropzone.classList.remove('drag'); }));
+dropzone.addEventListener('drop', e=>{ const f = e.dataTransfer.files[0]; if(f) handleFile(f); });
+
+function fmtBytes(n){
+  if(n<1024) return n+' B';
+  if(n<1048576) return (n/1024).toFixed(1)+' KB';
+  if(n<1073741824) return (n/1048576).toFixed(2)+' MB';
+  return (n/1073741824).toFixed(2)+' GB';
+}
+
+async function handleFile(file){
+  if(!file) return;
+  document.getElementById('fileMeta').textContent = file.name + ' · ' + fmtBytes(file.size) + ' · ' + (file.type||'未知类型');
+  const progressWrap = document.getElementById('progressWrap');
+  const progressBar = document.getElementById('progressBar');
+  progressWrap.style.display = 'block';
+  progressBar.style.width = '10%';
+  const buf = await file.arrayBuffer();
+  progressBar.style.width = '50%';
+  const bytes = new Uint8Array(buf);
+  const [sha1, sha256, sha512] = await Promise.all([
+    sha('SHA-1', buf), sha('SHA-256', buf), sha('SHA-512', buf)
+  ]);
+  progressBar.style.width = '80%';
+  const md5val = md5(bytes);
+  progressBar.style.width = '100%';
+  renderHashes(document.getElementById('fileHashResult'), { 'MD5': md5val, 'SHA-1': sha1, 'SHA-256': sha256, 'SHA-512': sha512 });
+  setTimeout(()=>{ progressWrap.style.display='none'; progressBar.style.width='0%'; }, 600);
+}
+
+function doCompare(){
+  const a = document.getElementById('compareA').value.trim().toLowerCase();
+  const b = document.getElementById('compareB').value.trim().toLowerCase();
+  const el = document.getElementById('compareResult');
+  if(!a || !b){ el.innerHTML = ''; return; }
+  el.innerHTML = a === b ? '<div class="match-ok">✓ 两个哈希值完全一致</div>' : '<div class="match-no">✗ 哈希值不一致，文件可能已损坏或被篡改</div>';
+}
+</script>
+</body>
+</html>

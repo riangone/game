@@ -18,6 +18,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=M+PLUS+Rounded+1c:wght@600;700;800;900&family=Noto+Sans+KR:wght@500;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
 <script src="js/voice-recorder.js"></script>
+<script src="js/hangeul_stroke_data.js"></script>
 <style>
   :root{
     --kr-blue:#1d4ed8; --kr-blue-dark:#1e3a8a; --kr-blue-soft:#dbeafe;
@@ -110,7 +111,7 @@
 
   /* character & hangul grid card */
   .char-wrap{width:100%;max-width:340px;perspective:1000px;}
-  .char-card{width:100%;aspect-ratio:4/5;position:relative;transform-style:preserve-3d;transition:transform .5s;cursor:pointer;}
+  .char-card{width:100%;min-height:390px;position:relative;transform-style:preserve-3d;transition:transform .5s;cursor:pointer;}
   .char-card.flipped{transform:rotateY(180deg);}
   .char-face{position:absolute;inset:0;border-radius:var(--radius-lg);backface-visibility:hidden;display:flex;flex-direction:column;
     align-items:center;justify-content:center;gap:8px;box-shadow:var(--shadow-card);border:2px solid #bfdbfe;padding:16px;}
@@ -129,12 +130,311 @@
   .hangul-grid::after{
     content:'';position:absolute;top:0;bottom:0;left:50%;border-left:1.5px dashed #93c5fd;z-index:1;pointer-events:none;
   }
-  .hangul-char{font-size:80px;font-weight:900;color:var(--kr-blue-dark);line-height:1;position:relative;z-index:2;}
+  .hangul-char{display:none;}
+  #hangulGuideCanvas{position:absolute;inset:0;z-index:2;transition:opacity .2s;pointer-events:none;}
+  #hangulGuideCanvas.guide-off{opacity:0;}
   #hangulCanvas{position:absolute;inset:0;z-index:3;touch-action:none;cursor:crosshair;}
+  .quiz-badge{position:absolute;top:5px;right:5px;z-index:4;font-size:11px;font-weight:800;background:var(--kr-blue);color:#fff;padding:2px 8px;border-radius:10px;display:none;pointer-events:none;}
+  .quiz-badge.show{display:block;}
+  @keyframes hgShake{0%,100%{transform:translateX(0);}20%{transform:translateX(-6px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}}
+  .hangul-grid.shake{animation:hgShake .35s;}
 
-  .breakdown-strip{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;background:#f8fafc;padding:5px 10px;border-radius:12px;border:1px solid #e2e8f0;}
-  .breakdown-part{background:#fff;padding:2px 7px;border-radius:6px;border:1px solid #cbd5e1;color:var(--kr-blue-dark);display:flex;align-items:center;gap:3px;}
-  .breakdown-part .type{font-size:10px;color:var(--muted);}
+  /* ================= HANGEUL STROKE & BREAKDOWN CARDS ================= */
+  .char-card{width:100%;min-height:390px;position:relative;transform-style:preserve-3d;transition:transform .5s;cursor:pointer;}
+  .char-face{position:absolute;inset:0;border-radius:var(--radius-lg);backface-visibility:hidden;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:6px;box-shadow:var(--shadow-card);border:2px solid #bfdbfe;padding:12px 14px;}
+  .char-front{background:var(--card);}
+  .char-back{background:linear-gradient(135deg,#eff6ff,#fef2f2);transform:rotateY(180deg);}
+
+  .breakdown-cards {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 4px 0 2px;
+    width: 100%;
+  }
+  .part-card {
+    background: #fff;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 4px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 68px;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    user-select: none;
+    position: relative;
+  }
+  .part-card:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59,130,246,0.18);
+    transform: translateY(-2px);
+  }
+  .part-card.active-step {
+    border-color: #2563eb;
+    background: #eff6ff;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.3), 0 4px 12px rgba(37,99,235,0.2);
+    transform: scale(1.05);
+    z-index: 2;
+  }
+  .part-card.step-done {
+    border-color: #10b981;
+    background: #f0fdf4;
+  }
+  .part-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .part-tag {
+    color: var(--kr-blue);
+    background: #e0e7ff;
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-size: 9px;
+  }
+  .part-jamo-text {
+    font-size: 12px;
+    font-weight: 800;
+    color: #1e293b;
+  }
+  .part-strokes-badge {
+    color: #dc2626;
+    background: #fee2e2;
+    padding: 1px 4px;
+    border-radius: 4px;
+    font-size: 9px;
+  }
+  .part-svg-wrap {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .jamo-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .jamo-svg .jamo path { fill: #1e293b; transition: fill 0.2s; }
+  .jamo-svg .stroke-number path { fill: #dc2626; }
+  .jamo-svg .order-arrow { fill: #2563eb; }
+  .part-card.active-step .jamo-svg .jamo path { fill: #1d4ed8; }
+  .part-card.active-step .jamo-svg .order-arrow { fill: #ef4444; }
+
+  .part-footer {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    color: #64748b;
+  }
+  .part-name { font-weight: 700; color: #334155; }
+  .part-ro { font-size: 9px; color: #94a3b8; }
+
+  /* Grid overlay step indicator */
+  .grid-step-indicator {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    z-index: 5;
+    background: rgba(30, 58, 138, 0.92);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 12px;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: all 0.2s ease;
+    backdrop-filter: blur(2px);
+  }
+  .grid-step-indicator.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Full Screen Stroke Modal */
+  .stroke-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+  .stroke-modal-overlay.active {
+    display: flex;
+    animation: fadeInModal 0.25s ease forwards;
+  }
+  @keyframes fadeInModal {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .stroke-modal-box {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    width: 100%;
+    max-width: 580px;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    animation: slideUpModal 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  @keyframes slideUpModal {
+    from { opacity: 0; transform: translateY(20px) scale(0.97); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .stroke-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .stroke-modal-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .stroke-modal-close {
+    background: none;
+    border: none;
+    font-size: 26px;
+    line-height: 1;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0 4px;
+    border-radius: 6px;
+    transition: color 0.15s;
+  }
+  .stroke-modal-close:hover { color: #0f172a; }
+  .stroke-modal-body {
+    padding: 20px;
+  }
+  .stroke-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    border-radius: 0 0 20px 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .modal-syllable-assembly {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .assembly-tip {
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #1e40af;
+    line-height: 1.5;
+  }
+  .modal-parts-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .modal-part-item {
+    background: #fff;
+    border: 2px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 120px;
+    max-width: 150px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .modal-part-badge {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--kr-blue);
+    background: #dbeafe;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+  }
+  .modal-part-svg {
+    width: 88px;
+    height: 88px;
+    margin: 4px 0;
+  }
+  .modal-part-plus {
+    font-size: 22px;
+    font-weight: 900;
+    color: #94a3b8;
+  }
+  .modal-single-jamo {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .modal-big-svg-wrap {
+    width: 160px;
+    height: 160px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 16px;
+    padding: 8px;
+    background: #f8fafc;
+  }
+  .modal-jamo-details {
+    flex: 1;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 14px;
+  }
+  .detail-row {
+    color: #334155;
+    line-height: 1.5;
+  }
+  .detail-legend {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .legend-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+  .legend-badge.red { background: #fee2e2; color: #b91c1c; }
+  .legend-badge.blue { background: #dbeafe; color: #1d4ed8; }
+  .legend-badge.dark { background: #f1f5f9; color: #334155; }
   .hanja-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:8px;background:var(--gold-soft);color:#92400e;border:1px solid #fde68a;font-size:12px;font-weight:700;}
 
   .char-pills{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;max-width:560px;}
@@ -250,6 +550,7 @@
   .btn-answer-fill{background:#10b981;border:none;color:#fff;border-radius:8px;padding:6px 14px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 2px 4px rgba(16,185,129,0.25);}
   .btn-answer-fill:active{transform:translateY(1px);}
 </style>
+    <link rel="canonical" href="https://hge.0101.click/hangugeo.html">
 </head>
 <body>
 <div id="app">
@@ -408,15 +709,14 @@
             <div style="font-size:18px;color:var(--kr-blue);font-weight:800;" id="charRo"></div>
             <div class="hangul-grid">
               <span class="hangul-char" id="charHangul">한</span>
+              <canvas id="hangulGuideCanvas" width="140" height="140"></canvas>
               <canvas id="hangulCanvas" width="140" height="140"></canvas>
+              <span class="quiz-badge" id="quizBadge"></span>
+              <div class="grid-step-indicator" id="gridStepIndicator"></div>
             </div>
-            <div class="breakdown-strip" id="charBreakdown">
-              <div class="breakdown-part"><span class="type">初声</span> <span id="bdCho">ㅎ</span></div>
-              <div class="breakdown-part"><span class="type">中声</span> <span id="bdJung">ㅏ</span></div>
-              <div class="breakdown-part" id="bdJongWrap"><span class="type">终声</span> <span id="bdJong">ㄴ</span></div>
-            </div>
+            <div class="breakdown-cards" id="charBreakdown"></div>
             <div class="hanja-badge" id="charHanjaBadge">对应汉字: 韓</div>
-            <div style="font-size:12px;color:var(--muted);margin-top:2px;">可在方格内手写临摹 · 点击翻面看释义 ↩️</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:2px;">💡 田字格内红色为描红字，沿笔画临摹书写 · 点击翻面看释义 ↩️</div>
           </div>
           <!-- BACK -->
           <div class="char-face char-back">
@@ -430,8 +730,12 @@
         </div>
       </div>
 
-      <div class="story-nav" style="justify-content:center;gap:10px;">
+      <div class="story-nav" style="justify-content:center;gap:8px;flex-wrap:wrap;">
         <button class="btn gold small" onclick="playCurrentCharAudio(event)">🔊 朗读发音</button>
+        <button class="btn gold small" id="strokeOrderBtn" onclick="playStrokeOrder(event)">▶️ 笔顺演示</button>
+        <button class="btn blue small" id="strokeModalBtn" onclick="openCurrentCharStrokeModal(event)">🔍 笔顺图解</button>
+        <button class="btn green small" id="traceQuizBtn" onclick="toggleTraceQuiz(event)">📝 跟笔顺练习</button>
+        <button class="btn ghost small" id="traceToggleBtn" onclick="toggleTraceGuide(event)">🙈 隐藏描红</button>
         <button class="btn red small" onclick="clearHangulCanvas(event)">🔁 清空格子</button>
       </div>
 
@@ -1459,8 +1763,11 @@ function jumpToRecordSentence(idx){
 function goChars(){
   showScreen('screen-chars');
   renderCharPills();
-  renderChar();
   initHangulCanvas();
+  renderChar();
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(()=> drawGuideChar(CHARACTERS[charIdx]));
+  }
 }
 
 function renderCharPills(){
@@ -1488,25 +1795,50 @@ function renderChar(){
   document.getElementById('charMeaning').textContent = c.meaning + ' · ' + c.context;
   document.getElementById('charCounter').textContent = (charIdx + 1) + ' / ' + CHARACTERS.length;
 
-  document.getElementById('bdCho').textContent = c.cho;
-  document.getElementById('bdJung').textContent = c.jung;
-  const jongWrap = document.getElementById('bdJongWrap');
-  if(c.jong){
-    jongWrap.style.display = 'flex';
-    document.getElementById('bdJong').textContent = c.jong;
-  } else {
-    jongWrap.style.display = 'none';
+  const bdWrap = document.getElementById('charBreakdown');
+  if(bdWrap && typeof renderJamoPartCard === 'function'){
+    let cardsHtml = renderJamoPartCard('cho', '初声', c.cho) + renderJamoPartCard('jung', '中声', c.jung);
+    if(c.jong){
+      cardsHtml += renderJamoPartCard('jong', '终声', c.jong);
+    }
+    bdWrap.innerHTML = cardsHtml;
   }
 
   document.querySelectorAll('.char-pill').forEach((el, i)=>{
     el.classList.toggle('active', i === charIdx);
   });
 
+  const guideEl = document.getElementById('hangulGuideCanvas');
+  if(guideEl) guideEl.classList.remove('guide-off');
+  drawGuideChar(c);
+  const traceBtn = document.getElementById('traceToggleBtn');
+  if(traceBtn) traceBtn.textContent = '🙈 隐藏描红';
+  strokeAnimGen++;
+  strokeAnimPlaying = false;
+  const strokeBtn = document.getElementById('strokeOrderBtn');
+  if(strokeBtn){ strokeBtn.disabled = false; strokeBtn.textContent = '▶️ 笔顺演示'; }
+  if(quizActive) exitTraceQuiz();
   clearHangulCanvas();
+  hideStepIndicator();
+}
+
+function openCurrentCharStrokeModal(e){
+  if(e) e.stopPropagation();
+  if(typeof openStrokeGuideModal === 'function'){
+    openStrokeGuideModal(CHARACTERS[charIdx]);
+  }
+}
+
+function toggleTraceGuide(e){
+  if(e) e.stopPropagation();
+  const guideEl = document.getElementById('hangulGuideCanvas');
+  const traceBtn = document.getElementById('traceToggleBtn');
+  const hidden = guideEl.classList.toggle('guide-off');
+  if(traceBtn) traceBtn.textContent = hidden ? '👁️ 显示描红' : '🙈 隐藏描红';
 }
 
 function flipChar(e){
-  if(e && e.target && e.target.closest('#hangulCanvas, .btn')){ return; }
+  if(e && e.target && e.target.closest('#hangulCanvas, .btn, .part-card')){ return; }
   if(e) e.stopPropagation();
   document.getElementById('charCard').classList.toggle('flipped');
 }
@@ -1522,8 +1854,12 @@ function playCurrentCharAudio(e){
 
 /* Hangul Handwriting Canvas */
 let hCanvas = null, hCtx = null, isDrawing = false;
+let gCanvas = null, gCtx = null;
+let quizActive = false, quizSteps = [], quizStepIdx = 0, quizCompletedAbs = [], quizCurPoints = [];
 function initHangulCanvas(){
   hCanvas = document.getElementById('hangulCanvas');
+  gCanvas = document.getElementById('hangulGuideCanvas');
+  gCtx = gCanvas ? gCanvas.getContext('2d') : null;
   if(!hCanvas) return;
   hCtx = hCanvas.getContext('2d');
   hCtx.lineWidth = 6;
@@ -1544,6 +1880,7 @@ function initHangulCanvas(){
     const pos = getPos(e);
     hCtx.beginPath();
     hCtx.moveTo(pos.x, pos.y);
+    if(quizActive) quizCurPoints = [pos];
   };
   const moveDraw = (e)=>{
     if(!isDrawing) return;
@@ -1551,11 +1888,13 @@ function initHangulCanvas(){
     const pos = getPos(e);
     hCtx.lineTo(pos.x, pos.y);
     hCtx.stroke();
+    if(quizActive) quizCurPoints.push(pos);
   };
   const stopDraw = (e)=>{
     if(!isDrawing) return;
     e.preventDefault(); e.stopPropagation();
     isDrawing = false;
+    if(quizActive) handleQuizStrokeEnd();
   };
 
   hCanvas.addEventListener('mousedown', startDraw);
@@ -1569,8 +1908,239 @@ function initHangulCanvas(){
 
 function clearHangulCanvas(e){
   if(e) e.stopPropagation();
+  clearCanvasRaw();
+}
+
+function clearCanvasRaw(){
   if(!hCanvas || !hCtx) return;
   hCtx.clearRect(0, 0, hCanvas.width, hCanvas.height);
+}
+
+/* ---------------- 真实字体描红与双轨联动笔顺演示 ---------------- */
+const GUIDE_FONT = '900 92px "Noto Sans KR","M PLUS Rounded 1c",sans-serif';
+
+const VOWEL_TYPE = {
+  'ㅏ':'v','ㅐ':'v','ㅓ':'v','ㅔ':'v','ㅣ':'v','ㅘ':'v','ㅝ':'v',
+  'ㅗ':'h','ㅜ':'h','ㅛ':'h','ㅡ':'h'
+};
+
+function getBlockLayout(jungType, hasJong){
+  if(jungType === 'h'){
+    return hasJong
+      ? { cho:{x:8,y:8,w:124,h:40}, jung:{x:8,y:52,w:124,h:40}, jong:{x:8,y:96,w:124,h:36} }
+      : { cho:{x:8,y:8,w:124,h:62}, jung:{x:8,y:74,w:124,h:58} };
+  }
+  return hasJong
+    ? { cho:{x:8,y:8,w:60,h:82}, jung:{x:72,y:8,w:60,h:82}, jong:{x:8,y:94,w:124,h:38} }
+    : { cho:{x:8,y:8,w:60,h:124}, jung:{x:72,y:8,w:60,h:124} };
+}
+
+function drawGuideChar(c){
+  if(!gCtx || !gCanvas) return;
+  gCtx.clearRect(0, 0, gCanvas.width, gCanvas.height);
+  gCtx.save();
+  gCtx.font = GUIDE_FONT;
+  gCtx.textAlign = 'center';
+  gCtx.textBaseline = 'middle';
+  gCtx.fillStyle = 'rgba(239,68,68,.45)';
+  gCtx.fillText(c.zh, gCanvas.width/2, gCanvas.height/2 + 6);
+  gCtx.restore();
+}
+
+let strokeAnimGen = 0, strokeAnimPlaying = false;
+
+function showStepIndicator(text){
+  const el = document.getElementById('gridStepIndicator');
+  if(!el) return;
+  el.textContent = text;
+  el.classList.add('show');
+}
+function hideStepIndicator(){
+  const el = document.getElementById('gridStepIndicator');
+  if(!el) return;
+  el.classList.remove('show');
+}
+
+function revealCharBoxWithSpotlight(ch, box, gen){
+  return new Promise(resolve=>{
+    if(!hCtx) return resolve();
+    const duration = 400;
+    const start = performance.now();
+    function frame(now){
+      if(gen !== strokeAnimGen) return resolve();
+      const t = Math.min(1, (now - start) / duration);
+      hCtx.save();
+      // Draw spotlight tint over the active part area
+      hCtx.fillStyle = 'rgba(59, 130, 246, 0.12)';
+      hCtx.beginPath();
+      hCtx.roundRect ? hCtx.roundRect(box.x - 2, box.y - 2, box.w + 4, box.h + 4, 8) : hCtx.rect(box.x, box.y, box.w, box.h);
+      hCtx.fill();
+
+      // Progressive reveal of character portion in bright blue
+      hCtx.beginPath();
+      hCtx.rect(box.x, box.y, box.w * t, box.h);
+      hCtx.clip();
+      hCtx.font = GUIDE_FONT;
+      hCtx.textAlign = 'center';
+      hCtx.textBaseline = 'middle';
+      hCtx.fillStyle = '#1d4ed8';
+      hCtx.fillText(ch, hCanvas.width/2, hCanvas.height/2 + 6);
+      hCtx.restore();
+
+      if(t < 1){ requestAnimationFrame(frame); } else { resolve(); }
+    }
+    requestAnimationFrame(frame);
+  });
+}
+
+async function playStrokeOrder(e){
+  if(e) e.stopPropagation();
+  if(strokeAnimPlaying || !hCtx || quizActive) return;
+  const c = CHARACTERS[charIdx];
+  const gen = ++strokeAnimGen;
+  strokeAnimPlaying = true;
+  const btn = document.getElementById('strokeOrderBtn');
+  if(btn){ btn.disabled = true; btn.textContent = '✍️ 演示中...'; }
+  clearCanvasRaw();
+
+  const jungType = VOWEL_TYPE[c.jung] || 'v';
+  const layout = getBlockLayout(jungType, !!c.jong);
+  const parts = [
+    { key: 'cho', label: '初声', jamo: c.cho, box: layout.cho },
+    { key: 'jung', label: '中声', jamo: c.jung, box: layout.jung }
+  ];
+  if(c.jong){
+    parts.push({ key: 'jong', label: '终声', jamo: c.jong, box: layout.jong });
+  }
+
+  // Remove previous highlights
+  document.querySelectorAll('.part-card').forEach(el=> el.classList.remove('active-step', 'step-done'));
+
+  for(let i = 0; i < parts.length; i++){
+    if(gen !== strokeAnimGen) break;
+    const p = parts[i];
+    const cardEl = document.querySelector(`.part-card[data-part="${p.key}"]`);
+    if(cardEl){
+      document.querySelectorAll('.part-card').forEach(el=> el.classList.remove('active-step'));
+      cardEl.classList.add('active-step');
+    }
+    const meta = (typeof HANGEUL_STROKE_META !== 'undefined' && HANGEUL_STROKE_META[p.jamo]) || {};
+    showStepIndicator(`${i+1}. ${p.label}【${p.jamo}】${meta.strokes ? meta.strokes + '画' : ''}`);
+
+    await revealCharBoxWithSpotlight(c.zh, p.box, gen);
+    if(cardEl) cardEl.classList.add('step-done');
+    await new Promise(r=> setTimeout(r, 420));
+  }
+
+  if(gen === strokeAnimGen){
+    showStepIndicator('✨ 笔顺演示完成');
+    document.querySelectorAll('.part-card').forEach(el=> el.classList.remove('active-step'));
+    await new Promise(r=> setTimeout(r, 700));
+    clearCanvasRaw();
+    hideStepIndicator();
+    if(btn){ btn.disabled = false; btn.textContent = '▶️ 笔顺演示'; }
+    document.querySelectorAll('.part-card').forEach(el=> el.classList.remove('step-done'));
+  }
+  strokeAnimPlaying = false;
+}
+
+/* ---------------- 跟笔顺描红练习 (Interactive Stroke Quiz) ---------------- */
+function updateQuizBadge(){
+  const badge = document.getElementById('quizBadge');
+  if(!badge) return;
+  if(quizActive){
+    badge.classList.add('show');
+    badge.textContent = `第 ${quizStepIdx + 1}/${quizSteps.length} 部件`;
+  } else {
+    badge.classList.remove('show');
+  }
+}
+
+function startTraceQuiz(){
+  if(strokeAnimPlaying) return;
+  const c = CHARACTERS[charIdx];
+  const jungType = VOWEL_TYPE[c.jung] || 'v';
+  const layout = getBlockLayout(jungType, !!c.jong);
+  const steps = [
+    { key: 'cho', label: '初声', jamo: c.cho, box: layout.cho },
+    { key: 'jung', label: '中声', jamo: c.jung, box: layout.jung }
+  ];
+  if(c.jong) steps.push({ key: 'jong', label: '终声', jamo: c.jong, box: layout.jong });
+
+  quizSteps = steps;
+  quizActive = true;
+  quizStepIdx = 0;
+  quizCompletedAbs = [];
+  quizCurPoints = [];
+  const btn = document.getElementById('traceQuizBtn');
+  if(btn) btn.textContent = '✖️ 退出练习';
+  updateQuizBadge();
+  highlightQuizCurrentStep();
+  toast(`📝 请按笔顺临摹第 1 部件【${steps[0].label}: ${steps[0].jamo}】`);
+}
+
+function highlightQuizCurrentStep(){
+  if(!quizActive || quizStepIdx >= quizSteps.length){
+    hideStepIndicator();
+    document.querySelectorAll('.part-card').forEach(el=> el.classList.remove('active-step'));
+    return;
+  }
+  const step = quizSteps[quizStepIdx];
+  const meta = (typeof HANGEUL_STROKE_META !== 'undefined' && HANGEUL_STROKE_META[step.jamo]) || {};
+  showStepIndicator(`请写 ${step.label}【${step.jamo}】${meta.strokes ? meta.strokes + '画' : ''}`);
+  document.querySelectorAll('.part-card').forEach(el=>{
+    const isCur = el.getAttribute('data-part') === step.key;
+    el.classList.toggle('active-step', isCur);
+  });
+}
+
+function handleQuizStrokeEnd(){
+  if(!quizActive || quizStepIdx >= quizSteps.length){ quizCurPoints = []; return; }
+  const step = quizSteps[quizStepIdx];
+  const box = step.box;
+  let hitCount = 0;
+  quizCurPoints.forEach(p=>{
+    if(p.x >= box.x - 14 && p.x <= box.x + box.w + 14 && p.y >= box.y - 14 && p.y <= box.y + box.h + 14){
+      hitCount++;
+    }
+  });
+  const hitRatio = quizCurPoints.length > 0 ? (hitCount / quizCurPoints.length) : 0;
+  quizCurPoints = [];
+
+  const cardEl = document.querySelector(`.part-card[data-part="${step.key}"]`);
+  if(hitRatio >= 0.3 || hitCount >= 3){
+    if(cardEl) cardEl.classList.add('step-done');
+    quizStepIdx++;
+    updateQuizBadge();
+    if(quizStepIdx >= quizSteps.length){
+      toast('🎉 棒极了！全字临摹完成！可尝试隐藏描红默写～');
+      showStepIndicator('🎉 临摹完成！');
+      setTimeout(()=>{ if(quizActive) exitTraceQuiz(); }, 1600);
+      return;
+    }
+    const nextStep = quizSteps[quizStepIdx];
+    toast(`✅ 很好！接着临摹【${nextStep.label}: ${nextStep.jamo}】`);
+    highlightQuizCurrentStep();
+  } else {
+    const grid = document.querySelector('#screen-chars .hangul-grid');
+    if(grid){ grid.classList.add('shake'); setTimeout(()=> grid.classList.remove('shake'), 360); }
+    toast(`提示：请先在【${step.label}】区域临摹书写～`);
+  }
+}
+
+function exitTraceQuiz(){
+  quizActive = false;
+  quizSteps = []; quizStepIdx = 0; quizCompletedAbs = []; quizCurPoints = [];
+  updateQuizBadge();
+  hideStepIndicator();
+  document.querySelectorAll('.part-card').forEach(el=> el.classList.remove('active-step', 'step-done'));
+  const btn = document.getElementById('traceQuizBtn');
+  if(btn) btn.textContent = '📝 跟笔顺练习';
+}
+
+function toggleTraceQuiz(e){
+  if(e) e.stopPropagation();
+  if(quizActive) exitTraceQuiz(); else startTraceQuiz();
 }
 
 /* ---------------- FLASHCARDS (生词) ---------------- */

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>待办清单 · 极简看板</title>
+<meta name="description" content="纯前端待办清单工具，支持分类标签、拖拽排序、优先级与本地持久化存储，数据零上传。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--success-subtle:#d1fae5;--danger:#ef4444;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);--success-subtle:rgba(16,185,129,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:760px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.add-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.add-bar input[type=text]{flex:1;min-width:160px;padding:12px 14px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-main);font-size:14px;}
+.add-bar select{padding:12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-main);font-size:13px;}
+.add-bar button{padding:12px 20px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:800;cursor:pointer;}
+.filter-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.filter-chip{padding:6px 14px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-surface);font-size:12px;font-weight:700;cursor:pointer;color:var(--text-muted);}
+.filter-chip.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.stat-bar{display:flex;gap:16px;margin-bottom:16px;font-size:12.5px;color:var(--text-muted);font-weight:600;}
+ul#todoList{list-style:none;display:flex;flex-direction:column;gap:8px;}
+.todo-item{display:flex;align-items:center;gap:10px;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:12px 14px;box-shadow:var(--shadow-sm);cursor:grab;}
+.todo-item.dragging{opacity:0.4;}
+.todo-item.done .todo-text{text-decoration:line-through;color:var(--text-light);}
+.todo-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--border-color);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;}
+.todo-item.done .todo-check{background:var(--success);border-color:var(--success);color:#fff;}
+.todo-text{flex:1;font-size:14px;}
+.todo-tag{font-size:11px;font-weight:700;padding:3px 9px;border-radius:var(--radius-pill);flex-shrink:0;}
+.tag-work{background:#dbeafe;color:#1d4ed8;}
+.tag-life{background:#d1fae5;color:#047857;}
+.tag-study{background:#ede9fe;color:#6d28d9;}
+.tag-other{background:#fef3c7;color:#92400e;}
+[data-theme="dark"] .tag-work{background:rgba(29,78,216,.25);color:#93c5fd;}
+[data-theme="dark"] .tag-life{background:rgba(4,120,87,.25);color:#6ee7b7;}
+[data-theme="dark"] .tag-study{background:rgba(109,40,217,.25);color:#c4b5fd;}
+[data-theme="dark"] .tag-other{background:rgba(146,64,14,.25);color:#fcd34d;}
+.del-btn{border:none;background:transparent;color:var(--text-light);cursor:pointer;font-size:16px;flex-shrink:0;}
+.del-btn:hover{color:var(--danger);}
+.drag-handle{color:var(--text-light);flex-shrink:0;cursor:grab;}
+.empty-state{text-align:center;padding:40px 20px;color:var(--text-light);}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/todolist.html">
+</head>
+<body>
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>✅</span><span>待办清单</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="todolist.html">✅ 待办清单</option>
+      <option value="pomodoro.html">🍅 番茄钟</option>
+      <option value="expense-tracker.html">💰 记账本</option>
+      <option value="habit-tracker.html">🔥 习惯打卡</option>
+      <option value="countdown.html">⏳ 倒数日</option>
+      <option value="time-tool.html">🕐 时间工具箱</option>
+      <option value="loan-calculator.html">🏦 贷款计算器</option>
+      <option value="color-tool.html">🎨 颜色工具箱</option>
+      <option value="drawing-board.html">🖌️ 简易画板</option>
+      <option value="img-to-pdf.html">📄 图片转PDF</option>
+      <option value="network-info.html">🌐 网络信息</option>
+      <option value="text-tools.html">🔤 文本工具箱</option>
+      <option value="diff-tool.html">🪞 文本差异对比</option>
+      <option value="hash-tool.html">#️⃣ 哈希校验</option>
+      <option value="encrypt-tool.html">🛡️ 本地加解密</option>
+          <option value="calendar.html">📅 万年历</option>
+</select>
+    <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+  </div>
+</header>
+
+<main class="container">
+  <h1 class="page-title">✅ 待办清单</h1>
+  <p class="page-sub">支持分类标签、拖拽排序与本地持久化。数据仅保存在本机浏览器，零上传。</p>
+
+  <div class="add-bar">
+    <input type="text" id="newTodoText" placeholder="输入待办事项，回车快速添加..." onkeydown="if(event.key==='Enter')addTodo()">
+    <select id="newTodoTag">
+      <option value="work">💼 工作</option>
+      <option value="life">🏠 生活</option>
+      <option value="study">📚 学习</option>
+      <option value="other">🔖 其他</option>
+    </select>
+    <button onclick="addTodo()">+ 添加</button>
+  </div>
+
+  <div class="filter-row">
+    <div class="filter-chip active" data-filter="all" onclick="setFilter('all')">全部</div>
+    <div class="filter-chip" data-filter="active" onclick="setFilter('active')">未完成</div>
+    <div class="filter-chip" data-filter="done" onclick="setFilter('done')">已完成</div>
+  </div>
+
+  <div class="stat-bar" id="statBar"></div>
+
+  <ul id="todoList"></ul>
+</main>
+
+<script>
+(function(){const t=localStorage.getItem('app_theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');})();
+function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme');const next=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);localStorage.setItem('app_theme',next);}
+
+const STORAGE_KEY = 'todolist_items_v1';
+let todos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+let filter = 'all';
+const tagLabels = { work: ['💼 工作','tag-work'], life: ['🏠 生活','tag-life'], study: ['📚 学习','tag-study'], other: ['🔖 其他','tag-other'] };
+
+function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(todos)); render(); }
+
+function addTodo(){
+  const input = document.getElementById('newTodoText');
+  const text = input.value.trim();
+  if(!text) return;
+  const tag = document.getElementById('newTodoTag').value;
+  todos.push({ id: Date.now()+Math.random(), text, tag, done: false });
+  input.value = '';
+  save();
+}
+
+function toggleDone(id){ const t = todos.find(x=>x.id===id); if(t) t.done = !t.done; save(); }
+function removeTodo(id){ todos = todos.filter(x=>x.id!==id); save(); }
+function setFilter(f){ filter = f; document.querySelectorAll('.filter-chip').forEach(c=>c.classList.toggle('active', c.dataset.filter===f)); render(); }
+
+let dragSrcId = null;
+function render(){
+  const list = document.getElementById('todoList');
+  const filtered = todos.filter(t => filter==='all' ? true : filter==='active' ? !t.done : t.done);
+  list.innerHTML = '';
+  if(filtered.length===0){
+    list.innerHTML = '<div class="empty-state">暂无事项，添加一个开始吧 ✨</div>';
+  } else {
+    filtered.forEach(t => {
+      const [label, cls] = tagLabels[t.tag] || tagLabels.other;
+      const li = document.createElement('li');
+      li.className = 'todo-item' + (t.done ? ' done' : '');
+      li.draggable = true;
+      li.dataset.id = t.id;
+      li.innerHTML = `
+        <span class="drag-handle">⠿</span>
+        <div class="todo-check" onclick="toggleDone(${t.id})">${t.done ? '✓' : ''}</div>
+        <span class="todo-text">${escapeHtml(t.text)}</span>
+        <span class="todo-tag ${cls}">${label}</span>
+        <button class="del-btn" onclick="removeTodo(${t.id})">✕</button>
+      `;
+      li.addEventListener('dragstart', () => { dragSrcId = t.id; li.classList.add('dragging'); });
+      li.addEventListener('dragend', () => li.classList.remove('dragging'));
+      li.addEventListener('dragover', e => e.preventDefault());
+      li.addEventListener('drop', () => {
+        if(dragSrcId === null || dragSrcId === t.id) return;
+        const srcIdx = todos.findIndex(x=>x.id===dragSrcId);
+        const dstIdx = todos.findIndex(x=>x.id===t.id);
+        const [moved] = todos.splice(srcIdx, 1);
+        todos.splice(dstIdx, 0, moved);
+        save();
+      });
+      list.appendChild(li);
+    });
+  }
+  const doneCount = todos.filter(t=>t.done).length;
+  document.getElementById('statBar').innerHTML = `<span>共 ${todos.length} 项</span><span>已完成 ${doneCount}</span><span>未完成 ${todos.length-doneCount}</span>`;
+}
+function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+render();
+</script>
+</body>
+</html>

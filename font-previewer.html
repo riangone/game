@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>本地与网页字体预览工坊 · 纯前端免安装工具</title>
+<meta name="description" content="纯前端预览本地安装字体、拖拽载入 OTF/TTF 字体文件、字阶排版瀑布流与字形比对，100% 离线。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--purple:#8b5cf6;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,.06);--shadow-lg:0 10px 15px -3px rgba(0,0,0,.08);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:1100px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.tab-btn{padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-muted);font-size:13px;font-weight:700;cursor:pointer;transition:.2s;}
+.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.panel{display:none;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);}
+.panel.active{display:block;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;}
+.btn:hover{background:var(--primary-hover);}
+.btn-subtle{background:var(--bg-subtle);color:var(--text-main);border:1px solid var(--border-color);}
+.btn-subtle:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+input[type=text],input[type=number],textarea,select{width:100%;padding:10px 12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;outline:none;}
+input:focus,textarea:focus,select:focus{border-color:var(--border-focus);}
+label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/font-previewer.html">
+</head>
+<style>
+.font-layout{display:grid;grid-template-columns:300px 1fr;gap:24px;align-items:start;}
+@media(max-width:768px){.font-layout{grid-template-columns:1fr;}}
+.waterfall-row{padding:12px 0;border-bottom:1px solid var(--border-color);overflow-x:auto;}
+.waterfall-meta{font-size:11px;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:4px;}
+.waterfall-text{line-height:1.4;white-space:nowrap;}
+.font-list-item{padding:8px 12px;border-radius:var(--radius-md);cursor:pointer;font-size:13px;display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.font-list-item:hover{background:var(--bg-subtle);}
+.font-list-item.active{background:var(--primary-subtle);color:var(--primary);font-weight:700;}
+</style>
+
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>🔤</span><span>字体预览工坊</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="favicon-generator.html">🌐 Favicon图标生成</option>
+      <option value="image-grid-splitter.html">🧩 九宫格切图工坊</option>
+      <option value="metronome.html">⏱️ 电子节拍器与鼓机</option>
+      <option value="font-previewer.html">🔤 字体预览工坊</option>
+      <option value="tools.html">🏠 全部工具大厅</option>
+    </select>
+    <button class="theme-btn" onclick="toggleTheme()" title="切换明暗主题">🌓</button>
+  </div>
+</header>
+<main class="container">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+    <div>
+      <h1 class="page-title">🔤 本地与网页字体预览工坊</h1>
+      <p class="page-sub">系统预设字库全量测试、拖拽加载自定义 .ttf/.otf/.woff 字体文件，字阶排版与字符全集检视。</p>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <input type="file" id="fontFileInput" accept=".ttf,.otf,.woff,.woff2" style="display:none;" onchange="handleFontFile(event)">
+      <button class="btn btn-subtle" onclick="document.getElementById('fontFileInput').click()">📂 加载本地字体文件</button>
+      <button class="btn" onclick="querySystemFonts()">🔍 枚举系统已安装字体</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="waterfall" onclick="switchTab('waterfall')">🌊 瀑布流级联字阶</button>
+    <button class="tab-btn" data-tab="paragraph" onclick="switchTab('paragraph')">📄 段落排版测试</button>
+    <button class="tab-btn" data-tab="glyphs" onclick="switchTab('glyphs')">🔤 常用字符集 (Glyphs)</button>
+  </div>
+
+  <div class="font-layout">
+    <div class="panel active">
+      <label class="field-label">选择测试字体</label>
+      <div id="fontList" style="max-height:360px;overflow-y:auto;border:1px solid var(--border-color);border-radius:var(--radius-md);padding:6px;background:var(--bg-subtle);"></div>
+
+      <div style="margin-top:16px;">
+        <label class="field-label">自定义测试文案</label>
+        <input type="text" id="customSampleText" value="敏捷的棕狐跳过懒惰的狗 0123456789 The quick brown fox jumps over the lazy dog." oninput="updatePreviewText()">
+      </div>
+    </div>
+
+    <div>
+      <!-- Waterfall -->
+      <div class="panel active" id="panel-waterfall">
+        <div id="waterfallList"></div>
+      </div>
+
+      <!-- Paragraph -->
+      <div class="panel" id="panel-paragraph">
+        <textarea id="paraInput" style="height:320px;font-size:16px;line-height:1.8;" oninput="updateParaPreview()">
+设计之道，在于克制与平衡。
+
+纯前端自包含架构通过将计算与存储完全置于浏览器沙盒中，不仅免除了繁琐的服务器部署与运维负担，更从物理边界上彻底隔绝了用户隐私泄露的风险。
+
+The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs.
+1234567890 !@#$%^&*()_+=-[]{};:'",.<>?/
+        </textarea>
+      </div>
+
+      <!-- Glyphs -->
+      <div class="panel" id="panel-glyphs">
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:8px;">英文字符全集</h3>
+        <div id="glyphLatin" style="font-size:18px;line-height:1.6;word-break:break-all;padding:12px;background:var(--bg-subtle);border-radius:var(--radius-md);margin-bottom:14px;">
+          ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 0123456789
+        </div>
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:8px;">标点与数学符号</h3>
+        <div id="glyphSymbols" style="font-size:18px;line-height:1.6;word-break:break-all;padding:12px;background:var(--bg-subtle);border-radius:var(--radius-md);">
+          ~!@#$%^&*()_+-={}|[]\:";'&lt;&gt;?,./ ·～！@#￥%……&*（）——+【】、；‘：“”，。、《》？
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+let curTab = 'waterfall';
+let curFont = 'system-ui';
+
+const PRESET_FONTS = [
+  { name: '系统默认 (system-ui)', font: 'system-ui, -apple-system, sans-serif' },
+  { name: '苹方 (PingFang SC)', font: '"PingFang SC", sans-serif' },
+  { name: '冬青黑体 (Hiragino Sans)', font: '"Hiragino Sans GB", sans-serif' },
+  { name: '微软雅黑 (Microsoft YaHei)', font: '"Microsoft YaHei", sans-serif' },
+  { name: '楷体 (KaiTi)', font: 'KaiTi, "Kaiti SC", serif' },
+  { name: '宋体 (SimSun)', font: 'SimSun, "Songti SC", serif' },
+  { name: 'Arial', font: 'Arial, sans-serif' },
+  { name: 'Helvetica', font: 'Helvetica, Arial, sans-serif' },
+  { name: 'Times New Roman', font: '"Times New Roman", serif' },
+  { name: 'Georgia', font: 'Georgia, serif' },
+  { name: 'Courier New (等宽)', font: '"Courier New", monospace' },
+  { name: 'SF Pro / Inter', font: '"SF Pro Display", Inter, sans-serif' }
+];
+
+function switchTab(tab) {
+  curTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-tab') === tab));
+  document.getElementById('panel-waterfall').classList.toggle('active', tab === 'waterfall');
+  document.getElementById('panel-paragraph').classList.toggle('active', tab === 'paragraph');
+  document.getElementById('panel-glyphs').classList.toggle('active', tab === 'glyphs');
+  applyCurrentFont();
+}
+
+function renderFontList() {
+  const container = document.getElementById('fontList');
+  container.innerHTML = '';
+  PRESET_FONTS.forEach((f, idx) => {
+    const item = document.createElement('div');
+    item.className = 'font-list-item' + (idx === 0 ? ' active' : '');
+    item.textContent = f.name;
+    item.onclick = () => selectFont(f.font, item);
+    container.appendChild(item);
+  });
+}
+
+function selectFont(font, el) {
+  curFont = font;
+  document.querySelectorAll('.font-list-item').forEach(i => i.classList.remove('active'));
+  if (el) el.classList.add('active');
+  applyCurrentFont();
+}
+
+function applyCurrentFont() {
+  document.querySelectorAll('.waterfall-text').forEach(el => el.style.fontFamily = curFont);
+  document.getElementById('paraInput').style.fontFamily = curFont;
+  document.getElementById('glyphLatin').style.fontFamily = curFont;
+  document.getElementById('glyphSymbols').style.fontFamily = curFont;
+}
+
+const SIZES = [12, 14, 16, 20, 24, 32, 48, 64];
+
+function renderWaterfall() {
+  const container = document.getElementById('waterfallList');
+  container.innerHTML = '';
+  const sample = document.getElementById('customSampleText').value;
+
+  SIZES.forEach(sz => {
+    const row = document.createElement('div');
+    row.className = 'waterfall-row';
+    row.innerHTML = '<div class="waterfall-meta">' + sz + 'px</div>' +
+      '<div class="waterfall-text" style="font-size:' + sz + 'px;font-family:' + curFont + ';">' + escapeHtml(sample) + '</div>';
+    container.appendChild(row);
+  });
+}
+
+function updatePreviewText() {
+  renderWaterfall();
+}
+
+function updateParaPreview() {
+  applyCurrentFont();
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+async function handleFontFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const fontName = 'CustomFont_' + Date.now();
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    try {
+      const fontFace = new FontFace(fontName, ev.target.result);
+      await fontFace.load();
+      document.fonts.add(fontFace);
+
+      PRESET_FONTS.unshift({ name: '★ ' + file.name, font: fontName });
+      renderFontList();
+      selectFont(fontName, document.querySelector('.font-list-item'));
+      showToast('已加载自定义字体: ' + file.name);
+    } catch (err) {
+      showToast('字体加载失败: ' + err.message);
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+async function querySystemFonts() {
+  if (!('queryLocalFonts' in window)) {
+    return showToast('当前浏览器不支持 Local Font Access API（仅 Chromium 桌面内核支持）');
+  }
+  try {
+    const availableFonts = await window.queryLocalFonts();
+    const uniqueFamilies = Array.from(new Set(availableFonts.map(f => f.family))).slice(0, 30);
+    uniqueFamilies.forEach(family => {
+      PRESET_FONTS.push({ name: '💻 ' + family, font: '"' + family + '", sans-serif' });
+    });
+    renderFontList();
+    showToast('成功检测到 ' + uniqueFamilies.length + ' 个系统已安装字体！');
+  } catch (err) {
+    showToast('获取系统字体失败: ' + err.message);
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  renderFontList();
+  renderWaterfall();
+});
+</script>
+
+<script>
+function initTheme(){
+  const saved=localStorage.getItem('app_theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved);}
+  else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.setAttribute('data-theme','dark');}
+}
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  const target=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',target);
+  localStorage.setItem('app_theme',target);
+}
+initTheme();
+function showToast(msg, duration=2200){
+  const el=document.createElement('div');
+  el.textContent=msg;
+  el.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:9999px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 10px 25px rgba(0,0,0,.2);transition:opacity .3s;';
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},duration);
+}
+</script>
+</body>
+</html>

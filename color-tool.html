@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>颜色工具箱 · 取色/调色板/对比度检测</title>
+<meta name="description" content="纯前端颜色工具箱：HEX/RGB/HSL互转、调色板与渐变生成器、图片取色、WCAG对比度检测，100%离线。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--danger:#ef4444;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:1000px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.tab-btn{padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-muted);font-size:13px;font-weight:700;cursor:pointer;}
+.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.panel{display:none;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);}
+.panel.active{display:block;}
+.grid2{display:grid;grid-template-columns:200px 1fr;gap:20px;}
+@media(max-width:700px){.grid2{grid-template-columns:1fr;}}
+.swatch{width:100%;height:160px;border-radius:var(--radius-lg);border:1px solid var(--border-color);}
+input[type=color]{width:100%;height:44px;border:1px solid var(--border-color);border-radius:var(--radius-md);background:var(--bg-subtle);cursor:pointer;}
+input[type=text],input[type=range]{width:100%;padding:9px 11px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-family:var(--font-mono);}
+label.small{font-size:12px;color:var(--text-muted);font-weight:700;display:block;margin:10px 0 5px;}
+.copy-field{display:flex;gap:6px;}
+.copy-field button{border:none;background:var(--bg-subtle);border-radius:8px;padding:0 12px;cursor:pointer;font-size:12px;}
+.palette-row{display:flex;border-radius:var(--radius-md);overflow:hidden;height:80px;margin-top:14px;}
+.palette-cell{flex:1;display:flex;align-items:flex-end;justify-content:center;padding-bottom:8px;font-size:11px;font-family:var(--font-mono);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5);cursor:pointer;}
+.grad-preview{height:100px;border-radius:var(--radius-lg);margin-top:14px;border:1px solid var(--border-color);}
+.grad-code{margin-top:10px;font-family:var(--font-mono);font-size:12px;background:var(--bg-subtle);padding:10px;border-radius:8px;word-break:break-all;}
+.contrast-preview{padding:30px;border-radius:var(--radius-lg);text-align:center;font-size:20px;font-weight:800;margin-top:14px;}
+.contrast-score{font-size:28px;font-weight:900;margin-top:10px;}
+.pass{color:var(--success);} .fail{color:var(--danger);}
+.dropzone{border:2px dashed var(--border-color);border-radius:var(--radius-lg);padding:20px;text-align:center;color:var(--text-muted);cursor:pointer;}
+#pickerCanvas{max-width:100%;border-radius:var(--radius-md);cursor:crosshair;margin-top:10px;}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/color-tool.html">
+</head>
+<body>
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>🎨</span><span>颜色工具箱</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="color-tool.html">🎨 颜色工具箱</option>
+      <option value="drawing-board.html">🖌️ 简易画板</option>
+      <option value="img-to-pdf.html">📄 图片转PDF</option>
+      <option value="image-tool.html">🖼️ 图片工坊</option>
+      <option value="network-info.html">🌐 网络信息</option>
+      <option value="loan-calculator.html">🏦 贷款计算器</option>
+      <option value="time-tool.html">🕐 时间工具箱</option>
+          <option value="calendar.html">📅 万年历</option>
+</select>
+    <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+  </div>
+</header>
+
+<main class="container">
+  <h1 class="page-title">🎨 颜色工具箱</h1>
+  <p class="page-sub">HEX/RGB/HSL 互转、调色板与渐变生成、图片取色、WCAG 对比度检测。全部纯本地 Canvas 计算。</p>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="convert" onclick="switchTab('convert')">颜色转换</button>
+    <button class="tab-btn" data-tab="palette" onclick="switchTab('palette')">调色板生成</button>
+    <button class="tab-btn" data-tab="gradient" onclick="switchTab('gradient')">渐变生成器</button>
+    <button class="tab-btn" data-tab="picker" onclick="switchTab('picker')">图片取色</button>
+    <button class="tab-btn" data-tab="contrast" onclick="switchTab('contrast')">对比度检测</button>
+  </div>
+
+  <!-- 转换 -->
+  <section class="panel active" id="panel-convert">
+    <div class="grid2">
+      <div>
+        <div class="swatch" id="mainSwatch" style="background:#0284c7;"></div>
+        <input type="color" id="colorPicker" value="#0284c7" oninput="updateFromPicker()" style="margin-top:10px;">
+      </div>
+      <div>
+        <label class="small">HEX</label>
+        <div class="copy-field"><input type="text" id="hexField" value="#0284c7" onchange="updateFromHex()"><button onclick="copyField('hexField')">📋</button></div>
+        <label class="small">RGB</label>
+        <div class="copy-field"><input type="text" id="rgbField" readonly><button onclick="copyField('rgbField')">📋</button></div>
+        <label class="small">HSL</label>
+        <div class="copy-field"><input type="text" id="hslField" readonly><button onclick="copyField('hslField')">📋</button></div>
+        <label class="small">CSS 变量</label>
+        <div class="copy-field"><input type="text" id="cssField" readonly><button onclick="copyField('cssField')">📋</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 调色板 -->
+  <section class="panel" id="panel-palette">
+    <label class="small">基准颜色</label>
+    <input type="color" id="paletteBase" value="#0284c7" oninput="renderPalette()">
+    <div class="palette-row" id="shadesRow"></div>
+    <div class="palette-row" id="harmonyRow"></div>
+  </section>
+
+  <!-- 渐变 -->
+  <section class="panel" id="panel-gradient">
+    <div class="grid2">
+      <div>
+        <label class="small">起始色</label>
+        <input type="color" id="gradStart" value="#0284c7" oninput="renderGradient()">
+        <label class="small">结束色</label>
+        <input type="color" id="gradEnd" value="#8b5cf6" oninput="renderGradient()">
+        <label class="small">角度</label>
+        <input type="range" id="gradAngle" min="0" max="360" value="135" oninput="renderGradient()">
+      </div>
+      <div>
+        <div class="grad-preview" id="gradPreview"></div>
+        <div class="grad-code" id="gradCode"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 取色 -->
+  <section class="panel" id="panel-picker">
+    <div class="dropzone" id="pickDropzone" onclick="document.getElementById('pickerFile').click()">
+      📁 点击或拖拽图片到此处，然后在图片上点击取色
+      <input type="file" accept="image/*" id="pickerFile" style="display:none" onchange="loadImageForPicking(this.files[0])">
+    </div>
+    <canvas id="pickerCanvas"></canvas>
+    <div class="grid2" style="margin-top:14px;">
+      <div class="swatch" id="pickedSwatch" style="height:80px;background:#fff;"></div>
+      <div>
+        <label class="small">HEX</label>
+        <div class="copy-field"><input type="text" id="pickedHex" readonly><button onclick="copyField('pickedHex')">📋</button></div>
+        <label class="small">RGB</label>
+        <div class="copy-field"><input type="text" id="pickedRgb" readonly><button onclick="copyField('pickedRgb')">📋</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 对比度 -->
+  <section class="panel" id="panel-contrast">
+    <div class="grid2">
+      <div>
+        <label class="small">前景色（文字）</label>
+        <input type="color" id="fgColor" value="#0f172a" oninput="checkContrast()">
+        <label class="small">背景色</label>
+        <input type="color" id="bgColor" value="#ffffff" oninput="checkContrast()">
+      </div>
+      <div>
+        <div class="contrast-preview" id="contrastPreview">示例文字 Sample Text</div>
+        <div class="contrast-score" id="contrastScore"></div>
+        <div id="contrastLevels" style="margin-top:8px;font-size:13px;"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+(function(){const t=localStorage.getItem('app_theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');})();
+function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme');const next=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);localStorage.setItem('app_theme',next);}
+
+function switchTab(id){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===id));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id==='panel-'+id));
+  if(id==='palette') renderPalette();
+  if(id==='gradient') renderGradient();
+  if(id==='contrast') checkContrast();
+}
+
+function hexToRgb(hex){
+  hex = hex.replace('#','');
+  if(hex.length===3) hex = hex.split('').map(c=>c+c).join('');
+  const n = parseInt(hex,16);
+  return { r:(n>>16)&255, g:(n>>8)&255, b:n&255 };
+}
+function rgbToHex(r,g,b){ return '#'+[r,g,b].map(x=>Math.round(x).toString(16).padStart(2,'0')).join(''); }
+function rgbToHsl(r,g,b){
+  r/=255; g/=255; b/=255;
+  const max=Math.max(r,g,b), min=Math.min(r,g,b);
+  let h=0,s=0,l=(max+min)/2;
+  if(max!==min){
+    const d = max-min;
+    s = l>0.5 ? d/(2-max-min) : d/(max+min);
+    switch(max){
+      case r: h=(g-b)/d+(g<b?6:0); break;
+      case g: h=(b-r)/d+2; break;
+      case b: h=(r-g)/d+4; break;
+    }
+    h/=6;
+  }
+  return { h:Math.round(h*360), s:Math.round(s*100), l:Math.round(l*100) };
+}
+function hslToRgb(h,s,l){
+  h/=360; s/=100; l/=100;
+  let r,g,b;
+  if(s===0){ r=g=b=l; }
+  else{
+    const hue2rgb = (p,q,t) => { if(t<0)t+=1; if(t>1)t-=1; if(t<1/6)return p+(q-p)*6*t; if(t<1/2)return q; if(t<2/3)return p+(q-p)*(2/3-t)*6; return p; };
+    const q = l<0.5 ? l*(1+s) : l+s-l*s;
+    const p = 2*l-q;
+    r = hue2rgb(p,q,h+1/3); g = hue2rgb(p,q,h); b = hue2rgb(p,q,h-1/3);
+  }
+  return { r:Math.round(r*255), g:Math.round(g*255), b:Math.round(b*255) };
+}
+function copyField(id){ navigator.clipboard.writeText(document.getElementById(id).value); }
+
+function updateFromPicker(){
+  const hex = document.getElementById('colorPicker').value;
+  document.getElementById('hexField').value = hex;
+  syncColorDisplay(hex);
+}
+function updateFromHex(){
+  let hex = document.getElementById('hexField').value.trim();
+  if(!/^#?[0-9a-fA-F]{3}$|^#?[0-9a-fA-F]{6}$/.test(hex)){ return; }
+  if(!hex.startsWith('#')) hex = '#'+hex;
+  document.getElementById('colorPicker').value = hex.length===4 ? hexToRgb(hex) && rgbToHex(...Object.values(hexToRgb(hex))) : hex;
+  syncColorDisplay(hex);
+}
+function syncColorDisplay(hex){
+  const {r,g,b} = hexToRgb(hex);
+  const {h,s,l} = rgbToHsl(r,g,b);
+  document.getElementById('mainSwatch').style.background = hex;
+  document.getElementById('rgbField').value = `rgb(${r}, ${g}, ${b})`;
+  document.getElementById('hslField').value = `hsl(${h}, ${s}%, ${l}%)`;
+  document.getElementById('cssField').value = `--color: ${hex};`;
+}
+syncColorDisplay('#0284c7');
+
+// 调色板
+function renderPalette(){
+  const hex = document.getElementById('paletteBase').value;
+  const {r,g,b} = hexToRgb(hex);
+  const {h,s,l} = rgbToHsl(r,g,b);
+  const shades = [90,80,65,50,35,20,10].map(lv => {
+    const c = hslToRgb(h,s,lv);
+    return rgbToHex(c.r,c.g,c.b);
+  });
+  document.getElementById('shadesRow').innerHTML = shades.map(c =>
+    `<div class="palette-cell" style="background:${c}" onclick="navigator.clipboard.writeText('${c}')" title="点击复制">${c}</div>`).join('');
+  const harmonies = [0,30,60,180,210,330].map(off => {
+    const c = hslToRgb((h+off)%360,s,l);
+    return rgbToHex(c.r,c.g,c.b);
+  });
+  document.getElementById('harmonyRow').innerHTML = harmonies.map(c =>
+    `<div class="palette-cell" style="background:${c}" onclick="navigator.clipboard.writeText('${c}')" title="点击复制">${c}</div>`).join('');
+}
+
+// 渐变
+function renderGradient(){
+  const start = document.getElementById('gradStart').value;
+  const end = document.getElementById('gradEnd').value;
+  const angle = document.getElementById('gradAngle').value;
+  const css = `linear-gradient(${angle}deg, ${start}, ${end})`;
+  document.getElementById('gradPreview').style.background = css;
+  document.getElementById('gradCode').textContent = `background: ${css};`;
+}
+renderGradient();
+
+// 取色
+const pickDropzone = document.getElementById('pickDropzone');
+['dragover','dragenter'].forEach(ev => pickDropzone.addEventListener(ev, e=>{e.preventDefault(); pickDropzone.style.borderColor='var(--primary)';}));
+pickDropzone.addEventListener('drop', e=>{ e.preventDefault(); const f = e.dataTransfer.files[0]; if(f) loadImageForPicking(f); });
+
+function loadImageForPicking(file){
+  if(!file) return;
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.getElementById('pickerCanvas');
+    const maxW = 600;
+    const scale = Math.min(1, maxW/img.width);
+    canvas.width = img.width*scale; canvas.height = img.height*scale;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    canvas.onclick = (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = Math.floor((e.clientX-rect.left) * (canvas.width/rect.width));
+      const y = Math.floor((e.clientY-rect.top) * (canvas.height/rect.height));
+      const pixel = ctx.getImageData(x,y,1,1).data;
+      const hex = rgbToHex(pixel[0],pixel[1],pixel[2]);
+      document.getElementById('pickedSwatch').style.background = hex;
+      document.getElementById('pickedHex').value = hex;
+      document.getElementById('pickedRgb').value = `rgb(${pixel[0]}, ${pixel[1]}, ${pixel[2]})`;
+    };
+  };
+  img.src = URL.createObjectURL(file);
+}
+
+// 对比度 (WCAG)
+function relLuminance(r,g,b){
+  const [rs,gs,bs] = [r,g,b].map(c => { c/=255; return c<=0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4); });
+  return 0.2126*rs + 0.7152*gs + 0.0722*bs;
+}
+function checkContrast(){
+  const fg = document.getElementById('fgColor').value;
+  const bg = document.getElementById('bgColor').value;
+  const fgRgb = hexToRgb(fg), bgRgb = hexToRgb(bg);
+  const L1 = relLuminance(fgRgb.r,fgRgb.g,fgRgb.b);
+  const L2 = relLuminance(bgRgb.r,bgRgb.g,bgRgb.b);
+  const ratio = (Math.max(L1,L2)+0.05) / (Math.min(L1,L2)+0.05);
+  const preview = document.getElementById('contrastPreview');
+  preview.style.color = fg; preview.style.background = bg;
+  document.getElementById('contrastScore').innerHTML = `对比度 ${ratio.toFixed(2)} : 1`;
+  const levels = [
+    {label:'正文文本 AA (≥4.5)', pass: ratio>=4.5},
+    {label:'正文文本 AAA (≥7)', pass: ratio>=7},
+    {label:'大字号文本 AA (≥3)', pass: ratio>=3},
+    {label:'大字号文本 AAA (≥4.5)', pass: ratio>=4.5}
+  ];
+  document.getElementById('contrastLevels').innerHTML = levels.map(l =>
+    `<div class="${l.pass?'pass':'fail'}">${l.pass?'✓':'✗'} ${l.label}</div>`).join('');
+}
+checkContrast();
+</script>
+</body>
+</html>

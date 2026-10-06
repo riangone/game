@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>文本工具箱 · 大小写/JSON/Base64/正则/去重排序</title>
+<meta name="description" content="纯前端文本处理工具箱：大小写与全半角转换、JSON格式化校验、Base64/URL编解码、正则表达式测试器、文本去重排序、字数统计，零依赖100%离线。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--danger:#ef4444;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,.07);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);--shadow-sm:0 1px 3px rgba(0,0,0,.4);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;transition:background-color .25s,color .25s;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);transition:all .15s;}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:1080px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:20px;}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.tab-btn{padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-muted);font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;}
+.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.panel{display:none;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);}
+.panel.active{display:block;}
+textarea,input[type=text]{width:100%;font-family:var(--font-mono);font-size:13px;border:1px solid var(--border-color);border-radius:var(--radius-md);padding:12px;background:var(--bg-subtle);color:var(--text-main);resize:vertical;}
+textarea{min-height:160px;line-height:1.6;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:780px){.grid2{grid-template-columns:1fr;}}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;}
+.btn{padding:9px 16px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:700;cursor:pointer;}
+.btn.primary{background:var(--primary);color:#fff;border-color:var(--primary);}
+.btn:hover{filter:brightness(0.97);}
+label.small{font-size:12px;color:var(--text-muted);font-weight:700;display:block;margin-bottom:6px;}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-top:14px;}
+.stat-card{background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:12px;text-align:center;}
+.stat-card b{display:block;font-size:20px;color:var(--primary);}
+.stat-card span{font-size:11px;color:var(--text-muted);}
+.err{color:var(--danger);font-size:12px;margin-top:8px;font-weight:600;}
+.ok{color:var(--success);font-size:12px;margin-top:8px;font-weight:600;}
+mark{background:#fde68a;color:#78350f;border-radius:3px;padding:0 1px;}
+[data-theme="dark"] mark{background:#92400e;color:#fde68a;}
+.group-list{font-size:12px;margin-top:10px;display:flex;flex-direction:column;gap:4px;}
+.group-list code{background:var(--bg-subtle);padding:2px 6px;border-radius:6px;}
+.hint{font-size:12px;color:var(--text-light);margin-top:6px;}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/text-tools.html">
+</head>
+<body>
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>🔤</span><span>文本工具箱</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="notepad.html">📝 便签</option>
+      <option value="calculator.html">🧮 计算器</option>
+      <option value="unit-converter.html">📐 换算器</option>
+      <option value="currency.html">💱 汇率</option>
+      <option value="weather.html">🌤️ 天气</option>
+      <option value="qrcode.html">📱 二维码</option>
+      <option value="image-tool.html">🖼️ 图片工坊</option>
+      <option value="pomodoro.html">🍅 番茄钟</option>
+      <option value="password.html">🔐 密码</option>
+      <option value="text-tools.html">🔤 文本工具箱</option>
+      <option value="diff-tool.html">🪞 文本差异对比</option>
+      <option value="hash-tool.html">#️⃣ 哈希校验</option>
+      <option value="encrypt-tool.html">🛡️ 本地加解密</option>
+      <option value="todolist.html">✅ 待办清单</option>
+      <option value="expense-tracker.html">💰 记账本</option>
+      <option value="habit-tracker.html">🔥 习惯打卡</option>
+      <option value="countdown.html">⏳ 倒数日</option>
+      <option value="time-tool.html">🕐 时间工具箱</option>
+      <option value="loan-calculator.html">🏦 贷款计算器</option>
+      <option value="color-tool.html">🎨 颜色工具箱</option>
+      <option value="drawing-board.html">🖌️ 简易画板</option>
+      <option value="img-to-pdf.html">📄 图片转PDF</option>
+      <option value="network-info.html">🌐 网络信息</option>
+          <option value="calendar.html">📅 万年历</option>
+</select>
+    <button class="theme-btn" onclick="toggleTheme()" title="切换深色/浅色模式">🌓</button>
+  </div>
+</header>
+
+<main class="container">
+  <h1 class="page-title">🔤 文本工具箱</h1>
+  <p class="page-sub">大小写/全半角转换 · JSON格式化校验 · Base64/URL编解码 · 正则表达式测试器 · 行去重排序 · 字数统计 — 全部纯本地计算，内容不出浏览器。</p>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="case" onclick="switchTab('case')">大小写/全半角</button>
+    <button class="tab-btn" data-tab="json" onclick="switchTab('json')">JSON 格式化</button>
+    <button class="tab-btn" data-tab="b64" onclick="switchTab('b64')">Base64 / URL</button>
+    <button class="tab-btn" data-tab="regex" onclick="switchTab('regex')">正则测试器</button>
+    <button class="tab-btn" data-tab="lines" onclick="switchTab('lines')">行去重/排序</button>
+    <button class="tab-btn" data-tab="stat" onclick="switchTab('stat')">字数统计</button>
+  </div>
+
+  <!-- 大小写 -->
+  <section class="panel active" id="panel-case">
+    <label class="small">输入文本</label>
+    <textarea id="caseInput" placeholder="在此输入或粘贴文本..."></textarea>
+    <div class="row">
+      <button class="btn" onclick="applyCase('upper')">全部大写</button>
+      <button class="btn" onclick="applyCase('lower')">全部小写</button>
+      <button class="btn" onclick="applyCase('title')">首字母大写</button>
+      <button class="btn" onclick="applyCase('sentence')">句首大写</button>
+      <button class="btn" onclick="applyCase('full')">半角→全角</button>
+      <button class="btn" onclick="applyCase('half')">全角→半角</button>
+      <button class="btn primary" onclick="copyText('caseInput')">📋 复制结果</button>
+    </div>
+  </section>
+
+  <!-- JSON -->
+  <section class="panel" id="panel-json">
+    <div class="grid2">
+      <div>
+        <label class="small">原始 JSON</label>
+        <textarea id="jsonInput" style="min-height:260px" placeholder='{"name":"张三","age":18}'></textarea>
+      </div>
+      <div>
+        <label class="small">格式化结果</label>
+        <textarea id="jsonOutput" style="min-height:260px" readonly></textarea>
+      </div>
+    </div>
+    <div class="row">
+      <button class="btn primary" onclick="jsonFormat(2)">格式化 (2格缩进)</button>
+      <button class="btn" onclick="jsonFormat(4)">格式化 (4格缩进)</button>
+      <button class="btn" onclick="jsonMinify()">压缩为一行</button>
+      <button class="btn" onclick="copyText('jsonOutput')">📋 复制结果</button>
+    </div>
+    <div id="jsonMsg"></div>
+  </section>
+
+  <!-- Base64 / URL -->
+  <section class="panel" id="panel-b64">
+    <div class="grid2">
+      <div>
+        <label class="small">原文</label>
+        <textarea id="b64Input" placeholder="输入要编码/解码的文本..."></textarea>
+      </div>
+      <div>
+        <label class="small">结果</label>
+        <textarea id="b64Output" readonly></textarea>
+      </div>
+    </div>
+    <div class="row">
+      <button class="btn primary" onclick="b64Op('encodeB64')">Base64 编码</button>
+      <button class="btn" onclick="b64Op('decodeB64')">Base64 解码</button>
+      <button class="btn primary" onclick="b64Op('encodeURL')">URL 编码</button>
+      <button class="btn" onclick="b64Op('decodeURL')">URL 解码</button>
+      <button class="btn" onclick="copyText('b64Output')">📋 复制结果</button>
+    </div>
+    <div id="b64Msg"></div>
+  </section>
+
+  <!-- Regex -->
+  <section class="panel" id="panel-regex">
+    <div class="row" style="margin-top:0;">
+      <div style="flex:1;min-width:200px;">
+        <label class="small">正则表达式</label>
+        <input type="text" id="regexPattern" placeholder="例如 \\d+(\\.\\d+)?">
+      </div>
+      <div style="width:140px;">
+        <label class="small">标志 (flags)</label>
+        <input type="text" id="regexFlags" value="g" placeholder="g i m s">
+      </div>
+    </div>
+    <label class="small">测试文本</label>
+    <textarea id="regexText" placeholder="在此粘贴要匹配的文本..."></textarea>
+    <div class="row">
+      <button class="btn primary" onclick="runRegex()">▶ 执行匹配</button>
+    </div>
+    <div id="regexMsg"></div>
+    <div id="regexHighlight" style="white-space:pre-wrap;word-break:break-all;background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:12px;font-family:var(--font-mono);font-size:13px;min-height:60px;margin-top:10px;"></div>
+    <div class="group-list" id="regexGroups"></div>
+  </section>
+
+  <!-- Lines -->
+  <section class="panel" id="panel-lines">
+    <label class="small">输入多行文本（每行一项）</label>
+    <textarea id="linesInput" style="min-height:220px" placeholder="每行一个条目..."></textarea>
+    <div class="row">
+      <button class="btn primary" onclick="linesOp('dedupe')">去除重复行</button>
+      <button class="btn" onclick="linesOp('sortAsc')">按字典序升序</button>
+      <button class="btn" onclick="linesOp('sortDesc')">按字典序降序</button>
+      <button class="btn" onclick="linesOp('trim')">去除空行/首尾空格</button>
+      <button class="btn" onclick="linesOp('shuffle')">随机打乱</button>
+      <button class="btn" onclick="linesOp('reverse')">反转行序</button>
+      <button class="btn" onclick="copyText('linesInput')">📋 复制结果</button>
+    </div>
+    <div class="hint">处理结果会原地替换上方文本框内容，方便连续多次操作。</div>
+  </section>
+
+  <!-- Stats -->
+  <section class="panel" id="panel-stat">
+    <label class="small">输入文本（实时统计）</label>
+    <textarea id="statInput" style="min-height:220px" oninput="updateStats()" placeholder="输入或粘贴任意文本，右下方将实时统计..."></textarea>
+    <div class="stat-grid">
+      <div class="stat-card"><b id="statChars">0</b><span>字符数</span></div>
+      <div class="stat-card"><b id="statNoSpace">0</b><span>不含空格字符</span></div>
+      <div class="stat-card"><b id="statWords">0</b><span>词数(英文)</span></div>
+      <div class="stat-card"><b id="statCJK">0</b><span>中日韩字符数</span></div>
+      <div class="stat-card"><b id="statLines">0</b><span>行数</span></div>
+      <div class="stat-card"><b id="statBytes">0</b><span>UTF-8 字节数</span></div>
+    </div>
+  </section>
+</main>
+
+<script>
+// 主题
+(function(){const t=localStorage.getItem('app_theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');})();
+function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme');const next=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);localStorage.setItem('app_theme',next);}
+
+function switchTab(id){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.tab===id));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id==='panel-'+id));
+}
+
+function copyText(id){
+  const el = document.getElementById(id);
+  navigator.clipboard.writeText(el.value).then(()=>{
+    el.style.outline='2px solid var(--success)';
+    setTimeout(()=>el.style.outline='',500);
+  });
+}
+
+// 大小写 / 全半角
+function toFullWidth(s){
+  return s.replace(/[\x21-\x7e]/g, c => String.fromCharCode(c.charCodeAt(0)+0xFEE0)).replace(/\x20/g,'　');
+}
+function toHalfWidth(s){
+  return s.replace(/[！-～]/g, c => String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/　/g,' ');
+}
+function applyCase(mode){
+  const el = document.getElementById('caseInput');
+  let v = el.value;
+  if(mode==='upper') v = v.toUpperCase();
+  else if(mode==='lower') v = v.toLowerCase();
+  else if(mode==='title') v = v.replace(/\w\S*/g, w => w.charAt(0).toUpperCase()+w.slice(1).toLowerCase());
+  else if(mode==='sentence') v = v.toLowerCase().replace(/(^\s*\w|[.!?]\s*\w)/g, c => c.toUpperCase());
+  else if(mode==='full') v = toFullWidth(v);
+  else if(mode==='half') v = toHalfWidth(v);
+  el.value = v;
+}
+
+// JSON
+function jsonFormat(indent){
+  const input = document.getElementById('jsonInput').value;
+  const msg = document.getElementById('jsonMsg');
+  try{
+    const obj = JSON.parse(input);
+    document.getElementById('jsonOutput').value = JSON.stringify(obj, null, indent);
+    msg.innerHTML = '<div class="ok">✓ JSON 格式合法</div>';
+  }catch(e){
+    document.getElementById('jsonOutput').value = '';
+    msg.innerHTML = '<div class="err">✗ 解析失败：'+e.message+'</div>';
+  }
+}
+function jsonMinify(){
+  const input = document.getElementById('jsonInput').value;
+  const msg = document.getElementById('jsonMsg');
+  try{
+    const obj = JSON.parse(input);
+    document.getElementById('jsonOutput').value = JSON.stringify(obj);
+    msg.innerHTML = '<div class="ok">✓ 已压缩为单行</div>';
+  }catch(e){
+    msg.innerHTML = '<div class="err">✗ 解析失败：'+e.message+'</div>';
+  }
+}
+
+// Base64 / URL
+function b64Op(mode){
+  const input = document.getElementById('b64Input').value;
+  const out = document.getElementById('b64Output');
+  const msg = document.getElementById('b64Msg');
+  try{
+    if(mode==='encodeB64') out.value = btoa(unescape(encodeURIComponent(input)));
+    else if(mode==='decodeB64') out.value = decodeURIComponent(escape(atob(input)));
+    else if(mode==='encodeURL') out.value = encodeURIComponent(input);
+    else if(mode==='decodeURL') out.value = decodeURIComponent(input);
+    msg.innerHTML = '<div class="ok">✓ 转换成功</div>';
+  }catch(e){
+    msg.innerHTML = '<div class="err">✗ 转换失败：输入内容不是有效格式</div>';
+  }
+}
+
+// Regex
+function escapeHtml(s){return s.replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+function runRegex(){
+  const pattern = document.getElementById('regexPattern').value;
+  const flags = document.getElementById('regexFlags').value;
+  const text = document.getElementById('regexText').value;
+  const msg = document.getElementById('regexMsg');
+  const hl = document.getElementById('regexHighlight');
+  const groupsBox = document.getElementById('regexGroups');
+  groupsBox.innerHTML = '';
+  if(!pattern){ msg.innerHTML=''; hl.textContent=''; return; }
+  let re;
+  try{ re = new RegExp(pattern, flags.includes('g')?flags:flags+'g'); }
+  catch(e){ msg.innerHTML = '<div class="err">✗ 正则语法错误：'+e.message+'</div>'; hl.textContent=''; return; }
+  let m, count=0, lastIndex=0, html='';
+  const groupRows=[];
+  while((m = re.exec(text)) !== null){
+    html += escapeHtml(text.slice(lastIndex, m.index)) + '<mark>'+escapeHtml(m[0])+'</mark>';
+    lastIndex = m.index + (m[0].length||1);
+    if(m[0].length===0) re.lastIndex++;
+    count++;
+    if(m.length>1) groupRows.push('匹配 #'+count+': '+m.slice(1).map((g,i)=>'<code>$'+(i+1)+'='+escapeHtml(String(g))+'</code>').join(' '));
+    if(count>2000) break;
+  }
+  html += escapeHtml(text.slice(lastIndex));
+  hl.innerHTML = html || '(无内容)';
+  msg.innerHTML = count>0 ? '<div class="ok">✓ 共找到 '+count+' 处匹配</div>' : '<div class="err">未找到匹配项</div>';
+  groupsBox.innerHTML = groupRows.join('<br>');
+}
+
+// Lines
+function linesOp(mode){
+  const el = document.getElementById('linesInput');
+  let lines = el.value.split('\n');
+  if(mode==='trim') lines = lines.map(l=>l.trim()).filter(l=>l.length>0);
+  else if(mode==='dedupe') lines = [...new Set(lines)];
+  else if(mode==='sortAsc') lines = lines.sort((a,b)=>a.localeCompare(b));
+  else if(mode==='sortDesc') lines = lines.sort((a,b)=>b.localeCompare(a));
+  else if(mode==='reverse') lines = lines.reverse();
+  else if(mode==='shuffle'){ for(let i=lines.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[lines[i],lines[j]]=[lines[j],lines[i]];} }
+  el.value = lines.join('\n');
+}
+
+// Stats
+function updateStats(){
+  const v = document.getElementById('statInput').value;
+  document.getElementById('statChars').textContent = v.length;
+  document.getElementById('statNoSpace').textContent = v.replace(/\s/g,'').length;
+  const words = v.trim().length ? (v.trim().match(/[A-Za-z0-9'-]+/g) || []).length : 0;
+  document.getElementById('statWords').textContent = words;
+  const cjk = (v.match(/[一-鿿぀-ヿ가-힯]/g) || []).length;
+  document.getElementById('statCJK').textContent = cjk;
+  document.getElementById('statLines').textContent = v.length ? v.split('\n').length : 0;
+  document.getElementById('statBytes').textContent = new TextEncoder().encode(v).length;
+}
+</script>
+</body>
+</html>

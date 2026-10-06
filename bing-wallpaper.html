@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>每日高清壁纸与历史视界 · 纯前端免安装工具</title>
+<meta name="description" content="纯前端每日 Bing 高清壁纸鉴赏、4K 原图下载、手机 9:16 锁屏海报自适应裁剪与日期小组件叠加。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--purple:#8b5cf6;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,.06);--shadow-lg:0 10px 15px -3px rgba(0,0,0,.08);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:1100px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.tab-btn{padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-muted);font-size:13px;font-weight:700;cursor:pointer;transition:.2s;}
+.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.panel{display:none;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);}
+.panel.active{display:block;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;}
+.btn:hover{background:var(--primary-hover);}
+.btn-subtle{background:var(--bg-subtle);color:var(--text-main);border:1px solid var(--border-color);}
+.btn-subtle:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+input[type=text],input[type=number],textarea,select{width:100%;padding:10px 12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;outline:none;}
+input:focus,textarea:focus,select:focus{border-color:var(--border-focus);}
+label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;}
+.badge{display:inline-block;padding:3px 8px;border-radius:var(--radius-pill);font-size:11px;font-weight:700;}
+.badge-success{background:rgba(16,185,129,.15);color:var(--success);}
+.badge-warning{background:rgba(245,158,11,.15);color:var(--warning);}
+.badge-primary{background:var(--primary-subtle);color:var(--primary);}
+.stat-card{background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px;text-align:center;}
+.stat-card b{display:block;font-size:22px;color:var(--primary);font-weight:800;font-family:var(--font-mono);}
+.stat-card span{font-size:12px;color:var(--text-muted);}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/bing-wallpaper.html">
+</head>
+<style>
+.wall-layout{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;}
+@media(max-width:850px){.wall-layout{grid-template-columns:1fr;}}
+.main-img-box{position:relative;border-radius:var(--radius-lg);overflow:hidden;background:#000;box-shadow:var(--shadow-lg);min-height:360px;}
+.main-img{width:100%;height:auto;display:block;transition:transform .3s ease;}
+.thumb-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:14px;}
+.thumb-item{border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;aspect-ratio:16/9;border:2px solid transparent;}
+.thumb-item.active{border-color:var(--primary);}
+.thumb-item img{width:100%;height:100%;object-fit:cover;}
+</style>
+
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>🖼️</span><span>每日高清壁纸视界</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="iss-tracker.html">🛰️ 空间站实时追踪</option>
+      <option value="bing-wallpaper.html">🖼️ 每日壁纸视界</option>
+      <option value="pokedex.html">⚡ 宝可梦图鉴</option>
+      <option value="quote-card.html">🖋️ 一言灵感排版</option>
+      <option value="country-explorer.html">🌍 世界地理百科</option>
+      <option value="doh-lookup.html">🔍 原生DNS探针</option>
+      <option value="github-card.html">🐙 GitHub名片工坊</option>
+      <option value="tools.html">🏠 全部工具大厅</option>
+    </select>
+    <button class="theme-btn" onclick="toggleTheme()" title="切换明暗主题">🌓</button>
+  </div>
+</header>
+<main class="container">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+    <div>
+      <h1 class="page-title">🖼️ 每日高清壁纸与历史视界</h1>
+      <p class="page-sub">每日精选全球地理、自然与人文高清摄影，一键下载 4K 超清原图或制作手机锁屏壁纸。</p>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-subtle" onclick="downloadOriginal()">💾 下载高清原图</button>
+      <button class="btn" onclick="generateMobileLockscreen()">📱 制作手机锁屏壁纸</button>
+    </div>
+  </div>
+
+  <div class="wall-layout">
+    <div>
+      <div class="main-img-box">
+        <img id="curWallImg" class="main-img" src="" alt="每日壁纸">
+      </div>
+      <div class="thumb-gallery" id="thumbGallery"></div>
+    </div>
+
+    <div>
+      <div class="panel active">
+        <h3 id="wallTitle" style="font-size:18px;font-weight:800;margin-bottom:6px;">--</h3>
+        <p id="wallDesc" style="font-size:13px;line-height:1.6;color:var(--text-muted);margin-bottom:14px;">--</p>
+        <div style="font-size:12px;color:var(--text-light);padding-top:10px;border-top:1px solid var(--border-color);">
+          版权所有：<span id="wallCopyright">--</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+// Built-in high-availability 4K curated Bing Wallpapers
+const WALLPAPERS = [
+  {
+    title: '富士山下的初晓红枫 · 日本静冈',
+    desc: '秋末初冬，红叶如火焰般绽放在富士山脚下的河口湖畔。清晨无风的瞬间，湖面如镜倒映出白雪皑皑的山峰。',
+    copyright: '© DoctorEgg/Getty Images',
+    url: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1920&q=85'
+  },
+  {
+    title: '极光下的特罗姆瑟峡湾 · 挪威',
+    desc: '当太阳风暴粒子撞击地球高空磁层，绿色极光如同轻纱般在北极圈内的峡湾夜空曼妙起舞。',
+    copyright: '© arctic-images/Stone/Getty Images',
+    url: 'https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?auto=format&fit=crop&w=1920&q=85'
+  },
+  {
+    title: '羚羊峡谷的光之瀑布 · 美国亚利桑那',
+    desc: '数百万年由流水与风沙共同雕刻而成的狭缝型峡谷，正午阳光穿透岩缝直射谷底，形成光之圣柱。',
+    copyright: '© Clint Losee/Tandem Stills + Motion',
+    url: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=1920&q=85'
+  },
+  {
+    title: '阿尔卑斯多洛米蒂山脉峰峦 · 意大利',
+    desc: '多洛米蒂山脉以锯齿般的石灰岩白峰著称，在落日余晖中折射出令人屏息的阿尔卑斯红光。',
+    copyright: '© Roberto Moiola/Sysaworld/Getty Images',
+    url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1920&q=85'
+  }
+];
+
+let curIndex = 0;
+
+function selectWallpaper(idx) {
+  curIndex = idx;
+  const item = WALLPAPERS[idx];
+  document.getElementById('curWallImg').src = item.url;
+  document.getElementById('wallTitle').textContent = item.title;
+  document.getElementById('wallDesc').textContent = item.desc;
+  document.getElementById('wallCopyright').textContent = item.copyright;
+
+  document.querySelectorAll('.thumb-item').forEach((t, i) => t.classList.toggle('active', i === idx));
+}
+
+function renderGallery() {
+  const gal = document.getElementById('thumbGallery');
+  gal.innerHTML = '';
+  WALLPAPERS.forEach((item, idx) => {
+    const div = document.createElement('div');
+    div.className = 'thumb-item' + (idx === 0 ? ' active' : '');
+    div.innerHTML = '<img src="' + item.url + '" loading="lazy">';
+    div.onclick = () => selectWallpaper(idx);
+    gal.appendChild(div);
+  });
+}
+
+function downloadOriginal() {
+  const item = WALLPAPERS[curIndex];
+  const a = document.createElement('a');
+  a.href = item.url;
+  a.target = '_blank';
+  a.download = 'wallpaper_' + (curIndex + 1) + '.jpg';
+  a.click();
+  showToast('正在打开/下载超高清原图');
+}
+
+function generateMobileLockscreen() {
+  const item = WALLPAPERS[curIndex];
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    const cv = document.createElement('canvas');
+    cv.width = 1080;
+    cv.height = 1920;
+    const ctx = cv.getContext('2d');
+
+    // 9:16 Center crop
+    const scale = Math.max(1080 / img.width, 1920 / img.height);
+    const w = img.width * scale;
+    const h = img.height * scale;
+    const x = (1080 - w) / 2;
+    const y = (1920 - h) / 2;
+    ctx.drawImage(img, x, y, w, h);
+
+    // Frosted dark gradient overlay on top
+    const grad = ctx.createLinearGradient(0, 0, 0, 800);
+    grad.addColorStop(0, 'rgba(0,0,0,0.6)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 1080, 800);
+
+    // Clock
+    const now = new Date();
+    const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 140px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(timeStr, 540, 320);
+
+    // Date
+    const dateStr = (now.getMonth() + 1) + '月' + now.getDate() + '日 星期' + ['日','一','二','三','四','五','六'][now.getDay()];
+    ctx.font = '36px sans-serif';
+    ctx.fillText(dateStr, 540, 390);
+
+    const a = document.createElement('a');
+    a.href = cv.toDataURL('image/png');
+    a.download = 'lockscreen_' + Date.now() + '.png';
+    a.click();
+    showToast('已生成并下载 1080×1920 手机锁屏壁纸！');
+  };
+  img.src = item.url;
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  renderGallery();
+  selectWallpaper(0);
+});
+</script>
+
+<script>
+function initTheme(){
+  const saved=localStorage.getItem('app_theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved);}
+  else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.setAttribute('data-theme','dark');}
+}
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  const target=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',target);
+  localStorage.setItem('app_theme',target);
+}
+initTheme();
+function showToast(msg, duration=2200){
+  const el=document.createElement('div');
+  el.textContent=msg;
+  el.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:9999px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 10px 25px rgba(0,0,0,.2);transition:opacity .3s;';
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},duration);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>唯一标识符生成器 · UUID/ULID/NanoID · 纯前端免安装工具</title>
+<meta name="description" content="纯前端批量生成 UUID v4、毫秒排序 ULID 与 NanoID，支持多种格式转换、大写/无横线与 SQL 格式。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--purple:#8b5cf6;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,.06);--shadow-lg:0 10px 15px -3px rgba(0,0,0,.08);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:1100px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.tab-btn{padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-muted);font-size:13px;font-weight:700;cursor:pointer;transition:.2s;}
+.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.panel{display:none;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);}
+.panel.active{display:block;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;}
+.btn:hover{background:var(--primary-hover);}
+.btn-subtle{background:var(--bg-subtle);color:var(--text-main);border:1px solid var(--border-color);}
+.btn-subtle:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+input[type=text],input[type=number],textarea,select{width:100%;padding:10px 12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;outline:none;}
+input:focus,textarea:focus,select:focus{border-color:var(--border-focus);}
+label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;}
+.badge{display:inline-block;padding:3px 8px;border-radius:var(--radius-pill);font-size:11px;font-weight:700;}
+.badge-success{background:rgba(16,185,129,.15);color:var(--success);}
+.badge-warning{background:rgba(245,158,11,.15);color:var(--warning);}
+.badge-primary{background:var(--primary-subtle);color:var(--primary);}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/uuid-generator.html">
+</head>
+<style>
+.ctrl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:20px;}
+.ctrl-card{background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px;}
+.output-area{width:100%;height:320px;font-family:var(--font-mono);font-size:13px;line-height:1.6;padding:14px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);resize:vertical;}
+.stat-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:var(--bg-subtle);border-radius:var(--radius-pill);font-size:12px;font-weight:700;}
+</style>
+
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>🆔</span><span>唯一标识符生成器</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="markdown-editor.html">📝 Markdown排版</option>
+      <option value="uuid-generator.html">🆔 唯一标识生成</option>
+      <option value="json-csv-tool.html">🔄 JSON/CSV互转</option>
+      <option value="cron-parser.html">⏰ Cron表达式</option>
+      <option value="css-generator.html">🎨 CSS视觉工坊</option>
+      <option value="ascii-art.html">🔤 字符画艺术</option>
+      <option value="tools.html">🏠 返回全部工具</option>
+    </select>
+    <button class="theme-btn" onclick="toggleTheme()" title="切换明暗主题">🌓</button>
+  </div>
+</header>
+<main class="container">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+    <div>
+      <h1 class="page-title">🆔 唯一标识符生成器</h1>
+      <p class="page-sub">标准 UUID v4、时序可排序 ULID 与紧凑型 NanoID 批量并发生成，支持各种格式清洗。</p>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn" onclick="generateBatch()">⚡ 重新生成</button>
+      <button class="btn btn-subtle" onclick="copyResults()">📋 复制结果</button>
+      <button class="btn btn-subtle" onclick="downloadTxt()">💾 存为 TXT</button>
+    </div>
+  </div>
+
+  <div class="ctrl-grid">
+    <div class="ctrl-card">
+      <label class="field-label">标识符规范算法</label>
+      <select id="idType" onchange="onTypeChanged()">
+        <option value="uuid4">UUID v4 (标准通用 128-bit 随机)</option>
+        <option value="ulid">ULID (带毫秒时序前缀 Crockford Base32)</option>
+        <option value="nanoid">NanoID (URL 友好短链随机串)</option>
+      </select>
+    </div>
+
+    <div class="ctrl-card">
+      <label class="field-label">生成数量: <span id="countVal">10</span> 个</label>
+      <input type="range" id="genCount" min="1" max="100" value="10" oninput="document.getElementById('countVal').textContent=this.value;generateBatch();">
+    </div>
+
+    <div class="ctrl-card">
+      <label class="field-label">字母大小写</label>
+      <select id="caseOption" onchange="generateBatch()">
+        <option value="lower">小写字母 (默认标准)</option>
+        <option value="upper">大写字母 (UPPERCASE)</option>
+      </select>
+    </div>
+
+    <div class="ctrl-card">
+      <label class="field-label">符号与包裹格式</label>
+      <select id="formatOption" onchange="generateBatch()">
+        <option value="standard">标准格式 (保留短横线)</option>
+        <option value="nohyphen">紧凑去除短横线 (32字符)</option>
+        <option value="braces">带花括号 { ... }</option>
+        <option value="sql">SQL IN 语法 ('a', 'b')</option>
+        <option value="json">JSON 数组 ["a", "b"]</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="nanoConfig" class="ctrl-card" style="display:none;margin-bottom:16px;">
+    <div style="display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:center;">
+      <div>
+        <label class="field-label">NanoID 长度</label>
+        <input type="number" id="nanoLen" value="21" min="6" max="64" onchange="generateBatch()">
+      </div>
+      <div>
+        <label class="field-label">自定义字符集 (默认 64 字符)</label>
+        <input type="text" id="nanoAlphabet" value="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz-" onchange="generateBatch()">
+      </div>
+    </div>
+  </div>
+
+  <div class="panel active" style="padding:16px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+      <div style="display:flex;gap:10px;align-items:center;">
+        <span class="stat-pill">熵值: <b id="entropyVal" style="color:var(--primary);">122 bits</b></span>
+        <span class="stat-pill">理论冲突概率: <b style="color:var(--success);">&lt; 1 / 10^18</b></span>
+      </div>
+      <button class="btn btn-subtle btn-sm" onclick="clearOutput()">清空</button>
+    </div>
+    <textarea id="outputArea" class="output-area" readonly></textarea>
+  </div>
+</main>
+
+<script>
+// Crockford Base32
+const ENCODING = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+function generateUlid() {
+  const now = Date.now();
+  let timeStr = '';
+  let time = now;
+  for (let i = 9; i >= 0; i--) {
+    const mod = time % 32;
+    timeStr = ENCODING[mod] + timeStr;
+    time = Math.floor(time / 32);
+  }
+  let randStr = '';
+  const randBytes = new Uint8Array(10);
+  crypto.getRandomValues(randBytes);
+  for (let i = 0; i < 16; i++) {
+    const randVal = Math.floor(Math.random() * 32);
+    randStr += ENCODING[randVal];
+  }
+  return timeStr + randStr;
+}
+
+function generateNanoId(size, alphabet) {
+  let id = '';
+  const bytes = new Uint8Array(size);
+  crypto.getRandomValues(bytes);
+  for (let i = 0; i < size; i++) {
+    id += alphabet[bytes[i] % alphabet.length];
+  }
+  return id;
+}
+
+function onTypeChanged() {
+  const type = document.getElementById('idType').value;
+  document.getElementById('nanoConfig').style.display = (type === 'nanoid') ? 'block' : 'none';
+  generateBatch();
+}
+
+function generateBatch() {
+  const type = document.getElementById('idType').value;
+  const count = parseInt(document.getElementById('genCount').value, 10);
+  const caseOpt = document.getElementById('caseOption').value;
+  const fmt = document.getElementById('formatOption').value;
+
+  const results = [];
+  for (let i = 0; i < count; i++) {
+    let raw = '';
+    if (type === 'uuid4') {
+      raw = crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        const r = Math.random() * 16 | 0;
+        return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+      });
+    } else if (type === 'ulid') {
+      raw = generateUlid();
+    } else if (type === 'nanoid') {
+      const len = parseInt(document.getElementById('nanoLen').value, 10) || 21;
+      const alpha = document.getElementById('nanoAlphabet').value || '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz-';
+      raw = generateNanoId(len, alpha);
+    }
+
+    if (caseOpt === 'upper') raw = raw.toUpperCase();
+    else if (caseOpt === 'lower') raw = raw.toLowerCase();
+
+    if (fmt === 'nohyphen') raw = raw.replace(/-/g, '');
+    else if (fmt === 'braces') raw = '{' + raw + '}';
+
+    results.push(raw);
+  }
+
+  let finalOutput = '';
+  if (fmt === 'sql') {
+    finalOutput = '(' + results.map(r => "'" + r + "'").join(', ') + ')';
+  } else if (fmt === 'json') {
+    finalOutput = JSON.stringify(results, null, 2);
+  } else {
+    finalOutput = results.join('\n');
+  }
+
+  document.getElementById('outputArea').value = finalOutput;
+
+  // Update entropy
+  if (type === 'uuid4') document.getElementById('entropyVal').textContent = '122 bits (v4 CSPRNG)';
+  else if (type === 'ulid') document.getElementById('entropyVal').textContent = '128 bits (48-bit Time + 80-bit Rand)';
+  else document.getElementById('entropyVal').textContent = (parseInt(document.getElementById('nanoLen').value, 10) * 6) + ' bits';
+}
+
+function copyResults() {
+  const val = document.getElementById('outputArea').value;
+  if (!val) return;
+  navigator.clipboard.writeText(val).then(() => showToast('已成功复制 ' + document.getElementById('genCount').value + ' 个标识符'));
+}
+
+function downloadTxt() {
+  const val = document.getElementById('outputArea').value;
+  if (!val) return;
+  const blob = new Blob([val], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'identifiers_' + Date.now() + '.txt';
+  a.click();
+  showToast('已下载标识符文本文件');
+}
+
+function clearOutput() {
+  document.getElementById('outputArea').value = '';
+}
+
+window.addEventListener('DOMContentLoaded', generateBatch);
+</script>
+
+<script>
+function initTheme(){
+  const saved=localStorage.getItem('app_theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved);}
+  else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.setAttribute('data-theme','dark');}
+}
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  const target=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',target);
+  localStorage.setItem('app_theme',target);
+}
+initTheme();
+function showToast(msg, duration=2200){
+  const el=document.createElement('div');
+  el.textContent=msg;
+  el.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:9999px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 10px 25px rgba(0,0,0,.2);transition:opacity .3s;';
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},duration);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>随机抉择与抽奖转盘 · 纯前端免安装工具</title>
+<meta name="description" content="纯前端幸运大转盘、公平名单随机抽取/团队分组、3D 掷骰子与抛硬币模拟，100% 离线。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--purple:#8b5cf6;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,.06);--shadow-lg:0 10px 15px -3px rgba(0,0,0,.08);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:1050px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.tab-btn{padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-muted);font-size:13px;font-weight:700;cursor:pointer;transition:.2s;}
+.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.panel{display:none;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);}
+.panel.active{display:block;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;}
+.btn:hover{background:var(--primary-hover);}
+.btn-subtle{background:var(--bg-subtle);color:var(--text-main);border:1px solid var(--border-color);}
+.btn-subtle:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+input[type=text],input[type=number],textarea,select{width:100%;padding:10px 12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;outline:none;}
+input:focus,textarea:focus,select:focus{border-color:var(--border-focus);}
+label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;}
+.stat-card{background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px;text-align:center;}
+.stat-card b{display:block;font-size:24px;color:var(--primary);font-weight:800;font-family:var(--font-mono);}
+.stat-card span{font-size:12px;color:var(--text-muted);}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/random-picker.html">
+</head>
+<style>
+.wheel-layout{display:grid;grid-template-columns:360px 1fr;gap:24px;align-items:start;}
+@media(max-width:768px){.wheel-layout{grid-template-columns:1fr;}}
+.wheel-container{position:relative;width:340px;height:340px;margin:0 auto;}
+canvas#wheelCanvas{width:100%;height:100%;border-radius:50%;box-shadow:var(--shadow-lg);}
+.pointer{position:absolute;top:50%;right:-12px;transform:translateY(-50%);width:0;height:0;border-top:14px solid transparent;border-bottom:14px solid transparent;border-right:24px solid var(--danger);z-index:10;filter:drop-shadow(-2px 0 3px rgba(0,0,0,.3));}
+.spin-center-btn{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;background:var(--primary);color:#fff;border:4px solid #fff;font-weight:900;font-size:14px;cursor:pointer;box-shadow:var(--shadow-md);display:flex;align-items:center;justify-content:center;z-index:11;}
+.spin-center-btn:active{transform:translate(-50%,-50%) scale(0.95);}
+.options-ta{height:160px;font-family:var(--font-mono);font-size:13px;resize:vertical;}
+.dice-area{display:flex;gap:20px;justify-content:center;align-items:center;min-height:180px;perspective:600px;}
+.dice{width:70px;height:70px;background:#fff;color:#1e293b;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;box-shadow:var(--shadow-md);border:2px solid var(--border-color);transition:transform .4s cubic-bezier(.17,.67,.83,.67);}
+.coin{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg, #f59e0b, #d97706);color:#fff;font-size:24px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-lg);border:4px solid #fef3c7;transition:transform .6s ease;}
+</style>
+
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>🎯</span><span>随机抉择与抽奖转盘</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="random-picker.html">🎯 随机抉择转盘</option>
+      <option value="bmi-tracker.html">⚖️ BMI健康追踪</option>
+      <option value="water-reminder.html">💧 喝水打卡提醒</option>
+      <option value="packing-list.html">🧳 旅行行李清单</option>
+      <option value="tip-calculator.html">🧾 账单AA计算器</option>
+      <option value="tools.html">🏠 全部工具大厅</option>
+    </select>
+    <button class="theme-btn" onclick="toggleTheme()" title="切换明暗主题">🌓</button>
+  </div>
+</header>
+<main class="container">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+    <div>
+      <h1 class="page-title">🎯 随机抉择与抽奖转盘</h1>
+      <p class="page-sub">解决选择困难症！物理摩擦力幸运转盘、公平名单抽签/团队分组、掷骰子与抛硬币。</p>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="wheel" onclick="switchTab('wheel')">🎡 幸运大转盘</button>
+    <button class="tab-btn" data-tab="draw" onclick="switchTab('draw')">👥 名单抽签与分组</button>
+    <button class="tab-btn" data-tab="dice" onclick="switchTab('dice')">🎲 掷骰子与抛硬币</button>
+  </div>
+
+  <!-- Wheel -->
+  <div class="panel active" id="panel-wheel">
+    <div class="wheel-layout">
+      <div>
+        <div class="wheel-container">
+          <canvas id="wheelCanvas" width="500" height="500"></canvas>
+          <div class="pointer"></div>
+          <button class="spin-center-btn" onclick="spinWheel()">开始</button>
+        </div>
+      </div>
+      <div>
+        <label class="field-label">转盘选项（每行一项）</label>
+        <textarea id="wheelOptions" class="options-ta" oninput="updateWheelSlices()">火锅
+麻辣烫
+日式拉面
+轻食沙拉
+麦当劳
+黄焖鸡米饭
+烤肉拌饭
+兰州牛肉面</textarea>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+          <button class="btn btn-subtle btn-sm" onclick="setWheelPreset('eat')">🍜 今天吃什么</button>
+          <button class="btn btn-subtle btn-sm" onclick="setWheelPreset('truth')">🤫 真心话大冒险</button>
+          <button class="btn btn-subtle btn-sm" onclick="setWheelPreset('number')">🔢 1 至 10 随机数</button>
+        </div>
+        <div style="margin-top:20px;padding:14px;background:var(--bg-subtle);border-radius:var(--radius-md);border:1px solid var(--border-color);text-align:center;">
+          <div style="font-size:12px;color:var(--text-muted);font-weight:700;">抽选结果</div>
+          <div id="wheelResult" style="font-size:26px;font-weight:800;color:var(--primary);margin-top:4px;">准备就绪</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Draw & Group -->
+  <div class="panel" id="panel-draw">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div>
+        <label class="field-label">参与名单（每行一个人名/项）</label>
+        <textarea id="nameList" style="height:220px;" placeholder="张三&#10;李四&#10;王五&#10;赵六&#10;钱七&#10;孙八"></textarea>
+      </div>
+      <div>
+        <div style="margin-bottom:14px;">
+          <label class="field-label">抽取模式</label>
+          <div style="display:flex;gap:10px;">
+            <input type="number" id="pickCount" value="1" min="1" max="100" style="width:90px;">
+            <button class="btn" onclick="drawWinners()">🎯 随机抽取幸存者</button>
+          </div>
+        </div>
+        <div style="margin-bottom:14px;">
+          <label class="field-label">随机均等分组</label>
+          <div style="display:flex;gap:10px;">
+            <input type="number" id="groupCount" value="2" min="2" max="20" style="width:90px;">
+            <button class="btn btn-subtle" onclick="splitGroups()">👥 均分为 N 组</button>
+          </div>
+        </div>
+        <div style="background:var(--bg-subtle);border-radius:var(--radius-md);padding:14px;border:1px solid var(--border-color);min-height:120px;" id="drawResultArea">
+          <div style="color:var(--text-muted);font-size:13px;">抽签结果将展示在这里...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dice & Coin -->
+  <div class="panel" id="panel-dice">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+      <div style="text-align:center;padding:20px;background:var(--bg-subtle);border-radius:var(--radius-lg);border:1px solid var(--border-color);">
+        <h3 style="font-size:16px;margin-bottom:10px;">🎲 3D 掷骰子</h3>
+        <div class="dice-area" id="diceArea">
+          <div class="dice" id="d1">1</div>
+          <div class="dice" id="d2">6</div>
+        </div>
+        <div style="margin:14px 0;font-size:14px;font-weight:700;">总点数: <b id="diceSum" style="color:var(--primary);font-size:22px;">7</b></div>
+        <div style="display:flex;gap:10px;justify-content:center;">
+          <select id="diceNum" style="width:100px;">
+            <option value="1">1 颗骰子</option>
+            <option value="2" selected>2 颗骰子</option>
+            <option value="3">3 颗骰子</option>
+            <option value="4">4 颗骰子</option>
+          </select>
+          <button class="btn" onclick="rollDice()">掷出骰子</button>
+        </div>
+      </div>
+
+      <div style="text-align:center;padding:20px;background:var(--bg-subtle);border-radius:var(--radius-lg);border:1px solid var(--border-color);">
+        <h3 style="font-size:16px;margin-bottom:10px;">🪙 抛硬币模拟</h3>
+        <div style="height:140px;display:flex;align-items:center;justify-content:center;">
+          <div class="coin" id="coinEl">正</div>
+        </div>
+        <div style="margin:14px 0;font-size:13px;color:var(--text-muted);">
+          正: <b id="cntHeads" style="color:var(--primary);">0</b> 次 · 反: <b id="cntTails" style="color:var(--warning);">0</b> 次
+        </div>
+        <button class="btn" onclick="flipCoin()">抛掷硬币</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+let curTab = 'wheel';
+
+function switchTab(tab) {
+  curTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-tab') === tab));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + tab));
+  if (tab === 'wheel') updateWheelSlices();
+}
+
+// Wheel Engine
+const COLORS = ['#0284c7', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#f97316', '#6366f1'];
+let slices = [];
+let curAngle = 0;
+let isSpinning = false;
+
+function updateWheelSlices() {
+  const text = document.getElementById('wheelOptions').value.trim();
+  slices = text.split('\n').map(s => s.trim()).filter(Boolean);
+  if (slices.length === 0) slices = ['暂无选项'];
+  drawWheel();
+}
+
+function drawWheel() {
+  const canvas = document.getElementById('wheelCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const size = canvas.width;
+  const center = size / 2;
+  const radius = center - 10;
+  ctx.clearRect(0, 0, size, size);
+
+  const arc = (2 * Math.PI) / slices.length;
+
+  slices.forEach((slice, i) => {
+    const angle = curAngle + i * arc;
+    ctx.beginPath();
+    ctx.fillStyle = COLORS[i % COLORS.length];
+    ctx.moveTo(center, center);
+    ctx.arc(center, center, radius, angle, angle + arc);
+    ctx.fill();
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Draw text
+    ctx.save();
+    ctx.translate(center, center);
+    ctx.rotate(angle + arc / 2);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 20px sans-serif';
+    ctx.shadowColor = 'rgba(0,0,0,0.4)';
+    ctx.shadowBlur = 4;
+    ctx.fillText(slice.length > 8 ? slice.slice(0, 8) + '..' : slice, radius - 24, 7);
+    ctx.restore();
+  });
+}
+
+function spinWheel() {
+  if (isSpinning || slices.length === 0) return;
+  isSpinning = true;
+  document.getElementById('wheelResult').textContent = '旋转中...';
+
+  const extraSpins = 5 + Math.random() * 4;
+  const targetAngle = curAngle + extraSpins * 2 * Math.PI + Math.random() * 2 * Math.PI;
+  const duration = 4000;
+  const start = performance.now();
+  const initAngle = curAngle;
+
+  function animate(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    // Cubic ease out
+    const ease = 1 - Math.pow(1 - progress, 3);
+    curAngle = initAngle + (targetAngle - initAngle) * ease;
+    drawWheel();
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    } else {
+      isSpinning = false;
+      // Calculate stopped item at pointer (0 rad = right side / 3 o'clock)
+      const arc = (2 * Math.PI) / slices.length;
+      let norm = (2 * Math.PI - (curAngle % (2 * Math.PI))) % (2 * Math.PI);
+      const index = Math.floor(norm / arc) % slices.length;
+      const winner = slices[index];
+      document.getElementById('wheelResult').textContent = '🎉 ' + winner;
+      showToast('恭喜抽中: ' + winner);
+    }
+  }
+  requestAnimationFrame(animate);
+}
+
+function setWheelPreset(type) {
+  if (type === 'eat') {
+    document.getElementById('wheelOptions').value = '火锅\n麻辣烫\n日式拉面\n轻食沙拉\n麦当劳\n黄焖鸡米饭\n烤肉拌饭\n兰州牛肉面';
+  } else if (type === 'truth') {
+    document.getElementById('wheelOptions').value = '真心话：说出你最尴尬的一件事\n大冒险：做 10 个俯卧撑\n真心话：手机相册最后一张照片\n大冒险：深情朗诵一段说明书\n免罚金牌\n全场喝一杯';
+  } else if (type === 'number') {
+    document.getElementById('wheelOptions').value = '1\n2\n3\n4\n5\n6\n7\n8\n9\n10';
+  }
+  updateWheelSlices();
+}
+
+function drawWinners() {
+  const text = document.getElementById('nameList').value.trim();
+  const names = text.split('\n').map(s => s.trim()).filter(Boolean);
+  if (names.length === 0) return showToast('请先输入参与名单！');
+  const count = Math.min(parseInt(document.getElementById('pickCount').value, 10) || 1, names.length);
+  
+  const shuffled = [...names].sort(() => Math.random() - 0.5);
+  const picked = shuffled.slice(0, count);
+
+  const resArea = document.getElementById('drawResultArea');
+  resArea.innerHTML = '<div style="font-weight:700;margin-bottom:8px;color:var(--text-muted);">中奖者名单 (' + count + '人)：</div>' +
+    picked.map((n, i) => '<span class="badge badge-primary" style="margin:4px;font-size:14px;padding:6px 12px;">🏆 #' + (i + 1) + ' ' + n + '</span>').join('');
+  showToast('抽签完成！');
+}
+
+function splitGroups() {
+  const text = document.getElementById('nameList').value.trim();
+  const names = text.split('\n').map(s => s.trim()).filter(Boolean);
+  if (names.length === 0) return showToast('请先输入参与名单！');
+  const gCount = parseInt(document.getElementById('groupCount').value, 10) || 2;
+
+  const shuffled = [...names].sort(() => Math.random() - 0.5);
+  const groups = Array.from({ length: gCount }, () => []);
+  shuffled.forEach((n, idx) => groups[idx % gCount].push(n));
+
+  const resArea = document.getElementById('drawResultArea');
+  let html = '<div style="font-weight:700;margin-bottom:8px;color:var(--text-muted);">随机分组结果 (' + gCount + '组)：</div>';
+  groups.forEach((grp, i) => {
+    html += '<div style="margin-bottom:8px;"><b>第 ' + (i + 1) + ' 组 (' + grp.length + '人):</b> ' + grp.join(', ') + '</div>';
+  });
+  resArea.innerHTML = html;
+  showToast('分组完成！');
+}
+
+function rollDice() {
+  const num = parseInt(document.getElementById('diceNum').value, 10);
+  const area = document.getElementById('diceArea');
+  area.innerHTML = '';
+  let sum = 0;
+  for (let i = 0; i < num; i++) {
+    const val = Math.floor(Math.random() * 6) + 1;
+    sum += val;
+    const d = document.createElement('div');
+    d.className = 'dice';
+    d.textContent = val;
+    d.style.transform = 'rotate(' + (Math.random() * 20 - 10) + 'deg) scale(1.1)';
+    setTimeout(() => d.style.transform = 'none', 300);
+    area.appendChild(d);
+  }
+  document.getElementById('diceSum').textContent = sum;
+}
+
+let heads = 0, tails = 0;
+function flipCoin() {
+  const coin = document.getElementById('coinEl');
+  coin.style.transform = 'rotateY(720deg) scale(1.2)';
+  setTimeout(() => {
+    const isHead = Math.random() > 0.5;
+    coin.textContent = isHead ? '正' : '反';
+    coin.style.transform = 'none';
+    if (isHead) heads++; else tails++;
+    document.getElementById('cntHeads').textContent = heads;
+    document.getElementById('cntTails').textContent = tails;
+  }, 300);
+}
+
+window.addEventListener('DOMContentLoaded', updateWheelSlices);
+</script>
+
+<script>
+function initTheme(){
+  const saved=localStorage.getItem('app_theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved);}
+  else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.setAttribute('data-theme','dark');}
+}
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  const target=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',target);
+  localStorage.setItem('app_theme',target);
+}
+initTheme();
+function showToast(msg, duration=2200){
+  const el=document.createElement('div');
+  el.textContent=msg;
+  el.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:9999px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 10px 25px rgba(0,0,0,.2);transition:opacity .3s;';
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},duration);
+}
+</script>
+</body>
+</html>

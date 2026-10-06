@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>一言·灵感排版工坊 · 纯前端免安装工具</title>
+<meta name="description" content="纯前端一言名句获取、卡片排版设计（水墨/极简/复古/赛博）、朱红印章、一键导出朋友圈配图。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--purple:#8b5cf6;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,.06);--shadow-lg:0 10px 15px -3px rgba(0,0,0,.08);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:1100px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.tab-btn{padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-muted);font-size:13px;font-weight:700;cursor:pointer;transition:.2s;}
+.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.panel{display:none;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);}
+.panel.active{display:block;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;}
+.btn:hover{background:var(--primary-hover);}
+.btn-subtle{background:var(--bg-subtle);color:var(--text-main);border:1px solid var(--border-color);}
+.btn-subtle:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+input[type=text],input[type=number],textarea,select{width:100%;padding:10px 12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;outline:none;}
+input:focus,textarea:focus,select:focus{border-color:var(--border-focus);}
+label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;}
+.badge{display:inline-block;padding:3px 8px;border-radius:var(--radius-pill);font-size:11px;font-weight:700;}
+.badge-success{background:rgba(16,185,129,.15);color:var(--success);}
+.badge-warning{background:rgba(245,158,11,.15);color:var(--warning);}
+.badge-primary{background:var(--primary-subtle);color:var(--primary);}
+.stat-card{background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px;text-align:center;}
+.stat-card b{display:block;font-size:22px;color:var(--primary);font-weight:800;font-family:var(--font-mono);}
+.stat-card span{font-size:12px;color:var(--text-muted);}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/quote-card.html">
+</head>
+<style>
+.card-layout{display:grid;grid-template-columns:300px 1fr;gap:20px;align-items:start;}
+@media(max-width:768px){.card-layout{grid-template-columns:1fr;}}
+.quote-stage{padding:30px;background:var(--bg-subtle);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;border:1px solid var(--border-color);}
+.quote-paper{width:420px;min-height:280px;padding:36px;border-radius:12px;box-shadow:var(--shadow-lg);position:relative;display:flex;flex-direction:column;justify-content:space-between;transition:.3s;}
+.quote-content{font-size:18px;line-height:1.8;letter-spacing:1px;font-family:serif;}
+.quote-author{text-align:right;font-size:13px;margin-top:20px;opacity:.8;}
+.seal{position:absolute;bottom:24px;left:30px;width:38px;height:38px;border:2px solid #ef4444;color:#ef4444;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;letter-spacing:2px;user-select:none;}
+</style>
+
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>🖋️</span><span>一言·灵感排版工坊</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="iss-tracker.html">🛰️ 空间站实时追踪</option>
+      <option value="bing-wallpaper.html">🖼️ 每日壁纸视界</option>
+      <option value="pokedex.html">⚡ 宝可梦图鉴</option>
+      <option value="quote-card.html">🖋️ 一言灵感排版</option>
+      <option value="country-explorer.html">🌍 世界地理百科</option>
+      <option value="doh-lookup.html">🔍 原生DNS探针</option>
+      <option value="github-card.html">🐙 GitHub名片工坊</option>
+      <option value="tools.html">🏠 全部工具大厅</option>
+    </select>
+    <button class="theme-btn" onclick="toggleTheme()" title="切换明暗主题">🌓</button>
+  </div>
+</header>
+<main class="container">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+    <div>
+      <h1 class="page-title">🖋️ 一言·灵感排版工坊</h1>
+      <p class="page-sub">随机名句灵感、多种文艺卡片风格、朱红印章与一键 Canvas 高清社交分享卡片导出。</p>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-subtle" onclick="fetchQuote()">🎲 换一句灵感</button>
+      <button class="btn" onclick="exportCardImage()">💾 导出为分享图片</button>
+    </div>
+  </div>
+
+  <div class="card-layout">
+    <div class="panel active">
+      <div style="margin-bottom:14px;">
+        <label class="field-label">卡片视觉风格</label>
+        <select id="themeSelect" onchange="applyTheme()">
+          <option value="minimal">极简素白 (Minimal White)</option>
+          <option value="dark">深邃暗夜 (Night Dark)</option>
+          <option value="sunset">落日霞光 (Sunset Gradient)</option>
+          <option value="kraft">牛皮纸复古 (Vintage Kraft)</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom:14px;">
+        <label class="field-label">字体选择</label>
+        <select id="fontSelect" onchange="applyTheme()">
+          <option value="KaiTi, serif">古风楷体 (KaiTi)</option>
+          <option value="Georgia, serif">衬线体 (Serif)</option>
+          <option value="sans-serif">无衬线体 (Sans-serif)</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="field-label">印章文案</label>
+        <input type="text" id="sealInput" value="灵感" maxlength="4" oninput="document.getElementById('sealEl').textContent=this.value;">
+      </div>
+    </div>
+
+    <div>
+      <div class="quote-stage">
+        <div class="quote-paper" id="paper">
+          <div class="quote-content" id="qText">“满地都是凡俗，但我抬起头，看见了浩瀚星河。”</div>
+          <div class="quote-author" id="qFrom">—— 摘自《灵感手记》</div>
+          <div class="seal" id="sealEl">灵感</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+const QUOTES_BANK = [
+  { text: '生活原本沉闷，但跑起来就有风。', from: '网络' },
+  { text: '凡是过往，皆为序章。', from: '莎士比亚《暴风雨》' },
+  { text: '愿你历尽千帆，归来仍是少年。', from: '网络' },
+  { text: '架构的本质，是在混沌中建立清晰的秩序。', from: 'Architect' },
+  { text: '保持热爱，奔赴山海。', from: '网络' }
+];
+
+async function fetchQuote() {
+  try {
+    const res = await fetch('https://v1.hitokoto.cn');
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    document.getElementById('qText').textContent = '“' + data.hitokoto + '”';
+    document.getElementById('qFrom').textContent = '—— ' + (data.from_who ? data.from_who + ' ' : '') + '《' + data.from + '》';
+  } catch (e) {
+    const rnd = QUOTES_BANK[Math.floor(Math.random() * QUOTES_BANK.length)];
+    document.getElementById('qText').textContent = '“' + rnd.text + '”';
+    document.getElementById('qFrom').textContent = '—— ' + rnd.from;
+  }
+}
+
+function applyTheme() {
+  const theme = document.getElementById('themeSelect').value;
+  const font = document.getElementById('fontSelect').value;
+  const paper = document.getElementById('paper');
+
+  paper.style.fontFamily = font;
+  if (theme === 'minimal') {
+    paper.style.background = '#ffffff';
+    paper.style.color = '#0f172a';
+    paper.style.border = '1px solid #e2e8f0';
+  } else if (theme === 'dark') {
+    paper.style.background = '#111827';
+    paper.style.color = '#f9fafb';
+    paper.style.border = '1px solid #374151';
+  } else if (theme === 'sunset') {
+    paper.style.background = 'linear-gradient(135deg, #fbcfe8, #fed7aa)';
+    paper.style.color = '#831843';
+    paper.style.border = 'none';
+  } else if (theme === 'kraft') {
+    paper.style.background = '#d7c4a3';
+    paper.style.color = '#3e2723';
+    paper.style.border = 'none';
+  }
+}
+
+function exportCardImage() {
+  const paper = document.getElementById('paper');
+  const text = document.getElementById('qText').textContent;
+  const from = document.getElementById('qFrom').textContent;
+  const seal = document.getElementById('sealEl').textContent;
+  const theme = document.getElementById('themeSelect').value;
+
+  const cv = document.createElement('canvas');
+  cv.width = 840;
+  cv.height = 560;
+  const ctx = cv.getContext('2d');
+
+  // Background
+  if (theme === 'dark') ctx.fillStyle = '#111827';
+  else if (theme === 'sunset') {
+    const grad = ctx.createLinearGradient(0, 0, 840, 560);
+    grad.addColorStop(0, '#fbcfe8'); grad.addColorStop(1, '#fed7aa');
+    ctx.fillStyle = grad;
+  } else if (theme === 'kraft') ctx.fillStyle = '#d7c4a3';
+  else ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, 840, 560);
+
+  // Text
+  ctx.fillStyle = theme === 'dark' ? '#f9fafb' : (theme === 'sunset' ? '#831843' : (theme === 'kraft' ? '#3e2723' : '#0f172a'));
+  ctx.font = '32px serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(text, 420, 240);
+
+  ctx.font = '22px serif';
+  ctx.textAlign = 'right';
+  ctx.fillText(from, 740, 360);
+
+  // Seal
+  ctx.strokeStyle = '#ef4444';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(80, 420, 60, 60);
+  ctx.fillStyle = '#ef4444';
+  ctx.font = 'bold 20px serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(seal, 110, 458);
+
+  const a = document.createElement('a');
+  a.href = cv.toDataURL('image/png');
+  a.download = 'quote_card_' + Date.now() + '.png';
+  a.click();
+  showToast('卡片图片已生成导出！');
+}
+
+window.addEventListener('DOMContentLoaded', applyTheme);
+</script>
+
+<script>
+function initTheme(){
+  const saved=localStorage.getItem('app_theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved);}
+  else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.setAttribute('data-theme','dark');}
+}
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  const target=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',target);
+  localStorage.setItem('app_theme',target);
+}
+initTheme();
+function showToast(msg, duration=2200){
+  const el=document.createElement('div');
+  el.textContent=msg;
+  el.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:9999px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 10px 25px rgba(0,0,0,.2);transition:opacity .3s;';
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},duration);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>BMI 与健康指标追踪 · 纯前端免安装工具</title>
+<meta name="description" content="纯前端个人健康评估：计算 BMI、体型判定、理想体重、基础代谢率 BMR 与体脂率估算，Canvas 走势图。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--purple:#8b5cf6;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,.06);--shadow-lg:0 10px 15px -3px rgba(0,0,0,.08);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:1050px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.tab-btn{padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-muted);font-size:13px;font-weight:700;cursor:pointer;transition:.2s;}
+.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.panel{display:none;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);}
+.panel.active{display:block;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;}
+.btn:hover{background:var(--primary-hover);}
+.btn-subtle{background:var(--bg-subtle);color:var(--text-main);border:1px solid var(--border-color);}
+.btn-subtle:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+input[type=text],input[type=number],textarea,select{width:100%;padding:10px 12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;outline:none;}
+input:focus,textarea:focus,select:focus{border-color:var(--border-focus);}
+label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;}
+.stat-card{background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px;text-align:center;}
+.stat-card b{display:block;font-size:24px;color:var(--primary);font-weight:800;font-family:var(--font-mono);}
+.stat-card span{font-size:12px;color:var(--text-muted);}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/bmi-tracker.html">
+</head>
+<style>
+.input-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px;}
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:24px;}
+.status-badge{padding:6px 12px;border-radius:var(--radius-pill);font-weight:800;font-size:13px;display:inline-block;}
+.table-std{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px;}
+.table-std th,.table-std td{border:1px solid var(--border-color);padding:8px 12px;text-align:left;}
+.table-std th{background:var(--bg-subtle);}
+</style>
+
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>⚖️</span><span>BMI 与健康指标追踪</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="random-picker.html">🎯 随机抉择转盘</option>
+      <option value="bmi-tracker.html">⚖️ BMI健康追踪</option>
+      <option value="water-reminder.html">💧 喝水打卡提醒</option>
+      <option value="packing-list.html">🧳 旅行行李清单</option>
+      <option value="tip-calculator.html">🧾 账单AA计算器</option>
+      <option value="tools.html">🏠 全部工具大厅</option>
+    </select>
+    <button class="theme-btn" onclick="toggleTheme()" title="切换明暗主题">🌓</button>
+  </div>
+</header>
+<main class="container">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+    <div>
+      <h1 class="page-title">⚖️ BMI 与健康指标追踪</h1>
+      <p class="page-sub">卫健委与 WHO 双标准对照，BMR 基础代谢率与体脂率推算，本地趋势记录，保护健康隐私。</p>
+    </div>
+    <button class="btn btn-subtle" onclick="saveRecord()">📌 记录今日数据</button>
+  </div>
+
+  <div class="panel active" style="margin-bottom:20px;">
+    <div class="input-grid">
+      <div>
+        <label class="field-label">身高 (厘米 cm)</label>
+        <input type="number" id="heightInput" value="175" min="50" max="250" oninput="calculateBMI()">
+      </div>
+      <div>
+        <label class="field-label">体重 (公斤 kg)</label>
+        <input type="number" id="weightInput" value="68" min="20" max="300" step="0.1" oninput="calculateBMI()">
+      </div>
+      <div>
+        <label class="field-label">生理性别</label>
+        <select id="genderInput" onchange="calculateBMI()">
+          <option value="male">男 (Male)</option>
+          <option value="female">女 (Female)</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label">年龄 (岁)</label>
+        <input type="number" id="ageInput" value="28" min="1" max="120" oninput="calculateBMI()">
+      </div>
+    </div>
+
+    <div class="result-grid">
+      <div class="stat-card">
+        <span>BMI 指数</span>
+        <b id="bmiVal">22.2</b>
+        <div id="bmiTag" class="status-badge" style="background:rgba(16,185,129,.15);color:var(--success);margin-top:6px;">正常体重</div>
+      </div>
+      <div class="stat-card">
+        <span>理想体重范围</span>
+        <b id="idealWeight">56.7 ~ 73.2 kg</b>
+        <span style="display:block;margin-top:6px;">基于 BMI 18.5 ~ 23.9</span>
+      </div>
+      <div class="stat-card">
+        <span>基础代谢率 (BMR)</span>
+        <b id="bmrVal">1650 kcal</b>
+        <span style="display:block;margin-top:6px;">Mifflin-St Jeor 公式</span>
+      </div>
+      <div class="stat-card">
+        <span>估算体脂率 (BFR)</span>
+        <b id="bfrVal">17.8%</b>
+        <span style="display:block;margin-top:6px;">成年人公式估算</span>
+      </div>
+    </div>
+
+    <div style="background:var(--bg-subtle);border-radius:var(--radius-md);padding:14px;border:1px solid var(--border-color);">
+      <h3 style="font-size:14px;font-weight:700;margin-bottom:8px;">📋 中国卫健委成人体重判定标准对照</h3>
+      <table class="table-std">
+        <thead><tr><th>分类</th><th>BMI 范围 (kg/m²)</th><th>健康风险</th></tr></thead>
+        <tbody>
+          <tr><td>偏瘦</td><td>&lt; 18.5</td><td>营养不良、抵抗力减弱</td></tr>
+          <tr style="font-weight:700;background:rgba(16,185,129,.05);"><td>正常</td><td>18.5 ～ 23.9</td><td>最低风险</td></tr>
+          <tr><td>超重</td><td>24.0 ～ 27.9</td><td>心脑血管疾病风险增加</td></tr>
+          <tr><td>肥胖</td><td>≥ 28.0</td><td>代谢综合征、高血压高危</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel active">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <h3 style="font-size:16px;font-weight:700;">📈 历史体重走势图</h3>
+      <button class="btn btn-subtle btn-sm" onclick="clearHistory()">清空历史</button>
+    </div>
+    <canvas id="trendChart" width="900" height="260" style="width:100%;height:260px;background:var(--bg-subtle);border-radius:var(--radius-md);border:1px solid var(--border-color);"></canvas>
+  </div>
+</main>
+
+<script>
+function calculateBMI() {
+  const h = parseFloat(document.getElementById('heightInput').value) / 100;
+  const w = parseFloat(document.getElementById('weightInput').value);
+  const gender = document.getElementById('genderInput').value;
+  const age = parseInt(document.getElementById('ageInput').value, 10);
+
+  if (!h || !w) return;
+  const bmi = (w / (h * h)).toFixed(1);
+  document.getElementById('bmiVal').textContent = bmi;
+
+  const tag = document.getElementById('bmiTag');
+  if (bmi < 18.5) {
+    tag.textContent = '偏瘦 (Underweight)';
+    tag.style.background = 'rgba(56,189,248,.15)';
+    tag.style.color = '#0284c7';
+  } else if (bmi <= 23.9) {
+    tag.textContent = '标准健康 (Normal)';
+    tag.style.background = 'rgba(16,185,129,.15)';
+    tag.style.color = '#10b981';
+  } else if (bmi <= 27.9) {
+    tag.textContent = '超重 (Overweight)';
+    tag.style.background = 'rgba(245,158,11,.15)';
+    tag.style.color = '#f59e0b';
+  } else {
+    tag.textContent = '肥胖 (Obese)';
+    tag.style.background = 'rgba(239,68,68,.15)';
+    tag.style.color = '#ef4444';
+  }
+
+  // Ideal weight
+  const minW = (18.5 * h * h).toFixed(1);
+  const maxW = (23.9 * h * h).toFixed(1);
+  document.getElementById('idealWeight').textContent = minW + ' ~ ' + maxW + ' kg';
+
+  // BMR (Mifflin-St Jeor)
+  // Men: 10 * w + 6.25 * h_cm - 5 * age + 5
+  // Women: 10 * w + 6.25 * h_cm - 5 * age - 161
+  let bmr = (10 * w) + (6.25 * h * 100) - (5 * age);
+  bmr += gender === 'male' ? 5 : -161;
+  document.getElementById('bmrVal').textContent = Math.round(bmr) + ' kcal';
+
+  // BFR (Deurenberg)
+  // BFR = (1.20 * BMI) + (0.23 * Age) - (10.8 * gender[male=1,female=0]) - 5.4
+  const gFactor = gender === 'male' ? 1 : 0;
+  const bfr = (1.20 * bmi + 0.23 * age - 10.8 * gFactor - 5.4).toFixed(1);
+  document.getElementById('bfrVal').textContent = Math.max(5, bfr) + '%';
+}
+
+function saveRecord() {
+  const w = parseFloat(document.getElementById('weightInput').value);
+  const h = parseFloat(document.getElementById('heightInput').value) / 100;
+  const bmi = (w / (h * h)).toFixed(1);
+  const dateStr = new Date().toISOString().slice(5, 10);
+
+  const history = JSON.parse(localStorage.getItem('bmi_history') || '[]');
+  history.push({ date: dateStr, weight: w, bmi: Number(bmi) });
+  if (history.length > 20) history.shift();
+  localStorage.setItem('bmi_history', JSON.stringify(history));
+  drawTrend();
+  showToast('已记录今日数据: ' + w + 'kg / BMI ' + bmi);
+}
+
+function clearHistory() {
+  if (confirm('确认清空所有体重历史记录吗？')) {
+    localStorage.removeItem('bmi_history');
+    drawTrend();
+  }
+}
+
+function drawTrend() {
+  const canvas = document.getElementById('trendChart');
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+
+  let history = JSON.parse(localStorage.getItem('bmi_history') || '[]');
+  if (history.length < 2) {
+    history = [
+      { date: '10-01', weight: 70.2, bmi: 22.9 },
+      { date: '10-02', weight: 69.8, bmi: 22.7 },
+      { date: '10-03', weight: 69.1, bmi: 22.5 },
+      { date: '10-04', weight: 68.0, bmi: 22.2 }
+    ];
+  }
+
+  const pad = 40;
+  const weights = history.map(d => d.weight);
+  const minW = Math.min(...weights) - 2;
+  const maxW = Math.max(...weights) + 2;
+
+  ctx.strokeStyle = '#cbd5e1';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad, pad);
+  ctx.lineTo(pad, h - pad);
+  ctx.lineTo(w - pad, h - pad);
+  ctx.stroke();
+
+  // Plot line
+  const step = (w - 2 * pad) / (history.length - 1);
+  ctx.strokeStyle = '#0284c7';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+
+  history.forEach((pt, i) => {
+    const x = pad + i * step;
+    const y = h - pad - ((pt.weight - minW) / (maxW - minW)) * (h - 2 * pad);
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // Draw points & labels
+  history.forEach((pt, i) => {
+    const x = pad + i * step;
+    const y = h - pad - ((pt.weight - minW) / (maxW - minW)) * (h - 2 * pad);
+    ctx.fillStyle = '#0284c7';
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = '#64748b';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(pt.weight + 'kg', x, y - 10);
+    ctx.fillText(pt.date, x, h - pad + 16);
+  });
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  calculateBMI();
+  drawTrend();
+});
+</script>
+
+<script>
+function initTheme(){
+  const saved=localStorage.getItem('app_theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved);}
+  else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.setAttribute('data-theme','dark');}
+}
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  const target=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',target);
+  localStorage.setItem('app_theme',target);
+}
+initTheme();
+function showToast(msg, duration=2200){
+  const el=document.createElement('div');
+  el.textContent=msg;
+  el.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:9999px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 10px 25px rgba(0,0,0,.2);transition:opacity .3s;';
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},duration);
+}
+</script>
+</body>
+</html>

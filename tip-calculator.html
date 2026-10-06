@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>账单 AA 分摊与小费计算器 · 纯前端免安装工具</title>
+<meta name="description" content="纯前端账单平摊、各国小费速算、向上整钱取整与多人明细点餐公平拆分，聚会结账神器。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--purple:#8b5cf6;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,.06);--shadow-lg:0 10px 15px -3px rgba(0,0,0,.08);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:1050px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
+.tab-btn{padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-muted);font-size:13px;font-weight:700;cursor:pointer;transition:.2s;}
+.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.panel{display:none;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);}
+.panel.active{display:block;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;}
+.btn:hover{background:var(--primary-hover);}
+.btn-subtle{background:var(--bg-subtle);color:var(--text-main);border:1px solid var(--border-color);}
+.btn-subtle:hover{border-color:var(--primary);color:var(--primary);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+input[type=text],input[type=number],textarea,select{width:100%;padding:10px 12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;outline:none;}
+input:focus,textarea:focus,select:focus{border-color:var(--border-focus);}
+label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;}
+.stat-card{background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px;text-align:center;}
+.stat-card b{display:block;font-size:24px;color:var(--primary);font-weight:800;font-family:var(--font-mono);}
+.stat-card span{font-size:12px;color:var(--text-muted);}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/tip-calculator.html">
+</head>
+<style>
+.aa-layout{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media(max-width:768px){.aa-layout{grid-template-columns:1fr;}}
+.tip-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.tip-chip{padding:6px 14px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-subtle);font-weight:700;font-size:13px;cursor:pointer;}
+.tip-chip.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.big-card{background:var(--primary-subtle);border:1px solid var(--primary);border-radius:var(--radius-lg);padding:24px;text-align:center;}
+.big-card .num{font-size:36px;font-weight:900;color:var(--primary);font-family:var(--font-mono);margin:8px 0;}
+.item-row{display:grid;grid-template-columns:1fr 90px 1fr 36px;gap:8px;align-items:center;margin-bottom:8px;}
+</style>
+
+<header class="app-header">
+  <div class="header-left">
+    <a href="tools.html" class="back-link">← 工具箱</a>
+    <div class="app-brand"><span>🧾</span><span>账单 AA 分摊与小费计算器</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
+      <option value="">🔀 切换工具...</option>
+      <option value="random-picker.html">🎯 随机抉择转盘</option>
+      <option value="bmi-tracker.html">⚖️ BMI健康追踪</option>
+      <option value="water-reminder.html">💧 喝水打卡提醒</option>
+      <option value="packing-list.html">🧳 旅行行李清单</option>
+      <option value="tip-calculator.html">🧾 账单AA计算器</option>
+      <option value="tools.html">🏠 全部工具大厅</option>
+    </select>
+    <button class="theme-btn" onclick="toggleTheme()" title="切换明暗主题">🌓</button>
+  </div>
+</header>
+<main class="container">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
+    <div>
+      <h1 class="page-title">🧾 账单 AA 分摊与小费计算器</h1>
+      <p class="page-sub">聚会结账不扯皮！平均分摊、税费小费比例算清、明细拆分与一键微信群收款文案。</p>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="simple" onclick="switchTab('simple')">⚡ 快捷均摊与小费</button>
+    <button class="tab-btn" data-tab="itemized" onclick="switchTab('itemized')">📋 多人点餐明细拆分</button>
+  </div>
+
+  <!-- Simple AA -->
+  <div class="panel active" id="panel-simple">
+    <div class="aa-layout">
+      <div>
+        <div style="margin-bottom:14px;">
+          <label class="field-label">账单金额 (元 / ￥)</label>
+          <input type="number" id="billAmount" value="388" step="0.1" oninput="calculateSimple()">
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <label class="field-label">小费 / 服务费比例</label>
+          <div class="tip-chips">
+            <button class="tip-chip active" onclick="setTip(0, this)">0% 无小费</button>
+            <button class="tip-chip" onclick="setTip(10, this)">10%</button>
+            <button class="tip-chip" onclick="setTip(15, this)">15%</button>
+            <button class="tip-chip" onclick="setTip(18, this)">18%</button>
+            <button class="tip-chip" onclick="setTip(20, this)">20%</button>
+          </div>
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <label class="field-label">用餐分摊人数: <b id="peopleCountVal">4</b> 人</label>
+          <input type="range" id="peopleCount" min="1" max="30" value="4" oninput="document.getElementById('peopleCountVal').textContent=this.value;calculateSimple();">
+        </div>
+
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;cursor:pointer;">
+          <input type="checkbox" id="roundUp" onchange="calculateSimple()"> 向上取整到整数元 (免找零)
+        </label>
+      </div>
+
+      <div>
+        <div class="big-card">
+          <div style="font-size:13px;color:var(--text-muted);font-weight:700;">每人应付</div>
+          <div class="num" id="perPersonVal">￥97.00</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">含小费总计: <b id="totalWithTip">￥388.00</b> · 小费额: <b id="tipAmountVal">￥0.00</b></div>
+        </div>
+
+        <div style="margin-top:16px;">
+          <button class="btn btn-subtle" style="width:100%;" onclick="copyCollectionText()">📋 复制群收款通知文案</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Itemized -->
+  <div class="panel" id="panel-itemized">
+    <div style="margin-bottom:14px;">
+      <label class="field-label">参与小伙伴 (逗号隔开)</label>
+      <input type="text" id="memberList" value="张三, 李四, 王五, 赵六" onchange="renderItemizedMembers()">
+    </div>
+
+    <div style="margin-bottom:12px;font-weight:700;font-size:14px;">点餐菜品明细</div>
+    <div id="itemList"></div>
+    <button class="btn btn-subtle btn-sm" onclick="addItemRow()">+ 添加菜品项</button>
+
+    <div style="margin-top:20px;padding:16px;background:var(--bg-subtle);border-radius:var(--radius-lg);border:1px solid var(--border-color);">
+      <h3 style="font-size:15px;font-weight:700;margin-bottom:10px;">📊 个人明细分账结果</h3>
+      <div id="itemizedResult"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+let curTab = 'simple';
+let curTipPct = 0;
+
+function switchTab(tab) {
+  curTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-tab') === tab));
+  document.getElementById('panel-simple').classList.toggle('active', tab === 'simple');
+  document.getElementById('panel-itemized').classList.toggle('active', tab === 'itemized');
+  if (tab === 'itemized') renderItemized();
+}
+
+function setTip(pct, el) {
+  curTipPct = pct;
+  document.querySelectorAll('.tip-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  calculateSimple();
+}
+
+function calculateSimple() {
+  const bill = parseFloat(document.getElementById('billAmount').value) || 0;
+  const count = parseInt(document.getElementById('peopleCount').value, 10) || 1;
+  const round = document.getElementById('roundUp').checked;
+
+  const tip = bill * (curTipPct / 100);
+  let total = bill + tip;
+  let per = total / count;
+
+  if (round) {
+    per = Math.ceil(per);
+    total = per * count;
+  }
+
+  document.getElementById('perPersonVal').textContent = '￥' + per.toFixed(2);
+  document.getElementById('totalWithTip').textContent = '￥' + total.toFixed(2);
+  document.getElementById('tipAmountVal').textContent = '￥' + tip.toFixed(2);
+}
+
+function copyCollectionText() {
+  const per = document.getElementById('perPersonVal').textContent;
+  const count = document.getElementById('peopleCount').value;
+  const total = document.getElementById('totalWithTip').textContent;
+  const text = '📢 聚餐 AA 收款通知：\n总金额：' + total + '\n用餐人数：' + count + ' 人\n每人应付：' + per + '\n收到请发红包或转账，谢谢大家配合！✨';
+  navigator.clipboard.writeText(text).then(() => showToast('群收款文案已复制！'));
+}
+
+// Itemized
+let items = [
+  { name: '烤全鱼套餐', price: 188, payers: ['张三', '李四', '王五', '赵六'] },
+  { name: '啤酒饮料畅饮', price: 80, payers: ['张三', '李四'] },
+  { name: '精选果盘', price: 40, payers: ['王五', '赵六'] }
+];
+
+function renderItemized() {
+  const container = document.getElementById('itemList');
+  container.innerHTML = '';
+  const members = document.getElementById('memberList').value.split(',').map(s => s.trim()).filter(Boolean);
+
+  items.forEach((item, idx) => {
+    const row = document.createElement('div');
+    row.className = 'item-row';
+    row.innerHTML = '<input type="text" value="' + item.name + '" onchange="items[' + idx + '].name=this.value;calcItemized();">' +
+      '<input type="number" value="' + item.price + '" onchange="items[' + idx + '].price=Number(this.value);calcItemized();">' +
+      '<div style="font-size:12px;color:var(--text-muted);">' + item.payers.join(', ') + '</div>' +
+      '<button class="btn btn-subtle btn-sm" style="color:var(--danger);" onclick="items.splice(' + idx + ', 1);renderItemized();">✕</button>';
+    container.appendChild(row);
+  });
+  calcItemized();
+}
+
+function addItemRow() {
+  const members = document.getElementById('memberList').value.split(',').map(s => s.trim()).filter(Boolean);
+  items.push({ name: '新菜品', price: 50, payers: members });
+  renderItemized();
+}
+
+function calcItemized() {
+  const members = document.getElementById('memberList').value.split(',').map(s => s.trim()).filter(Boolean);
+  const shares = {};
+  members.forEach(m => shares[m] = 0);
+
+  items.forEach(item => {
+    if (item.payers.length > 0) {
+      const split = item.price / item.payers.length;
+      item.payers.forEach(p => {
+        if (shares[p] !== undefined) shares[p] += split;
+      });
+    }
+  });
+
+  const res = document.getElementById('itemizedResult');
+  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;">';
+  for (const m in shares) {
+    html += '<div class="stat-card"><span>' + m + '</span><b>￥' + shares[m].toFixed(2) + '</b></div>';
+  }
+  html += '</div>';
+  res.innerHTML = html;
+}
+
+window.addEventListener('DOMContentLoaded', calculateSimple);
+</script>
+
+<script>
+function initTheme(){
+  const saved=localStorage.getItem('app_theme');
+  if(saved){document.documentElement.setAttribute('data-theme',saved);}
+  else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.setAttribute('data-theme','dark');}
+}
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  const target=cur==='dark'?'light':'dark';
+  document.documentElement.setAttribute('data-theme',target);
+  localStorage.setItem('app_theme',target);
+}
+initTheme();
+function showToast(msg, duration=2200){
+  const el=document.createElement('div');
+  el.textContent=msg;
+  el.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:9999px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 10px 25px rgba(0,0,0,.2);transition:opacity .3s;';
+  document.body.appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';setTimeout(()=>el.remove(),300);},duration);
+}
+</script>
+</body>
+</html>
