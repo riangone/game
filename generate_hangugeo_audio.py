@@ -17,8 +17,14 @@ Generates:
 - audio/hangugeo_zh/st1.mp3 .. st8.mp3    (8 story sentences, Chinese bonus translation)
 """
 import asyncio
+import sys
 from pathlib import Path
 import edge_tts
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from tools_ko.ko_tts import synth_citation  # noqa: E402  slow citation form for 音节 zi*
+
+FORCE = "--force" in sys.argv  # 覆盖已有文件重新生成（否则已存在即跳过）
 
 ROOT = Path(__file__).resolve().parent
 OUT_DIR = ROOT / "audio" / "hangugeo"
@@ -99,7 +105,10 @@ KO_ITEMS = STORY + CHARACTERS + WORDS + PROPER_NOUNS + KEY_SENTENCE
 
 
 async def synth(text, voice, rate, out_path):
-    if out_path.exists() and out_path.stat().st_size > 500:
+    if out_path.exists() and out_path.stat().st_size > 500 and not FORCE:
+        return
+    if out_path.stem.startswith("zi") and out_path.parent == OUT_DIR:
+        await synth_citation(text, out_path, voice=voice)
         return
     comm = edge_tts.Communicate(text, voice, rate=rate)
     await comm.save(str(out_path))

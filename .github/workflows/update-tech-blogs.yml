@@ -1,0 +1,40 @@
+name: Update Tech Blogs Aggregation
+
+on:
+  schedule:
+    # Runs every 8 hours (00:00, 08:00, 16:00 UTC)
+    - cron: '0 0,8,16 * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  aggregate:
+    name: Fetch & Aggregate Tech Blogs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Aggregation Script
+        run: |
+          python3 scripts/update_tech_blogs.py data/tech-blogs.json
+
+      - name: Commit & Push if data changed
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/tech-blogs.json
+          if git diff --staged --quiet; then
+            echo "No changes in tech blogs data, skipping commit."
+          else
+            git commit -m "chore(data): auto-update tech blogs static feed [skip ci]"
+            git push
+          fi

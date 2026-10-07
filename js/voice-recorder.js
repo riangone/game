@@ -358,6 +358,23 @@ class AppVoiceManager {
     }
   }
 
+  async hasRecord(id) {
+    const data = await getVoiceBlob(id);
+    return !!data;
+  }
+
+  async countRecorded(items) {
+    if (!items || !items.length) return 0;
+    const keys = await getAllVoiceKeys();
+    const keySet = new Set(keys);
+    let count = 0;
+    for (const item of items) {
+      const vId = typeof item === 'string' ? item : item.id;
+      if (keySet.has(vId)) count++;
+    }
+    return count;
+  }
+
   stopSequential() {
     if (this.isSequentialPlaying) {
       this.sequentialCancel = true;

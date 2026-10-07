@@ -7,6 +7,7 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
+  gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied'});
       gtag('config', 'G-Y1P7PMMM6V');
     </script>
 
@@ -17,6 +18,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800;900&family=Outfit:wght@500;600;700;800;900&family=M+PLUS+Rounded+1c:wght@700;800;900&display=swap" rel="stylesheet">
 <script src="js/hangeul_stroke_data.js"></script>
+<script src="js/ko_phonetics.js"></script>
 
 <style>
   :root {
@@ -1004,6 +1006,7 @@
   }
 </style>
     <link rel="canonical" href="https://hge.0101.click/hangeul.html">
+  <script src="js/pwa-register.js"></script>
 </head>
 <body>
 
@@ -1576,7 +1579,7 @@ const CONFUSABLE_PAIRS = [
 
 /* 40 Jamo Master Tables for Tab 3 */
 const CONSONANT_LIST = [
-  {c:'ㄱ', n:'기역', r:'g/k', type:'松音'}, {c:'ㄴ', n:'니은', r:'n', type:'鼻音'},
+  {c:'ㄱ', n:'기역 (기윽)', r:'g/k', type:'松音'}, {c:'ㄴ', n:'니은', r:'n', type:'鼻音'},
   {c:'ㄷ', n:'디귿', r:'d/t', type:'松音'}, {c:'ㄹ', n:'리을', r:'r/l', type:'闪音'},
   {c:'ㅁ', n:'미음', r:'m', type:'鼻音'}, {c:'ㅂ', n:'비읍', r:'b/p', type:'松音'},
   {c:'ㅅ', n:'시옷', r:'s', type:'松音'}, {c:'ㅇ', n:'이응', r:'ng', type:'零/鼻'},
@@ -2090,20 +2093,33 @@ function nextSpellingWord() {
    ========================================================== */
 let audioCache = {};
 let isSequentialPlaying = false;
+let currentPlayingAudio = null;
 
 function playAudioFile(url, fallbackText) {
   return new Promise((resolve) => {
+    if (!isSequentialPlaying && currentPlayingAudio && !currentPlayingAudio.paused) {
+      try {
+        currentPlayingAudio.pause();
+        currentPlayingAudio.currentTime = 0;
+      } catch(e) {}
+    }
     let a = audioCache[url];
     if (!a) {
       a = new Audio(url);
       audioCache[url] = a;
     }
+    currentPlayingAudio = a;
     a.currentTime = 0;
-    a.onended = () => resolve();
+    a.onended = () => {
+      if (currentPlayingAudio === a) currentPlayingAudio = null;
+      resolve();
+    };
     a.onerror = () => {
+      if (currentPlayingAudio === a) currentPlayingAudio = null;
       speakFallback(fallbackText, resolve);
     };
     a.play().catch(() => {
+      if (currentPlayingAudio === a) currentPlayingAudio = null;
       speakFallback(fallbackText, resolve);
     });
   });
@@ -2133,8 +2149,14 @@ function playHangeulSound(char) {
     setTimeout(() => card.classList.remove('playing'), 900);
   }
   // Try audio/ko/<char>.mp3
-  const audioUrl = `audio/ko/${cleanChar}.mp3`;
-  playAudioFile(audioUrl, cleanChar);
+  const audioUrl = `audio/ko/${encodeURIComponent(cleanChar)}.mp3`;
+  // 单个字母的兜底朗读要读名称 (ㄱ→기윽/기역)，浏览器直接读 "ㄱ" 会读错或不出声
+  const meta = (typeof HANGEUL_STROKE_META !== 'undefined') && HANGEUL_STROKE_META[cleanChar];
+  let fallbackName = cleanChar;
+  if (meta && meta.name) {
+    fallbackName = cleanChar === 'ㄱ' ? '기윽' : meta.name.split('/')[0].trim();
+  }
+  playAudioFile(audioUrl, fallbackName);
 }
 
 function playVocabSound(word) {
@@ -2386,5 +2408,7 @@ function toast(msg) {
 
 window.addEventListener('DOMContentLoaded', initApp);
 </script>
+
+<div class="site-legal-0101" style="clear:both;width:100%;box-sizing:border-box;padding:16px 12px 20px;text-align:center;font:12px/1.7 system-ui,sans-serif;color:#64748b;opacity:.9"><a href="https://0101.click/privacy.html" style="color:inherit;text-decoration:underline;opacity:.85">隐私政策 / プライバシー</a> · <a href="https://0101.click/about.html" style="color:inherit;text-decoration:underline;opacity:.85">关于 / 運営者情報</a> · <a href="https://0101.click/contact.html" style="color:inherit;text-decoration:underline;opacity:.85">联系 / お問い合わせ</a> · <a href="https://0101.click/" style="color:inherit;text-decoration:underline;opacity:.85">0101.click</a></div>
 </body>
 </html>

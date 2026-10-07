@@ -29,169 +29,422 @@ header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--bor
 .back-link:hover{background:var(--primary-subtle);color:var(--primary);}
 .app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
 .tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
-.container{max-width:1100px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+.container{max-width:1160px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
 h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
 p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
 .tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;}
-.tab-btn{padding:8px 14px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-muted);font-size:13px;font-weight:700;cursor:pointer;transition:.2s;}
-.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
-.panel{display:none;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);}
+.tab-btn{padding:8px 16px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-muted);font-size:13px;font-weight:700;cursor:pointer;transition:.2s;}
+.tab-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);box-shadow:var(--shadow-sm);}
+.panel{display:none;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow-sm);}
 .panel.active{display:block;}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 16px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:700;font-size:13px;cursor:pointer;transition:.2s;}
 .btn:hover{background:var(--primary-hover);}
 .btn-subtle{background:var(--bg-subtle);color:var(--text-main);border:1px solid var(--border-color);}
 .btn-subtle:hover{border-color:var(--primary);color:var(--primary);}
 .btn-sm{padding:6px 12px;font-size:12px;}
-input[type=text],input[type=number],textarea,select{width:100%;padding:10px 12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;outline:none;}
-input:focus,textarea:focus,select:focus{border-color:var(--border-focus);}
-label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;}
-.badge{display:inline-block;padding:3px 8px;border-radius:var(--radius-pill);font-size:11px;font-weight:700;}
-.badge-success{background:rgba(16,185,129,.15);color:var(--success);}
-.badge-warning{background:rgba(245,158,11,.15);color:var(--warning);}
-.badge-primary{background:var(--primary-subtle);color:var(--primary);}
-.stat-card{background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px;text-align:center;}
-.stat-card b{display:block;font-size:22px;color:var(--primary);font-weight:800;font-family:var(--font-mono);}
-.stat-card span{font-size:12px;color:var(--text-muted);}
-</style>
-    <link rel="canonical" href="https://tool.0101.click/country-explorer.html">
-</head>
-<style>
-.country-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
-.country-card{background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px;cursor:pointer;transition:.2s;}
-.country-card:hover{border-color:var(--primary);transform:translateY(-2px);}
-.flag-emoji{font-size:36px;margin-bottom:6px;}
-.quiz-box{text-align:center;padding:30px;background:var(--bg-subtle);border-radius:var(--radius-lg);border:1px solid var(--border-color);max-width:500px;margin:0 auto;}
-.quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px;}
-</style>
+input[type=text],select{width:100%;padding:10px 14px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;outline:none;transition:border-color .2s;}
+input:focus,select:focus{border-color:var(--border-focus);}
 
-<header class="app-header">
-  <div class="header-left">
-    <a href="tools.html" class="back-link">← 工具箱</a>
-    <div class="app-brand"><span>🌍</span><span>世界地理大百科</span></div>
-  </div>
-  <div style="display:flex;align-items:center;gap:8px;">
-    <select class="tool-switch" onchange="if(this.value) location.href=this.value;">
-      <option value="">🔀 切换工具...</option>
-      <option value="iss-tracker.html">🛰️ 空间站实时追踪</option>
-      <option value="quote-card.html">🖋️ 一言灵感排版</option>
-      <option value="country-explorer.html">🌍 世界地理百科</option>
-      <option value="doh-lookup.html">🔍 原生DNS探针</option>
-      <option value="github-card.html">🐙 GitHub名片工坊</option>
-      <option value="tools.html">🏠 全部工具大厅</option>
-    </select>
-    <button class="theme-btn" onclick="toggleTheme()" title="切换明暗主题">🌓</button>
-  </div>
-</header>
+/* 区域筛选 */
+.region-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.region-btn{padding:5px 12px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-muted);font-size:12px;font-weight:600;cursor:pointer;transition:.15s;}
+.region-btn.active{background:var(--primary-subtle);color:var(--primary);border-color:var(--primary);}
+
+/* 卡片布局 */
+.country-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;}
+.country-card{background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:14px;cursor:pointer;transition:.2s;display:flex;flex-direction:column;gap:8px;}
+.country-card:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.flag-wrap{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.flag-box{width:48px;height:32px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.04);border-radius:4px;overflow:hidden;border:1px solid rgba(0,0,0,0.08);}
+.flag-img{width:100%;height:100%;object-fit:cover;display:block;}
+.flag-emoji{font-size:28px;line-height:1;}
+.code-badge{font-size:11px;font-weight:700;font-family:var(--font-mono);background:var(--bg-surface);color:var(--text-muted);padding:2px 6px;border-radius:4px;border:1px solid var(--border-color);}
+.country-title{font-weight:800;font-size:14px;color:var(--text-main);line-height:1.4;}
+.country-meta{font-size:12px;color:var(--text-muted);display:grid;grid-template-columns:1fr 1fr;gap:4px 8px;margin-top:auto;}
+.country-meta span b{color:var(--text-main);font-weight:600;}
+
+/* 猜谜样式 */
+.quiz-box{text-align:center;padding:24px;background:var(--bg-subtle);border-radius:var(--radius-lg);border:1px solid var(--border-color);max-width:560px;margin:0 auto;}
+.quiz-flag-box{width:160px;height:106px;margin:16px auto;display:flex;align-items:center;justify-content:center;background:var(--bg-surface);border-radius:8px;overflow:hidden;box-shadow:var(--shadow-md);border:1px solid var(--border-color);}
+.quiz-flag-img{width:100%;height:100%;object-fit:cover;display:block;}
+.quiz-flag-emoji{font-size:72px;}
+.quiz-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;}
+.quiz-opt-btn{padding:12px 14px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-main);font-size:13px;font-weight:700;cursor:pointer;transition:.15s;text-align:center;}
+.quiz-opt-btn:hover:not(:disabled){border-color:var(--primary);color:var(--primary);background:var(--primary-subtle);}
+.quiz-opt-btn.correct{background:#10b981!important;color:#fff!important;border-color:#10b981!important;}
+.quiz-opt-btn.wrong{background:#ef4444!important;color:#fff!important;border-color:#ef4444!important;}
+.quiz-stats{display:flex;justify-content:center;gap:24px;margin-top:12px;}
+.quiz-fact-card{margin-top:18px;padding:12px 16px;background:var(--bg-surface);border-radius:var(--radius-md);border:1px solid var(--border-color);text-align:left;font-size:12px;color:var(--text-muted);display:none;}
+.quiz-fact-card.show{display:block;}
+
+/* 模态框 */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:999;padding:20px;backdrop-filter:blur(4px);}
+.modal-overlay.active{display:flex;}
+.modal-card{background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);max-width:440px;width:100%;padding:24px;box-shadow:var(--shadow-lg);position:relative;animation:modalFade .2s ease-out;}
+@keyframes modalFade{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}
+.modal-close{position:absolute;top:16px;right:16px;background:var(--bg-subtle);border:1px solid var(--border-color);width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--text-muted);}
+.modal-close:hover{color:var(--text-main);border-color:var(--primary);}
+</style>
+<link rel="canonical" href="https://tool.0101.click/country-explorer.html">
+    <link rel="stylesheet" href="css/tools-header.css">
+  <script src="js/pwa-register.js"></script>
+</head>
+<body>
+
+  <!-- 统一小工具顶部导航 -->
+  <header class="app-header">
+    <div class="header-left">
+      <a href="tools.html" class="back-link" title="返回实用工具箱">
+        <span class="back-icon">←</span>
+        <span class="back-text">工具箱</span>
+      </a>
+      <div class="app-brand">
+        <span class="brand-icon">🌍</span>
+        <span class="brand-title">世界地理大百科</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="index.html" class="hall-btn" title="返回游戏大厅">
+        <span class="hall-icon">🎮</span>
+        <span class="hall-text">大厅</span>
+      </a>
+      <select class="tool-switch" onchange="if(this.value) location.href=this.value;" title="快速切换小工具">
+        <option value="">🔀 快捷切换小工具...</option>
+        <optgroup label="常用必备">
+          <option value="calculator.html">🧮 表达式计算器</option>
+          <option value="notepad.html">📝 极简便签</option>
+          <option value="unit-converter.html">📐 全能单位换算器</option>
+          <option value="currency.html">💱 全球实时汇率换算</option>
+          <option value="weather.html">🌤️ 极简实时天气看板</option>
+          <option value="qrcode.html">📱 二维码大师</option>
+          <option value="pomodoro.html">🍅 极简番茄时钟</option>
+          <option value="calendar.html">📅 万年历与节气</option>
+        </optgroup>
+        <optgroup label="文本与开发">
+          <option value="markdown-editor.html">📑 Markdown 排版工坊</option>
+          <option value="text-tools.html">🔤 文本综合工具箱</option>
+          <option value="diff-tool.html">🪞 文本差异对比</option>
+          <option value="json-csv-tool.html">🔄 JSON / CSV 互转工坊</option>
+          <option value="hash-tool.html">#️⃣ 哈希校验工具</option>
+          <option value="encrypt-tool.html">🛡️ 本地加解密工具</option>
+          <option value="uuid-generator.html">🆔 唯一标识符生成器</option>
+          <option value="cron-parser.html">⏰ Cron 表达式工坊</option>
+          <option value="css-generator.html">🎨 现代 CSS 视觉工坊</option>
+          <option value="github-card.html">🐙 GitHub 开发者名片工坊</option>
+        </optgroup>
+        <optgroup label="图形与多媒体">
+          <option value="image-tool.html">🖼️ 本地图片工坊</option>
+          <option value="image-grid-splitter.html">🧩 九宫格切图工坊</option>
+          <option value="img-to-pdf.html">📄 图片转 PDF</option>
+          <option value="drawing-board.html">🖌️ 简易画板</option>
+          <option value="color-tool.html">🎨 颜色转换工具箱</option>
+          <option value="favicon-generator.html">🌐 Favicon 图标生成器</option>
+          <option value="ascii-art.html">🔤 字符画与 ASCII 艺术字</option>
+          <option value="font-previewer.html">🔤 字体预览工坊</option>
+          <option value="quote-card.html">🖋️ 一言·灵感排版工坊</option>
+          <option value="metronome.html">⏱️ 电子节拍器与律动鼓机</option>
+        </optgroup>
+        <optgroup label="日常与生活">
+          <option value="todolist.html">✅ 极简待办清单</option>
+          <option value="expense-tracker.html">💰 极简记账本</option>
+          <option value="habit-tracker.html">🔥 习惯打卡</option>
+          <option value="countdown.html">⏳ 倒数日与纪念日</option>
+          <option value="time-tool.html">🕐 世界时间工具箱</option>
+          <option value="loan-calculator.html">🏦 贷款与房贷计算器</option>
+          <option value="tip-calculator.html">🧾 账单 AA 分摊与小费</option>
+          <option value="password.html">🔐 安全密码工坊</option>
+          <option value="packing-list.html">🧳 旅行与出差行李清单</option>
+          <option value="random-picker.html">🎯 随机抉择与抽奖转盘</option>
+          <option value="bmi-tracker.html">⚖️ BMI 与健康指标追踪</option>
+          <option value="water-reminder.html">💧 喝水打卡与健康提醒</option>
+        </optgroup>
+        <optgroup label="资讯与探索">
+          <option value="country-explorer.html" selected>🌍 世界地理大百科</option>
+          <option value="global-news.html">🌍 全球新闻视角雷达</option>
+          <option value="tech-blogs.html">📡 企业技术博客雷达</option>
+          <option value="network-info.html">🌐 网络信息查询探针</option>
+          <option value="doh-lookup.html">🔍 浏览器原生 DNS 探针</option>
+          <option value="iss-tracker.html">🛰️ 国际空间站实时追踪</option>
+        </optgroup>
+      </select>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="切换深色/浅色模式">🌓</button>
+    </div>
+  </header>
+
 <main class="container">
   <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
     <div>
       <h1 class="page-title">🌍 世界地理大百科与国旗猜谜</h1>
-      <p class="page-sub">探索全球 200+ 国家与地区资料，玩转“看国旗猜国家”地理挑战赛。</p>
+      <p class="page-sub">收录全球 208 个国家与地区详细档案（国旗、首都、人口、时区），支持大洲过滤与趣味看国旗猜国家答题挑战。</p>
     </div>
   </div>
 
   <div class="tabs">
-    <button class="tab-btn active" data-tab="explore" onclick="switchTab('explore')">🔍 国家大百科</button>
-    <button class="tab-btn" data-tab="quiz" onclick="switchTab('quiz')">🎮 看国旗猜国家</button>
+    <button class="tab-btn active" data-tab="explore" onclick="switchTab('explore')">🔍 国家大百科 (<span id="tabCount">208</span>)</button>
+    <button class="tab-btn" data-tab="quiz" onclick="switchTab('quiz')">🎮 看国旗猜国家挑战</button>
   </div>
 
+  <!-- 百科面板 -->
   <div class="panel active" id="panel-explore">
-    <div style="margin-bottom:16px;">
-      <input type="text" id="countrySearch" placeholder="搜索国家名或首都 (如: 中国, 日本, 法国, 伦敦)..." oninput="filterCountries()">
+    <div style="display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:16px;">
+      <input type="text" id="countrySearch" placeholder="搜索国家名、英文名、首都或代码 (如: 中国, Japan, 伦敦, FR)..." oninput="filterCountries()">
+      <div class="region-tabs" id="regionTabs">
+        <button class="region-btn active" onclick="setRegion('全部')">全部 (208)</button>
+        <button class="region-btn" onclick="setRegion('亚洲')">亚洲 (50)</button>
+        <button class="region-btn" onclick="setRegion('欧洲')">欧洲 (47)</button>
+        <button class="region-btn" onclick="setRegion('美洲')">美洲 (40)</button>
+        <button class="region-btn" onclick="setRegion('非洲')">非洲 (54)</button>
+        <button class="region-btn" onclick="setRegion('大洋洲')">大洋洲 (17)</button>
+      </div>
     </div>
     <div class="country-grid" id="countryGrid"></div>
+    <div id="emptyHint" style="display:none;text-align:center;padding:40px;color:var(--text-muted);font-size:14px;">
+      未找到匹配的国家或地区，请尝试更换关键词。
+    </div>
   </div>
 
+  <!-- 猜谜面板 -->
   <div class="panel" id="panel-quiz">
     <div class="quiz-box">
-      <div style="font-size:13px;font-weight:700;color:var(--text-muted);">这是哪个国家的国旗？</div>
-      <div class="flag-emoji" id="quizFlag">🇨🇳</div>
-      <div style="font-size:14px;color:var(--text-muted);">当前连胜得分: <b id="quizScore" style="color:var(--primary);font-size:18px;">0</b></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <span style="font-size:13px;font-weight:700;color:var(--text-muted);">这是哪个国家/地区的国旗？</span>
+        <select id="quizRegionSelect" onchange="startQuizQuestion()" style="width:auto;padding:4px 8px;font-size:12px;">
+          <option value="全部">全球题库 (208国)</option>
+          <option value="亚洲">仅限亚洲</option>
+          <option value="欧洲">仅限欧洲</option>
+          <option value="美洲">仅限美洲</option>
+          <option value="非洲">仅限非洲</option>
+          <option value="大洋洲">仅限大洋洲</option>
+        </select>
+      </div>
+
+      <div class="quiz-flag-box">
+        <img id="quizFlagImg" class="quiz-flag-img" alt="国旗" onerror="this.style.display='none';document.getElementById('quizFlagEmoji').style.display='block';">
+        <span id="quizFlagEmoji" class="quiz-flag-emoji" style="display:none;">🇨🇳</span>
+      </div>
+
+      <div class="quiz-stats">
+        <div style="font-size:13px;color:var(--text-muted);">当前连胜: <b id="quizScore" style="color:var(--primary);font-size:18px;">0</b></div>
+        <div style="font-size:13px;color:var(--text-muted);">历史最高: <b id="quizHighScore" style="color:var(--warning);font-size:18px;">0</b></div>
+      </div>
+
       <div class="quiz-options" id="quizOptions"></div>
+
+      <div class="quiz-fact-card" id="quizFactCard">
+        <div style="font-weight:700;color:var(--text-main);margin-bottom:4px;" id="quizFactTitle"></div>
+        <div id="quizFactDesc"></div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <button class="btn btn-subtle btn-sm" onclick="startQuizQuestion()">跳过此题 →</button>
+      </div>
     </div>
   </div>
 </main>
 
+<!-- 国家详情弹窗 -->
+<div class="modal-overlay" id="countryModal" onclick="if(event.target===this) closeModal()">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div style="text-align:center;margin-bottom:16px;">
+      <div style="width:100px;height:66px;margin:0 auto 12px;border-radius:6px;overflow:hidden;border:1px solid var(--border-color);box-shadow:var(--shadow-sm);background:var(--bg-subtle);display:flex;align-items:center;justify-content:center;">
+        <img id="modalFlagImg" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none';document.getElementById('modalFlagEmoji').style.display='block';">
+        <span id="modalFlagEmoji" style="font-size:48px;display:none;"></span>
+      </div>
+      <h3 id="modalTitle" style="font-size:18px;font-weight:800;color:var(--text-main);margin-bottom:4px;"></h3>
+      <div style="display:inline-block;padding:2px 8px;border-radius:4px;background:var(--bg-subtle);font-family:var(--font-mono);font-size:12px;color:var(--text-muted);" id="modalCode"></div>
+    </div>
+
+    <div style="background:var(--bg-subtle);padding:14px;border-radius:var(--radius-md);display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px;">
+      <div>首都: <b id="modalCapital" style="color:var(--text-main);"></b></div>
+      <div>大洲: <b id="modalRegion" style="color:var(--text-main);"></b></div>
+      <div>人口: <b id="modalPop" style="color:var(--text-main);"></b></div>
+      <div>时区: <b id="modalTz" style="color:var(--text-main);"></b></div>
+    </div>
+
+    <div style="margin-top:16px;text-align:center;">
+      <button class="btn btn-sm" style="width:100%;" onclick="closeModal();switchTab('quiz');">🎮 挑战国旗猜谜</button>
+    </div>
+  </div>
+</div>
+
 <script>
-const COUNTRIES = [
-  { name: '中国 (China)', flag: '🇨🇳', capital: '北京', pop: '14.1 亿', region: '亚洲' },
-  { name: '日本 (Japan)', flag: '🇯🇵', capital: '东京', pop: '1.25 亿', region: '亚洲' },
-  { name: '韩国 (South Korea)', flag: '🇰🇷', capital: '首尔', pop: '5170 万', region: '亚洲' },
-  { name: '美国 (USA)', flag: '🇺🇸', capital: '华盛顿', pop: '3.3 亿', region: '美洲' },
-  { name: '英国 (UK)', flag: '🇬🇧', capital: '伦敦', pop: '6700 万', region: '欧洲' },
-  { name: '法国 (France)', flag: '🇫🇷', capital: '巴黎', pop: '6780 万', region: '欧洲' },
-  { name: '德国 (Germany)', flag: '🇩🇪', capital: '柏林', pop: '8320 万', region: '欧洲' },
-  { name: '澳大利亚 (Australia)', flag: '🇦🇺', capital: '堪培拉', pop: '2560 万', region: '大洋洲' },
-  { name: '加拿大 (Canada)', flag: '🇨🇦', capital: '渥太华', pop: '3825 万', region: '美洲' },
-  { name: '巴西 (Brazil)', flag: '🇧🇷', capital: '巴西利亚', pop: '2.14 亿', region: '美洲' }
-];
+const COUNTRIES = [{"name": "中国 (China)", "code": "CN", "flag": "🇨🇳", "capital": "北京", "pop": "14.1 亿", "region": "亚洲", "tz": "UTC+8"}, {"name": "中国香港 (Hong Kong)", "code": "HK", "flag": "🇭🇰", "capital": "香港", "pop": "733 万", "region": "亚洲", "tz": "UTC+8"}, {"name": "中国澳门 (Macao)", "code": "MO", "flag": "🇲🇴", "capital": "澳门", "pop": "68 万", "region": "亚洲", "tz": "UTC+8"}, {"name": "中国台湾 (Taiwan)", "code": "TW", "flag": "🇹🇼", "capital": "台北", "pop": "2340 万", "region": "亚洲", "tz": "UTC+8"}, {"name": "日本 (Japan)", "code": "JP", "flag": "🇯🇵", "capital": "东京", "pop": "1.25 亿", "region": "亚洲", "tz": "UTC+9"}, {"name": "韩国 (South Korea)", "code": "KR", "flag": "🇰🇷", "capital": "首尔", "pop": "5170 万", "region": "亚洲", "tz": "UTC+9"}, {"name": "朝鲜 (North Korea)", "code": "KP", "flag": "🇰🇵", "capital": "平壤", "pop": "2600 万", "region": "亚洲", "tz": "UTC+9"}, {"name": "蒙古 (Mongolia)", "code": "MN", "flag": "🇲🇳", "capital": "乌兰巴托", "pop": "340 万", "region": "亚洲", "tz": "UTC+8"}, {"name": "新加坡 (Singapore)", "code": "SG", "flag": "🇸🇬", "capital": "新加坡", "pop": "592 万", "region": "亚洲", "tz": "UTC+8"}, {"name": "马来西亚 (Malaysia)", "code": "MY", "flag": "🇲🇾", "capital": "吉隆坡", "pop": "3390 万", "region": "亚洲", "tz": "UTC+8"}, {"name": "泰国 (Thailand)", "code": "TH", "flag": "🇹🇭", "capital": "曼谷", "pop": "7180 万", "region": "亚洲", "tz": "UTC+7"}, {"name": "越南 (Vietnam)", "code": "VN", "flag": "🇻🇳", "capital": "河内", "pop": "9885 万", "region": "亚洲", "tz": "UTC+7"}, {"name": "印度尼西亚 (Indonesia)", "code": "ID", "flag": "🇮🇩", "capital": "雅加达", "pop": "2.77 亿", "region": "亚洲", "tz": "UTC+7 ~ +9"}, {"name": "菲律宾 (Philippines)", "code": "PH", "flag": "🇵🇭", "capital": "马尼拉", "pop": "1.15 亿", "region": "亚洲", "tz": "UTC+8"}, {"name": "缅甸 (Myanmar)", "code": "MM", "flag": "🇲🇲", "capital": "内比都", "pop": "5418 万", "region": "亚洲", "tz": "UTC+6:30"}, {"name": "柬埔寨 (Cambodia)", "code": "KH", "flag": "🇰🇭", "capital": "金边", "pop": "1677 万", "region": "亚洲", "tz": "UTC+7"}, {"name": "老挝 (Laos)", "code": "LA", "flag": "🇱🇦", "capital": "万象", "pop": "753 万", "region": "亚洲", "tz": "UTC+7"}, {"name": "文莱 (Brunei)", "code": "BN", "flag": "🇧🇳", "capital": "斯里巴加湾市", "pop": "45 万", "region": "亚洲", "tz": "UTC+8"}, {"name": "东帝汶 (Timor-Leste)", "code": "TL", "flag": "🇹🇱", "capital": "帝力", "pop": "134 万", "region": "亚洲", "tz": "UTC+9"}, {"name": "印度 (India)", "code": "IN", "flag": "🇮🇳", "capital": "新德里", "pop": "14.28 亿", "region": "亚洲", "tz": "UTC+5:30"}, {"name": "巴基斯坦 (Pakistan)", "code": "PK", "flag": "🇵🇰", "capital": "伊斯兰堡", "pop": "2.4 亿", "region": "亚洲", "tz": "UTC+5"}, {"name": "孟加拉国 (Bangladesh)", "code": "BD", "flag": "🇧🇩", "capital": "达卡", "pop": "1.71 亿", "region": "亚洲", "tz": "UTC+6"}, {"name": "斯里兰卡 (Sri Lanka)", "code": "LK", "flag": "🇱🇰", "capital": "科伦坡", "pop": "2218 万", "region": "亚洲", "tz": "UTC+5:30"}, {"name": "尼泊尔 (Nepal)", "code": "NP", "flag": "🇳🇵", "capital": "加德满都", "pop": "3055 万", "region": "亚洲", "tz": "UTC+5:45"}, {"name": "不丹 (Bhutan)", "code": "BT", "flag": "🇧🇹", "capital": "廷布", "pop": "78 万", "region": "亚洲", "tz": "UTC+6"}, {"name": "马尔代夫 (Maldives)", "code": "MV", "flag": "🇲🇻", "capital": "马累", "pop": "52 万", "region": "亚洲", "tz": "UTC+5"}, {"name": "哈萨克斯坦 (Kazakhstan)", "code": "KZ", "flag": "🇰🇿", "capital": "阿斯塔纳", "pop": "1962 万", "region": "亚洲", "tz": "UTC+5"}, {"name": "乌兹别克斯坦 (Uzbekistan)", "code": "UZ", "flag": "🇺🇿", "capital": "塔什干", "pop": "3640 万", "region": "亚洲", "tz": "UTC+5"}, {"name": "吉尔吉斯斯坦 (Kyrgyzstan)", "code": "KG", "flag": "🇰🇬", "capital": "比什凯克", "pop": "696 万", "region": "亚洲", "tz": "UTC+6"}, {"name": "塔吉克斯坦 (Tajikistan)", "code": "TJ", "flag": "🇹🇯", "capital": "杜尚别", "pop": "1014 万", "region": "亚洲", "tz": "UTC+5"}, {"name": "土库曼斯坦 (Turkmenistan)", "code": "TM", "flag": "🇹🇲", "capital": "阿什哈巴德", "pop": "643 万", "region": "亚洲", "tz": "UTC+5"}, {"name": "阿富汗 (Afghanistan)", "code": "AF", "flag": "🇦🇫", "capital": "喀布尔", "pop": "4113 万", "region": "亚洲", "tz": "UTC+4:30"}, {"name": "沙特阿拉伯 (Saudi Arabia)", "code": "SA", "flag": "🇸🇦", "capital": "利雅得", "pop": "3640 万", "region": "亚洲", "tz": "UTC+3"}, {"name": "阿拉伯联合酋长国 (UAE)", "code": "AE", "flag": "🇦🇪", "capital": "阿布扎比", "pop": "944 万", "region": "亚洲", "tz": "UTC+4"}, {"name": "卡塔尔 (Qatar)", "code": "QA", "flag": "🇶🇦", "capital": "多哈", "pop": "270 万", "region": "亚洲", "tz": "UTC+3"}, {"name": "科威特 (Kuwait)", "code": "KW", "flag": "🇰🇼", "capital": "科威特城", "pop": "425 万", "region": "亚洲", "tz": "UTC+3"}, {"name": "阿曼 (Oman)", "code": "OM", "flag": "🇴🇲", "capital": "马斯喀特", "pop": "458 万", "region": "亚洲", "tz": "UTC+4"}, {"name": "巴林 (Bahrain)", "code": "BH", "flag": "🇧🇭", "capital": "麦纳麦", "pop": "147 万", "region": "亚洲", "tz": "UTC+3"}, {"name": "也门 (Yemen)", "code": "YE", "flag": "🇾🇪", "capital": "萨那", "pop": "3370 万", "region": "亚洲", "tz": "UTC+3"}, {"name": "伊拉克 (Iraq)", "code": "IQ", "flag": "🇮🇶", "capital": "巴格达", "pop": "4450 万", "region": "亚洲", "tz": "UTC+3"}, {"name": "伊朗 (Iran)", "code": "IR", "flag": "🇮🇷", "capital": "德黑兰", "pop": "8855 万", "region": "亚洲", "tz": "UTC+3:30"}, {"name": "土耳其 (Turkey)", "code": "TR", "flag": "🇹🇷", "capital": "安卡拉", "pop": "8530 万", "region": "亚洲", "tz": "UTC+3"}, {"name": "叙利亚 (Syria)", "code": "SY", "flag": "🇸🇾", "capital": "大马士革", "pop": "2213 万", "region": "亚洲", "tz": "UTC+3"}, {"name": "约旦 (Jordan)", "code": "JO", "flag": "🇯🇴", "capital": "安曼", "pop": "1129 万", "region": "亚洲", "tz": "UTC+3"}, {"name": "黎巴嫩 (Lebanon)", "code": "LB", "flag": "🇱🇧", "capital": "贝鲁特", "pop": "549 万", "region": "亚洲", "tz": "UTC+2"}, {"name": "以色列 (Israel)", "code": "IL", "flag": "🇮🇱", "capital": "耶路撒冷", "pop": "970 万", "region": "亚洲", "tz": "UTC+2"}, {"name": "格鲁吉亚 (Georgia)", "code": "GE", "flag": "🇬🇪", "capital": "第比利斯", "pop": "370 万", "region": "亚洲", "tz": "UTC+4"}, {"name": "亚美尼亚 (Armenia)", "code": "AM", "flag": "🇦🇲", "capital": "埃里温", "pop": "278 万", "region": "亚洲", "tz": "UTC+4"}, {"name": "阿塞拜疆 (Azerbaijan)", "code": "AZ", "flag": "🇦🇿", "capital": "巴库", "pop": "1017 万", "region": "亚洲", "tz": "UTC+4"}, {"name": "塞浦路斯 (Cyprus)", "code": "CY", "flag": "🇨🇾", "capital": "尼科西亚", "pop": "125 万", "region": "亚洲", "tz": "UTC+2"}, {"name": "英国 (UK)", "code": "GB", "flag": "🇬🇧", "capital": "伦敦", "pop": "6700 万", "region": "欧洲", "tz": "UTC+0"}, {"name": "法国 (France)", "code": "FR", "flag": "🇫🇷", "capital": "巴黎", "pop": "6780 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "德国 (Germany)", "code": "DE", "flag": "🇩🇪", "capital": "柏林", "pop": "8320 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "意大利 (Italy)", "code": "IT", "flag": "🇮🇹", "capital": "罗马", "pop": "5900 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "西班牙 (Spain)", "code": "ES", "flag": "🇪🇸", "capital": "马德里", "pop": "4740 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "葡萄牙 (Portugal)", "code": "PT", "flag": "🇵🇹", "capital": "里斯本", "pop": "1030 万", "region": "欧洲", "tz": "UTC+0"}, {"name": "俄罗斯 (Russia)", "code": "RU", "flag": "🇷🇺", "capital": "莫斯科", "pop": "1.44 亿", "region": "欧洲", "tz": "UTC+2 ~ +12"}, {"name": "荷兰 (Netherlands)", "code": "NL", "flag": "🇳🇱", "capital": "阿姆斯特丹", "pop": "1750 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "比利时 (Belgium)", "code": "BE", "flag": "🇧🇪", "capital": "布鲁塞尔", "pop": "1160 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "瑞士 (Switzerland)", "code": "CH", "flag": "🇨🇭", "capital": "伯尔尼", "pop": "870 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "瑞典 (Sweden)", "code": "SE", "flag": "🇸🇪", "capital": "斯德哥尔摩", "pop": "1040 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "挪威 (Norway)", "code": "NO", "flag": "🇳🇴", "capital": "奥斯陆", "pop": "540 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "丹麦 (Denmark)", "code": "DK", "flag": "🇩🇰", "capital": "哥本哈根", "pop": "585 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "芬兰 (Finland)", "code": "FI", "flag": "🇫🇮", "capital": "赫尔辛基", "pop": "554 万", "region": "欧洲", "tz": "UTC+2"}, {"name": "爱尔兰 (Ireland)", "code": "IE", "flag": "🇮🇪", "capital": "都柏林", "pop": "503 万", "region": "欧洲", "tz": "UTC+0"}, {"name": "希腊 (Greece)", "code": "GR", "flag": "🇬🇷", "capital": "雅典", "pop": "1040 万", "region": "欧洲", "tz": "UTC+2"}, {"name": "波兰 (Poland)", "code": "PL", "flag": "🇵🇱", "capital": "华沙", "pop": "3770 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "奥地利 (Austria)", "code": "AT", "flag": "🇦🇹", "capital": "维也纳", "pop": "895 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "捷克 (Czechia)", "code": "CZ", "flag": "🇨🇿", "capital": "布拉格", "pop": "1050 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "匈牙利 (Hungary)", "code": "HU", "flag": "🇭🇺", "capital": "布达佩斯", "pop": "970 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "乌克兰 (Ukraine)", "code": "UA", "flag": "🇺🇦", "capital": "基辅", "pop": "3800 万", "region": "欧洲", "tz": "UTC+2"}, {"name": "罗马尼亚 (Romania)", "code": "RO", "flag": "🇷🇴", "capital": "布加勒斯特", "pop": "1900 万", "region": "欧洲", "tz": "UTC+2"}, {"name": "塞尔维亚 (Serbia)", "code": "RS", "flag": "🇷🇸", "capital": "贝尔格莱德", "pop": "680 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "克罗地亚 (Croatia)", "code": "HR", "flag": "🇭🇷", "capital": "萨格勒布", "pop": "390 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "保加利亚 (Bulgaria)", "code": "BG", "flag": "🇧🇬", "capital": "索非亚", "pop": "650 万", "region": "欧洲", "tz": "UTC+2"}, {"name": "斯洛伐克 (Slovakia)", "code": "SK", "flag": "🇸🇰", "capital": "布拉迪斯拉发", "pop": "540 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "斯洛文尼亚 (Slovenia)", "code": "SI", "flag": "🇸🇮", "capital": "卢布尔雅那", "pop": "210 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "爱沙尼亚 (Estonia)", "code": "EE", "flag": "🇪🇪", "capital": "塔林", "pop": "133 万", "region": "欧洲", "tz": "UTC+2"}, {"name": "拉脱维亚 (Latvia)", "code": "LV", "flag": "🇱🇻", "capital": "里加", "pop": "188 万", "region": "欧洲", "tz": "UTC+2"}, {"name": "立陶宛 (Lithuania)", "code": "LT", "flag": "🇱🇹", "capital": "维尔纽斯", "pop": "280 万", "region": "欧洲", "tz": "UTC+2"}, {"name": "白俄罗斯 (Belarus)", "code": "BY", "flag": "🇧🇾", "capital": "明斯克", "pop": "920 万", "region": "欧洲", "tz": "UTC+3"}, {"name": "冰岛 (Iceland)", "code": "IS", "flag": "🇮🇸", "capital": "雷克雅未克", "pop": "37 万", "region": "欧洲", "tz": "UTC+0"}, {"name": "卢森堡 (Luxembourg)", "code": "LU", "flag": "🇱🇺", "capital": "卢森堡市", "pop": "64 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "摩纳哥 (Monaco)", "code": "MC", "flag": "🇲🇨", "capital": "摩纳哥", "pop": "3.9 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "梵蒂冈 (Vatican City)", "code": "VA", "flag": "🇻🇦", "capital": "梵蒂冈城", "pop": "800 人", "region": "欧洲", "tz": "UTC+1"}, {"name": "马耳他 (Malta)", "code": "MT", "flag": "🇲🇹", "capital": "瓦莱塔", "pop": "52 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "安道尔 (Andorra)", "code": "AD", "flag": "🇦🇩", "capital": "安道尔城", "pop": "8 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "圣马力诺 (San Marino)", "code": "SM", "flag": "🇸🇲", "capital": "圣马力诺", "pop": "3.4 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "列支敦士登 (Liechtenstein)", "code": "LI", "flag": "🇱🇮", "capital": "瓦杜兹", "pop": "3.9 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "黑山 (Montenegro)", "code": "ME", "flag": "🇲🇪", "capital": "波德戈里察", "pop": "62 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "北马其顿 (North Macedonia)", "code": "MK", "flag": "🇲🇰", "capital": "斯科普里", "pop": "183 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "阿尔巴尼亚 (Albania)", "code": "AL", "flag": "🇦🇱", "capital": "地拉那", "pop": "279 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "波黑 (Bosnia & Herzegovina)", "code": "BA", "flag": "🇧🇦", "capital": "萨拉热窝", "pop": "320 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "摩尔多瓦 (Moldova)", "code": "MD", "flag": "🇲🇩", "capital": "基希讷乌", "pop": "260 万", "region": "欧洲", "tz": "UTC+2"}, {"name": "法罗群岛 (Faroe Islands)", "code": "FO", "flag": "🇫🇴", "capital": "托尔斯港", "pop": "5.3 万", "region": "欧洲", "tz": "UTC+0"}, {"name": "直布罗陀 (Gibraltar)", "code": "GI", "flag": "🇬🇮", "capital": "直布罗陀", "pop": "3.4 万", "region": "欧洲", "tz": "UTC+1"}, {"name": "曼岛 (Isle of Man)", "code": "IM", "flag": "🇮🇲", "capital": "道格拉斯", "pop": "8.4 万", "region": "欧洲", "tz": "UTC+0"}, {"name": "美国 (USA)", "code": "US", "flag": "🇺🇸", "capital": "华盛顿", "pop": "3.35 亿", "region": "美洲", "tz": "UTC-5 ~ -10"}, {"name": "加拿大 (Canada)", "code": "CA", "flag": "🇨🇦", "capital": "渥太华", "pop": "3825 万", "region": "美洲", "tz": "UTC-3:30 ~ -8"}, {"name": "墨西哥 (Mexico)", "code": "MX", "flag": "🇲🇽", "capital": "墨西哥城", "pop": "1.28 亿", "region": "美洲", "tz": "UTC-6 ~ -8"}, {"name": "巴西 (Brazil)", "code": "BR", "flag": "🇧🇷", "capital": "巴西利亚", "pop": "2.14 亿", "region": "美洲", "tz": "UTC-2 ~ -5"}, {"name": "阿根廷 (Argentina)", "code": "AR", "flag": "🇦🇷", "capital": "布宜诺斯艾利斯", "pop": "4580 万", "region": "美洲", "tz": "UTC-3"}, {"name": "智利 (Chile)", "code": "CL", "flag": "🇨🇱", "capital": "圣地亚哥", "pop": "1950 万", "region": "美洲", "tz": "UTC-3 ~ -5"}, {"name": "哥伦比亚 (Colombia)", "code": "CO", "flag": "🇨🇴", "capital": "波哥大", "pop": "5150 万", "region": "美洲", "tz": "UTC-5"}, {"name": "秘鲁 (Peru)", "code": "PE", "flag": "🇵🇪", "capital": "利马", "pop": "3370 万", "region": "美洲", "tz": "UTC-5"}, {"name": "委内瑞拉 (Venezuela)", "code": "VE", "flag": "🇻🇪", "capital": "加拉加斯", "pop": "2830 万", "region": "美洲", "tz": "UTC-4"}, {"name": "厄瓜多尔 (Ecuador)", "code": "EC", "flag": "🇪🇨", "capital": "基多", "pop": "1780 万", "region": "美洲", "tz": "UTC-5"}, {"name": "玻利维亚 (Bolivia)", "code": "BO", "flag": "🇧🇴", "capital": "苏克雷", "pop": "1200 万", "region": "美洲", "tz": "UTC-4"}, {"name": "乌拉圭 (Uruguay)", "code": "UY", "flag": "🇺🇾", "capital": "蒙得维的亚", "pop": "342 万", "region": "美洲", "tz": "UTC-3"}, {"name": "巴拉圭 (Paraguay)", "code": "PY", "flag": "🇵🇾", "capital": "亚松森", "pop": "670 万", "region": "美洲", "tz": "UTC-4"}, {"name": "古巴 (Cuba)", "code": "CU", "flag": "🇨🇺", "capital": "哈瓦那", "pop": "1120 万", "region": "美洲", "tz": "UTC-5"}, {"name": "多米尼加 (Dominican Rep.)", "code": "DO", "flag": "🇩🇴", "capital": "圣多明各", "pop": "1110 万", "region": "美洲", "tz": "UTC-4"}, {"name": "海地 (Haiti)", "code": "HT", "flag": "🇭🇹", "capital": "太子港", "pop": "1140 万", "region": "美洲", "tz": "UTC-5"}, {"name": "牙买加 (Jamaica)", "code": "JM", "flag": "🇯🇲", "capital": "金斯敦", "pop": "280 万", "region": "美洲", "tz": "UTC-5"}, {"name": "巴拿马 (Panama)", "code": "PA", "flag": "🇵🇦", "capital": "巴拿马城", "pop": "435 万", "region": "美洲", "tz": "UTC-5"}, {"name": "哥斯达黎加 (Costa Rica)", "code": "CR", "flag": "🇨🇷", "capital": "圣何塞", "pop": "515 万", "region": "美洲", "tz": "UTC-6"}, {"name": "危地马拉 (Guatemala)", "code": "GT", "flag": "🇬🇹", "capital": "危地马拉城", "pop": "1760 万", "region": "美洲", "tz": "UTC-6"}, {"name": "洪都拉斯 (Honduras)", "code": "HN", "flag": "🇭🇳", "capital": "特古西加尔巴", "pop": "1020 万", "region": "美洲", "tz": "UTC-6"}, {"name": "萨尔瓦多 (El Salvador)", "code": "SV", "flag": "🇸🇻", "capital": "圣萨尔瓦多", "pop": "630 万", "region": "美洲", "tz": "UTC-6"}, {"name": "尼加拉瓜 (Nicaragua)", "code": "NI", "flag": "🇳🇮", "capital": "马那瓜", "pop": "685 万", "region": "美洲", "tz": "UTC-6"}, {"name": "波多黎各 (Puerto Rico)", "code": "PR", "flag": "🇵🇷", "capital": "圣胡安", "pop": "322 万", "region": "美洲", "tz": "UTC-4"}, {"name": "巴哈马 (Bahamas)", "code": "BS", "flag": "🇧🇸", "capital": "拿骚", "pop": "41 万", "region": "美洲", "tz": "UTC-5"}, {"name": "巴巴多斯 (Barbados)", "code": "BB", "flag": "🇧🇧", "capital": "布里奇敦", "pop": "28 万", "region": "美洲", "tz": "UTC-4"}, {"name": "特立尼达和多巴哥 (Trinidad & Tobago)", "code": "TT", "flag": "🇹🇹", "capital": "西班牙港", "pop": "153 万", "region": "美洲", "tz": "UTC-4"}, {"name": "圭亚那 (Guyana)", "code": "GY", "flag": "🇬🇾", "capital": "乔治敦", "pop": "80 万", "region": "美洲", "tz": "UTC-4"}, {"name": "苏里南 (Suriname)", "code": "SR", "flag": "🇸🇷", "capital": "帕拉马里博", "pop": "61 万", "region": "美洲", "tz": "UTC-3"}, {"name": "伯利兹 (Belize)", "code": "BZ", "flag": "🇧🇿", "capital": "贝尔莫潘", "pop": "40 万", "region": "美洲", "tz": "UTC-6"}, {"name": "格陵兰 (Greenland)", "code": "GL", "flag": "🇬🇱", "capital": "努克", "pop": "5.6 万", "region": "美洲", "tz": "UTC-2"}, {"name": "百慕大 (Bermuda)", "code": "BM", "flag": "🇧🇲", "capital": "哈密尔顿", "pop": "6.4 万", "region": "美洲", "tz": "UTC-4"}, {"name": "开曼群岛 (Cayman Islands)", "code": "KY", "flag": "🇰🇾", "capital": "乔治城", "pop": "6.8 万", "region": "美洲", "tz": "UTC-5"}, {"name": "格林纳达 (Grenada)", "code": "GD", "flag": "🇬🇩", "capital": "圣乔治", "pop": "12 万", "region": "美洲", "tz": "UTC-4"}, {"name": "圣卢西亚 (Saint Lucia)", "code": "LC", "flag": "🇱🇨", "capital": "卡斯特里", "pop": "18 万", "region": "美洲", "tz": "UTC-4"}, {"name": "安提瓜和巴布达 (Antigua & Barbuda)", "code": "AG", "flag": "🇦🇬", "capital": "圣约翰", "pop": "9.3 万", "region": "美洲", "tz": "UTC-4"}, {"name": "圣基茨和尼维斯 (St. Kitts & Nevis)", "code": "KN", "flag": "🇰🇳", "capital": "巴斯特尔", "pop": "4.7 万", "region": "美洲", "tz": "UTC-4"}, {"name": "圣文森特和格林纳丁斯 (St. Vincent)", "code": "VC", "flag": "🇻🇨", "capital": "金斯敦", "pop": "10 万", "region": "美洲", "tz": "UTC-4"}, {"name": "多米尼克 (Dominica)", "code": "DM", "flag": "🇩🇲", "capital": "罗索", "pop": "7.2 万", "region": "美洲", "tz": "UTC-4"}, {"name": "库拉索 (Curaçao)", "code": "CW", "flag": "🇨🇼", "capital": "威廉斯塔德", "pop": "15 万", "region": "美洲", "tz": "UTC-4"}, {"name": "埃及 (Egypt)", "code": "EG", "flag": "🇪🇬", "capital": "开罗", "pop": "1.09 亿", "region": "非洲", "tz": "UTC+2"}, {"name": "南非 (South Africa)", "code": "ZA", "flag": "🇿🇦", "capital": "比勒陀利亚", "pop": "6000 万", "region": "非洲", "tz": "UTC+2"}, {"name": "尼日利亚 (Nigeria)", "code": "NG", "flag": "🇳🇬", "capital": "阿布贾", "pop": "2.18 亿", "region": "非洲", "tz": "UTC+1"}, {"name": "肯尼亚 (Kenya)", "code": "KE", "flag": "🇰🇪", "capital": "内罗毕", "pop": "5300 万", "region": "非洲", "tz": "UTC+3"}, {"name": "埃塞俄比亚 (Ethiopia)", "code": "ET", "flag": "🇪🇹", "capital": "亚的斯亚贝巴", "pop": "1.20 亿", "region": "非洲", "tz": "UTC+3"}, {"name": "摩洛哥 (Morocco)", "code": "MA", "flag": "🇲🇦", "capital": "拉巴特", "pop": "3700 万", "region": "非洲", "tz": "UTC+1"}, {"name": "阿尔及利亚 (Algeria)", "code": "DZ", "flag": "🇩🇿", "capital": "阿尔及尔", "pop": "4400 万", "region": "非洲", "tz": "UTC+1"}, {"name": "加纳 (Ghana)", "code": "GH", "flag": "🇬🇭", "capital": "阿克拉", "pop": "3280 万", "region": "非洲", "tz": "UTC+0"}, {"name": "坦桑尼亚 (Tanzania)", "code": "TZ", "flag": "🇹🇿", "capital": "多多马", "pop": "6350 万", "region": "非洲", "tz": "UTC+3"}, {"name": "乌干达 (Uganda)", "code": "UG", "flag": "🇺🇬", "capital": "坎帕拉", "pop": "4580 万", "region": "非洲", "tz": "UTC+3"}, {"name": "苏丹 (Sudan)", "code": "SD", "flag": "🇸🇩", "capital": "喀土穆", "pop": "4560 万", "region": "非洲", "tz": "UTC+2"}, {"name": "突尼斯 (Tunisia)", "code": "TN", "flag": "🇹🇳", "capital": "突尼斯市", "pop": "1220 万", "region": "非洲", "tz": "UTC+1"}, {"name": "安哥拉 (Angola)", "code": "AO", "flag": "🇦🇴", "capital": "罗安达", "pop": "3450 万", "region": "非洲", "tz": "UTC+1"}, {"name": "莫桑比克 (Mozambique)", "code": "MZ", "flag": "🇲🇿", "capital": "马普托", "pop": "3200 万", "region": "非洲", "tz": "UTC+2"}, {"name": "马达加斯加 (Madagascar)", "code": "MG", "flag": "🇲🇬", "capital": "塔那那利佛", "pop": "2890 万", "region": "非洲", "tz": "UTC+3"}, {"name": "喀麦隆 (Cameroon)", "code": "CM", "flag": "🇨🇲", "capital": "雅温得", "pop": "2720 万", "region": "非洲", "tz": "UTC+1"}, {"name": "科特迪瓦 (Côte d'Ivoire)", "code": "CI", "flag": "🇨🇮", "capital": "亚穆苏克罗", "pop": "2750 万", "region": "非洲", "tz": "UTC+0"}, {"name": "塞内加尔 (Senegal)", "code": "SN", "flag": "🇸🇳", "capital": "达喀尔", "pop": "1680 万", "region": "非洲", "tz": "UTC+0"}, {"name": "津巴布韦 (Zimbabwe)", "code": "ZW", "flag": "🇿🇼", "capital": "哈拉雷", "pop": "1590 万", "region": "非洲", "tz": "UTC+2"}, {"name": "赞比亚 (Zambia)", "code": "ZM", "flag": "🇿🇲", "capital": "卢萨卡", "pop": "1950 万", "region": "非洲", "tz": "UTC+2"}, {"name": "卢旺达 (Rwanda)", "code": "RW", "flag": "🇷🇼", "capital": "基加利", "pop": "1340 万", "region": "非洲", "tz": "UTC+2"}, {"name": "刚果(金) (DR Congo)", "code": "CD", "flag": "🇨🇩", "capital": "金沙萨", "pop": "9590 万", "region": "非洲", "tz": "UTC+1 ~ +2"}, {"name": "刚果(布) (Congo)", "code": "CG", "flag": "🇨🇬", "capital": "布拉柴维尔", "pop": "580 万", "region": "非洲", "tz": "UTC+1"}, {"name": "纳米比亚 (Namibia)", "code": "NA", "flag": "🇳🇦", "capital": "温得和克", "pop": "2530 万", "region": "非洲", "tz": "UTC+2"}, {"name": "博茨瓦纳 (Botswana)", "code": "BW", "flag": "🇧🇼", "capital": "哈博罗内", "pop": "259 万", "region": "非洲", "tz": "UTC+2"}, {"name": "毛里求斯 (Mauritius)", "code": "MU", "flag": "🇲🇺", "capital": "路易港", "pop": "126 万", "region": "非洲", "tz": "UTC+4"}, {"name": "塞舌尔 (Seychelles)", "code": "SC", "flag": "🇸🇨", "capital": "维多利亚", "pop": "10 万", "region": "非洲", "tz": "UTC+4"}, {"name": "索马里 (Somalia)", "code": "SO", "flag": "🇸🇴", "capital": "摩加迪沙", "pop": "1700 万", "region": "非洲", "tz": "UTC+3"}, {"name": "塞拉利昂 (Sierra Leone)", "code": "SL", "flag": "🇸🇱", "capital": "弗里敦", "pop": "840 万", "region": "非洲", "tz": "UTC+0"}, {"name": "利比亚 (Libya)", "code": "LY", "flag": "🇱🇾", "capital": "的黎波里", "pop": "670 万", "region": "非洲", "tz": "UTC+2"}, {"name": "马里 (Mali)", "code": "ML", "flag": "🇲🇱", "capital": "巴马科", "pop": "2190 万", "region": "非洲", "tz": "UTC+0"}, {"name": "尼日尔 (Niger)", "code": "NE", "flag": "🇳🇪", "capital": "尼亚美", "pop": "2520 万", "region": "非洲", "tz": "UTC+1"}, {"name": "乍得 (Chad)", "code": "TD", "flag": "🇹🇩", "capital": "恩贾梅纳", "pop": "1710 万", "region": "非洲", "tz": "UTC+1"}, {"name": "布基纳法索 (Burkina Faso)", "code": "BF", "flag": "🇧🇫", "capital": "瓦加杜古", "pop": "2210 万", "region": "非洲", "tz": "UTC+0"}, {"name": "几内亚 (Guinea)", "code": "GN", "flag": "🇬🇳", "capital": "科纳克里", "pop": "1350 万", "region": "非洲", "tz": "UTC+0"}, {"name": "贝宁 (Benin)", "code": "BJ", "flag": "🇧🇯", "capital": "波多诺伏", "pop": "1300 万", "region": "非洲", "tz": "UTC+1"}, {"name": "布隆迪 (Burundi)", "code": "BI", "flag": "🇧🇮", "capital": "基特加", "pop": "1250 万", "region": "非洲", "tz": "UTC+2"}, {"name": "南苏丹 (South Sudan)", "code": "SS", "flag": "🇸🇸", "capital": "朱巴", "pop": "1070 万", "region": "非洲", "tz": "UTC+2"}, {"name": "多哥 (Togo)", "code": "TG", "flag": "🇹🇬", "capital": "洛美", "pop": "860 万", "region": "非洲", "tz": "UTC+0"}, {"name": "中非 (Central African Rep.)", "code": "CF", "flag": "🇨🇫", "capital": "班吉", "pop": "545 万", "region": "非洲", "tz": "UTC+1"}, {"name": "利比里亚 (Liberia)", "code": "LR", "flag": "🇱🇷", "capital": "蒙罗维亚", "pop": "520 万", "region": "非洲", "tz": "UTC+0"}, {"name": "毛里塔尼亚 (Mauritania)", "code": "MR", "flag": "🇲🇷", "capital": "努瓦克肖特", "pop": "460 万", "region": "非洲", "tz": "UTC+0"}, {"name": "厄立特里亚 (Eritrea)", "code": "ER", "flag": "🇪🇷", "capital": "阿斯马拉", "pop": "360 万", "region": "非洲", "tz": "UTC+3"}, {"name": "冈比亚 (Gambia)", "code": "GM", "flag": "🇬🇲", "capital": "班珠尔", "pop": "260 万", "region": "非洲", "tz": "UTC+0"}, {"name": "加蓬 (Gabon)", "code": "GA", "flag": "🇬🇦", "capital": "利伯维尔", "pop": "230 万", "region": "非洲", "tz": "UTC+1"}, {"name": "莱索托 (Lesotho)", "code": "LS", "flag": "🇱🇸", "capital": "马塞卢", "pop": "228 万", "region": "非洲", "tz": "UTC+2"}, {"name": "几内亚比绍 (Guinea-Bissau)", "code": "GW", "flag": "🇬🇼", "capital": "比绍", "pop": "206 万", "region": "非洲", "tz": "UTC+0"}, {"name": "赤道几内亚 (Equatorial Guinea)", "code": "GQ", "flag": "🇬🇶", "capital": "马拉博", "pop": "163 万", "region": "非洲", "tz": "UTC+1"}, {"name": "斯威士兰 (Eswatini)", "code": "SZ", "flag": "🇸🇿", "capital": "姆巴巴内", "pop": "119 万", "region": "非洲", "tz": "UTC+2"}, {"name": "吉布提 (Djibouti)", "code": "DJ", "flag": "🇩🇯", "capital": "吉布提市", "pop": "110 万", "region": "非洲", "tz": "UTC+3"}, {"name": "科摩罗 (Comoros)", "code": "KM", "flag": "🇰🇲", "capital": "莫罗尼", "pop": "82 万", "region": "非洲", "tz": "UTC+3"}, {"name": "佛得角 (Cape Verde)", "code": "CV", "flag": "🇨🇻", "capital": "普拉亚", "pop": "58 万", "region": "非洲", "tz": "UTC-1"}, {"name": "圣多美和普林西比 (Sao Tome)", "code": "ST", "flag": "🇸🇹", "capital": "圣多美", "pop": "22 万", "region": "非洲", "tz": "UTC+0"}, {"name": "马拉维 (Malawi)", "code": "MW", "flag": "🇲🇼", "capital": "利隆圭", "pop": "1980 万", "region": "非洲", "tz": "UTC+2"}, {"name": "澳大利亚 (Australia)", "code": "AU", "flag": "🇦🇺", "capital": "堪培拉", "pop": "2560 万", "region": "大洋洲", "tz": "UTC+8 ~ +10.5"}, {"name": "新西兰 (New Zealand)", "code": "NZ", "flag": "🇳🇿", "capital": "惠灵顿", "pop": "512 万", "region": "大洋洲", "tz": "UTC+12"}, {"name": "巴布亚新几内亚 (PNG)", "code": "PG", "flag": "🇵🇬", "capital": "莫尔兹比港", "pop": "990 万", "region": "大洋洲", "tz": "UTC+10"}, {"name": "斐济 (Fiji)", "code": "FJ", "flag": "🇫🇯", "capital": "苏瓦", "pop": "92 万", "region": "大洋洲", "tz": "UTC+12"}, {"name": "所罗门群岛 (Solomon Islands)", "code": "SB", "flag": "🇸🇧", "capital": "霍尼亚拉", "pop": "70 万", "region": "大洋洲", "tz": "UTC+11"}, {"name": "瓦努阿图 (Vanuatu)", "code": "VU", "flag": "🇻🇺", "capital": "维拉港", "pop": "32 万", "region": "大洋洲", "tz": "UTC+11"}, {"name": "萨摩亚 (Samoa)", "code": "WS", "flag": "🇼🇸", "capital": "阿皮亚", "pop": "21 万", "region": "大洋洲", "tz": "UTC+13"}, {"name": "关岛 (Guam)", "code": "GU", "flag": "🇬🇺", "capital": "阿加尼亚", "pop": "17 万", "region": "大洋洲", "tz": "UTC+10"}, {"name": "基里巴斯 (Kiribati)", "code": "KI", "flag": "🇰🇮", "capital": "南塔拉瓦", "pop": "12 万", "region": "大洋洲", "tz": "UTC+12 ~ +14"}, {"name": "密克罗尼西亚 (Micronesia)", "code": "FM", "flag": "🇫🇲", "capital": "帕利基尔", "pop": "11 万", "region": "大洋洲", "tz": "UTC+10 ~ +11"}, {"name": "汤加 (Tonga)", "code": "TO", "flag": "🇹🇴", "capital": "努库阿洛法", "pop": "10 万", "region": "大洋洲", "tz": "UTC+13"}, {"name": "帕劳 (Palau)", "code": "PW", "flag": "🇵🇼", "capital": "恩吉鲁穆德", "pop": "1.8 万", "region": "大洋洲", "tz": "UTC+9"}, {"name": "马绍尔群岛 (Marshall Islands)", "code": "MH", "flag": "🇲🇭", "capital": "马朱罗", "pop": "4.2 万", "region": "大洋洲", "tz": "UTC+12"}, {"name": "图瓦卢 (Tuvalu)", "code": "TV", "flag": "🇹🇻", "capital": "富纳富提", "pop": "1.1 万", "region": "大洋洲", "tz": "UTC+12"}, {"name": "瑙鲁 (Nauru)", "code": "NR", "flag": "🇳🇷", "capital": "亚伦", "pop": "1.2 万", "region": "大洋洲", "tz": "UTC+12"}, {"name": "法属波利尼西亚 (French Polynesia)", "code": "PF", "flag": "🇵🇫", "capital": "帕皮提", "pop": "28 万", "region": "大洋洲", "tz": "UTC-10"}, {"name": "新喀里多尼亚 (New Caledonia)", "code": "NC", "flag": "🇳🇨", "capital": "努美阿", "pop": "27 万", "region": "大洋洲", "tz": "UTC+11"}];
 
 let curTab = 'explore';
+let curRegion = '全部';
 let quizScore = 0;
+let quizHighScore = parseInt(localStorage.getItem('flag_quiz_highscore') || '0', 10);
 let curQuizTarget = null;
+let quizAnswered = false;
+
+document.getElementById('quizHighScore').textContent = quizHighScore;
 
 function switchTab(tab) {
   curTab = tab;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-tab') === tab));
   document.getElementById('panel-explore').classList.toggle('active', tab === 'explore');
   document.getElementById('panel-quiz').classList.toggle('active', tab === 'quiz');
-  if (tab === 'quiz') startQuizQuestion();
+  if (tab === 'quiz' && !curQuizTarget) startQuizQuestion();
+}
+
+function setRegion(reg) {
+  curRegion = reg;
+  document.querySelectorAll('.region-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.startsWith(reg));
+  });
+  filterCountries();
 }
 
 function renderCountries(list) {
   const grid = document.getElementById('countryGrid');
+  const emptyHint = document.getElementById('emptyHint');
   grid.innerHTML = '';
+  if (list.length === 0) {
+    emptyHint.style.display = 'block';
+    return;
+  }
+  emptyHint.style.display = 'none';
+
   list.forEach(c => {
     const card = document.createElement('div');
     card.className = 'country-card';
-    card.innerHTML = '<div class="flag-emoji">' + c.flag + '</div>' +
-      '<div style="font-weight:800;font-size:14px;margin-bottom:4px;">' + c.name + '</div>' +
-      '<div style="font-size:12px;color:var(--text-muted);">首都: ' + c.capital + '</div>' +
-      '<div style="font-size:12px;color:var(--text-muted);">人口: ' + c.pop + '</div>';
+    card.onclick = () => openModal(c);
+
+    const flagUrl = 'https://flagcdn.com/w80/' + c.code.toLowerCase() + '.png';
+
+    card.innerHTML = '<div class="flag-wrap">' +
+      '<div class="flag-box">' +
+        '<img src="' + flagUrl + '" loading="lazy" class="flag-img" alt="' + c.name + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'block\';">' +
+        '<span class="flag-emoji" style="display:none;">' + c.flag + '</span>' +
+      '</div>' +
+      '<span class="code-badge">' + c.code + '</span>' +
+    '</div>' +
+    '<div class="country-title">' + c.name + '</div>' +
+    '<div class="country-meta">' +
+      '<span>首都: <b>' + c.capital + '</b></span>' +
+      '<span>大洲: <b>' + c.region + '</b></span>' +
+      '<span>人口: <b>' + c.pop + '</b></span>' +
+      '<span>时区: <b>' + c.tz + '</b></span>' +
+    '</div>';
     grid.appendChild(card);
   });
 }
 
 function filterCountries() {
-  const q = document.getElementById('countrySearch').value.trim().toLowerCase();
-  const filtered = COUNTRIES.filter(c => c.name.toLowerCase().includes(q) || c.capital.toLowerCase().includes(q));
+  const q = (document.getElementById('countrySearch').value || '').trim().toLowerCase();
+  const filtered = COUNTRIES.filter(c => {
+    const matchReg = (curRegion === '全部') || (c.region === curRegion);
+    const matchQ = !q || c.name.toLowerCase().includes(q) || c.capital.toLowerCase().includes(q) || c.code.toLowerCase().includes(q);
+    return matchReg && matchQ;
+  });
   renderCountries(filtered);
 }
 
-function startQuizQuestion() {
-  const target = COUNTRIES[Math.floor(Math.random() * COUNTRIES.length)];
-  curQuizTarget = target;
-  document.getElementById('quizFlag').textContent = target.flag;
+function openModal(c) {
+  document.getElementById('modalTitle').textContent = c.name;
+  document.getElementById('modalCode').textContent = 'ISO: ' + c.code + ' · ' + c.flag;
+  document.getElementById('modalCapital').textContent = c.capital;
+  document.getElementById('modalRegion').textContent = c.region;
+  document.getElementById('modalPop').textContent = c.pop;
+  document.getElementById('modalTz').textContent = c.tz;
 
-  const others = COUNTRIES.filter(c => c !== target).sort(() => Math.random() - 0.5).slice(0, 3);
+  const img = document.getElementById('modalFlagImg');
+  const emoji = document.getElementById('modalFlagEmoji');
+  img.style.display = 'block';
+  emoji.style.display = 'none';
+  img.src = 'https://flagcdn.com/w160/' + c.code.toLowerCase() + '.png';
+  emoji.textContent = c.flag;
+
+  document.getElementById('countryModal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('countryModal').classList.remove('active');
+}
+
+function startQuizQuestion() {
+  quizAnswered = false;
+  document.getElementById('quizFactCard').classList.remove('show');
+
+  const reg = document.getElementById('quizRegionSelect').value;
+  const pool = (reg === '全部') ? COUNTRIES : COUNTRIES.filter(c => c.region === reg);
+  if (pool.length < 4) return;
+
+  const target = pool[Math.floor(Math.random() * pool.length)];
+  curQuizTarget = target;
+
+  const img = document.getElementById('quizFlagImg');
+  const emoji = document.getElementById('quizFlagEmoji');
+  img.style.display = 'block';
+  emoji.style.display = 'none';
+  img.src = 'https://flagcdn.com/w160/' + target.code.toLowerCase() + '.png';
+  emoji.textContent = target.flag;
+
+  const others = pool.filter(c => c !== target).sort(() => Math.random() - 0.5).slice(0, 3);
   const options = [...others, target].sort(() => Math.random() - 0.5);
 
   const container = document.getElementById('quizOptions');
   container.innerHTML = '';
   options.forEach(opt => {
     const btn = document.createElement('button');
-    btn.className = 'btn btn-subtle';
+    btn.className = 'quiz-opt-btn';
     btn.textContent = opt.name.split(' (')[0];
-    btn.onclick = () => handleQuizAnswer(opt);
+    btn.onclick = () => handleQuizAnswer(opt, btn);
     container.appendChild(btn);
   });
 }
 
-function handleQuizAnswer(selected) {
+function handleQuizAnswer(selected, selectedBtn) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+
+  const btns = document.querySelectorAll('.quiz-opt-btn');
+  btns.forEach(b => b.disabled = true);
+
+  const factCard = document.getElementById('quizFactCard');
+  const factTitle = document.getElementById('quizFactTitle');
+  const factDesc = document.getElementById('quizFactDesc');
+
   if (selected === curQuizTarget) {
+    selectedBtn.classList.add('correct');
     quizScore++;
+    if (quizScore > quizHighScore) {
+      quizHighScore = quizScore;
+      localStorage.setItem('flag_quiz_highscore', quizHighScore);
+      document.getElementById('quizHighScore').textContent = quizHighScore;
+    }
     document.getElementById('quizScore').textContent = quizScore;
-    showToast('🎉 回答正确！');
-    startQuizQuestion();
+    showToast('🎉 回答正确！连胜 +' + quizScore);
+
+    factTitle.textContent = '✅ 正确答案：' + curQuizTarget.name;
+    factDesc.textContent = '首都：' + curQuizTarget.capital + ' · 大洲：' + curQuizTarget.region + ' · 人口：' + curQuizTarget.pop + ' · 时区：' + curQuizTarget.tz;
+    factCard.classList.add('show');
+
+    setTimeout(() => {
+      startQuizQuestion();
+    }, 1400);
   } else {
-    showToast('❌ 回答错误！正确答案是: ' + curQuizTarget.name);
+    selectedBtn.classList.add('wrong');
+    btns.forEach(b => {
+      if (b.textContent === curQuizTarget.name.split(' (')[0]) {
+        b.classList.add('correct');
+      }
+    });
+
+    factTitle.textContent = '❌ 正确答案其实是：' + curQuizTarget.name;
+    factDesc.textContent = '首都：' + curQuizTarget.capital + ' · 大洲：' + curQuizTarget.region + ' · 人口：' + curQuizTarget.pop + ' · 时区：' + curQuizTarget.tz;
+    factCard.classList.add('show');
+
+    showToast('❌ 回答错误！正确答案是: ' + curQuizTarget.name.split(' (')[0]);
     quizScore = 0;
     document.getElementById('quizScore').textContent = quizScore;
-    startQuizQuestion();
   }
 }
 
-window.addEventListener('DOMContentLoaded', () => renderCountries(COUNTRIES));
+window.addEventListener('DOMContentLoaded', () => {
+  renderCountries(COUNTRIES);
+});
 </script>
 
 <script>

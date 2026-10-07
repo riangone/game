@@ -7,6 +7,7 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
+  gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied'});
 
       gtag('config', 'G-Y1P7PMMM6V');
     </script>
@@ -19,6 +20,7 @@
 <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=M+PLUS+Rounded+1c:wght@600;700;800;900&family=Noto+Sans+KR:wght@500;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
 <script src="js/voice-recorder.js"></script>
 <script src="js/hangeul_stroke_data.js"></script>
+<script src="js/ko_phonetics.js"></script>
 <style>
   :root{
     --kr-blue:#1d4ed8; --kr-blue-dark:#1e3a8a; --kr-blue-soft:#dbeafe;
@@ -77,6 +79,7 @@
     box-shadow:var(--shadow-card);display:flex;flex-direction:column;gap:10px;}
   .story-progress{font-size:12px;color:var(--muted);text-align:center;}
   .sentence-zh{font-size:24px;font-weight:800;line-height:1.8;text-align:center;color:#0f172a;}
+  .sentence-pron{display:flex;align-items:center;justify-content:center;gap:6px;font-size:13px;color:#dc2626;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:6px 12px;margin:2px 0;box-sizing:border-box;line-height:1.4;}
   .sentence-py{font-size:14px;color:var(--kr-blue);text-align:center;font-weight:700;min-height:20px;letter-spacing:0.3px;}
   .sentence-en{font-size:13px;color:var(--muted);text-align:center;}
   .sentence-jp{font-size:13px;color:#7c3aed;text-align:center;}
@@ -551,6 +554,7 @@
   .btn-answer-fill:active{transform:translateY(1px);}
 </style>
     <link rel="canonical" href="https://hge.0101.click/hangugeo3.html">
+  <script src="js/pwa-register.js"></script>
 </head>
 <body>
 <div id="app">
@@ -649,6 +653,10 @@
       <div class="story-card">
         <div class="story-progress" id="storyProgress">1 / 8</div>
         <div class="sentence-zh" id="storyKo"></div>
+        <div class="sentence-pron" id="storyPronRow">
+          <span class="pron-badge-icon">🗣️</span>
+          <span id="storyPron"></span>
+        </div>
         <div class="sentence-py" id="storyRo"></div>
         <div class="sentence-en" id="storyEnRow" style="display:none;">
           <span id="storyEn"></span>
@@ -661,6 +669,7 @@
       </div>
 
       <div class="toggle-row">
+        <div class="chip active" id="chipTogglePron" onclick="togglePron()">实际发音: 开</div>
         <div class="chip" id="chipToggleRo" onclick="toggleRo()">罗马音: 开</div>
         <div class="chip active" id="chipToggleZh" onclick="toggleZh()">中文: 开</div>
         <div class="chip" id="chipToggleEn" onclick="toggleEn()">英文: 关</div>
@@ -1296,6 +1305,7 @@ const CLOZE_QUESTIONS = [
 
 /* ---------------- GLOBAL STATE ---------------- */
 let storyIdx = 0;
+let showPron = true;
 let showRo = true;
 let showZh = true;
 let showEn = false;
@@ -1488,7 +1498,31 @@ function goStory(){
 function renderStory(){
   const s = STORY[storyIdx];
   document.getElementById('storyProgress').textContent = (storyIdx + 1) + ' / ' + STORY.length;
-  document.getElementById('storyKo').textContent = s.zh;
+  const koEl = document.getElementById('storyKo');
+  const pronRow = document.getElementById('storyPronRow');
+  const pronEl = document.getElementById('storyPron');
+
+  if(typeof KoPhonetics !== 'undefined'){
+    const analysis = KoPhonetics.analyze(s.zh);
+    if(showPron){
+      koEl.innerHTML = KoPhonetics.renderAnnotatedHtml(s.zh);
+      if(pronRow && pronEl){
+        pronRow.style.display = 'flex';
+        if(analysis.hasChange){
+          pronEl.innerHTML = `实际发音: <strong style="color:var(--kr-red);font-size:15px;">[${analysis.cleanPronounced}]</strong> <span style="font-size:11px;color:#64748b;margin-left:4px;">(${analysis.rules.map(r=>r.label).join(' · ')})</span>`;
+        } else {
+          pronEl.innerHTML = `实际发音: <strong>[${s.zh}]</strong> <span style="font-size:11px;color:#10b981;margin-left:4px;">(与拼写一致)</span>`;
+        }
+      }
+    } else {
+      koEl.textContent = s.zh;
+      if(pronRow) pronRow.style.display = 'none';
+    }
+  } else {
+    koEl.textContent = s.zh;
+    if(pronRow) pronRow.style.display = 'none';
+  }
+
   document.getElementById('storyRo').textContent = s.py;
   document.getElementById('storyEn').textContent = s.en;
   document.getElementById('storyZh').textContent = s.jp;
@@ -1498,6 +1532,16 @@ function renderStory(){
   document.getElementById('storyZhRow').style.display = showZh ? 'flex' : 'none';
 
   updateSentenceRecordStatus();
+}
+
+function togglePron(){
+  showPron = !showPron;
+  const chip = document.getElementById('chipTogglePron');
+  if(chip){
+    chip.classList.toggle('active', showPron);
+    chip.textContent = '实际发音: ' + (showPron ? '开' : '关');
+  }
+  renderStory();
 }
 
 function toggleRo(){
@@ -1631,8 +1675,16 @@ function renderFullText(){
       if(e.target.closest('.sent-action-btn')) return;
       playClip(s.id, s.zh);
     };
+    let pronSubtitle = '';
+    if(typeof KoPhonetics !== 'undefined'){
+      const analysis = KoPhonetics.analyze(s.zh);
+      if(analysis.hasChange){
+        pronSubtitle = `<div class="full-sent-pron" style="font-size:12px;color:var(--kr-red);font-weight:700;margin-top:2px;">🗣️ 实际读音: [${analysis.cleanPronounced}]</div>`;
+      }
+    }
     row.innerHTML = `
       <div class="full-sent-zh">${i + 1}. ${s.zh}</div>
+      ${pronSubtitle}
       <div class="full-sent-py">${s.py}</div>
       <div class="full-sent-en">${s.en}</div>
       <div class="full-sent-jp">${s.jp}</div>
@@ -1786,6 +1838,17 @@ function renderCharPills(){
   });
 }
 
+function formatAnnotatedWords(wordsStr){
+  if(typeof KoPhonetics === 'undefined' || !wordsStr) return wordsStr;
+  return wordsStr.replace(/([가-힣]+)\s*(\([^)]+\))/g, (match, koWord, meaning)=>{
+    const a = KoPhonetics.analyze(koWord);
+    if(a.hasChange){
+      return `<strong style="color:var(--kr-blue-dark);">${koWord}</strong> <span class="ko-word-pron-badge" style="display:inline-block;padding:1px 5px;font-size:11px;background:#fef2f2;color:#dc2626;border-radius:4px;border:1px solid #fecaca;margin-right:2px;font-weight:700;" title="${a.rules.map(r=>r.label).join(' · ')}">[발음: ${a.cleanPronounced}]</span> ${meaning}`;
+    }
+    return match;
+  });
+}
+
 function renderChar(){
   const c = CHARACTERS[charIdx];
   document.getElementById('charCard').classList.remove('flipped');
@@ -1795,8 +1858,15 @@ function renderChar(){
   document.getElementById('charRoBack').textContent = c.py;
   document.getElementById('charHanjaBadge').textContent = '对应汉字: ' + c.hanja;
   document.getElementById('charHanjaDesc').textContent = '汉字词源: ' + c.hanja;
-  document.getElementById('charWords').innerHTML = '<strong>常用词:</strong> ' + c.words;
-  document.getElementById('charMeaning').textContent = c.meaning + ' · ' + c.context;
+  document.getElementById('charWords').innerHTML = '<strong>常用词:</strong> ' + formatAnnotatedWords(c.words);
+  let contextHtml = c.context;
+  if(typeof KoPhonetics !== 'undefined'){
+    const cAnalysis = KoPhonetics.analyze(c.context);
+    if(cAnalysis.hasChange){
+      contextHtml = `${c.context} <span style="color:var(--kr-red);font-size:12px;font-weight:700;">[🗣️ ${cAnalysis.cleanPronounced}]</span>`;
+    }
+  }
+  document.getElementById('charMeaning').innerHTML = c.meaning + ' · ' + contextHtml;
   document.getElementById('charCounter').textContent = (charIdx + 1) + ' / ' + CHARACTERS.length;
 
   const bdWrap = document.getElementById('charBreakdown');
@@ -2178,10 +2248,29 @@ function renderFlash(){
   const v = currentVocabList[flashIdx];
   document.getElementById('flashCard').classList.remove('flipped');
   document.getElementById('flashEmoji').textContent = v.emoji;
-  document.getElementById('flashKo').textContent = v.zh;
+
+  const koEl = document.getElementById('flashKo');
+  const koBackEl = document.getElementById('flashKoBack');
+  const roEl = document.getElementById('flashRo');
+
+  if(typeof KoPhonetics !== 'undefined'){
+    const analysis = KoPhonetics.analyze(v.zh);
+    if(analysis.hasChange){
+      koEl.innerHTML = v.zh + ` <span class="ko-word-pron-badge">[발음: ${analysis.cleanPronounced}]</span>`;
+      koBackEl.innerHTML = v.zh + ` <span style="display:block;font-size:16px;color:var(--kr-red);font-weight:800;margin-top:4px;">[${analysis.cleanPronounced}]</span>`;
+      roEl.textContent = v.py + (analysis.romanization ? ' · ' + analysis.romanization : '');
+    } else {
+      koEl.textContent = v.zh;
+      koBackEl.textContent = v.zh;
+      roEl.textContent = v.py;
+    }
+  } else {
+    koEl.textContent = v.zh;
+    koBackEl.textContent = v.zh;
+    roEl.textContent = v.py;
+  }
+
   document.getElementById('flashTag').textContent = v.tag;
-  document.getElementById('flashKoBack').textContent = v.zh;
-  document.getElementById('flashRo').textContent = v.py;
   document.getElementById('flashMeaning').textContent = v.meaning + ' · ' + v.meaningJp;
   document.getElementById('flashContext').textContent = '“' + v.context + '”';
   document.getElementById('flashCounter').textContent = (flashIdx + 1) + ' / ' + currentVocabList.length;
