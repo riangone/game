@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied'});
+    gtag('config', 'G-Y1P7PMMM6V');
+  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>寒假倒计时 · 填入学校放假和开学日期，算出假期怎么分配</title>
+<meta name="description" content="寒假日期各地、各校不同。填入你学校通知的放假日和开学日，自动算出距离放假几天、寒假共几天、春节前后各有几天，方便安排作业和出行。">
+<link rel="canonical" href="https://tool.0101.click/holiday-hanjia.html">
+<link rel="stylesheet" href="css/tools-header.css">
+<style>
+:root{--bg:#f8fafc;--card:#fff;--line:#e2e8f0;--text:#0f172a;--muted:#64748b;--primary:#0284c7;--soft:#e0f2fe;--font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;}
+[data-theme="dark"]{--bg:#090d16;--card:#111827;--line:#374151;--text:#f9fafb;--muted:#9ca3af;--primary:#38bdf8;--soft:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.75;}
+header.app-header{background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;}
+.back-link{color:var(--muted);text-decoration:none;font-size:13px;font-weight:600;}
+.theme-btn{padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer;}
+main{max-width:760px;margin:0 auto;padding:24px 20px 48px;}
+h1{font-size:24px;margin-bottom:6px;}
+h2{font-size:17px;margin:26px 0 8px;}
+p,li{font-size:15px;}
+.form{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:18px 0;}
+.form label{display:flex;flex-direction:column;font-size:13px;color:var(--muted);gap:4px;}
+.form input{padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:14px;}
+.form button{padding:10px 16px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-weight:700;cursor:pointer;}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;}
+.stat{border-radius:16px;padding:16px;color:#fff;background:linear-gradient(135deg,#0284c7,#06b6d4);}
+.stat:nth-child(2){background:linear-gradient(135deg,#6366f1,#3b82f6);}
+.stat:nth-child(3){background:linear-gradient(135deg,#dc2626,#f97316);}
+.stat:nth-child(4){background:linear-gradient(135deg,#10b981,#059669);}
+.stat .k{font-size:13px;opacity:.9;}
+.stat .v{font-size:30px;font-weight:900;}
+.note{border-left:4px solid var(--primary);background:var(--soft);padding:12px 14px;border-radius:8px;font-size:14px;margin:18px 0;}
+a{color:var(--primary);}
+.more{margin-top:28px;font-size:14px;color:var(--muted);}
+#msg{font-size:14px;color:var(--muted);margin-top:10px;}
+</style>
+<script src="js/pwa-register.js"></script>
+</head>
+<body>
+<header class="app-header">
+  <a href="tools.html" class="back-link">← 工具箱</a>
+  <button class="theme-btn" onclick="toggleTheme()" title="切换深色/浅色模式">🌓</button>
+</header>
+<main>
+  <h1>⛄ 寒假倒计时</h1>
+  <p style="color:var(--muted);font-size:14px;">寒假没有全国统一的日期，所以这里不预设任何日期——填入你学校通知里的两个日期即可。数据只保存在你自己的浏览器里。</p>
+
+  <div class="form">
+    <label>放假日（最后一天上课的次日）<input type="date" id="startDate"></label>
+    <label>开学日<input type="date" id="endDate"></label>
+    <button onclick="calc(true)">计算</button>
+    <button onclick="addToCountdown()" style="background:#10b981">＋ 加入我的倒数日</button>
+  </div>
+  <div class="stats" id="stats"></div>
+  <div id="msg"></div>
+
+  <h2>寒假不长，先看清它被春节分成了几段</h2>
+  <p>寒假和暑假最大的不同，是中间夹着春节。很多同学和家长按“一共四周”来排计划，结果年前忙着走亲戚、年后又要赶返程，真正能静下心写作业、复习的日子比想象中少得多。所以比起“还有几天放假”，更有用的是先算清楚：放假到除夕有几天，初一到开学又有几天。</p>
+  <p>举个例子（以下是假设的日期，不代表任何地区的实际校历）：如果放假日是 1 月 16 日、开学日是 2 月 22 日，而春节在 2 月 6 日，那么年前大约有 3 周、年后只有两周出头。比较稳妥的做法是把需要整块时间的作业和预习放在年前，年后只留背诵、整理错题这类零碎任务，最后 3 天调回上学时的作息。上面的计算器会按你填的真实日期给出这几个数字。</p>
+
+  <div class="note">
+    <strong>日期以官方为准：</strong>中小学和高校的寒假安排由各地教育部门和学校分别发布，同一个城市的不同学校也可能相差几天，请以学校的正式通知或当地教育部门公布的校历为准。春节日期按农历换算；法定节假日的放假和调休安排以国务院办公厅在
+    <a href="https://www.gov.cn/" target="_blank" rel="noopener">中国政府网（gov.cn）</a>发布的通知为准。
+  </div>
+
+  <p class="more">相关：<a href="holiday-chunjie.html">春节倒计时</a> · <a href="holiday-yuandan.html">元旦倒计时</a> · <a href="exam-countdown.html">考试季倒排计划</a> · <a href="countdown.html">倒数日</a> · <a href="habit-tracker.html">习惯打卡</a></p>
+</main>
+
+<script>
+(function(){const t=localStorage.getItem('app_theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');})();
+function toggleTheme(){const n=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('app_theme',n);}
+// 正月初一（公历），由本站万年历的农历换算引擎核对
+const LNY=['2027-02-06','2028-01-26','2029-02-13'];
+const SKEY='hanjia_dates_v1';
+function pad(n){return String(n).padStart(2,'0');}
+function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function parse(s){const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
+function today(){const n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate());}
+function days(a,b){return Math.round((b-a)/86400000);}
+function calc(save){
+  const s=document.getElementById('startDate').value,e=document.getElementById('endDate').value;
+  const st=document.getElementById('stats'),msg=document.getElementById('msg');
+  if(!s||!e){st.innerHTML='';msg.textContent='请先填入学校通知的放假日和开学日。';return;}
+  const sd=parse(s),ed=parse(e);
+  if(ed<=sd){st.innerHTML='';msg.textContent='开学日需要晚于放假日。';return;}
+  if(save)localStorage.setItem(SKEY,JSON.stringify({s,e}));
+  const t=today(),toStart=days(t,sd),len=days(sd,ed);
+  const ny=LNY.map(parse).find(d=>d>=sd&&d<ed);
+  const cards=[[toStart>0?'距离放假':(days(t,ed)>0?'寒假已开始，距离开学':'寒假已结束'),toStart>0?toStart+' 天':(days(t,ed)>0?days(t,ed)+' 天':'—')],['寒假总长',len+' 天']];
+  if(ny){const eve=new Date(ny.getFullYear(),ny.getMonth(),ny.getDate()-1);cards.push(['放假 → 除夕',days(sd,eve)+' 天']);cards.push(['初一 → 开学',days(ny,ed)+' 天']);msg.textContent='春节（正月初一 '+iso(ny)+'）落在这个寒假里。';}
+  else msg.textContent='按你填的日期，春节不在这段假期内。';
+  st.innerHTML=cards.map(([k,v])=>'<div class="stat"><div class="k">'+k+'</div><div class="v">'+v+'</div></div>').join('');
+}
+function addToCountdown(){
+  const s=document.getElementById('startDate').value,e=document.getElementById('endDate').value;
+  if(!s||!e){alert('请先填入放假日和开学日');return;}
+  const KEY='countdown_events_v1',list=JSON.parse(localStorage.getItem(KEY)||'[]');
+  [['寒假放假',s,'🎉'],['寒假开学',e,'🎓']].forEach(([name,date,emoji],i)=>{if(!list.some(x=>x.name===name&&x.date===date))list.push({id:Date.now()+i,name,date,emoji});});
+  localStorage.setItem(KEY,JSON.stringify(list));
+  if(confirm('已加入倒数日，现在去查看吗？'))location.href='countdown.html';
+}
+(function(){const v=JSON.parse(localStorage.getItem(SKEY)||'null');if(v){document.getElementById('startDate').value=v.s;document.getElementById('endDate').value=v.e;}calc(false);})();
+</script>
+
+<div class="site-legal-0101" style="clear:both;width:100%;box-sizing:border-box;padding:16px 12px 20px;text-align:center;font:12px/1.7 system-ui,sans-serif;color:#64748b;opacity:.9"><a href="https://0101.click/privacy.html" style="color:inherit;text-decoration:underline;opacity:.85">隐私政策 / プライバシー</a> · <a href="https://0101.click/about.html" style="color:inherit;text-decoration:underline;opacity:.85">关于 / 運営者情報</a> · <a href="https://0101.click/contact.html" style="color:inherit;text-decoration:underline;opacity:.85">联系 / お問い合わせ</a> · <a href="https://0101.click/" style="color:inherit;text-decoration:underline;opacity:.85">0101.click</a></div>
+</body>
+</html>

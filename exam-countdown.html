@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied'});
+    gtag('config', 'G-Y1P7PMMM6V');
+  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>考试季倒计时 · 从考试日往回排出复习节点</title>
+<meta name="description" content="期末考试、考研初试、四六级等考试倒计时：填入准考证或学校通知上的考试日期，自动从考试日往回排出 60/30/14/7/1 天的复习节点。考试日期以官方公告为准。">
+<link rel="canonical" href="https://tool.0101.click/exam-countdown.html">
+<link rel="stylesheet" href="css/tools-header.css">
+<style>
+:root{--bg:#f8fafc;--card:#fff;--line:#e2e8f0;--text:#0f172a;--muted:#64748b;--primary:#0284c7;--soft:#e0f2fe;--font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;}
+[data-theme="dark"]{--bg:#090d16;--card:#111827;--line:#374151;--text:#f9fafb;--muted:#9ca3af;--primary:#38bdf8;--soft:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.75;}
+header.app-header{background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;}
+.back-link{color:var(--muted);text-decoration:none;font-size:13px;font-weight:600;}
+.theme-btn{padding:6px 10px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer;}
+main{max-width:760px;margin:0 auto;padding:24px 20px 48px;}
+h1{font-size:24px;margin-bottom:6px;}
+h2{font-size:17px;margin:26px 0 8px;}
+p,li{font-size:15px;}
+ul{padding-left:20px;}
+.form{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin:18px 0;}
+.form label{display:flex;flex-direction:column;font-size:13px;color:var(--muted);gap:4px;}
+.form input,.form select{padding:9px 10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:14px;}
+.form button{padding:10px 16px;border-radius:10px;border:none;background:var(--primary);color:#fff;font-weight:700;cursor:pointer;}
+.hero{border-radius:20px;padding:20px;color:#fff;background:linear-gradient(135deg,#6366f1,#8b5cf6);margin-bottom:12px;}
+.hero .big{font-size:40px;font-weight:900;line-height:1.1;}
+.hero .sub{opacity:.9;font-size:14px;}
+.plan{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px;}
+.plan td,.plan th{border:1px solid var(--line);padding:8px;text-align:left;}
+.note{border-left:4px solid var(--primary);background:var(--soft);padding:12px 14px;border-radius:8px;font-size:14px;margin:18px 0;}
+a{color:var(--primary);}
+.more{margin-top:28px;font-size:14px;color:var(--muted);}
+</style>
+<script src="js/pwa-register.js"></script>
+</head>
+<body>
+<header class="app-header">
+  <a href="tools.html" class="back-link">← 工具箱</a>
+  <button class="theme-btn" onclick="toggleTheme()" title="切换深色/浅色模式">🌓</button>
+</header>
+<main>
+  <h1>📚 考试季倒计时与倒排计划</h1>
+  <p style="color:var(--muted);font-size:14px;">本页不预填任何考试日期。请按准考证、报名系统或学校通知上的日期填写，数据只保存在你的浏览器里。</p>
+
+  <div class="form">
+    <label>考试类型
+      <select id="examType">
+        <option value="final">期末考试</option>
+        <option value="kaoyan">考研初试</option>
+        <option value="cet">英语四六级</option>
+        <option value="other">其他考试</option>
+      </select>
+    </label>
+    <label>名称（可选）<input type="text" id="examName" placeholder="如：高数期末"></label>
+    <label>考试日期<input type="date" id="examDate"></label>
+    <button onclick="calc(true)">生成计划</button>
+    <button onclick="addToCountdown()" style="background:#10b981">＋ 加入我的倒数日</button>
+  </div>
+
+  <div id="result"></div>
+
+  <h2>倒计时真正的用处，是把“还有很久”拆成几个能检查的节点</h2>
+  <p>12 月到次年 1 月，期末、考研初试、四六级常常挤在同一个月里。只看一个“还剩 40 天”的大数字，人很容易在前 30 天觉得来得及、最后 10 天才慌。更好的办法是从考试日往回排：每个节点只回答一个问题——这一阶段结束时，我应该已经做完什么。</p>
+  <p>示例：假设你的期末考试在 60 天后。剩 60 天时把各科范围和自己的薄弱章节列出来；剩 30 天时第一轮过完教材，开始做往年试卷；剩 14 天时只围绕错题和老师划的重点复习；剩 7 天停止开新题，按考试时间段调整作息；考前 1 天只核对考场、证件和文具。选不同的考试类型，下面的表会给出更贴合的提示，但节奏需要按你自己的基础调整。</p>
+
+  <div class="note">
+    <strong>考试日期以官方公告为准：</strong>期末考试安排以学校教务通知为准；考研初试时间以教育部和
+    <a href="https://yz.chsi.com.cn/" target="_blank" rel="noopener">中国研究生招生信息网</a>的公告为准；四六级考试时间以
+    <a href="https://cet.neea.edu.cn/" target="_blank" rel="noopener">教育部教育考试院 CET 网站</a>的公告为准。本页的复习节点只是时间管理上的参考，不构成任何备考承诺。
+  </div>
+
+  <p class="more">相关：<a href="countdown.html">倒数日</a> · <a href="pomodoro.html">番茄时钟</a> · <a href="habit-tracker.html">习惯打卡</a> · <a href="holiday-hanjia.html">寒假倒计时</a> · <a href="holiday-yuandan.html">元旦倒计时</a></p>
+</main>
+
+<script>
+(function(){const t=localStorage.getItem('app_theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');})();
+function toggleTheme(){const n=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',n);localStorage.setItem('app_theme',n);}
+const SKEY='exam_plan_v1';
+const WEEK=['周日','周一','周二','周三','周四','周五','周六'];
+const LABEL={final:'期末考试',kaoyan:'考研初试',cet:'英语四六级',other:'考试'};
+const PLANS={
+  final:[[60,'列出每科考试范围，标出自己没听懂的章节'],[30,'第一轮过完教材和笔记，开始做往年试卷'],[14,'只围绕错题和老师强调的重点复习'],[7,'不再开新题，按考试时段调整作息'],[1,'核对考场、时间、学生证和文具']],
+  kaoyan:[[60,'各科完成一轮系统复习，确定剩余薄弱点'],[30,'按考试时长完整模拟，政治开始集中记忆'],[14,'回顾错题本，专业课按真题题型查漏'],[7,'固定作息与考试时段一致，减少新资料'],[1,'打印并核对准考证、身份证、考场位置']],
+  cet:[[60,'做一套真题摸底，看听力、阅读、写作哪项最弱'],[30,'每天固定听力练习，背近年真题高频词'],[14,'每周一套完整真题，严格计时'],[7,'作文和翻译各准备几个常用句式'],[1,'核对准考证、耳机调频与考场要求']],
+  other:[[60,'明确考试范围和题型'],[30,'完成一轮复习，开始做练习题或真题'],[14,'集中处理错题和薄弱环节'],[7,'模拟考试节奏，调整作息'],[1,'核对考试时间、地点和证件']]
+};
+function pad(n){return String(n).padStart(2,'0');}
+function iso(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());}
+function parse(s){const [y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d);}
+function today(){const n=new Date();return new Date(n.getFullYear(),n.getMonth(),n.getDate());}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function nameOf(){return document.getElementById('examName').value.trim()||LABEL[document.getElementById('examType').value];}
+function calc(save){
+  const type=document.getElementById('examType').value,date=document.getElementById('examDate').value,out=document.getElementById('result');
+  if(!date){out.innerHTML='<p style="color:var(--muted);font-size:14px;">填入考试日期后，这里会显示倒计时和复习节点。</p>';return;}
+  if(save)localStorage.setItem(SKEY,JSON.stringify({type,name:document.getElementById('examName').value,date}));
+  const ed=parse(date),t=today(),left=Math.round((ed-t)/86400000);
+  const big=left>0?left+' 天':(left===0?'就是今天，加油！':'已结束');
+  const rows=PLANS[type].map(([n,s])=>{const dt=new Date(ed);dt.setDate(dt.getDate()-n);const past=dt<t;
+    return '<tr'+(past?' style="opacity:.5"':'')+'><td>考前 '+n+' 天</td><td>'+iso(dt)+' '+WEEK[dt.getDay()]+(past?'（已过）':'')+'</td><td>'+s+'</td></tr>';}).join('');
+  out.innerHTML='<div class="hero"><div class="sub">距离 '+esc(nameOf())+'（'+date+' '+WEEK[ed.getDay()]+'）</div><div class="big">'+big+'</div></div>'+
+    '<table class="plan"><thead><tr><th>节点</th><th>日期</th><th>这一阶段结束时应完成</th></tr></thead><tbody>'+rows+'</tbody></table>';
+}
+function addToCountdown(){
+  const date=document.getElementById('examDate').value;
+  if(!date){alert('请先填入考试日期');return;}
+  const KEY='countdown_events_v1',name=nameOf(),list=JSON.parse(localStorage.getItem(KEY)||'[]');
+  if(!list.some(e=>e.name===name&&e.date===date)){list.push({id:Date.now(),name,date,emoji:'🎓'});localStorage.setItem(KEY,JSON.stringify(list));}
+  if(confirm('已加入倒数日，现在去查看吗？'))location.href='countdown.html';
+}
+(function(){const v=JSON.parse(localStorage.getItem(SKEY)||'null');if(v){document.getElementById('examType').value=v.type;document.getElementById('examName').value=v.name||'';document.getElementById('examDate').value=v.date;}calc(false);})();
+</script>
+
+<div class="site-legal-0101" style="clear:both;width:100%;box-sizing:border-box;padding:16px 12px 20px;text-align:center;font:12px/1.7 system-ui,sans-serif;color:#64748b;opacity:.9"><a href="https://0101.click/privacy.html" style="color:inherit;text-decoration:underline;opacity:.85">隐私政策 / プライバシー</a> · <a href="https://0101.click/about.html" style="color:inherit;text-decoration:underline;opacity:.85">关于 / 運営者情報</a> · <a href="https://0101.click/contact.html" style="color:inherit;text-decoration:underline;opacity:.85">联系 / お問い合わせ</a> · <a href="https://0101.click/" style="color:inherit;text-decoration:underline;opacity:.85">0101.click</a></div>
+</body>
+</html>
