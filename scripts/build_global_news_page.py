@@ -1276,7 +1276,7 @@ def generate_page():
         return false;
       }}
       if (searchQuery) {{
-        const text = (art.title + ' ' + (art.snippet || '') + ' ' + art.sourceName).toLowerCase();
+        const text = (art.title + ' ' + art.sourceName).toLowerCase();
         if (!text.includes(searchQuery)) return false;
       }}
       return true;
@@ -1297,10 +1297,8 @@ def generate_page():
           <a href="${{art.link}}" target="_blank" rel="noopener noreferrer" class="news-title">
             ${{art.title}}
           </a>
-          ${{art.snippet ? `<div class="news-snippet" id="snip_${{btoa(art.link).replace(/=/g, '').slice(0, 16)}}">${{art.snippet}}</div>` : ''}}
           <div class="news-actions">
             <div>
-              ${{art.snippet ? `<button class="news-action-btn" onclick="toggleSnippet('snip_${{btoa(art.link).replace(/=/g, '').slice(0, 16)}}')">📄 导读</button>` : ''}}
               ${{isForeign ? `<a href="${{translateUrl}}" target="_blank" rel="noopener noreferrer" class="news-action-btn" title="在 Google 翻译中打开全文">🌏 译文</a>` : ''}}
             </div>
             <div>
@@ -1407,7 +1405,6 @@ def generate_page():
               <a href="${{art.link}}" target="_blank" rel="noopener noreferrer" class="timeline-title">
                 ${{art.title}}
               </a>
-              ${{art.snippet ? `<div style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-top: 4px;">${{art.snippet}}</div>` : ''}}
               <div class="news-actions" style="margin-top: 8px;">
                 <div>
                   ${{isForeign ? `<a href="${{translateUrl}}" target="_blank" rel="noopener noreferrer" class="news-action-btn">🌏 中文翻译</a>` : ''}}
@@ -1500,8 +1497,7 @@ def generate_page():
 
     // 3. Level 2: 浏览器端多路代理并发实时同步
     const PROXY_CANDIDATES = [
-      url => `https://api.allorigins.win/get?url=${{encodeURIComponent(url)}}`,
-      url => `https://corsproxy.io/?url=${{encodeURIComponent(url)}}`
+      url => `https://api.allorigins.win/get?url=${{encodeURIComponent(url)}}`
     ];
 
     async function fetchRssText(url) {{
@@ -1549,14 +1545,12 @@ def generate_page():
           if (!isNaN(d.getTime())) pubDateIso = d.toISOString();
         }}
 
-        let snippet = (item.querySelector('description, summary')?.textContent || '').trim();
-        snippet = snippet.replace(/<[^>]+>/g, '').replace(/\\s+/g, ' ').slice(0, 160);
 
         articles.push({{
           title,
           link,
           pubDateIso,
-          snippet,
+          snippet: '',
           sourceId: src.id,
           sourceName: src.name,
           region: src.region,

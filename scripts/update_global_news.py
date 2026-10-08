@@ -524,16 +524,8 @@ def fetch_and_parse_feed(cfg: dict, max_items: int = 12) -> list[dict]:
                 break
         pub_display, pub_iso = parse_iso_date(date_raw)
         
-        # Extract snippet / description
-        snippet_raw = ""
-        for tag in ['description', 'summary', 'content']:
-            snippet_raw = extract_tag(item_xml, tag)
-            if snippet_raw:
-                break
-        snippet = clean_html(snippet_raw)
-        if snippet:
-            # Truncate clean snippet to reasonable length
-            snippet = snippet[:180] + ('...' if len(snippet) > 180 else '')
+        # 只收标题 + 链接，不转载发布方的导语/摘要（合规红线第 1 条，待办 #10）
+        snippet = ""
 
         seen_titles.add(title)
         articles.append({

@@ -1295,7 +1295,6 @@ html_template = '''<!DOCTYPE html>
     // 代理候选池
     const PROXY_CANDIDATES = [
       url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
-      url => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
       url => `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`
     ];
 

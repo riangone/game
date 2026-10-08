@@ -697,12 +697,8 @@ def parse_feed_content(content: bytes, blog_id: str, limit: int = 5):
                 raw_date = date_el.text if date_el is not None and date_el.text else ""
                 pub_date = parse_date(raw_date, link)
 
-                summary_el = entry.find('{http://www.w3.org/2005/Atom}summary')
-                if summary_el is None:
-                    summary_el = entry.find('{http://www.w3.org/2005/Atom}content')
-                summary = clean_text(summary_el.text if summary_el is not None else "")
-                if len(summary) > 120:
-                    summary = summary[:120] + "..."
+                # 只收标题 + 链接，不转载文章摘要（合规红线第 1 条，待办 #10）
+                summary = ""
 
                 if title and link:
                     articles.append({
@@ -731,10 +727,7 @@ def parse_feed_content(content: bytes, blog_id: str, limit: int = 5):
                 raw_date = date_el.text if date_el is not None and date_el.text else ""
                 pub_date = parse_date(raw_date, link)
 
-                desc_el = item.find('description')
-                desc = clean_text(desc_el.text if desc_el is not None else "")
-                if len(desc) > 120:
-                    desc = desc[:120] + "..."
+                desc = ""
 
                 if title and link:
                     articles.append({
