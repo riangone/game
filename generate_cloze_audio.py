@@ -28,6 +28,7 @@ LESSONS = [
     ('nihongo2.html', 'audio/nihongo2', 'ja-JP-NanamiNeural', '-10%'),
     ('nihongo3.html', 'audio/nihongo3', 'ja-JP-NanamiNeural', '-5%'),
     ('nihongo4.html', 'audio/nihongo4', 'ja-JP-NanamiNeural', '-5%'),
+    ('nihongo5.html', 'audio/nihongo5', 'ja-JP-NanamiNeural', '-5%'),
 ]
 
 MISSING_SCRAMBLE = [
