@@ -198,6 +198,20 @@
   .slider.round:before {
     border-radius: 50%;
   }
+  .mode-switch {
+    display: flex; gap: 6px; justify-content: center; margin: 0 0 18px;
+    padding: 4px; border-radius: 50px; background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .mode-switch button {
+    flex: 1; padding: 8px 14px; border: none; border-radius: 50px; cursor: pointer;
+    background: transparent; color: rgba(255, 255, 255, 0.7); font: inherit; font-size: 13px; font-weight: 600;
+  }
+  .mode-switch button.active { background: rgba(255, 255, 255, 0.14); color: #fff; }
+  #mode3d {
+    position: fixed; inset: 0; width: 100%; height: 100%; border: 0; z-index: 100;
+    display: none; background: #0a0b16;
+  }
 </style>
     <link rel="canonical" href="https://game.0101.click/jj9.html">
   <script src="js/pwa-register.js"></script>
@@ -230,11 +244,39 @@
       </div>
     </div>
 
+    <div class="mode-switch" role="group" aria-label="显示模式">
+      <button type="button" data-mode="2d" class="active">经典 2D</button>
+      <button type="button" data-mode="3d">立体 3D</button>
+    </div>
+
     <button id="startBtn">开始游戏</button>
   </div>
 </div>
 
 <canvas id="game"></canvas>
+<iframe id="mode3d" title="跳跳方块 立体 3D 模式" allow="autoplay; fullscreen"></iframe>
+<script>
+  // 显示模式切换：经典 2D（本页 Canvas）/ 立体 3D（Three.js 引擎内嵌在 jj9-3d.html）
+  (function () {
+    const frame = document.getElementById('mode3d');
+    function setMode(mode) {
+      const is3d = mode === '3d';
+      // 回到 2D 时卸载 3D 引擎，停止其渲染循环和音效
+      if (is3d) { if (!frame.getAttribute('src')) frame.src = 'jj9-3d.html'; }
+      else frame.removeAttribute('src');
+      frame.style.display = is3d ? 'block' : 'none';
+      if (is3d) frame.focus();
+      const url = new URL(location.href);
+      if (is3d) url.searchParams.set('mode', '3d'); else url.searchParams.delete('mode');
+      history.replaceState(null, '', url);
+    }
+    document.querySelector('.mode-switch [data-mode="3d"]').addEventListener('click', () => setMode('3d'));
+    window.addEventListener('message', (e) => {
+      if (e.origin === location.origin && e.data && e.data.jj9mode) setMode(e.data.jj9mode);
+    });
+    if (new URLSearchParams(location.search).get('mode') === '3d') setMode('3d');
+  })();
+</script>
 
 <div id="hud">
   <div class="hud-card">
