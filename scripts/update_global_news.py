@@ -16,7 +16,7 @@ import time
 import urllib.request
 import urllib.error
 import ssl
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from email.utils import parsedate_to_datetime
 
 # 24 Selected Leading News Outlets across CN, JP, KR, and US
@@ -266,6 +266,7 @@ NEWS_SOURCES = [
         "categoryName": "深度特稿",
         "url": "https://www.hani.co.kr/",
         "feedUrl": "https://www.hani.co.kr/rss/",
+        "undatedFeed": True,  # RSS 不含任何日期字段，但内容实时（2026-10-09 确认）
         "icon": "🕊️",
         "language": "ko",
         "desc": "韩国由民众募资创办的著名进步派独立报纸，长于人权保障、财阀垄断监督与劳动民生议题。"
@@ -391,44 +392,74 @@ def clean_html(raw_html: str) -> str:
     cleaned = re.sub(r'\s+', ' ', cleaned).strip()
     return cleaned
 
-def parse_iso_date(raw_date: str) -> tuple[str, str]:
-    """Parse various date formats into display date (YYYY-MM-DD) and ISO UTC string."""
+# 新鲜度窗口：只收最近 N 天的新闻；超过该窗口仍无新文章的来源标为 stale（停更）
+MAX_AGE_DAYS = 3
+# 允许的未来时差（时区写错的源偶尔会超前几小时），超出视为异常日期
+MAX_FUTURE_SKEW = timedelta(hours=12)
+
+_MONTHS = {m: i for i, m in enumerate(
+    ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"], 1)}
+
+def _to_result(dt: datetime) -> tuple[str, str]:
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    dt_utc = dt.astimezone(timezone.utc)
+    return dt_utc.strftime("%Y-%m-%d"), dt_utc.isoformat()
+
+def parse_iso_date(raw_date: str) -> tuple[str | None, str | None]:
+    """Parse various date formats into (YYYY-MM-DD, ISO UTC).
+
+    读不到日期时返回 (None, None)，不再用抓取时间冒充发布时间。
+    """
     if not raw_date:
-        now = datetime.now(timezone.utc)
-        return now.strftime("%Y-%m-%d"), now.isoformat()
-    raw_date = raw_date.strip()
-    
-    # Try email/RFC 822 format (e.g., Tue, 06 Oct 2026 08:30:00 GMT)
+        return None, None
+    raw_date = clean_html(raw_date).strip()
+    if not raw_date:
+        return None, None
+
+    # RFC 822 (e.g. Tue, 06 Oct 2026 08:30:00 GMT)
     try:
         dt = parsedate_to_datetime(raw_date)
-        dt_utc = dt.astimezone(timezone.utc)
-        return dt_utc.strftime("%Y-%m-%d"), dt_utc.isoformat()
-    except Exception:
-        pass
-        
-    # Try ISO 8601 (e.g. 2026-10-06T08:30:00+09:00, 2026-10-06T08:30:00Z)
-    try:
-        clean = raw_date.replace('Z', '+00:00')
-        dt = datetime.fromisoformat(clean)
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=timezone.utc)
-        dt_utc = dt.astimezone(timezone.utc)
-        return dt_utc.strftime("%Y-%m-%d"), dt_utc.isoformat()
+        if dt is not None:
+            return _to_result(dt)
     except Exception:
         pass
 
-    # Regex search YYYY-MM-DD
-    m = re.search(r'(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})', raw_date)
-    if m:
+    # ISO 8601 (e.g. 2026-10-06T08:30:00+09:00 / ...Z)
+    try:
+        return _to_result(datetime.fromisoformat(raw_date.replace('Z', '+00:00')))
+    except Exception:
+        pass
+
+    # 新华社等不规范格式：Wed,14-Dec-2022 11:17:59 GMT / 14 Dec 2022
+    m = re.search(r'(\d{1,2})[-\s]([A-Za-z]{3})[a-z]*[-\s,]+(\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?', raw_date)
+    if m and m.group(2).lower() in _MONTHS:
         try:
-            y, mo, d = int(m.group(1)), int(m.group(2)), int(m.group(3))
-            dt = datetime(y, mo, d, 0, 0, 0, tzinfo=timezone.utc)
-            return dt.strftime("%Y-%m-%d"), dt.isoformat()
+            dt = datetime(int(m.group(3)), _MONTHS[m.group(2).lower()], int(m.group(1)),
+                          int(m.group(4) or 0), int(m.group(5) or 0), int(m.group(6) or 0),
+                          tzinfo=timezone.utc)
+            return _to_result(dt)
         except Exception:
             pass
 
-    now = datetime.now(timezone.utc)
-    return now.strftime("%Y-%m-%d"), now.isoformat()
+    # YYYY-MM-DD / YYYY/MM/DD / YYYY.MM.DD (+ optional HH:MM[:SS])
+    m = re.search(r'(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})(?:[T\s]+(\d{1,2}):(\d{2})(?::(\d{2}))?)?', raw_date)
+    if m:
+        try:
+            dt = datetime(int(m.group(1)), int(m.group(2)), int(m.group(3)),
+                          int(m.group(4) or 0), int(m.group(5) or 0), int(m.group(6) or 0),
+                          tzinfo=timezone.utc)
+            return _to_result(dt)
+        except Exception:
+            pass
+
+    return None, None
+
+def is_fresh(pub_iso: str | None, now: datetime) -> bool:
+    if not pub_iso:
+        return False
+    dt = datetime.fromisoformat(pub_iso)
+    return now - timedelta(days=MAX_AGE_DAYS) <= dt <= now + MAX_FUTURE_SKEW
 
 def extract_tag(xml_snippet: str, tag_name: str) -> str:
     """Extract content of an XML tag, handling CDATA."""
@@ -466,8 +497,11 @@ def extract_link(xml_snippet: str) -> str:
         
     return link
 
-def fetch_and_parse_feed(cfg: dict, max_items: int = 12) -> list[dict]:
-    """Fetch feed using standard urllib and parse articles."""
+def fetch_and_parse_feed(cfg: dict, max_items: int = 12) -> tuple[list[dict], dict]:
+    """Fetch feed and parse articles.
+
+    Returns (fresh_articles, stats)。stats 记录 feed 内最新日期、过期/无日期被丢弃的条数。
+    """
     feed_url = cfg["feedUrl"]
     req = urllib.request.Request(
         feed_url,
@@ -499,6 +533,8 @@ def fetch_and_parse_feed(cfg: dict, max_items: int = 12) -> list[dict]:
 
     articles = []
     seen_titles = set()
+    now = datetime.now(timezone.utc)
+    stats = {"latestPubDateIso": None, "droppedStale": 0, "droppedUndated": 0}
 
     for item_xml in items:
         if len(articles) >= max_items:
@@ -523,6 +559,27 @@ def fetch_and_parse_feed(cfg: dict, max_items: int = 12) -> list[dict]:
             if date_raw:
                 break
         pub_display, pub_iso = parse_iso_date(date_raw)
+        if not pub_iso:
+            # 日期不在标准标签里（如新华社把日期作为 <item> 的裸文本），从去掉子标签后的文本里找
+            inner = re.sub(r'^\s*<(?:item|entry)\b[^>]*>|</(?:item|entry)>\s*$', '', item_xml, flags=re.IGNORECASE)
+            bare = re.sub(r'<(\w[\w:]*)[^>]*>.*?</\1>', ' ', inner, flags=re.DOTALL)
+            pub_display, pub_iso = parse_iso_date(bare)
+
+        date_estimated = False
+        if not pub_iso and cfg.get("undatedFeed"):
+            # 少数 feed（如韩民族）完全不带日期但内容是实时的：仅对显式标记的来源用抓取时间，并打上标记
+            pub_iso = now.isoformat()
+            pub_display = now.strftime("%Y-%m-%d")
+            date_estimated = True
+        if not pub_iso:
+            stats["droppedUndated"] += 1
+            continue
+        if stats["latestPubDateIso"] is None or pub_iso > stats["latestPubDateIso"]:
+            if datetime.fromisoformat(pub_iso) <= now + MAX_FUTURE_SKEW:
+                stats["latestPubDateIso"] = pub_iso
+        if not is_fresh(pub_iso, now):
+            stats["droppedStale"] += 1
+            continue
         
         # 只收标题 + 链接，不转载发布方的导语/摘要（合规红线第 1 条，待办 #10）
         snippet = ""
@@ -540,10 +597,11 @@ def fetch_and_parse_feed(cfg: dict, max_items: int = 12) -> list[dict]:
             "regionFlag": cfg["regionFlag"],
             "category": cfg["category"],
             "categoryName": cfg["categoryName"],
-            "language": cfg["language"]
+            "language": cfg["language"],
+            **({"dateEstimated": True} if date_estimated else {})
         })
 
-    return articles
+    return articles, stats
 
 def aggregate_news():
     print(f"🚀 Starting Global News Perspectives Aggregation ({len(NEWS_SOURCES)} outlets)...")
@@ -553,19 +611,28 @@ def aggregate_news():
     all_articles = []
     success_count = 0
     fail_count = 0
+    stale_count = 0
 
     for i, cfg in enumerate(NEWS_SOURCES, 1):
         print(f"[{i:02d}/{len(NEWS_SOURCES)}] Fetching {cfg['regionFlag']} {cfg['name']}...", end=" ", flush=True)
         try:
-            articles = fetch_and_parse_feed(cfg)
+            articles, stats = fetch_and_parse_feed(cfg)
             source_data = dict(cfg)
             source_data["articles"] = articles
             source_data["lastArticleCount"] = len(articles)
-            source_data["status"] = "ok"
+            source_data["latestPubDateIso"] = stats["latestPubDateIso"]
+            dropped = f"(dropped {stats['droppedStale']} stale / {stats['droppedUndated']} undated)"
+            if articles:
+                source_data["status"] = "ok"
+                success_count += 1
+                print(f"✅ OK ({len(articles)} articles) {dropped}")
+            else:
+                # feed 能打开但最近 MAX_AGE_DAYS 天没有新文章 → 视为停更，前端隐藏
+                source_data["status"] = "stale"
+                stale_count += 1
+                print(f"⏸️  STALE (latest: {stats['latestPubDateIso'] or 'unknown'}) {dropped}")
             output_sources.append(source_data)
             all_articles.extend(articles)
-            success_count += 1
-            print(f"✅ OK ({len(articles)} articles)")
         except Exception as e:
             print(f"❌ Error: {e}")
             fail_count += 1
@@ -593,6 +660,9 @@ def aggregate_news():
         "updatedAt": now_utc,
         "totalSources": len(NEWS_SOURCES),
         "successfulSources": success_count,
+        "staleSources": stale_count,
+        "failedSources": fail_count,
+        "maxAgeDays": MAX_AGE_DAYS,
         "totalArticles": len(all_articles),
         "timelineArticlesCount": len(timeline_articles),
         "regions": [
