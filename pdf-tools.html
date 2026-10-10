@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied'});
+    gtag('config', 'G-Y1P7PMMM6V');
+  </script>
+  <script>
+    (function(){var sent=false;function u(e){var t=e.target;if(sent||!t||!t.closest||!t.closest('button,input,select,textarea,canvas,[role=button]')||t.closest('footer,nav'))return;sent=true;gtag('event','tool_use',{tool:'pdf-tools',action:'use'});}
+    document.addEventListener('click',u,true);document.addEventListener('change',u,true);})();
+  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>本地 PDF 工具箱 · 合并 拆分 提取页 旋转 排序</title>
+<meta name="description" content="在浏览器里合并、拆分 PDF，提取指定页、旋转页面、拖动缩略图调整顺序。文件只在你的浏览器中处理，不上传服务器。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--danger:#ef4444;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.tool-switch,.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:960px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:12px;line-height:1.7;}
+p.page-sub a,.doc a{color:var(--primary);}
+.dropzone{border:2px dashed var(--border-color);border-radius:var(--radius-lg);padding:30px;text-align:center;color:var(--text-muted);cursor:pointer;margin-bottom:16px;line-height:1.7;}
+.dropzone.drag{border-color:var(--primary);background:var(--primary-subtle);color:var(--primary);}
+.card{background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:16px;box-shadow:var(--shadow-sm);margin-bottom:16px;}
+.card h2{font-size:15px;font-weight:800;margin-bottom:10px;}
+.file-chips{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 6px 5px 10px;border-radius:var(--radius-pill);background:var(--bg-subtle);border:1px solid var(--border-color);font-size:12px;max-width:100%;}
+.chip .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.chip .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px;}
+.chip button{border:none;background:transparent;color:var(--text-muted);cursor:pointer;font-size:13px;padding:0 4px;}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px;}
+.tbtn{padding:7px 12px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.tbtn:hover{border-color:var(--primary);color:var(--primary);}
+.tbtn.danger:hover{border-color:var(--danger);color:var(--danger);}
+.tinput{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-surface);color:var(--text-main);font-size:13px;width:150px;}
+.sel-info{font-size:12px;color:var(--text-muted);margin-left:auto;}
+.page-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:12px;}
+.pcard{position:relative;background:var(--bg-subtle);border:2px solid transparent;border-radius:var(--radius-md);padding:8px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:grab;user-select:none;}
+.pcard.sel{border-color:var(--primary);background:var(--primary-subtle);}
+.pcard.dragging{opacity:.4;}
+.pcard.over{outline:2px dashed var(--primary);outline-offset:2px;}
+.thumb{width:100%;height:150px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.thumb img{max-width:100%;max-height:100%;box-shadow:0 1px 4px rgba(0,0,0,.25);background:#fff;transition:transform .2s;}
+.thumb .ph{width:96px;height:128px;background:#fff;border:1px solid var(--border-color);display:flex;align-items:center;justify-content:center;color:#94a3b8;font-size:12px;transition:transform .2s;}
+.pcard .lbl{font-size:11px;color:var(--text-muted);text-align:center;line-height:1.4;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pcard .lbl b{color:var(--text-main);}
+.pcard .stripe{position:absolute;left:8px;right:8px;top:4px;height:3px;border-radius:2px;}
+.pcard .acts{display:flex;gap:4px;}
+.pcard .acts button{border:none;background:var(--bg-surface);border-radius:6px;width:26px;height:26px;cursor:pointer;font-size:13px;color:var(--text-main);}
+.pcard .acts button:hover{background:var(--primary-subtle);}
+.pcard input[type=checkbox]{position:absolute;top:10px;left:10px;width:16px;height:16px;cursor:pointer;}
+.empty-state{text-align:center;color:var(--text-light);padding:20px;grid-column:1/-1;}
+.out-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:10px;}
+.btn{padding:12px 18px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:800;cursor:pointer;font-size:14px;}
+.btn.alt{background:var(--bg-subtle);color:var(--text-main);border:1px solid var(--border-color);}
+.btn:disabled{opacity:.5;cursor:not-allowed;}
+select.tinput{width:auto;}
+.status{font-size:13px;color:var(--text-muted);min-height:20px;margin-top:6px;}
+.status.err{color:var(--danger);}
+.results{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
+.results a{font-size:13px;color:var(--primary);}
+.doc{line-height:1.8;font-size:14px;}
+.doc h2{font-size:17px;font-weight:800;margin:4px 0 10px;}
+.doc ol,.doc ul{padding-left:22px;margin-bottom:8px;}
+.doc details{border-top:1px solid var(--border-color);padding:10px 0;}
+.doc details summary{cursor:pointer;font-weight:700;}
+.doc details p{margin-top:6px;color:var(--text-muted);}
+.doc .small{font-size:12px;color:var(--text-muted);}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/pdf-tools.html">
+    <link rel="stylesheet" href="css/tools-header.css">
+  <script src="js/pwa-register.js"></script>
+</head>
+<body>
+  <!-- 统一小工具顶部导航 -->
+  <header class="app-header">
+    <div class="header-left">
+      <a href="tools.html" class="back-link" title="返回实用工具箱">
+        <span class="back-icon">←</span>
+        <span class="back-text">工具箱</span>
+      </a>
+      <div class="app-brand">
+        <span class="brand-icon">🗂️</span>
+        <span class="brand-title">PDF 工具箱</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="index.html" class="hall-btn" title="返回游戏大厅">
+        <span class="hall-icon">🎮</span>
+        <span class="hall-text">大厅</span>
+      </a>
+      <select class="tool-switch" onchange="if(this.value) location.href=this.value;" title="快速切换小工具">
+        <option value="">🔀 快捷切换小工具...</option>
+        <optgroup label="常用必备">
+          <option value="calculator.html">🧮 表达式计算器</option>
+          <option value="notepad.html">📝 极简便签</option>
+          <option value="unit-converter.html">📐 全能单位换算器</option>
+          <option value="currency.html">💱 全球实时汇率换算</option>
+          <option value="weather.html">🌤️ 极简实时天气看板</option>
+          <option value="qrcode.html">📱 二维码大师</option>
+          <option value="pomodoro.html">🍅 极简番茄时钟</option>
+          <option value="calendar.html">📅 万年历与节气</option>
+        </optgroup>
+        <optgroup label="文本与开发">
+          <option value="markdown-editor.html">📑 Markdown 排版工坊</option>
+          <option value="text-tools.html">🔤 文本综合工具箱</option>
+          <option value="diff-tool.html">🪞 文本差异对比</option>
+          <option value="json-csv-tool.html">🔄 JSON / CSV 互转工坊</option>
+          <option value="hash-tool.html">#️⃣ 哈希校验工具</option>
+          <option value="encrypt-tool.html">🛡️ 本地加解密工具</option>
+          <option value="uuid-generator.html">🆔 唯一标识符生成器</option>
+          <option value="cron-parser.html">⏰ Cron 表达式工坊</option>
+          <option value="css-generator.html">🎨 现代 CSS 视觉工坊</option>
+          <option value="github-card.html">🐙 GitHub 开发者名片工坊</option>
+        </optgroup>
+        <optgroup label="图形与多媒体">
+          <option value="image-tool.html">🖼️ 本地图片工坊</option>
+          <option value="image-grid-splitter.html">🧩 九宫格切图工坊</option>
+          <option value="img-to-pdf.html">📄 图片转 PDF</option>
+          <option value="pdf-tools.html" selected>🗂️ 本地 PDF 工具箱</option>
+          <option value="drawing-board.html">🖌️ 简易画板</option>
+          <option value="color-tool.html">🎨 颜色转换工具箱</option>
+          <option value="favicon-generator.html">🌐 Favicon 图标生成器</option>
+          <option value="ascii-art.html">🔤 字符画与 ASCII 艺术字</option>
+          <option value="font-previewer.html">🔤 字体预览工坊</option>
+          <option value="quote-card.html">🖋️ 一言·灵感排版工坊</option>
+          <option value="metronome.html">⏱️ 电子节拍器与律动鼓机</option>
+        </optgroup>
+        <optgroup label="日常与生活">
+          <option value="todolist.html">✅ 极简待办清单</option>
+          <option value="expense-tracker.html">💰 极简记账本</option>
+          <option value="habit-tracker.html">🔥 习惯打卡</option>
+          <option value="countdown.html">⏳ 倒数日与纪念日</option>
+          <option value="time-tool.html">🕐 世界时间工具箱</option>
+          <option value="loan-calculator.html">🏦 贷款与房贷计算器</option>
+          <option value="tip-calculator.html">🧾 账单 AA 分摊与小费</option>
+          <option value="password.html">🔐 安全密码工坊</option>
+          <option value="packing-list.html">🧳 旅行与出差行李清单</option>
+          <option value="random-picker.html">🎯 随机抉择与抽奖转盘</option>
+          <option value="bmi-tracker.html">⚖️ BMI 与健康指标追踪</option>
+          <option value="water-reminder.html">💧 喝水打卡与健康提醒</option>
+        </optgroup>
+        <optgroup label="资讯与探索">
+          <option value="country-explorer.html">🌍 世界地理大百科</option>
+          <option value="global-news.html">🌍 全球新闻视角雷达</option>
+          <option value="tech-blogs.html">📡 企业技术博客雷达</option>
+          <option value="network-info.html">🌐 网络信息查询探针</option>
+          <option value="doh-lookup.html">🔍 浏览器原生 DNS 探针</option>
+        </optgroup>
+      </select>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="切换深色/浅色模式">🌓</button>
+    </div>
+  </header>
+
+<main class="container">
+  <h1 class="page-title">🗂️ 本地 PDF 工具箱</h1>
+  <p class="page-sub">合并多个 PDF、拆分成多个文件、提取指定页、旋转页面、拖动缩略图调整顺序。<strong>文件只在你的浏览器里处理，不会上传到任何服务器。</strong>手上只有照片或截图？先用 <a href="img-to-pdf.html">图片转 PDF</a> 生成 PDF，再回到这里合并整理。</p>
+  <details class="local-note" open style="margin:8px 0 14px;padding:8px 12px;border:1px solid rgba(16,185,129,.35);background:rgba(16,185,129,.08);border-radius:8px;font-size:13px;line-height:1.7;"><summary style="cursor:pointer;font-weight:700;color:#059669;">🔒 本地处理 · 不上传服务器</summary><p style="margin:6px 0 0;">你选择的 PDF 只在你的浏览器中用 JavaScript 读取和生成，本页没有任何上传接口，不会发送到本站或第三方服务器。处理所用的程序库（pdf-lib、PDF.js）都放在本站，不从外部 CDN 加载；页面加载完成后断网也能继续使用，你可以打开浏览器开发者工具的 Network 面板自行验证。本站用 Google Analytics 统计匿名访问量，只记录访问了哪个页面、是否使用过工具，不包含文件名或文件内容。详见<a href="https://0101.click/privacy.html#local">隐私政策</a>。</p></details>
+
+  <div class="dropzone" id="dropzone" tabindex="0" role="button" onclick="document.getElementById('fileInput').click()">
+    📁 拖拽一个或多个 PDF 到此处，或点击选择（可多次添加，页面会按添加顺序排在后面）
+    <input type="file" id="fileInput" accept="application/pdf,.pdf" multiple style="display:none" onchange="handleFiles(this.files); this.value='';">
+  </div>
+
+  <div class="card" id="filesCard" style="display:none;">
+    <h2>已添加的文件</h2>
+    <div class="file-chips" id="fileChips"></div>
+  </div>
+
+  <div class="card">
+    <h2>页面（拖动缩略图排序，点击缩略图选中）</h2>
+    <div class="toolbar">
+      <button class="tbtn" onclick="selectAll(true)">全选</button>
+      <button class="tbtn" onclick="selectAll(false)">取消选择</button>
+      <input class="tinput" id="rangeInput" placeholder="按页码选，如 1-3,8" onkeydown="if(event.key==='Enter')selectByRange()">
+      <button class="tbtn" onclick="selectByRange()">选中</button>
+      <button class="tbtn" onclick="rotateSelected(-90)" title="选中页逆时针旋转 90°">↺ 左转</button>
+      <button class="tbtn" onclick="rotateSelected(90)" title="选中页顺时针旋转 90°">↻ 右转</button>
+      <button class="tbtn danger" onclick="deleteSelected()">🗑 删除选中</button>
+      <button class="tbtn" onclick="resetOrder()" title="恢复为文件原始页序，并撤销旋转和删除">↩ 还原</button>
+      <span class="sel-info" id="selInfo"></span>
+    </div>
+    <div class="page-grid" id="pageGrid"></div>
+  </div>
+
+  <div class="card">
+    <h2>导出</h2>
+    <div class="out-row">
+      <button class="btn" id="btnMerge" onclick="exportAll()" disabled>📥 按当前顺序导出为一个 PDF</button>
+      <button class="btn alt" id="btnExtract" onclick="exportSelected()" disabled>📑 只导出选中的页</button>
+    </div>
+    <div class="out-row">
+      <select class="tinput" id="splitMode" onchange="document.getElementById('splitArg').style.display=this.value==='each'?'none':'';updateSplitHint()">
+        <option value="each">拆分：每页一个文件</option>
+        <option value="every">拆分：每 N 页一个文件</option>
+        <option value="ranges">拆分：按页码范围</option>
+      </select>
+      <input class="tinput" id="splitArg" style="display:none" oninput="updateSplitHint()">
+      <button class="btn alt" id="btnSplit" onclick="exportSplit()" disabled>✂️ 拆分</button>
+    </div>
+    <div class="status" id="status"></div>
+    <div class="results" id="results"></div>
+  </div>
+
+  <section class="card doc">
+    <h2>使用步骤</h2>
+    <ol>
+      <li>点击上方虚线框或直接拖入 PDF。可以一次选多个，也可以分几次添加，新文件的页面会接在后面。</li>
+      <li>在“页面”区域整理：拖动缩略图改顺序（手机上用 ◀ ▶ 按钮），每页右下角可以单独旋转或删除；也可以先选中多页，再用工具栏批量旋转、删除。</li>
+      <li>选择导出方式：
+        <ul>
+          <li><b>合并 / 重新排序</b>：点“按当前顺序导出为一个 PDF”，得到包含全部剩余页面的新文件。</li>
+          <li><b>提取页</b>：选中需要的页（可以在输入框里写 <code>1-3,8</code> 快速选中），点“只导出选中的页”。</li>
+          <li><b>拆分</b>：选择每页一个文件、每 N 页一个文件，或按范围（如 <code>1-5,6-10</code>，每段一个文件），点“拆分”后逐个下载。</li>
+        </ul>
+      </li>
+      <li>原文件不会被修改，导出的是一份新的 PDF。页码都按“页面”区域当前的顺序计算。</li>
+    </ol>
+  </section>
+
+  <section class="card doc">
+    <h2>常见问题</h2>
+    <details><summary>我的文件会被上传吗？</summary><p>不会。读取、预览和生成 PDF 都在你的浏览器里完成，本页没有上传接口。关闭或刷新页面后，已加载的文件就从内存中清除了。</p></details>
+    <details><summary>为什么加了密码的 PDF 打不开？</summary><p>本工具不处理加密的 PDF，也不提供移除或破解密码的功能。如果这是你自己的文件，请在原来的阅读器或编辑软件里输入密码打开，另存或打印为一份不加密的 PDF，再拿来处理。有些文件虽然打开时不用密码，但设置了“禁止编辑”之类的权限，这类文件同样不处理，请尊重文件作者的设置。</p></details>
+    <details><summary>旋转会让页面变模糊吗？</summary><p>不会。旋转只修改页面的显示方向，文字、图片保持原样，不会被重新压缩。</p></details>
+    <details><summary>书签、表单、超链接会保留吗？</summary><p>页面上看到的内容（文字、图片、矢量图形）和大部分注释会保留；目录书签不会带到新文件里；可填写的表单在合并或拆分后可能无法再填写，建议先填好并保存，再来合并。</p></details>
+    <details><summary>拆分后每个文件为什么没有小多少？</summary><p>PDF 里的字体、背景图等资源常被多页共用，拆分时每个新文件都要带上自己用到的那一份，所以几个小文件加起来通常比原文件大。这是正常现象。</p></details>
+    <details><summary>能处理多大的文件？</summary><p>取决于设备内存。电脑上几十 MB、几百页的文件一般没问题；手机上建议单次处理的总量控制在几十 MB 以内。页数很多时缩略图会逐页生成，稍等即可，不影响导出。</p></details>
+    <details><summary>和“图片转 PDF”有什么区别？</summary><p><a href="img-to-pdf.html">图片转 PDF</a> 把 JPG / PNG 照片排成 A4 页面生成 PDF；本工具处理已有的 PDF 文件。两者可以配合使用：先把扫描照片转成 PDF，再和其他 PDF 合并。</p></details>
+    <p class="small" style="margin-top:10px;">开源组件：<a href="https://github.com/Hopding/pdf-lib" rel="noopener" target="_blank">pdf-lib</a>（MIT License, © 2019 Andrew Dillon）用于读取和生成 PDF；<a href="https://github.com/mozilla/pdf.js" rel="noopener" target="_blank">PDF.js</a>（Apache License 2.0, © Mozilla Foundation）用于生成缩略图。两者均未经修改、由本站自托管，完整许可声明见 <a href="js/vendor/THIRD-PARTY-LICENSES.txt">THIRD-PARTY-LICENSES.txt</a>。</p>
+  </section>
+</main>
+
+<script src="js/vendor/pdf-lib.min.js"></script>
+<script>
+(function(){const t=localStorage.getItem('app_theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');})();
+function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme');const next=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);localStorage.setItem('app_theme',next);}
+
+const COLORS = ['#0284c7','#f59e0b','#10b981','#ef4444','#8b5cf6','#ec4899','#14b8a6','#84cc16'];
+let files = [];   // {id, name, bytes, doc, pageCount, color}
+let pages = [];   // {key, fileId, index, rot, sel, thumb}
+let fileSeq = 0, dragKey = null, resultUrls = [];
+
+const $ = id => document.getElementById(id);
+function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+function fileById(id){ return files.find(f=>f.id===id); }
+function setStatus(msg, err){ const s=$('status'); s.textContent=msg||''; s.className='status'+(err?' err':''); }
+
+const dropzone = $('dropzone');
+['dragover','dragenter'].forEach(ev => dropzone.addEventListener(ev, e=>{e.preventDefault(); dropzone.classList.add('drag');}));
+['dragleave','drop'].forEach(ev => dropzone.addEventListener(ev, e=>{e.preventDefault(); dropzone.classList.remove('drag');}));
+dropzone.addEventListener('drop', e=>{ if(e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); });
+dropzone.addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); $('fileInput').click(); } });
+
+async function handleFiles(fileList){
+  const list = [...fileList].filter(f => f.type==='application/pdf' || /\.pdf$/i.test(f.name));
+  if(!list.length){ setStatus('请选择 PDF 文件。', true); return; }
+  const errors = [];
+  for(const f of list){
+    setStatus('正在读取 ' + f.name + ' …');
+    try{
+      const bytes = new Uint8Array(await f.arrayBuffer());
+      // 不传 ignoreEncryption：加密文件直接拒绝，不做任何绕过
+      const doc = await PDFLib.PDFDocument.load(bytes, { updateMetadata:false });
+      const id = ++fileSeq;
+      const entry = { id, name:f.name, bytes, doc, pageCount:doc.getPageCount(), color:COLORS[(id-1)%COLORS.length] };
+      files.push(entry);
+      for(let i=0;i<entry.pageCount;i++) pages.push({ key:id+'-'+i, fileId:id, index:i, rot:0, sel:false, thumb:null });
+    }catch(e){
+      const encrypted = /encrypt/i.test(e && (e.name+' '+e.message));
+      errors.push(f.name + (encrypted ? '：文件已加密，本工具不处理加密的 PDF（见下方常见问题）' : '：无法读取，可能不是有效的 PDF 或文件已损坏'));
+    }
+  }
+  render();
+  setStatus(errors.join('；'), errors.length>0);
+  renderThumbs();
+}
+
+function removeFile(id){
+  files = files.filter(f=>f.id!==id);
+  pages = pages.filter(p=>p.fileId!==id);
+  render();
+}
+
+function render(){
+  // 文件列表
+  $('filesCard').style.display = files.length ? '' : 'none';
+  $('fileChips').innerHTML = files.map(f => `
+    <span class="chip"><span class="dot" style="background:${f.color}"></span><span class="nm" title="${escapeHtml(f.name)}">${escapeHtml(f.name)}</span><span style="color:var(--text-muted)">${f.pageCount} 页</span><button onclick="removeFile(${f.id})" title="移除此文件及其全部页面">✕</button></span>`).join('');
+
+  // 页面网格
+  const grid = $('pageGrid');
+  if(!pages.length){
+    grid.innerHTML = '<div class="empty-state">尚未添加 PDF</div>';
+  } else {
+    grid.innerHTML = pages.map((p,i) => {
+      const f = fileById(p.fileId);
+      const tf = p.rot ? ` style="transform:rotate(${p.rot}deg)"` : '';
+      const pic = p.thumb ? `<img src="${p.thumb}" alt=""${tf}>` : `<div class="ph"${tf}>第 ${p.index+1} 页</div>`;
+      return `<div class="pcard${p.sel?' sel':''}" draggable="true" data-key="${p.key}">
+        <span class="stripe" style="background:${f.color}"></span>
+        <input type="checkbox" ${p.sel?'checked':''} data-act="sel" aria-label="选中第 ${i+1} 页">
+        <div class="thumb" data-act="sel">${pic}</div>
+        <div class="lbl" title="${escapeHtml(f.name)} 原第 ${p.index+1} 页"><b>${i+1}</b> · ${escapeHtml(f.name)} p${p.index+1}${p.rot?' · '+p.rot+'°':''}</div>
+        <div class="acts">
+          <button data-act="left" title="前移">◀</button>
+          <button data-act="right" title="后移">▶</button>
+          <button data-act="rot" title="顺时针旋转 90°">↻</button>
+          <button data-act="del" title="删除此页">✕</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  const nSel = pages.filter(p=>p.sel).length;
+  $('selInfo').textContent = pages.length ? `共 ${pages.length} 页，已选 ${nSel} 页` : '';
+  $('btnMerge').disabled = !pages.length;
+  $('btnExtract').disabled = !nSel;
+  $('btnExtract').textContent = `📑 只导出选中的页 (${nSel})`;
+  $('btnSplit').disabled = !pages.length;
+  updateSplitHint();
+}
+
+// 缩略图：按需加载自托管的 PDF.js，逐页渲染；失败时保留占位框，不影响导出
+let pdfjsReady = null;
+function loadPdfjs(){
+  if(!pdfjsReady) pdfjsReady = new Promise((resolve,reject) => {
+    const s = document.createElement('script');
+    s.src = 'js/vendor/pdfjs-pdf.min.js';
+    s.onload = () => { pdfjsLib.GlobalWorkerOptions.workerSrc = 'js/vendor/pdfjs-pdf.worker.min.js'; resolve(pdfjsLib); };
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+  return pdfjsReady;
+}
+const jsDocs = {};
+let thumbing = false;
+async function renderThumbs(){
+  if(thumbing) return;
+  thumbing = true;
+  try{
+    const lib = await loadPdfjs();
+    let p;
+    while((p = pages.find(x => !x.thumb && !x.thumbFail && fileById(x.fileId)))){
+      const f = fileById(p.fileId);
+      try{
+        if(!jsDocs[f.id]) jsDocs[f.id] = lib.getDocument({ data:f.bytes.slice(), isEvalSupported:false }).promise;
+        const jd = await jsDocs[f.id];
+        const pg = await jd.getPage(p.index+1);
+        const vp0 = pg.getViewport({ scale:1 });
+        const vp = pg.getViewport({ scale: 220 / Math.max(vp0.width, vp0.height) });
+        const c = document.createElement('canvas');
+        c.width = Math.ceil(vp.width); c.height = Math.ceil(vp.height);
+        await pg.render({ canvasContext:c.getContext('2d'), viewport:vp }).promise;
+        const url = c.toDataURL('image/jpeg', 0.75);
+        pages.filter(x => x.fileId===p.fileId && x.index===p.index).forEach(x => x.thumb = url);
+        const img = document.querySelector(`.pcard[data-key="${p.key}"] .thumb`);
+        if(img) img.innerHTML = `<img src="${url}" alt=""${p.rot?` style="transform:rotate(${p.rot}deg)"`:''}>`;
+      }catch(e){
+        p.thumbFail = true;
+      }
+    }
+  }catch(e){ /* 缩略图组件加载失败：保留占位框 */ }
+  thumbing = false;
+}
+
+// 页面网格交互（事件委托）
+const grid = $('pageGrid');
+grid.addEventListener('click', e => {
+  const card = e.target.closest('.pcard'); if(!card) return;
+  const act = e.target.closest('[data-act]'); if(!act) return;
+  const i = pages.findIndex(p=>p.key===card.dataset.key); if(i<0) return;
+  switch(act.dataset.act){
+    case 'sel': pages[i].sel = !pages[i].sel; break;
+    case 'left': if(i>0) [pages[i-1],pages[i]] = [pages[i],pages[i-1]]; break;
+    case 'right': if(i<pages.length-1) [pages[i+1],pages[i]] = [pages[i],pages[i+1]]; break;
+    case 'rot': pages[i].rot = (pages[i].rot+90)%360; break;
+    case 'del': pages.splice(i,1); break;
+  }
+  render();
+});
+grid.addEventListener('dragstart', e => {
+  const card = e.target.closest('.pcard'); if(!card) return;
+  dragKey = card.dataset.key; card.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', dragKey);
+});
+grid.addEventListener('dragend', () => { dragKey = null; render(); });
+grid.addEventListener('dragover', e => {
+  if(!dragKey) return;
+  e.preventDefault();
+  grid.querySelectorAll('.over').forEach(el=>el.classList.remove('over'));
+  const card = e.target.closest('.pcard'); if(card && card.dataset.key!==dragKey) card.classList.add('over');
+});
+grid.addEventListener('drop', e => {
+  if(!dragKey) return;
+  e.preventDefault(); e.stopPropagation();
+  const card = e.target.closest('.pcard'); if(!card || card.dataset.key===dragKey) return;
+  const from = pages.findIndex(p=>p.key===dragKey);
+  const [moved] = pages.splice(from,1);
+  let to = pages.findIndex(p=>p.key===card.dataset.key);
+  const r = card.getBoundingClientRect();
+  if(e.clientX > r.left + r.width/2) to++;
+  pages.splice(to,0,moved);
+  dragKey = null; render();
+});
+
+function selectAll(v){ pages.forEach(p=>p.sel=v); render(); }
+function rotateSelected(d){
+  const sel = pages.filter(p=>p.sel);
+  if(!sel.length){ setStatus('请先选中要旋转的页。', true); return; }
+  sel.forEach(p => p.rot = (p.rot + d + 360) % 360); setStatus(''); render();
+}
+function deleteSelected(){
+  const n = pages.filter(p=>p.sel).length;
+  if(!n){ setStatus('请先选中要删除的页。', true); return; }
+  pages = pages.filter(p=>!p.sel); setStatus(`已删除 ${n} 页，可点“还原”撤销。`); render();
+}
+function resetOrder(){
+  pages = [];
+  files.forEach(f => { for(let i=0;i<f.pageCount;i++) pages.push({ key:f.id+'-'+i, fileId:f.id, index:i, rot:0, sel:false, thumb:null }); });
+  render(); renderThumbs();
+}
+
+// 解析 "1-3,5,8-" 这样的页码表达式，返回段数组 [[start,end],...]（1 起始，含两端）
+function parseRanges(str, max){
+  const out = [];
+  for(const part of String(str).replace(/，/g,',').split(',').map(s=>s.trim()).filter(Boolean)){
+    const m = part.match(/^(\d*)\s*[-~—]\s*(\d*)$/) || part.match(/^(\d+)$/);
+    if(!m) throw new Error('无法识别“' + part + '”，请写成 1-3,5 这样的格式');
+    let a = m[1] ? parseInt(m[1],10) : 1, b = m.length>2 ? (m[2] ? parseInt(m[2],10) : max) : a;
+    if(a>b) [a,b] = [b,a];
+    if(a<1 || b>max) throw new Error('页码“' + part + '”超出范围（当前共 ' + max + ' 页）');
+    out.push([a,b]);
+  }
+  if(!out.length) throw new Error('请输入页码，例如 1-3,5');
+  return out;
+}
+function selectByRange(){
+  try{
+    const ranges = parseRanges($('rangeInput').value, pages.length);
+    pages.forEach((p,i) => p.sel = ranges.some(([a,b]) => i+1>=a && i+1<=b));
+    setStatus(''); render();
+  }catch(e){ setStatus(e.message, true); }
+}
+
+function updateSplitHint(){
+  const mode = $('splitMode').value, arg = $('splitArg');
+  if(mode==='every'){ arg.placeholder = '每个文件几页，如 2'; }
+  else if(mode==='ranges'){ arg.placeholder = '如 1-5,6-10'; }
+}
+
+// 生成新 PDF：同一源文件的页一次性复制，避免共享字体/图片被重复写入
+async function buildPdf(list){
+  const out = await PDFLib.PDFDocument.create();
+  const byFile = new Map();
+  list.forEach(p => { if(!byFile.has(p.fileId)) byFile.set(p.fileId, []); byFile.get(p.fileId).push(p.index); });
+  const copied = new Map();
+  for(const [fid, idxs] of byFile){
+    const uniq = [...new Set(idxs)];
+    const cps = await out.copyPages(fileById(fid).doc, uniq);
+    uniq.forEach((idx,k) => copied.set(fid+'-'+idx, { page:cps[k], used:false }));
+  }
+  for(const p of list){
+    const c = copied.get(p.fileId+'-'+p.index);
+    // 同一页在结果中出现多次时需要另复制一份
+    const page = c.used ? (await out.copyPages(fileById(p.fileId).doc, [p.index]))[0] : c.page;
+    c.used = true;
+    const base = fileById(p.fileId).doc.getPage(p.index).getRotation().angle || 0;
+    page.setRotation(PDFLib.degrees(((base + p.rot) % 360 + 360) % 360));
+    out.addPage(page);
+  }
+  return out.save();
+}
+
+function baseName(){
+  const n = files.length===1 ? files[0].name : (files[0] ? files[0].name : 'document');
+  return n.replace(/\.pdf$/i,'') + (files.length>1 ? '-merged' : '');
+}
+function clearResults(){ resultUrls.forEach(u=>URL.revokeObjectURL(u)); resultUrls=[]; $('results').innerHTML=''; }
+function makeLink(bytes, name){
+  const url = URL.createObjectURL(new Blob([bytes], { type:'application/pdf' }));
+  resultUrls.push(url);
+  const a = document.createElement('a'); a.href = url; a.download = name; a.textContent = '⬇ ' + name + '（' + fmtBytes(bytes.length) + '）';
+  return a;
+}
+function fmtBytes(n){ if(n<1024) return n+' B'; if(n<1048576) return (n/1024).toFixed(1)+' KB'; return (n/1048576).toFixed(2)+' MB'; }
+
+async function runExport(label, fn){
+  const btns = ['btnMerge','btnExtract','btnSplit'].map($);
+  btns.forEach(b=>b.disabled=true);
+  clearResults(); setStatus('⏳ 正在' + label + '…');
+  try{ await fn(); }
+  catch(e){ setStatus(label + '失败：' + e.message, true); }
+  render();
+}
+function exportAll(){
+  return runExport('生成', async () => {
+    const a = makeLink(await buildPdf(pages), baseName() + '.pdf');
+    $('results').appendChild(a); a.click();
+    setStatus(`✅ 已生成 ${pages.length} 页的 PDF。如果没有自动下载，请点下面的链接。`);
+  });
+}
+function exportSelected(){
+  const sel = pages.filter(p=>p.sel);
+  return runExport('提取', async () => {
+    const a = makeLink(await buildPdf(sel), baseName() + '-extract.pdf');
+    $('results').appendChild(a); a.click();
+    setStatus(`✅ 已提取 ${sel.length} 页。如果没有自动下载，请点下面的链接。`);
+  });
+}
+function exportSplit(){
+  const mode = $('splitMode').value, arg = $('splitArg').value.trim();
+  let groups;
+  try{
+    if(mode==='each') groups = pages.map((p,i)=>[i+1,i+1]);
+    else if(mode==='every'){
+      const n = parseInt(arg,10);
+      if(!(n>=1)) throw new Error('请填写每个文件的页数，例如 2');
+      groups = []; for(let i=1;i<=pages.length;i+=n) groups.push([i, Math.min(i+n-1, pages.length)]);
+    } else groups = parseRanges(arg, pages.length);
+  }catch(e){ setStatus(e.message, true); return; }
+  return runExport('拆分', async () => {
+    const base = baseName(), pad = String(pages.length).length;
+    for(let g=0; g<groups.length; g++){
+      const [a,b] = groups[g];
+      setStatus(`⏳ 正在拆分 ${g+1}/${groups.length} …`);
+      const bytes = await buildPdf(pages.slice(a-1, b));
+      const tag = a===b ? 'p'+String(a).padStart(pad,'0') : 'p'+String(a).padStart(pad,'0')+'-'+String(b).padStart(pad,'0');
+      $('results').appendChild(makeLink(bytes, `${base}-${tag}.pdf`));
+    }
+    if(groups.length>1){
+      const all = document.createElement('button'); all.className='tbtn'; all.textContent='⬇ 依次下载全部 ' + groups.length + ' 个文件';
+      all.onclick = async () => { for(const a of $('results').querySelectorAll('a')){ a.click(); await new Promise(r=>setTimeout(r,400)); } };
+      $('results').prepend(all);
+    }
+    setStatus(`✅ 已拆分为 ${groups.length} 个文件，点击下方链接下载（浏览器可能会询问是否允许下载多个文件）。`);
+  });
+}
+
+render();
+</script>
+
+<div class="site-legal-0101" style="clear:both;width:100%;box-sizing:border-box;padding:16px 12px 20px;text-align:center;font:12px/1.7 system-ui,sans-serif;color:#64748b;opacity:.9"><a href="https://0101.click/privacy.html" style="color:inherit;text-decoration:underline;opacity:.85">隐私政策 / プライバシー</a> · <a href="https://0101.click/about.html" style="color:inherit;text-decoration:underline;opacity:.85">关于 / 運営者情報</a> · <a href="https://0101.click/contact.html" style="color:inherit;text-decoration:underline;opacity:.85">联系 / お問い合わせ</a> · <a href="https://0101.click/" style="color:inherit;text-decoration:underline;opacity:.85">0101.click</a></div>
+</body>
+</html>
