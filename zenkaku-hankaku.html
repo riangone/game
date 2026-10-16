@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script src="js/consent-default.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied'});
+    gtag('config', 'G-Y1P7PMMM6V');
+  </script>
+  <script>
+    (function(){var sent=false;function u(e){var t=e.target;if(sent||!t||!t.closest||!t.closest('button,input,select,textarea,canvas,[role=button]')||t.closest('footer,nav'))return;sent=true;gtag('event','tool_use',{tool:'zenkaku-hankaku',action:'use'});}
+    document.addEventListener('click',u,true);document.addEventListener('change',u,true);})();
+  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>全角半角変換ツール｜英数字・カタカナ・記号・スペースを一括変換（ブラウザ内で完結）</title>
+<meta name="description" content="英字・数字・記号・スペース・カタカナの全角⇔半角を種類ごとに一括変換。半角カナの濁点（ｶﾞ→ガ）も正しく合成します。ブラウザ内で完結・サーバー送信なしなので、社内文書や個人情報も安心して変換できます。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--danger:#ef4444;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI",Meiryo,sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"BIZ UDGothic",monospace;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:1000px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;line-height:1.7;}
+.card{background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);}
+.card h2{font-size:16px;margin-bottom:12px;}
+.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.presets button{padding:8px 12px;border-radius:var(--radius-pill);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:12.5px;font-weight:700;cursor:pointer;}
+.presets button:hover,.presets button.on{border-color:var(--primary);color:var(--primary);background:var(--primary-subtle);}
+.rules{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px 14px;margin-bottom:14px;}
+.rules label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--text-muted);font-weight:700;}
+.rules small{font-weight:400;color:var(--text-light);}
+.rules select{padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:800px){.grid2{grid-template-columns:1fr;}}
+label.small{font-size:12px;color:var(--text-muted);font-weight:700;display:block;margin-bottom:6px;}
+textarea{width:100%;min-height:200px;padding:11px 12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:15px;line-height:1.7;font-family:var(--font-mono);resize:vertical;}
+textarea:focus{outline:none;border-color:var(--border-focus);}
+.hint{font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.6;min-height:1em;}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.btn{padding:10px 16px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:800;cursor:pointer;font-size:13px;}
+.btn:hover{background:var(--primary-hover);}
+.btn.sub{background:var(--bg-subtle);color:var(--text-main);border:1px solid var(--border-color);}
+.prose{line-height:1.85;font-size:14px;}
+.prose h2{font-size:17px;margin-bottom:10px;}
+.prose h3{font-size:15px;margin:14px 0 4px;}
+.prose ul{padding-left:20px;}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px;}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border-color);vertical-align:top;}
+th{background:var(--bg-subtle);color:var(--text-muted);font-size:12px;}
+td.mono{font-family:var(--font-mono);white-space:nowrap;}
+.table-wrap{overflow-x:auto;}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/zenkaku-hankaku.html">
+    <link rel="stylesheet" href="css/tools-header.css">
+  <script src="js/pwa-register.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-left">
+      <a href="tools.html" class="back-link" title="ツール一覧へ戻る">
+        <span class="back-icon">←</span>
+        <span class="back-text">ツール一覧</span>
+      </a>
+      <div class="app-brand">
+        <span class="brand-icon">🔡</span>
+        <span class="brand-title">全角半角変換</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="https://game.0101.click/languages.html" class="hall-btn" title="語学学習ページへ">
+        <span class="hall-icon">🎌</span>
+        <span class="hall-text">語学</span>
+      </a>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="ダーク／ライト切替">🌓</button>
+    </div>
+  </header>
+
+<main class="container">
+  <h1 class="page-title">🔡 全角半角変換ツール</h1>
+  <p class="page-sub">英字・数字・記号・スペース・カタカナを、種類ごとに「全角へ」「半角へ」「そのまま」を選んで一括変換します。半角カナの濁点・半濁点（ｶﾞ→ガ、ﾊﾟ→パ）も 1 文字に正しく合成します。</p>
+  <details class="local-note" style="margin:8px 0 12px;padding:8px 12px;border:1px solid rgba(16,185,129,.35);background:rgba(16,185,129,.08);border-radius:8px;font-size:13px;line-height:1.7;"><summary style="cursor:pointer;font-weight:700;color:#059669;">🔒 ブラウザ内で完結・サーバー送信なし</summary><p style="margin:6px 0 0;">入力した文章は、お使いのブラウザの中だけで JavaScript により変換されます。このページには送信処理がなく、本サイトや第三方のサーバーに送られることも、保存されることもありません。読み込み後はオフラインでも使えます。アクセス解析（Google Analytics）はページの閲覧とツール利用の有無のみを匿名で記録し、入力内容は含みません。詳しくは<a href="https://0101.click/privacy.html#local">プライバシーポリシー</a>をご覧ください。</p></details>
+
+  <section class="card">
+    <h2>変換ルール</h2>
+    <div class="presets" id="presets">
+      <button type="button" data-p="form">英数字は半角・カナは全角（おすすめ）</button>
+      <button type="button" data-p="half">すべて半角</button>
+      <button type="button" data-p="full">すべて全角</button>
+      <button type="button" data-p="kana">半角カナだけ全角に</button>
+    </div>
+    <div class="rules">
+      <label>英字 <small>A–Z a–z ⇔ Ａ–Ｚ ａ–ｚ</small><select id="r-alpha"></select></label>
+      <label>数字 <small>0–9 ⇔ ０–９</small><select id="r-digit"></select></label>
+      <label>記号 <small>! # ( ) - @ ~ ¥ など</small><select id="r-symbol"></select></label>
+      <label>スペース <small>半角スペース ⇔ 全角スペース</small><select id="r-space"></select></label>
+      <label>カタカナ <small>ｱｲｳ ⇔ アイウ（長音ーと濁点を含む）</small><select id="r-kana"></select></label>
+      <label>和文記号 <small>。「」、・ ⇔ ｡｢｣､･</small><select id="r-jpunct"></select></label>
+    </div>
+
+    <div class="grid2">
+      <div>
+        <label class="small" for="src">変換前</label>
+        <textarea id="src" spellcheck="false">ﾔﾏﾀﾞ ﾀﾛｳ　ＴＥＬ：０３－１２３４－５６７８
+〒１００－０００１　東京都千代田区１－２－３
+ｶﾞｷﾞｸﾞｹﾞｺﾞ ﾊﾟﾋﾟﾌﾟﾍﾟﾎﾟ ｳﾞｧｲｵﾘﾝ</textarea>
+      </div>
+      <div>
+        <label class="small" for="dst">変換後</label>
+        <textarea id="dst" spellcheck="false" readonly></textarea>
+      </div>
+    </div>
+    <div class="hint" id="stat"></div>
+    <div class="btns">
+      <button class="btn" id="copyBtn">📋 変換後をコピー</button>
+      <button class="btn sub" id="useBtn">⤴ 変換後を入力欄へ戻す</button>
+      <button class="btn sub" id="clearBtn">🗑 クリア</button>
+    </div>
+  </section>
+
+  <section class="card prose" style="margin-top:20px;">
+    <h2>全角と半角の使い分け</h2>
+    <p>全角文字は漢字と同じ幅、半角文字はその半分の幅で表示される文字です。もともとは昔のコンピューターが日本語を扱うために設けた区別ですが、今でも入力フォームや社内システムでは「どちらで入力するか」が細かく決められています。</p>
+    <p>よくあるのは、氏名のフリガナは<strong>全角カタカナ</strong>、電話番号・郵便番号・メールアドレスは<strong>半角英数字</strong>というルールです。銀行の振込名義のように半角カナを求められる場面もあります。ルールと違う文字が混ざっていると、送信時にエラーになったり、検索や並べ替えで同じ語として扱われなかったりします。</p>
+    <p>半角カナの「ｶﾞ」は、見た目は 1 文字でも実際は「ｶ」と濁点「ﾞ」の 2 文字です。そのため 1 文字ずつ置き換えるだけでは「カ゛」のように崩れてしまいます。このツールは濁点・半濁点を前の文字と合成して「ガ」「パ」に直し、逆方向では「ガ」を「ｶﾞ」に分解します。Mac で作ったファイル名などに含まれる結合用の濁点（見た目は同じでも別の文字）も同じように扱います。</p>
+    <p>変換はすべてブラウザ内で完結し、サーバーへの送信はありません。顧客名簿や社内資料を整える作業にも安心してお使いいただけます。</p>
+
+    <h3>変換の例</h3>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>変換前</th><th>おすすめ設定での結果</th><th>ポイント</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">ﾔﾏﾀﾞ ﾀﾛｳ</td><td class="mono">ヤマダ タロウ</td><td>濁点付きの「ﾀﾞ」を 1 文字の「ダ」に合成</td></tr>
+        <tr><td class="mono">０３－１２３４－５６７８</td><td class="mono">03-1234-5678</td><td>全角ハイフン「－」も半角「-」に</td></tr>
+        <tr><td class="mono">ｳﾞｧｲｵﾘﾝ</td><td class="mono">ヴァイオリン</td><td>「ｳﾞ」は「ヴ」になる</td></tr>
+        <tr><td class="mono">すーぱー</td><td class="mono">すーぱー</td><td>ひらがなの後の長音「ー」はカタカナ扱いにしない</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <section class="card prose" style="margin-top:20px;">
+    <h2>よくある質問</h2>
+    <h3>ひらがなや漢字も半角になりますか？</h3>
+    <p>なりません。半角の文字が存在するのは英数字・記号・カタカナと一部の句読点だけです。ひらがな・漢字はそのまま残ります。</p>
+    <h3>「ヵ」「ヶ」「ヮ」「ヰ」「ヱ」が半角にならないのはなぜですか？</h3>
+    <p>これらには対応する半角文字がありません。勝手に「ｶ」「ｹ」などに置き換えると意味が変わるため、そのまま残し、件数を変換結果の下に表示します。</p>
+    <h3>「〜」（波ダッシュ）や「―」（ダッシュ）は変換されますか？</h3>
+    <p>変換しません。全角チルダ「～」は半角「~」になりますが、見た目が似た「〜」「―」「‐」は別の文字です。用途によって置き換え先が変わるため、必要なら手で直してください。</p>
+    <h3>「＼」と「￥」はどうなりますか？</h3>
+    <p>「＼」は半角「\」に、「￥」は半角「¥」になります。日本語フォントでは半角「\」が「¥」の形で表示されることがありますが、文字としては別物です。</p>
+    <h3>入力した文章は送信・保存されますか？</h3>
+    <p>されません。ブラウザ内で完結・サーバー送信なしです。ページを閉じると入力内容は消えます。</p>
+  </section>
+</main>
+
+<script>
+(function(){const t=localStorage.getItem('app_theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');})();
+function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme');const next=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);localStorage.setItem('app_theme',next);}
+
+// 半角カナ（U+FF61–FF9F）と全角の対応。濁点付きの文字は表に入れず、合成・分解で扱う
+const H_KANA = 'ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝﾞﾟ';
+const F_KANA = 'ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン゛゜';
+const H_PUNCT = '｡｢｣､･', F_PUNCT = '。「」、・';
+const toFullKana = {}, toHalfKana = {}, toFullPunct = {}, toHalfPunct = {};
+for(let i=0;i<H_KANA.length;i++){ toFullKana[H_KANA[i]] = F_KANA[i]; toHalfKana[F_KANA[i]] = H_KANA[i]; }
+for(let i=0;i<H_PUNCT.length;i++){ toFullPunct[H_PUNCT[i]] = F_PUNCT[i]; toHalfPunct[F_PUNCT[i]] = H_PUNCT[i]; }
+const MARK = {'ﾞ':'\u3099','ﾟ':'\u309A','\u3099':'\u3099','\u309A':'\u309A'};
+const MARK_HALF = {'\u3099':'ﾞ','\u309A':'ﾟ'};
+
+// 基本文字＋結合用濁点を NFC で 1 文字にできれば返す（カ＋U+3099→ガ、ウ＋U+3099→ヴ）
+function compose(base, mark){ const c = (base + mark).normalize('NFC'); return c.length === 1 ? c : null; }
+
+const isKatakana = c => /[\u30A1-\u30FA\u30FC\uFF66-\uFF9D]/.test(c);
+
+function category(code){
+  if((code >= 0x41 && code <= 0x5A) || (code >= 0x61 && code <= 0x7A)) return 'alpha';
+  if(code >= 0x30 && code <= 0x39) return 'digit';
+  return 'symbol';
+}
+
+function convert(text, r){
+  const out = [];
+  let changed = 0;
+  const left = {};  // 半角にできずに残ったカナ
+  const chars = Array.from(text);
+  for(let i=0;i<chars.length;i++){
+    const c = chars[i], code = c.codePointAt(0), next = chars[i+1];
+    let o = c;
+
+    if(code >= 0x21 && code <= 0x7E){                 // 半角英数記号
+      if(r[category(code)] === 'full') o = String.fromCharCode(code + 0xFEE0);
+    }else if(code >= 0xFF01 && code <= 0xFF5E){       // 全角英数記号
+      if(r[category(code - 0xFEE0)] === 'half') o = String.fromCharCode(code - 0xFEE0);
+    }else if(c === ' '){
+      if(r.space === 'full') o = '\u3000';
+    }else if(c === '\u3000'){
+      if(r.space === 'half') o = ' ';
+    }else if(c === '\u00A5'){
+      if(r.symbol === 'full') o = '\uFFE5';
+    }else if(c === '\uFFE5'){
+      if(r.symbol === 'half') o = '\u00A5';
+    }else if(c in toFullPunct){
+      if(r.jpunct === 'full') o = toFullPunct[c];
+    }else if(c in toHalfPunct){
+      if(r.jpunct === 'half') o = toHalfPunct[c];
+    }else if(c in toFullKana){                        // 半角カナ
+      if(r.kana === 'full'){
+        o = toFullKana[c];
+        const m = MARK[next];
+        const k = m && compose(o, m);
+        if(k){ o = k; i++; }
+      }
+    }else if(r.kana === 'half' && (c === '\u3099' || c === '\u309A')){
+      if(isKatakana(chars[i-1] || '')) o = MARK_HALF[c]; // 前の文字は既に半角化済み
+    }else if(/[\u30A1-\u30FA\u30FC\u309B\u309C]/.test(c)){ // 全角カナ
+      const m = MARK[next];
+      if(r.kana === 'half'){
+        if(c === 'ー' && !isKatakana(chars[i-1] || '')){ /* ひらがな等の後の長音は残す */ }
+        else if(c in toHalfKana) o = toHalfKana[c];
+        else{
+          const d = c.normalize('NFD');
+          if(d.length === 2 && d[0] in toHalfKana) o = toHalfKana[d[0]] + MARK_HALF[d[1]];
+          else left[c] = (left[c] || 0) + 1;
+        }
+      }else if(r.kana === 'full' && m){
+        const k = compose(c, m);                      // 全角カナ＋濁点 → 1 文字
+        if(k){ o = k; i++; }
+      }
+    }
+    if(o !== c) changed++;
+    out.push(o);
+  }
+  return {text: out.join(''), changed, left};
+}
+
+const $ = id => document.getElementById(id);
+const KEYS = ['alpha','digit','symbol','space','kana','jpunct'];
+const PRESETS = {
+  form: {alpha:'half', digit:'half', symbol:'half', space:'keep', kana:'full', jpunct:'full'},
+  half: {alpha:'half', digit:'half', symbol:'half', space:'half', kana:'half', jpunct:'half'},
+  full: {alpha:'full', digit:'full', symbol:'full', space:'full', kana:'full', jpunct:'full'},
+  kana: {alpha:'keep', digit:'keep', symbol:'keep', space:'keep', kana:'full', jpunct:'full'}
+};
+KEYS.forEach(k => {
+  $('r-' + k).innerHTML = '<option value="half">半角へ</option><option value="full">全角へ</option><option value="keep">変換しない</option>';
+  $('r-' + k).addEventListener('change', () => { markPreset(null); run(); });
+});
+
+function rules(){ const r = {}; KEYS.forEach(k => r[k] = $('r-' + k).value); return r; }
+function markPreset(p){ document.querySelectorAll('#presets button').forEach(b => b.classList.toggle('on', b.dataset.p === p)); }
+function applyPreset(p){ KEYS.forEach(k => $('r-' + k).value = PRESETS[p][k]); markPreset(p); run(); }
+
+function run(){
+  const res = convert($('src').value, rules());
+  $('dst').value = res.text;
+  const left = Object.keys(res.left);
+  let s = Array.from($('src').value).length + ' 文字中 ' + res.changed + ' 文字を変換しました。';
+  if(left.length) s += ' 半角にできない文字が残っています：' + left.map(c => '「' + c + '」×' + res.left[c]).join(' ');
+  $('stat').textContent = s;
+}
+
+function copyText(text, btn){
+  const done = () => { const t = btn.textContent; btn.textContent = '✅ コピーしました'; setTimeout(() => btn.textContent = t, 1200); };
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text) && done());
+  }else if(fallbackCopy(text)) done();
+}
+function fallbackCopy(text){
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  let ok = false; try{ ok = document.execCommand('copy'); }catch(e){}
+  ta.remove(); return ok;
+}
+
+document.querySelectorAll('#presets button').forEach(b => b.addEventListener('click', () => applyPreset(b.dataset.p)));
+$('src').addEventListener('input', run);
+$('copyBtn').addEventListener('click', () => copyText($('dst').value, $('copyBtn')));
+$('useBtn').addEventListener('click', () => { $('src').value = $('dst').value; run(); });
+$('clearBtn').addEventListener('click', () => { $('src').value = ''; run(); $('src').focus(); });
+applyPreset('form');
+</script>
+
+<div class="site-legal-0101" style="clear:both;width:100%;box-sizing:border-box;padding:16px 12px 20px;text-align:center;font:12px/1.7 system-ui,sans-serif;color:#64748b;opacity:.9"><a href="https://0101.click/privacy.html" style="color:inherit;text-decoration:underline;opacity:.85">隐私政策 / プライバシー</a> · <a href="https://0101.click/about.html" style="color:inherit;text-decoration:underline;opacity:.85">关于 / 運営者情報</a> · <a href="https://0101.click/contact.html" style="color:inherit;text-decoration:underline;opacity:.85">联系 / お問い合わせ</a> · <a href="https://0101.click/" style="color:inherit;text-decoration:underline;opacity:.85">0101.click</a></div>
+</body>
+</html>
