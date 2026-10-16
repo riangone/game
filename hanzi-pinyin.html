@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script src="js/consent-default.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied'});
+    gtag('config', 'G-Y1P7PMMM6V');
+  </script>
+  <script>
+    (function(){var sent=false;function u(e){var t=e.target;if(sent||!t||!t.closest||!t.closest('button,input,select,textarea,canvas,[role=button]')||t.closest('footer,nav'))return;sent=true;gtag('event','tool_use',{tool:'hanzi-pinyin',action:'use'});}
+    document.addEventListener('click',u,true);document.addEventListener('change',u,true);})();
+  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>汉字转拼音 · 带声调 / 数字声调 / 首字母 / 按词分隔（浏览器本地转换）</title>
+<meta name="description" content="把汉字转换成拼音：带声调（zhōng wén）、数字声调（zhong1 wen2）、不带声调或拼音首字母（zw），可按字或按词分隔，并在汉字上方注音。多音字可点击切换读音，全部在浏览器本地处理，不上传。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--danger:#ef4444;--warn:#d97706;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);--warn:#fbbf24;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:1000px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;line-height:1.7;}
+.card{background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);}
+.card h2{font-size:16px;margin-bottom:12px;}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px 14px;margin-bottom:14px;}
+.opts label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--text-muted);font-weight:700;}
+.opts select{padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;}
+.checks{display:flex;flex-wrap:wrap;gap:8px 18px;margin-bottom:14px;font-size:13px;}
+.checks label{display:flex;align-items:center;gap:6px;cursor:pointer;}
+.checks label.off{opacity:.45;}
+label.small{font-size:12px;color:var(--text-muted);font-weight:700;display:block;margin-bottom:6px;}
+textarea{width:100%;min-height:150px;padding:11px 12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:15px;line-height:1.7;font-family:var(--font-sans);resize:vertical;}
+textarea:focus{outline:none;border-color:var(--border-focus);}
+textarea#dst{font-family:var(--font-mono);margin-top:14px;}
+.hint{font-size:12px;color:var(--text-muted);margin-top:8px;line-height:1.6;min-height:1em;}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.btn{padding:10px 16px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:800;cursor:pointer;font-size:13px;}
+.btn:hover{background:var(--primary-hover);}
+.btn.sub{background:var(--bg-subtle);color:var(--text-main);border:1px solid var(--border-color);}
+.ruby-box{margin-top:14px;padding:14px;border:1px dashed var(--border-color);border-radius:var(--radius-md);font-size:22px;line-height:2.4;word-break:break-all;max-height:360px;overflow:auto;}
+.ruby-box ruby{margin:0 1px;}
+.ruby-box rt{font-size:12px;color:var(--text-muted);font-family:var(--font-sans);}
+.ruby-box ruby.poly{cursor:pointer;border-bottom:2px dotted var(--warn);}
+.ruby-box ruby.poly rt{color:var(--warn);font-weight:700;}
+.ruby-box ruby.fixed{border-bottom-style:solid;}
+.ruby-box .empty{font-size:13px;color:var(--text-light);}
+.warn{margin-top:14px;padding:10px 12px;border-left:3px solid #f59e0b;background:rgba(245,158,11,.08);border-radius:4px;font-size:13px;line-height:1.7;}
+.prose{line-height:1.85;font-size:14px;}
+.prose h2{font-size:17px;margin-bottom:10px;}
+.prose h3{font-size:15px;margin:14px 0 4px;}
+.prose ul{padding-left:20px;}
+.prose a,.warn a{color:var(--primary);}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px;}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border-color);vertical-align:top;}
+th{background:var(--bg-subtle);color:var(--text-muted);font-size:12px;}
+td.mono{font-family:var(--font-mono);}
+.table-wrap{overflow-x:auto;}
+.credit{margin-top:20px;font-size:12px;color:var(--text-muted);line-height:1.7;}
+.credit a{color:inherit;}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/hanzi-pinyin.html">
+    <link rel="stylesheet" href="css/tools-header.css">
+  <script src="js/pwa-register.js"></script>
+</head>
+<body>
+  <!-- 统一小工具顶部导航 -->
+  <header class="app-header">
+    <div class="header-left">
+      <a href="tools.html" class="back-link" title="返回实用工具箱">
+        <span class="back-icon">←</span>
+        <span class="back-text">工具箱</span>
+      </a>
+      <div class="app-brand">
+        <span class="brand-icon">🀄</span>
+        <span class="brand-title">汉字转拼音</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="https://game.0101.click/pinyin-basics.html" class="hall-btn" title="站内拼音基础课程">
+        <span class="hall-icon">📖</span>
+        <span class="hall-text">拼音课程</span>
+      </a>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="切换深色/浅色模式">🌓</button>
+    </div>
+  </header>
+
+<main class="container">
+  <h1 class="page-title">🀄 汉字转拼音</h1>
+  <p class="page-sub">粘贴一段中文，立即得到带声调拼音（zhōng wén）、数字声调（zhong1 wen2）、无声调或拼音首字母（zw）。可以按字或按词分隔，也能在汉字上方注音；读错的多音字点一下就能换成正确读音。</p>
+  <details class="local-note" style="margin:8px 0 12px;padding:8px 12px;border:1px solid rgba(16,185,129,.35);background:rgba(16,185,129,.08);border-radius:8px;font-size:13px;line-height:1.7;"><summary style="cursor:pointer;font-weight:700;color:#059669;">🔒 本地处理 · 不上传服务器</summary><p style="margin:6px 0 0;">你输入的文字只在你的浏览器中用 JavaScript 转换（拼音词库随页面一起下载，存放在本站），本页没有任何上传接口，不会发送到本站或第三方服务器，也不会被保存。页面加载完成后断网也能继续使用。本站用 Google Analytics 统计匿名访问量，只记录访问了哪个页面、是否使用过工具，不包含你输入的内容。详见<a href="https://0101.click/privacy.html#local">隐私政策</a>。</p></details>
+
+  <section class="card">
+    <h2>转换设置</h2>
+    <div class="opts">
+      <label>输出格式
+        <select id="o-format">
+          <option value="tone">带声调　zhōng wén</option>
+          <option value="num">数字声调　zhong1 wen2</option>
+          <option value="none">不带声调　zhong wen</option>
+          <option value="first">首字母　z w</option>
+        </select>
+      </label>
+      <label>分隔方式
+        <select id="o-sep">
+          <option value="char">按字分隔（每个音节一个空格）</option>
+          <option value="word">按词分隔（词内连写）</option>
+          <option value="nospace">不分隔</option>
+        </select>
+      </label>
+      <label id="l-neutral">轻声写法（数字声调）
+        <select id="o-neutral">
+          <option value="none">不加数字　men</option>
+          <option value="5">写作 5　men5</option>
+          <option value="0">写作 0　men0</option>
+        </select>
+      </label>
+      <label id="l-v">ü 的写法（无声调符号时）
+        <select id="o-v">
+          <option value="u">ü　lü nü</option>
+          <option value="v">v　lv nv（键盘输入法习惯）</option>
+        </select>
+      </label>
+    </div>
+    <div class="checks">
+      <label><input type="checkbox" id="o-sandhi"> 按实际读音标注“一”“不”变调（一个 → yí gè）</label>
+      <label><input type="checkbox" id="o-punct"> 中文标点转为英文标点</label>
+      <label><input type="checkbox" id="o-upper"> 输出大写</label>
+    </div>
+
+    <label class="small" for="src">中文原文</label>
+    <textarea id="src" spellcheck="false">我们一起去银行办理业务。行长说：“重庆的长城很长。”
+一个人不会，一起学就会了。西安、天安门、绿色、女儿。</textarea>
+    <textarea id="dst" spellcheck="false" readonly aria-label="拼音结果"></textarea>
+    <div class="hint" id="stat"></div>
+    <div class="btns">
+      <button class="btn" id="copyBtn">📋 复制拼音</button>
+      <button class="btn sub" id="resetBtn">↺ 还原多音字修改</button>
+      <button class="btn sub" id="clearBtn">🗑 清空</button>
+    </div>
+
+    <label class="small" style="margin-top:18px;">汉字注音对照（<span style="color:var(--warn);font-weight:700;">橙色虚线</span>是多音字，点击可切换读音，结果会同步更新）</label>
+    <div class="ruby-box" id="ruby"></div>
+
+    <div class="warn">⚠️ <b>多音字可能识别不准。</b>本工具根据内置词库和上下文自动选择读音，常见词基本正确，但像“行长”“长大”“重新”这类一字多音的字，遇到少见搭配、人名地名或古诗文时可能会标错。用于教学、印刷或正式场合前，请对照上面的注音逐字核对，标错的字直接点击改正。想系统学习声母、韵母和声调，可以去站内的<a href="https://game.0101.click/pinyin-basics.html">拼音基础课程</a>。</div>
+  </section>
+
+  <section class="card prose" style="margin-top:20px;">
+    <h2>几种拼音格式分别用在哪里</h2>
+    <p><strong>带声调拼音</strong>（zhōng wén）是课本、词典和教材使用的标准写法，适合给生字注音、做识字卡片或给外国朋友标读音。声调符号标在主要元音上，例如 guǒ、xiě、liù。</p>
+    <p><strong>数字声调</strong>（zhong1 wen2）把声调写成音节末尾的数字 1–4，在不方便输入声调符号的场合很常见：电子表格、程序数据、语音合成标注、部分学习软件和词典数据（如 CC-CEDICT）都用这种格式。轻声有人不标、有人写 5 或 0，可以在上面的“轻声写法”里选择。</p>
+    <p><strong>不带声调</strong>（zhong wen）常用于网址、文件名、用户名和英文环境下的姓名；<strong>首字母</strong>（zw）常用于通讯录排序、拼音检索（输入 “bj” 找到“北京”）和缩写编号。</p>
+    <h3>按字分隔和按词分隔有什么不同</h3>
+    <p>按字分隔时每个音节之间都有空格，便于逐字对照；按词分隔则遵循《汉语拼音正词法基本规则》的思路，把同一个词的音节连写，例如“银行”写作 yínháng、“天安门”写作 Tiān'ānmén。连写时如果后一个音节以 a、o、e 开头，会自动加隔音符号 '（如 Xī'ān），避免和 xiān 混淆。分词由浏览器内置的中文分词功能完成，较旧的浏览器会退回到词库分词，效果略差。</p>
+
+    <h3>转换示例</h3>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>原文</th><th>带声调 · 按词</th><th>数字声调 · 按字</th><th>首字母 · 不分隔</th></tr></thead>
+      <tbody>
+        <tr><td>中华人民共和国</td><td class="mono">zhōnghuá rénmín gònghéguó</td><td class="mono">zhong1 hua2 ren2 min2 gong4 he2 guo2</td><td class="mono">zhrmghg</td></tr>
+        <tr><td>西安</td><td class="mono">xī'ān</td><td class="mono">xi1 an1</td><td class="mono">xa</td></tr>
+        <tr><td>绿色</td><td class="mono">lǜsè</td><td class="mono">lü4 se4（或 lv4 se4）</td><td class="mono">ls</td></tr>
+        <tr><td>一个</td><td class="mono">yīgè（勾选变调后为 yígè）</td><td class="mono">yi1 ge4</td><td class="mono">yg</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p style="margin-top:8px;font-size:13px;color:var(--text-muted);">首字母只取每个音节的第一个字母，所以 zh、ch、sh 分别记作 z、c、s，这也是通讯录和输入法的通行做法。</p>
+  </section>
+
+  <section class="card prose" style="margin-top:20px;">
+    <h2>常见问题</h2>
+    <h3>多音字标错了怎么办？</h3>
+    <p>在“汉字注音对照”里，带橙色虚线的字有不止一个读音，点击它会依次切换候选读音，上面的拼音结果会立即同步；改过的字下划线变成实线。点“还原多音字修改”可以撤销所有手动修改。修改输入内容后会重新识别。</p>
+    <h3>“一”和“不”为什么默认标原调？</h3>
+    <p>词典和《汉语拼音正词法》要求按原调标注，所以“一个”默认写作 yī gè。如果你在做朗读材料，想标出实际读音（一个 yí gè、不对 bú duì），勾选“按实际读音标注变调”即可。三声连读变调（如“你好”实际读 ní hǎo）按惯例不改写。</p>
+    <h3>英文、数字和标点会怎样处理？</h3>
+    <p>原样保留，不会被拆成单个字母。勾选“中文标点转为英文标点”后，“，。！？：；”等会换成英文标点并自动补空格，方便直接用于英文文档。</p>
+    <h3>能转换繁体字吗？</h3>
+    <p>可以，常见繁体字也能识别读音，但输出只有拼音，不会把繁体转换成简体。</p>
+    <h3>输入的内容会上传吗？</h3>
+    <p>不会。拼音词库和转换程序都随页面下载到你的浏览器里，转换在本地完成，本页没有任何上传接口。</p>
+  </section>
+
+  <p class="credit">开源组件：拼音转换使用 <a href="https://github.com/zh-lx/pinyin-pro" rel="noopener" target="_blank">pinyin-pro</a> v3.29.5（MIT License, © 2022-present zh-lx），未经修改、由本站自托管，许可声明见 <a href="js/vendor/pinyin-pro.LICENSE.txt">pinyin-pro.LICENSE.txt</a>。</p>
+</main>
+
+<script src="js/vendor/pinyin-pro.min.js"></script>
+<script>
+(function(){const t=localStorage.getItem('app_theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');})();
+function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme');const next=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);localStorage.setItem('app_theme',next);}
+
+const P = window.pinyinPro;
+const $ = id => document.getElementById(id);
+const PUNCT = {'，':',','。':'.','！':'!','？':'?','：':':','；':';','、':',','“':'"','”':'"','‘':"'",'’':"'",'（':'(','）':')','《':'"','》':'"','…':'...','—':'-','～':'~'};
+const wordSeg = (window.Intl && Intl.Segmenter) ? new Intl.Segmenter('zh', {granularity: 'word'}) : null;
+
+// items：逐字结果 {ch, zh, py(带调), cands(候选读音), word(所在词序号)}；override：手动改过的读音
+let items = [], override = {};
+
+function analyse(){
+  const text = $('src').value;
+  const all = P.pinyin(text, {type: 'all', toneSandhi: $('o-sandhi').checked});
+  items = all.map(x => ({ch: x.origin, zh: x.isZh && !!x.pinyin, py: x.pinyin, cands: x.isZh ? (x.polyphonic || []) : [], word: 0}));
+  // 分词：优先用浏览器内置分词，否则退回 pinyin-pro 的词库分词
+  let words;
+  if(wordSeg) words = Array.from(wordSeg.segment(text), s => s.segment);
+  else words = P.segment(text, {format: P.OutputFormat.ZhSegment});
+  let w = 0, left = 0;
+  for(const it of items){
+    while(left <= 0 && w < words.length){ left = words[w].length; w++; }
+    it.word = w; left -= it.ch.length;
+  }
+  override = {};
+}
+
+// 把带调拼音转成所选格式
+function fmt(py){
+  const f = $('o-format').value, useV = $('o-v').value === 'v';
+  let s;
+  if(f === 'tone') s = py;
+  else if(f === 'first') s = P.convert(py, {format: 'toneNone'}).charAt(0);
+  else if(f === 'none') s = P.convert(py, {format: 'toneNone'});
+  else{
+    s = P.convert(py, {format: 'symbolToNum'});
+    if(/0$/.test(s)){ const n = $('o-neutral').value; s = s.slice(0, -1) + (n === 'none' ? '' : n); }
+  }
+  if(useV && f !== 'tone') s = s.replace(/ü/g, 'v');
+  return s;
+}
+
+function render(){
+  const sep = $('o-sep').value, f = $('o-format').value, punct = $('o-punct').checked;
+  let out = '', prevZh = null, zhCount = 0, polyCount = 0;
+  const html = [];
+  items.forEach((it, i) => {
+    const py = override[i] || it.py;
+    if(it.zh){
+      zhCount++;
+      let s = fmt(py);
+      if(prevZh !== null){
+        const sameWord = sep === 'word' && items[prevZh].word === it.word && prevZh === i - 1;
+        if(sep === 'char' || (sep === 'word' && !sameWord)) out += ' ';
+        else if(sameWord && (f === 'tone' || f === 'none') && /^[aoeāáǎàōóǒòēéěè]/.test(s)) s = "'" + s;
+      }else if(out && /[0-9A-Za-z,.!?:;)]$/.test(out)) out += ' ';
+      out += s; prevZh = i;
+    }else{
+      let c = it.ch;
+      if(punct && PUNCT[c]){
+        c = PUNCT[c];
+        // 英文排版：句读和右引号、右括号后面补空格（后面紧跟其他标点或换行时不补）
+        const next = items[i + 1];
+        if(/[，。！？：；、”’）》…]/.test(it.ch) && next && !/[\s，。！？：；、”’）》…]/.test(next.ch)) c += ' ';
+      }
+      if(prevZh !== null && /^[0-9A-Za-z(“‘（《"']/.test(c) && !(punct && /^["')]/.test(c) && /[”’）》]/.test(it.ch))) out += ' ';
+      out += c; prevZh = null;
+    }
+    // 注音对照
+    if(it.ch === '\n') html.push('<br>');
+    else if(it.zh){
+      const poly = it.cands.length > 1;
+      html.push('<ruby' + (poly ? ' class="poly' + (override[i] ? ' fixed' : '') + '" data-i="' + i + '" role="button" title="多音字：' + it.cands.join(' / ') + '"' : '') + '>' + esc(it.ch) + '<rt>' + esc(py) + '</rt></ruby>');
+      if(poly) polyCount++;
+    }else html.push(esc(it.ch));
+  });
+  if($('o-upper').checked) out = out.toUpperCase();
+  $('dst').value = out;
+  $('ruby').innerHTML = html.join('') || '<span class="empty">输入中文后，这里会显示逐字注音。</span>';
+  const fixed = Object.keys(override).length;
+  $('stat').textContent = zhCount ? '共 ' + zhCount + ' 个汉字，其中 ' + polyCount + ' 个是多音字' + (fixed ? '，已手动修改 ' + fixed + ' 处' : '') + '。' : '';
+}
+
+function esc(s){ return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function syncOpts(){
+  const f = $('o-format').value;
+  $('l-neutral').style.display = f === 'num' ? '' : 'none';
+  $('l-v').style.display = f === 'tone' ? 'none' : '';
+}
+
+function copyText(text, btn){
+  const done = () => { const t = btn.textContent; btn.textContent = '✅ 已复制'; setTimeout(() => btn.textContent = t, 1200); };
+  if(navigator.clipboard && window.isSecureContext){
+    navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text) && done());
+  }else if(fallbackCopy(text)) done();
+}
+function fallbackCopy(text){
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  let ok = false; try{ ok = document.execCommand('copy'); }catch(e){}
+  ta.remove(); return ok;
+}
+
+$('src').addEventListener('input', () => { analyse(); render(); });
+$('o-sandhi').addEventListener('change', () => { analyse(); render(); });
+['o-format','o-sep','o-neutral','o-v','o-punct','o-upper'].forEach(id => $(id).addEventListener('change', () => { syncOpts(); render(); }));
+$('ruby').addEventListener('click', e => {
+  const r = e.target.closest('ruby.poly'); if(!r) return;
+  const i = +r.dataset.i, it = items[i], cur = override[i] || it.py;
+  const next = it.cands[(it.cands.indexOf(cur) + 1) % it.cands.length];
+  if(next === it.py) delete override[i]; else override[i] = next;
+  render();
+});
+$('copyBtn').addEventListener('click', () => copyText($('dst').value, $('copyBtn')));
+$('resetBtn').addEventListener('click', () => { override = {}; render(); });
+$('clearBtn').addEventListener('click', () => { $('src').value = ''; analyse(); render(); $('src').focus(); });
+syncOpts(); analyse(); render();
+</script>
+
+<div class="site-legal-0101" style="clear:both;width:100%;box-sizing:border-box;padding:16px 12px 20px;text-align:center;font:12px/1.7 system-ui,sans-serif;color:#64748b;opacity:.9"><a href="https://0101.click/privacy.html" style="color:inherit;text-decoration:underline;opacity:.85">隐私政策 / プライバシー</a> · <a href="https://0101.click/about.html" style="color:inherit;text-decoration:underline;opacity:.85">关于 / 運営者情報</a> · <a href="https://0101.click/contact.html" style="color:inherit;text-decoration:underline;opacity:.85">联系 / お問い合わせ</a> · <a href="https://0101.click/" style="color:inherit;text-decoration:underline;opacity:.85">0101.click</a> · 拼音转换：<a href="https://github.com/zh-lx/pinyin-pro" rel="noopener" target="_blank" style="color:inherit;text-decoration:underline;opacity:.85">pinyin-pro</a>（MIT）</div>
+</body>
+</html>
