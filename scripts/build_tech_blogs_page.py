@@ -33,7 +33,7 @@ html_template = '''<!DOCTYPE html>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>中日韩与全球企业技术博客雷达 · 工程前沿 RSS 聚合平台</title>
-  <meta name="description" content="汇聚 LINE、Mercari、ZOZO、Pixiv、日本经济新闻 (Nikkei)、NAVER、Kakao、Toss、Coupang、美团、有赞、云风、Draveness、EMQX、APISIX、Doris、CoolShell、Cloudflare、GitHub 等 54 家中日韩及全球顶尖科技企业技术博客。采用三层容灾架构：内置精选离线兜底 + 浏览器实时代理抓取 + GitHub Actions CI 静态预聚合。">
+  <meta name="description" content="汇聚 LINE、Mercari、ZOZO、Pixiv、日本经济新闻 (Nikkei)、NAVER、Kakao、Toss、Coupang、美团、有赞、云风、Draveness、EMQX、APISIX、Doris、CoolShell、Cloudflare、GitHub 等 54 家中日韩及全球顶尖科技企业技术博客。只收录各博客文章的标题、日期和原文链接，由本站服务器每 3 小时抓取官方 RSS 更新。">
   <meta name="theme-color" content="#0284c7">
 
   <style>
@@ -919,15 +919,15 @@ html_template = '''<!DOCTYPE html>
     <section class="hero-banner">
       <h2 class="hero-title">中日韩与全球知名科技企业 <span>技术博客与前沿雷达</span></h2>
       <p class="hero-desc">
-        秉持“静态底座打底、边缘代理实时更新、CI/CD 定时归集”的高可用架构设计。实时追踪来自 NAVER、Kakao、Toss、Coupang、LINE/Yahoo、Mercari、ZOZO、Pixiv、日本经济新闻 (Nikkei)、Cloudflare、GitHub、Netflix、美团、有赞、云风、Draveness、EMQX、APISIX、Doris、CoolShell 等 54 家顶尖团队的一线实战演进。
+        本站服务器每 3 小时抓取一次各博客的官方 RSS，只保存文章标题、日期和原文链接，点击后到原站阅读全文。追踪来自 NAVER、Kakao、Toss、Coupang、LINE/Yahoo、Mercari、ZOZO、Pixiv、日本经济新闻 (Nikkei)、Cloudflare、GitHub、Netflix、美团、有赞、云风、Draveness、EMQX、APISIX、Doris、CoolShell 等 54 家顶尖团队的一线实战演进。
       </p>
 
       <!-- 架构特性徽章 -->
       <div class="feature-pills">
         <div class="feature-pill"><span class="icon">📦</span> 内置精选离线兜底 (0ms 秒开)</div>
-        <div class="feature-pill"><span class="icon">⚡</span> CI 静态预聚合 (GitHub Actions 定时同步)</div>
-        <div class="feature-pill"><span class="icon">🌐</span> 浏览器端边缘代理实时获取 (CORS 容灾)</div>
-        <div class="feature-pill"><span class="icon">🔒</span> 零后端常驻依赖与用户隐私隔离</div>
+        <div class="feature-pill"><span class="icon">⚡</span> 服务器每 3 小时抓取官方 RSS</div>
+        <div class="feature-pill"><span class="icon">🔗</span> 只存标题 · 日期 · 原文链接</div>
+        <div class="feature-pill"><span class="icon">🔒</span> 浏览器不连接第三方代理</div>
       </div>
 
       <!-- 架构设计折叠栏 -->
@@ -938,15 +938,15 @@ html_template = '''<!DOCTYPE html>
         <div class="arch-content">
           <div class="arch-item">
             <strong>Level 0: DOM 内置种子打底</strong>
-            页面打包时已预置完整博客元数据与最新文章精选。弱网、断网或代理失效时 100% 正常阅读与跳转导航。
+            页面打包时已预置完整博客元数据与最新文章精选。弱网或断网时也能正常浏览和跳转。
           </div>
           <div class="arch-item">
-            <strong>Level 1: CI/CD 预聚合静态 JSON</strong>
-            通过 <code>scripts/update_tech_blogs.py</code> 定时由 GitHub Actions 在无 CORS 限制环境下抓取，生成 <code>data/tech-blogs.json</code> 静态分发。
+            <strong>Level 1: 服务器定时抓取的静态 JSON</strong>
+            本站服务器用 <code>scripts/update_tech_blogs.py</code> 每 3 小时直接抓取各博客官方 RSS，只保存标题、日期和原文链接，生成 <code>data/tech-blogs.json</code> 静态分发。
           </div>
           <div class="arch-item">
-            <strong>Level 2: 运行时多路代理动态拉取</strong>
-            客户端支持通过 AllOrigins / CorsProxy 实时拉取最新 3~5 篇动态，DOMParser 本地解析并进行 LocalStorage 缓存。
+            <strong>Level 2: 手动重新载入</strong>
+            点「重新载入最新数据」只会重新读取本站的 <code>data/tech-blogs.json</code>，浏览器不直接访问 RSS 源，也不经过任何第三方代理。
           </div>
         </div>
       </details>
@@ -975,7 +975,7 @@ html_template = '''<!DOCTYPE html>
 
         <button class="btn-action-primary" id="syncAllBtn" onclick="syncAllLiveFeeds()">
           <span id="syncBtnIcon">🔄</span>
-          <span id="syncBtnText">一键实时同步动态</span>
+          <span id="syncBtnText">重新载入最新数据</span>
         </button>
       </div>
     </div>
@@ -983,7 +983,7 @@ html_template = '''<!DOCTYPE html>
     <!-- 实时拉取进度面板 -->
     <div class="progress-container" id="progressContainer">
       <div class="progress-header">
-        <span id="progressStatusText">正在通过代理异步获取最新 Feed...</span>
+        <span id="progressStatusText">正在读取本站最新数据...</span>
         <span id="progressCountText">0 / 54</span>
       </div>
       <div class="progress-bar-bg">
@@ -1104,9 +1104,9 @@ html_template = '''<!DOCTYPE html>
         // 状态徽章判定
         let statusBadge = '<span class="status-badge static">📦 内置精选</span>';
         if (blog._source === 'live') {
-          statusBadge = '<span class="status-badge live">🟢 实时更新</span>';
+          statusBadge = '<span class="status-badge live">🟢 已刷新</span>';
         } else if (blog._source === 'ci') {
-          statusBadge = '<span class="status-badge ci">⚡ CI 预构建</span>';
+          statusBadge = '<span class="status-badge ci">⚡ 服务器抓取</span>';
         } else if (blog._loading) {
           statusBadge = '<span class="status-badge loading">⏳ 同步中...</span>';
         }
@@ -1171,7 +1171,7 @@ html_template = '''<!DOCTYPE html>
                 <button class="btn-foot" onclick="copyRss('${blog.feedUrl}')" title="复制 RSS 订阅地址">
                   <span>📋 复制 RSS</span>
                 </button>
-                <button class="btn-foot" onclick="refreshSingleBlog('${blog.id}')" title="通过代理单项重新拉取">
+                <button class="btn-foot" onclick="refreshSingleBlog('${blog.id}')" title="重新读取本站最新数据">
                   <span>🔄 刷新</span>
                 </button>
               </div>
@@ -1263,7 +1263,7 @@ html_template = '''<!DOCTYPE html>
       }, 2400);
     }
 
-    // 2. 检查本地静态预聚合 JSON (Level 1: CI/CD 输出的 data/tech-blogs.json)
+    // 2. 检查本地静态预聚合 JSON (Level 1: 服务器定时抓取输出的 data/tech-blogs.json)
     async function tryLoadCIPrebuiltData() {
       try {
         const resp = await fetch('data/tech-blogs.json?_t=' + Date.now());
@@ -1291,133 +1291,29 @@ html_template = '''<!DOCTYPE html>
       }
     }
 
-    // 3. 运行时多代理异步抓取引擎 (Level 2: 浏览器直连或多代理容灾)
-    // 代理候选池
-    const PROXY_CANDIDATES = [
-      url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
-      url => `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}`
-    ];
-
-    // RSS / Atom XML 浏览器端解析函数
-    function parseRssXml(xmlText) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(xmlText, 'text/xml');
-      const articles = [];
-
-      // 判断是 Atom 还是 RSS 2.0
-      const entries = doc.querySelectorAll('entry');
-      if (entries.length > 0) {
-        // Atom
-        entries.forEach(entry => {
-          if (articles.length >= 5) return;
-          const title = (entry.querySelector('title')?.textContent || '').trim();
-          let link = '';
-          const linkEl = entry.querySelector('link[rel="alternate"]') || entry.querySelector('link');
-          if (linkEl) {
-            link = linkEl.getAttribute('href') || linkEl.textContent;
-          }
-          const dateEl = entry.querySelector('published') || entry.querySelector('updated');
-          const dateStr = dateEl ? dateEl.textContent : '';
-          let pubDate = '';
-          if (dateStr) {
-            pubDate = dateStr.slice(0, 10);
-          }
-
-          if (title && link) {
-            articles.push({ title, link, pubDate });
-          }
-        });
-      } else {
-        // RSS 2.0
-        const items = doc.querySelectorAll('item');
-        items.forEach(item => {
-          if (articles.length >= 5) return;
-          const title = (item.querySelector('title')?.textContent || '').trim();
-          let link = (item.querySelector('link')?.textContent || '').trim();
-          if (!link) {
-            const guid = item.querySelector('guid')?.textContent || '';
-            if (guid.startsWith('http')) link = guid;
-          }
-          const pubDateEl = item.querySelector('pubDate');
-          let pubDate = '';
-          if (pubDateEl && pubDateEl.textContent) {
-            const d = new Date(pubDateEl.textContent);
-            if (!isNaN(d.getTime())) {
-              pubDate = d.toISOString().slice(0, 10);
-            }
-          }
-
-          if (title && link) {
-            articles.push({ title, link, pubDate });
-          }
-        });
+    // 3. 手动刷新：只重新读取本站服务器定时抓取生成的 data/tech-blogs.json
+    //    （浏览器不直连 RSS 源，也不经过任何第三方代理；JSON 只含标题、日期和原文链接）
+    let serverSnapshotPromise = null;
+    function loadServerSnapshot() {
+      if (!serverSnapshotPromise) {
+        serverSnapshotPromise = fetch('data/tech-blogs.json?_t=' + Date.now())
+          .then(resp => {
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            return resp.json();
+          })
+          .finally(() => setTimeout(() => { serverSnapshotPromise = null; }, 60000));
       }
-
-      return articles;
+      return serverSnapshotPromise;
     }
 
-    // 单个 Feed 抓取 (依次尝试代理)
+    // 单个 Feed：从服务器快照里取对应博客的文章
     async function fetchFeedWithFallback(feedUrl) {
-      // 检查 LocalStorage 缓存 (1小时内有效)
-      const cacheKey = 'tb_feed_' + btoa(feedUrl).slice(0, 32);
-      const cached = localStorage.getItem(cacheKey);
-      if (cached) {
-        try {
-          const parsed = JSON.parse(cached);
-          if (Date.now() - parsed.ts < 3600 * 1000 && parsed.articles && parsed.articles.length > 0) {
-            return { articles: parsed.articles, fromCache: true };
-          }
-        } catch (e) {}
+      const data = await loadServerSnapshot();
+      const blog = (data.blogs || []).find(b => b.feedUrl === feedUrl);
+      if (!blog || !blog.articles || blog.articles.length === 0) {
+        throw new Error('No server snapshot for ' + feedUrl);
       }
-
-      for (let i = 0; i < PROXY_CANDIDATES.length; i++) {
-        const proxyGen = PROXY_CANDIDATES[i];
-        const reqUrl = proxyGen(feedUrl);
-        try {
-          const controller = new AbortController();
-          const timer = setTimeout(() => controller.abort(), 9000);
-          const resp = await fetch(reqUrl, { signal: controller.signal });
-          clearTimeout(timer);
-
-          if (!resp.ok) continue;
-
-          // 若是 rss2json，返回的是结构化 JSON
-          if (reqUrl.includes('rss2json')) {
-            const data = await resp.json();
-            if (data && data.items && data.items.length > 0) {
-              const articles = data.items.slice(0, 5).map(it => ({
-                title: it.title,
-                link: it.link,
-                pubDate: (it.pubDate || '').slice(0, 10)
-              }));
-              localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), articles }));
-              return { articles, fromCache: false };
-            }
-          } else if (reqUrl.includes('allorigins')) {
-            const data = await resp.json();
-            if (data && data.contents) {
-              const articles = parseRssXml(data.contents);
-              if (articles.length > 0) {
-                localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), articles }));
-                return { articles, fromCache: false };
-              }
-            }
-          } else {
-            // 直接 text
-            const text = await resp.text();
-            const articles = parseRssXml(text);
-            if (articles.length > 0) {
-              localStorage.setItem(cacheKey, JSON.stringify({ ts: Date.now(), articles }));
-              return { articles, fromCache: false };
-            }
-          }
-        } catch (err) {
-          // 尝试下一代理
-          continue;
-        }
-      }
-
-      throw new Error('All proxies failed for ' + feedUrl);
+      return { articles: blog.articles, fromCache: false };
     }
 
     // 单个博客独立刷新
@@ -1427,7 +1323,7 @@ html_template = '''<!DOCTYPE html>
 
       blog._loading = true;
       filterBlogs();
-      showToast('🔄 正在拉取 ' + blog.name + ' 最新文章...');
+      showToast('🔄 正在读取 ' + blog.name + ' 最新文章...');
 
       try {
         const res = await fetchFeedWithFallback(blog.feedUrl);
@@ -1437,7 +1333,7 @@ html_template = '''<!DOCTYPE html>
           showToast('✅ ' + blog.name + ' 最新文章已更新！');
         }
       } catch (e) {
-        showToast('⚠️ 实时拉取超时，已保留静态精选数据。');
+        showToast('⚠️ 读取最新数据失败，已保留现有内容。');
       } finally {
         blog._loading = false;
         filterBlogs();
@@ -1462,7 +1358,7 @@ html_template = '''<!DOCTYPE html>
       let completedCount = 0;
       const total = currentBlogs.length;
 
-      // 并发池控制（限制最大 3 个请求同时跑，避免请求风暴与限流）
+      // 并发池（数据都来自同一份服务器快照，实际只请求一次）
       const queue = [...currentBlogs];
       const concurrency = 3;
 
@@ -1497,9 +1393,9 @@ html_template = '''<!DOCTYPE html>
 
       isSyncingAll = false;
       syncBtn.disabled = false;
-      document.getElementById('syncBtnText').textContent = '一键实时同步动态';
-      progressStatusText.textContent = '🎉 全量博客动态同步完成！';
-      showToast('🎉 全部 ' + total + ' 家博客动态已完成同步！');
+      document.getElementById('syncBtnText').textContent = '重新载入最新数据';
+      progressStatusText.textContent = '🎉 已载入最新数据！';
+      showToast('🎉 已载入 ' + total + ' 家博客的最新数据');
 
       setTimeout(() => {
         progressContainer.style.display = 'none';

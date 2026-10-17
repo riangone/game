@@ -1046,7 +1046,7 @@
       <h2 class="hero-title">中日韩美 · <span>全球大报多重视角雷达</span></h2>
       <p class="hero-desc">
         同一时刻，世界如何被讲述？汇聚中、日、韩、美四方 24 家顶级通讯社与主流大报，打破单一语境的信息偏狭与推荐算法的信息茧房。
-        采用三层容灾架构：内置种子离线秒开 + CI 静态预聚合快照 + 边缘代理实时同步。
+        本站服务器每 3 小时抓取一次各媒体官方 RSS，只显示标题、来源和原文链接，点击后到原站阅读全文。
       </p>
 
       <div class="feature-pills">
@@ -1059,12 +1059,12 @@
       <!-- 状态与同步条 -->
       <div class="status-bar">
         <div class="status-info">
-          <span class="status-badge live" id="statusBadge">⚡ CI 预构建快照</span>
+          <span class="status-badge live" id="statusBadge">⚡ 服务器定时抓取</span>
           <span id="statSummary">收录 24 家媒体 · 共 270+ 篇要闻</span>
           <span id="lastUpdated" style="color: var(--text-light);">更新于: 刚刚</span>
         </div>
         <button class="sync-btn" id="syncAllBtn" onclick="syncAllFeeds()">
-          <span>🔄</span> 实时同步所有视角
+          <span>🔄</span> 重新载入最新数据
         </button>
       </div>
 
@@ -7613,7 +7613,7 @@
       if (allCountEl) allCountEl.textContent = total;
     }
 
-    // 2. Level 1: 异步获取本地 CI 静态 JSON 快照 (data/global-news.json)
+    // 2. Level 1: 异步获取服务器定时抓取的静态 JSON 快照 (data/global-news.json)
     async function loadCiStaticData() {
       try {
         const resp = await fetch('./data/global-news.json', { cache: 'no-cache' });
@@ -7622,7 +7622,7 @@
           if (remote && remote.sources && remote.sources.length > 0) {
             currentData = pruneStale(remote);
             document.getElementById('statusBadge').className = 'status-badge ci';
-            document.getElementById('statusBadge').textContent = '⚡ CI 预构建快照';
+            document.getElementById('statusBadge').textContent = '⚡ 服务器定时抓取';
             if (remote.updatedAt) {
               document.getElementById('lastUpdated').textContent = `更新于: ${formatRelativeTime(remote.updatedAt)}`;
             }
@@ -7635,120 +7635,22 @@
       }
     }
 
-    // 3. Level 2: 浏览器端多路代理并发实时同步
-    const PROXY_CANDIDATES = [
-      url => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`
-    ];
-
-    async function fetchRssText(url) {
-      for (const getProxyUrl of PROXY_CANDIDATES) {
-        try {
-          const proxyUrl = getProxyUrl(url);
-          const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(6000) });
-          if (!res.ok) continue;
-          if (proxyUrl.includes('allorigins.win')) {
-            const data = await res.json();
-            if (data && data.contents) return data.contents;
-          } else {
-            const text = await res.text();
-            if (text && text.includes('<')) return text;
-          }
-        } catch (e) {}
-      }
-      return null;
-    }
-
-    function parseXmlArticles(xmlText, src) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(xmlText, 'text/xml');
-      const articles = [];
-      const items = doc.querySelectorAll('item, entry');
-
-      items.forEach((item, idx) => {
-        if (idx >= 12) return;
-        const title = (item.querySelector('title')?.textContent || '').trim();
-        let link = (item.querySelector('link')?.textContent || '').trim();
-        if (!link) {
-          const linkEl = item.querySelector('link[href]');
-          if (linkEl) link = linkEl.getAttribute('href');
-        }
-        if (!link) {
-          const guid = item.querySelector('guid')?.textContent || '';
-          if (guid.startsWith('http')) link = guid;
-        }
-        if (!title || !link) return;
-
-        let dateStr = item.querySelector('pubDate, date, updated, published')?.textContent || '';
-        let pubDateIso = null;
-        if (dateStr) {
-          const d = new Date(dateStr);
-          if (!isNaN(d.getTime())) pubDateIso = d.toISOString();
-        }
-        // 读不到日期不再冒充“刚刚”；仅对已知无日期但实时的源（undatedFeed）用当前时间
-        if (!pubDateIso && src.undatedFeed) pubDateIso = new Date().toISOString();
-        if (!isFreshIso(pubDateIso, Date.now())) return;
-
-
-        articles.push({
-          title,
-          link,
-          pubDateIso,
-          snippet: '',
-          sourceId: src.id,
-          sourceName: src.name,
-          region: src.region,
-          regionFlag: src.regionFlag,
-          category: src.category,
-          categoryName: src.categoryName,
-          language: src.language
-        });
-      });
-      return articles;
-    }
-
+    // 3. 手动刷新：只重新读取本站服务器定时抓取生成的 data/global-news.json
+    //    （浏览器不直连媒体 RSS，也不经过任何第三方代理；JSON 只含标题、日期和原文链接）
     async function syncAllFeeds() {
       if (isSyncing) return;
       isSyncing = true;
 
       const btn = document.getElementById('syncAllBtn');
-      const pBar = document.getElementById('progressBar');
-      const pFill = document.getElementById('progressFill');
-
       btn.disabled = true;
-      btn.innerHTML = '<span>⏳</span> 正在多路同步...';
-      pBar.style.display = 'block';
-      pFill.style.width = '0%';
+      btn.innerHTML = '<span>⏳</span> 正在读取...';
 
-      let completed = 0;
-      const total = currentData.sources.length;
-
-      for (const src of currentData.sources) {
-        try {
-          const xml = await fetchRssText(src.feedUrl);
-          if (xml) {
-            const newArts = parseXmlArticles(xml, src);
-            if (newArts.length > 0) {
-              src.articles = newArts;
-              src.status = 'ok';
-            }
-          }
-        } catch (e) {}
-
-        completed++;
-        pFill.style.width = `${(completed / total) * 100}%`;
-      }
+      await loadCiStaticData();
 
       isSyncing = false;
       btn.disabled = false;
-      btn.innerHTML = '<span>🔄</span> 实时同步所有视角';
-      pBar.style.display = 'none';
-
-      document.getElementById('statusBadge').className = 'status-badge live';
-      document.getElementById('statusBadge').textContent = '🟢 边缘实时已同步';
-      document.getElementById('lastUpdated').textContent = '更新于: 刚刚 (实时)';
-
-      renderActiveView();
-      showToast('🎉 全球 24 家大报新闻视角同步完成');
+      btn.innerHTML = '<span>🔄</span> 重新载入最新数据';
+      showToast('已载入本站服务器最新抓取的数据');
     }
 
     // 初始化渲染
