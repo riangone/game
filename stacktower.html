@@ -184,6 +184,7 @@
 </style>
     <link rel="canonical" href="https://game.0101.click/stacktower.html">
   <script src="js/pwa-register.js"></script>
+  <script src="js/weekly-challenge.js"></script>
 </head>
 <body>
 
@@ -724,6 +725,7 @@
   function gameOver() {
     state = 'dead';
     if (score > best) { best = score; localStorage.setItem('stackTowerBest', String(best)); }
+    if (window.WeeklyChallenge) WeeklyChallenge.record('stacktower', score);
     bestEl.textContent = "最高分 " + best;
     finalScoreEl.textContent = String(score);
     overlay.querySelector('.sub').textContent = (score >= best && score > 0) ? '打破个人最高纪录！' : ('最高连击 ' + comboBestStreak + ' 层完美');

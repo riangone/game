@@ -236,6 +236,7 @@
 </style>
     <link rel="canonical" href="https://game.0101.click/towerdefense.html">
   <script src="js/pwa-register.js"></script>
+  <script src="js/weekly-challenge.js"></script>
 </head>
 <body>
 <canvas id="game"></canvas>
@@ -2634,6 +2635,7 @@
 
     const best = Math.max(state.score, parseInt(localStorage.getItem(BEST_KEY) || '0', 10));
     localStorage.setItem(BEST_KEY, String(best));
+    if (window.WeeklyChallenge) WeeklyChallenge.record('towerdefense', state.score);
 
     document.getElementById('overlayTitle').textContent = `🎉 关卡胜利！第 ${curLevel.id} 关已守卫`;
     document.getElementById('overlayStars').textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
@@ -2677,6 +2679,7 @@
     state.gameOver = true; state.win = won; state.running = false;
     const best = Math.max(state.score, parseInt(localStorage.getItem(BEST_KEY) || '0', 10));
     localStorage.setItem(BEST_KEY, String(best));
+    if (window.WeeklyChallenge) WeeklyChallenge.record('towerdefense', state.score);
 
     document.getElementById('overlayTitle').textContent = '💥 晶石核心沦陷';
     document.getElementById('overlayStars').textContent = '';

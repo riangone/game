@@ -24,6 +24,7 @@
   <link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
   <link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon.png">
   <script src="js/pwa-register.js"></script>
+  <script src="js/weekly-challenge.js"></script>
   <style>
     :root {
       --bg-base: #f8fafc;
@@ -296,6 +297,34 @@
       border: 1px solid var(--border-subtle);
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
     }
+
+    /* 本周挑战 */
+    .weekly-challenge {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%);
+      border: 1px solid #c7d2fe;
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-card);
+    }
+    .wc-icon { font-size: 36px; line-height: 1; }
+    .wc-body { flex: 1; min-width: 220px; }
+    .wc-label { font-size: 12px; font-weight: 700; color: var(--accent); letter-spacing: .04em; }
+    .wc-title { font-size: 17px; font-weight: 700; color: var(--text-main); margin: 2px 0 6px; }
+    .wc-progress { height: 8px; background: #e0e7ff; border-radius: 4px; overflow: hidden; }
+    .wc-progress-bar { height: 100%; width: 0; background: var(--accent); transition: width .4s; }
+    .wc-progress-bar.done { background: var(--accent-green); }
+    .wc-meta { font-size: 13px; color: var(--text-muted); margin-top: 6px; }
+    .wc-note { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+    .weekly-challenge .btn-play-wc {
+      background: var(--accent); color: #fff; border: none; border-radius: var(--radius-md);
+      padding: 10px 18px; font-weight: 700; font-size: 14px; cursor: pointer;
+    }
+    .weekly-challenge .btn-play-wc:hover { opacity: .9; }
 
     /* 过滤与搜索 */
     .toolbar-section {
@@ -914,6 +943,19 @@
       </div>
     </section>
 
+    <!-- 本周挑战：按 ISO 周轮换，成绩只存在本机 localStorage -->
+    <section class="weekly-challenge" id="weeklyChallenge" aria-live="polite">
+      <div class="wc-icon" id="wcIcon">🏆</div>
+      <div class="wc-body">
+        <div class="wc-label" id="wcLabel">本周挑战</div>
+        <div class="wc-title" id="wcTitle"></div>
+        <div class="wc-progress"><div class="wc-progress-bar" id="wcBar"></div></div>
+        <div class="wc-meta" id="wcMeta"></div>
+        <div class="wc-note" id="wcNote"></div>
+      </div>
+      <button type="button" class="btn-play-wc" id="wcPlay"></button>
+    </section>
+
     <!-- 检索与分类工具栏 -->
     <section class="toolbar-section">
       <div class="filter-tabs" id="categoryTabs">
@@ -1084,6 +1126,7 @@
 
       // 更新分类徽标计数
       updateCategoryCounts();
+      renderWeeklyChallenge();
 
       // 更新搜索栏占位符与悬浮按钮
       searchInput.placeholder = i18n[lang].searchPlaceholder;
@@ -1297,6 +1340,44 @@
       const info = randomGame[currentLang] || randomGame.zh;
       openPreview(randomGame.file, info.title + i18n[currentLang].randomSuffix);
     }
+
+    // 本周挑战卡片
+    const wcText = {
+      zh: { label: '本周挑战', title: (g, t, u) => `在「${g}」中单局达到 ${t} ${u}`,
+            range: (k, s, e) => `${k}（${s} – ${e}）`, best: (b, u) => `你的本周最高：${b} ${u}`,
+            done: '✅ 已达成本周目标！', none: '本周还没有成绩', play: '去挑战 ➔',
+            note: '每周一换游戏和目标分。成绩只保存在这台设备的浏览器里，不上传，也没有线上排行榜。' },
+      ja: { label: '今週のチャレンジ', title: (g, t, u) => `「${g}」で1プレイ ${t} ${u}を目指そう`,
+            range: (k, s, e) => `${k}（${s} – ${e}）`, best: (b, u) => `今週のあなたのベスト：${b} ${u}`,
+            done: '✅ 今週の目標クリア！', none: '今週の記録はまだありません', play: '挑戦する ➔',
+            note: '毎週月曜日にゲームと目標スコアが変わります。記録はこの端末のブラウザ内だけに保存され、送信やオンラインランキングはありません。' }
+    };
+    function renderWeeklyChallenge() {
+      const box = document.getElementById('weeklyChallenge');
+      if (!window.WeeklyChallenge) { box.style.display = 'none'; return; }
+      const c = WeeklyChallenge.current();
+      const best = WeeklyChallenge.getBest(c);
+      const t = wcText[currentLang] || wcText.zh;
+      const g = c.game;
+      const name = currentLang === 'ja' ? g.ja : g.zh;
+      const unit = currentLang === 'ja' ? g.unitJa : g.unitZh;
+      const md = d => `${d.getMonth() + 1}/${d.getDate()}`;
+      const done = best >= c.target;
+      document.getElementById('wcIcon').textContent = g.icon;
+      document.getElementById('wcLabel').textContent = t.label + ' · ' + t.range(c.key, md(c.start), md(c.end));
+      document.getElementById('wcTitle').textContent = t.title(name, c.target, unit);
+      const bar = document.getElementById('wcBar');
+      bar.style.width = Math.min(100, Math.round(best / c.target * 100)) + '%';
+      bar.classList.toggle('done', done);
+      document.getElementById('wcMeta').textContent = best > 0 ? (t.best(best, unit) + (done ? '　' + t.done : '')) : t.none;
+      document.getElementById('wcNote').textContent = t.note;
+      const btn = document.getElementById('wcPlay');
+      btn.textContent = t.play;
+      btn.onclick = () => openPreview(g.file, name);
+    }
+    // 从游戏返回（弹窗 iframe 或新标签页）时刷新成绩
+    window.addEventListener('storage', (e) => { if (!e.key || e.key.indexOf('wc_best_') === 0) renderWeeklyChallenge(); });
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) renderWeeklyChallenge(); });
 
     // ESC 键关闭 Modal
     window.addEventListener('keydown', (e) => {
