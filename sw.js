@@ -1,5 +1,5 @@
 /* Hyperion Unified Service Worker */
-const CACHE_VERSION = 'hyperion-pwa-v2';
+const CACHE_VERSION = 'hyperion-pwa-v3';
 const PRECACHE_NAME = `precache-${CACHE_VERSION}`;
 const RUNTIME_NAME = `runtime-${CACHE_VERSION}`;
 

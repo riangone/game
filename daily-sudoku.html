@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<script src="js/consent-default.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-Y1P7PMMM6V');</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>每日数独 · 每天一题，所有人同一题 | 0101.click</title>
+<meta name="description" content="每天一道 9×9 数独，所有人做同一题。免费、不用注册，进度只存在你的浏览器里。">
+<link rel="canonical" href="https://game.0101.click/daily-sudoku.html">
+<link rel="icon" type="image/svg+xml" href="icons/favicon.svg">
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--line:#cbd5e1;--bold:#334155;--tx:#0f172a;--mu:#64748b;--pri:#0284c7;--sel:#e0f2fe;--same:#bae6fd;--bad:#dc2626}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"PingFang SC","Hiragino Sans",sans-serif}
+.w{max-width:460px;margin:0 auto;padding:10px 12px 24px}
+.top{display:flex;align-items:center;gap:8px}.top h1{font-size:18px;margin:0;flex:1}.top a{color:var(--mu);font-size:13px;text-decoration:none}
+.bar{display:flex;justify-content:space-between;color:var(--mu);font-size:13px;margin:8px 2px}
+#b{display:grid;grid-template-columns:repeat(9,1fr);aspect-ratio:1;border:2px solid var(--bold);background:var(--card);user-select:none}
+.c{display:flex;align-items:center;justify-content:center;font-size:clamp(18px,5.6vw,26px);border-right:1px solid var(--line);border-bottom:1px solid var(--line);cursor:pointer;color:var(--pri);position:relative}
+.c.g{color:var(--tx);font-weight:600}.c:nth-child(9n){border-right:0}.c.r3{border-right:2px solid var(--bold)}.c.b3{border-bottom:2px solid var(--bold)}
+.c.same{background:var(--same)}.c.hl{background:var(--sel)}.c.sel{background:#7dd3fc}.c.bad{color:var(--bad)}
+.c .n{position:absolute;inset:1px;display:grid;grid-template-columns:repeat(3,1fr);font-size:clamp(8px,2.2vw,11px);color:var(--mu);line-height:1}
+.c .n span{display:flex;align-items:center;justify-content:center}
+.pad{display:grid;grid-template-columns:repeat(9,1fr);gap:5px;margin-top:10px}
+.pad button,.tools button{font-size:20px;padding:10px 0;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--tx);cursor:pointer}
+.pad button.done{opacity:.3}
+.tools{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}.tools button{font-size:14px}.tools button.on{background:var(--sel);border-color:var(--pri)}
+#win{display:none;margin-top:12px;padding:14px;border-radius:14px;background:#ecfdf5;border:1px solid #6ee7b7;text-align:center}
+#win b{font-size:17px}#win button{margin-top:8px;font-size:14px;padding:8px 14px;border-radius:10px;border:1px solid #10b981;background:#fff;cursor:pointer}
+.more{margin-top:14px;font-size:13px;color:var(--mu);text-align:center}.more a{color:var(--mu)}
+</style>
+</head>
+<body>
+<div class="w">
+  <div class="top"><h1>📅 每日数独</h1><a href="https://0101.click/">首页</a></div>
+  <div class="bar"><span id="date"></span><span id="time">0:00</span></div>
+  <div id="b" role="grid" aria-label="数独"></div>
+  <div class="pad" id="pad"></div>
+  <div class="tools"><button id="note">✏️ 笔记</button><button id="erase">⌫ 擦除</button><button id="undo">↶ 撤销</button></div>
+  <div id="win"><b>完成！</b><div id="winTxt"></div><button id="share">复制成绩</button></div>
+  <div class="more">每天 0 点换题，所有人同一题 · <a href="sudoku.html">更多数独（4×4 起）</a></div>
+</div>
+<script src="js/o1.js"></script>
+<script>
+(function(){
+'use strict';
+var now=new Date(), Y=now.getFullYear(), M=now.getMonth()+1, D=now.getDate(), KEY='dsdk_'+(Y*10000+M*100+D);
+document.getElementById('date').textContent=Y+'年'+M+'月'+D+'日';
+// 以日期为种子，保证同一天所有人同一题
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+var R=rng(Y*10000+M*100+D);
+function shuf(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(R()*(i+1));var x=a[i];a[i]=a[j];a[j]=x;}return a;}
+function ok(g,i,v){var r=Math.floor(i/9),c=i%9,br=r-r%3,bc=c-c%3;for(var k=0;k<9;k++){if(g[r*9+k]===v||g[k*9+c]===v||g[(br+Math.floor(k/3))*9+bc+k%3]===v)return false;}return true;}
+function fill(g){var i=g.indexOf(0);if(i<0)return true;var vs=shuf([1,2,3,4,5,6,7,8,9]);for(var k=0;k<9;k++){if(ok(g,i,vs[k])){g[i]=vs[k];if(fill(g))return true;}}g[i]=0;return false;}
+function count(g,lim){var i=g.indexOf(0);if(i<0)return 1;var n=0;for(var v=1;v<=9&&n<lim;v++){if(ok(g,i,v)){g[i]=v;n+=count(g,lim-n);}}g[i]=0;return n;}
+var sol=new Array(81).fill(0);fill(sol);
+var puz=sol.slice(), order=shuf(Array.from({length:81},function(_,i){return i;})), clues=81, TARGET=30;
+for(var k=0;k<81&&clues>TARGET;k++){var i=order[k],j=80-i;if(!puz[i])continue;var a=puz[i],b=puz[j];puz[i]=0;puz[j]=0;
+  if(count(puz.slice(),2)!==1){puz[i]=a;puz[j]=b;}else clues-=(i===j?1:2);}
+// 状态
+var st=JSON.parse(localStorage.getItem(KEY)||'null')||{v:puz.slice(),n:Array(81).fill(0),t:0,done:false};
+var sel=-1, noteMode=false, hist=[], start=Date.now()-st.t*1000;
+var B=document.getElementById('b'), cells=[];
+for(var x=0;x<81;x++){var d=document.createElement('div');d.className='c'+(puz[x]?' g':'')+((x%9===2||x%9===5)?' r3':'')+((Math.floor(x/9)===2||Math.floor(x/9)===5)?' b3':'');
+  d.dataset.i=x;d.addEventListener('click',function(){sel=+this.dataset.i;draw();});B.appendChild(d);cells.push(d);}
+var P=document.getElementById('pad');for(var v=1;v<=9;v++){var bt=document.createElement('button');bt.textContent=v;bt.dataset.v=v;bt.addEventListener('click',function(){put(+this.dataset.v);});P.appendChild(bt);}
+function save(){st.t=Math.floor((Date.now()-start)/1000);localStorage.setItem(KEY,JSON.stringify(st));}
+function bad(i){var v=st.v[i];if(!v)return false;st.v[i]=0;var r=!ok(st.v,i,v);st.v[i]=v;return r;}
+function draw(){var sv=sel>=0?st.v[sel]:0,cnt={};
+  for(var i=0;i<81;i++){var c=cells[i],v=st.v[i];cnt[v]=(cnt[v]||0)+1;
+    c.classList.toggle('sel',i===sel);
+    c.classList.toggle('hl',sel>=0&&i!==sel&&(Math.floor(i/9)===Math.floor(sel/9)||i%9===sel%9||(Math.floor(i/27)===Math.floor(sel/27)&&Math.floor(i%9/3)===Math.floor(sel%9/3))));
+    c.classList.toggle('same',!!sv&&v===sv&&i!==sel);c.classList.toggle('bad',bad(i));
+    if(v){c.textContent=v;}else if(st.n[i]){var h='<div class="n">';for(var k=1;k<=9;k++)h+='<span>'+((st.n[i]>>k)&1?k:'')+'</span>';c.innerHTML=h+'</div>';}else c.textContent='';}
+  P.querySelectorAll('button').forEach(function(b){b.classList.toggle('done',(cnt[+b.dataset.v]||0)>=9);});}
+function put(v){if(sel<0||puz[sel]||st.done)return;hist.push([sel,st.v[sel],st.n[sel]]);
+  if(noteMode){if(!st.v[sel])st.n[sel]^=(1<<v);}else{st.v[sel]=st.v[sel]===v?0:v;st.n[sel]=0;}
+  draw();save();check();}
+document.getElementById('note').onclick=function(){noteMode=!noteMode;this.classList.toggle('on',noteMode);};
+document.getElementById('erase').onclick=function(){if(sel<0||puz[sel]||st.done)return;hist.push([sel,st.v[sel],st.n[sel]]);st.v[sel]=0;st.n[sel]=0;draw();save();};
+document.getElementById('undo').onclick=function(){var h=hist.pop();if(!h||st.done)return;st.v[h[0]]=h[1];st.n[h[0]]=h[2];sel=h[0];draw();save();};
+document.addEventListener('keydown',function(e){if(e.key>='1'&&e.key<='9')put(+e.key);else if(e.key==='Backspace'||e.key==='Delete')document.getElementById('erase').click();
+  else if(sel>=0&&/^Arrow/.test(e.key)){var r=Math.floor(sel/9),c=sel%9;if(e.key==='ArrowUp')r=(r+8)%9;if(e.key==='ArrowDown')r=(r+1)%9;if(e.key==='ArrowLeft')c=(c+8)%9;if(e.key==='ArrowRight')c=(c+1)%9;sel=r*9+c;draw();e.preventDefault();}});
+function fmt(s){return Math.floor(s/60)+':'+('0'+s%60).slice(-2);}
+function check(){for(var i=0;i<81;i++)if(st.v[i]!==sol[i])return;if(!st.done){st.done=true;save();}win();}
+function win(){if(window.O1)O1.addDay('q');var o=window.O1?O1.get():{},n=window.O1?O1.streak(o.q):1;
+  document.getElementById('winTxt').textContent='用时 '+fmt(st.t)+(n>1?' · 已连续 '+n+' 天':'')+' · 明天再来';
+  document.getElementById('win').style.display='block';}
+document.getElementById('share').onclick=function(){var t='0101.click 每日数独 '+M+'/'+D+' 用时 '+fmt(st.t)+' https://game.0101.click/daily-sudoku.html';
+  (navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){document.getElementById('share').textContent='已复制';},function(){prompt('复制这段文字',t);});};
+setInterval(function(){if(st.done)return;var s=Math.floor((Date.now()-start)/1000);document.getElementById('time').textContent=fmt(s);if(s%10===0)save();},1000);
+document.getElementById('time').textContent=fmt(st.t);
+draw();if(st.done)win();
+window.__dsdk={sol:sol,puz:puz,clues:clues};
+})();
+</script>
+</body>
+</html>

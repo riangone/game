@@ -176,3 +176,45 @@
   ensurePwaMeta();
   registerServiceWorker();
 })();
+
+/* 2026-10-20 工具页：记录「最近用过」（js/o1.js），并把说明/FAQ 区块默认折叠。
+ * 只处理引用了 css/tools-header.css 的工具页；含输入框、按钮、画布的区块不折叠。 */
+(function () {
+  'use strict';
+  function isToolPage() { return !!document.querySelector('link[href*="tools-header.css"]'); }
+  var KW = /常见问题|FAQ|使用步骤|使用方法|使用说明|怎么|如何|规则|原理|说明|关于|什么是|为什么|区别|教程|小贴士|注意事项|よくある質問|使い方/;
+  function fold() {
+    var hs = document.querySelectorAll('main h2, main h3, body > section h2, body > section h3, .container h2, .container h3');
+    var n = 0;
+    Array.prototype.forEach.call(hs, function (h) {
+      var box = h.closest('section, article, .card, .panel, .section-card, .ref-section');
+      if (!KW.test(h.textContent) && !(box && /(^|\s)(prose|guide|ref-section|doc|faq|seo[\w-]*)(\s|$)/.test(box.className))) return;
+      if (!box || box.getAttribute('data-o1fold') || box.closest('details')) return;
+      if (box.matches('main, body') || box.querySelector('input, textarea, select, canvas, button, [contenteditable]')) return;
+      if (box.querySelector('h2, h3') !== h) return;
+      var det = document.createElement('details'); det.className = 'o1-fold';
+      var sum = document.createElement('summary');
+      h.parentNode.insertBefore(det, h);
+      sum.appendChild(h); det.appendChild(sum);
+      while (det.nextSibling) det.appendChild(det.nextSibling);
+      box.setAttribute('data-o1fold', '1'); n++;
+    });
+    if (n) {
+      var st = document.createElement('style');
+      st.textContent = 'details.o1-fold>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px}' +
+        'details.o1-fold>summary::-webkit-details-marker{display:none}' +
+        'details.o1-fold>summary::before{content:"▸";opacity:.6;transition:transform .15s}' +
+        'details.o1-fold[open]>summary::before{transform:rotate(90deg)}' +
+        'details.o1-fold>summary>h2,details.o1-fold>summary>h3{display:inline;margin:0}';
+      document.head.appendChild(st);
+    }
+  }
+  function boot() {
+    if (!isToolPage()) return;
+    try { fold(); } catch (e) {}
+    var s = document.createElement('script');
+    s.src = 'js/o1.js'; s.setAttribute('data-o1', 'tool');
+    document.body.appendChild(s);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
+})();
