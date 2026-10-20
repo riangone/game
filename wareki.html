@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script src="js/consent-default.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied'});
+    gtag('config', 'G-Y1P7PMMM6V');
+  </script>
+  <script>
+    (function(){var sent=false;function u(e){var t=e.target;if(sent||!t||!t.closest||!t.closest('button,input,select,textarea,canvas,[role=button]')||t.closest('footer,nav'))return;sent=true;gtag('event','tool_use',{tool:'wareki',action:'use'});}
+    document.addEventListener('click',u,true);document.addEventListener('change',u,true);})();
+  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>和暦・西暦変換と年齢早見表｜明治・大正・昭和・平成・令和（印刷できる干支付き一覧）</title>
+<meta name="description" content="西暦と明治・大正・昭和・平成・令和を相互に変換。改元の年は月日で判定します。生まれ年ごとの満年齢と干支を一覧にした年齢早見表は印刷にも対応。計算はブラウザ内だけで行い、入力した生年月日は送信しません。">
+<style>
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--danger:#ef4444;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI",Meiryo,sans-serif;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
+header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
+.header-left{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+.back-link{display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:13px;font-weight:600;padding:6px 10px;border-radius:var(--radius-sm);}
+.back-link:hover{background:var(--primary-subtle);color:var(--primary);}
+.app-brand{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;}
+.theme-btn{padding:7px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:600;cursor:pointer;}
+.container{max-width:1000px;margin:0 auto;padding:24px 20px 48px;width:100%;flex:1;}
+h1.page-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;line-height:1.7;}
+.card{background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);}
+.card h2{font-size:16px;margin-bottom:12px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:800px){.grid2{grid-template-columns:1fr;}}
+.conv h3{font-size:14px;margin-bottom:10px;color:var(--text-muted);}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:14px;}
+.row input,.row select{padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:15px;}
+.row input:focus,.row select:focus{outline:none;border-color:var(--border-focus);}
+.row input.y{width:6.5em;}
+.row input.ey{width:4.5em;}
+.out{margin-top:12px;padding:12px 14px;border-radius:var(--radius-md);background:var(--primary-subtle);font-size:15px;line-height:1.8;min-height:3.2em;}
+.out b{font-size:18px;}
+.out .note{display:block;font-size:12px;color:var(--text-muted);}
+.out .err{color:var(--danger);font-weight:700;}
+.btn{padding:9px 14px;border-radius:var(--radius-md);border:none;background:var(--primary);color:#fff;font-weight:800;cursor:pointer;font-size:13px;}
+.btn:hover{background:var(--primary-hover);}
+.tools{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px;font-size:13px;}
+.tools input,.tools select{padding:7px 9px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:14px;}
+.tools input{width:6.5em;}
+.prose{line-height:1.85;font-size:14px;}
+.prose h2{font-size:17px;margin-bottom:10px;}
+.prose p{margin-bottom:8px;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--border-color);vertical-align:top;}
+th{background:var(--bg-subtle);color:var(--text-muted);font-size:12px;position:sticky;top:0;}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;}
+tr.kaigen td{background:rgba(234,179,8,.10);}
+.table-wrap{overflow-x:auto;}
+.age-wrap{max-height:560px;overflow:auto;border:1px solid var(--border-color);border-radius:var(--radius-md);}
+.print-title{display:none;}
+@media print{
+  header.app-header,.no-print,.local-note,.site-legal-0101{display:none !important;}
+  body{background:#fff;color:#000;}
+  .container{padding:0;max-width:none;}
+  .card{border:none;box-shadow:none;padding:0;}
+  .age-wrap{max-height:none;overflow:visible;border:none;}
+  .print-title{display:block;font-size:15px;font-weight:800;margin-bottom:6px;}
+  th{position:static;background:#eee;color:#000;}
+  th,td{padding:3px 6px;font-size:11px;}
+  tr.kaigen td{background:#f5f5f5;}
+  #ageCard{margin-top:0 !important;}
+}
+</style>
+    <link rel="canonical" href="https://tool.0101.click/wareki.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="0101.click 实用工具箱">
+    <meta property="og:title" content="和暦・西暦変換と年齢早見表｜明治・大正・昭和・平成・令和">
+    <meta property="og:description" content="西暦と明治・大正・昭和・平成・令和を相互に変換。改元の年は月日で判定。干支付きの年齢早見表は印刷対応。">
+    <meta property="og:url" content="https://tool.0101.click/wareki.html">
+    <meta property="og:locale" content="ja_JP">
+    <meta name="twitter:card" content="summary">
+    <script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "WebApplication",
+   "name": "和暦・西暦変換と年齢早見表",
+   "url": "https://tool.0101.click/wareki.html",
+   "description": "西暦と明治・大正・昭和・平成・令和を相互に変換。改元の年は月日で判定します。干支付きの年齢早見表は印刷にも対応。",
+   "applicationCategory": "UtilitiesApplication",
+   "operatingSystem": "Any",
+   "browserRequirements": "Requires JavaScript",
+   "inLanguage": "ja"
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {"@type": "ListItem", "position": 1, "name": "ツール一覧", "item": "https://tool.0101.click/"},
+    {"@type": "ListItem", "position": 2, "name": "和暦・西暦変換と年齢早見表", "item": "https://tool.0101.click/wareki.html"}
+   ]
+  }
+ ]
+}
+    </script>
+    <link rel="stylesheet" href="css/tools-header.css">
+  <script src="js/pwa-register.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="header-left">
+      <a href="tools.html" class="back-link" title="ツール一覧へ戻る">
+        <span class="back-icon">←</span>
+        <span class="back-text">ツール一覧</span>
+      </a>
+      <div class="app-brand">
+        <span class="brand-icon">🗓</span>
+        <span class="brand-title">和暦・西暦変換</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="https://game.0101.click/languages.html" class="hall-btn" title="語学学習ページへ">
+        <span class="hall-icon">🎌</span>
+        <span class="hall-text">語学</span>
+      </a>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="ダーク／ライト切替">🌓</button>
+    </div>
+  </header>
+
+<main class="container">
+  <h1 class="page-title no-print">🗓 和暦・西暦変換と年齢早見表</h1>
+  <p class="page-sub no-print">西暦と明治・大正・昭和・平成・令和を相互に変換します。元号が変わった年は月日まで入れると正しい元号を判定します。</p>
+  <details class="local-note" style="margin:8px 0 12px;padding:8px 12px;border:1px solid rgba(16,185,129,.35);background:rgba(16,185,129,.08);border-radius:8px;font-size:13px;line-height:1.7;"><summary style="cursor:pointer;font-weight:700;color:#059669;">🔒 ブラウザ内で完結・サーバー送信なし</summary><p style="margin:6px 0 0;">入力した生年月日などは、お使いのブラウザの中だけで計算されます。このページには送信処理がなく、本サイトや第三者のサーバーに送られることも、保存されることもありません。アクセス解析（Google Analytics）はページの閲覧とツール利用の有無のみを匿名で記録し、入力内容は含みません。詳しくは<a href="https://0101.click/privacy.html#local">プライバシーポリシー</a>をご覧ください。</p></details>
+
+  <section class="card no-print">
+    <div class="grid2">
+      <div class="conv">
+        <h3>西暦 → 和暦</h3>
+        <div class="row">
+          <input id="sy" class="y" type="number" inputmode="numeric" min="1868" max="2200" placeholder="1989" aria-label="西暦の年">年
+          <select id="sm" aria-label="月"></select>月
+          <select id="sd" aria-label="日"></select>日
+        </div>
+        <div class="out" id="sOut" aria-live="polite"></div>
+      </div>
+      <div class="conv">
+        <h3>和暦 → 西暦</h3>
+        <div class="row">
+          <select id="we" aria-label="元号"></select>
+          <input id="wy" class="ey" type="text" inputmode="numeric" placeholder="元" aria-label="和暦の年（元 または 数字）">年
+          <select id="wm" aria-label="月"></select>月
+          <select id="wd" aria-label="日"></select>日
+        </div>
+        <div class="out" id="wOut" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="ageCard" style="margin-top:20px;">
+    <h2 class="no-print">年齢早見表</h2>
+    <div class="tools no-print">
+      <label>基準の年 <input id="by" type="number" inputmode="numeric" min="1900" max="2200"></label>
+      <label>並び順 <select id="order"><option value="desc">新しい順</option><option value="asc">古い順</option></select></label>
+      <button class="btn" type="button" onclick="window.print()">🖨 印刷する</button>
+    </div>
+    <div class="print-title" id="printTitle"></div>
+    <div class="age-wrap">
+      <table>
+        <thead><tr><th>生まれ年（西暦）</th><th>和暦</th><th>干支</th><th class="num">誕生日後の満年齢</th><th class="num">誕生日前</th></tr></thead>
+        <tbody id="ageBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card prose no-print" style="margin-top:20px;">
+    <h2>「元年」の書き方と改元日</h2>
+    <p>元号が始まった最初の年は「1年」ではなく「<strong>元年</strong>（がんねん）」と書くのが慣例です。改元は年の途中で行われることが多く、たとえば2019年は4月30日までが平成31年、5月1日からが令和元年です。同じ年の中に二つの元号があるので、改元の年は月日まで確かめてください。数字しか入らない書類の欄では「1」と書きます。</p>
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>元号</th><th>始まり</th><th>終わり</th></tr></thead>
+      <tbody>
+        <tr><td>明治</td><td>1868年（慶応4年9月8日に改元し、その年の1月1日にさかのぼって明治元年としました）</td><td>明治45年（1912年）7月29日</td></tr>
+        <tr><td>大正</td><td>大正元年（1912年）7月30日</td><td>大正15年（1926年）12月24日</td></tr>
+        <tr><td>昭和</td><td>昭和元年（1926年）12月25日</td><td>昭和64年（1989年）1月7日</td></tr>
+        <tr><td>平成</td><td>平成元年（1989年）1月8日</td><td>平成31年（2019年）4月30日</td></tr>
+        <tr><td>令和</td><td>令和元年（2019年）5月1日</td><td>―</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p style="margin-top:8px;font-size:12.5px;color:var(--text-muted);">明治5年12月2日までは旧暦（太陰太陽暦）が使われていたため、明治元年〜5年の月日は西暦の月日と一致しません。このページでは明治5年以前を年単位で対応させています。干支はその年の干支（十干十二支）です。</p>
+  </section>
+</main>
+
+<script>
+(function(){const t=localStorage.getItem('app_theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.setAttribute('data-theme','dark');})();
+function toggleTheme(){const cur=document.documentElement.getAttribute('data-theme');const next=cur==='dark'?'light':'dark';document.documentElement.setAttribute('data-theme',next);localStorage.setItem('app_theme',next);}
+
+// 元号の開始日（新しい順）。終わりは次の元号の開始日の前日。明治は年単位で扱う
+const ERAS = [
+  {n:'令和', a:'R', y:2019, m:5,  d:1},
+  {n:'平成', a:'H', y:1989, m:1,  d:8},
+  {n:'昭和', a:'S', y:1926, m:12, d:25},
+  {n:'大正', a:'T', y:1912, m:7,  d:30},
+  {n:'明治', a:'M', y:1868, m:1,  d:1}
+];
+const MIN_Y = 1868, SOLAR_Y = 1873; // 1873年（明治6年）から新暦
+const STEMS = '甲乙丙丁戊己庚辛壬癸', BRANCHES = '子丑寅卯辰巳午未申酉戌亥', ANIMALS = 'ねずみ,うし,とら,うさぎ,たつ,へび,うま,ひつじ,さる,とり,いぬ,いのしし'.split(',');
+const $ = id => document.getElementById(id);
+const key = (y,m,d) => y*10000 + m*100 + d;
+const startKey = e => key(e.y, e.m, e.d);
+const nextEra = i => i > 0 ? ERAS[i-1] : null;
+const eraYearText = n => n === 1 ? '元年' : n + '年';
+const daysIn = (y,m) => new Date(y, m, 0).getDate();
+const kanshi = y => STEMS[(y-4)%10] + BRANCHES[(y-4)%12] + '（' + ANIMALS[(y-4)%12] + '）';
+const pad = n => String(n).padStart(2, '0');
+
+// 西暦の年月日 → 和暦。月日がなければ、その年にかかる元号をすべて返す
+function toWareki(y, m, d){
+  if(m && d){
+    const k = key(y,m,d);
+    const i = ERAS.findIndex(e => startKey(e) <= k);
+    if(i < 0) return [];
+    return [{era:ERAS[i], idx:i, n:y - ERAS[i].y + 1}];
+  }
+  const out = [];
+  ERAS.forEach((e, i) => {
+    const nx = nextEra(i);
+    if(e.y <= y && (!nx || y <= nx.y) && !(nx && nx.y === y && nx.m === 1 && nx.d === 1)) out.push({era:e, idx:i, n:y - e.y + 1});
+  });
+  return out.reverse();
+}
+function eraEndText(i){
+  const nx = nextEra(i); if(!nx) return '';
+  const end = new Date(nx.y, nx.m - 1, nx.d - 1);
+  return (end.getMonth()+1) + '月' + end.getDate() + '日';
+}
+function eraRangeInYear(r, y){
+  const nx = nextEra(r.idx);
+  const from = r.era.y === y && r.idx < ERAS.length - 1 ? r.era.m + '月' + r.era.d + '日' : '1月1日';
+  const to = nx && nx.y === y ? eraEndText(r.idx) : '12月31日';
+  return from + '〜' + to;
+}
+
+function age(y, m, d, now){
+  let a = now.getFullYear() - y;
+  if(m && d && (now.getMonth()+1 < m || (now.getMonth()+1 === m && now.getDate() < d))) a--;
+  return a;
+}
+function ageText(y, m, d){
+  const now = new Date();
+  if(key(y, m||1, d||1) > key(now.getFullYear(), now.getMonth()+1, now.getDate())) return '';
+  if(m && d) return '今日時点で満 ' + age(y,m,d,now) + ' 歳';
+  const a = now.getFullYear() - y;
+  return '今年の誕生日後は満 ' + a + ' 歳' + (a > 0 ? '（誕生日前は ' + (a-1) + ' 歳）' : '');
+}
+
+function fillDays(ySel, mSel, dSel){
+  const y = +ySel() || 2000, m = +mSel.value, keep = dSel.value;
+  const n = m ? daysIn(y, m) : 31;
+  let h = '<option value="">―</option>';
+  for(let i=1;i<=n;i++) h += '<option>' + i + '</option>';
+  dSel.innerHTML = h;
+  if(keep && +keep <= n) dSel.value = keep;
+}
+function monthOptions(sel){
+  let h = '<option value="">―</option>';
+  for(let i=1;i<=12;i++) h += '<option>' + i + '</option>';
+  sel.innerHTML = h;
+}
+
+function oldCalNote(y){ return y < SOLAR_Y ? '<span class="note">明治5年以前は旧暦のため、月日は西暦と一致しません（年のみの対応です）。</span>' : ''; }
+
+function runS(){
+  const y = parseInt($('sy').value, 10), out = $('sOut');
+  let m = +$('sm').value, d = +$('sd').value;
+  if(!y){ out.innerHTML = '<span class="note">西暦の年を入れてください。月日は改元の年だけ必要です。</span>'; return; }
+  if(y < MIN_Y){ out.innerHTML = '<span class="err">明治元年（1868年）より前には対応していません。</span>'; return; }
+  if((m && !d) || (!m && d)){ out.innerHTML = '<span class="note">月と日は両方入れるか、両方空けてください。</span>'; return; }
+  if(y < SOLAR_Y){ m = 0; d = 0; }
+  const res = toWareki(y, m, d);
+  let h;
+  if(res.length === 1){
+    const r = res[0];
+    h = '<b>' + r.era.n + eraYearText(r.n) + (m && d ? m + '月' + d + '日' : '') + '</b>　<span>' + r.era.a + r.n + '</span>';
+  }else{
+    h = res.map(r => '<b>' + r.era.n + eraYearText(r.n) + '</b>（' + eraRangeInYear(r, y) + '）').join('<br>');
+    h += '<span class="note">この年は途中で元号が変わります。月日を入れると一つに絞れます。</span>';
+  }
+  h += '<span class="note">干支：' + kanshi(y) + '　' + ageText(y, m, d) + '</span>' + oldCalNote(y);
+  out.innerHTML = h;
+}
+
+function runW(){
+  const i = +$('we').value, e = ERAS[i], raw = $('wy').value.trim().replace(/[０-９]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0));
+  let m = +$('wm').value, d = +$('wd').value;
+  const out = $('wOut');
+  if(!raw){ out.innerHTML = '<span class="note">和暦の年を「元」または数字で入れてください。</span>'; return; }
+  const n = raw === '元' || raw === '元年' ? 1 : parseInt(raw, 10);
+  if(!n || n < 1){ out.innerHTML = '<span class="err">年は「元」または 1 以上の数字で入れてください。</span>'; return; }
+  if((m && !d) || (!m && d)){ out.innerHTML = '<span class="note">月と日は両方入れるか、両方空けてください。</span>'; return; }
+  const y = e.y + n - 1, nx = nextEra(i);
+  if(y < SOLAR_Y){ m = 0; d = 0; }
+  const label = e.n + eraYearText(n) + (m && d ? m + '月' + d + '日' : '');
+  if(nx && y > nx.y){ out.innerHTML = '<span class="err">' + e.n + 'は ' + (nx.y - e.y + 1) + ' 年（' + nx.y + '年）' + eraEndText(i) + 'までです。</span>'; return; }
+  if(m && d){
+    const k = key(y,m,d);
+    if(k < startKey(e) && i < ERAS.length - 1){ out.innerHTML = '<span class="err">' + e.n + 'は ' + e.y + '年' + e.m + '月' + e.d + '日からです。この日付は' + ERAS[i+1].n + eraYearText(y - ERAS[i+1].y + 1) + 'です。</span>'; return; }
+    if(nx && k >= startKey(nx)){ out.innerHTML = '<span class="err">' + e.n + 'は ' + (nx.y - e.y + 1) + '年' + eraEndText(i) + 'までです。この日付は' + nx.n + eraYearText(y - nx.y + 1) + m + '月' + d + '日です。</span>'; return; }
+  }
+  let h = label + ' は <b>' + y + '年' + (m && d ? m + '月' + d + '日' : '') + '</b>';
+  if(nx && y === nx.y) h += '<span class="note">' + e.n + eraYearText(n) + 'は ' + eraEndText(i) + 'までで、その後は' + nx.n + '元年です。</span>';
+  if(n === 1 && i < ERAS.length - 1) h += '<span class="note">' + e.n + '元年は ' + e.m + '月' + e.d + '日から。それより前は' + ERAS[i+1].n + (y - ERAS[i+1].y + 1) + '年です。</span>';
+  h += '<span class="note">干支：' + kanshi(y) + '　' + ageText(y, m, d) + '</span>' + oldCalNote(y);
+  out.innerHTML = h;
+}
+
+function renderAges(){
+  const nowY = new Date().getFullYear();
+  let base = parseInt($('by').value, 10);
+  if(!base || base < 1900 || base > 2200) base = nowY;
+  const rows = [];
+  for(let y = base; y >= Math.max(MIN_Y, base - 110); y--){
+    const w = toWareki(y).map(r => r.era.n + eraYearText(r.n)).join(' / ');
+    const after = base - y, before = after - 1;
+    rows.push('<tr class="' + (toWareki(y).length > 1 ? 'kaigen' : '') + '"><td>' + y + '年</td><td>' + w + '</td><td>' + kanshi(y) + '</td><td class="num">' + after + ' 歳</td><td class="num">' + (before >= 0 ? before + ' 歳' : '―') + '</td></tr>');
+  }
+  if($('order').value === 'asc') rows.reverse();
+  $('ageBody').innerHTML = rows.join('');
+  const bw = toWareki(base).map(r => r.era.n + eraYearText(r.n)).pop();
+  $('printTitle').textContent = '年齢早見表（' + base + '年・' + bw + '）　満年齢／干支';
+}
+
+// 初期化
+$('we').innerHTML = ERAS.map((e, i) => '<option value="' + i + '">' + e.n + '</option>').join('');
+[['sm','sd',() => $('sy').value], ['wm','wd',() => ERAS[+$('we').value].y + (parseInt($('wy').value,10)||1) - 1]].forEach(([mi, di, yf]) => {
+  monthOptions($(mi)); fillDays(yf, $(mi), $(di));
+});
+['sy','sm','sd'].forEach(id => $(id).addEventListener('input', () => { if(id !== 'sd') fillDays(() => $('sy').value, $('sm'), $('sd')); runS(); }));
+['we','wy','wm','wd'].forEach(id => $(id).addEventListener('input', () => { if(id !== 'wd') fillDays(() => ERAS[+$('we').value].y + (parseInt($('wy').value,10)||1) - 1, $('wm'), $('wd')); runW(); }));
+$('by').value = new Date().getFullYear();
+$('by').addEventListener('input', renderAges);
+$('order').addEventListener('change', renderAges);
+$('sy').value = 2019; $('sm').value = 5; fillDays(() => 2019, $('sm'), $('sd')); $('sd').value = 1;
+$('we').value = 2; $('wy').value = '64';
+runS(); runW(); renderAges();
+</script>
+
+<div class="site-legal-0101" style="clear:both;width:100%;box-sizing:border-box;padding:16px 12px 20px;text-align:center;font:12px/1.7 system-ui,sans-serif;color:#64748b;opacity:.9"><a href="https://0101.click/privacy.html" style="color:inherit;text-decoration:underline;opacity:.85">隐私政策 / プライバシー</a> · <a href="https://0101.click/about.html" style="color:inherit;text-decoration:underline;opacity:.85">关于 / 運営者情報</a> · <a href="https://0101.click/contact.html" style="color:inherit;text-decoration:underline;opacity:.85">联系 / お問い合わせ</a> · <a href="https://0101.click/" style="color:inherit;text-decoration:underline;opacity:.85">0101.click</a></div>
+</body>
+</html>
