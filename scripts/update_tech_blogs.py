@@ -194,6 +194,153 @@ BLOG_CONFIGS = [
         "tags": ["日经电子版", "媒体DX", "AI与数据", "云原生架构"]
     },
 
+    # ---- gihyo.jp「企業技術ブログ一覧」(https://gihyo.jp/misc/techblog) 收录企业全量对齐 ----
+    {
+        "id": "xlsoft", "name": "エクセルソフト ブログ (XLsoft)", "category": "japan",
+        "url": "https://www.xlsoft.com/jp/blog/", "feedUrl": "https://www.xlsoft.com/jp/blog/feed/",
+        "icon": "🧰", "desc": "日本老牌开发工具与安全软件代理商，追踪编译器、HPC 工具链、软件供应链安全与 Linux 企业发行版动态。",
+        "tags": ["开发工具", "软件安全", "HPC", "Linux"]
+    },
+    {
+        "id": "skygroup", "name": "Ｓｋｙ Tech Blog (スカイ)", "category": "japan",
+        "url": "https://www.skygroup.jp/tech-blog/", "feedUrl": "https://www.skygroup.jp/tech-blog/news.xml",
+        "icon": "🌌", "desc": "SKYSEA Client View 开发商 Sky 株式会社技术博客，分享 Windows 终端管理、网络运维与企业级客户端开发实践。",
+        "tags": ["Windows", "终端管理", "网络运维", "企业软件"]
+    },
+    {
+        "id": "3shake", "name": "Sreake (3-shake Engineers' Blogs)", "category": "japan",
+        "url": "https://sreake.com/blog/", "feedUrl": "https://sreake.com/feed/",
+        "icon": "🔧", "desc": "日本 SRE 专业公司 3-shake 技术媒体，聚焦 SRE 方法论、Kubernetes 运维、云原生可观测性与 Go 生态。",
+        "tags": ["SRE", "Kubernetes", "可观测性", "Go"]
+    },
+    {
+        "id": "iij", "name": "IIJ Engineers Blog", "category": "japan",
+        "url": "https://eng-blog.iij.ad.jp/", "feedUrl": "https://eng-blog.iij.ad.jp/feed",
+        "icon": "🌐", "desc": "日本首家商用 ISP 互联网倡议（IIJ）工程博客，深度剖析骨干网络、DNS/BGP、蜜罐威胁情报与数据中心基础设施。",
+        "tags": ["骨干网络", "网络安全", "DNS/BGP", "数据中心"]
+    },
+    {
+        "id": "microad", "name": "MicroAd Developers Blog", "category": "japan",
+        "url": "https://developers.microad.co.jp/", "feedUrl": "https://developers.microad.co.jp/feed",
+        "icon": "📢", "desc": "日本广告技术公司 MicroAd 开发者博客，分享 RTB 实时竞价、海量广告日志处理与机器学习投放优化。",
+        "tags": ["AdTech", "RTB", "大数据", "机器学习"]
+    },
+    {
+        "id": "youtrust", "name": "YOUTRUST Tech Blog", "category": "japan",
+        "url": "https://tech.youtrust.co.jp/", "feedUrl": "https://tech.youtrust.co.jp/feed",
+        "icon": "🤝", "desc": "日本职业社交平台 YOUTRUST 技术博客，涵盖 Rails/React 产品开发、工程组织建设与 EM 成长实践。",
+        "tags": ["职业社交", "Rails", "React", "工程管理"]
+    },
+    {
+        "id": "legalon", "name": "LegalOn Technologies Engineering Blog", "category": "japan",
+        "url": "https://tech.legalforce.co.jp/", "feedUrl": "https://tech.legalforce.co.jp/feed",
+        "icon": "⚖️", "desc": "日本 AI 法务科技公司 LegalOn 工程博客，聚焦合同审查 NLP/LLM、文档结构化与全球化 SaaS 架构。",
+        "tags": ["LegalTech", "NLP/LLM", "SaaS", "文档AI"]
+    },
+    {
+        "id": "andpad", "name": "ANDPAD Tech Blog", "category": "japan",
+        "url": "https://tech.andpad.co.jp/", "feedUrl": "https://tech.andpad.co.jp/feed",
+        "icon": "🏗️", "desc": "日本建筑行业云平台 ANDPAD 技术博客，分享建设 DX 领域的 Go/Vue 微服务、移动端与大规模 SaaS 演进。",
+        "tags": ["建筑DX", "Go", "Vue", "SaaS"]
+    },
+    {
+        "id": "mescius", "name": "MESCIUS.devlog (メシウス)", "category": "japan",
+        "url": "https://devlog.mescius.jp/", "feedUrl": "https://devlog.mescius.jp/feed/",
+        "icon": "🧩", "desc": "原 GrapeCity 日本法人 MESCIUS 开发者博客，聚焦 .NET/JavaScript UI 组件、表格引擎与 AI 辅助开发工具。",
+        "tags": [".NET", "UI组件", "JavaScript", "开发效率"]
+    },
+    {
+        "id": "virtualtech", "name": "とことんDevOps (日本仮想化技術)", "category": "japan",
+        "url": "https://devops-blog.virtualtech.jp/", "feedUrl": "https://devops-blog.virtualtech.jp/feed",
+        "icon": "♾️", "desc": "日本虚拟化技术株式会社 DevOps 技术媒体，实操讲解 CI/CD、容器、OpenStack 与开发环境工具链。",
+        "tags": ["DevOps", "CI/CD", "容器", "虚拟化"]
+    },
+    {
+        "id": "mobilefactory", "name": "Mobile Factory Tech Blog", "category": "japan",
+        "url": "https://tech.mobilefactory.jp/", "feedUrl": "https://tech.mobilefactory.jp/feed",
+        "icon": "📲", "desc": "日本位置游戏与区块链服务商 Mobile Factory 技术博客，分享 AWS 运维、Perl/TypeScript 与 Web3 实践。",
+        "tags": ["位置游戏", "AWS", "区块链", "TypeScript"]
+    },
+    {
+        "id": "gmotech", "name": "GMO TECH TECHブログ", "category": "japan",
+        "url": "https://hd.gmotech.jp/blog/", "feedUrl": "https://hd.gmotech.jp/blog/feed/",
+        "icon": "🏠", "desc": "GMO TECH 控股技术博客，覆盖不动产 DX、营销科技 SaaS 产品动态与工程团队实践。",
+        "tags": ["不动产DX", "MarTech", "SaaS", "产品工程"]
+    },
+    {
+        "id": "fltech", "name": "fltech - 富士通研究所", "category": "japan",
+        "url": "https://blog.fltech.dev/", "feedUrl": "https://blog.fltech.dev/feed",
+        "icon": "🔬", "desc": "富士通研究所官方技术博客，发布 AI、量子计算、高性能计算与安全前沿研究成果及顶会论文解读。",
+        "tags": ["AI研究", "量子计算", "HPC", "前沿研究"]
+    },
+    {
+        "id": "revcomm", "name": "RevComm Tech Blog", "category": "japan",
+        "url": "https://tech.revcomm.co.jp/", "feedUrl": "https://tech.revcomm.co.jp/feed",
+        "icon": "🎙️", "desc": "日本语音 AI 通信平台 MiiTel 开发商 RevComm 技术博客，分享语音识别、通话分析与小团队后端架构。",
+        "tags": ["语音AI", "语音识别", "后端架构", "Python"]
+    },
+    {
+        "id": "pepabo", "name": "Pepabo Tech Portal (GMOペパボ)", "category": "japan",
+        "url": "https://tech.pepabo.com/", "feedUrl": "https://tech.pepabo.com/feed.xml",
+        "icon": "🐸", "desc": "GMO Pepabo（lolipop!、SUZURI、colorme）技术门户，聚焦测试策略、托管基础设施、SRE 与 Rails 工程。",
+        "tags": ["测试策略", "托管服务", "SRE", "Rails"]
+    },
+    {
+        "id": "base", "name": "BASE プロダクトチームブログ", "category": "japan",
+        "url": "https://devblog.thebase.in/", "feedUrl": "https://devblog.thebase.in/feed",
+        "icon": "🛍️", "desc": "日本网店搭建平台 BASE 产品团队博客，分享 PHP/Go 电商架构、支付系统与大规模 EC 运营工程。",
+        "tags": ["电商SaaS", "PHP/Go", "支付", "产品开发"]
+    },
+    {
+        "id": "monstarlab", "name": "Monstarlab Engineering Blog", "category": "japan",
+        "url": "https://engineering.monstar-lab.com/jp/", "feedUrl": "https://engineering.monstar-lab.com/jp/",
+        "adapter": "nextdata_monstarlab",
+        "icon": "👾", "desc": "全球数字咨询公司 Monstarlab 工程博客，涵盖移动开发、云基础设施、容器运维与 AI 驱动的开发流程。（无官方 RSS，读取官网内嵌的文章列表）",
+        "tags": ["移动开发", "云基础设施", "容器", "AI开发"]
+    },
+    {
+        "id": "stores", "name": "STORES Product Blog", "category": "japan",
+        "url": "https://product.st.inc/", "feedUrl": "https://product.st.inc/feed",
+        "icon": "🏪", "desc": "日本中小商户数字化平台 STORES 产品博客，分享 Rails/Go 支付与 POS 系统、移动端与开发者社区活动。",
+        "tags": ["支付/POS", "Rails", "移动端", "SaaS"]
+    },
+    {
+        "id": "enigmo", "name": "エニグモ開発者ブログ (BUYMA)", "category": "japan",
+        "url": "https://tech.enigmo.co.jp/", "feedUrl": "https://tech.enigmo.co.jp/feed",
+        "icon": "🧳", "desc": "日本跨境时尚电商 BUYMA 运营商 Enigmo 开发者博客，分享电商搜索推荐、数据平台与 AI 驱动开发体制。",
+        "tags": ["跨境电商", "搜索推荐", "数据平台", "Rails"]
+    },
+    {
+        "id": "mirrativ", "name": "Mirrativ Tech Blog", "category": "japan",
+        "url": "https://tech.mirrativ.stream/", "feedUrl": "https://tech.mirrativ.stream/feed",
+        "icon": "📡", "desc": "日本手游直播平台 Mirrativ 技术博客，聚焦低延迟直播推流、Unity Avatar 渲染与 Android/iOS 工程。",
+        "tags": ["直播", "音视频", "Unity", "移动端"]
+    },
+    {
+        "id": "mixi", "name": "MIXI DEVELOPERS", "category": "japan",
+        "url": "https://mixi-developers.mixi.co.jp/", "feedUrl": "https://mixi-developers.mixi.co.jp/feed",
+        "icon": "🎲", "desc": "MIXI（怪物弹珠、mixi2）开发者媒体，分享游戏服务器、计算机视觉研究、SRE 与大规模社交服务架构。",
+        "tags": ["游戏服务器", "计算机视觉", "SRE", "社交服务"]
+    },
+    {
+        "id": "carta", "name": "CARTA TECH BLOG", "category": "japan",
+        "url": "https://techblog.cartaholdings.co.jp/", "feedUrl": "https://techblog.cartaholdings.co.jp/feed",
+        "icon": "🗺️", "desc": "日本数字营销集团 CARTA HOLDINGS 技术博客，分享广告平台、Go/Scala 后端、数据基盘与 AI Agent 工具实践。",
+        "tags": ["AdTech", "Go/Scala", "数据基盘", "AI工具"]
+    },
+    {
+        "id": "sterra", "name": "Sterra Security Tech Blog", "category": "japan",
+        "url": "https://tech-blog.sterrasec.com/", "feedUrl": "https://tech-blog.sterrasec.com/feed",
+        "icon": "🛡️", "desc": "日本安全评估公司 Sterra Security 技术博客，聚焦 Web/移动应用渗透测试、漏洞研究与开发工具供应链安全。",
+        "tags": ["渗透测试", "漏洞研究", "移动安全", "供应链安全"]
+    },
+    {
+        "id": "tsd", "name": "TSD CoLab (ミツエーリンクス)", "category": "japan",
+        "url": "https://tsd.mitsue.co.jp/blog/", "feedUrl": "https://tsd.mitsue.co.jp/assets/rss/atom.xml",
+        "icon": "🧪", "desc": "Mitsue-Links 技术解决方案部官方工程博客，分享 Serverless、Web 前端与 AWS 更新解读。",
+        "tags": ["Serverless", "Web前端", "AWS", "Web制作"]
+    },
+
 
     # ==========================================
     # Korea (Top Tech Unicorns & Tech Giants)
@@ -383,16 +530,6 @@ BLOG_CONFIGS = [
         "tags": ["MQTT", "物联网", "Erlang/Elixir", "流处理"]
     },
     {
-        "id": "oceanbase",
-        "name": "OceanBase 技术博客",
-        "category": "china",
-        "url": "https://open.oceanbase.com/blog",
-        "feedUrl": "https://open.oceanbase.com/blog",
-        "icon": "🌊",
-        "desc": "金融级原生分布式关系型数据库团队，硬核剖析 Paxos 一致性协议、LSM-Tree 高性能存储引擎与 HTAP 架构。",
-        "tags": ["分布式数据库", "Paxos", "HTAP", "存储引擎"]
-    },
-    {
         "id": "solidot",
         "name": "Solidot (奇客资讯)",
         "category": "china",
@@ -413,16 +550,6 @@ BLOG_CONFIGS = [
         "tags": ["系统架构", "性能调优", "分布式", "工程哲学"]
     },
     {
-        "id": "jiqizhixin",
-        "name": "机器之心 (Synced)",
-        "category": "china",
-        "url": "https://www.jiqizhixin.com/",
-        "feedUrl": "https://www.jiqizhixin.com/",
-        "icon": "🤖",
-        "desc": "前沿人工智能科技媒体与产业智库，深度追踪大模型前沿架构（LLM/Transformer）、多模态与 AI Infra 算力集群演进。",
-        "tags": ["大模型", "Transformer", "AI Infra", "多模态"]
-    },
-    {
         "id": "apisix",
         "name": "Apache APISIX 博客",
         "category": "china",
@@ -431,16 +558,6 @@ BLOG_CONFIGS = [
         "icon": "🚀",
         "desc": "Apache 顶尖开源动态云原生微服务与 API 网关团队，专注海量请求动态路由、OpenResty/Wasm 插件与流量治理。",
         "tags": ["API网关", "云原生", "微服务治理", "OpenResty"]
-    },
-    {
-        "id": "zilliz",
-        "name": "Zilliz / Milvus 技术博客",
-        "category": "china",
-        "url": "https://zilliz.com.cn/blog",
-        "feedUrl": "https://zilliz.com.cn/blog",
-        "icon": "📐",
-        "desc": "全球知名开源向量数据库 Milvus 研发团队，聚焦 AI 时代非结构化数据检索、多模态 Embedding 与 RAG 检索增强架构。",
-        "tags": ["向量数据库", "Milvus", "RAG检索", "AI Infra"]
     },
     {
         "id": "doris",
@@ -481,26 +598,6 @@ BLOG_CONFIGS = [
         "icon": "🎨",
         "desc": "知名 Web 前端技术专家，十余年专注现代 CSS 标准规范演进、SVG/Canvas 图形渲染与极致无障碍交互工程。",
         "tags": ["CSS3/CSS4", "Web标准", "SVG图形", "前端工程"]
-    },
-    {
-        "id": "ctriptech",
-        "name": "携程技术团队 (Ctrip Tech)",
-        "category": "china",
-        "url": "https://ctriptech.github.io/",
-        "feedUrl": "https://ctriptech.github.io/",
-        "icon": "🐬",
-        "desc": "全球领先在线旅游巨头技术中台，深入分享千万级高并发票务交易、Apollo 动态配置中心演进与单元化异地多活灾备。",
-        "tags": ["高并发交易", "Apollo", "异地多活", "服务治理"]
-    },
-    {
-        "id": "xiaolincoding",
-        "name": "小林coding",
-        "category": "china",
-        "url": "https://xiaolincoding.com/",
-        "feedUrl": "https://xiaolincoding.com/",
-        "icon": "📘",
-        "desc": "《图解网络》《图解系统》作者，系统化图解计算机网络底层、Linux 内核调度与 MySQL/Redis 高性能存储中间件。",
-        "tags": ["图解网络", "Linux内核", "MySQL", "Redis"]
     },
 
     # ==========================================
@@ -767,6 +864,38 @@ def parse_feed_content(content: bytes, blog_id: str, limit: int = 5):
 
     return articles
 
+def parse_nextdata_monstarlab(content: bytes, limit: int = 5):
+    """Monstarlab 无官方 RSS：从官网首页 __NEXT_DATA__ 内嵌的 allPosts 中只取标题、日期和链接。"""
+    text = content.decode('utf-8', errors='ignore')
+    m = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', text, re.S)
+    if not m:
+        return []
+    posts = json.loads(m.group(1)).get('props', {}).get('pageProps', {}).get('allPosts', []) or []
+    posts = [p for p in posts if p.get('lang', 'jp') == 'jp' and p.get('slug') and p.get('title')]
+    posts.sort(key=lambda p: p.get('date', ''), reverse=True)
+    articles = []
+    for p in posts[:limit]:
+        sm = re.match(r'(\d{4})-(\d{2})-(\d{2})-(.+)', p['slug'])
+        path = f"{sm.group(1)}/{sm.group(2)}/{sm.group(3)}/{sm.group(4)}" if sm else p['slug']
+        articles.append({
+            "title": clean_text(p['title']),
+            "link": f"https://engineering.monstar-lab.com/jp/post/{path}",
+            "pubDate": parse_date(p.get('date', '')),
+            "summary": ""
+        })
+    return articles
+
+ADAPTERS = {
+    "nextdata_monstarlab": parse_nextdata_monstarlab,
+}
+
+def fetch_and_parse(blog: dict, limit: int = 5):
+    raw = fetch_feed(blog['feedUrl'], timeout=12)
+    adapter = ADAPTERS.get(blog.get('adapter', ''))
+    if adapter:
+        return adapter(raw, limit=limit)
+    return parse_feed_content(raw, blog['id'], limit=limit)
+
 def run_aggregation(output_path: str = "data/tech-blogs.json"):
     """Main aggregation pipeline."""
     print("🚀 Starting Tech Blogs Aggregation...")
@@ -793,16 +922,14 @@ def run_aggregation(output_path: str = "data/tech-blogs.json"):
 
         articles = []
         try:
-            raw_xml = fetch_feed(feed_url, timeout=12)
-            articles = parse_feed_content(raw_xml, b_id, limit=5)
+            articles = fetch_and_parse(blog, limit=5)
             print(f"✅ OK ({len(articles)} items)")
         except urllib.error.HTTPError as he:
             if he.code == 429:
                 print("⏳ Rate limited (429), waiting 2.5s and retrying...", end=" ", flush=True)
                 time.sleep(2.5)
                 try:
-                    raw_xml = fetch_feed(feed_url, timeout=12)
-                    articles = parse_feed_content(raw_xml, b_id, limit=5)
+                    articles = fetch_and_parse(blog, limit=5)
                     print(f"✅ OK on retry ({len(articles)} items)")
                 except Exception as e2:
                     print(f"❌ Failed after retry: {e2}")
@@ -838,7 +965,7 @@ def run_aggregation(output_path: str = "data/tech-blogs.json"):
         "totalArticles": total_articles_count,
         "categories": [
             {"id": "all", "name": "全部博客"},
-            {"id": "japan", "name": "日本名企 (gihyo.jp 体系)"},
+            {"id": "japan", "name": "日本名企 (gihyo.jp 企業技術ブログ一覧)"},
             {"id": "korea", "name": "韩国名企 (NAVER / Kakao / Toss)"},
             {"id": "china", "name": "国内名企前沿"},
             {"id": "global", "name": "全球科技巨头"}

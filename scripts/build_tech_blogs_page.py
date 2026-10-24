@@ -17,6 +17,7 @@ html_template = '''<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <!-- Google tag (gtag.js) -->
+  <script src="js/consent-default.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -33,7 +34,7 @@ html_template = '''<!DOCTYPE html>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>中日韩与全球企业技术博客雷达 · 工程前沿 RSS 聚合平台</title>
-  <meta name="description" content="汇聚 LINE、Mercari、ZOZO、Pixiv、日本经济新闻 (Nikkei)、NAVER、Kakao、Toss、Coupang、美团、有赞、云风、Draveness、EMQX、APISIX、Doris、CoolShell、Cloudflare、GitHub 等 54 家中日韩及全球顶尖科技企业技术博客。只收录各博客文章的标题、日期和原文链接，由本站服务器每 3 小时抓取官方 RSS 更新。">
+  <meta name="description" content="汇聚 LINE、Mercari、ZOZO、Pixiv、日本经济新闻 (Nikkei)、IIJ、富士通研究所、MIXI、GMO Pepabo 等 gihyo.jp 全部收录企业、NAVER、Kakao、Toss、Coupang、美团、有赞、云风、Draveness、EMQX、APISIX、Doris、CoolShell、Cloudflare、GitHub 等 73 家中日韩及全球顶尖科技企业技术博客。只收录各博客文章的标题、日期和原文链接，由本站服务器每 3 小时抓取官方 RSS 更新。">
   <meta name="theme-color" content="#0284c7">
 
   <style>
@@ -884,31 +885,136 @@ html_template = '''<!DOCTYPE html>
     }
   </style>
     <link rel="canonical" href="https://tool.0101.click/tech-blogs.html">
+    <!-- og+ld (#43) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="0101.click 实用工具箱">
+    <meta property="og:title" content="中日韩与全球企业技术博客雷达 · 工程前沿 RSS 聚合平台">
+    <meta property="og:description" content="汇聚 LINE、Mercari、ZOZO、Pixiv、日本经济新闻 (Nikkei)、IIJ、富士通研究所、MIXI、GMO Pepabo 等 gihyo.jp 全部收录企业、NAVER、Kakao、Toss、Coupang、美团、有赞、云风、Draveness、EMQX、APISIX、Doris、CoolShell、Cloudflare、GitHub 等 73 家中日韩及全球顶尖科技企业技术博客。只收录各博客文章的标题、日期和原文链接，由本站服务器每 3 小时抓取官方 RSS 更新。">
+    <meta property="og:url" content="https://tool.0101.click/tech-blogs.html">
+    <meta property="og:image" content="https://tool.0101.click/assets/og/tech-blogs.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="企业技术博客雷达">
+    <meta property="og:locale" content="zh_CN">
+    <meta name="twitter:card" content="summary_large_image">
+    <script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "WebApplication",
+   "name": "企业技术博客雷达",
+   "url": "https://tool.0101.click/tech-blogs.html",
+   "description": "汇聚 LINE、Mercari、ZOZO、Pixiv、日本经济新闻 (Nikkei)、IIJ、富士通研究所、MIXI、GMO Pepabo 等 gihyo.jp 全部收录企业、NAVER、Kakao、Toss、Coupang、美团、有赞、云风、Draveness、EMQX、APISIX、Doris、CoolShell、Cloudflare、GitHub 等 73 家中日韩及全球顶尖科技企业技术博客。只收录各博客文章的标题、日期和原文链接，由本站服务器每 3 小时抓取官方 RSS 更新。",
+   "applicationCategory": "ReferenceApplication",
+   "operatingSystem": "Any",
+   "browserRequirements": "Requires JavaScript",
+   "inLanguage": "zh-CN",
+   "image": "https://tool.0101.click/assets/og/tech-blogs.png"
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "工具箱",
+     "item": "https://tool.0101.click/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "企业技术博客雷达",
+     "item": "https://tool.0101.click/tech-blogs.html"
+    }
+   ]
+  }
+ ]
+}
+    </script>
+    <link rel="stylesheet" href="css/tools-header.css">
+  <script src="js/pwa-register.js"></script>
 </head>
 <body>
 
   <!-- 顶部导航 -->
+    <!-- 统一小工具顶部导航 -->
   <header class="app-header">
-    <a href="tech-blogs.html" class="brand-group">
-      <div class="brand-icon">📡</div>
-      <div class="brand-text">
-        <h1>全球企业技术博客雷达 <span class="badge-sub">54 家中日韩名企 · RSS 聚合</span></h1>
-        <p>对齐 gihyo.jp 体系 · 实时工程实战追踪</p>
+    <div class="header-left">
+      <a href="tools.html" class="back-link" title="返回实用工具箱">
+        <span class="back-icon">←</span>
+        <span class="back-text">工具箱</span>
+      </a>
+      <div class="app-brand">
+        <span class="brand-icon">📡</span>
+        <span class="brand-title">企业技术博客雷达</span>
+        <span class="badge-sub" style="font-size:11px;font-weight:600;padding:2px 7px;border-radius:9999px;background:var(--primary-subtle);color:var(--primary);border:1px solid var(--border-color);">73家名企</span>
       </div>
-    </a>
-
-    <div class="nav-actions">
-      <a href="tools.html" class="btn-nav" title="返回实用工具箱">
-        <span>🛠️</span>
-        <span>工具矩阵</span>
+    </div>
+    <div class="header-right">
+      <a href="index.html" class="hall-btn" title="返回游戏大厅">
+        <span class="hall-icon">🎮</span>
+        <span class="hall-text">大厅</span>
       </a>
-      <a href="index.html" class="btn-nav" title="返回游戏大厅">
-        <span>🎮</span>
-        <span>游戏大厅</span>
-      </a>
-      <button class="btn-icon-only" id="themeToggleBtn" onclick="toggleTheme()" title="切换明暗主题">
-        🌓
-      </button>
+      <select class="tool-switch" onchange="if(this.value) location.href=this.value;" title="快速切换小工具">
+        <option value="">🔀 快捷切换小工具...</option>
+        <optgroup label="常用必备">
+          <option value="calculator.html">🧮 表达式计算器</option>
+          <option value="notepad.html">📝 极简便签</option>
+          <option value="unit-converter.html">📐 全能单位换算器</option>
+          <option value="currency.html">💱 全球实时汇率换算</option>
+          <option value="weather.html">🌤️ 极简实时天气看板</option>
+          <option value="qrcode.html">📱 二维码大师</option>
+          <option value="pomodoro.html">🍅 极简番茄时钟</option>
+          <option value="calendar.html">📅 万年历与节气</option>
+        </optgroup>
+        <optgroup label="文本与开发">
+          <option value="markdown-editor.html">📑 Markdown 排版工坊</option>
+          <option value="text-tools.html">🔤 文本综合工具箱</option>
+          <option value="diff-tool.html">🪞 文本差异对比</option>
+          <option value="json-csv-tool.html">🔄 JSON / CSV 互转工坊</option>
+          <option value="hash-tool.html">#️⃣ 哈希校验工具</option>
+          <option value="encrypt-tool.html">🛡️ 本地加解密工具</option>
+          <option value="uuid-generator.html">🆔 唯一标识符生成器</option>
+          <option value="cron-parser.html">⏰ Cron 表达式工坊</option>
+          <option value="css-generator.html">🎨 现代 CSS 视觉工坊</option>
+          <option value="github-card.html">🐙 GitHub 开发者名片工坊</option>
+        </optgroup>
+        <optgroup label="图形与多媒体">
+          <option value="image-tool.html">🖼️ 本地图片工坊</option>
+          <option value="image-grid-splitter.html">🧩 九宫格切图工坊</option>
+          <option value="img-to-pdf.html">📄 图片转 PDF</option>
+          <option value="drawing-board.html">🖌️ 简易画板</option>
+          <option value="color-tool.html">🎨 颜色转换工具箱</option>
+          <option value="favicon-generator.html">🌐 Favicon 图标生成器</option>
+          <option value="ascii-art.html">🔤 字符画与 ASCII 艺术字</option>
+          <option value="font-previewer.html">🔤 字体预览工坊</option>
+          <option value="quote-card.html">🖋️ 一言·灵感排版工坊</option>
+          <option value="metronome.html">⏱️ 电子节拍器与律动鼓机</option>
+        </optgroup>
+        <optgroup label="日常与生活">
+          <option value="todolist.html">✅ 极简待办清单</option>
+          <option value="expense-tracker.html">💰 极简记账本</option>
+          <option value="habit-tracker.html">🔥 习惯打卡</option>
+          <option value="countdown.html">⏳ 倒数日与纪念日</option>
+          <option value="time-tool.html">🕐 世界时间工具箱</option>
+          <option value="loan-calculator.html">🏦 贷款与房贷计算器</option>
+          <option value="tip-calculator.html">🧾 账单 AA 分摊与小费</option>
+          <option value="password.html">🔐 安全密码工坊</option>
+          <option value="packing-list.html">🧳 旅行与出差行李清单</option>
+          <option value="random-picker.html">🎯 随机抉择与抽奖转盘</option>
+          <option value="bmi-tracker.html">⚖️ BMI 与健康指标追踪</option>
+          <option value="water-reminder.html">💧 喝水打卡与健康提醒</option>
+        </optgroup>
+        <optgroup label="资讯与探索">
+          <option value="country-explorer.html">🌍 世界地理大百科</option>
+          <option value="global-news.html">🌍 全球新闻视角雷达</option>
+          <option value="tech-blogs.html" selected>📡 企业技术博客雷达</option>
+          <option value="network-info.html">🌐 网络信息查询探针</option>
+          <option value="doh-lookup.html">🔍 浏览器原生 DNS 探针</option>
+        </optgroup>
+      </select>
+      <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="切换深色/浅色模式">🌓</button>
     </div>
   </header>
 
@@ -919,7 +1025,7 @@ html_template = '''<!DOCTYPE html>
     <section class="hero-banner">
       <h2 class="hero-title">中日韩与全球知名科技企业 <span>技术博客与前沿雷达</span></h2>
       <p class="hero-desc">
-        本站服务器每 3 小时抓取一次各博客的官方 RSS，只保存文章标题、日期和原文链接，点击后到原站阅读全文。追踪来自 NAVER、Kakao、Toss、Coupang、LINE/Yahoo、Mercari、ZOZO、Pixiv、日本经济新闻 (Nikkei)、Cloudflare、GitHub、Netflix、美团、有赞、云风、Draveness、EMQX、APISIX、Doris、CoolShell 等 54 家顶尖团队的一线实战演进。
+        本站服务器每 3 小时抓取一次各博客的官方 RSS，只保存文章标题、日期和原文链接，点击后到原站阅读全文。追踪来自 NAVER、Kakao、Toss、Coupang、LINE/Yahoo、Mercari、ZOZO、Pixiv、日本经济新闻 (Nikkei)、IIJ、富士通研究所、MIXI、GMO Pepabo 等 gihyo.jp 全部收录企业、Cloudflare、GitHub、Netflix、美团、有赞、云风、Draveness、EMQX、APISIX、Doris、CoolShell 等 73 家顶尖团队的一线实战演进。
       </p>
 
       <!-- 架构特性徽章 -->
@@ -960,11 +1066,11 @@ html_template = '''<!DOCTYPE html>
       </div>
 
       <div class="filter-tabs">
-        <button class="filter-tab active" data-cat="all" onclick="setCategory('all')">全部 (<span id="countAll">54</span>)</button>
-        <button class="filter-tab" data-cat="japan" onclick="setCategory('japan')">🇯🇵 日本名企 (<span id="countJapan">17</span>)</button>
+        <button class="filter-tab active" data-cat="all" onclick="setCategory('all')">全部 (<span id="countAll">73</span>)</button>
+        <button class="filter-tab" data-cat="japan" onclick="setCategory('japan')">🇯🇵 日本名企 (<span id="countJapan">41</span>)</button>
         <button class="filter-tab" data-cat="korea" onclick="setCategory('korea')">🇰🇷 韩国团队 (<span id="countKorea">7</span>)</button>
         <button class="filter-tab" data-cat="global" onclick="setCategory('global')">🌐 全球巨头 (<span id="countGlobal">7</span>)</button>
-        <button class="filter-tab" data-cat="china" onclick="setCategory('china')">🇨🇳 国内团队 (<span id="countChina">23</span>)</button>
+        <button class="filter-tab" data-cat="china" onclick="setCategory('china')">🇨🇳 国内团队 (<span id="countChina">18</span>)</button>
       </div>
 
       <div class="action-controls">
@@ -984,7 +1090,7 @@ html_template = '''<!DOCTYPE html>
     <div class="progress-container" id="progressContainer">
       <div class="progress-header">
         <span id="progressStatusText">正在读取本站最新数据...</span>
-        <span id="progressCountText">0 / 54</span>
+        <span id="progressCountText">0 / 73</span>
       </div>
       <div class="progress-bar-bg">
         <div class="progress-bar-fill" id="progressBarFill"></div>
@@ -1263,6 +1369,30 @@ html_template = '''<!DOCTYPE html>
       }, 2400);
     }
 
+    // 以服务器快照为准合并：已有博客更新元数据与文章，快照中新增的博客直接追加
+    // （避免 BUILTIN_DATA 未重建时，新接入的博客在前端被静默丢弃）
+    function mergeServerBlogs(remoteBlogs, source) {
+      const localMap = new Map(currentBlogs.map(b => [b.id, b]));
+      remoteBlogs.forEach(rBlog => {
+        const hasArticles = rBlog.articles && rBlog.articles.length > 0;
+        const local = localMap.get(rBlog.id);
+        if (local) {
+          ['name', 'category', 'url', 'feedUrl', 'icon', 'desc', 'tags'].forEach(k => {
+            if (rBlog[k] !== undefined) local[k] = rBlog[k];
+          });
+          if (hasArticles) {
+            local.articles = rBlog.articles;
+            local._source = source;
+          }
+        } else {
+          const nb = JSON.parse(JSON.stringify(rBlog));
+          nb.articles = nb.articles || [];
+          if (hasArticles) nb._source = source;
+          currentBlogs.push(nb);
+        }
+      });
+    }
+
     // 2. 检查本地静态预聚合 JSON (Level 1: 服务器定时抓取输出的 data/tech-blogs.json)
     async function tryLoadCIPrebuiltData() {
       try {
@@ -1270,17 +1400,7 @@ html_template = '''<!DOCTYPE html>
         if (resp.ok) {
           const remoteData = await resp.json();
           if (remoteData && remoteData.blogs && remoteData.blogs.length > 0) {
-            // 合并并更新数据
-            const remoteMap = new Map(remoteData.blogs.map(b => [b.id, b]));
-            currentBlogs.forEach(blog => {
-              if (remoteMap.has(blog.id)) {
-                const rBlog = remoteMap.get(blog.id);
-                if (rBlog.articles && rBlog.articles.length > 0) {
-                  blog.articles = rBlog.articles;
-                  blog._source = 'ci';
-                }
-              }
-            });
+            mergeServerBlogs(remoteData.blogs, 'ci');
             console.log('⚡ 成功加载 CI 预聚合静态 JSON 数据');
             updateCategoryCounts();
             filterBlogs();
@@ -1307,9 +1427,10 @@ html_template = '''<!DOCTYPE html>
     }
 
     // 单个 Feed：从服务器快照里取对应博客的文章
-    async function fetchFeedWithFallback(feedUrl) {
+    async function fetchFeedWithFallback(feedUrl, blogId) {
       const data = await loadServerSnapshot();
-      const blog = (data.blogs || []).find(b => b.feedUrl === feedUrl);
+      const blogs = data.blogs || [];
+      const blog = blogs.find(b => blogId && b.id === blogId) || blogs.find(b => b.feedUrl === feedUrl);
       if (!blog || !blog.articles || blog.articles.length === 0) {
         throw new Error('No server snapshot for ' + feedUrl);
       }
@@ -1326,7 +1447,7 @@ html_template = '''<!DOCTYPE html>
       showToast('🔄 正在读取 ' + blog.name + ' 最新文章...');
 
       try {
-        const res = await fetchFeedWithFallback(blog.feedUrl);
+        const res = await fetchFeedWithFallback(blog.feedUrl, blog.id);
         if (res && res.articles && res.articles.length > 0) {
           blog.articles = res.articles;
           blog._source = 'live';
@@ -1355,6 +1476,12 @@ html_template = '''<!DOCTYPE html>
       document.getElementById('syncBtnText').textContent = '同步中...';
       progressContainer.style.display = 'block';
 
+      // 先把服务器快照里新增的博客并入列表（只请求一次快照）
+      try {
+        const snap = await loadServerSnapshot();
+        if (snap && snap.blogs) mergeServerBlogs(snap.blogs, 'live');
+      } catch (e) { /* 快照不可用时保留现有内容 */ }
+
       let completedCount = 0;
       const total = currentBlogs.length;
 
@@ -1369,7 +1496,7 @@ html_template = '''<!DOCTYPE html>
           blog._loading = true;
 
           try {
-            const res = await fetchFeedWithFallback(blog.feedUrl);
+            const res = await fetchFeedWithFallback(blog.feedUrl, blog.id);
             if (res && res.articles && res.articles.length > 0) {
               blog.articles = res.articles;
               blog._source = 'live';
