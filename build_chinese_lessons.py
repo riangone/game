@@ -7,12 +7,22 @@ Architect build script for the brand new Chinese Situational Lesson series:
 - zh1.html (Level 1: 我的一星期)
 - zh2.html (Level 2: 我的一天)
 - zh3.html (Level 3: 中国的四季)
+- zh4.html (Level 4: 我的社区与城市)
+- zh5.html (Level 5: 美味的中国菜)
+- zh6.html (Level 6: 快乐的旅行)
+- zh7.html (Level 7: 我的家人)
+
+读课文 / 全文朗读 use ClausePlayer (js/clause-player.js) like zw-2x-*.html:
+clause data in zh_lesson_clauses.py → data/zh-lesson-clauses.js (generate_zh_clause_audio.py).
+EN / JA / KO translations are hidden by default.
 - zh-index.html (Course Catalog & Portal)
 """
 
 import os
 import re
 import json
+
+from zh_lesson_clauses import CLAUSES, validate as validate_clauses
 
 BASE_DIR = '/home/ubuntu/ws/jump-jump-game'
 
@@ -24,6 +34,7 @@ LESSONS = [
         "lesson_num": "0",
         "title": "拼音与日常问候 - 汉语课文识字闯关 (Pinyin & Greetings)",
         "canonical": "https://zw.0101.click/zh0.html",
+        "meta_desc": "原创汉语入门课《拼音与日常问候》：认识声母、韵母和四声调，学会常用礼貌问候和 12 个基础汉字，带拼音逐句朗读与拼音点读盘。",
         "header_title": "拼音与日常问候",
         "title_en": "Pinyin &amp; Greetings",
         "sub_desc": "跟随原创启蒙课文初识汉语拼音（声母、韵母与四声调），掌握高频日常礼貌问候与12个基础象形汉字！本课是全新原创汉语课程体系的入门序章（第0课）。",
@@ -241,6 +252,7 @@ LESSONS = [
         "lesson_num": "1",
         "title": "我的一星期 - 汉语课文识字闯关 (My Week)",
         "canonical": "https://zw.0101.click/zh1.html",
+        "meta_desc": "原创汉语课文《我的一星期》：围绕校园和家庭生活学习一周七天的说法、爱好动词和 12 个核心汉字，带拼音朗读、配对、填空和听力练习。",
         "header_title": "我的一星期",
         "title_en": "My Week in Chinese",
         "sub_desc": "跟随原创情境课文《我的一星期》走进校园与家庭生活，掌握一周七天时间表达、学校爱好动词与12个核心汉字！本课是全新原创汉语课程第1课。",
@@ -463,6 +475,7 @@ LESSONS = [
         "lesson_num": "2",
         "title": "我的一天 - 汉语课文识字闯关 (My Day)",
         "canonical": "https://zw.0101.click/zh2.html",
+        "meta_desc": "原创汉语课文《我的一天》：学习钟点时刻、一日三餐和作息动作的表达，掌握 12 个核心汉字，带拼音逐句朗读与闯关练习。",
         "header_title": "我的一天",
         "title_en": "My Day in Chinese",
         "sub_desc": "跟随原创情境课文《我的一天》体验一日作息生活，掌握时刻钟点、三餐起居、日常动作与12个核心汉字！本课是《我的一星期》的续篇（第2课）。",
@@ -681,6 +694,7 @@ LESSONS = [
         "lesson_num": "3",
         "title": "中国的四季 - 汉语课文识字闯关 (Four Seasons)",
         "canonical": "https://zw.0101.click/zh3.html",
+        "meta_desc": "原创汉语课文《中国的四季》：通过春夏秋冬的景物、气候和节日学习 12 个核心汉字与常用词，带拼音逐句朗读和听力、阅读练习。",
         "header_title": "中国的四季",
         "title_en": "Four Seasons in Chinese",
         "sub_desc": "跟随原创自然景致课文《中国的四季》感受春夏秋冬自然之美，学习节气气候、风物诗篇与12个核心汉字！本课是《我的一天》的续篇（第3课）。",
@@ -896,6 +910,719 @@ LESSONS = [
                 "audioId": "cloze_8"
             }
         ]
+    },
+    {
+        "id": "zh4",
+        "lesson_num": "4",
+        "title": "我的社区与城市 - 汉语课文识字闯关 (My Community & City)",
+        "canonical": "https://zw.0101.click/zh4.html",
+        "meta_desc": "原创汉语课文《我的社区与城市》：学习方位表达和公园、超市等公共设施的说法，掌握 12 个核心汉字，带拼音朗读与闯关练习。",
+        "header_title": "我的社区与城市",
+        "title_en": "My Community &amp; City in Chinese",
+        "sub_desc": "跟随原创生活情境课文《我的社区与城市》漫步街区，学习空间方位表达、公共生活设施与12个核心汉字！本课是《中国的四季》的续篇（第4课）。",
+        "story_title": "📖 我的社区与城市 (My Community &amp; City)",
+        "full_title": "📜 我的社区与城市 · 全文",
+        "palace_svg": """<svg viewBox="0 0 64 64" width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" style="vertical-align:-0.08em">
+          <circle cx="32" cy="32" r="28" fill="#fff" stroke="#b91c1c" stroke-width="3"/>
+          <rect x="18" y="26" width="14" height="22" rx="2" fill="#fff7ed" stroke="#b91c1c" stroke-width="2"/>
+          <rect x="34" y="20" width="14" height="28" rx="2" fill="#fff7ed" stroke="#b91c1c" stroke-width="2"/>
+          <line x1="22" y1="31" x2="25" y2="31" stroke="#b91c1c" stroke-width="2" stroke-linecap="round"/>
+          <line x1="22" y1="37" x2="25" y2="37" stroke="#b91c1c" stroke-width="2" stroke-linecap="round"/>
+          <line x1="38" y1="26" x2="41" y2="26" stroke="#b91c1c" stroke-width="2" stroke-linecap="round"/>
+          <line x1="38" y1="32" x2="41" y2="32" stroke="#b91c1c" stroke-width="2" stroke-linecap="round"/>
+          <line x1="38" y1="38" x2="41" y2="38" stroke="#b91c1c" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="12" cy="42" r="4.5" fill="#059669"/>
+          <line x1="12" y1="42" x2="12" y2="48" stroke="#78716c" stroke-width="2"/>
+        </svg>""",
+        "proper_label": "方位",
+        "has_pinyin_chart": False,
+        "story": [
+            {"id":"st1", "zh":"我住在一个美丽又便利的社区里。", "py":"Wǒ zhù zài yí gè měilì yòu biànlì de shèqū lǐ.", "en":"I live in a beautiful and convenient community.", "jp":"私は美しく便利なコミュニティに住んでいます。"},
+            {"id":"st2", "zh":"地铁站的前面，有大型商场和银行。", "py":"Dìtiězhàn de qiánmiàn, yǒu dàxíng shāngchǎng hé yínháng.", "en":"In front of the subway station, there are large shopping malls and banks.", "jp":"地下鉄の駅の前には、大きなショッピングモールや銀行があります。"},
+            {"id":"st3", "zh":"每天早上，我穿过热闹的街道去上学。", "py":"Měitiān zǎoshang, wǒ chuānguò rènao de jiēdào qù shàngxué.", "en":"Every morning, I walk through the lively streets to go to school.", "jp":"毎朝、賑やかな通りを抜けて学校へ行きます。"},
+            {"id":"st4", "zh":"马路附近，有一家古老的书店和小茶馆。", "py":"Mǎlù fùjìn, yǒu yì jiā gǔlǎo de shūdiàn hé xiǎo cháguǎn.", "en":"Near the road, there is an old bookstore and a small teahouse.", "jp":"大通りの近くに、古い本屋と小さな茶館があります。"},
+            {"id":"st5", "zh":"公园里面有绿绿的大树和漂亮的花朵。", "py":"Gōngyuán lǐmiàn yǒu lǜlǜ de dàshù hé piàoliang de huāduǒ.", "en":"Inside the park, there are lush green trees and pretty flowers.", "jp":"公園の中には、青々とした木や綺麗な花があります。"},
+            {"id":"st6", "zh":"走出家门外，总能遇到热情友善的邻居。", "py":"Zǒuchū jiāmén wài, zǒng néng yùdào rèqíng yǒushàn de línjū.", "en":"Stepping outside my home, I always meet warm and friendly neighbors.", "jp":"家の外に出ると、いつも親切で友好的なご近所さんに会います。"},
+            {"id":"st7", "zh":"社区服务站的右边是邮局，左边是诊所。", "py":"Shèqū fúwùzhàn de yòubian shì yóujú, zuǒbian shì zhěnsuǒ.", "en":"To the right of the community service station is the post office, and to the left is the clinic.", "jp":"コミュニティセンターの右に郵便局があり、左にクリニックがあります。"},
+            {"id":"st8", "zh":"这座充满欢笑和温情的新城市，我非常喜欢。", "py":"Zhè zuò chōngmǎn huānxiào hé wēnqíng de xīn chéngshì, wǒ fēicháng xǐhuan.", "en":"I love this new city full of laughter and warmth very much.", "jp":"笑顔と温もりにあふれるこの新しい街が大好きです。"}
+        ],
+        "characters": [
+            {"id":"zi1", "zh":"住", "py":"zhù", "radical":"亻部（单人旁）", "radicalBadge":"亻 —— 住", "words":"居住、住房、住所", "meaning":"live / reside", "meaningJp":"すむ、じゅう", "context":"我住在一个美丽又便利的社区里"},
+            {"id":"zi2", "zh":"市", "py":"shì", "radical":"巾部（巾字底）", "radicalBadge":"巾 —— 市", "words":"城市、超市、市民", "meaning":"city / market", "meaningJp":"まち、し", "context":"这座充满欢笑和温情的新城市"},
+            {"id":"zi3", "zh":"店", "py":"diàn", "radical":"广部（广字旁）", "radicalBadge":"广 —— 店", "words":"商店、书店、饭店", "meaning":"shop / store", "meaningJp":"みせ、てん", "context":"马路附近，有一家古老的书店"},
+            {"id":"zi4", "zh":"前", "py":"qián", "radical":"刂部（立刀旁）", "radicalBadge":"刂 —— 前", "words":"前面、前进、从前", "meaning":"front / forward", "meaningJp":"まえ、ぜん", "context":"地铁站的前面，有大型商场和银行"},
+            {"id":"zi5", "zh":"后", "py":"hòu", "radical":"口部（口字底）", "radicalBadge":None, "words":"后面、后方、后来", "meaning":"back / behind", "meaningJp":"うしろ、こう", "context":"社区的后面有一座绿意盎然的公园"},
+            {"id":"zi6", "zh":"中", "py":"zhōng", "radical":"丨部（竖部）", "radicalBadge":None, "words":"中间、中心、中国", "meaning":"middle / center", "meaningJp":"なか、ちゅう", "context":"公园中心有一座小喷泉"},
+            {"id":"zi7", "zh":"外", "py":"wài", "radical":"夕部（夕字旁）", "radicalBadge":"夕 —— 外", "words":"外面、外边、郊外", "meaning":"outside", "meaningJp":"そと、がい", "context":"走出家门外，总能遇到友善的邻居"},
+            {"id":"zi8", "zh":"左", "py":"zuǒ", "radical":"工部（工字底）", "radicalBadge":"工 —— 左", "words":"左边、左手、左侧", "meaning":"left", "meaningJp":"ひだり、さ", "context":"左边是诊所"},
+            {"id":"zi9", "zh":"右", "py":"yòu", "radical":"口部（口字底）", "radicalBadge":"口 —— 右", "words":"右边、右手、右侧", "meaning":"right", "meaningJp":"みぎ、う", "context":"社区服务站的右边是邮局"},
+            {"id":"zi10", "zh":"近", "py":"jìn", "radical":"辶部（走之底）", "radicalBadge":"辶 —— 近", "words":"附近、近处、靠近", "meaning":"near / close", "meaningJp":"ちかい、きん", "context":"马路附近，有一家古老的书店和小茶馆"},
+            {"id":"zi11", "zh":"道", "py":"dào", "radical":"辶部（走之底）", "radicalBadge":"辶 —— 道", "words":"街道、道路、大道", "meaning":"road / way", "meaningJp":"みち、どう", "context":"我穿过热闹的街道去上学"},
+            {"id":"zi12", "zh":"新", "py":"xīn", "radical":"斤部（斤字旁）", "radicalBadge":"斤 —— 新", "words":"新鲜、崭新、新年", "meaning":"new", "meaningJp":"あたらしい、しん", "context":"这座充满欢笑和温情的新城市"}
+        ],
+        "words": [
+            {"id":"ci1", "zh":"社区", "py":"shèqū", "meaning":"community", "meaningJp":"コミュニティ", "emoji":"🏘️", "context":"我住在一个美丽又便利的社区里。", "tag":"场所"},
+            {"id":"ci2", "zh":"地铁站", "py":"dìtiězhàn", "meaning":"subway station", "meaningJp":"地下鉄の駅", "emoji":"🚇", "context":"地铁站的前面，有大型商场和银行。", "tag":"设施"},
+            {"id":"ci3", "zh":"银行", "py":"yínháng", "meaning":"bank", "meaningJp":"銀行", "emoji":"🏦", "context":"地铁站的前面，有大型商场和银行。", "tag":"设施"},
+            {"id":"ci4", "zh":"街道", "py":"jiēdào", "meaning":"street", "meaningJp":"通り・街道", "emoji":"🛣️", "context":"每天早上，我穿过热闹的街道去上学。", "tag":"场所"},
+            {"id":"ci5", "zh":"书店", "py":"shūdiàn", "meaning":"bookstore", "meaningJp":"書店", "emoji":"📚", "context":"马路附近，有一家古老的书店和小茶馆。", "tag":"设施"},
+            {"id":"ci6", "zh":"茶馆", "py":"cháguǎn", "meaning":"teahouse", "meaningJp":"茶館・カフェ", "emoji":"🍵", "context":"马路附近，有一家古老的书店和小茶馆。", "tag":"设施"},
+            {"id":"ci7", "zh":"公园", "py":"gōngyuán", "meaning":"park", "meaningJp":"公園", "emoji":"🌳", "context":"公园里面有绿绿的大树和漂亮的花朵。", "tag":"场所"},
+            {"id":"ci8", "zh":"邻居", "py":"línjū", "meaning":"neighbor", "meaningJp":"お隣さん・近所の人", "emoji":"🤝", "context":"走出家门外，总能遇到热情友善的邻居。", "tag":"人物"},
+            {"id":"ci9", "zh":"邮局", "py":"yóujú", "meaning":"post office", "meaningJp":"郵便局", "emoji":"📮", "context":"社区服务站的右边是邮局。", "tag":"设施"},
+            {"id":"ci10", "zh":"诊所", "py":"zhěnsuǒ", "meaning":"clinic", "meaningJp":"クリニック・診療所", "emoji":"🏥", "context":"左边是社区诊所。", "tag":"设施"},
+            {"id":"ci11", "zh":"便利", "py":"biànlì", "meaning":"convenient", "meaningJp":"便利", "emoji":"✨", "context":"我住在一个美丽又便利的社区里。", "tag":"形容"},
+            {"id":"ci12", "zh":"热闹", "py":"rènao", "meaning":"bustling / lively", "meaningJp":"賑やか", "emoji":"🎊", "context":"每天早上，我穿过热闹的街道去上学。", "tag":"形容"}
+        ],
+        "proper_nouns": [
+            {"id":"pn1", "zh":"前面", "py":"qiánmiàn", "meaning":"front / ahead", "meaningJp":"前・正面", "emoji":"⬆️", "context":"地铁站的前面，有大型商场和银行。", "tag":"方位"},
+            {"id":"pn2", "zh":"后面", "py":"hòumiàn", "meaning":"behind / back", "meaningJp":"後ろ・後方", "emoji":"⬇️", "context":"社区的后面有一座绿色的山坡。", "tag":"方位"},
+            {"id":"pn3", "zh":"里面", "py":"lǐmiàn", "meaning":"inside", "meaningJp":"中・内部", "emoji":"📦", "context":"公园里面有绿绿的大树和漂亮的花朵。", "tag":"方位"},
+            {"id":"pn4", "zh":"外面", "py":"wàimiàn", "meaning":"outside", "meaningJp":"外・外部", "emoji":"🚪", "context":"走出家门外，总能遇到热情友善的邻居。", "tag":"方位"},
+            {"id":"pn5", "zh":"左边", "py":"zuǒbian", "meaning":"left side", "meaningJp":"左側", "emoji":"⬅️", "context":"左边是社区诊所。", "tag":"方位"},
+            {"id":"pn6", "zh":"右边", "py":"yòubian", "meaning":"right side", "meaningJp":"右側", "emoji":"➡️", "context":"社区服务站的右边是邮局。", "tag":"方位"},
+            {"id":"pn7", "zh":"附近", "py":"fùjìn", "meaning":"nearby / vicinity", "meaningJp":"近く・付近", "emoji":"📍", "context":"马路附近，有一家古老的书店和小茶馆。", "tag":"方位"}
+        ],
+        "scramble_sentences": [
+            {
+                "id": "sent1",
+                "zh": "我住在一个美丽又便利的社区里。",
+                "tokens": ["我住在", "一个美丽", "又便利的", "社区里。"],
+                "isKey": True
+            },
+            {
+                "id": "st2",
+                "zh": "地铁站的前面，有大型商场和银行。",
+                "tokens": ["地铁站的", "前面，", "有大型商场", "和银行。"]
+            },
+            {
+                "id": "st3",
+                "zh": "每天早上，我穿过热闹的街道去上学。",
+                "tokens": ["每天早上，", "我穿过", "热闹的街道", "去上学。"]
+            },
+            {
+                "id": "st6",
+                "zh": "走出家门外，总能遇到热情友善的邻居。",
+                "tokens": ["走出家门外，", "总能遇到", "热情友善的", "邻居。"]
+            },
+            {
+                "id": "st7",
+                "zh": "社区服务站的右边是邮局，左边是诊所。",
+                "tokens": ["社区服务站的", "右边是邮局，", "左边是", "诊所。"]
+            }
+        ],
+        "quiz": [
+            {"q":"我住的社区有什么主要特点？", "opts":["美丽又便利", "荒凉又偏远", "狭窄又脏乱", "危险又吵闹"], "a":0},
+            {"q":"地铁站的前面有什么公共生活设施？", "opts":["农田与池塘", "大型商场和银行", "原始森林", "高耸雪山"], "a":1},
+            {"q":"汉字“住”的偏旁部首是什么？", "opts":["亻部（单人旁）", "木部（木字旁）", "口部（口字底）", "日部（日字旁）"], "a":0},
+            {"q":"我每天上学路上会穿过什么样的街道？", "opts":["安静的小溪", "热闹的街道", "黑暗的树林", "高速公路"], "a":1},
+            {"q":"马路附近有什么古老的场所？", "opts":["古老的书店和小茶馆", "现代化飞机场", "大型集装箱码头", "火箭发射基地"], "a":0},
+            {"q":"汉字“前”的偏旁部首是什么？", "opts":["刂部（立刀旁）", "广部（广字旁）", "夕部（夕字旁）", "工部（工字底）"], "a":0},
+            {"q":"社区服务站右边的建筑是什么设施？", "opts":["邮局", "书店", "茶馆", "公园"], "a":0},
+            {"q":"在反义词中，与汉字“新”相对的是哪一个字？", "opts":["古", "左", "外", "右"], "a":0}
+        ],
+        "cloze": [
+            {
+                "id": "zh_c1",
+                "type": "text",
+                "before": "我住在一个美丽又便利的",
+                "answer": "社区",
+                "after": "里。",
+                "py": "Wǒ zhù zài yí gè měilì yòu biànlì de shèqū lǐ.",
+                "en": "I live in a beautiful and convenient community.",
+                "jp": "私は美しく便利なコミュニティに住んでいます。",
+                "answerPy": "shè qū",
+                "options": ["社区", "海岛", "山洞", "草地"],
+                "hint": "课文原句 · 生活居住的环境",
+                "audioId": "cloze_1"
+            },
+            {
+                "id": "zh_c2",
+                "type": "text",
+                "before": "地铁站的",
+                "answer": "前面",
+                "after": "，有大型商场和银行。",
+                "py": "Dìtiězhàn de qiánmiàn, yǒu dàxíng shāngchǎng hé yínháng.",
+                "en": "In front of the subway station, there are malls and banks.",
+                "jp": "駅の前には大型ショッピングモールや銀行があります。",
+                "answerPy": "qián miàn",
+                "options": ["前面", "后面", "地下", "天上"],
+                "hint": "课文原句 · 核心空间方位表达",
+                "audioId": "cloze_2"
+            },
+            {
+                "id": "zh_c3",
+                "type": "text",
+                "before": "每天早上，我穿过热闹的",
+                "answer": "街道",
+                "after": "去上学。",
+                "py": "Měitiān zǎoshang, wǒ chuānguò rènao de jiēdào qù shàngxué.",
+                "en": "Every morning I walk through lively streets to school.",
+                "jp": "毎朝、賑やかな通りを抜けて学校へ行きます。",
+                "answerPy": "jiē dào",
+                "options": ["街道", "山峰", "河流", "天空"],
+                "hint": "课文原句 · 通往学校的公共道路",
+                "audioId": "cloze_3"
+            },
+            {
+                "id": "zh_c4",
+                "type": "text",
+                "before": "马路",
+                "answer": "附近",
+                "after": "，有一家古老的书店和小茶馆。",
+                "py": "Mǎlù fùjìn, yǒu yì jiā gǔlǎo de shūdiàn hé xiǎo cháguǎn.",
+                "en": "Near the road, there is an old bookstore and a teahouse.",
+                "jp": "大通りの近くに、古い本屋と小さな茶館があります。",
+                "answerPy": "fù jìn",
+                "options": ["附近", "高空", "海外", "正中"],
+                "hint": "课文原句 · 表示距离不远的方位词",
+                "audioId": "cloze_4"
+            },
+            {
+                "id": "zh_c5",
+                "type": "text",
+                "before": "公园",
+                "answer": "里面",
+                "after": "有绿绿的大树和漂亮的花朵。",
+                "py": "Gōngyuán lǐmiàn yǒu lǜlǜ de dàshù hé piàoliang de huāduǒ.",
+                "en": "Inside the park, there are lush trees and pretty flowers.",
+                "jp": "公園の中には、青々とした木や綺麗な花があります。",
+                "answerPy": "lǐ miàn",
+                "options": ["里面", "外面", "远处", "后方"],
+                "hint": "课文原句 · 园区内部空间",
+                "audioId": "cloze_5"
+            },
+            {
+                "id": "zh_c6",
+                "type": "text",
+                "before": "走出家门",
+                "answer": "外",
+                "after": "，总能遇到热情友善的邻居。",
+                "py": "Zǒuchū jiāmén wài, zǒng néng yùdào rèqíng yǒushàn de línjū.",
+                "en": "Stepping outside home, I always meet friendly neighbors.",
+                "jp": "家の外に出ると、いつも親切なご近所さんに会います。",
+                "answerPy": "wài",
+                "options": ["外", "中", "内", "上"],
+                "hint": "课文原句 · 表示到屋外",
+                "audioId": "cloze_6"
+            },
+            {
+                "id": "zh_c7",
+                "type": "text",
+                "before": "社区服务站的",
+                "answer": "右边",
+                "after": "是邮局，左边是诊所。",
+                "py": "Shèqū fúwùzhàn de yòubian shì yóujú, zuǒbian shì zhěnsuǒ.",
+                "en": "To the right is the post office, to the left is clinic.",
+                "jp": "右側に郵便局があり、左側にクリニックがあります。",
+                "answerPy": "yòu bian",
+                "options": ["右边", "后方", "正中", "天边"],
+                "hint": "课文原句 · 左右方位对应",
+                "audioId": "cloze_7"
+            },
+            {
+                "id": "zh_c8",
+                "type": "text",
+                "before": "这座充满欢笑和温情的新",
+                "answer": "城市",
+                "after": "，我非常喜欢。",
+                "py": "Zhè zuò chōngmǎn huānxiào hé wēnqíng de xīn chéngshì, wǒ fēicháng xǐhuan.",
+                "en": "I love this new city full of laughter and warmth very much.",
+                "jp": "笑顔と温もりにあふれるこの新しい街が大好きです。",
+                "answerPy": "chéng shì",
+                "options": ["城市", "教室", "森林", "车间"],
+                "hint": "课文原句 · 我们生活的现代都市",
+                "audioId": "cloze_8"
+            }
+        ]
+    },
+    {
+        "id": "zh5",
+        "lesson_num": "5",
+        "title": "美味的中国菜 - 汉语课文识字闯关 (Delicious Chinese Food)",
+        "canonical": "https://zw.0101.click/zh5.html",
+        "meta_desc": "原创汉语课文《美味的中国菜》：围绕中国家庭的一日三餐学习饮食和口味相关词语与 12 个核心汉字，带拼音逐句朗读和练习题。",
+        "header_title": "美味的中国菜",
+        "title_en": "Delicious Chinese Food in Chinese",
+        "sub_desc": "跟随原创生活情境课文《美味的中国菜》漫步中华餐桌，体验一日三餐与烟火温情，学习饮食文化、丰富风味与12个核心汉字！本课是《我的社区与城市》的续篇（第5课）。",
+        "story_title": "📖 美味的中国菜 (Delicious Chinese Food)",
+        "full_title": "📜 美味的中国菜 · 全文",
+        "palace_svg": """<svg viewBox="0 0 64 64" width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" style="vertical-align:-0.08em">
+          <circle cx="32" cy="32" r="28" fill="#fff" stroke="#b91c1c" stroke-width="3"/>
+          <path d="M16 32 C16 46 24 50 32 50 C40 50 48 46 48 32 Z" fill="#fff7ed" stroke="#b91c1c" stroke-width="2.5"/>
+          <line x1="26" y1="50" x2="38" y2="50" stroke="#b91c1c" stroke-width="3" stroke-linecap="round"/>
+          <path d="M25 26 Q23 20 25 15" stroke="#f97316" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M32 27 Q30 20 32 14" stroke="#f97316" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M39 26 Q37 20 39 15" stroke="#f97316" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <line x1="14" y1="23" x2="48" y2="19" stroke="#b91c1c" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="15" y1="27" x2="50" y2="24" stroke="#b91c1c" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>""",
+        "proper_label": "饮食",
+        "has_pinyin_chart": False,
+        "story": [
+            {"id":"st1", "zh":"我非常喜欢丰富又美味的中国菜。", "py":"Wǒ fēicháng xǐhuan fēngfù yòu měiwèi de zhōngguócài.", "en":"I love rich and delicious Chinese food very much.", "jp":"私は豊かで美味しい中国料理が大好きです。"},
+            {"id":"st2", "zh":"清晨，热气腾腾的包子配上香浓的豆浆。", "py":"Qīngchén, rèqì téngténg de bāozi pèishang xiāngnóng de dòujiāng.", "en":"In the early morning, steaming hot buns are paired with fragrant soy milk.", "jp":"清々しい朝、湯気の立つ包子（肉まん）に香ばしい豆乳を合わせます。"},
+            {"id":"st3", "zh":"正午，刚出锅的手工面条香气扑鼻、劲道爽滑。", "py":"Zhèngwǔ, gāng chūguō de shǒugōng miàntiáo xiāngqì pūbí, jìndao shuǎnghuá.", "en":"At high noon, freshly cooked handmade noodles are enticingly fragrant and delightfully springy.", "jp":"正午には、茹でたての手打ち麺が食欲をそそる香りを放ち、もっちりとのどごし豊かです。"},
+            {"id":"st4", "zh":"傍晚全家围坐桌旁，亲手包出鲜美多汁的饺子。", "py":"Bàngwǎn quánjiā wéizuò zhuōpáng, qīnshǒu bāo chū xiānměi duōzhī de jiǎozi.", "en":"In the evening, the whole family sits around the table to wrap fresh and juicy dumplings by hand.", "jp":"夕暮れには家族みんなで食卓を囲み、手作りでジューシーな餃子を包みます。"},
+            {"id":"st5", "zh":"开饭前，大家互致微笑，礼貌地说一声“请慢用”。", "py":"Kāifàn qián, dàjiā hù zhì wēixiào, lǐmào de shuō yì shēng 'Qǐng mànyòng'.", "en":"Before the meal, everyone exchanges smiles and politely says, 'Please enjoy your meal.'", "jp":"食事の前には、みんなで微笑みを交わし、「どうぞごゆっくりお召し上がりください」と礼儀正しく挨拶します。"},
+            {"id":"st6", "zh":"盘中的菜肴色香味俱全，荤素搭配更显营养健康。", "py":"Pán zhōng de càiyáo sè xiāng wèi jùquán, hūn sù dāpèi gèng xiǎn yíngyǎng jiànkāng.", "en":"The delicacies on the plate have exquisite color, aroma, and taste, wonderfully balanced for health and nutrition.", "jp":"お皿の料理は彩り・香り・味の三拍子が揃い、肉と野菜の調和が栄養と健康を引き立てます。"},
+            {"id":"st7", "zh":"饭后闲坐，细细品味一壶甘甜清香的热茶。", "py":"Fànhòu xiánzuò, xìxì pǐnwèi yì hú gāntián qīngxiāng de rèchá.", "en":"Relaxing after the meal, we quietly savor a pot of sweet and fragrant hot tea.", "jp":"食後はゆったりと寛ぎ、急須で淹れた甘く香り高い温かいお茶をじっくりと味わいます。"},
+            {"id":"st8", "zh":"缕缕烟火气与可口佳肴，温暖了心灵，带来了无尽的欢愉与力量。", "py":"Lǚlǚ yānhuǒqì yǔ kěkǒu jiāyáo, wēnnuǎn le xīnlíng, dàilái le wújìn de huānyú yǔ lìliàng.", "en":"The gentle warmth of the hearth and luscious feasts comfort the soul, bringing endless joy and vigor.", "jp":"立ちのぼる暮らしの温もりと美味しいごちそうは、心を温め、尽きることのない喜びと力を与えてくれます。"}
+        ],
+        "characters": [
+            {"id":"zi1", "zh":"菜", "py":"cài", "radical":"艹部（草字头）", "radicalBadge":"艹 —— 菜", "words":"菜肴、蔬菜、饭菜", "meaning":"vegetable / dish / cuisine", "meaningJp":"野菜、料理、おかず", "context":"盘中的菜肴色香味俱全"},
+            {"id":"zi2", "zh":"饭", "py":"fàn", "radical":"饣部（饣字旁）", "radicalBadge":"饣 —— 饭", "words":"米饭、开饭、早饭", "meaning":"meal / cooked rice", "meaningJp":"ご飯、食事", "context":"开饭前，大家礼貌地说请慢用"},
+            {"id":"zi3", "zh":"面", "py":"miàn", "radical":"面部（自体即部首）", "radicalBadge":None, "words":"面条、拉面、手工面", "meaning":"noodles / face", "meaningJp":"麺、小麦粉", "context":"刚出锅的手工面条香气扑鼻"},
+            {"id":"zi4", "zh":"汤", "py":"tāng", "radical":"氵部（三点水）", "radicalBadge":"氵 —— 汤", "words":"热汤、煲汤、鸡汤", "meaning":"soup / broth", "meaningJp":"スープ、汁物", "context":"餐桌上热气腾腾的鲜美热汤"},
+            {"id":"zi5", "zh":"肉", "py":"ròu", "radical":"肉部（自体即部首）", "radicalBadge":None, "words":"瘦肉、牛肉、鲜肉", "meaning":"meat", "meaningJp":"肉、牛肉", "context":"荤素搭配，肉类与青菜均衡"},
+            {"id":"zi6", "zh":"鱼", "py":"yú", "radical":"鱼部（自体即部首）", "radicalBadge":None, "words":"鲜鱼、红烧鱼、吃鱼", "meaning":"fish", "meaningJp":"魚", "context":"清蒸鲜鱼，味道极为鲜美"},
+            {"id":"zi7", "zh":"茶", "py":"chá", "radical":"艹部（草字头）", "radicalBadge":"艹 —— 茶", "words":"热茶、绿茶、品茶", "meaning":"tea", "meaningJp":"お茶", "context":"饭后闲坐，细细品味一壶甘甜清香的热茶"},
+            {"id":"zi8", "zh":"吃", "py":"chī", "radical":"口部（口字旁）", "radicalBadge":"口 —— 吃", "words":"好吃、品尝、小吃", "meaning":"eat", "meaningJp":"食べる", "context":"大家一起开心地品尝美味佳肴"},
+            {"id":"zi9", "zh":"喝", "py":"hē", "radical":"口部（口字旁）", "radicalBadge":"口 —— 喝", "words":"喝茶、喝汤、痛快畅喝", "meaning":"drink", "meaningJp":"飲む", "context":"配上一碗香浓豆浆大口喝下"},
+            {"id":"zi10", "zh":"香", "py":"xiāng", "radical":"香部（自体即部首）", "radicalBadge":None, "words":"香气、清香、芬芳", "meaning":"fragrant / sweet-smelling", "meaningJp":"香ばしい、良い香り", "context":"手工面条香气扑鼻"},
+            {"id":"zi11", "zh":"甜", "py":"tián", "radical":"甘部（甘字旁）", "radicalBadge":"甘 —— 甜", "words":"甘甜、香甜、甜美", "meaning":"sweet", "meaningJp":"甘い", "context":"一壶甘甜清香的热茶"},
+            {"id":"zi12", "zh":"热", "py":"rè", "radical":"灬部（四点底）", "radicalBadge":"灬 —— 热", "words":"热气腾腾、温热、热水", "meaning":"hot / warm", "meaningJp":"熱い、温かい", "context":"热气腾腾的包子配上香浓的豆浆"}
+        ],
+        "words": [
+            {"id":"ci1", "zh":"中国菜", "py":"zhōngguócài", "meaning":"Chinese cuisine", "meaningJp":"中国料理", "emoji":"🇨🇳", "context":"我非常喜欢丰富又美味的中国菜。", "tag":"美食"},
+            {"id":"ci2", "zh":"包子", "py":"bāozi", "meaning":"steamed bun", "meaningJp":"肉まん、包子", "emoji":"🥟", "context":"清晨，热气腾腾的包子配上香浓的豆浆。", "tag":"早点"},
+            {"id":"ci3", "zh":"豆浆", "py":"dòujiāng", "meaning":"soybean milk", "meaningJp":"豆乳", "emoji":"🥛", "context":"热腾腾的包子配上香浓的豆浆。", "tag":"早点"},
+            {"id":"ci4", "zh":"面条", "py":"miàntiáo", "meaning":"noodles", "meaningJp":"麺、ラーメン", "emoji":"🍜", "context":"刚出锅的手工面条香气扑鼻、劲道爽滑。", "tag":"主食"},
+            {"id":"ci5", "zh":"饺子", "py":"jiǎozi", "meaning":"dumplings", "meaningJp":"餃子", "emoji":"🥟", "context":"傍晚全家围坐桌旁，亲手包出鲜美多汁的饺子。", "tag":"传统"},
+            {"id":"ci6", "zh":"米饭", "py":"mǐfàn", "meaning":"cooked rice", "meaningJp":"ご飯、白米", "emoji":"🍚", "context":"白白胖胖的米饭是餐桌上最亲切的陪伴。", "tag":"主食"},
+            {"id":"ci7", "zh":"热茶", "py":"rèchá", "meaning":"hot tea", "meaningJp":"温かいお茶", "emoji":"🍵", "context":"饭后闲坐，细细品味一壶甘甜清香的热茶。", "tag":"茶饮"},
+            {"id":"ci8", "zh":"色香味", "py":"sè xiāng wèi", "meaning":"color, aroma and taste", "meaningJp":"色・香り・味（料理の三要素）", "emoji":"✨", "context":"盘中的菜肴色香味俱全。", "tag":"风味"},
+            {"id":"ci9", "zh":"营养", "py":"yíngyǎng", "meaning":"nutrition", "meaningJp":"栄養", "emoji":"🥗", "context":"荤素搭配更显营养健康。", "tag":"健康"},
+            {"id":"ci10", "zh":"可口", "py":"kěkǒu", "meaning":"delicious / palatable", "meaningJp":"口当たりが良い、美味しい", "emoji":"😋", "context":"温暖可口的佳肴让人倍感幸福。", "tag":"风味"},
+            {"id":"ci11", "zh":"幸福", "py":"xìngfú", "meaning":"happiness / bliss", "meaningJp":"幸せ", "emoji":"💖", "context":"带来了无尽的欢愉与幸福。", "tag":"情感"},
+            {"id":"ci12", "zh":"味道", "py":"wèidao", "meaning":"flavor / savor", "meaningJp":"味、風味", "emoji":"🍲", "context":"每一道家常菜都蕴含着温暖的滋味。", "tag":"风味"}
+        ],
+        "proper_nouns": [
+            {"id":"pn1", "zh":"请慢用", "py":"qǐng mànyòng", "meaning":"Please enjoy your meal", "meaningJp":"どうぞごゆっくりお召し上がりください", "emoji":"🙏", "context":"开饭前，大家礼貌地说一声“请慢用”。", "tag":"礼仪"},
+            {"id":"pn2", "zh":"真好吃", "py":"zhēn hǎochī", "meaning":"really delicious", "meaningJp":"本当に美味しい", "emoji":"😋", "context":"这盘刚出锅的家常炒菜真好吃！", "tag":"赞美"},
+            {"id":"pn3", "zh":"吃饱了", "py":"chī bǎo le", "meaning":"I am full", "meaningJp":"お腹がいっぱいです / ごちそうさま", "emoji":"🤰", "context":"品尝完美食，心满意足地说一声“吃饱了”。", "tag":"礼仪"},
+            {"id":"pn4", "zh":"筷子", "py":"kuàizi", "meaning":"chopsticks", "meaningJp":"箸（はし）", "emoji":"🥢", "context":"拿起轻巧的竹筷子，夹起美味的佳肴。", "tag":"餐具"},
+            {"id":"pn5", "zh":"火锅", "py":"huǒguō", "meaning":"hotpot", "meaningJp":"火鍋（ひなべ）", "emoji":"🍲", "context":"寒冬里，全家人最爱聚在一起吃热气腾腾的火锅。", "tag":"名吃"},
+            {"id":"pn6", "zh":"清淡", "py":"qīngdàn", "meaning":"light / mild in flavor", "meaningJp":"あっさりした、薄味の", "emoji":"🥒", "context":"这道清炒时蔬口感脆嫩，味道十分清淡爽口。", "tag":"风味"},
+            {"id":"pn7", "zh":"麻辣", "py":"málà", "meaning":"numbing and spicy", "meaningJp":"ピリ辛・麻辣", "emoji":"🌶️", "context":"川味菜肴麻辣鲜香，深受大家喜爱。", "tag":"风味"}
+        ],
+        "scramble_sentences": [
+            {
+                "id": "sent1",
+                "zh": "盘中的菜肴色香味俱全，荤素搭配更显营养健康。",
+                "tokens": ["盘中的菜肴", "色香味俱全，", "荤素搭配", "更显营养健康。"],
+                "isKey": True
+            },
+            {
+                "id": "st1",
+                "zh": "我非常喜欢丰富又美味的中国菜。",
+                "tokens": ["我非常喜欢", "丰富又美味的", "中国菜。"]
+            },
+            {
+                "id": "st2",
+                "zh": "清晨，热气腾腾的包子配上香浓的豆浆。",
+                "tokens": ["清晨，", "热气腾腾的包子", "配上", "香浓的豆浆。"]
+            },
+            {
+                "id": "st4",
+                "zh": "傍晚全家围坐桌旁，亲手包出鲜美多汁的饺子。",
+                "tokens": ["傍晚全家", "围坐桌旁，", "亲手包出", "鲜美多汁的饺子。"]
+            },
+            {
+                "id": "st5",
+                "zh": "开饭前，大家互致微笑，礼貌地说一声请慢用。",
+                "tokens": ["开饭前，", "大家互致微笑，", "礼貌地说一声", "请慢用。"]
+            }
+        ],
+        "quiz": [
+            {"q":"课文中清晨的早餐吃什么，并搭配香浓的豆浆？", "opts":["热气腾腾的包子", "冰凉的西瓜", "黑巧克力", "炸鸡块"], "a":0},
+            {"q":"正午刚出锅的哪种主食让人感到“香气扑鼻、劲道爽滑”？", "opts":["白米饭", "手工面条", "小笼包", "全麦面包"], "a":1},
+            {"q":"傍晚全家人围坐桌旁，亲手制作哪一道传统美食？", "opts":["鲜美多汁的饺子", "西式汉堡", "麻辣火锅", "甜甜圈"], "a":0},
+            {"q":"开饭之前，大家互致微笑，礼貌地表达什么用餐礼仪？", "opts":["对不起", "请慢用", "明天见", "欢迎光临"], "a":1},
+            {"q":"中国饮食文化讲究“色香味俱全”，其中“荤素搭配”的核心益处是什么？", "opts":["更显营养健康", "颜色更红艳", "做饭更费时", "只能冷着吃"], "a":0},
+            {"q":"饭后闲坐时，大家一起细细品味什么饮品来消食润喉？", "opts":["冰镇汽水", "一壶甘甜清香的热茶", "浓缩黑咖啡", "冰牛奶"], "a":1},
+            {"q":"汉字“饭”的部首是下列哪一个？", "opts":["饣部（饣字旁）", "口部", "日部", "木部"], "a":0},
+            {"q":"汉字“热”底部的“灬”属于什么部首？", "opts":["灬部（四点底）", "水部", "火字旁", "草字头"], "a":0}
+        ],
+        "cloze": [
+            {
+                "id": "zh_c1",
+                "type": "text",
+                "before": "我非常喜欢丰富又",
+                "answer": "美味",
+                "after": "的中国菜。",
+                "py": "Wǒ fēicháng xǐhuan fēngfù yòu měiwèi de zhōngguócài.",
+                "en": "I love rich and delicious Chinese food very much.",
+                "jp": "私は豊かで美味しい中国料理が大好きです。",
+                "answerPy": "měi wèi",
+                "options": ["美味", "马路", "天气", "冷风"],
+                "hint": "课文原句 · 形容菜肴可口诱人",
+                "audioId": "cloze_1"
+            },
+            {
+                "id": "zh_c2",
+                "type": "text",
+                "before": "清晨，热气腾腾的包子配上香浓的",
+                "answer": "豆浆",
+                "after": "。",
+                "py": "Qīngchén, rèqì téngténg de bāozi pèishang xiāngnóng de dòujiāng.",
+                "en": "In the morning, hot buns are paired with fragrant soy milk.",
+                "jp": "朝、熱々の包子に香ばしい豆乳を合わせます。",
+                "answerPy": "dòu jiāng",
+                "options": ["豆浆", "街道", "公园", "书店"],
+                "hint": "课文原句 · 传统早餐经典饮品",
+                "audioId": "cloze_2"
+            },
+            {
+                "id": "zh_c3",
+                "type": "text",
+                "before": "正午，刚出锅的手工",
+                "answer": "面条",
+                "after": "香气扑鼻、劲道爽滑。",
+                "py": "Zhèngwǔ, gāng chūguō de shǒugōng miàntiáo xiāngqì pūbí, jìndao shuǎnghuá.",
+                "en": "Freshly cooked handmade noodles are wonderfully fragrant and springy.",
+                "jp": "茹でたての手打ち麺が食欲をそそる香りを放ちます。",
+                "answerPy": "miàn tiáo",
+                "options": ["面条", "日历", "铅笔", "落叶"],
+                "hint": "课文原句 · 正午热腾腾的主食",
+                "audioId": "cloze_3"
+            },
+            {
+                "id": "zh_c4",
+                "type": "text",
+                "before": "傍晚全家围坐桌旁，亲手包出鲜美多汁的",
+                "answer": "饺子",
+                "after": "。",
+                "py": "Bàngwǎn quánjiā wéizuò zhuōpáng, qīnshǒu bāo chū xiānměi duōzhī de jiǎozi.",
+                "en": "The family sits around to wrap fresh, juicy dumplings.",
+                "jp": "家族みんなで手作りでジューシーな餃子を包みます。",
+                "answerPy": "jiǎo zi",
+                "options": ["饺子", "苹果", "花朵", "桌子"],
+                "hint": "课文原句 · 全家合力包出的传统美食",
+                "audioId": "cloze_4"
+            },
+            {
+                "id": "zh_c5",
+                "type": "text",
+                "before": "开饭前，大家互致微笑，礼貌地说一声“",
+                "answer": "请慢用",
+                "after": "”。",
+                "py": "Kāifàn qián, dàjiā hù zhì wēixiào, lǐmào de shuō yì shēng 'Qǐng mànyòng'.",
+                "en": "Before the meal, everyone politely says 'Please enjoy your meal'.",
+                "jp": "食事の前には、礼儀正しく「どうぞお召し上がりください」と挨拶します。",
+                "answerPy": "qǐng màn yòng",
+                "options": ["请慢用", "对不起", "没关系", "欢迎你"],
+                "hint": "课文原句 · 优雅温馨的餐前礼貌用语",
+                "audioId": "cloze_5"
+            },
+            {
+                "id": "zh_c6",
+                "type": "text",
+                "before": "盘中的菜肴色香味俱全，荤素搭配更显",
+                "answer": "营养",
+                "after": "健康。",
+                "py": "Pán zhōng de càiyáo sè xiāng wèi jùquán, hūn sù dāpèi gèng xiǎn yíngyǎng jiànkāng.",
+                "en": "The dishes have color, aroma, and taste, ensuring great nutrition.",
+                "jp": "料理は彩り・香り・味が揃い、栄養と健康を引き立てます。",
+                "answerPy": "yíng yǎng",
+                "options": ["营养", "附近", "中央", "颜色"],
+                "hint": "课文原句 · 荤素搭配带来的身体益处",
+                "audioId": "cloze_6"
+            },
+            {
+                "id": "zh_c7",
+                "type": "text",
+                "before": "饭后闲坐，细细品味一壶甘甜清香的",
+                "answer": "热茶",
+                "after": "。",
+                "py": "Fànhòu xiánzuò, xìxì pǐnwèi yì hú gāntián qīngxiāng de rèchá.",
+                "en": "After the meal, we quietly savor a pot of sweet and fragrant hot tea.",
+                "jp": "食後は急須で淹れた甘く香り高い温かいお茶を味わいます。",
+                "answerPy": "rè chá",
+                "options": ["热茶", "冰水", "凉风", "大米"],
+                "hint": "课文原句 · 饭后解腻的传统温热茶饮",
+                "audioId": "cloze_7"
+            },
+            {
+                "id": "zh_c8",
+                "type": "text",
+                "before": "缕缕烟火气与可口佳肴，温暖了心灵，带来了无尽的欢愉与",
+                "answer": "力量",
+                "after": "。",
+                "py": "Lǚlǚ yānhuǒqì yǔ kěkǒu jiāyáo, wēnnuǎn le xīnlíng, dàilái le wújìn de huānyú yǔ lìliàng.",
+                "en": "The hearth and feasts warm the soul, bringing endless joy and energy.",
+                "jp": "暮らしの温もりと美味しいごちそうは、尽きることのない喜びと力を与えてくれます。",
+                "answerPy": "lì liang",
+                "options": ["力量", "冬天", "星期", "时间"],
+                "hint": "课文原句 · 美食给身心注入的精神动能",
+                "audioId": "cloze_8"
+            }
+        ]
+    },
+    {
+        "id": "zh6",
+        "lesson_num": "6",
+        "title": "快乐的旅行 - 汉语课文识字闯关 (A Fun Trip)",
+        "canonical": "https://zw.0101.click/zh6.html",
+        "meta_desc": "原创汉语课文《快乐的旅行》：坐高铁去杭州，游西湖、坐小船、尝西湖醋鱼，学习出行与交通相关词语和 12 个核心汉字，带拼音分句跟读与闯关练习。",
+        "header_title": "快乐的旅行",
+        "title_en": "A Fun Trip in Chinese",
+        "sub_desc": "跟随原创情境课文《快乐的旅行》坐上高铁奔向杭州，游西湖、坐小船、拍照片、买特产，学习出行交通表达、名胜见闻与12个核心汉字！本课是《美味的中国菜》的续篇（第6课）。",
+        "story_title": "📖 快乐的旅行 (A Fun Trip)",
+        "full_title": "📜 快乐的旅行 · 全文",
+        "palace_svg": """<svg viewBox="0 0 64 64" width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" style="vertical-align:-0.08em">
+          <circle cx="32" cy="32" r="28" fill="#fff" stroke="#b91c1c" stroke-width="3"/>
+          <path d="M13 40 L13 29 Q13 23 20 23 L40 23 Q49 23 52 35 L52 40 Z" fill="#fff7ed" stroke="#b91c1c" stroke-width="2.5" stroke-linejoin="round"/>
+          <rect x="18" y="27" width="7" height="6" rx="1.2" fill="#93c5fd"/>
+          <rect x="28" y="27" width="7" height="6" rx="1.2" fill="#93c5fd"/>
+          <path d="M39 27 L43 27 Q46 29 47.5 33 L39 33 Z" fill="#93c5fd"/>
+          <line x1="13" y1="36" x2="52" y2="36" stroke="#b91c1c" stroke-width="2"/>
+          <line x1="10" y1="45" x2="55" y2="45" stroke="#78716c" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>""",
+        "proper_label": "出行",
+        "has_pinyin_chart": False,
+        "story": [
+            {"id":"st1", "zh":"放暑假了，我和爸爸妈妈一起去杭州旅行。", "py":"Fàng shǔjià le, wǒ hé bàba māma yìqǐ qù Hángzhōu lǚxíng.", "en":"Summer vacation has begun, and I am going on a trip to Hangzhou with Mom and Dad.", "jp":"夏休みになり、お父さんとお母さんと一緒に杭州へ旅行に行きます。"},
+            {"id":"st2", "zh":"我们拿着车票走进北京南站，坐上了又快又稳的高铁。", "py":"Wǒmen názhe chēpiào zǒujìn Běijīng Nánzhàn, zuòshang le yòu kuài yòu wěn de gāotiě.", "en":"Holding our tickets, we walk into Beijing South Station and board the fast, smooth high-speed train.", "jp":"切符を持って北京南駅に入り、速くて揺れの少ない高速鉄道に乗りました。"},
+            {"id":"st3", "zh":"车窗外，青山绿水一闪而过，美得像一幅画。", "py":"Chēchuāng wài, qīngshān lǜshuǐ yì shǎn ér guò, měi de xiàng yì fú huà.", "en":"Outside the train window, green hills and clear rivers flash past, as beautiful as a painting.", "jp":"車窓の外を、緑の山と澄んだ川があっという間に過ぎていき、まるで一枚の絵のように美しいです。"},
+            {"id":"st4", "zh":"到了杭州，我们在西湖边散步，远远看见了高高的雷峰塔。", "py":"Dào le Hángzhōu, wǒmen zài Xī Hú biān sànbù, yuǎnyuǎn kànjiàn le gāogāo de Léifēng Tǎ.", "en":"When we arrive in Hangzhou, we take a walk beside West Lake and see the tall Leifeng Pagoda in the distance.", "jp":"杭州に着くと、西湖のほとりを散歩し、遠くに高い雷峰塔が見えました。"},
+            {"id":"st5", "zh":"我们坐着小船游湖，拍了很多漂亮的照片。", "py":"Wǒmen zuòzhe xiǎochuán yóu hú, pāi le hěn duō piàoliang de zhàopiàn.", "en":"We ride a little boat around the lake and take lots of lovely photos.", "jp":"小舟に乗って湖を巡り、きれいな写真をたくさん撮りました。"},
+            {"id":"st6", "zh":"中午，我们走进一家老饭馆，尝了鲜美的西湖醋鱼。", "py":"Zhōngwǔ, wǒmen zǒujìn yì jiā lǎo fànguǎn, cháng le xiānměi de Xī Hú cùyú.", "en":"At noon, we step into an old restaurant and taste delicious West Lake fish in vinegar sauce.", "jp":"お昼には老舗のレストランに入り、美味しい西湖醋魚（魚の甘酢あんかけ）を味わいました。"},
+            {"id":"st7", "zh":"在特产店里，我给好朋友买了一盒清香的龙井茶。", "py":"Zài tèchǎndiàn lǐ, wǒ gěi hǎo péngyou mǎi le yì hé qīngxiāng de Lóngjǐng chá.", "en":"In a local specialty shop, I buy a box of fragrant Longjing tea for my good friend.", "jp":"名産品のお店で、仲良しの友達に香りのよい龍井茶を一箱買いました。"},
+            {"id":"st8", "zh":"这次旅行真快乐，给我留下了美好的回忆。", "py":"Zhè cì lǚxíng zhēn kuàilè, gěi wǒ liúxià le měihǎo de huíyì.", "en":"This trip was so much fun, and it left me with wonderful memories.", "jp":"今回の旅行はとても楽しく、すてきな思い出になりました。"}
+        ],
+        "characters": [
+            {"id":"zi1", "zh":"旅", "py":"lǚ", "radical":"方部（方字旁）", "radicalBadge":"方 —— 旅", "words":"旅行、旅游、旅客", "meaning":"travel / journey", "meaningJp":"旅、旅行", "context":"我和爸爸妈妈一起去杭州旅行"},
+            {"id":"zi2", "zh":"行", "py":"xíng", "radical":"彳部（双人旁）", "radicalBadge":"彳 —— 行", "words":"旅行、行李、步行", "meaning":"go / travel / walk", "meaningJp":"行く、歩く", "context":"这次旅行真快乐"},
+            {"id":"zi3", "zh":"车", "py":"chē", "radical":"车部（自体即部首）", "radicalBadge":None, "words":"车票、车窗、火车", "meaning":"vehicle / train", "meaningJp":"車、列車", "context":"我们拿着车票走进北京南站"},
+            {"id":"zi4", "zh":"站", "py":"zhàn", "radical":"立部（立字旁）", "radicalBadge":"立 —— 站", "words":"车站、站台、站立", "meaning":"station / to stand", "meaningJp":"駅、立つ", "context":"我们拿着车票走进北京南站"},
+            {"id":"zi5", "zh":"票", "py":"piào", "radical":"示部（示字底）", "radicalBadge":"示 —— 票", "words":"车票、门票、买票", "meaning":"ticket", "meaningJp":"切符、チケット", "context":"我们拿着车票走进北京南站"},
+            {"id":"zi6", "zh":"坐", "py":"zuò", "radical":"土部（土字底）", "radicalBadge":"土 —— 坐", "words":"坐车、坐船、请坐", "meaning":"sit / take (a vehicle)", "meaningJp":"座る、（乗り物に）乗る", "context":"坐上了又快又稳的高铁"},
+            {"id":"zi7", "zh":"山", "py":"shān", "radical":"山部（自体即部首）", "radicalBadge":None, "words":"青山、高山、爬山", "meaning":"mountain / hill", "meaningJp":"山", "context":"车窗外，青山绿水一闪而过"},
+            {"id":"zi8", "zh":"水", "py":"shuǐ", "radical":"水部（自体即部首）", "radicalBadge":None, "words":"绿水、湖水、喝水", "meaning":"water", "meaningJp":"水", "context":"车窗外，青山绿水一闪而过"},
+            {"id":"zi9", "zh":"湖", "py":"hú", "radical":"氵部（三点水）", "radicalBadge":"氵 —— 湖", "words":"西湖、湖边、湖水", "meaning":"lake", "meaningJp":"湖（みずうみ）", "context":"我们在西湖边散步"},
+            {"id":"zi10", "zh":"船", "py":"chuán", "radical":"舟部（舟字旁）", "radicalBadge":"舟 —— 船", "words":"小船、坐船、游船", "meaning":"boat / ship", "meaningJp":"船、舟", "context":"我们坐着小船游湖"},
+            {"id":"zi11", "zh":"游", "py":"yóu", "radical":"氵部（三点水）", "radicalBadge":"氵 —— 游", "words":"游湖、旅游、游玩", "meaning":"tour / swim", "meaningJp":"遊覧する、泳ぐ", "context":"我们坐着小船游湖"},
+            {"id":"zi12", "zh":"照", "py":"zhào", "radical":"灬部（四点底）", "radicalBadge":"灬 —— 照", "words":"照片、拍照、照相", "meaning":"photo / to shine", "meaningJp":"写真、照らす", "context":"拍了很多漂亮的照片"}
+        ],
+        "words": [
+            {"id":"ci1", "zh":"旅行", "py":"lǚxíng", "meaning":"trip / to travel", "meaningJp":"旅行", "emoji":"🧳", "context":"我和爸爸妈妈一起去杭州旅行。", "tag":"出行"},
+            {"id":"ci2", "zh":"暑假", "py":"shǔjià", "meaning":"summer vacation", "meaningJp":"夏休み", "emoji":"☀️", "context":"放暑假了，我们去旅行。", "tag":"时间"},
+            {"id":"ci3", "zh":"车票", "py":"chēpiào", "meaning":"train / bus ticket", "meaningJp":"切符、乗車券", "emoji":"🎫", "context":"我们拿着车票走进北京南站。", "tag":"出行"},
+            {"id":"ci4", "zh":"高铁", "py":"gāotiě", "meaning":"high-speed train", "meaningJp":"高速鉄道", "emoji":"🚄", "context":"坐上了又快又稳的高铁。", "tag":"交通"},
+            {"id":"ci5", "zh":"车窗", "py":"chēchuāng", "meaning":"train window", "meaningJp":"車窓", "emoji":"🪟", "context":"车窗外，青山绿水一闪而过。", "tag":"交通"},
+            {"id":"ci6", "zh":"青山绿水", "py":"qīngshān lǜshuǐ", "meaning":"green hills and clear waters", "meaningJp":"緑の山と澄んだ水", "emoji":"🏞️", "context":"青山绿水一闪而过，美得像一幅画。", "tag":"风景"},
+            {"id":"ci7", "zh":"西湖", "py":"Xī Hú", "meaning":"West Lake (Hangzhou)", "meaningJp":"西湖（杭州）", "emoji":"🌊", "context":"我们在西湖边散步。", "tag":"名胜"},
+            {"id":"ci8", "zh":"散步", "py":"sànbù", "meaning":"to take a walk", "meaningJp":"散歩する", "emoji":"🚶", "context":"我们在西湖边散步。", "tag":"活动"},
+            {"id":"ci9", "zh":"小船", "py":"xiǎochuán", "meaning":"little boat", "meaningJp":"小舟", "emoji":"🛶", "context":"我们坐着小船游湖。", "tag":"交通"},
+            {"id":"ci10", "zh":"照片", "py":"zhàopiàn", "meaning":"photo", "meaningJp":"写真", "emoji":"📷", "context":"拍了很多漂亮的照片。", "tag":"活动"},
+            {"id":"ci11", "zh":"特产", "py":"tèchǎn", "meaning":"local specialty", "meaningJp":"名産品、特産品", "emoji":"🎁", "context":"在特产店里，我买了龙井茶。", "tag":"购物"},
+            {"id":"ci12", "zh":"回忆", "py":"huíyì", "meaning":"memory / to recall", "meaningJp":"思い出", "emoji":"💭", "context":"这次旅行给我留下了美好的回忆。", "tag":"情感"}
+        ],
+        "proper_nouns": [
+            {"id":"pn1", "zh":"飞机", "py":"fēijī", "meaning":"airplane", "meaningJp":"飛行機", "emoji":"✈️", "context":"坐飞机去远方旅行，又快又方便。", "tag":"交通"},
+            {"id":"pn2", "zh":"地铁", "py":"dìtiě", "meaning":"subway", "meaningJp":"地下鉄", "emoji":"🚇", "context":"我们先坐地铁去火车站。", "tag":"交通"},
+            {"id":"pn3", "zh":"出租车", "py":"chūzūchē", "meaning":"taxi", "meaningJp":"タクシー", "emoji":"🚕", "context":"下了高铁，我们坐出租车去酒店。", "tag":"交通"},
+            {"id":"pn4", "zh":"行李箱", "py":"xínglixiāng", "meaning":"suitcase", "meaningJp":"スーツケース", "emoji":"🧳", "context":"妈妈把衣服整整齐齐地放进行李箱。", "tag":"行李"},
+            {"id":"pn5", "zh":"酒店", "py":"jiǔdiàn", "meaning":"hotel", "meaningJp":"ホテル", "emoji":"🏨", "context":"晚上，我们住在西湖边的酒店里。", "tag":"住宿"},
+            {"id":"pn6", "zh":"地图", "py":"dìtú", "meaning":"map", "meaningJp":"地図", "emoji":"🗺️", "context":"爸爸拿着地图，带我们找到了雷峰塔。", "tag":"工具"},
+            {"id":"pn7", "zh":"一路平安", "py":"yí lù píng'ān", "meaning":"have a safe trip", "meaningJp":"道中ご無事で", "emoji":"🙏", "context":"出发前，奶奶笑着说：“一路平安！”", "tag":"祝福"}
+        ],
+        "scramble_sentences": [
+            {
+                "id": "sent1",
+                "zh": "车窗外，青山绿水一闪而过，美得像一幅画。",
+                "tokens": ["车窗外，", "青山绿水", "一闪而过，", "美得像一幅画。"],
+                "isKey": True
+            },
+            {
+                "id": "st1",
+                "zh": "放暑假了，我和爸爸妈妈一起去杭州旅行。",
+                "tokens": ["放暑假了，", "我和爸爸妈妈", "一起去", "杭州旅行。"]
+            },
+            {
+                "id": "st5",
+                "zh": "我们坐着小船游湖，拍了很多漂亮的照片。",
+                "tokens": ["我们坐着小船", "游湖，", "拍了很多", "漂亮的照片。"]
+            },
+            {
+                "id": "st6",
+                "zh": "中午，我们走进一家老饭馆，尝了鲜美的西湖醋鱼。",
+                "tokens": ["中午，", "我们走进", "一家老饭馆，", "尝了鲜美的西湖醋鱼。"]
+            },
+            {
+                "id": "st8",
+                "zh": "这次旅行真快乐，给我留下了美好的回忆。",
+                "tokens": ["这次旅行", "真快乐，", "给我留下了", "美好的回忆。"]
+            }
+        ],
+        "quiz": [
+            {"q":"放暑假了，“我”和谁一起去杭州旅行？", "opts":["爸爸妈妈", "老师和同学", "爷爷奶奶", "一个人去"], "a":0},
+            {"q":"我们从哪个车站出发，坐上了高铁？", "opts":["上海站", "北京南站", "杭州东站", "广州南站"], "a":1},
+            {"q":"车窗外的青山绿水美得像什么？", "opts":["一幅画", "一首歌", "一本书", "一条鱼"], "a":0},
+            {"q":"在西湖边散步时，我们远远看见了什么？", "opts":["长城", "高高的雷峰塔", "大熊猫", "天安门"], "a":1},
+            {"q":"我们坐着什么游湖，还拍了很多照片？", "opts":["飞机", "地铁", "小船", "出租车"], "a":2},
+            {"q":"在特产店里，“我”给好朋友买了什么？", "opts":["一盒清香的龙井茶", "一个大西瓜", "一本旧书", "一双新鞋"], "a":0},
+            {"q":"汉字“站”的部首是下列哪一个？", "opts":["立部（立字旁）", "口部", "木部", "氵部"], "a":0},
+            {"q":"汉字“湖”和“游”共同的部首是什么？", "opts":["氵部（三点水）", "艹部（草字头）", "亻部（单人旁）", "灬部（四点底）"], "a":0}
+        ],
+        "cloze": [
+            {"id":"zh_c1", "type":"text", "before":"放暑假了，我和爸爸妈妈一起去杭州", "answer":"旅行", "after":"。",
+             "py":"Fàng shǔjià le, wǒ hé bàba māma yìqǐ qù Hángzhōu lǚxíng.", "en":"Summer vacation has begun, and I am going on a trip to Hangzhou with Mom and Dad.", "jp":"夏休みになり、お父さんとお母さんと一緒に杭州へ旅行に行きます。",
+             "answerPy":"lǚ xíng", "options":["旅行", "上学", "睡觉", "写字"], "hint":"课文原句 · 假期里全家出门做什么", "audioId":"cloze_1"},
+            {"id":"zh_c2", "type":"text", "before":"我们拿着车票走进北京南站，坐上了又快又稳的", "answer":"高铁", "after":"。",
+             "py":"Wǒmen názhe chēpiào zǒujìn Běijīng Nánzhàn, zuòshang le yòu kuài yòu wěn de gāotiě.", "en":"Holding our tickets, we board the fast, smooth high-speed train.", "jp":"切符を持って、速くて揺れの少ない高速鉄道に乗りました。",
+             "answerPy":"gāo tiě", "options":["高铁", "小船", "书包", "茶馆"], "hint":"课文原句 · 又快又稳的交通工具", "audioId":"cloze_2"},
+            {"id":"zh_c3", "type":"text", "before":"车窗外，青山绿水一闪而过，美得像一幅", "answer":"画", "after":"。",
+             "py":"Chēchuāng wài, qīngshān lǜshuǐ yì shǎn ér guò, měi de xiàng yì fú huà.", "en":"Outside the window, green hills and clear rivers flash past, as beautiful as a painting.", "jp":"車窓の外の景色は、まるで一枚の絵のように美しいです。",
+             "answerPy":"huà", "options":["画", "书", "鱼", "茶"], "hint":"课文原句 · “一幅”后面接什么", "audioId":"cloze_3"},
+            {"id":"zh_c4", "type":"text", "before":"到了杭州，我们在", "answer":"西湖", "after":"边散步，远远看见了高高的雷峰塔。",
+             "py":"Dào le Hángzhōu, wǒmen zài Xī Hú biān sànbù, yuǎnyuǎn kànjiàn le gāogāo de Léifēng Tǎ.", "en":"In Hangzhou, we walk beside West Lake and see the tall Leifeng Pagoda.", "jp":"杭州に着くと、西湖のほとりを散歩し、遠くに雷峰塔が見えました。",
+             "answerPy":"Xī Hú", "options":["西湖", "操场", "食堂", "教室"], "hint":"课文原句 · 杭州最有名的湖", "audioId":"cloze_4"},
+            {"id":"zh_c5", "type":"text", "before":"我们坐着小船游湖，拍了很多漂亮的", "answer":"照片", "after":"。",
+             "py":"Wǒmen zuòzhe xiǎochuán yóu hú, pāi le hěn duō piàoliang de zhàopiàn.", "en":"We ride a little boat around the lake and take lots of lovely photos.", "jp":"小舟に乗って湖を巡り、きれいな写真をたくさん撮りました。",
+             "answerPy":"zhào piàn", "options":["照片", "饺子", "作业", "雪人"], "hint":"课文原句 · 用相机“拍”出来的东西", "audioId":"cloze_5"},
+            {"id":"zh_c6", "type":"text", "before":"中午，我们走进一家老饭馆，尝了鲜美的西湖", "answer":"醋鱼", "after":"。",
+             "py":"Zhōngwǔ, wǒmen zǒujìn yì jiā lǎo fànguǎn, cháng le xiānměi de Xī Hú cùyú.", "en":"At noon, we taste delicious West Lake fish in vinegar sauce.", "jp":"お昼には老舗のレストランで西湖醋魚を味わいました。",
+             "answerPy":"cù yú", "options":["醋鱼", "豆浆", "灯笼", "风筝"], "hint":"课文原句 · 杭州名菜", "audioId":"cloze_6"},
+            {"id":"zh_c7", "type":"text", "before":"在特产店里，我给好朋友买了一盒清香的", "answer":"龙井茶", "after":"。",
+             "py":"Zài tèchǎndiàn lǐ, wǒ gěi hǎo péngyou mǎi le yì hé qīngxiāng de Lóngjǐng chá.", "en":"In a specialty shop, I buy a box of fragrant Longjing tea for my good friend.", "jp":"名産品のお店で、友達に香りのよい龍井茶を買いました。",
+             "answerPy":"Lóng jǐng chá", "options":["龙井茶", "冰淇淋", "巧克力", "牛奶"], "hint":"课文原句 · 杭州有名的绿茶", "audioId":"cloze_7"},
+            {"id":"zh_c8", "type":"text", "before":"这次旅行真快乐，给我留下了美好的", "answer":"回忆", "after":"。",
+             "py":"Zhè cì lǚxíng zhēn kuàilè, gěi wǒ liúxià le měihǎo de huíyì.", "en":"This trip was so much fun, and it left me with wonderful memories.", "jp":"今回の旅行はとても楽しく、すてきな思い出になりました。",
+             "answerPy":"huí yì", "options":["回忆", "早餐", "车票", "邮局"], "hint":"课文原句 · 旅行结束后留在心里的东西", "audioId":"cloze_8"}
+        ]
+    },
+    {
+        "id": "zh7",
+        "lesson_num": "7",
+        "title": "我的家人 - 汉语课文识字闯关 (My Family)",
+        "canonical": "https://zw.0101.click/zh7.html",
+        "meta_desc": "原创汉语课文《我的家人》：介绍爸爸、妈妈、哥哥、妹妹和小猫，学习家庭成员、职业与亲属称呼和 12 个核心汉字，带拼音分句跟读与闯关练习。",
+        "header_title": "我的家人",
+        "title_en": "My Family in Chinese",
+        "sub_desc": "跟随原创情境课文《我的家人》认识一个温暖的五口之家：当医生的爸爸、做饭好吃的妈妈、爱踢足球的哥哥和爱唱歌的妹妹，学习家庭成员与亲属称呼和12个核心汉字！本课是《快乐的旅行》的续篇（第7课）。",
+        "story_title": "📖 我的家人 (My Family)",
+        "full_title": "📜 我的家人 · 全文",
+        "palace_svg": """<svg viewBox="0 0 64 64" width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" style="vertical-align:-0.08em">
+          <circle cx="32" cy="32" r="28" fill="#fff" stroke="#b91c1c" stroke-width="3"/>
+          <path d="M14 32 L32 16 L50 32" fill="none" stroke="#b91c1c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="19" y="30" width="26" height="18" rx="2" fill="#fff7ed" stroke="#b91c1c" stroke-width="2.5"/>
+          <path d="M32 44 C26 40 24 37 26 34.5 C27.5 32.5 30.5 33 32 35 C33.5 33 36.5 32.5 38 34.5 C40 37 38 40 32 44 Z" fill="#f43f5e"/>
+        </svg>""",
+        "proper_label": "亲属",
+        "has_pinyin_chart": False,
+        "story": [
+            {"id":"st1", "zh":"我家有五口人：爸爸、妈妈、哥哥、妹妹和我。", "py":"Wǒ jiā yǒu wǔ kǒu rén: bàba, māma, gēge, mèimei hé wǒ.", "en":"There are five people in my family: Dad, Mom, my big brother, my little sister and me.", "jp":"わたしの家族は五人です。お父さん、お母さん、お兄さん、妹、そしてわたしです。"},
+            {"id":"st2", "zh":"爸爸是一名医生，每天早上骑自行车去医院上班。", "py":"Bàba shì yì míng yīshēng, měitiān zǎoshang qí zìxíngchē qù yīyuàn shàngbān.", "en":"Dad is a doctor; every morning he rides his bike to work at the hospital.", "jp":"お父さんはお医者さんで、毎朝自転車に乗って病院へ仕事に行きます。"},
+            {"id":"st3", "zh":"妈妈做的菜特别好吃，每天都给我们做香喷喷的饭菜。", "py":"Māma zuò de cài tèbié hǎochī, měitiān dōu gěi wǒmen zuò xiāngpēnpēn de fàncài.", "en":"Mom's cooking is especially tasty; every day she cooks us delicious-smelling meals.", "jp":"お母さんの料理はとても美味しくて、毎日わたしたちにいい匂いのご飯を作ってくれます。"},
+            {"id":"st4", "zh":"哥哥是中学生，他最喜欢和同学一起踢足球。", "py":"Gēge shì zhōngxuéshēng, tā zuì xǐhuan hé tóngxué yìqǐ tī zúqiú.", "en":"My big brother is a middle school student; he loves playing football with his classmates most of all.", "jp":"お兄さんは中学生で、友達と一緒にサッカーをするのが一番好きです。"},
+            {"id":"st5", "zh":"妹妹还很小，总是开开心心地唱歌跳舞。", "py":"Mèimei hái hěn xiǎo, zǒngshì kāikāixīnxīn de chàng gē tiào wǔ.", "en":"My little sister is still very young; she is always happily singing and dancing.", "jp":"妹はまだ小さくて、いつも楽しそうに歌ったり踊ったりしています。"},
+            {"id":"st6", "zh":"我家还有一只白白的小猫，它可爱极了。", "py":"Wǒ jiā hái yǒu yì zhī báibái de xiǎomāo, tā kě'ài jí le.", "en":"We also have a little white kitten at home, and it is super cute.", "jp":"家には白い子猫も一匹いて、とてもかわいいです。"},
+            {"id":"st7", "zh":"星期天，全家人一起去看望爷爷奶奶。", "py":"Xīngqītiān, quán jiā rén yìqǐ qù kànwàng yéye nǎinai.", "en":"On Sunday, the whole family goes to visit Grandpa and Grandma.", "jp":"日曜日には、家族みんなでおじいちゃんとおばあちゃんに会いに行きます。"},
+            {"id":"st8", "zh":"和亲爱的家人在一起，每一天都很幸福。", "py":"Hé qīn'ài de jiārén zài yìqǐ, měi yì tiān dōu hěn xìngfú.", "en":"Being together with my dear family, every day is full of happiness.", "jp":"大好きな家族と一緒にいると、毎日がとても幸せです。"}
+        ],
+        "characters": [
+            {"id":"zi1", "zh":"家", "py":"jiā", "radical":"宀部（宝盖头）", "radicalBadge":"宀 —— 家", "words":"家人、回家、大家", "meaning":"home / family", "meaningJp":"家、家族", "context":"我家有五口人"},
+            {"id":"zi2", "zh":"口", "py":"kǒu", "radical":"口部（自体即部首）", "radicalBadge":None, "words":"五口人、门口、口袋", "meaning":"mouth / measure word for family members", "meaningJp":"口、（家族の人数）", "context":"我家有五口人"},
+            {"id":"zi3", "zh":"人", "py":"rén", "radical":"人部（自体即部首）", "radicalBadge":None, "words":"家人、大人、人们", "meaning":"person / people", "meaningJp":"人", "context":"全家人一起去看望爷爷奶奶"},
+            {"id":"zi4", "zh":"爸", "py":"bà", "radical":"父部（父字头）", "radicalBadge":"父 —— 爸", "words":"爸爸、老爸", "meaning":"dad / father", "meaningJp":"お父さん、パパ", "context":"爸爸是一名医生"},
+            {"id":"zi5", "zh":"妈", "py":"mā", "radical":"女部（女字旁）", "radicalBadge":"女 —— 妈", "words":"妈妈、姑妈、舅妈", "meaning":"mom / mother", "meaningJp":"お母さん、ママ", "context":"妈妈做的菜特别好吃"},
+            {"id":"zi6", "zh":"妹", "py":"mèi", "radical":"女部（女字旁）", "radicalBadge":"女 —— 妹", "words":"妹妹、姐妹、表妹", "meaning":"younger sister", "meaningJp":"妹", "context":"妹妹还很小"},
+            {"id":"zi7", "zh":"医", "py":"yī", "radical":"匚部（三框儿）", "radicalBadge":"匚 —— 医", "words":"医生、医院、中医", "meaning":"medicine / doctor", "meaningJp":"医者、医療", "context":"爸爸是一名医生"},
+            {"id":"zi8", "zh":"生", "py":"shēng", "radical":"生部（自体即部首）", "radicalBadge":None, "words":"医生、学生、生日", "meaning":"be born / student", "meaningJp":"生まれる、学生", "context":"哥哥是中学生"},
+            {"id":"zi9", "zh":"他", "py":"tā", "radical":"亻部（单人旁）", "radicalBadge":"亻 —— 他", "words":"他们、其他、他人", "meaning":"he / him", "meaningJp":"彼", "context":"他最喜欢和同学一起踢足球"},
+            {"id":"zi10", "zh":"猫", "py":"māo", "radical":"犭部（反犬旁）", "radicalBadge":"犭 —— 猫", "words":"小猫、猫咪、熊猫", "meaning":"cat", "meaningJp":"猫", "context":"我家还有一只白白的小猫"},
+            {"id":"zi11", "zh":"球", "py":"qiú", "radical":"王部（王字旁）", "radicalBadge":"王 —— 球", "words":"足球、篮球、地球", "meaning":"ball", "meaningJp":"ボール、球", "context":"他最喜欢和同学一起踢足球"},
+            {"id":"zi12", "zh":"爱", "py":"ài", "radical":"爫部（爪字头）", "radicalBadge":"爫 —— 爱", "words":"可爱、亲爱、爱心", "meaning":"love / dear", "meaningJp":"愛する、かわいい", "context":"和亲爱的家人在一起"}
+        ],
+        "words": [
+            {"id":"ci1", "zh":"家人", "py":"jiārén", "meaning":"family members", "meaningJp":"家族", "emoji":"👨‍👩‍👧‍👦", "context":"和亲爱的家人在一起，每一天都很幸福。", "tag":"家庭"},
+            {"id":"ci2", "zh":"爸爸", "py":"bàba", "meaning":"dad", "meaningJp":"お父さん", "emoji":"👨", "context":"爸爸是一名医生。", "tag":"家庭"},
+            {"id":"ci3", "zh":"妈妈", "py":"māma", "meaning":"mom", "meaningJp":"お母さん", "emoji":"👩", "context":"妈妈做的菜特别好吃。", "tag":"家庭"},
+            {"id":"ci4", "zh":"哥哥", "py":"gēge", "meaning":"older brother", "meaningJp":"お兄さん", "emoji":"👦", "context":"哥哥是中学生。", "tag":"家庭"},
+            {"id":"ci5", "zh":"妹妹", "py":"mèimei", "meaning":"younger sister", "meaningJp":"妹", "emoji":"👧", "context":"妹妹还很小，总是开开心心的。", "tag":"家庭"},
+            {"id":"ci6", "zh":"医生", "py":"yīshēng", "meaning":"doctor", "meaningJp":"医者", "emoji":"🩺", "context":"爸爸是一名医生。", "tag":"职业"},
+            {"id":"ci7", "zh":"医院", "py":"yīyuàn", "meaning":"hospital", "meaningJp":"病院", "emoji":"🏥", "context":"爸爸每天骑自行车去医院上班。", "tag":"地点"},
+            {"id":"ci8", "zh":"自行车", "py":"zìxíngchē", "meaning":"bicycle", "meaningJp":"自転車", "emoji":"🚲", "context":"每天早上骑自行车去医院上班。", "tag":"交通"},
+            {"id":"ci9", "zh":"中学生", "py":"zhōngxuéshēng", "meaning":"middle school student", "meaningJp":"中学生", "emoji":"🎒", "context":"哥哥是中学生。", "tag":"身份"},
+            {"id":"ci10", "zh":"足球", "py":"zúqiú", "meaning":"football / soccer", "meaningJp":"サッカー", "emoji":"⚽", "context":"他最喜欢和同学一起踢足球。", "tag":"运动"},
+            {"id":"ci11", "zh":"小猫", "py":"xiǎomāo", "meaning":"kitten", "meaningJp":"子猫", "emoji":"🐱", "context":"我家还有一只白白的小猫。", "tag":"宠物"},
+            {"id":"ci12", "zh":"幸福", "py":"xìngfú", "meaning":"happy / happiness", "meaningJp":"幸せ", "emoji":"💖", "context":"每一天都很幸福。", "tag":"情感"}
+        ],
+        "proper_nouns": [
+            {"id":"pn1", "zh":"爷爷", "py":"yéye", "meaning":"grandpa (father's father)", "meaningJp":"おじいちゃん（父方）", "emoji":"👴", "context":"星期天，我们去看望爷爷奶奶。", "tag":"祖辈"},
+            {"id":"pn2", "zh":"奶奶", "py":"nǎinai", "meaning":"grandma (father's mother)", "meaningJp":"おばあちゃん（父方）", "emoji":"👵", "context":"奶奶笑眯眯地给我们包饺子。", "tag":"祖辈"},
+            {"id":"pn3", "zh":"姥爷", "py":"lǎoye", "meaning":"grandpa (mother's father)", "meaningJp":"おじいちゃん（母方）", "emoji":"👴", "context":"姥爷每天早上去公园打太极拳。", "tag":"祖辈"},
+            {"id":"pn4", "zh":"姥姥", "py":"lǎolao", "meaning":"grandma (mother's mother)", "meaningJp":"おばあちゃん（母方）", "emoji":"👵", "context":"姥姥给我织了一条红围巾。", "tag":"祖辈"},
+            {"id":"pn5", "zh":"姐姐", "py":"jiějie", "meaning":"older sister", "meaningJp":"お姉さん", "emoji":"👧", "context":"姐姐每天陪我一起读书。", "tag":"同辈"},
+            {"id":"pn6", "zh":"弟弟", "py":"dìdi", "meaning":"younger brother", "meaningJp":"弟", "emoji":"👦", "context":"弟弟最喜欢玩小汽车。", "tag":"同辈"},
+            {"id":"pn7", "zh":"全家福", "py":"quánjiāfú", "meaning":"family photo", "meaningJp":"家族写真", "emoji":"🖼️", "context":"墙上挂着一张我们的全家福。", "tag":"家庭"}
+        ],
+        "scramble_sentences": [
+            {
+                "id": "sent1",
+                "zh": "和亲爱的家人在一起，每一天都很幸福。",
+                "tokens": ["和亲爱的家人", "在一起，", "每一天", "都很幸福。"],
+                "isKey": True
+            },
+            {
+                "id": "st2",
+                "zh": "爸爸是一名医生，每天早上骑自行车去医院上班。",
+                "tokens": ["爸爸是一名医生，", "每天早上", "骑自行车", "去医院上班。"]
+            },
+            {
+                "id": "st3",
+                "zh": "妈妈做的菜特别好吃，每天都给我们做香喷喷的饭菜。",
+                "tokens": ["妈妈做的菜", "特别好吃，", "每天都给我们做", "香喷喷的饭菜。"]
+            },
+            {
+                "id": "st4",
+                "zh": "哥哥是中学生，他最喜欢和同学一起踢足球。",
+                "tokens": ["哥哥是中学生，", "他最喜欢", "和同学一起", "踢足球。"]
+            },
+            {
+                "id": "st7",
+                "zh": "星期天，全家人一起去看望爷爷奶奶。",
+                "tokens": ["星期天，", "全家人", "一起去看望", "爷爷奶奶。"]
+            }
+        ],
+        "quiz": [
+            {"q":"“我”家有几口人？", "opts":["三口人", "四口人", "五口人", "六口人"], "a":2},
+            {"q":"爸爸是做什么工作的？", "opts":["老师", "医生", "司机", "厨师"], "a":1},
+            {"q":"爸爸每天早上怎么去医院上班？", "opts":["坐地铁", "开汽车", "骑自行车", "走路"], "a":2},
+            {"q":"哥哥最喜欢和同学一起做什么？", "opts":["踢足球", "画画", "弹钢琴", "看电视"], "a":0},
+            {"q":"妹妹总是开开心心地做什么？", "opts":["写作业", "唱歌跳舞", "做饭", "睡觉"], "a":1},
+            {"q":"“我”家还有一只什么样的小动物？", "opts":["黑黑的小狗", "白白的小猫", "黄黄的小鸭", "绿绿的小鸟"], "a":1},
+            {"q":"汉字“妈”和“妹”共同的部首是什么？", "opts":["女部（女字旁）", "口部", "亻部（单人旁）", "宀部（宝盖头）"], "a":0},
+            {"q":"汉字“家”上面的“宀”叫什么？", "opts":["宝盖头", "草字头", "三点水", "走之底"], "a":0}
+        ],
+        "cloze": [
+            {"id":"zh_c1", "type":"text", "before":"我家有五口人：爸爸、妈妈、哥哥、", "answer":"妹妹", "after":"和我。",
+             "py":"Wǒ jiā yǒu wǔ kǒu rén: bàba, māma, gēge, mèimei hé wǒ.", "en":"There are five people in my family: Dad, Mom, my big brother, my little sister and me.", "jp":"わたしの家族は五人です。お父さん、お母さん、お兄さん、妹、そしてわたしです。",
+             "answerPy":"mèi mei", "options":["妹妹", "老师", "邻居", "同学"], "hint":"课文原句 · 比“我”小的女孩子", "audioId":"cloze_1"},
+            {"id":"zh_c2", "type":"text", "before":"爸爸是一名", "answer":"医生", "after":"，每天早上骑自行车去医院上班。",
+             "py":"Bàba shì yì míng yīshēng, měitiān zǎoshang qí zìxíngchē qù yīyuàn shàngbān.", "en":"Dad is a doctor; every morning he rides his bike to work at the hospital.", "jp":"お父さんはお医者さんで、毎朝自転車で病院へ仕事に行きます。",
+             "answerPy":"yī shēng", "options":["医生", "学生", "司机", "导游"], "hint":"课文原句 · 在医院上班的人", "audioId":"cloze_2"},
+            {"id":"zh_c3", "type":"text", "before":"妈妈做的菜特别", "answer":"好吃", "after":"，每天都给我们做香喷喷的饭菜。",
+             "py":"Māma zuò de cài tèbié hǎochī, měitiān dōu gěi wǒmen zuò xiāngpēnpēn de fàncài.", "en":"Mom's cooking is especially tasty; every day she cooks us delicious meals.", "jp":"お母さんの料理はとても美味しくて、毎日ご飯を作ってくれます。",
+             "answerPy":"hǎo chī", "options":["好吃", "安静", "凉快", "热闹"], "hint":"课文原句 · 形容菜的味道", "audioId":"cloze_3"},
+            {"id":"zh_c4", "type":"text", "before":"哥哥是中学生，他最喜欢和同学一起踢", "answer":"足球", "after":"。",
+             "py":"Gēge shì zhōngxuéshēng, tā zuì xǐhuan hé tóngxué yìqǐ tī zúqiú.", "en":"My big brother loves playing football with his classmates.", "jp":"お兄さんは友達と一緒にサッカーをするのが一番好きです。",
+             "answerPy":"zú qiú", "options":["足球", "风筝", "雪人", "茶馆"], "hint":"课文原句 · 用脚“踢”的球", "audioId":"cloze_4"},
+            {"id":"zh_c5", "type":"text", "before":"妹妹还很小，总是开开心心地唱歌", "answer":"跳舞", "after":"。",
+             "py":"Mèimei hái hěn xiǎo, zǒngshì kāikāixīnxīn de chàng gē tiào wǔ.", "en":"My little sister is always happily singing and dancing.", "jp":"妹はいつも楽しそうに歌ったり踊ったりしています。",
+             "answerPy":"tiào wǔ", "options":["跳舞", "上班", "睡觉", "写字"], "hint":"课文原句 · 和“唱歌”常常连在一起", "audioId":"cloze_5"},
+            {"id":"zh_c6", "type":"text", "before":"我家还有一只白白的小", "answer":"猫", "after":"，它可爱极了。",
+             "py":"Wǒ jiā hái yǒu yì zhī báibái de xiǎomāo, tā kě'ài jí le.", "en":"We also have a little white kitten, and it is super cute.", "jp":"家には白い子猫も一匹いて、とてもかわいいです。",
+             "answerPy":"māo", "options":["猫", "船", "山", "树"], "hint":"课文原句 · 会“喵喵”叫的小动物", "audioId":"cloze_6"},
+            {"id":"zh_c7", "type":"text", "before":"星期天，全家人一起去", "answer":"看望", "after":"爷爷奶奶。",
+             "py":"Xīngqītiān, quán jiā rén yìqǐ qù kànwàng yéye nǎinai.", "en":"On Sunday, the whole family goes to visit Grandpa and Grandma.", "jp":"日曜日には、家族みんなでおじいちゃんとおばあちゃんに会いに行きます。",
+             "answerPy":"kàn wàng", "options":["看望", "打扫", "学习", "买卖"], "hint":"课文原句 · 去探访长辈", "audioId":"cloze_7"},
+            {"id":"zh_c8", "type":"text", "before":"和亲爱的家人在一起，每一天都很", "answer":"幸福", "after":"。",
+             "py":"Hé qīn'ài de jiārén zài yìqǐ, měi yì tiān dōu hěn xìngfú.", "en":"Being together with my dear family, every day is full of happiness.", "jp":"大好きな家族と一緒にいると、毎日がとても幸せです。",
+             "answerPy":"xìng fú", "options":["幸福", "忙碌", "寒冷", "安静"], "hint":"课文原句 · 和家人在一起的感受", "audioId":"cloze_8"}
+        ]
     }
 ]
 
@@ -1037,6 +1764,126 @@ function goPinyinChart() {
 }
 """
 
+# ----------------- READING UPGRADE (ko + ClausePlayer, aligned with zw-2x-*.html) -----------------
+
+CLAUSE_ASSET_VERSION = "zhcp1"
+
+
+def _swap(src, old, new, count=1):
+    """Exact replacement that fails loudly if the template drifted."""
+    found = src.count(old)
+    if found != count:
+        raise RuntimeError(f"template anchor found {found}x (expected {count}): {old[:80]!r}")
+    return src.replace(old, new)
+
+
+def apply_reading_upgrade(src, lesson):
+    """读课文 / 全文朗读 → 与 zw-ty-2-xin（zw-2x-*.html）一致的分段播放跟读：
+    - ClausePlayer 三种模式（原来整句 / 逗号分句细读 / 整句连续听）+ 分句点读 + 单句循环 + 变速
+    - 全文朗读里每个分句可单独点读
+    - 新增韩文译文行；英 / 日 / 韩译文默认不显示（拼音默认显示）
+    """
+    prefix = lesson["id"]
+
+    # head: shared ClausePlayer assets + this series' own clause bundle (small, not the 470KB shared one)
+    src = _swap(src, '<script src="js/hanzi-writer.min.js"></script>\n',
+                '<script src="js/hanzi-writer.min.js"></script>\n'
+                '<link rel="stylesheet" href="css/clause-player.css">\n'
+                f'<script src="data/zh-lesson-clauses.js?v={CLAUSE_ASSET_VERSION}"></script>\n'
+                f'<script src="js/clause-player.js?v={CLAUSE_ASSET_VERSION}"></script>\n')
+
+    # css: Korean line colours (same as zw-2x)
+    src = _swap(src, '  .sentence-jp{font-size:13px;color:#8b5cf6;text-align:center;}\n',
+                '  .sentence-jp{font-size:13px;color:#8b5cf6;text-align:center;}\n'
+                '  .sentence-ko{font-size:13px;color:#059669;text-align:center;}\n')
+    src = _swap(src, '  .full-sentence .sentence-jp{font-size:12px;text-align:left;color:#8b5cf6;}\n',
+                '  .full-sentence .sentence-jp{font-size:12px;text-align:left;color:#8b5cf6;}\n'
+                '  .full-sentence .sentence-ko{font-size:12px;text-align:left;color:#059669;margin-top:2px;}\n')
+
+    # story chips: translations off by default, add 한국어
+    src = _swap(src,
+                '<div class="chip active" id="chipEn" onclick="toggleStoryEn()">English</div>\n'
+                '        <div class="chip active" id="chipJp" onclick="toggleStoryJp()">日文</div>\n',
+                '<div class="chip" id="chipEn" onclick="toggleStoryEn()">English</div>\n'
+                '        <div class="chip" id="chipJp" onclick="toggleStoryJp()">日本語</div>\n'
+                '        <div class="chip" id="chipKo" onclick="toggleStoryKo()">한국어</div>\n')
+    src = _swap(src,
+                '<div class="chip active" id="chipFullEn" onclick="toggleFullEn()">English</div>\n'
+                '        <div class="chip active" id="chipFullJp" onclick="toggleFullJp()">日文</div>\n',
+                '<div class="chip" id="chipFullEn" onclick="toggleFullEn()">English</div>\n'
+                '        <div class="chip" id="chipFullJp" onclick="toggleFullJp()">日本語</div>\n'
+                '        <div class="chip" id="chipFullKo" onclick="toggleFullKo()">한국어</div>\n')
+
+    # story card: Korean row
+    jp_row_end = ("playClip(STORY[storyIdx].id, STORY[storyIdx].jp||'', null, 'ja-JP')\" title=\"播放日文发音\">🔊</button>\n"
+                  "        </div>\n")
+    src = _swap(src, jp_row_end, jp_row_end +
+                '        <div class="lang-line-row" id="storyKoRow" style="display:flex;align-items:center;justify-content:center;gap:6px;">\n'
+                '          <div class="sentence-ko" id="storyKo"></div>\n'
+                "          <button class=\"mini-speak-btn\" onclick=\"event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].ko||'', null, 'ko-KR')\" title=\"播放韩文发音\">🔊</button>\n"
+                '        </div>\n')
+
+    # state defaults
+    src = _swap(src, 'let storyIdx = 0, showPy = true, showEn = true, showJp = true;',
+                'let storyIdx = 0, showPy = true, showEn = false, showJp = false, showKo = false;')
+    src = _swap(src, 'let fullPy = true, fullEn = true, fullJp = true;',
+                'let fullPy = true, fullEn = false, fullJp = false, fullKo = false;')
+
+    # renderStory + toggles
+    src = _swap(src,
+                "  document.getElementById('storyJp').textContent = showJp ? (s.jp || '') : '';\n",
+                "  document.getElementById('storyJp').textContent = showJp ? (s.jp || '') : '';\n"
+                "  document.getElementById('storyKo').textContent = showKo ? (s.ko || '') : '';\n")
+    src = _swap(src,
+                "  const jpRow = document.getElementById('storyJpRow'); if(jpRow) jpRow.style.display = (showJp && s.jp) ? 'flex' : 'none';\n",
+                "  const jpRow = document.getElementById('storyJpRow'); if(jpRow) jpRow.style.display = (showJp && s.jp) ? 'flex' : 'none';\n"
+                "  const koRow = document.getElementById('storyKoRow'); if(koRow) koRow.style.display = (showKo && s.ko) ? 'flex' : 'none';\n")
+    src = _swap(src,
+                "function toggleStoryJp(){ showJp = !showJp; document.getElementById('chipJp').classList.toggle('active', showJp); renderStory(); }\n",
+                "function toggleStoryJp(){ showJp = !showJp; document.getElementById('chipJp').classList.toggle('active', showJp); renderStory(); }\n"
+                "function toggleStoryKo(){ showKo = !showKo; document.getElementById('chipKo').classList.toggle('active', showKo); renderStory(); }\n")
+
+    # full text: Korean line + toggle
+    full_jp = ("      (fullJp && s.jp ? '<div style=\"display:flex;align-items:center;justify-content:center;gap:6px;\"><div class=\"sentence-jp\">'+s.jp+'</div>"
+               "<button class=\"mini-speak-btn\" onclick=\"event.stopPropagation(); playClip(STORY['+i+'].id, STORY['+i+'].jp||\\'\\', null, \\'ja-JP\\');\" title=\"播放日文发音\">🔊</button></div>' : '') +\n")
+    src = _swap(src, full_jp, full_jp +
+                "      (fullKo && s.ko ? '<div style=\"display:flex;align-items:center;justify-content:center;gap:6px;\"><div class=\"sentence-ko\">'+s.ko+'</div>"
+                "<button class=\"mini-speak-btn\" onclick=\"event.stopPropagation(); playClip(STORY['+i+'].id, STORY['+i+'].ko||\\'\\', null, \\'ko-KR\\');\" title=\"播放韩文发音\">🔊</button></div>' : '') +\n")
+    src = _swap(src,
+                "function toggleFullJp(){ fullJp = !fullJp; document.getElementById('chipFullJp').classList.toggle('active', fullJp); renderFullText(); }\n",
+                "function toggleFullJp(){ fullJp = !fullJp; document.getElementById('chipFullJp').classList.toggle('active', fullJp); renderFullText(); }\n"
+                "function toggleFullKo(){ fullKo = !fullKo; document.getElementById('chipFullKo').classList.toggle('active', fullKo); renderFullText(); }\n")
+
+    # audio: Korean story folder
+    src = _swap(src, f"const AUDIO_DIR_JA = '/audio/{prefix}_ja/';\n",
+                f"const AUDIO_DIR_JA = '/audio/{prefix}_ja/';\nconst AUDIO_DIR_KO = '/audio/{prefix}_ko/';\n")
+    src = _swap(src,
+                "const dir = lang === 'en-US' ? AUDIO_DIR_EN : (lang === 'ja-JP' ? AUDIO_DIR_JA : AUDIO_DIR);",
+                "const dir = lang === 'en-US' ? AUDIO_DIR_EN : (lang === 'ja-JP' ? AUDIO_DIR_JA : (lang === 'ko-KR' ? AUDIO_DIR_KO : AUDIO_DIR));")
+
+    # ClausePlayer boots itself on DOMContentLoaded: js/clause-player.js maps the file name
+    # (zh0 … zh7) to the lesson key, so no explicit init here (an extra init would wrap
+    # renderStory / playClip twice).
+    return src
+
+
+def story_with_ko(lesson):
+    """STORY items + Korean sentence translation from zh_lesson_clauses.CLAUSES."""
+    rows = CLAUSES[lesson["id"]]
+    return [dict(s, ko=rows[i][0]) for i, s in enumerate(lesson["story"])]
+
+
+def apply_meta(src, lesson):
+    """SEO meta: replace the template's Japanese-lesson description / og tags."""
+    desc = lesson["meta_desc"]
+    src = re.sub(r'<meta name="description" content="[^"]*">', f'<meta name="description" content="{desc}">', src, count=1)
+    src = re.sub(r'<meta property="og:title" content="[^"]*">',
+                 '<meta property="og:title" content="' + lesson["title"].replace('&amp;', '&').replace('&', '&amp;') + '">', src, count=1)
+    src = re.sub(r'<meta property="og:description" content="[^"]*">', f'<meta property="og:description" content="{desc}">', src, count=1)
+    src = re.sub(r'<meta property="og:url" content="[^"]*">', f'<meta property="og:url" content="{lesson["canonical"]}">', src, count=1)
+    return src
+
+
 def generate_lesson_html(lesson):
     """Generate self-contained lesson HTML file from template base."""
     with open(os.path.join(BASE_DIR, 'nihongo0.html'), 'r', encoding='utf-8') as f:
@@ -1074,8 +1921,9 @@ def generate_lesson_html(lesson):
     src = src.replace('<h2 class="title">✍️ 课后汉字 (Kanji)</h2>', '<h2 class="title">✍️ 认生字 (Characters)</h2>')
     src = src.replace('田字格标准习字 · 笔顺动态演示与指尖描红临摹（仅收录与简体中文笔顺一致的汉字）。', '田字格标准汉字习字 · 动态笔顺演示与指尖描红临摹。')
     proper_lbl = lesson.get("proper_label", "口语")
+    proper_icon = {"饮食": "🥢", "方位": "🧭", "时令": "🍂", "出行": "🧳", "亲属": "👪"}.get(proper_lbl, "⏰")
     src = src.replace('>时间 (7)</div>', f'>{proper_lbl} (7)</div>')
-    src = src.replace('>⏰ 时间 (7)</div>', f'>⏰ {proper_lbl} (7)</div>')
+    src = src.replace('>⏰ 时间 (7)</div>', f'>{proper_icon} {proper_lbl} (7)</div>')
 
     # Menu banner replacement
     if lesson["has_pinyin_chart"]:
@@ -1160,7 +2008,7 @@ def generate_lesson_html(lesson):
 
     new_data_code = f"""/* ---------------- DATA ---------------- */
 // 1. 课文《{lesson["header_title"]}》(全新原创汉语情境课文)
-const STORY = {json.dumps(lesson["story"], ensure_ascii=False, indent=2)};
+const STORY = {json.dumps(story_with_ko(lesson), ensure_ascii=False, indent=2)};
 
 // 2. 课后生字表 (12 核心汉字，田字格笔顺与部首全具备)
 const CHARACTERS = {json.dumps(lesson["characters"], ensure_ascii=False, indent=2)};
@@ -1206,6 +2054,9 @@ const CLOZE_QUESTIONS = {json.dumps(lesson["cloze"], ensure_ascii=False, indent=
     # 7. Update Footer
     src = src.replace('<footer>nhg.0101.click</footer>', '<footer>zw.0101.click · 原创汉语课程体系</footer>')
 
+    src = apply_meta(src, lesson)
+    src = apply_reading_upgrade(src, lesson)
+
     target_path = os.path.join(BASE_DIR, f'{lesson["id"]}.html')
     with open(target_path, 'w', encoding='utf-8') as f:
         f.write(src)
@@ -1219,6 +2070,7 @@ def generate_zh_index():
 <html lang="zh-CN">
 <head>
     <!-- Google tag (gtag.js) -->
+    <script src="js/consent-default.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -1231,6 +2083,13 @@ def generate_zh_index():
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>汉语情境课文与识字闯关 - 课程一览</title>
+<meta name="description" content="原创汉语情境课程目录：从拼音与日常问候入门，到我的一星期、我的一天、中国的四季、社区与城市、中国菜、快乐的旅行、我的家人，循序学习汉字与日常表达，课文支持分句跟读。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="0101.click">
+<meta property="og:title" content="汉语情境课文与识字闯关 - 课程一览">
+<meta property="og:description" content="原创汉语情境课程目录：从拼音与日常问候入门，到我的一星期、我的一天、中国的四季、社区与城市、中国菜、快乐的旅行、我的家人，循序学习汉字与日常表达，课文支持分句跟读。">
+<meta property="og:url" content="https://zw.0101.click/zh-index.html">
+<meta property="og:locale" content="zh_CN">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=M+PLUS+Rounded+1c:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -1273,6 +2132,7 @@ def generate_zh_index():
   footer{margin-top:36px;font-size:11px;color:var(--muted);text-align:center;}
 </style>
 <link rel="canonical" href="https://zw.0101.click/zh-index.html">
+  <script src="js/pwa-register.js"></script>
 </head>
 <body>
   <header>
@@ -1288,7 +2148,7 @@ def generate_zh_index():
     </a>
     <a style="font-size:13px;font-weight:800;padding:8px 16px;border-radius:16px;background:#fff7ed;border:2px solid #f97316;color:#c2410c;text-decoration:none;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 10px rgba(194,65,12,0.1);transition:transform .1s;" href="https://zw.0101.click/zw-ty-4.html">
       <span>📚</span>
-      <span>统编教材 · 第4册专页 (zw-ty-4)</span>
+      <span>中文教材 · 第4册新版 (zw-ty-4)</span>
     </a>
   </div>
 
@@ -1358,11 +2218,84 @@ def generate_zh_index():
       <div class="name-en">Level 3 · Four Seasons in China</div>
       <div class="desc">春夏秋冬自然景物 · 节气气候与传统节日 · 进阶汉字与沉浸朗读</div>
     </a>
+
+    <a class="card" href="/zh4.html" role="link" aria-label="第4课 我的社区与城市">
+      <span class="level-tag">第 4 课</span>
+      <div class="ico">
+        <svg viewBox="0 0 64 64" width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" style="vertical-align:-0.08em">
+          <circle cx="32" cy="32" r="28" fill="#fff" stroke="#b91c1c" stroke-width="3"/>
+          <rect x="18" y="26" width="14" height="22" rx="2" fill="#fff7ed" stroke="#b91c1c" stroke-width="2"/>
+          <rect x="34" y="20" width="14" height="28" rx="2" fill="#fff7ed" stroke="#b91c1c" stroke-width="2"/>
+          <line x1="22" y1="31" x2="25" y2="31" stroke="#b91c1c" stroke-width="2" stroke-linecap="round"/>
+          <line x1="22" y1="37" x2="25" y2="37" stroke="#b91c1c" stroke-width="2" stroke-linecap="round"/>
+          <line x1="38" y1="26" x2="41" y2="26" stroke="#b91c1c" stroke-width="2" stroke-linecap="round"/>
+          <line x1="38" y1="32" x2="41" y2="32" stroke="#b91c1c" stroke-width="2" stroke-linecap="round"/>
+          <line x1="38" y1="38" x2="41" y2="38" stroke="#b91c1c" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="12" cy="42" r="4.5" fill="#059669"/>
+          <line x1="12" y1="42" x2="12" y2="48" stroke="#78716c" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="name">我的社区与城市</div>
+      <div class="name-en">Level 4 · My Community &amp; City</div>
+      <div class="desc">空间方位与公共设施 · 社区生活情境 · 方位表达与12核心生字闯关</div>
+    </a>
+
+    <a class="card" href="/zh5.html" role="link" aria-label="第5课 美味的中国菜">
+      <span class="level-tag">第 5 课</span>
+      <div class="ico">
+        <svg viewBox="0 0 64 64" width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" style="vertical-align:-0.08em">
+          <circle cx="32" cy="32" r="28" fill="#fff" stroke="#b91c1c" stroke-width="3"/>
+          <path d="M16 32 C16 46 24 50 32 50 C40 50 48 46 48 32 Z" fill="#fff7ed" stroke="#b91c1c" stroke-width="2.5"/>
+          <line x1="26" y1="50" x2="38" y2="50" stroke="#b91c1c" stroke-width="3" stroke-linecap="round"/>
+          <path d="M25 26 Q23 20 25 15" stroke="#f97316" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M32 27 Q30 20 32 14" stroke="#f97316" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <path d="M39 26 Q37 20 39 15" stroke="#f97316" stroke-width="2" stroke-linecap="round" fill="none"/>
+          <line x1="14" y1="23" x2="48" y2="19" stroke="#b91c1c" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="15" y1="27" x2="50" y2="24" stroke="#b91c1c" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="name">美味的中国菜</div>
+      <div class="name-en">Level 5 · Delicious Chinese Food</div>
+      <div class="desc">一日三餐与饮食文化 · 餐桌礼仪与丰富风味 · 荤素搭配与12核心生字闯关</div>
+    </a>
+
+    <a class="card" href="/zh6.html" role="link" aria-label="第6课 快乐的旅行">
+      <span class="level-tag">第 6 课</span>
+      <div class="ico">
+        <svg viewBox="0 0 64 64" width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" style="vertical-align:-0.08em">
+          <circle cx="32" cy="32" r="28" fill="#fff" stroke="#b91c1c" stroke-width="3"/>
+          <path d="M13 40 L13 29 Q13 23 20 23 L40 23 Q49 23 52 35 L52 40 Z" fill="#fff7ed" stroke="#b91c1c" stroke-width="2.5" stroke-linejoin="round"/>
+          <rect x="18" y="27" width="7" height="6" rx="1.2" fill="#93c5fd"/>
+          <rect x="28" y="27" width="7" height="6" rx="1.2" fill="#93c5fd"/>
+          <path d="M39 27 L43 27 Q46 29 47.5 33 L39 33 Z" fill="#93c5fd"/>
+          <line x1="13" y1="36" x2="52" y2="36" stroke="#b91c1c" stroke-width="2"/>
+          <line x1="10" y1="45" x2="55" y2="45" stroke="#78716c" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="name">快乐的旅行</div>
+      <div class="name-en">Level 6 · A Fun Trip</div>
+      <div class="desc">坐高铁游杭州西湖 · 交通出行与名胜见闻 · 分句跟读与12核心生字闯关</div>
+    </a>
+
+    <a class="card" href="/zh7.html" role="link" aria-label="第7课 我的家人">
+      <span class="level-tag">第 7 课</span>
+      <div class="ico">
+        <svg viewBox="0 0 64 64" width="1em" height="1em" xmlns="http://www.w3.org/2000/svg" style="vertical-align:-0.08em">
+          <circle cx="32" cy="32" r="28" fill="#fff" stroke="#b91c1c" stroke-width="3"/>
+          <path d="M14 32 L32 16 L50 32" fill="none" stroke="#b91c1c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <rect x="19" y="30" width="26" height="18" rx="2" fill="#fff7ed" stroke="#b91c1c" stroke-width="2.5"/>
+          <path d="M32 44 C26 40 24 37 26 34.5 C27.5 32.5 30.5 33 32 35 C33.5 33 36.5 32.5 38 34.5 C40 37 38 40 32 44 Z" fill="#f43f5e"/>
+        </svg>
+      </div>
+      <div class="name">我的家人</div>
+      <div class="name-en">Level 7 · My Family</div>
+      <div class="desc">五口之家与职业爱好 · 亲属称呼（爷爷奶奶/姥姥姥爷）· 分句跟读与12核心生字闯关</div>
+    </a>
   </div>
 
   <div class="nav-pills">
     <a class="pill-link" href="https://zw.0101.click/zw-index.html">📖 统编课文总览 (zw)</a>
-    <a class="pill-link" href="https://zw.0101.click/zw-ty-4.html">📚 统编第4册 (zw-ty-4)</a>
+    <a class="pill-link" href="https://zw.0101.click/zw-ty-4.html">📚 第4册新版 (zw-ty-4)</a>
     <a class="pill-link" href="https://l.0101.click">🏠 游乐场首页</a>
     <a class="pill-link" href="https://l.0101.click/languages.html">🌐 多语言大厅</a>
     <a class="pill-link" href="https://nhg.0101.click">🎌 日语课文一览</a>
@@ -1399,10 +2332,11 @@ def generate_zh_index():
 
 def main():
     print("=== Building New Chinese Lessons Series ===")
+    validate_clauses(LESSONS)
     for lesson in LESSONS:
         generate_lesson_html(lesson)
     generate_zh_index()
-    print("=== All 5 files generated successfully! ===")
+    print(f"=== {len(LESSONS)} lessons + zh-index generated ===")
 
 if __name__ == '__main__':
     main()

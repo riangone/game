@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """Generate high-quality neural-TTS MP3 audio for the Chinese situational lesson series:
-zh0 (拼音与日常问候), zh1 (我的一星期), zh2 (我的一天), zh3 (中国的四季).
+zh0–zh7 (every lesson in build_chinese_lessons.LESSONS; existing files are skipped).
 
 Uses edge-tts (Microsoft Azure neural voices, free, pre-cached static files):
 - Chinese (Mandarin): zh-CN-XiaoxiaoNeural, rate -10%

@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
     <!-- Google tag (gtag.js) -->
+    <script src="js/consent-default.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -15,10 +16,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>中国的四季 - 汉语课文识字闯关 (Four Seasons)</title>
+<meta name="description" content="原创汉语课文《中国的四季》：通过春夏秋冬的景物、气候和节日学习 12 个核心汉字与常用词，带拼音逐句朗读和听力、阅读练习。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="0101.click">
+<meta property="og:title" content="中国的四季 - 汉语课文识字闯关 (Four Seasons)">
+<meta property="og:description" content="原创汉语课文《中国的四季》：通过春夏秋冬的景物、气候和节日学习 12 个核心汉字与常用词，带拼音逐句朗读和听力、阅读练习。">
+<meta property="og:url" content="https://zw.0101.click/zh3.html">
+<meta property="og:locale" content="zh_CN">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=M+PLUS+Rounded+1c:wght@600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
 <script src="js/hanzi-writer.min.js"></script>
+<link rel="stylesheet" href="css/clause-player.css">
+<script src="data/zh-lesson-clauses.js?v=zhcp1"></script>
+<script src="js/clause-player.js?v=zhcp1"></script>
 <script src="js/hanzi-data.js"></script>
 <script src="js/voice-recorder.js"></script>
 <style>
@@ -57,7 +68,8 @@
   .palace-ico{font-size:50px;filter:drop-shadow(0 6px 8px rgba(0,0,0,0.15));}
   .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:520px;margin-top:4px;}
   .menu-card{background:var(--card);border:2px solid #fbd38d;border-radius:var(--radius-lg);padding:14px 10px;text-align:center;
-    box-shadow:var(--shadow-card);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;}
+    box-shadow:var(--shadow-card);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent;}
+  .menu-card *{pointer-events:none;}
   .menu-card .ico{font-size:30px;}
   .menu-card .name{font-size:14px;font-weight:800;}
   .menu-card .desc{font-size:11px;color:var(--muted);}
@@ -81,6 +93,7 @@
   .sentence-py{font-size:15px;color:var(--blue);text-align:center;font-weight:700;min-height:20px;}
   .sentence-en{font-size:13px;color:var(--muted);text-align:center;}
   .sentence-jp{font-size:13px;color:#8b5cf6;text-align:center;}
+  .sentence-ko{font-size:13px;color:#059669;text-align:center;}
   .mini-speak-btn{border:none;background:none;font-size:13px;cursor:pointer;line-height:1;padding:2px 3px;border-radius:50%;flex-shrink:0;opacity:.75;}
   .mini-speak-btn:active{opacity:1;transform:scale(1.15);}
   .sent-action-btn.lang-voice{background:#f0f4ff;border-color:#a3bffa;color:#3b4fd8;}
@@ -224,6 +237,7 @@
   .full-sentence .sentence-py{font-size:13px;text-align:left;}
   .full-sentence .sentence-en{font-size:12px;text-align:left;}
   .full-sentence .sentence-jp{font-size:12px;text-align:left;color:#8b5cf6;}
+  .full-sentence .sentence-ko{font-size:12px;text-align:left;color:#059669;margin-top:2px;}
   .full-sentence.playing{background:var(--gold-soft);border-color:var(--imperial-gold);}
 
   /* audio challenge */
@@ -436,8 +450,9 @@
       <h2 class="title">📖 中国的四季 (Four Seasons)</h2>
       <div class="toggle-row">
         <div class="chip active" id="chipPy" onclick="toggleStoryPy()">拼音</div>
-        <div class="chip active" id="chipEn" onclick="toggleStoryEn()">English</div>
-        <div class="chip active" id="chipJp" onclick="toggleStoryJp()">日文</div>
+        <div class="chip" id="chipEn" onclick="toggleStoryEn()">English</div>
+        <div class="chip" id="chipJp" onclick="toggleStoryJp()">日本語</div>
+        <div class="chip" id="chipKo" onclick="toggleStoryKo()">한국어</div>
         <div class="chip" onclick="goFull()">📜 全文朗读</div>
       </div>
       <div class="story-card">
@@ -451,6 +466,10 @@
         <div class="lang-line-row" id="storyJpRow" style="display:flex;align-items:center;justify-content:center;gap:6px;">
           <div class="sentence-jp" id="storyJp"></div>
           <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].jp||'', null, 'ja-JP')" title="播放日文发音">🔊</button>
+        </div>
+        <div class="lang-line-row" id="storyKoRow" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+          <div class="sentence-ko" id="storyKo"></div>
+          <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].ko||'', null, 'ko-KR')" title="播放韩文发音">🔊</button>
         </div>
       </div>
       <!-- VOICE WAVE VISUALIZER -->
@@ -485,8 +504,9 @@
       <p class="sub">显示完整课文，可点击单句发音，或用下方按钮连续朗读全文。</p>
       <div class="toggle-row">
         <div class="chip active" id="chipFullPy" onclick="toggleFullPy()">拼音</div>
-        <div class="chip active" id="chipFullEn" onclick="toggleFullEn()">English</div>
-        <div class="chip active" id="chipFullJp" onclick="toggleFullJp()">日文</div>
+        <div class="chip" id="chipFullEn" onclick="toggleFullEn()">English</div>
+        <div class="chip" id="chipFullJp" onclick="toggleFullJp()">日本語</div>
+        <div class="chip" id="chipFullKo" onclick="toggleFullKo()">한국어</div>
       </div>
       <div class="story-card" style="align-items:stretch;gap:12px;">
         <div id="fullTextList" style="display:flex;flex-direction:column;gap:12px;"></div>
@@ -580,7 +600,7 @@
       <div class="toggle-row">
         <div class="chip active" id="chipMatchChars" onclick="setMatchMode('chars')">✍️ 汉字 (12)</div>
         <div class="chip" id="chipMatchWords" onclick="setMatchMode('words')">📝 单词 (12)</div>
-        <div class="chip" id="chipMatchProper" onclick="setMatchMode('proper')">⏰ 时令 (7)</div>
+        <div class="chip" id="chipMatchProper" onclick="setMatchMode('proper')">🍂 时令 (7)</div>
         <div class="chip" id="chipMatchAll" onclick="setMatchMode('all')">🎲 全部混合</div>
       </div>
       <div class="hud-row">
@@ -771,56 +791,64 @@ const STORY = [
     "zh": "春天来了，微风吹绿了大地，桃花和杏花悄悄盛开。",
     "py": "Chūntiān lái le, wēifēng chuī lǜ le dàdì, táohuā hé xìnghuā qiāoqiāo shèngkāi.",
     "en": "Spring has arrived; gentle breeze greens the earth, peach and apricot blossoms quietly bloom.",
-    "jp": "春が来ました。そよ風が大地を緑に染め、桃と杏の花が静かに咲き誇ります。"
+    "jp": "春が来ました。そよ風が大地を緑に染め、桃と杏の花が静かに咲き誇ります。",
+    "ko": "봄이 왔어요. 산들바람이 땅을 푸르게 물들이고, 복숭아꽃과 살구꽃이 살며시 피어나요."
   },
   {
     "id": "st2",
     "zh": "春雨滋润着泥土，小朋友们在草地上快乐地放风筝。",
     "py": "Chūnyǔ zīrùn zhe nítǔ, xiǎopéngyoumen zài cǎodì shang kuàilè de fàng fēngzheng.",
     "en": "Spring rain nourishes the soil; children happily fly kites on the grassland.",
-    "jp": "春の雨が土を潤し、子どもたちが原っぱで楽しそうに凧揚げをします。"
+    "jp": "春の雨が土を潤し、子どもたちが原っぱで楽しそうに凧揚げをします。",
+    "ko": "봄비가 흙을 촉촉이 적시고, 아이들은 풀밭에서 즐겁게 연을 날려요."
   },
   {
     "id": "st3",
     "zh": "夏天阳光热烈，茂密的绿树给大地送来一片片阴凉。",
     "py": "Xiàtiān yángguāng rèliè, màomì de lǜshù gěi dàdì sòng lái yí piànpiàn yīnliáng.",
     "en": "Summer sun is blazing, dense green trees bring patches of shade to the earth.",
-    "jp": "夏の陽射しは眩しく、青々とした木陰が涼しさをもたらします。"
+    "jp": "夏の陽射しは眩しく、青々とした木陰が涼しさをもたらします。",
+    "ko": "여름 햇살은 뜨겁고, 무성한 푸른 나무가 땅에 시원한 그늘을 드리워요."
   },
   {
     "id": "st4",
     "zh": "池塘里粉红的荷花亭亭玉立，我们在树荫下吃冰甜的西瓜。",
     "py": "Chítáng lǐ fěnhóng de héhuā tíngtíngyùlì, wǒmen zài shùyīn xià chī bīngtián de xīguā.",
     "en": "In the pond, pink lotuses stand gracefully; we eat chilled sweet watermelon under tree shades.",
-    "jp": "池にはピンクの蓮の花が美しく咲き、木陰で冷たいスイカを食べます。"
+    "jp": "池にはピンクの蓮の花が美しく咲き、木陰で冷たいスイカを食べます。",
+    "ko": "연못에는 분홍빛 연꽃이 우아하게 서 있고, 우리는 나무 그늘 아래에서 시원하고 달콤한 수박을 먹어요."
   },
   {
     "id": "st5",
     "zh": "秋天到了，凉爽的秋风吹过，金黄的树叶像蝴蝶般飞舞。",
     "py": "Qiūtiān dào le, liángshuǎng de qiūfēng chuī guò, jīnhuáng de shùyè xiàng húdié bān fēiwǔ.",
     "en": "Autumn arrives; cool breeze sweeps through, golden leaves dancing like butterflies.",
-    "jp": "秋が訪れ、爽やかな秋風が吹き抜け、黄金色の落ち葉が蝶のように舞います。"
+    "jp": "秋が訪れ、爽やかな秋風が吹き抜け、黄金色の落ち葉が蝶のように舞います。",
+    "ko": "가을이 오면, 선선한 가을바람이 불어오고, 황금빛 나뭇잎이 나비처럼 춤을 춰요."
   },
   {
     "id": "st6",
     "zh": "秋天是收获的黄金季节，红彤彤的苹果挂满了枝头。",
     "py": "Qiūtiān shì shōuhuò de huángjīn jìjié, hóngtōngtōng de píngguǒ guàmǎn le zhītóu.",
     "en": "Autumn is the golden season of harvest; bright red apples hang heavy on the branches.",
-    "jp": "秋は実りの黄金の季節、真っ赤なリンゴが枝いっぱいに実ります。"
+    "jp": "秋は実りの黄金の季節、真っ赤なリンゴが枝いっぱいに実ります。",
+    "ko": "가을은 수확의 황금 계절, 새빨간 사과가 가지마다 주렁주렁 열려요."
   },
   {
     "id": "st7",
     "zh": "冬天漫天飞雪，洁白的雪花把天地染成了银白色。",
     "py": "Dōngtiān màntiān fēixuě, jiébái de xuěhuā bǎ tiāndì rǎnchéng le yínbáisè.",
     "en": "In winter snow fills the sky; pure white snowflakes dye the world in silvery white.",
-    "jp": "冬には雪が舞い散り、真っ白な雪が世界を銀世界へと染め上げます。"
+    "jp": "冬には雪が舞い散り、真っ白な雪が世界を銀世界へと染め上げます。",
+    "ko": "겨울에는 온 하늘에 눈이 날리고, 새하얀 눈송이가 온 세상을 은빛으로 물들여요."
   },
   {
     "id": "st8",
     "zh": "大家一起堆雪人，大年三十挂红灯笼、全家团圆迎新年！",
     "py": "Dàjiā yìqǐ duī xuěrén, dà nián sānshí guà hóng dēnglong, quánjiā tuányuán yíng xīnnián!",
     "en": "Everyone makes snowmen together; on New Year's Eve, red lanterns are hung, celebrating family reunion!",
-    "jp": "みんなで雪だるまを作り、大晦日には赤い提灯を掲げて新年を迎えます！"
+    "jp": "みんなで雪だるまを作り、大晦日には赤い提灯を掲げて新年を迎えます！",
+    "ko": "모두 함께 눈사람을 만들고, 섣달그믐에는 빨간 등롱을 걸고, 온 가족이 모여 새해를 맞이해요!"
   }
 ];
 
@@ -1457,7 +1485,7 @@ const CLOZE_QUESTIONS = [
 ];
 
 /* ---------------- STATE ---------------- */
-let storyIdx = 0, showPy = true, showEn = true, showJp = true;
+let storyIdx = 0, showPy = true, showEn = false, showJp = false, showKo = false;
 let charIdx = 0;
 let vocabFilter = 'all'; // all, words, proper
 let currentVocabList = ALL_VOCAB;
@@ -1562,13 +1590,14 @@ function goReview(){ switchReviewTab('quiz'); showScreen('screen-review'); }
 const AUDIO_DIR = '/audio/zh3/';
 const AUDIO_DIR_EN = '/audio/zh3_en/';
 const AUDIO_DIR_JA = '/audio/zh3_ja/';
+const AUDIO_DIR_KO = '/audio/zh3_ko/';
 const audioCache = {};
 let currentClip = null;
 
 function playClip(id, text, onend, lang){
   stopClip();
   lang = lang || 'zh-CN';
-  const dir = lang === 'en-US' ? AUDIO_DIR_EN : (lang === 'ja-JP' ? AUDIO_DIR_JA : AUDIO_DIR);
+  const dir = lang === 'en-US' ? AUDIO_DIR_EN : (lang === 'ja-JP' ? AUDIO_DIR_JA : (lang === 'ko-KR' ? AUDIO_DIR_KO : AUDIO_DIR));
   if(!id){ speak(text, onend, lang); return; }
   const key = lang + ':' + id;
   let a = audioCache[key];
@@ -1681,17 +1710,20 @@ function renderStory(){
   document.getElementById('storyPy').textContent = showPy ? s.py : '';
   document.getElementById('storyEn').textContent = showEn ? s.en : '';
   document.getElementById('storyJp').textContent = showJp ? (s.jp || '') : '';
+  document.getElementById('storyKo').textContent = showKo ? (s.ko || '') : '';
   const enRow = document.getElementById('storyEnRow'); if(enRow) enRow.style.display = showEn ? 'flex' : 'none';
   const jpRow = document.getElementById('storyJpRow'); if(jpRow) jpRow.style.display = (showJp && s.jp) ? 'flex' : 'none';
+  const koRow = document.getElementById('storyKoRow'); if(koRow) koRow.style.display = (showKo && s.ko) ? 'flex' : 'none';
 }
 function storyNext(){ storyIdx = (storyIdx+1) % STORY.length; renderStory(); }
 function storyPrev(){ storyIdx = (storyIdx-1+STORY.length) % STORY.length; renderStory(); }
 function toggleStoryPy(){ showPy = !showPy; document.getElementById('chipPy').classList.toggle('active', showPy); renderStory(); }
 function toggleStoryEn(){ showEn = !showEn; document.getElementById('chipEn').classList.toggle('active', showEn); renderStory(); }
 function toggleStoryJp(){ showJp = !showJp; document.getElementById('chipJp').classList.toggle('active', showJp); renderStory(); }
+function toggleStoryKo(){ showKo = !showKo; document.getElementById('chipKo').classList.toggle('active', showKo); renderStory(); }
 
 /* ---------------- FULL TEXT (view + continuous read-aloud) ---------------- */
-let fullPy = true, fullEn = true, fullJp = true;
+let fullPy = true, fullEn = false, fullJp = false, fullKo = false;
 let fullPlaying = false, fullPlayIdx = 0;
 function renderFullText(){
   const list = document.getElementById('fullTextList');
@@ -1705,6 +1737,7 @@ function renderFullText(){
       '<div class="sentence-zh">'+s.zh+'</div>' +
       (fullEn ? '<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><div class="sentence-en">'+s.en+'</div><button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY['+i+'].id, STORY['+i+'].en, null, \'en-US\');" title="播放英文发音">🔊</button></div>' : '') +
       (fullJp && s.jp ? '<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><div class="sentence-jp">'+s.jp+'</div><button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY['+i+'].id, STORY['+i+'].jp||\'\', null, \'ja-JP\');" title="播放日文发音">🔊</button></div>' : '') +
+      (fullKo && s.ko ? '<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><div class="sentence-ko">'+s.ko+'</div><button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY['+i+'].id, STORY['+i+'].ko||\'\', null, \'ko-KR\');" title="播放韩文发音">🔊</button></div>' : '') +
       '<div class="full-sent-voice-bar">' +
         '<button class="sent-action-btn" onclick="event.stopPropagation(); stopFullPlay(); stopFullMyPlay(); playClip(\''+s.id+'\',\''+s.zh+'\');" title="听原声示范">🔊 原声</button>' +
         '<span id="sent-voice-slot-'+i+'"></span>' +
@@ -1740,6 +1773,7 @@ async function updateFullTextVoiceStatus(){
 function toggleFullPy(){ fullPy = !fullPy; document.getElementById('chipFullPy').classList.toggle('active', fullPy); renderFullText(); }
 function toggleFullEn(){ fullEn = !fullEn; document.getElementById('chipFullEn').classList.toggle('active', fullEn); renderFullText(); }
 function toggleFullJp(){ fullJp = !fullJp; document.getElementById('chipFullJp').classList.toggle('active', fullJp); renderFullText(); }
+function toggleFullKo(){ fullKo = !fullKo; document.getElementById('chipFullKo').classList.toggle('active', fullKo); renderFullText(); }
 function toggleFullPlay(){ if(fullPlaying) stopFullPlay(); else startFullPlay(); }
 
 function startFullPlay(){
@@ -3438,5 +3472,7 @@ function downloadStoryRecord(){
 </script>
 
 <div class="site-legal-0101" style="clear:both;width:100%;box-sizing:border-box;padding:16px 12px 20px;text-align:center;font:12px/1.7 system-ui,sans-serif;color:#64748b;opacity:.9"><a href="https://0101.click/privacy.html" style="color:inherit;text-decoration:underline;opacity:.85">隐私政策 / プライバシー</a> · <a href="https://0101.click/about.html" style="color:inherit;text-decoration:underline;opacity:.85">关于 / 運営者情報</a> · <a href="https://0101.click/contact.html" style="color:inherit;text-decoration:underline;opacity:.85">联系 / お問い合わせ</a> · <a href="https://0101.click/" style="color:inherit;text-decoration:underline;opacity:.85">0101.click</a></div>
+<footer class="stroke-license-0101" style="clear:both;width:100%;box-sizing:border-box;padding:0 12px 16px;text-align:center;font:12px/1.7 system-ui,sans-serif;color:#64748b;opacity:.9">笔顺数据 / 筆順データ © Arphic Technology · <a href="https://0101.click/about.html#stroke-data" style="color:inherit;text-decoration:underline;opacity:.85">Arphic Public License</a>（hanzi-writer-data，源自 Make Me a Hanzi）</footer>
+<script src="js/o1.js" data-o1="lesson"></script>
 </body>
 </html>

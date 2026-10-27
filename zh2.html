@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
     <!-- Google tag (gtag.js) -->
+    <script src="js/consent-default.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -15,10 +16,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>我的一天 - 汉语课文识字闯关 (My Day)</title>
+<meta name="description" content="原创汉语课文《我的一天》：学习钟点时刻、一日三餐和作息动作的表达，掌握 12 个核心汉字，带拼音逐句朗读与闯关练习。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="0101.click">
+<meta property="og:title" content="我的一天 - 汉语课文识字闯关 (My Day)">
+<meta property="og:description" content="原创汉语课文《我的一天》：学习钟点时刻、一日三餐和作息动作的表达，掌握 12 个核心汉字，带拼音逐句朗读与闯关练习。">
+<meta property="og:url" content="https://zw.0101.click/zh2.html">
+<meta property="og:locale" content="zh_CN">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=M+PLUS+Rounded+1c:wght@600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
 <script src="js/hanzi-writer.min.js"></script>
+<link rel="stylesheet" href="css/clause-player.css">
+<script src="data/zh-lesson-clauses.js?v=zhcp1"></script>
+<script src="js/clause-player.js?v=zhcp1"></script>
 <script src="js/hanzi-data.js"></script>
 <script src="js/voice-recorder.js"></script>
 <style>
@@ -57,7 +68,8 @@
   .palace-ico{font-size:50px;filter:drop-shadow(0 6px 8px rgba(0,0,0,0.15));}
   .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:520px;margin-top:4px;}
   .menu-card{background:var(--card);border:2px solid #fbd38d;border-radius:var(--radius-lg);padding:14px 10px;text-align:center;
-    box-shadow:var(--shadow-card);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;}
+    box-shadow:var(--shadow-card);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent;}
+  .menu-card *{pointer-events:none;}
   .menu-card .ico{font-size:30px;}
   .menu-card .name{font-size:14px;font-weight:800;}
   .menu-card .desc{font-size:11px;color:var(--muted);}
@@ -81,6 +93,7 @@
   .sentence-py{font-size:15px;color:var(--blue);text-align:center;font-weight:700;min-height:20px;}
   .sentence-en{font-size:13px;color:var(--muted);text-align:center;}
   .sentence-jp{font-size:13px;color:#8b5cf6;text-align:center;}
+  .sentence-ko{font-size:13px;color:#059669;text-align:center;}
   .mini-speak-btn{border:none;background:none;font-size:13px;cursor:pointer;line-height:1;padding:2px 3px;border-radius:50%;flex-shrink:0;opacity:.75;}
   .mini-speak-btn:active{opacity:1;transform:scale(1.15);}
   .sent-action-btn.lang-voice{background:#f0f4ff;border-color:#a3bffa;color:#3b4fd8;}
@@ -224,6 +237,7 @@
   .full-sentence .sentence-py{font-size:13px;text-align:left;}
   .full-sentence .sentence-en{font-size:12px;text-align:left;}
   .full-sentence .sentence-jp{font-size:12px;text-align:left;color:#8b5cf6;}
+  .full-sentence .sentence-ko{font-size:12px;text-align:left;color:#059669;margin-top:2px;}
   .full-sentence.playing{background:var(--gold-soft);border-color:var(--imperial-gold);}
 
   /* audio challenge */
@@ -433,8 +447,9 @@
       <h2 class="title">📖 我的一天 (My Day)</h2>
       <div class="toggle-row">
         <div class="chip active" id="chipPy" onclick="toggleStoryPy()">拼音</div>
-        <div class="chip active" id="chipEn" onclick="toggleStoryEn()">English</div>
-        <div class="chip active" id="chipJp" onclick="toggleStoryJp()">日文</div>
+        <div class="chip" id="chipEn" onclick="toggleStoryEn()">English</div>
+        <div class="chip" id="chipJp" onclick="toggleStoryJp()">日本語</div>
+        <div class="chip" id="chipKo" onclick="toggleStoryKo()">한국어</div>
         <div class="chip" onclick="goFull()">📜 全文朗读</div>
       </div>
       <div class="story-card">
@@ -448,6 +463,10 @@
         <div class="lang-line-row" id="storyJpRow" style="display:flex;align-items:center;justify-content:center;gap:6px;">
           <div class="sentence-jp" id="storyJp"></div>
           <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].jp||'', null, 'ja-JP')" title="播放日文发音">🔊</button>
+        </div>
+        <div class="lang-line-row" id="storyKoRow" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+          <div class="sentence-ko" id="storyKo"></div>
+          <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].ko||'', null, 'ko-KR')" title="播放韩文发音">🔊</button>
         </div>
       </div>
       <!-- VOICE WAVE VISUALIZER -->
@@ -482,8 +501,9 @@
       <p class="sub">显示完整课文，可点击单句发音，或用下方按钮连续朗读全文。</p>
       <div class="toggle-row">
         <div class="chip active" id="chipFullPy" onclick="toggleFullPy()">拼音</div>
-        <div class="chip active" id="chipFullEn" onclick="toggleFullEn()">English</div>
-        <div class="chip active" id="chipFullJp" onclick="toggleFullJp()">日文</div>
+        <div class="chip" id="chipFullEn" onclick="toggleFullEn()">English</div>
+        <div class="chip" id="chipFullJp" onclick="toggleFullJp()">日本語</div>
+        <div class="chip" id="chipFullKo" onclick="toggleFullKo()">한국어</div>
       </div>
       <div class="story-card" style="align-items:stretch;gap:12px;">
         <div id="fullTextList" style="display:flex;flex-direction:column;gap:12px;"></div>
@@ -765,56 +785,64 @@ const STORY = [
     "zh": "早上七点，闹钟叮咚响了，我准时起床。",
     "py": "Zǎoshang qī diǎn, nàozhōng dīngdōng xiǎng le, wǒ zhǔnshí qǐchuáng.",
     "en": "At 7 o'clock in the morning, the alarm rings, I get up on time.",
-    "jp": "朝7時、目覚まし時計が鳴り、時間通りに起きます。"
+    "jp": "朝7時、目覚まし時計が鳴り、時間通りに起きます。",
+    "ko": "아침 7시, 자명종이 따르릉 울리고, 나는 제시간에 일어나요."
   },
   {
     "id": "st2",
     "zh": "洗脸刷牙后，我和家人一起吃香喷喷的早餐。",
     "py": "Xǐliǎn shuāyá hòu, wǒ hé jiārén yìqǐ chī xiāngpēnpēn de zǎocān.",
     "en": "After washing face and brushing teeth, I eat delicious breakfast with family.",
-    "jp": "洗顔と歯磨きをして、家族と一緒に美味しい朝ごはんを食べます。"
+    "jp": "洗顔と歯磨きをして、家族と一緒に美味しい朝ごはんを食べます。",
+    "ko": "세수하고 이를 닦은 뒤, 나는 가족과 함께 맛있는 아침을 먹어요."
   },
   {
     "id": "st3",
     "zh": "早上八点，我背着书包走出家门，向着学校走去。",
     "py": "Zǎoshang bā diǎn, wǒ bēizhe shūbāo zǒuchū jiāmén, xiàngzhe xuéxiào zǒuqù.",
     "en": "At 8 o'clock, carrying my schoolbag, I step out the door and walk to school.",
-    "jp": "朝8時、カバンを背負って家を出て、学校に向かって歩きます。"
+    "jp": "朝8時、カバンを背負って家を出て、学校に向かって歩きます。",
+    "ko": "아침 8시, 나는 책가방을 메고 집을 나서, 학교를 향해 걸어가요."
   },
   {
     "id": "st4",
     "zh": "中午十二点，我们在食堂吃午饭，排骨和米饭真香！",
     "py": "Zhōngwǔ shí'èr diǎn, wǒmen zài shítáng chī wǔfàn, páigǔ hé mǐfàn zhēn xiāng!",
     "en": "At 12 o'clock noon, we eat lunch in the cafeteria; ribs and rice are delicious!",
-    "jp": "お昼12時、食堂で昼ごはんを食べます。おかずとご飯がとても美味しいです！"
+    "jp": "お昼12時、食堂で昼ごはんを食べます。おかずとご飯がとても美味しいです！",
+    "ko": "낮 12시, 우리는 식당에서 점심을 먹어요. 갈비와 밥이 정말 맛있어요!"
   },
   {
     "id": "st5",
     "zh": "下午四点，放学铃声响起，我们收拾好书本准备回家。",
     "py": "Xiàwǔ sì diǎn, fàngxué língshēng xiǎngqǐ, wǒmen shōushi hǎo shūběn zhǔnbèi huíjiā.",
     "en": "At 4 o'clock in the afternoon, the bell rings, we pack our books ready to go home.",
-    "jp": "午後4時、下校のチャイムが鳴り、本を片付けて帰宅の準備をします。"
+    "jp": "午後4時、下校のチャイムが鳴り、本を片付けて帰宅の準備をします。",
+    "ko": "오후 4시, 하교 종이 울리고, 우리는 책을 챙겨 집에 갈 준비를 해요."
   },
   {
     "id": "st6",
     "zh": "傍晚六点半，全家人围坐在餐桌旁吃丰盛的晚饭。",
     "py": "Bàngwǎn liù diǎn bàn, quán jiārén wéizuò zài cānzhuō páng chī fēngshèng de wǎnfàn.",
     "en": "At 6:30 in the evening, the whole family sits around the table eating a hearty dinner.",
-    "jp": "夕方6時半、家族全員で食卓を囲み、豪華な晩ごはんを食べます。"
+    "jp": "夕方6時半、家族全員で食卓を囲み、豪華な晩ごはんを食べます。",
+    "ko": "저녁 6시 반, 온 가족이 식탁에 둘러앉아 푸짐한 저녁을 먹어요."
   },
   {
     "id": "st7",
     "zh": "晚上八点，我在书桌前专心致志地写作业。",
     "py": "Wǎnshang bā diǎn, wǒ zài shūzhuō qián zhuānxīnzhìzhì de xiě zuòyè.",
     "en": "At 8 o'clock in the evening, I focus intently on my homework at the desk.",
-    "jp": "夜8時、机に向かって集中して宿題をします。"
+    "jp": "夜8時、机に向かって集中して宿題をします。",
+    "ko": "저녁 8시, 나는 책상 앞에서 집중해서 숙제를 해요."
   },
   {
     "id": "st8",
     "zh": "晚上九点半，我对爸爸妈妈道声晚安，安心睡觉。",
     "py": "Wǎnshang jiǔ diǎn bàn, wǒ duì bàba māma dào shēng wǎn'ān, ānxīn shuìjiào.",
     "en": "At 9:30, I say good night to Mom and Dad, and fall asleep peacefully.",
-    "jp": "夜9時半、両親に「おやすみなさい」と言って、安心して眠りにつきます。"
+    "jp": "夜9時半、両親に「おやすみなさい」と言って、安心して眠りにつきます。",
+    "ko": "밤 9시 반, 나는 엄마 아빠께 안녕히 주무시라고 인사하고, 편안하게 잠들어요."
   }
 ];
 
@@ -1451,7 +1479,7 @@ const CLOZE_QUESTIONS = [
 ];
 
 /* ---------------- STATE ---------------- */
-let storyIdx = 0, showPy = true, showEn = true, showJp = true;
+let storyIdx = 0, showPy = true, showEn = false, showJp = false, showKo = false;
 let charIdx = 0;
 let vocabFilter = 'all'; // all, words, proper
 let currentVocabList = ALL_VOCAB;
@@ -1556,13 +1584,14 @@ function goReview(){ switchReviewTab('quiz'); showScreen('screen-review'); }
 const AUDIO_DIR = '/audio/zh2/';
 const AUDIO_DIR_EN = '/audio/zh2_en/';
 const AUDIO_DIR_JA = '/audio/zh2_ja/';
+const AUDIO_DIR_KO = '/audio/zh2_ko/';
 const audioCache = {};
 let currentClip = null;
 
 function playClip(id, text, onend, lang){
   stopClip();
   lang = lang || 'zh-CN';
-  const dir = lang === 'en-US' ? AUDIO_DIR_EN : (lang === 'ja-JP' ? AUDIO_DIR_JA : AUDIO_DIR);
+  const dir = lang === 'en-US' ? AUDIO_DIR_EN : (lang === 'ja-JP' ? AUDIO_DIR_JA : (lang === 'ko-KR' ? AUDIO_DIR_KO : AUDIO_DIR));
   if(!id){ speak(text, onend, lang); return; }
   const key = lang + ':' + id;
   let a = audioCache[key];
@@ -1675,17 +1704,20 @@ function renderStory(){
   document.getElementById('storyPy').textContent = showPy ? s.py : '';
   document.getElementById('storyEn').textContent = showEn ? s.en : '';
   document.getElementById('storyJp').textContent = showJp ? (s.jp || '') : '';
+  document.getElementById('storyKo').textContent = showKo ? (s.ko || '') : '';
   const enRow = document.getElementById('storyEnRow'); if(enRow) enRow.style.display = showEn ? 'flex' : 'none';
   const jpRow = document.getElementById('storyJpRow'); if(jpRow) jpRow.style.display = (showJp && s.jp) ? 'flex' : 'none';
+  const koRow = document.getElementById('storyKoRow'); if(koRow) koRow.style.display = (showKo && s.ko) ? 'flex' : 'none';
 }
 function storyNext(){ storyIdx = (storyIdx+1) % STORY.length; renderStory(); }
 function storyPrev(){ storyIdx = (storyIdx-1+STORY.length) % STORY.length; renderStory(); }
 function toggleStoryPy(){ showPy = !showPy; document.getElementById('chipPy').classList.toggle('active', showPy); renderStory(); }
 function toggleStoryEn(){ showEn = !showEn; document.getElementById('chipEn').classList.toggle('active', showEn); renderStory(); }
 function toggleStoryJp(){ showJp = !showJp; document.getElementById('chipJp').classList.toggle('active', showJp); renderStory(); }
+function toggleStoryKo(){ showKo = !showKo; document.getElementById('chipKo').classList.toggle('active', showKo); renderStory(); }
 
 /* ---------------- FULL TEXT (view + continuous read-aloud) ---------------- */
-let fullPy = true, fullEn = true, fullJp = true;
+let fullPy = true, fullEn = false, fullJp = false, fullKo = false;
 let fullPlaying = false, fullPlayIdx = 0;
 function renderFullText(){
   const list = document.getElementById('fullTextList');
@@ -1699,6 +1731,7 @@ function renderFullText(){
       '<div class="sentence-zh">'+s.zh+'</div>' +
       (fullEn ? '<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><div class="sentence-en">'+s.en+'</div><button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY['+i+'].id, STORY['+i+'].en, null, \'en-US\');" title="播放英文发音">🔊</button></div>' : '') +
       (fullJp && s.jp ? '<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><div class="sentence-jp">'+s.jp+'</div><button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY['+i+'].id, STORY['+i+'].jp||\'\', null, \'ja-JP\');" title="播放日文发音">🔊</button></div>' : '') +
+      (fullKo && s.ko ? '<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><div class="sentence-ko">'+s.ko+'</div><button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY['+i+'].id, STORY['+i+'].ko||\'\', null, \'ko-KR\');" title="播放韩文发音">🔊</button></div>' : '') +
       '<div class="full-sent-voice-bar">' +
         '<button class="sent-action-btn" onclick="event.stopPropagation(); stopFullPlay(); stopFullMyPlay(); playClip(\''+s.id+'\',\''+s.zh+'\');" title="听原声示范">🔊 原声</button>' +
         '<span id="sent-voice-slot-'+i+'"></span>' +
@@ -1734,6 +1767,7 @@ async function updateFullTextVoiceStatus(){
 function toggleFullPy(){ fullPy = !fullPy; document.getElementById('chipFullPy').classList.toggle('active', fullPy); renderFullText(); }
 function toggleFullEn(){ fullEn = !fullEn; document.getElementById('chipFullEn').classList.toggle('active', fullEn); renderFullText(); }
 function toggleFullJp(){ fullJp = !fullJp; document.getElementById('chipFullJp').classList.toggle('active', fullJp); renderFullText(); }
+function toggleFullKo(){ fullKo = !fullKo; document.getElementById('chipFullKo').classList.toggle('active', fullKo); renderFullText(); }
 function toggleFullPlay(){ if(fullPlaying) stopFullPlay(); else startFullPlay(); }
 
 function startFullPlay(){
@@ -3432,5 +3466,7 @@ function downloadStoryRecord(){
 </script>
 
 <div class="site-legal-0101" style="clear:both;width:100%;box-sizing:border-box;padding:16px 12px 20px;text-align:center;font:12px/1.7 system-ui,sans-serif;color:#64748b;opacity:.9"><a href="https://0101.click/privacy.html" style="color:inherit;text-decoration:underline;opacity:.85">隐私政策 / プライバシー</a> · <a href="https://0101.click/about.html" style="color:inherit;text-decoration:underline;opacity:.85">关于 / 運営者情報</a> · <a href="https://0101.click/contact.html" style="color:inherit;text-decoration:underline;opacity:.85">联系 / お問い合わせ</a> · <a href="https://0101.click/" style="color:inherit;text-decoration:underline;opacity:.85">0101.click</a></div>
+<footer class="stroke-license-0101" style="clear:both;width:100%;box-sizing:border-box;padding:0 12px 16px;text-align:center;font:12px/1.7 system-ui,sans-serif;color:#64748b;opacity:.9">笔顺数据 / 筆順データ © Arphic Technology · <a href="https://0101.click/about.html#stroke-data" style="color:inherit;text-decoration:underline;opacity:.85">Arphic Public License</a>（hanzi-writer-data，源自 Make Me a Hanzi）</footer>
+<script src="js/o1.js" data-o1="lesson"></script>
 </body>
 </html>

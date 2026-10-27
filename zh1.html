@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
     <!-- Google tag (gtag.js) -->
+    <script src="js/consent-default.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -15,10 +16,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>我的一星期 - 汉语课文识字闯关 (My Week)</title>
+<meta name="description" content="原创汉语课文《我的一星期》：围绕校园和家庭生活学习一周七天的说法、爱好动词和 12 个核心汉字，带拼音朗读、配对、填空和听力练习。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="0101.click">
+<meta property="og:title" content="我的一星期 - 汉语课文识字闯关 (My Week)">
+<meta property="og:description" content="原创汉语课文《我的一星期》：围绕校园和家庭生活学习一周七天的说法、爱好动词和 12 个核心汉字，带拼音朗读、配对、填空和听力练习。">
+<meta property="og:url" content="https://zw.0101.click/zh1.html">
+<meta property="og:locale" content="zh_CN">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=M+PLUS+Rounded+1c:wght@600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
 <script src="js/hanzi-writer.min.js"></script>
+<link rel="stylesheet" href="css/clause-player.css">
+<script src="data/zh-lesson-clauses.js?v=zhcp1"></script>
+<script src="js/clause-player.js?v=zhcp1"></script>
 <script src="js/hanzi-data.js"></script>
 <script src="js/voice-recorder.js"></script>
 <style>
@@ -57,7 +68,8 @@
   .palace-ico{font-size:50px;filter:drop-shadow(0 6px 8px rgba(0,0,0,0.15));}
   .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:520px;margin-top:4px;}
   .menu-card{background:var(--card);border:2px solid #fbd38d;border-radius:var(--radius-lg);padding:14px 10px;text-align:center;
-    box-shadow:var(--shadow-card);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;}
+    box-shadow:var(--shadow-card);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent;}
+  .menu-card *{pointer-events:none;}
   .menu-card .ico{font-size:30px;}
   .menu-card .name{font-size:14px;font-weight:800;}
   .menu-card .desc{font-size:11px;color:var(--muted);}
@@ -81,6 +93,7 @@
   .sentence-py{font-size:15px;color:var(--blue);text-align:center;font-weight:700;min-height:20px;}
   .sentence-en{font-size:13px;color:var(--muted);text-align:center;}
   .sentence-jp{font-size:13px;color:#8b5cf6;text-align:center;}
+  .sentence-ko{font-size:13px;color:#059669;text-align:center;}
   .mini-speak-btn{border:none;background:none;font-size:13px;cursor:pointer;line-height:1;padding:2px 3px;border-radius:50%;flex-shrink:0;opacity:.75;}
   .mini-speak-btn:active{opacity:1;transform:scale(1.15);}
   .sent-action-btn.lang-voice{background:#f0f4ff;border-color:#a3bffa;color:#3b4fd8;}
@@ -224,6 +237,7 @@
   .full-sentence .sentence-py{font-size:13px;text-align:left;}
   .full-sentence .sentence-en{font-size:12px;text-align:left;}
   .full-sentence .sentence-jp{font-size:12px;text-align:left;color:#8b5cf6;}
+  .full-sentence .sentence-ko{font-size:12px;text-align:left;color:#059669;margin-top:2px;}
   .full-sentence.playing{background:var(--gold-soft);border-color:var(--imperial-gold);}
 
   /* audio challenge */
@@ -437,8 +451,9 @@
       <h2 class="title">📖 我的一星期 (My Week)</h2>
       <div class="toggle-row">
         <div class="chip active" id="chipPy" onclick="toggleStoryPy()">拼音</div>
-        <div class="chip active" id="chipEn" onclick="toggleStoryEn()">English</div>
-        <div class="chip active" id="chipJp" onclick="toggleStoryJp()">日文</div>
+        <div class="chip" id="chipEn" onclick="toggleStoryEn()">English</div>
+        <div class="chip" id="chipJp" onclick="toggleStoryJp()">日本語</div>
+        <div class="chip" id="chipKo" onclick="toggleStoryKo()">한국어</div>
         <div class="chip" onclick="goFull()">📜 全文朗读</div>
       </div>
       <div class="story-card">
@@ -452,6 +467,10 @@
         <div class="lang-line-row" id="storyJpRow" style="display:flex;align-items:center;justify-content:center;gap:6px;">
           <div class="sentence-jp" id="storyJp"></div>
           <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].jp||'', null, 'ja-JP')" title="播放日文发音">🔊</button>
+        </div>
+        <div class="lang-line-row" id="storyKoRow" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+          <div class="sentence-ko" id="storyKo"></div>
+          <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].ko||'', null, 'ko-KR')" title="播放韩文发音">🔊</button>
         </div>
       </div>
       <!-- VOICE WAVE VISUALIZER -->
@@ -486,8 +505,9 @@
       <p class="sub">显示完整课文，可点击单句发音，或用下方按钮连续朗读全文。</p>
       <div class="toggle-row">
         <div class="chip active" id="chipFullPy" onclick="toggleFullPy()">拼音</div>
-        <div class="chip active" id="chipFullEn" onclick="toggleFullEn()">English</div>
-        <div class="chip active" id="chipFullJp" onclick="toggleFullJp()">日文</div>
+        <div class="chip" id="chipFullEn" onclick="toggleFullEn()">English</div>
+        <div class="chip" id="chipFullJp" onclick="toggleFullJp()">日本語</div>
+        <div class="chip" id="chipFullKo" onclick="toggleFullKo()">한국어</div>
       </div>
       <div class="story-card" style="align-items:stretch;gap:12px;">
         <div id="fullTextList" style="display:flex;flex-direction:column;gap:12px;"></div>
@@ -773,56 +793,64 @@ const STORY = [
     "zh": "星期一，朝阳升起，我们背上书包高高兴兴去学校。",
     "py": "Xīngqīyī, zhāoyáng shēngqǐ, wǒmen bēishang shūbāo gāogāoxìngxìng qù xuéxiào.",
     "en": "On Monday, morning sun rises, we carry our schoolbags happily to school.",
-    "jp": "月曜日、朝の光が昇り、私たちはランドセルを背負って元気に登校します。"
+    "jp": "月曜日、朝の光が昇り、私たちはランドセルを背負って元気に登校します。",
+    "ko": "월요일, 아침 해가 떠오르고, 우리는 책가방을 메고 신나게 학교에 가요."
   },
   {
     "id": "st2",
     "zh": "星期二，我们在明亮的教室里认真听讲、学习中文。",
     "py": "Xīngqī'èr, wǒmen zài míngliàng de jiàoshì lǐ rènzhēn tīngjiǎng, xuéxí zhōngwén.",
     "en": "On Tuesday, we listen attentively and study Chinese in the bright classroom.",
-    "jp": "火曜日、私たちは明るい教室で真剣に先生の話を聞き、中国語を学びます。"
+    "jp": "火曜日、私たちは明るい教室で真剣に先生の話を聞き、中国語を学びます。",
+    "ko": "화요일, 우리는 밝은 교실에서 열심히 수업을 듣고 중국어를 배워요."
   },
   {
     "id": "st3",
     "zh": "星期三，下课后我和同学们在操场上听优美的音乐。",
     "py": "Xīngqīsān, xiàkè hòu wǒ hé tóngxuémen zài cāochǎng shang tīng yōuměi de yīnyuè.",
     "en": "On Wednesday, after class my classmates and I listen to beautiful music on the playground.",
-    "jp": "水曜日、放課後にクラスメイトとグラウンドで美しい音楽を聴きます。"
+    "jp": "水曜日、放課後にクラスメイトとグラウンドで美しい音楽を聴きます。",
+    "ko": "수요일, 수업이 끝나면 나는 친구들과 운동장에서 아름다운 음악을 들어요."
   },
   {
     "id": "st4",
     "zh": "星期四，我们走进安静的图书馆，津津有味地看书。",
     "py": "Xīngqīsì, wǒmen zǒujìn ānjìng de túshūguǎn, jīnjīnyǒuwèi de kàn shū.",
     "en": "On Thursday, we walk into the quiet library and read books with keen interest.",
-    "jp": "木曜日、私たちは静かな図書館に入り、夢中になって本を読みます。"
+    "jp": "木曜日、私たちは静かな図書館に入り、夢中になって本を読みます。",
+    "ko": "목요일, 우리는 조용한 도서관에 들어가, 재미있게 책을 읽어요."
   },
   {
     "id": "st5",
     "zh": "星期五，大家一起唱歌跳舞，开开心心迎接周末。",
     "py": "Xīngqīwǔ, dàjiā yìqǐ chàng gē tiào wǔ, kāikāixīnxīn yíngjiē zhōumò.",
     "en": "On Friday, everyone sings and dances together, joyfully welcoming the weekend.",
-    "jp": "金曜日、みんなで歌って踊り、楽しく週末を迎えます。"
+    "jp": "金曜日、みんなで歌って踊り、楽しく週末を迎えます。",
+    "ko": "금요일, 모두 함께 노래하고 춤추며, 즐겁게 주말을 맞이해요."
   },
   {
     "id": "st6",
     "zh": "星期六，我和爸爸妈妈去公园散步，看盛开的鲜花。",
     "py": "Xīngqīliù, wǒ hé bàba māma qù gōngyuán sànbù, kàn shèngkāi de xiānhuā.",
     "en": "On Saturday, my parents and I go strolling in the park, admiring blooming flowers.",
-    "jp": "土曜日、私は両親と公園へ散歩に行き、満開の花を眺めます。"
+    "jp": "土曜日、私は両親と公園へ散歩に行き、満開の花を眺めます。",
+    "ko": "토요일, 나는 엄마 아빠와 공원에 산책하러 가서, 활짝 핀 꽃을 봐요."
   },
   {
     "id": "st7",
     "zh": "星期天，我喜欢坐在温暖的家里画画，享受休息日。",
     "py": "Xīngqītiān, wǒ xǐhuan zuò zài wēnnuǎn de jiā lǐ huàhuà, xiǎngshòu xiūxirì.",
     "en": "On Sunday, I like sitting in my warm home drawing pictures, enjoying the day of rest.",
-    "jp": "日曜日、私は温かい家で絵を描いて過ごし、休息日を楽しみます。"
+    "jp": "日曜日、私は温かい家で絵を描いて過ごし、休息日を楽しみます。",
+    "ko": "일요일, 나는 따뜻한 집에서 그림 그리는 것을 좋아하고, 쉬는 날을 즐겨요."
   },
   {
     "id": "st8",
     "zh": "充实又快乐的一星期，每一天都有满满的收获！",
     "py": "Chōngshí yòu kuàilè de yì xīngqī, měi yì tiān dōu yǒu mǎnmǎn de shōuhuò!",
     "en": "A fulfilling and happy week, every single day brings abundant gains!",
-    "jp": "充実して楽しい一週間、毎日たくさんの収穫があります！"
+    "jp": "充実して楽しい一週間、毎日たくさんの収穫があります！",
+    "ko": "알차고 즐거운 일주일, 하루하루 얻는 것이 가득해요!"
   }
 ];
 
@@ -1459,7 +1487,7 @@ const CLOZE_QUESTIONS = [
 ];
 
 /* ---------------- STATE ---------------- */
-let storyIdx = 0, showPy = true, showEn = true, showJp = true;
+let storyIdx = 0, showPy = true, showEn = false, showJp = false, showKo = false;
 let charIdx = 0;
 let vocabFilter = 'all'; // all, words, proper
 let currentVocabList = ALL_VOCAB;
@@ -1564,13 +1592,14 @@ function goReview(){ switchReviewTab('quiz'); showScreen('screen-review'); }
 const AUDIO_DIR = '/audio/zh1/';
 const AUDIO_DIR_EN = '/audio/zh1_en/';
 const AUDIO_DIR_JA = '/audio/zh1_ja/';
+const AUDIO_DIR_KO = '/audio/zh1_ko/';
 const audioCache = {};
 let currentClip = null;
 
 function playClip(id, text, onend, lang){
   stopClip();
   lang = lang || 'zh-CN';
-  const dir = lang === 'en-US' ? AUDIO_DIR_EN : (lang === 'ja-JP' ? AUDIO_DIR_JA : AUDIO_DIR);
+  const dir = lang === 'en-US' ? AUDIO_DIR_EN : (lang === 'ja-JP' ? AUDIO_DIR_JA : (lang === 'ko-KR' ? AUDIO_DIR_KO : AUDIO_DIR));
   if(!id){ speak(text, onend, lang); return; }
   const key = lang + ':' + id;
   let a = audioCache[key];
@@ -1683,17 +1712,20 @@ function renderStory(){
   document.getElementById('storyPy').textContent = showPy ? s.py : '';
   document.getElementById('storyEn').textContent = showEn ? s.en : '';
   document.getElementById('storyJp').textContent = showJp ? (s.jp || '') : '';
+  document.getElementById('storyKo').textContent = showKo ? (s.ko || '') : '';
   const enRow = document.getElementById('storyEnRow'); if(enRow) enRow.style.display = showEn ? 'flex' : 'none';
   const jpRow = document.getElementById('storyJpRow'); if(jpRow) jpRow.style.display = (showJp && s.jp) ? 'flex' : 'none';
+  const koRow = document.getElementById('storyKoRow'); if(koRow) koRow.style.display = (showKo && s.ko) ? 'flex' : 'none';
 }
 function storyNext(){ storyIdx = (storyIdx+1) % STORY.length; renderStory(); }
 function storyPrev(){ storyIdx = (storyIdx-1+STORY.length) % STORY.length; renderStory(); }
 function toggleStoryPy(){ showPy = !showPy; document.getElementById('chipPy').classList.toggle('active', showPy); renderStory(); }
 function toggleStoryEn(){ showEn = !showEn; document.getElementById('chipEn').classList.toggle('active', showEn); renderStory(); }
 function toggleStoryJp(){ showJp = !showJp; document.getElementById('chipJp').classList.toggle('active', showJp); renderStory(); }
+function toggleStoryKo(){ showKo = !showKo; document.getElementById('chipKo').classList.toggle('active', showKo); renderStory(); }
 
 /* ---------------- FULL TEXT (view + continuous read-aloud) ---------------- */
-let fullPy = true, fullEn = true, fullJp = true;
+let fullPy = true, fullEn = false, fullJp = false, fullKo = false;
 let fullPlaying = false, fullPlayIdx = 0;
 function renderFullText(){
   const list = document.getElementById('fullTextList');
@@ -1707,6 +1739,7 @@ function renderFullText(){
       '<div class="sentence-zh">'+s.zh+'</div>' +
       (fullEn ? '<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><div class="sentence-en">'+s.en+'</div><button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY['+i+'].id, STORY['+i+'].en, null, \'en-US\');" title="播放英文发音">🔊</button></div>' : '') +
       (fullJp && s.jp ? '<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><div class="sentence-jp">'+s.jp+'</div><button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY['+i+'].id, STORY['+i+'].jp||\'\', null, \'ja-JP\');" title="播放日文发音">🔊</button></div>' : '') +
+      (fullKo && s.ko ? '<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><div class="sentence-ko">'+s.ko+'</div><button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY['+i+'].id, STORY['+i+'].ko||\'\', null, \'ko-KR\');" title="播放韩文发音">🔊</button></div>' : '') +
       '<div class="full-sent-voice-bar">' +
         '<button class="sent-action-btn" onclick="event.stopPropagation(); stopFullPlay(); stopFullMyPlay(); playClip(\''+s.id+'\',\''+s.zh+'\');" title="听原声示范">🔊 原声</button>' +
         '<span id="sent-voice-slot-'+i+'"></span>' +
@@ -1742,6 +1775,7 @@ async function updateFullTextVoiceStatus(){
 function toggleFullPy(){ fullPy = !fullPy; document.getElementById('chipFullPy').classList.toggle('active', fullPy); renderFullText(); }
 function toggleFullEn(){ fullEn = !fullEn; document.getElementById('chipFullEn').classList.toggle('active', fullEn); renderFullText(); }
 function toggleFullJp(){ fullJp = !fullJp; document.getElementById('chipFullJp').classList.toggle('active', fullJp); renderFullText(); }
+function toggleFullKo(){ fullKo = !fullKo; document.getElementById('chipFullKo').classList.toggle('active', fullKo); renderFullText(); }
 function toggleFullPlay(){ if(fullPlaying) stopFullPlay(); else startFullPlay(); }
 
 function startFullPlay(){
@@ -3440,5 +3474,7 @@ function downloadStoryRecord(){
 </script>
 
 <div class="site-legal-0101" style="clear:both;width:100%;box-sizing:border-box;padding:16px 12px 20px;text-align:center;font:12px/1.7 system-ui,sans-serif;color:#64748b;opacity:.9"><a href="https://0101.click/privacy.html" style="color:inherit;text-decoration:underline;opacity:.85">隐私政策 / プライバシー</a> · <a href="https://0101.click/about.html" style="color:inherit;text-decoration:underline;opacity:.85">关于 / 運営者情報</a> · <a href="https://0101.click/contact.html" style="color:inherit;text-decoration:underline;opacity:.85">联系 / お問い合わせ</a> · <a href="https://0101.click/" style="color:inherit;text-decoration:underline;opacity:.85">0101.click</a></div>
+<footer class="stroke-license-0101" style="clear:both;width:100%;box-sizing:border-box;padding:0 12px 16px;text-align:center;font:12px/1.7 system-ui,sans-serif;color:#64748b;opacity:.9">笔顺数据 / 筆順データ © Arphic Technology · <a href="https://0101.click/about.html#stroke-data" style="color:inherit;text-decoration:underline;opacity:.85">Arphic Public License</a>（hanzi-writer-data，源自 Make Me a Hanzi）</footer>
+<script src="js/o1.js" data-o1="lesson"></script>
 </body>
 </html>

@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
     <!-- Google tag (gtag.js) -->
+    <script src="js/consent-default.js"></script>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -15,10 +16,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>拼音与日常问候 - 汉语课文识字闯关 (Pinyin & Greetings)</title>
+<meta name="description" content="原创汉语入门课《拼音与日常问候》：认识声母、韵母和四声调，学会常用礼貌问候和 12 个基础汉字，带拼音逐句朗读与拼音点读盘。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="0101.click">
+<meta property="og:title" content="拼音与日常问候 - 汉语课文识字闯关 (Pinyin &amp; Greetings)">
+<meta property="og:description" content="原创汉语入门课《拼音与日常问候》：认识声母、韵母和四声调，学会常用礼貌问候和 12 个基础汉字，带拼音逐句朗读与拼音点读盘。">
+<meta property="og:url" content="https://zw.0101.click/zh0.html">
+<meta property="og:locale" content="zh_CN">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=M+PLUS+Rounded+1c:wght@600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
 <script src="js/hanzi-writer.min.js"></script>
+<link rel="stylesheet" href="css/clause-player.css">
+<script src="data/zh-lesson-clauses.js?v=zhcp1"></script>
+<script src="js/clause-player.js?v=zhcp1"></script>
 <script src="js/hanzi-data.js"></script>
 <script src="js/voice-recorder.js"></script>
 <style>
@@ -57,7 +68,8 @@
   .palace-ico{font-size:50px;filter:drop-shadow(0 6px 8px rgba(0,0,0,0.15));}
   .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:520px;margin-top:4px;}
   .menu-card{background:var(--card);border:2px solid #fbd38d;border-radius:var(--radius-lg);padding:14px 10px;text-align:center;
-    box-shadow:var(--shadow-card);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;}
+    box-shadow:var(--shadow-card);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;position:relative;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent;}
+  .menu-card *{pointer-events:none;}
   .menu-card .ico{font-size:30px;}
   .menu-card .name{font-size:14px;font-weight:800;}
   .menu-card .desc{font-size:11px;color:var(--muted);}
@@ -81,6 +93,7 @@
   .sentence-py{font-size:15px;color:var(--blue);text-align:center;font-weight:700;min-height:20px;}
   .sentence-en{font-size:13px;color:var(--muted);text-align:center;}
   .sentence-jp{font-size:13px;color:#8b5cf6;text-align:center;}
+  .sentence-ko{font-size:13px;color:#059669;text-align:center;}
   .mini-speak-btn{border:none;background:none;font-size:13px;cursor:pointer;line-height:1;padding:2px 3px;border-radius:50%;flex-shrink:0;opacity:.75;}
   .mini-speak-btn:active{opacity:1;transform:scale(1.15);}
   .sent-action-btn.lang-voice{background:#f0f4ff;border-color:#a3bffa;color:#3b4fd8;}
@@ -224,6 +237,7 @@
   .full-sentence .sentence-py{font-size:13px;text-align:left;}
   .full-sentence .sentence-en{font-size:12px;text-align:left;}
   .full-sentence .sentence-jp{font-size:12px;text-align:left;color:#8b5cf6;}
+  .full-sentence .sentence-ko{font-size:12px;text-align:left;color:#059669;margin-top:2px;}
   .full-sentence.playing{background:var(--gold-soft);border-color:var(--imperial-gold);}
 
   /* audio challenge */
@@ -438,8 +452,9 @@
       <h2 class="title">📖 拼音与日常问候 (Pinyin &amp; Greetings)</h2>
       <div class="toggle-row">
         <div class="chip active" id="chipPy" onclick="toggleStoryPy()">拼音</div>
-        <div class="chip active" id="chipEn" onclick="toggleStoryEn()">English</div>
-        <div class="chip active" id="chipJp" onclick="toggleStoryJp()">日文</div>
+        <div class="chip" id="chipEn" onclick="toggleStoryEn()">English</div>
+        <div class="chip" id="chipJp" onclick="toggleStoryJp()">日本語</div>
+        <div class="chip" id="chipKo" onclick="toggleStoryKo()">한국어</div>
         <div class="chip" onclick="goFull()">📜 全文朗读</div>
       </div>
       <div class="story-card">
@@ -453,6 +468,10 @@
         <div class="lang-line-row" id="storyJpRow" style="display:flex;align-items:center;justify-content:center;gap:6px;">
           <div class="sentence-jp" id="storyJp"></div>
           <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].jp||'', null, 'ja-JP')" title="播放日文发音">🔊</button>
+        </div>
+        <div class="lang-line-row" id="storyKoRow" style="display:flex;align-items:center;justify-content:center;gap:6px;">
+          <div class="sentence-ko" id="storyKo"></div>
+          <button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY[storyIdx].id, STORY[storyIdx].ko||'', null, 'ko-KR')" title="播放韩文发音">🔊</button>
         </div>
       </div>
       <!-- VOICE WAVE VISUALIZER -->
@@ -487,8 +506,9 @@
       <p class="sub">显示完整课文，可点击单句发音，或用下方按钮连续朗读全文。</p>
       <div class="toggle-row">
         <div class="chip active" id="chipFullPy" onclick="toggleFullPy()">拼音</div>
-        <div class="chip active" id="chipFullEn" onclick="toggleFullEn()">English</div>
-        <div class="chip active" id="chipFullJp" onclick="toggleFullJp()">日文</div>
+        <div class="chip" id="chipFullEn" onclick="toggleFullEn()">English</div>
+        <div class="chip" id="chipFullJp" onclick="toggleFullJp()">日本語</div>
+        <div class="chip" id="chipFullKo" onclick="toggleFullKo()">한국어</div>
       </div>
       <div class="story-card" style="align-items:stretch;gap:12px;">
         <div id="fullTextList" style="display:flex;flex-direction:column;gap:12px;"></div>
@@ -789,56 +809,64 @@ const STORY = [
     "zh": "拼音是汉字的翅膀，让我们开始快乐学中文。",
     "py": "Pīnyīn shì hànzì de chìbǎng, ràng wǒmen kāishǐ kuàilè xué zhōngwén.",
     "en": "Pinyin is the wings of Chinese characters; let's begin learning Chinese happily.",
-    "jp": "ピンインは漢字の翼です。楽しく中国語を学び始めましょう。"
+    "jp": "ピンインは漢字の翼です。楽しく中国語を学び始めましょう。",
+    "ko": "병음은 한자의 날개예요. 즐겁게 중국어를 배우기 시작해요."
   },
   {
     "id": "st2",
     "zh": "早晨相遇，微笑着说一声“早上好”！",
     "py": "Zǎochén xiāngyù, wēixiàozhe shuō yì shēng “Zǎoshang hǎo”!",
     "en": "Meeting in the morning, say “Good morning” with a bright smile!",
-    "jp": "朝会ったら、笑顔で「おはようございます」と言いましょう！"
+    "jp": "朝会ったら、笑顔で「おはようございます」と言いましょう！",
+    "ko": "아침에 만나면, 웃으며 \"좋은 아침\"이라고 말해요!"
   },
   {
     "id": "st3",
     "zh": "朋友见面，热情地打招呼“你好”！",
     "py": "Péngyou jiànmiàn, rèqíng de dǎ zhāohu “Nǐ hǎo”!",
     "en": "When meeting friends, warmly greet them with “Hello”!",
-    "jp": "友達に会ったら、元気に「こんにちは」と挨拶します！"
+    "jp": "友達に会ったら、元気に「こんにちは」と挨拶します！",
+    "ko": "친구를 만나면, 반갑게 \"안녕\"이라고 인사해요!"
   },
   {
     "id": "st4",
     "zh": "夜幕降临，道一声温暖的“晚上好”。",
     "py": "Yèmù jiànglín, dào yì shēng wēnnuǎn de “Wǎnshang hǎo”.",
     "en": "When night falls, send a warm greeting: “Good evening”.",
-    "jp": "夜が来たら、温かく「こんばんは」と声をかけます。"
+    "jp": "夜が来たら、温かく「こんばんは」と声をかけます。",
+    "ko": "밤이 오면, 따뜻하게 \"좋은 저녁\"이라고 인사해요."
   },
   {
     "id": "st5",
     "zh": "得到帮助，真诚地说一声“谢谢”。",
     "py": "Dédào bāngzhù, zhēnchéng de shuō yì shēng “Xièxie”.",
     "en": "When receiving help, sincerely say “Thank you”.",
-    "jp": "助けてもらったら、心を込めて「ありがとう」と言います。"
+    "jp": "助けてもらったら、心を込めて「ありがとう」と言います。",
+    "ko": "도움을 받으면, 진심으로 \"고마워요\"라고 말해요."
   },
   {
     "id": "st6",
     "zh": "礼貌回应，温和地说“不客气”。",
     "py": "Lǐmào huíyìng, wēnhé de shuō “Bú kèqi”.",
     "en": "Politely respond and gently say “You're welcome”.",
-    "jp": "礼儀正しく、優しく「どういたしまして」と返します。"
+    "jp": "礼儀正しく、優しく「どういたしまして」と返します。",
+    "ko": "예의 바르게 대답하며, 부드럽게 \"천만에요\"라고 말해요."
   },
   {
     "id": "st7",
     "zh": "如果不小心做错了，主动说“对不起”。",
     "py": "Rúguǒ bù xiǎoxīn zuòcuò le, zhǔdòng shuō “Duìbuqǐ”.",
     "en": "If accidentally making a mistake, take the initiative to say “Sorry”.",
-    "jp": "うっかり間違えたら、自分から「ごめんなさい」と言います。"
+    "jp": "うっかり間違えたら、自分から「ごめんなさい」と言います。",
+    "ko": "실수로 잘못했다면, 먼저 \"미안해요\"라고 말해요."
   },
   {
     "id": "st8",
     "zh": "互相理解与包容，挥挥手说“再见”！",
     "py": "Hùxiāng lǐjiě yǔ bāoróng, huīhui shǒu shuō “Zàijiàn”!",
     "en": "Understanding and forgiving each other, wave hands and say “Goodbye”!",
-    "jp": "お互いに理解し合い、手を振って「さようなら」と言いましょう！"
+    "jp": "お互いに理解し合い、手を振って「さようなら」と言いましょう！",
+    "ko": "서로 이해하고 감싸 주며, 손을 흔들며 \"안녕히 가세요\"라고 말해요!"
   }
 ];
 
@@ -1474,7 +1502,7 @@ const CLOZE_QUESTIONS = [
 ];
 
 /* ---------------- STATE ---------------- */
-let storyIdx = 0, showPy = true, showEn = true, showJp = true;
+let storyIdx = 0, showPy = true, showEn = false, showJp = false, showKo = false;
 let charIdx = 0;
 let vocabFilter = 'all'; // all, words, proper
 let currentVocabList = ALL_VOCAB;
@@ -1579,13 +1607,14 @@ function goReview(){ switchReviewTab('quiz'); showScreen('screen-review'); }
 const AUDIO_DIR = '/audio/zh0/';
 const AUDIO_DIR_EN = '/audio/zh0_en/';
 const AUDIO_DIR_JA = '/audio/zh0_ja/';
+const AUDIO_DIR_KO = '/audio/zh0_ko/';
 const audioCache = {};
 let currentClip = null;
 
 function playClip(id, text, onend, lang){
   stopClip();
   lang = lang || 'zh-CN';
-  const dir = lang === 'en-US' ? AUDIO_DIR_EN : (lang === 'ja-JP' ? AUDIO_DIR_JA : AUDIO_DIR);
+  const dir = lang === 'en-US' ? AUDIO_DIR_EN : (lang === 'ja-JP' ? AUDIO_DIR_JA : (lang === 'ko-KR' ? AUDIO_DIR_KO : AUDIO_DIR));
   if(!id){ speak(text, onend, lang); return; }
   const key = lang + ':' + id;
   let a = audioCache[key];
@@ -1698,17 +1727,20 @@ function renderStory(){
   document.getElementById('storyPy').textContent = showPy ? s.py : '';
   document.getElementById('storyEn').textContent = showEn ? s.en : '';
   document.getElementById('storyJp').textContent = showJp ? (s.jp || '') : '';
+  document.getElementById('storyKo').textContent = showKo ? (s.ko || '') : '';
   const enRow = document.getElementById('storyEnRow'); if(enRow) enRow.style.display = showEn ? 'flex' : 'none';
   const jpRow = document.getElementById('storyJpRow'); if(jpRow) jpRow.style.display = (showJp && s.jp) ? 'flex' : 'none';
+  const koRow = document.getElementById('storyKoRow'); if(koRow) koRow.style.display = (showKo && s.ko) ? 'flex' : 'none';
 }
 function storyNext(){ storyIdx = (storyIdx+1) % STORY.length; renderStory(); }
 function storyPrev(){ storyIdx = (storyIdx-1+STORY.length) % STORY.length; renderStory(); }
 function toggleStoryPy(){ showPy = !showPy; document.getElementById('chipPy').classList.toggle('active', showPy); renderStory(); }
 function toggleStoryEn(){ showEn = !showEn; document.getElementById('chipEn').classList.toggle('active', showEn); renderStory(); }
 function toggleStoryJp(){ showJp = !showJp; document.getElementById('chipJp').classList.toggle('active', showJp); renderStory(); }
+function toggleStoryKo(){ showKo = !showKo; document.getElementById('chipKo').classList.toggle('active', showKo); renderStory(); }
 
 /* ---------------- FULL TEXT (view + continuous read-aloud) ---------------- */
-let fullPy = true, fullEn = true, fullJp = true;
+let fullPy = true, fullEn = false, fullJp = false, fullKo = false;
 let fullPlaying = false, fullPlayIdx = 0;
 function renderFullText(){
   const list = document.getElementById('fullTextList');
@@ -1722,6 +1754,7 @@ function renderFullText(){
       '<div class="sentence-zh">'+s.zh+'</div>' +
       (fullEn ? '<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><div class="sentence-en">'+s.en+'</div><button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY['+i+'].id, STORY['+i+'].en, null, \'en-US\');" title="播放英文发音">🔊</button></div>' : '') +
       (fullJp && s.jp ? '<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><div class="sentence-jp">'+s.jp+'</div><button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY['+i+'].id, STORY['+i+'].jp||\'\', null, \'ja-JP\');" title="播放日文发音">🔊</button></div>' : '') +
+      (fullKo && s.ko ? '<div style="display:flex;align-items:center;justify-content:center;gap:6px;"><div class="sentence-ko">'+s.ko+'</div><button class="mini-speak-btn" onclick="event.stopPropagation(); playClip(STORY['+i+'].id, STORY['+i+'].ko||\'\', null, \'ko-KR\');" title="播放韩文发音">🔊</button></div>' : '') +
       '<div class="full-sent-voice-bar">' +
         '<button class="sent-action-btn" onclick="event.stopPropagation(); stopFullPlay(); stopFullMyPlay(); playClip(\''+s.id+'\',\''+s.zh+'\');" title="听原声示范">🔊 原声</button>' +
         '<span id="sent-voice-slot-'+i+'"></span>' +
@@ -1757,6 +1790,7 @@ async function updateFullTextVoiceStatus(){
 function toggleFullPy(){ fullPy = !fullPy; document.getElementById('chipFullPy').classList.toggle('active', fullPy); renderFullText(); }
 function toggleFullEn(){ fullEn = !fullEn; document.getElementById('chipFullEn').classList.toggle('active', fullEn); renderFullText(); }
 function toggleFullJp(){ fullJp = !fullJp; document.getElementById('chipFullJp').classList.toggle('active', fullJp); renderFullText(); }
+function toggleFullKo(){ fullKo = !fullKo; document.getElementById('chipFullKo').classList.toggle('active', fullKo); renderFullText(); }
 function toggleFullPlay(){ if(fullPlaying) stopFullPlay(); else startFullPlay(); }
 
 function startFullPlay(){
@@ -3566,5 +3600,7 @@ function downloadStoryRecord(){
 </script>
 
 <div class="site-legal-0101" style="clear:both;width:100%;box-sizing:border-box;padding:16px 12px 20px;text-align:center;font:12px/1.7 system-ui,sans-serif;color:#64748b;opacity:.9"><a href="https://0101.click/privacy.html" style="color:inherit;text-decoration:underline;opacity:.85">隐私政策 / プライバシー</a> · <a href="https://0101.click/about.html" style="color:inherit;text-decoration:underline;opacity:.85">关于 / 運営者情報</a> · <a href="https://0101.click/contact.html" style="color:inherit;text-decoration:underline;opacity:.85">联系 / お問い合わせ</a> · <a href="https://0101.click/" style="color:inherit;text-decoration:underline;opacity:.85">0101.click</a></div>
+<footer class="stroke-license-0101" style="clear:both;width:100%;box-sizing:border-box;padding:0 12px 16px;text-align:center;font:12px/1.7 system-ui,sans-serif;color:#64748b;opacity:.9">笔顺数据 / 筆順データ © Arphic Technology · <a href="https://0101.click/about.html#stroke-data" style="color:inherit;text-decoration:underline;opacity:.85">Arphic Public License</a>（hanzi-writer-data，源自 Make Me a Hanzi）</footer>
+<script src="js/o1.js" data-o1="lesson"></script>
 </body>
 </html>

@@ -33,7 +33,52 @@
     'gushi-er-shou': 'gushi',
     'diqiu-qingjiegong': 'diqiu',
     'daziran-yuyan': 'daziran',
-    'tanyue': 'tanyue'
+    'tanyue': 'tanyue',
+    'shizi-1': 'shizi1',
+    'shizi-2': 'shizi2',
+    'shizi-3': 'shizi3',
+    'shizi-4': 'shizi4',
+    'shizi-5': 'shizi5',
+    'shizi-6': 'shizi6',
+    'shizi-7': 'shizi7',
+    'shizi-8': 'shizi8',
+    'shizi-9': 'shizi9',
+    'shizi-10': 'shizi10',
+    'zw-2-1': 'zw2_1',
+    'zw-2-2': 'zw2_2',
+    'zw-2-3': 'zw2_3',
+    'zw-2-4': 'zw2_4',
+    'zw-2-5': 'zw2_5',
+    'zw-2-6': 'zw2_6',
+    'zw-2-7': 'zw2_7',
+    'zw-2-8': 'zw2_8',
+    'zw-2-9': 'zw2_9',
+    'zw-2-10': 'zw2_10',
+    'zw-2-11': 'zw2_11',
+    'zw-2-12': 'zw2_12',
+    'zw-2x-1': 'zw2x_1',
+    'zw-2x-2': 'zw2x_2',
+    'zw-2x-3': 'zw2x_3',
+    'zw-2x-4': 'zw2x_4',
+    'zw-2x-5': 'zw2x_5',
+    'zw-2x-6': 'zw2x_6',
+    'zw-2x-7': 'zw2x_7',
+    'zw-2x-8': 'zw2x_8',
+    'zw-2x-9': 'zw2x_9',
+    'zw-2x-10': 'zw2x_10',
+    'zw-2x-11': 'zw2x_11',
+    'zw-2x-12': 'zw2x_12',
+    'shizi-11': 'shizi11',
+    'shizi-12': 'shizi12',
+    // 原创汉语情境课文 (build_chinese_lessons.py, data/zh-lesson-clauses.js)
+    'zh0': 'zh0',
+    'zh1': 'zh1',
+    'zh2': 'zh2',
+    'zh3': 'zh3',
+    'zh4': 'zh4',
+    'zh5': 'zh5',
+    'zh6': 'zh6',
+    'zh7': 'zh7'
   };
 
   const ClausePlayer = {
@@ -85,7 +130,10 @@
       let key = options.lessonKey || options.lessonSlug;
       if (!key) {
         const path = window.location.pathname;
-        for (const [slug, mappedKey] of Object.entries(LESSON_KEY_MAP)) {
+        // Exact file-name match first, so /shizi-10.html is not taken for 'shizi-1'.
+        const page = path.split('/').pop().replace(/\.html$/, '');
+        if (Object.prototype.hasOwnProperty.call(LESSON_KEY_MAP, page)) key = LESSON_KEY_MAP[page];
+        if (!key) for (const [slug, mappedKey] of Object.entries(LESSON_KEY_MAP)) {
           if (path.indexOf(slug) !== -1) {
             key = mappedKey;
             break;
