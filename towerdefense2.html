@@ -1,0 +1,3440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script src="js/consent-default.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied'});
+      gtag('config', 'G-Y1P7PMMM6V');
+    </script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>地球防线：现代战术塔防 - Earth Frontline TD (3D写实军事版)</title>
+<meta name="description" content="地球防线：现代战术塔防：2.5D 写实军事沙盘塔防，部署近防机枪、155mm榴弹炮、反器材狙击塔与防空导弹，在五大真实地球战区抵御现代装甲集群与武装直升机。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="0101.click">
+<meta property="og:title" content="地球防线：现代战术塔防 - Earth Frontline TD (3D写实军事版)">
+<meta property="og:description" content="2.5D 写实军事沙盘塔防，部署现代防御阵地抵御步兵、主战坦克与武装直升机集群，支持无级缩放与5大地球真实战区关卡。">
+<meta property="og:url" content="https://game.0101.click/towerdefense2.html">
+<meta property="og:locale" content="zh_CN">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap');
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    overflow: hidden; background: #0c1722;
+    font-family: 'Outfit', "PingFang SC", "Microsoft YaHei", sans-serif;
+    touch-action: none;
+    -webkit-user-select: none; user-select: none;
+  }
+  #game { display: block; width: 100%; height: 100%; cursor: grab; }
+  #game:active { cursor: grabbing; }
+
+  .glass {
+    background: rgba(16, 26, 34, 0.78);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(116, 168, 142, 0.35);
+    border-radius: 14px;
+    box-shadow: 0 10px 36px 0 rgba(0, 0, 0, 0.55);
+    color: #f1f5f9;
+  }
+
+  /* HUD Top Bar */
+  #hud {
+    position: fixed; top: 0; left: 0; width: 100%;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    padding: 10px 14px; box-sizing: border-box; pointer-events: none;
+    z-index: 5; gap: 8px;
+  }
+  #statsCard { display: flex; gap: 12px; padding: 7px 16px; pointer-events: auto; align-items: center; }
+  .stat { display: flex; flex-direction: column; align-items: flex-start; min-width: 44px; }
+  .stat-label { font-size: 9px; text-transform: uppercase; letter-spacing: 1.2px; opacity: 0.75; color: #94a3b8; }
+  .stat-value { font-size: 18px; font-weight: 800; line-height: 1.15; }
+  #levelBadge {
+    display: flex; align-items: center; gap: 5px;
+    background: rgba(34, 197, 94, 0.16); border: 1px solid rgba(74, 222, 128, 0.45);
+    border-radius: 8px; padding: 4px 10px; cursor: pointer; transition: all 0.15s ease;
+  }
+  #levelBadge:hover { background: rgba(34, 197, 94, 0.3); border-color: #86efac; }
+  #levelBadge .lvl-title { font-size: 12px; font-weight: 800; color: #86efac; white-space: nowrap; }
+
+  #goldVal { color: #fbbf24; }
+  #livesVal { color: #f87171; }
+  #waveVal { color: #38bdf8; }
+  #scoreVal { color: #a3e635; }
+
+  #controlsCard { display: flex; gap: 6px; padding: 6px; pointer-events: auto; }
+  .ctrl-btn {
+    background: rgba(56, 189, 248, 0.14); border: 1px solid rgba(56, 189, 248, 0.4);
+    color: #fff; border-radius: 10px; padding: 7px 11px; font-size: 12px; font-weight: 700;
+    cursor: pointer; min-width: 36px; text-align: center;
+    transition: all 0.15s ease;
+  }
+  .ctrl-btn:hover { background: rgba(56, 189, 248, 0.28); }
+  .ctrl-btn:active { background: rgba(56, 189, 248, 0.4); transform: scale(0.96); }
+  .ctrl-btn.active { background: rgba(234, 179, 8, 0.55); border-color: #fde047; }
+
+  /* Floating Camera Zoom Controls */
+  #cameraControls {
+    position: fixed; top: 68px; right: 14px;
+    display: flex; flex-direction: column; gap: 5px; padding: 6px;
+    z-index: 6; pointer-events: auto; align-items: center;
+  }
+  .cam-btn {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff; font-size: 16px; font-weight: 800;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.15s ease;
+  }
+  .cam-btn:hover { background: rgba(74, 222, 128, 0.25); border-color: #4ade80; }
+  .cam-btn:active { transform: scale(0.92); }
+  #zoomVal {
+    font-size: 10px; font-weight: 700; color: #86efac; cursor: default;
+    background: transparent; border: none; height: 20px;
+  }
+
+  /* Wave Banner */
+  #banner {
+    position: fixed; top: 68px; left: 50%; transform: translateX(-50%);
+    color: #fff; font-size: 13px; font-weight: 700;
+    padding: 7px 20px; border-radius: 14px;
+    display: none; z-index: 6; pointer-events: auto;
+    text-align: center; white-space: nowrap;
+    border: 1px solid rgba(74, 222, 128, 0.45);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  }
+  #banner button {
+    margin-left: 10px; background: #4ade80; border: none; color: #052e16; font-weight: 800;
+    border-radius: 8px; padding: 4px 12px; font-size: 12px; cursor: pointer;
+    box-shadow: 0 2px 8px rgba(74, 222, 128, 0.4);
+  }
+
+  #flash {
+    position: fixed; inset: 0; background: #ef4444; opacity: 0; pointer-events: none; z-index: 7;
+    transition: opacity 0.08s ease;
+  }
+
+  /* Bottom Shop */
+  #shop {
+    position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 8px; padding: 8px 12px; z-index: 5; max-width: 96vw; overflow-x: auto;
+    border-radius: 16px;
+  }
+  .tower-btn {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    width: 68px; padding: 6px 4px; border-radius: 12px; cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04);
+    flex-shrink: 0; position: relative;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .tower-btn:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
+  .tower-btn .icon { font-size: 22px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+  .tower-btn .name { font-size: 10px; margin-top: 2px; opacity: 0.92; font-weight: 600; }
+  .tower-btn .cost { font-size: 11px; font-weight: 800; color: #fbbf24; }
+  .tower-btn .hotkey {
+    position: absolute; top: 3px; left: 5px; font-size: 8px; opacity: 0.5; font-weight: 800;
+  }
+  .tower-btn.selected {
+    border-color: #4ade80; background: rgba(74, 222, 128, 0.22);
+    box-shadow: 0 0 16px rgba(74, 222, 128, 0.38); transform: translateY(-3px);
+  }
+  .tower-btn.disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* Tower Upgrade Panel */
+  #towerPanel {
+    position: fixed; bottom: 94px; left: 50%; transform: translateX(-50%);
+    padding: 12px 18px; z-index: 5; display: none; min-width: 260px; text-align: center;
+    border: 1px solid rgba(74, 222, 128, 0.4);
+  }
+  #towerPanel .tp-title { font-size: 14px; font-weight: 800; color: #86efac; margin-bottom: 4px; }
+  #towerPanel .tp-stats { font-size: 11px; opacity: 0.9; margin-bottom: 10px; line-height: 1.6; }
+  #towerPanel .tp-row { display: flex; gap: 8px; justify-content: center; }
+  #towerPanel button {
+    border: none; border-radius: 8px; padding: 7px 14px; font-size: 12px; font-weight: 800; cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: transform 0.1s ease;
+  }
+  #towerPanel button:active { transform: scale(0.96); }
+  #upgradeBtn { background: linear-gradient(135deg, #a3e635, #4ade80); color: #052e16; }
+  #sellBtn { background: linear-gradient(135deg, #fca5a5, #ef4444); color: #2a0808; }
+  #closePanelBtn { background: rgba(255,255,255,0.15); color: #fff; }
+  #towerPanel button:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* Overlay Modal */
+  #overlay {
+    position: fixed; inset: 0; background: rgba(8, 15, 22, 0.85);
+    display: flex; align-items: center; justify-content: center; z-index: 15;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  }
+  #overlay.hidden { display: none; }
+  #overlayCard { padding: 30px 34px; text-align: center; max-width: 470px; border-radius: 20px; }
+  #overlayCard h1 {
+    margin: 0 0 8px; font-size: 26px; font-weight: 800;
+    background: linear-gradient(90deg, #4ade80, #38bdf8, #fbbf24);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  #overlayCard p { font-size: 13px; opacity: 0.9; line-height: 1.7; margin: 6px 0 16px; }
+  .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .big-btn {
+    background: linear-gradient(90deg, #22c55e, #0ea5e9); border: none; color: #04121a;
+    font-weight: 800; font-size: 14px; padding: 11px 26px; border-radius: 12px; cursor: pointer;
+    box-shadow: 0 6px 20px rgba(34, 197, 94, 0.35); transition: transform 0.15s ease;
+  }
+  .big-btn:hover { transform: scale(1.03); }
+  .big-btn:active { transform: scale(0.97); }
+  .big-btn.secondary {
+    background: rgba(255, 255, 255, 0.12); color: #fff; box-shadow: none;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+  #overlayStats { font-size: 13px; margin-bottom: 16px; color: #fbbf24; font-weight: 600; }
+  #overlayStars { font-size: 26px; margin: 4px 0 12px; }
+
+  /* Level Select Modal */
+  #levelModal {
+    position: fixed; inset: 0; background: rgba(8, 15, 22, 0.85);
+    display: flex; align-items: center; justify-content: center; z-index: 16;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  }
+  #levelModal.hidden { display: none; }
+  #levelModalCard {
+    width: 90%; max-width: 550px; max-height: 85vh; overflow-y: auto;
+    padding: 24px 26px; border-radius: 20px; box-sizing: border-box;
+  }
+  #levelModalCard h2 {
+    margin: 0 0 14px; font-size: 20px; font-weight: 800; text-align: center;
+    background: linear-gradient(90deg, #4ade80, #fbbf24);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .level-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .level-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px; border-radius: 12px; background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12); cursor: pointer; transition: all 0.15s ease;
+  }
+  .level-item:hover { background: rgba(74, 222, 128, 0.16); border-color: #4ade80; transform: translateX(3px); }
+  .level-item.active { border-color: #fbbf24; background: rgba(251, 191, 36, 0.15); }
+  .lvl-info-main { display: flex; flex-direction: column; align-items: flex-start; text-align: left; }
+  .lvl-name { font-size: 14px; font-weight: 800; color: #86efac; }
+  .lvl-desc { font-size: 11px; opacity: 0.8; margin-top: 3px; }
+  .lvl-tag {
+    font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 8px;
+    background: rgba(14, 165, 233, 0.25); border: 1px solid rgba(56, 189, 248, 0.45); white-space: nowrap;
+  }
+
+  #camHint {
+    position: fixed; bottom: 82px; right: 14px;
+    font-size: 10px; opacity: 0.6; color: #e2e8f0; pointer-events: none; z-index: 5;
+    text-align: right; line-height: 1.4;
+  }
+</style>
+<link rel="canonical" href="https://game.0101.click/towerdefense2.html">
+<script src="js/pwa-register.js"></script>
+</head>
+<body>
+<canvas id="game"></canvas>
+<div id="flash"></div>
+
+<div id="hud">
+  <div id="statsCard" class="glass">
+    <div id="levelBadge" title="点击切换地球战区">
+      <span style="font-size:14px;">🌍</span>
+      <div class="stat">
+        <span class="stat-label">战区</span>
+        <span class="lvl-title" id="levelName">第 1 战区</span>
+      </div>
+    </div>
+    <div class="stat"><span class="stat-label">军费</span><span class="stat-value" id="goldVal">0</span></div>
+    <div class="stat"><span class="stat-label">防线耐久</span><span class="stat-value" id="livesVal">0</span></div>
+    <div class="stat"><span class="stat-label">攻势波次</span><span class="stat-value" id="waveVal">0/0</span></div>
+    <div class="stat"><span class="stat-label">战功</span><span class="stat-value" id="scoreVal">0</span></div>
+  </div>
+  <div id="controlsCard" class="glass">
+    <div class="ctrl-btn" id="levelBtn">战区</div>
+    <div class="ctrl-btn" id="speedBtn">x1</div>
+    <div class="ctrl-btn" id="pauseBtn">暂停</div>
+  </div>
+</div>
+
+<!-- Floating Zoom Controls -->
+<div id="cameraControls" class="glass">
+  <div class="cam-btn" id="zoomInBtn" title="放大 (+)">+</div>
+  <div class="cam-btn" id="zoomVal">100%</div>
+  <div class="cam-btn" id="zoomOutBtn" title="缩小 (-)">−</div>
+  <div class="cam-btn" id="zoomResetBtn" title="居中复位 (R)">⟲</div>
+</div>
+
+<div id="camHint">滚轮/双指缩放<br>按住拖拽移动战术沙盘</div>
+
+<div id="banner" class="glass"></div>
+
+<div id="towerPanel" class="glass">
+  <div class="tp-title" id="tpTitle">防御阵地</div>
+  <div class="tp-stats" id="tpStats"></div>
+  <div class="tp-row">
+    <button id="upgradeBtn">升级</button>
+    <button id="sellBtn">撤收</button>
+    <button id="closePanelBtn">关闭</button>
+  </div>
+</div>
+
+<div id="shop" class="glass"></div>
+
+<!-- Level Selection Modal -->
+<div id="levelModal" class="hidden">
+  <div id="levelModalCard" class="glass">
+    <h2>🌍 全球战区行动选择</h2>
+    <div class="level-list" id="levelList"></div>
+    <div style="text-align:center;">
+      <button class="big-btn secondary" id="closeLevelModalBtn">返回指挥所</button>
+    </div>
+  </div>
+</div>
+
+<!-- Game Over / Level Clear Overlay -->
+<div id="overlay">
+  <div id="overlayCard" class="glass">
+    <h1 id="overlayTitle">地球防线：现代战术塔防</h1>
+    <div id="overlayStars"></div>
+    <p id="overlayDesc">
+      真实地球五大战区立体地形沙盘！部署近防速射机枪、155mm榴弹炮、反器材狙击哨塔与防空导弹阵地，迎击现代突击步兵、主战坦克、武装直升机与重型装甲指挥车！<br>
+      支持无级缩放平移与细腻拟真动作物理特效。
+    </p>
+    <div id="overlayStats"></div>
+    <div class="btn-row" id="overlayBtnRow">
+      <button class="big-btn" id="startBtn">开始部署</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+  const flashEl = document.getElementById('flash');
+  const bannerEl = document.getElementById('banner');
+  const shopEl = document.getElementById('shop');
+  const towerPanelEl = document.getElementById('towerPanel');
+  const overlayEl = document.getElementById('overlay');
+  const levelModalEl = document.getElementById('levelModal');
+  const levelListEl = document.getElementById('levelList');
+  const levelNameEl = document.getElementById('levelName');
+  const levelBadgeEl = document.getElementById('levelBadge');
+  const levelBtnEl = document.getElementById('levelBtn');
+  const closeLevelModalBtn = document.getElementById('closeLevelModalBtn');
+
+  const goldVal = document.getElementById('goldVal');
+  const livesVal = document.getElementById('livesVal');
+  const waveVal = document.getElementById('waveVal');
+  const scoreVal = document.getElementById('scoreVal');
+  const speedBtn = document.getElementById('speedBtn');
+  const pauseBtn = document.getElementById('pauseBtn');
+
+  const zoomInBtn = document.getElementById('zoomInBtn');
+  const zoomOutBtn = document.getElementById('zoomOutBtn');
+  const zoomResetBtn = document.getElementById('zoomResetBtn');
+  const zoomValEl = document.getElementById('zoomVal');
+
+  const BEST_KEY = 'td_earth_frontline_best_score';
+  const STARS_KEY = 'td_earth_frontline_level_stars';
+
+  // ---------- 5 Cute & Complex Earth Theater Levels (25x17 Large Maps with Rivers, Bridges & High Ground) ----------
+  const LEVELS = [
+    {
+      id: 1,
+      name: '诺曼底田园水乡',
+      weather: 'clouds',
+      desc: '【双桥交汇水乡】25×17 超大田园沙盘！碧蓝运河贯穿全境，敌军从南北双公路跨桥汇合再分流，中央高地享 +15% 射程加成！',
+      cols: 25, rows: 17,
+      wavesCount: 9,
+      startGold: 240,
+      obstacleCount: 22,
+      obstacles: ['roundtree', 'pinetree', 'windmill', 'rock'],
+      foliage: ['flower', 'grass', 'mushroom'],
+      theme: {
+        top: '#68b94c', alt: '#5ca941', left: '#44822f', right: '#356823',
+        pathTop: '#e2cba0', pathLeft: '#b89f72', pathRight: '#947e56', pathLine: '#fffbeb',
+        waterTop: '#38bdf8', waterAlt: '#0ea5e9', waterLeft: '#0284c7', waterRight: '#0369a1',
+        highTop: '#84cc16', highLeft: '#4d7c0f', highRight: '#3f6212',
+        cliffL: '#78553a', cliffR: '#5c3f28',
+        bg0: '#1e40af', bg1: '#0f172a', water: true
+      },
+      generatePaths: () => {
+        const water = [];
+        for (let r = 0; r < 17; r++) {
+          const cRiver = 11 + Math.round(Math.sin(r * 0.45) * 1.2);
+          water.push({ c: cRiver, r }, { c: cRiver + 1, r });
+        }
+        const highgrounds = [
+          { c: 6, r: 7 }, { c: 7, r: 7 }, { c: 6, r: 8 }, { c: 7, r: 8 },
+          { c: 16, r: 6 }, { c: 17, r: 6 }, { c: 16, r: 9 }, { c: 17, r: 9 }
+        ];
+
+        // Path A: North Entry -> weaves south -> crosses North Bridge -> loops south -> HQ
+        const pA = [];
+        for (let c = 1; c <= 4; c++) pA.push({ c, r: 2 });
+        for (let r = 3; r <= 6; r++) pA.push({ c: 4, r });
+        for (let c = 5; c <= 9; c++) pA.push({ c, r: 6 });
+        for (let r = 5; r >= 3; r--) pA.push({ c: 9, r });
+        for (let c = 10; c <= 15; c++) pA.push({ c, r: 3 }); // Crosses river bridge at r=3
+        for (let r = 4; r <= 8; r++) pA.push({ c: 15, r });
+        for (let c = 16; c <= 19; c++) pA.push({ c, r: 8 });
+        for (let r = 7; r >= 4; r--) pA.push({ c: 19, r });
+        for (let c = 20; c <= 22; c++) pA.push({ c, r: 4 });
+        for (let r = 5; r <= 8; r++) pA.push({ c: 22, r });
+        pA.push({ c: 23, r: 8 });
+
+        // Path B: South Entry -> weaves north -> crosses South Bridge -> loops north -> HQ
+        const pB = [];
+        for (let c = 1; c <= 4; c++) pB.push({ c, r: 14 });
+        for (let r = 13; r >= 10; r--) pB.push({ c: 4, r });
+        for (let c = 5; c <= 9; c++) pB.push({ c, r: 10 });
+        for (let r = 11; r <= 13; r++) pB.push({ c: 9, r });
+        for (let c = 10; c <= 15; c++) pB.push({ c, r: 13 }); // Crosses river bridge at r=13
+        for (let r = 12; r >= 8; r--) pB.push({ c: 15, r });
+        for (let c = 16; c <= 19; c++) pB.push({ c, r: 8 });
+        for (let r = 9; r <= 12; r++) pB.push({ c: 19, r });
+        for (let c = 20; c <= 22; c++) pB.push({ c, r: 12 });
+        for (let r = 11; r >= 8; r--) pB.push({ c: 22, r });
+        pB.push({ c: 23, r: 8 });
+
+        return {
+          groundPaths: [pA, pB],
+          waterCells: water,
+          highCells: highgrounds,
+          airCorridors: [
+            [{ c: 25.5, r: -1 }, { c: 13, r: 4 }, { c: 23, r: 8 }],
+            [{ c: 25.5, r: 17 }, { c: 13, r: 12 }, { c: 23, r: 8 }]
+          ]
+        };
+      }
+    },
+    {
+      id: 2,
+      name: '撒哈拉绿洲迷宫',
+      weather: 'sand',
+      desc: '【绿洲翡翠双环线】干旱沙海中央镶嵌碧蓝绿洲湖泊，北非沙石公路呈九曲回肠状绕湖盘旋，大量砂岩高台可布置远程火力！',
+      cols: 25, rows: 17,
+      wavesCount: 10,
+      startGold: 250,
+      obstacleCount: 26,
+      obstacles: ['cactus', 'sandrock', 'palmtree', 'oilbarrel'],
+      foliage: ['drybush', 'pebbles', 'flower'],
+      theme: {
+        top: '#f4c571', alt: '#eab65d', left: '#c28e38', right: '#9e7024',
+        pathTop: '#c49a6c', pathLeft: '#967147', pathRight: '#785835', pathLine: '#fef3c7',
+        waterTop: '#2dd4bf', waterAlt: '#14b8a6', waterLeft: '#0d9488', waterRight: '#0f766e',
+        highTop: '#fbbf24', highLeft: '#d97706', highRight: '#b45309',
+        cliffL: '#9a6b34', cliffR: '#785022',
+        bg0: '#78350f', bg1: '#271206', water: false
+      },
+      generatePaths: () => {
+        // Central emerald oasis lake
+        const water = [];
+        for (let r = 6; r <= 10; r++) {
+          for (let c = 10; c <= 14; c++) {
+            if (Math.hypot(c - 12, r - 8) <= 2.4) water.push({ c, r });
+          }
+        }
+        const highgrounds = [
+          { c: 4, r: 5 }, { c: 4, r: 11 },
+          { c: 8, r: 4 }, { c: 16, r: 4 },
+          { c: 8, r: 12 }, { c: 16, r: 12 },
+          { c: 20, r: 5 }, { c: 20, r: 11 }
+        ];
+
+        const p1 = [];
+        for (let r = 15; r >= 2; r--) p1.push({ c: 2, r });
+        for (let c = 3; c <= 6; c++) p1.push({ c, r: 2 });
+        for (let r = 3; r <= 14; r++) p1.push({ c: 6, r });
+        for (let c = 7; c <= 18; c++) p1.push({ c, r: 14 });
+        for (let r = 13; r >= 2; r--) p1.push({ c: 18, r });
+        for (let c = 19; c <= 22; c++) p1.push({ c, r: 2 });
+        for (let r = 3; r <= 8; r++) p1.push({ c: 22, r });
+        p1.push({ c: 23, r: 8 });
+
+        const p2 = [];
+        for (let c = 2; c <= 12; c++) p2.push({ c, r: 2 });
+        for (let r = 3; r <= 8; r++) p2.push({ c: 12, r }); // Oasis causeway bridge!
+        for (let r = 9; r <= 14; r++) p2.push({ c: 12, r });
+        for (let c = 13; c <= 18; c++) p2.push({ c, r: 14 });
+        for (let r = 13; r >= 8; r--) p2.push({ c: 18, r });
+        for (let c = 19; c <= 23; c++) p2.push({ c, r: 8 });
+
+        return {
+          groundPaths: [p1, p2],
+          waterCells: water,
+          highCells: highgrounds,
+          airCorridors: [
+            [{ c: 25.5, r: 1 }, { c: 12, r: 8 }, { c: 23, r: 8 }],
+            [{ c: -1, r: 15 }, { c: 12, r: 10 }, { c: 23, r: 8 }]
+          ]
+        };
+      }
+    },
+    {
+      id: 3,
+      name: '阿尔卑斯三线雪谷',
+      weather: 'snow',
+      desc: '【三路雪山隘口总攻】冰封河谷与雪松林海，敌军从北坡、中路冰河大桥与南坡三条战道同时向雪山基地推进！',
+      cols: 25, rows: 17,
+      wavesCount: 11,
+      startGold: 270,
+      obstacleCount: 24,
+      obstacles: ['snowpine', 'snowman', 'icerock', 'bunkerprop'],
+      foliage: ['snowdrift', 'mushroom'],
+      theme: {
+        top: '#e2e8f0', alt: '#cbd5e1', left: '#94a3b8', right: '#64748b',
+        pathTop: '#64748b', pathLeft: '#475569', pathRight: '#334155', pathLine: '#fde047',
+        waterTop: '#7dd3fc', waterAlt: '#38bdf8', waterLeft: '#0284c7', waterRight: '#0369a1',
+        highTop: '#f8fafc', highLeft: '#94a3b8', highRight: '#64748b',
+        cliffL: '#475569', cliffR: '#334155',
+        bg0: '#1e293b', bg1: '#090f17', water: true
+      },
+      generatePaths: () => {
+        const water = [];
+        for (let r = 0; r < 17; r++) {
+          water.push({ c: 13, r });
+        }
+        const highgrounds = [
+          { c: 5, r: 4 }, { c: 6, r: 4 }, { c: 5, r: 12 }, { c: 6, r: 12 },
+          { c: 10, r: 6 }, { c: 10, r: 10 },
+          { c: 16, r: 5 }, { c: 16, r: 11 }, { c: 19, r: 8 }
+        ];
+
+        // North Pass
+        const pN = [];
+        for (let c = 1; c <= 8; c++) pN.push({ c, r: 1 });
+        for (let r = 2; r <= 4; r++) pN.push({ c: 8, r });
+        for (let c = 9; c <= 15; c++) pN.push({ c, r: 4 });
+        for (let r = 5; r <= 6; r++) pN.push({ c: 15, r });
+        for (let c = 16; c <= 21; c++) pN.push({ c, r: 6 });
+        for (let r = 7; r <= 8; r++) pN.push({ c: 21, r });
+        for (let c = 22; c <= 23; c++) pN.push({ c, r: 8 });
+
+        // Center Ice Bridge Route
+        const pC = [];
+        for (let c = 1; c <= 4; c++) pC.push({ c, r: 8 });
+        for (let r = 7; r >= 6; r--) pC.push({ c: 4, r });
+        for (let c = 5; c <= 8; c++) pC.push({ c, r: 6 });
+        for (let r = 7; r <= 10; r++) pC.push({ c: 8, r });
+        for (let c = 9; c <= 12; c++) pC.push({ c, r: 10 });
+        for (let r = 9; r >= 8; r--) pC.push({ c: 12, r });
+        for (let c = 13; c <= 17; c++) pC.push({ c, r: 8 });
+        for (let r = 7; r >= 6; r--) pC.push({ c: 17, r });
+        for (let c = 18; c <= 21; c++) pC.push({ c, r: 6 });
+        for (let r = 7; r <= 8; r++) pC.push({ c: 21, r });
+        for (let c = 22; c <= 23; c++) pC.push({ c, r: 8 });
+
+        // South Pass
+        const pS = [];
+        for (let c = 1; c <= 8; c++) pS.push({ c, r: 15 });
+        for (let r = 14; r >= 12; r--) pS.push({ c: 8, r });
+        for (let c = 9; c <= 15; c++) pS.push({ c, r: 12 });
+        for (let r = 11; r >= 10; r--) pS.push({ c: 15, r });
+        for (let c = 16; c <= 21; c++) pS.push({ c, r: 10 });
+        for (let r = 9; r >= 8; r--) pS.push({ c: 21, r });
+        for (let c = 22; c <= 23; c++) pS.push({ c, r: 8 });
+
+        return {
+          groundPaths: [pN, pC, pS],
+          waterCells: water,
+          highCells: highgrounds,
+          airCorridors: [
+            [{ c: 25.5, r: -1 }, { c: 14, r: 3 }, { c: 23, r: 8 }],
+            [{ c: 25.5, r: 17 }, { c: 14, r: 13 }, { c: 23, r: 8 }]
+          ]
+        };
+      }
+    },
+    {
+      id: 4,
+      name: '亚马孙双河三角洲',
+      weather: 'rain',
+      desc: '【热带雨林多桥交织】两条亚马逊支流交错切割雨林，泥泞栈道在密林间反复穿插迂回，更有三路空中走廊突袭！',
+      cols: 25, rows: 17,
+      wavesCount: 11,
+      startGold: 260,
+      obstacleCount: 28,
+      obstacles: ['roundtree', 'palmtree', 'pinetree', 'rock'],
+      foliage: ['flower', 'mushroom', 'grass'],
+      theme: {
+        top: '#4ade80', alt: '#22c55e', left: '#16a34a', right: '#15803d',
+        pathTop: '#a16207', pathLeft: '#854d0e', pathRight: '#713f12', pathLine: '#fde68a',
+        waterTop: '#06b6d4', waterAlt: '#0891b2', waterLeft: '#0e7490', waterRight: '#155e75',
+        highTop: '#86efac', highLeft: '#16a34a', highRight: '#14532d',
+        cliffL: '#3f6212', cliffR: '#1a2e05',
+        bg0: '#064e3b', bg1: '#022c22', water: true
+      },
+      generatePaths: () => {
+        const water = [];
+        for (let r = 0; r < 17; r++) {
+          water.push({ c: 8, r }, { c: 16, r });
+        }
+        const highgrounds = [
+          { c: 4, r: 4 }, { c: 4, r: 8 }, { c: 4, r: 12 },
+          { c: 11, r: 4 }, { c: 12, r: 8 }, { c: 11, r: 12 },
+          { c: 19, r: 5 }, { c: 19, r: 11 }
+        ];
+
+        const p1 = [];
+        for (let r = 1; r <= 6; r++) p1.push({ c: 2, r });
+        for (let c = 3; c <= 6; c++) p1.push({ c, r: 6 });
+        for (let r = 5; r >= 2; r--) p1.push({ c: 6, r });
+        for (let c = 7; c <= 10; c++) p1.push({ c, r: 2 }); // Bridge 1
+        for (let r = 3; r <= 14; r++) p1.push({ c: 10, r });
+        for (let c = 11; c <= 14; c++) p1.push({ c, r: 14 });
+        for (let r = 13; r >= 6; r--) p1.push({ c: 14, r });
+        for (let c = 15; c <= 21; c++) p1.push({ c, r: 6 }); // Bridge 2
+        for (let r = 7; r <= 12; r++) p1.push({ c: 21, r });
+        for (let c = 22; c <= 23; c++) p1.push({ c, r: 12 });
+
+        const p2 = [];
+        for (let r = 15; r >= 10; r--) p2.push({ c: 2, r });
+        for (let c = 3; c <= 14; c++) p2.push({ c, r: 10 }); // Bridge 3
+        for (let r = 9; r >= 2; r--) p2.push({ c: 14, r });
+        for (let c = 15; c <= 18; c++) p2.push({ c, r: 2 }); // Bridge 4
+        for (let r = 3; r <= 12; r++) p2.push({ c: 18, r });
+        for (let c = 19; c <= 23; c++) p2.push({ c, r: 12 });
+
+        return {
+          groundPaths: [p1, p2],
+          waterCells: water,
+          highCells: highgrounds,
+          airCorridors: [
+            [{ c: 25, r: -1 }, { c: 13, r: 3 }, { c: 23, r: 12 }],
+            [{ c: 0, r: 16 }, { c: 11, r: 11 }, { c: 23, r: 12 }],
+            [{ c: -1, r: 2 }, { c: 12, r: 7 }, { c: 23, r: 12 }]
+          ]
+        };
+      }
+    },
+    {
+      id: 5,
+      name: '首都星环立体枢纽',
+      weather: 'clouds',
+      desc: '【终极四方星环合围】联合指挥城堡坐镇 25×17 都市正中心！护城河环绕中央岛屿，东西南北四路装甲大军沿星环大道螺旋合围！',
+      cols: 25, rows: 17,
+      wavesCount: 12,
+      startGold: 320,
+      obstacleCount: 22,
+      obstacles: ['bunkerprop', 'oilbarrel', 'roundtree', 'windmill'],
+      foliage: ['flower', 'grass', 'pebbles'],
+      theme: {
+        top: '#94a3b8', alt: '#cbd5e1', left: '#64748b', right: '#475569',
+        pathTop: '#334155', pathLeft: '#1e293b', pathRight: '#0f172a', pathLine: '#fbbf24',
+        waterTop: '#38bdf8', waterAlt: '#0ea5e9', waterLeft: '#0284c7', waterRight: '#0369a1',
+        highTop: '#fde047', highLeft: '#ca8a04', highRight: '#a16207',
+        cliffL: '#475569', cliffR: '#1e293b',
+        bg0: '#1e293b', bg1: '#090d16', water: true
+      },
+      generatePaths: () => {
+        // Rectangular Moat around Central Command Island (c: 9..15, r: 5..11)
+        const water = [];
+        for (let c = 8; c <= 16; c++) {
+          water.push({ c, r: 4 }, { c, r: 12 });
+        }
+        for (let r = 5; r <= 11; r++) {
+          water.push({ c: 8, r }, { c: 16, r });
+        }
+        const highgrounds = [
+          { c: 10, r: 6 }, { c: 14, r: 6 }, { c: 10, r: 10 }, { c: 14, r: 10 },
+          { c: 5, r: 5 }, { c: 19, r: 5 }, { c: 5, r: 11 }, { c: 19, r: 11 }
+        ];
+
+        // Route 1: West-North spiral -> North Bridge -> HQ (12, 8)
+        const pNW = [];
+        for (let c = 1; c <= 21; c++) pNW.push({ c, r: 1 });
+        for (let r = 2; r <= 6; r++) pNW.push({ c: 21, r });
+        for (let c = 20; c >= 12; c--) pNW.push({ c, r: 6 }); // Crosses East Moat Bridge
+        for (let r = 7; r <= 8; r++) pNW.push({ c: 12, r });
+
+        // Route 2: East-South spiral -> South Bridge -> HQ (12, 8)
+        const pSE = [];
+        for (let c = 23; c >= 3; c--) pSE.push({ c, r: 15 });
+        for (let r = 14; r >= 10; r--) pSE.push({ c: 3, r });
+        for (let c = 4; c <= 12; c++) pSE.push({ c, r: 10 }); // Crosses West Moat Bridge
+        for (let r = 9; r >= 8; r--) pSE.push({ c: 12, r });
+
+        // Route 3: South-West direct ring -> North Moat Bridge -> HQ (12, 8)
+        const pSW = [];
+        for (let r = 15; r >= 3; r--) pSW.push({ c: 1, r });
+        for (let c = 2; c <= 12; c++) pSW.push({ c, r: 3 });
+        for (let r = 4; r <= 8; r++) pSW.push({ c: 12, r });
+
+        // Route 4: North-East direct ring -> South Moat Bridge -> HQ (12, 8)
+        const pNE = [];
+        for (let r = 1; r <= 13; r++) pNE.push({ c: 23, r });
+        for (let c = 22; c >= 12; c--) pNE.push({ c, r: 13 });
+        for (let r = 12; r >= 8; r--) pNE.push({ c: 12, r });
+
+        return {
+          groundPaths: [pNW, pSE, pSW, pNE],
+          waterCells: water,
+          highCells: highgrounds,
+          airCorridors: [
+            [{ c: -1, r: -1 }, { c: 7, r: 4 }, { c: 12, r: 8 }],
+            [{ c: 26, r: 18 }, { c: 17, r: 12 }, { c: 12, r: 8 }],
+            [{ c: 26, r: -1 }, { c: 17, r: 4 }, { c: 12, r: 8 }]
+          ]
+        };
+      }
+    }
+  ];
+
+  let currentLevelIdx = 0;
+  let curLevel = LEVELS[0];
+  let COLS = curLevel.cols, ROWS = curLevel.rows;
+
+  // ---------- 2.5D Isometric Grid & Camera System ----------
+  let DPR = 1, W = 0, H = 0;
+  let tileW = 40, tileH = 20, blockDepth = 11;
+  let X_center = 0, Y_center = 0;
+  let cellUnit = 22;
+
+  const camera = {
+    x: 0, y: 0, scale: 1.0,
+    minScale: 0.45, maxScale: 2.6,
+    isDragging: false, dragStartX: 0, dragStartY: 0,
+    lastScreenX: 0, lastScreenY: 0, moved: false, touchDist: 0
+  };
+
+  function updateZoomUI() {
+    zoomValEl.textContent = Math.round(camera.scale * 100) + '%';
+  }
+
+  function setZoom(factor, screenX = W / 2, screenY = H / 2) {
+    const oldScale = camera.scale;
+    const newScale = Math.min(camera.maxScale, Math.max(camera.minScale, oldScale * factor));
+    if (Math.abs(newScale - oldScale) < 0.001) return;
+    const worldPos = screenToWorld(screenX, screenY);
+    camera.scale = newScale;
+    camera.x = screenX - (worldPos.x - W / 2) * newScale - W / 2;
+    camera.y = screenY - (worldPos.y - H / 2) * newScale - H / 2;
+    updateZoomUI();
+  }
+
+  function resetCamera() {
+    camera.x = 0; camera.y = 0; camera.scale = 1.0;
+    updateZoomUI();
+  }
+
+  function screenToWorld(sx, sy) {
+    const cx = W / 2 + camera.x;
+    const cy = H / 2 + camera.y;
+    return {
+      x: (sx - cx) / camera.scale + W / 2,
+      y: (sy - cy) / camera.scale + H / 2
+    };
+  }
+
+  // Ambient weather particles (clouds, rain, snow, sand)
+  let weatherParticles = [];
+  function buildWeather() {
+    weatherParticles = [];
+    const count = curLevel.weather === 'rain' ? 95 : (curLevel.weather === 'snow' || curLevel.weather === 'sand' ? 65 : 18);
+    for (let i = 0; i < count; i++) {
+      weatherParticles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: curLevel.weather === 'clouds' ? (42 + Math.random() * 75) : (1.5 + Math.random() * 2.4),
+        vx: curLevel.weather === 'sand' ? (90 + Math.random() * 60) : (curLevel.weather === 'clouds' ? (8 + Math.random() * 10) : (15 + Math.random() * 15)),
+        vy: curLevel.weather === 'rain' ? (260 + Math.random() * 120) : (curLevel.weather === 'snow' ? (28 + Math.random() * 22) : (curLevel.weather === 'sand' ? (12 + Math.random() * 16) : 0)),
+        alpha: curLevel.weather === 'clouds' ? (0.06 + Math.random() * 0.06) : (0.3 + Math.random() * 0.45),
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+  }
+
+  function resize() {
+    DPR = Math.min((window.devicePixelRatio || 1) * 1.3, 3);
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = Math.floor(W * DPR); canvas.height = Math.floor(H * DPR);
+    canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    if ('imageSmoothingQuality' in ctx) ctx.imageSmoothingQuality = 'high';
+
+    const topMargin = 68, bottomMargin = 135;
+    const availW = W - 24;
+    const availH = Math.max(220, H - topMargin - bottomMargin);
+
+    const spanColsRows = (COLS + ROWS) * 0.5;
+    tileW = Math.max(18, Math.min(availW / (spanColsRows * 1.02), availH / (spanColsRows * 0.54)));
+    tileH = Math.round(tileW * 0.5);
+    tileW = tileH * 2;
+    blockDepth = Math.max(8, Math.round(tileH * 0.6));
+    cellUnit = (tileW / 2) * Math.sqrt(1.25);
+
+    X_center = Math.round(W / 2 - (COLS - ROWS) * (tileW / 4));
+    const gridVisualHeight = (COLS + ROWS) * (tileH / 2) + blockDepth + tileW * 0.5;
+    Y_center = Math.round(topMargin + Math.max(6, (availH - gridVisualHeight) / 2) + tileW * 0.2);
+
+    rebuildPathPoints();
+    buildWeather();
+    updateZoomUI();
+  }
+
+  function cellLiftZ(c, r) {
+    const k = keyOf(c, r);
+    if (highgroundSet && highgroundSet.has(k)) return Math.round(blockDepth * 0.72);
+    if (waterSet && waterSet.has(k) && !bridgeSet.has(k)) return -Math.round(blockDepth * 0.35);
+    return 0;
+  }
+
+  function cellToPx(c, r, z = 0) {
+    const baseLift = inGrid(Math.round(c), Math.round(r)) ? cellLiftZ(Math.round(c), Math.round(r)) : 0;
+    const x = X_center + (c - r) * (tileW / 2);
+    const y = Y_center + (c + r + 1) * (tileH / 2) - blockDepth - baseLift - (z || 0);
+    return { x, y };
+  }
+
+  function pxToCell(wx, wy) {
+    const dx = wx - X_center;
+    const dy = (wy + blockDepth) - Y_center;
+    const c = Math.floor(dx / tileW + dy / tileH - 0.5);
+    const r = Math.floor(dy / tileH - dx / tileW - 0.5);
+    return { c, r };
+  }
+
+  function inGrid(c, r) { return c >= 0 && c < COLS && r >= 0 && r < ROWS; }
+  function keyOf(c, r) { return c + ',' + r; }
+
+  function findTowerAtPx(wx, wy) {
+    if (!state || !state.towers) return null;
+    const sorted = state.towers.slice().sort((a, b) => (b.c + b.r) - (a.c + a.r));
+    for (const t of sorted) {
+      const pos = cellToPx(t.c, t.r);
+      const towerH = tileW * 0.78;
+      const cy = pos.y - towerH * 0.5;
+      const rx = tileW * 0.46;
+      const ry = towerH * 0.56;
+      const nx = (wx - pos.x) / rx;
+      const ny = (wy - cy) / ry;
+      if (nx * nx + ny * ny <= 1) return t;
+    }
+    return null;
+  }
+
+  // ---------- Paths, Rivers, Bridges & High-Ground Extras ----------
+  let groundPaths = [];
+  let groundPathsPoints = [];
+  let airCorridors = [];
+  let airPathsPoints = [];
+  let pathSet = new Set();
+  let waterSet = new Set();
+  let bridgeSet = new Set();
+  let highgroundSet = new Set();
+  let pathDirMap = new Map();
+  let obstacleSet = new Set();
+  let decorations = [];
+
+  function loadLevelPaths(level) {
+    const res = level.generatePaths();
+    groundPaths = res.groundPaths;
+    airCorridors = res.airCorridors;
+    pathSet = new Set();
+    waterSet = new Set();
+    bridgeSet = new Set();
+    highgroundSet = new Set();
+    pathDirMap = new Map();
+
+    if (res.waterCells) {
+      for (const wc of res.waterCells) {
+        if (inGrid(wc.c, wc.r)) waterSet.add(keyOf(wc.c, wc.r));
+      }
+    }
+
+    for (const p of groundPaths) {
+      for (let i = 0; i < p.length; i++) {
+        const cell = p[i];
+        const k = keyOf(cell.c, cell.r);
+        pathSet.add(k);
+        if (waterSet.has(k)) bridgeSet.add(k);
+        const next = p[i + 1] || p[i - 1] || cell;
+        const dc = next.c - cell.c;
+        const dr = next.r - cell.r;
+        pathDirMap.set(k, { dc, dr });
+      }
+    }
+
+    if (res.highCells) {
+      for (const hc of res.highCells) {
+        const k = keyOf(hc.c, hc.r);
+        if (inGrid(hc.c, hc.r) && !pathSet.has(k) && !waterSet.has(k)) {
+          highgroundSet.add(k);
+        }
+      }
+    }
+
+    rebuildPathPoints();
+    buildMapExtras(level);
+  }
+
+  function rebuildPathPoints() {
+    groundPathsPoints = groundPaths.map(path => path.map(p => cellToPx(p.c, p.r)));
+    airPathsPoints = airCorridors.map(corr => corr.map(p => cellToPx(p.c, p.r, 42)));
+  }
+
+  function pointsForEnemy(e) {
+    if (e.flying) {
+      return airPathsPoints[e.pathIdx % airPathsPoints.length] || airPathsPoints[0];
+    }
+    return groundPathsPoints[e.pathIdx % groundPathsPoints.length] || groundPathsPoints[0];
+  }
+
+  function buildMapExtras(level) {
+    obstacleSet = new Set();
+    decorations = [];
+    const free = [];
+    for (let r = 0; r < ROWS; r++) {
+      for (let c = 0; c < COLS; c++) {
+        const k = keyOf(c, r);
+        if (!pathSet.has(k) && !waterSet.has(k) && !highgroundSet.has(k)) free.push({ c, r });
+      }
+    }
+    const shuffled = free.slice();
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    const count = Math.min(level.obstacleCount, Math.floor(shuffled.length * 0.12));
+    const obstacleTypes = level.obstacles || ['roundtree', 'pinetree', 'rock'];
+    const foliageTypes = level.foliage || ['flower', 'grass'];
+    for (let i = 0; i < count; i++) {
+      const cellPos = shuffled[i];
+      obstacleSet.add(keyOf(cellPos.c, cellPos.r));
+      decorations.push({ c: cellPos.c, r: cellPos.r, type: obstacleTypes[i % obstacleTypes.length], blocking: true, seed: Math.random() });
+    }
+    for (let i = count; i < shuffled.length; i++) {
+      if (Math.random() < 0.18) {
+        const cellPos = shuffled[i];
+        decorations.push({ c: cellPos.c, r: cellPos.r, type: foliageTypes[i % foliageTypes.length], blocking: false, seed: Math.random() });
+      }
+    }
+  }
+
+  function canBuild(c, r) {
+    if (!inGrid(c, r)) return false;
+    const k = keyOf(c, r);
+    if (pathSet.has(k)) return false;
+    if (waterSet.has(k)) return false;
+    if (obstacleSet.has(k)) return false;
+    if (towerAt.has(k)) return false;
+    return true;
+  }
+
+  // ---------- WebAudio Realistic Military Synthesizer ----------
+  let audioCtx = null;
+  function ensureAudio() {
+    if (!audioCtx) {
+      try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+    }
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  }
+  function tone(freq, dur, type, gain, slideTo, delay) {
+    if (!audioCtx) return;
+    const t0 = audioCtx.currentTime + (delay || 0);
+    const osc = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    osc.type = type || 'square';
+    osc.frequency.setValueAtTime(freq, t0);
+    if (slideTo) osc.frequency.exponentialRampToValueAtTime(Math.max(1, slideTo), t0 + dur);
+    g.gain.setValueAtTime(gain != null ? gain : 0.12, t0);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+    osc.connect(g); g.connect(audioCtx.destination);
+    osc.start(t0); osc.stop(t0 + dur + 0.03);
+  }
+  const sfx = {
+    place: () => { tone(320, 0.06, 'triangle', 0.14, 480); tone(640, 0.07, 'sine', 0.1, 720, 0.05); },
+    error: () => tone(130, 0.12, 'sawtooth', 0.12),
+    upgrade: () => { tone(520, 0.08, 'triangle', 0.12, 780); tone(780, 0.1, 'triangle', 0.12, 1080, 0.06); },
+    sell: () => tone(320, 0.12, 'triangle', 0.12, 160),
+    shoot_gatling: () => tone(420, 0.03, 'sawtooth', 0.06, 180),
+    shoot_cannon: () => { tone(130, 0.16, 'sawtooth', 0.14, 42); tone(90, 0.18, 'triangle', 0.14, 35); },
+    shoot_frost: () => tone(920, 0.07, 'sine', 0.06, 560),
+    shoot_sniper: () => { tone(1100, 0.09, 'sawtooth', 0.11, 220); tone(300, 0.12, 'square', 0.07, 80, 0.02); },
+    shoot_lightning: () => { tone(1400, 0.04, 'square', 0.07, 1950); tone(680, 0.06, 'sawtooth', 0.06, 260, 0.02); },
+    shoot_flak: () => { tone(580, 0.07, 'sawtooth', 0.1, 180); tone(1200, 0.05, 'triangle', 0.06, 1700, 0.02); },
+    hit: () => tone(190, 0.04, 'square', 0.04, 75),
+    death: () => tone(260, 0.11, 'sawtooth', 0.09, 65),
+    leak: () => tone(160, 0.25, 'sawtooth', 0.16, 55),
+    heal: () => { tone(580, 0.14, 'sine', 0.09, 880); tone(880, 0.12, 'sine', 0.07, 1120, 0.05); },
+    emp: () => tone(280, 0.22, 'sawtooth', 0.16, 70),
+    berserk: () => { tone(150, 0.35, 'sawtooth', 0.2, 290); tone(210, 0.35, 'square', 0.16, 420, 0.05); },
+    wave: () => { tone(440, 0.12, 'triangle', 0.12, 660); tone(660, 0.16, 'triangle', 0.12, 880, 0.1); },
+    gameover: () => { tone(360, 0.2, 'sawtooth', 0.15, 95); tone(250, 0.3, 'sawtooth', 0.12, 55, 0.2); },
+    win: () => { [523, 659, 784, 1046].forEach((f, i) => tone(f, 0.18, 'triangle', 0.12, null, i * 0.12)); }
+  };
+
+  // ---------- Config: Realistic Military Towers & Earth Units ----------
+  const TOWER_TYPES = {
+    gatling:   { name: '近防速射机枪', icon: '🔫', cost: 50, dmg: 7.2, range: 2.95, rate: 6.5, color: '#fbbf24', canAirTarget: true, desc: '六管加特林沙袋掩体阵地（陆空兼备高频压制）' },
+    cannon:    { name: '155mm榴弹炮', icon: '💣', cost: 90, dmg: 30, range: 2.7, rate: 1.15, color: '#f97316', splash: 1.25, desc: '重型曲射火炮阵地（高爆破片面杀伤）' },
+    frost:     { name: '液氮急冻喷射器', icon: '❄️', cost: 70, dmg: 5.5, range: 2.55, rate: 1.6, color: '#38bdf8', slow: 0.55, desc: '高压低温阻滞塔（持续降低敌军移速）' },
+    sniper:    { name: '反器材狙击哨塔', icon: '🔭', cost: 130, dmg: 72, range: 5.2, rate: 0.7, color: '#ef4444', armorPierce: true, canAirTarget: true, desc: '巴雷特重狙高架瞭望塔（穿甲破盾超远点杀）' },
+    lightning: { name: '高能微波电磁塔', icon: '⚡', cost: 110, dmg: 18, range: 2.75, rate: 1.25, color: '#60a5fa', chain: 3, chainRange: 2.0, canAirTarget: true, desc: '定向脉冲相控阵（多目标电磁连锁打击）' },
+    flak:      { name: '爱国者防空导弹', icon: '🚀', cost: 100, dmg: 26, range: 3.7, rate: 1.55, color: '#4ade80', splash: 0.85, canAirTarget: true, airOnly: true, desc: '四联装防空导弹发射车（专精对空拦截）' }
+  };
+  const TOWER_ORDER = ['gatling', 'cannon', 'frost', 'sniper', 'lightning', 'flak'];
+
+  // Realistic Earth Military Roster (8 Units)
+  const ENEMY_TYPES = {
+    normal:  { name: '迷彩突击步兵', hp: 46, speed: 1.45, armor: 0, bounty: 7, leak: 1, color: '#4d7c43', r: 0.36, bobH: 2.8, strideFreq: 2.8 },
+    runner:  { name: '特种侦察尖兵', hp: 24, speed: 2.85, armor: 0, bounty: 6, leak: 2, color: '#eab308', r: 0.32, bobH: 3.6, strideFreq: 4.5 },
+    tank:    { name: '重装主战坦克', hp: 185, speed: 0.9, armor: 0.46, bounty: 18, leak: 3, color: '#57534e', r: 0.48, bobH: 0.8, strideFreq: 2.2, isVehicle: true },
+    flyer:   { name: '阿帕奇武装直升机', hp: 36, speed: 2.35, armor: 0.08, bounty: 12, leak: 2, color: '#475569', r: 0.38, flying: true, bobH: 0, strideFreq: 0 },
+    medic:   { name: '战地医护兵', hp: 76, speed: 1.35, armor: 0.15, bounty: 15, leak: 3, color: '#059669', r: 0.36, bobH: 2.6, strideFreq: 2.4 },
+    phantom: { name: '吉利服渗透兵', hp: 44, speed: 2.45, armor: 0, bounty: 14, leak: 3, color: '#65a30d', r: 0.35, bobH: 2.8, strideFreq: 3.2, dodgeRate: 0.38 },
+    bomber:  { name: '遥控爆破无人车', hp: 60, speed: 1.92, armor: 0.15, bounty: 15, leak: 2, color: '#d97706', r: 0.35, bobH: 1.0, strideFreq: 5.0, isVehicle: true },
+    boss:    { name: '双联装重型装甲车', hp: 1250, speed: 0.78, armor: 0.36, bounty: 220, leak: 8, color: '#991b1b', r: 0.62, bobH: 1.0, strideFreq: 1.6, isVehicle: true }
+  };
+
+  const WAVE_COUNTDOWN = 7;
+
+  // ---------- State ----------
+  let state = null;
+  let towerAt = new Map();
+
+  function freshState(lvlIdx) {
+    towerAt = new Map();
+    const lvl = LEVELS[lvlIdx];
+    return {
+      levelIdx: lvlIdx,
+      gold: lvl.startGold,
+      lives: 20,
+      wave: 0,
+      score: 0,
+      enemies: [],
+      towers: [],
+      projectiles: [],
+      particles: [],
+      shellCasings: [],
+      scorchMarks: [],
+      lightnings: [],
+      laserBeams: [],
+      shockwaves: [],
+      floatingTexts: [],
+      spawnQueue: [],
+      spawnTimer: 0,
+      spawnCount: 0,
+      waveActive: false,
+      countdown: WAVE_COUNTDOWN,
+      betweenWaves: true,
+      speedMult: 1,
+      paused: false,
+      selectedBuildType: null,
+      selectedTower: null,
+      hover: null,
+      gameOver: false,
+      win: false,
+      levelClear: false,
+      running: false,
+      time: 0,
+      screenShake: 0
+    };
+  }
+
+  function waveComposition(level, wave) {
+    const isBoss = wave === level.wavesCount || (wave % 5 === 0 && wave >= 5);
+    const baseCount = Math.round(14 + wave * 3.0 + (level.id - 1) * 4.0);
+    const list = [];
+
+    for (let i = 0; i < baseCount; i++) {
+      let type = 'normal';
+      const roll = Math.random();
+
+      if (level.id >= 2 && wave >= 4 && roll < 0.19) type = 'bomber';
+      else if (level.id >= 2 && wave >= 3 && roll < 0.37) type = 'phantom';
+      else if (wave >= 3 && roll < 0.54) type = 'medic';
+      else if (wave >= 2 && roll < 0.70) type = 'flyer';
+      else if (wave >= 2 && roll < 0.87) type = 'tank';
+      else if (roll < 0.96) type = 'runner';
+
+      list.push({ type, pathIdx: i });
+    }
+
+    if (isBoss) {
+      list.push({ type: 'boss', pathIdx: 0 });
+      if (groundPaths.length > 1) list.push({ type: 'boss', pathIdx: 1 });
+      list.push({ type: 'tank', pathIdx: 0 });
+      if (wave >= 9) list.push({ type: 'tank', pathIdx: groundPaths.length > 1 ? 1 : 0 });
+    }
+
+    const spawnInterval = Math.max(0.15, 0.68 - wave * 0.03 - (level.id - 1) * 0.03);
+    return { list, spawnInterval };
+  }
+
+  function startWave() {
+    if (state.wave >= curLevel.wavesCount) return;
+    state.wave++;
+    const comp = waveComposition(curLevel, state.wave);
+    state.spawnQueue = comp.list.slice();
+    state.spawnInterval = comp.spawnInterval;
+    state.spawnTimer = 0;
+    state.waveActive = true;
+    state.betweenWaves = false;
+    sfx.wave();
+    showBanner(`🎺 第 ${state.wave} / ${curLevel.wavesCount} 波攻势来袭！呆萌军团正在大步推进~`, 1800);
+  }
+
+  function spawnEnemy(entry) {
+    const type = entry.type;
+    const pathIdx = entry.pathIdx || 0;
+    const base = ENEMY_TYPES[type];
+    const hpScale = (1 + (state.wave - 1) * 0.23 + (curLevel.id - 1) * 0.28);
+    const speedScale = 1 + Math.min(0.45, (state.wave - 1) * 0.016 + (curLevel.id - 1) * 0.018);
+    const armorScale = 1 + Math.min(0.55, (state.wave - 1) * 0.018);
+    const hp = Math.round(base.hp * hpScale);
+    const flying = !!base.flying;
+
+    const e = {
+      type, hp, maxHp: hp, speedCells: base.speed * speedScale, armor: Math.min(0.75, base.armor * armorScale),
+      bounty: base.bounty, leak: base.leak, color: base.color, radius: base.r,
+      flying, isVehicle: !!base.isVehicle, bobH: base.bobH, strideFreq: base.strideFreq,
+      dodgeRate: base.dodgeRate || 0,
+      pathIdx, idx: 0,
+      x: 0, y: 0, z: flying ? 42 : 0,
+      walkPhase: Math.random(),
+      blinkSeed: Math.random() * 10,
+      facing: 0, targetFacing: 0,
+      hitFlash: 0,
+      slowUntil: 0, slowFactor: 1,
+      healTimer: 0, exhaustTimer: 0,
+      enraged: false, shield: 0, maxShield: 0,
+      id: Math.random()
+    };
+
+    const pts = pointsForEnemy(e);
+    if (!pts || pts.length === 0) return;
+    const p0 = pts[0];
+    e.x = p0.x; e.y = p0.y;
+    if (pts[1]) {
+      e.facing = Math.atan2(pts[1].y - p0.y, pts[1].x - p0.x);
+      e.targetFacing = e.facing;
+    }
+
+    state.enemies.push(e);
+    state.spawnCount++;
+  }
+
+  function addFloatingText(text, x, y, color = '#fff') {
+    state.floatingTexts.push({ text, x, y, vy: -34, life: 0.75, maxLife: 0.75, color });
+  }
+
+  function towerStats(t) {
+    const base = TOWER_TYPES[t.type];
+    const lvl = t.level;
+    const isHigh = highgroundSet && highgroundSet.has(keyOf(t.c, t.r));
+    const highMult = isHigh ? 1.15 : 1.0;
+    const dmgMult = 1 + (lvl - 1) * 0.42;
+    const rangeMult = (1 + (lvl - 1) * 0.13) * highMult;
+    const rateMult = 1 + (lvl - 1) * 0.22;
+    return {
+      dmg: base.dmg * dmgMult,
+      range: base.range * rangeMult * cellUnit,
+      rate: base.rate * rateMult,
+      splash: base.splash ? base.splash * (1 + (lvl - 1) * 0.12) * cellUnit : 0,
+      slow: base.slow,
+      armorPierce: !!base.armorPierce,
+      canAirTarget: !!base.canAirTarget,
+      airOnly: !!base.airOnly,
+      chain: base.chain || 0,
+      chainRange: base.chain ? base.chainRange * rangeMult * cellUnit : 0,
+      color: base.color,
+      isHigh
+    };
+  }
+
+  function upgradeCost(t) {
+    const base = TOWER_TYPES[t.type];
+    return Math.round(base.cost * 0.75 * t.level);
+  }
+
+  function sellValue(t) {
+    return Math.round(t.totalSpent * 0.7);
+  }
+
+  function placeTower(type, c, r) {
+    const base = TOWER_TYPES[type];
+    if (state.gold < base.cost) { sfx.error(); return; }
+    if (!canBuild(c, r)) { sfx.error(); return; }
+    const pos = cellToPx(c, r);
+    const t = {
+      type, c, r, x: pos.x, y: pos.y, level: 1, cooldown: 0,
+      disabledUntil: 0,
+      recoil: 0, muzzleFlash: 0, facing: -Math.PI / 4, targetFacing: -Math.PI / 4,
+      barrelSpin: 0, radarAngle: Math.random() * Math.PI * 2,
+      buildAnim: 1.0, // Cute bouncy pop-in animation
+      totalSpent: base.cost, id: Math.random()
+    };
+    state.towers.push(t);
+    towerAt.set(keyOf(c, r), t);
+    state.gold -= base.cost;
+    sfx.place();
+    spawnImpactParticles(pos.x, pos.y, base.color, 14);
+    if (highgroundSet && highgroundSet.has(keyOf(c, r))) {
+      addFloatingText('⛰️ 高地射程+15%!', pos.x, pos.y - 24, '#fde047');
+    }
+  }
+
+  function findTarget(t, stats, exclude) {
+    let best = null, bestProgress = -1;
+    for (const e of state.enemies) {
+      if (exclude && exclude.has(e)) continue;
+      if (e.flying && !stats.canAirTarget) continue;
+      if (!e.flying && stats.airOnly) continue;
+      const dx = e.x - t.x, dy = e.y - t.y;
+      if (dx * dx + dy * dy > stats.range * stats.range) continue;
+      const pts = pointsForEnemy(e);
+      const nextPt = pts[e.idx + 1];
+      let remain = nextPt ? Math.hypot(nextPt.x - e.x, nextPt.y - e.y) : 0;
+      const progress = e.idx * 10000 - remain;
+      if (progress > bestProgress) { bestProgress = progress; best = e; }
+    }
+    return best;
+  }
+
+  function lerpAngle(a, b, t) {
+    let diff = ((b - a + Math.PI * 3) % (Math.PI * 2)) - Math.PI;
+    return a + diff * Math.min(1, t);
+  }
+
+  function fireTower(t) {
+    if (state.time < t.disabledUntil) return;
+    const stats = towerStats(t);
+    if (t.type === 'lightning') { fireLightning(t, stats); return; }
+    const target = findTarget(t, stats);
+    if (!target) return;
+
+    t.cooldown = 1 / stats.rate;
+    t.targetFacing = Math.atan2(target.y - t.y, target.x - t.x);
+    t.facing = lerpAngle(t.facing, t.targetFacing, 0.65);
+    t.muzzleFlash = 0.12;
+    t.recoil = 1.0;
+
+    const spawnY = t.y - tileW * 0.45;
+    const muzzleX = t.x + Math.cos(t.facing) * (tileW * 0.32);
+    const muzzleY = spawnY + Math.sin(t.facing) * (tileW * 0.18);
+
+    // Eject cute shiny brass shell casing
+    if (t.type === 'gatling' || t.type === 'sniper') {
+      const ejectAng = t.facing + Math.PI * 0.55 + (Math.random() - 0.5) * 0.4;
+      const spd = 35 + Math.random() * 25;
+      state.shellCasings.push({
+        x: t.x, y: spawnY,
+        vx: Math.cos(ejectAng) * spd,
+        vy: Math.sin(ejectAng) * spd - 28,
+        gravity: 130,
+        rot: Math.random() * Math.PI,
+        vRot: (Math.random() - 0.5) * 18,
+        life: 0.55, maxLife: 0.55
+      });
+    }
+
+    if (t.type === 'sniper') {
+      state.laserBeams.push({
+        x1: muzzleX, y1: muzzleY,
+        x2: target.x, y2: enemyHitY(target),
+        life: 0.18, maxLife: 0.18, color: '#f43f5e'
+      });
+    }
+
+    if (t.type === 'cannon') {
+      spawnSmokeParticles(muzzleX, muzzleY, 6);
+    }
+
+    state.projectiles.push({
+      x: muzzleX, y: muzzleY, target, dmg: stats.dmg, splash: stats.splash,
+      slow: stats.slow, armorPierce: stats.armorPierce, color: stats.color,
+      speed: cellUnit * (t.type === 'sniper' ? 22 : (t.type === 'cannon' ? 11.5 : 15)),
+      type: t.type,
+      startY: muzzleY, startX: muzzleX,
+      travelDist: Math.hypot(target.x - muzzleX, enemyHitY(target) - muzzleY),
+      currDist: 0,
+      trailTimer: 0
+    });
+    if (sfx['shoot_' + t.type]) sfx['shoot_' + t.type]();
+  }
+
+  function fireLightning(t, stats) {
+    const first = findTarget(t, stats);
+    if (!first) return;
+    t.cooldown = 1 / stats.rate;
+    t.targetFacing = Math.atan2(first.y - t.y, first.x - t.x);
+    t.facing = lerpAngle(t.facing, t.targetFacing, 0.7);
+    t.muzzleFlash = 0.14;
+    t.recoil = 1.0;
+
+    const hit = new Set();
+    const arcs = [];
+    let from = { x: t.x, y: t.y - tileW * 0.52 };
+    let cur = first;
+    let dmg = stats.dmg;
+    let jumps = stats.chain;
+    while (cur) {
+      damageEnemy(cur, dmg, stats.armorPierce);
+      arcs.push({ x1: from.x, y1: from.y, x2: cur.x, y2: enemyHitY(cur), life: 0.24, maxLife: 0.24 });
+      hit.add(cur);
+      if (jumps <= 0) break;
+      jumps--;
+      dmg *= 0.75;
+      let next = null, bestD = stats.chainRange;
+      for (const e of state.enemies) {
+        if (hit.has(e)) continue;
+        if (e.flying && !stats.canAirTarget) continue;
+        const d = Math.hypot(e.x - cur.x, e.y - cur.y);
+        if (d <= bestD) { bestD = d; next = e; }
+      }
+      from = { x: cur.x, y: enemyHitY(cur) };
+      cur = next;
+    }
+    state.lightnings.push(...arcs);
+    sfx.shoot_lightning();
+  }
+
+  function damageEnemy(e, dmg, armorPierce) {
+    // Bush Chibi Sniper Leaf-Confetti Dodge
+    if (e.dodgeRate && Math.random() < e.dodgeRate) {
+      addFloatingText('🍃 躲猫猫~!', e.x, enemyHitY(e) - 14, '#a3e635');
+      spawnImpactParticles(e.x, enemyHitY(e), '#84cc16', 6);
+      return;
+    }
+
+    let actual = armorPierce ? dmg : dmg * (1 - e.armor);
+
+    if (e.shield > 0) {
+      if (e.shield >= actual) {
+        e.shield -= actual;
+        actual = 0;
+      } else {
+        actual -= e.shield;
+        e.shield = 0;
+      }
+    }
+
+    e.hp -= actual;
+    e.hitFlash = 0.14;
+
+    // Boss Enrage at 50% HP
+    if (e.type === 'boss' && !e.enraged && e.hp <= e.maxHp * 0.5) {
+      e.enraged = true;
+      e.speedCells *= 1.32;
+      e.shield = Math.round(e.maxHp * 0.28);
+      e.maxShield = e.shield;
+      state.screenShake = 0.4;
+      sfx.berserk();
+      addFloatingText('💢 鸭鸭暴走护盾!', e.x, e.y - 34, '#fb923c');
+      spawnImpactParticles(e.x, e.y, '#fbbf24', 24);
+    }
+
+    if (e.hp <= 0 && !e.dead) {
+      e.dead = true;
+      state.gold += e.bounty;
+      state.score += e.bounty * 2;
+      addFloatingText(`+${e.bounty}💰`, e.x, enemyHitY(e) - 10, '#fde047');
+      spawnImpactParticles(e.x, enemyHitY(e), e.isVehicle ? '#fb923c' : e.color, e.isVehicle ? 22 : 16);
+      if (e.isVehicle || e.flying) {
+        spawnSmokeParticles(e.x, enemyHitY(e), 9);
+        if (!e.flying) {
+          state.scorchMarks.push({ x: e.x, y: e.y, r: tileW * 0.28, life: 6.5, maxLife: 6.5 });
+        }
+      }
+      sfx.death();
+
+      // Wind-Up RC Rover EMP Pop
+      if (e.type === 'bomber') {
+        sfx.emp();
+        state.shockwaves.push({
+          x: e.x, y: e.y, r: 4, maxR: cellUnit * 2.2, life: 0.42, maxLife: 0.42, color: '#f43f5e'
+        });
+        for (const t of state.towers) {
+          const d = Math.hypot(t.x - e.x, t.y - e.y);
+          if (d <= cellUnit * 2.2) {
+            t.disabledUntil = Math.max(t.disabledUntil, state.time + 1.35);
+            addFloatingText('💫 晕乎乎~', t.x, t.y - 22, '#f43f5e');
+          }
+        }
+      }
+    }
+  }
+
+  function spawnImpactParticles(x, y, color, count = 8) {
+    for (let i = 0; i < count; i++) {
+      const ang = Math.random() * Math.PI * 2;
+      const spd = 28 + Math.random() * 92;
+      state.particles.push({
+        x, y, vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd,
+        r: 2.5 + Math.random() * 2.2,
+        life: 0.35 + Math.random() * 0.28, maxLife: 0.63, color
+      });
+    }
+  }
+
+  function spawnSmokeParticles(x, y, count = 5) {
+    for (let i = 0; i < count; i++) {
+      const ang = Math.random() * Math.PI * 2;
+      const spd = 8 + Math.random() * 24;
+      state.particles.push({
+        x: x + (Math.random() - 0.5) * 6,
+        y: y + (Math.random() - 0.5) * 6,
+        vx: Math.cos(ang) * spd,
+        vy: Math.sin(ang) * spd - 20,
+        r: 4.5 + Math.random() * 4,
+        grow: 11,
+        life: 0.5 + Math.random() * 0.35,
+        maxLife: 0.85,
+        color: 'rgba(241, 245, 249, 0.65)'
+      });
+    }
+  }
+
+  function leakEnemy(e) {
+    e.dead = true;
+    state.lives -= e.leak;
+    sfx.leak();
+    flashEl.style.opacity = '0.35';
+    setTimeout(() => { flashEl.style.opacity = '0'; }, 100);
+    state.screenShake = 0.25;
+    if (state.lives <= 0) { state.lives = 0; endGame(false); }
+  }
+
+  function updateEnemyMove(e, dt) {
+    if (e.hitFlash > 0) e.hitFlash = Math.max(0, e.hitFlash - dt);
+
+    const slowActive = state.time < e.slowUntil;
+    const spd = e.speedCells * cellUnit * (slowActive ? e.slowFactor : 1);
+    const pts = pointsForEnemy(e);
+    const target = pts[e.idx + 1];
+    if (!target) { leakEnemy(e); return; }
+
+    const dx = target.x - e.x, dy = target.y - e.y;
+    const dist = Math.hypot(dx, dy);
+    const step = spd * dt;
+
+    if (dist > 0.001) {
+      e.targetFacing = Math.atan2(dy, dx);
+      e.facing = lerpAngle(e.facing, e.targetFacing, dt * 11);
+    }
+
+    // Sweetheart Nurse Medic Heart-Pulse Heal
+    if (e.type === 'medic' && !e.dead) {
+      e.healTimer += dt;
+      if (e.healTimer >= 2.0) {
+        e.healTimer = 0;
+        let healedAny = false;
+        const healRange = cellUnit * 2.5;
+        for (const ally of state.enemies) {
+          if (ally === e || ally.dead) continue;
+          const d = Math.hypot(ally.x - e.x, ally.y - e.y);
+          if (d <= healRange && ally.hp < ally.maxHp) {
+            const healAmt = Math.round(ally.maxHp * 0.18);
+            ally.hp = Math.min(ally.maxHp, ally.hp + healAmt);
+            healedAny = true;
+            spawnImpactParticles(ally.x, ally.y - 10, '#f472b6', 5);
+            addFloatingText('💖+元气', ally.x, enemyHitY(ally) - 10, '#f472b6');
+          }
+        }
+        if (healedAny) {
+          sfx.heal();
+          state.shockwaves.push({
+            x: e.x, y: e.y, r: 2, maxR: healRange, life: 0.45, maxLife: 0.45, color: '#f472b6'
+          });
+        }
+      }
+    }
+
+    // Bouncy Chibi Walk / Chug / Rotor animation update
+    if (!e.flying) {
+      const moveFactor = dist > 0.001 ? Math.min(1, step / Math.max(0.0001, dt * cellUnit)) : 0;
+      e.walkPhase = (e.walkPhase || 0) + dt * (e.strideFreq || 2.6) * Math.max(0.35, moveFactor);
+      const phi = e.walkPhase % 1.0;
+      e.bobPhase = phi;
+      e.z = Math.abs(Math.sin(phi * Math.PI * 2)) * (e.bobH || 3.0);
+
+      // Cute puffy white clouds from chugging mini-vehicles
+      if (e.isVehicle) {
+        e.exhaustTimer = (e.exhaustTimer || 0) + dt;
+        if (e.exhaustTimer > (e.type === 'boss' ? 0.12 : 0.2)) {
+          e.exhaustTimer = 0;
+          const backX = e.x - Math.cos(e.facing) * (e.radius * tileW * 0.85);
+          const backY = e.y - Math.sin(e.facing) * (e.radius * tileW * 0.42) - 5;
+          state.particles.push({
+            x: backX, y: backY,
+            vx: -Math.cos(e.facing) * 12 + (Math.random() - 0.5) * 6,
+            vy: -14 - Math.random() * 8,
+            r: e.type === 'boss' ? 4.0 : 3.0,
+            grow: 7,
+            life: 0.4, maxLife: 0.4,
+            color: 'rgba(255, 255, 255, 0.65)'
+          });
+        }
+      }
+    } else {
+      e.z = 42 + Math.sin(state.time * 5.0 + e.id * 10) * 4.0;
+      e.propAngle = (e.propAngle || 0) + dt * 42;
+      e.walkPhase = (e.walkPhase || 0) + dt * 2.5;
+    }
+
+    if (step >= dist) {
+      e.x = target.x;
+      e.y = target.y;
+      e.idx++;
+    } else {
+      e.x += (dx / dist) * step;
+      e.y += (dy / dist) * step;
+    }
+  }
+
+  function update(dtRaw) {
+    const dt = dtRaw * state.speedMult;
+    state.time += dt;
+
+    if (state.screenShake > 0) state.screenShake = Math.max(0, state.screenShake - dt);
+
+    // Update ambient weather
+    for (const wp of weatherParticles) {
+      wp.x += wp.vx * dt;
+      wp.y += wp.vy * dt;
+      if (wp.x > W + 100) wp.x = -100;
+      if (wp.y > H + 40) { wp.y = -20; wp.x = Math.random() * W; }
+    }
+
+    // Spawning wave
+    if (state.waveActive) {
+      if (state.spawnQueue.length > 0) {
+        state.spawnTimer -= dt;
+        if (state.spawnTimer <= 0) {
+          spawnEnemy(state.spawnQueue.shift());
+          state.spawnTimer = state.spawnInterval;
+        }
+      } else if (state.enemies.length === 0) {
+        state.waveActive = false;
+        state.gold += 25 + state.wave * 4 + curLevel.id * 5;
+        if (state.wave >= curLevel.wavesCount) {
+          levelComplete();
+          return;
+        }
+        state.betweenWaves = true;
+        state.countdown = WAVE_COUNTDOWN;
+      }
+    } else if (state.betweenWaves && state.wave < curLevel.wavesCount) {
+      state.countdown -= dt;
+      if (state.countdown <= 0) startWave();
+    }
+
+    // Enemies
+    for (const e of state.enemies) if (!e.dead) updateEnemyMove(e, dt);
+    state.enemies = state.enemies.filter(e => !e.dead);
+
+    // Towers
+    for (const t of state.towers) {
+      if (t.buildAnim > 0) t.buildAnim = Math.max(0, t.buildAnim - dt * 4.5);
+      t.radarAngle = (t.radarAngle || 0) + dt * 2.6;
+
+      // Track target smoothly even between shots
+      const stats = towerStats(t);
+      const trackTarget = findTarget(t, stats);
+      if (trackTarget && state.time >= t.disabledUntil) {
+        t.targetFacing = Math.atan2(trackTarget.y - t.y, trackTarget.x - t.x);
+        t.facing = lerpAngle(t.facing, t.targetFacing, dt * 10);
+      }
+
+      if (t.cooldown > 0) t.cooldown -= dt;
+      else fireTower(t);
+
+      if (t.muzzleFlash > 0) {
+        t.muzzleFlash -= dt;
+        t.barrelSpin = (t.barrelSpin || 0) + dt * 35;
+      }
+      if (t.recoil > 0) t.recoil = Math.max(0, t.recoil - dt * 6.5);
+    }
+
+    // Projectiles
+    for (const p of state.projectiles) {
+      if (!p.target || p.target.dead) { p.dead = true; continue; }
+      const targetY = enemyHitY(p.target);
+      const dx = p.target.x - p.x, dy = targetY - p.y;
+      const dist = Math.hypot(dx, dy);
+      const step = p.speed * dt;
+      p.currDist += step;
+      p.facing = Math.atan2(dy, dx);
+
+      // Smoke trail for artillery shells & SAM missiles
+      if (p.type === 'cannon' || p.type === 'flak') {
+        p.trailTimer = (p.trailTimer || 0) + dt;
+        if (p.trailTimer >= 0.028) {
+          p.trailTimer = 0;
+          const progress = Math.min(1, p.currDist / (p.travelDist || 1));
+          const arcOffset = p.type === 'cannon' ? Math.sin(progress * Math.PI) * (tileW * 0.65) : 0;
+          state.particles.push({
+            x: p.x, y: p.y - arcOffset,
+            vx: (Math.random() - 0.5) * 8, vy: (Math.random() - 0.5) * 8,
+            r: p.type === 'flak' ? 2.8 : 3.4,
+            grow: 6,
+            life: 0.28, maxLife: 0.28,
+            color: p.type === 'flak' ? 'rgba(226, 232, 240, 0.65)' : 'rgba(148, 163, 184, 0.5)'
+          });
+        }
+      }
+
+      if (step >= dist) {
+        p.dead = true;
+        damageEnemy(p.target, p.dmg, p.armorPierce);
+        if (p.slow) {
+          p.target.slowUntil = state.time + 1.7;
+          p.target.slowFactor = 1 - p.slow;
+        }
+        if (p.splash > 0) {
+          state.shockwaves.push({
+            x: p.target.x, y: p.target.y, r: 4, maxR: p.splash,
+            life: 0.36, maxLife: 0.36, color: p.color
+          });
+          if (p.type === 'cannon') {
+            state.scorchMarks.push({ x: p.target.x, y: p.target.y, r: tileW * 0.24, life: 5.5, maxLife: 5.5 });
+            spawnSmokeParticles(p.target.x, p.target.y - 6, 5);
+          }
+          for (const e of state.enemies) {
+            if (e === p.target || e.dead) continue;
+            const d2 = Math.hypot(e.x - p.target.x, e.y - p.target.y);
+            if (d2 <= p.splash) damageEnemy(e, p.dmg * 0.65, p.armorPierce);
+          }
+        }
+      } else {
+        p.x += (dx / dist) * step;
+        p.y += (dy / dist) * step;
+      }
+    }
+    state.projectiles = state.projectiles.filter(p => !p.dead);
+    state.enemies = state.enemies.filter(e => !e.dead);
+
+    // Shell casings physics
+    for (const sc of state.shellCasings) {
+      sc.x += sc.vx * dt;
+      sc.y += sc.vy * dt;
+      sc.vy += sc.gravity * dt;
+      sc.rot += sc.vRot * dt;
+      sc.life -= dt;
+    }
+    state.shellCasings = state.shellCasings.filter(sc => sc.life > 0);
+
+    // Scorch marks
+    for (const sm of state.scorchMarks) sm.life -= dt;
+    state.scorchMarks = state.scorchMarks.filter(sm => sm.life > 0);
+
+    // Particles
+    for (const pt of state.particles) {
+      pt.x += pt.vx * dt; pt.y += pt.vy * dt;
+      if (pt.grow) pt.r += pt.grow * dt;
+      pt.life -= dt;
+    }
+    state.particles = state.particles.filter(pt => pt.life > 0);
+
+    // Shockwaves
+    for (const sw of state.shockwaves) {
+      sw.life -= dt;
+      sw.r += ((sw.maxR - sw.r) * 12) * dt;
+    }
+    state.shockwaves = state.shockwaves.filter(sw => sw.life > 0);
+
+    // Floating Texts
+    for (const ft of state.floatingTexts) {
+      ft.y += ft.vy * dt;
+      ft.life -= dt;
+    }
+    state.floatingTexts = state.floatingTexts.filter(ft => ft.life > 0);
+
+    // Lightning & Laser beams
+    for (const a of state.lightnings) a.life -= dt;
+    state.lightnings = state.lightnings.filter(a => a.life > 0);
+    for (const lb of state.laserBeams) lb.life -= dt;
+    state.laserBeams = state.laserBeams.filter(lb => lb.life > 0);
+  }
+
+  // ---------- 3D Isometric Terrain & Military Rendering ----------
+
+  function drawIsoBlock(c, r, topStyle, leftStyle, rightStyle, depth, liftZ = 0) {
+    const hw = tileW / 2, hh = tileH / 2;
+    const cx = X_center + (c - r) * hw;
+    const cy = Y_center + (c + r + 1) * hh - blockDepth - liftZ;
+
+    const EPS = 0.75;
+    function inflate(px, py) {
+      const dx = px - cx, dy = py - cy;
+      const len = Math.hypot(dx, dy) || 1;
+      return { x: px + (dx / len) * EPS, y: py + (dy / len) * EPS };
+    }
+
+    const topPt    = inflate(cx,      cy - hh);
+    const rightPt  = inflate(cx + hw, cy);
+    const bottomPt = inflate(cx,      cy + hh);
+    const leftPt   = inflate(cx - hw, cy);
+
+    const leftGrad = ctx.createLinearGradient(leftPt.x, leftPt.y, leftPt.x, leftPt.y + depth);
+    leftGrad.addColorStop(0, lightenHex(leftStyle, 0.08));
+    leftGrad.addColorStop(1, darkenHex(leftStyle, 0.28));
+    ctx.fillStyle = leftGrad;
+    ctx.beginPath();
+    ctx.moveTo(leftPt.x, leftPt.y);
+    ctx.lineTo(bottomPt.x, bottomPt.y);
+    ctx.lineTo(bottomPt.x, bottomPt.y + depth);
+    ctx.lineTo(leftPt.x, leftPt.y + depth);
+    ctx.closePath();
+    ctx.fill();
+
+    const rightGrad = ctx.createLinearGradient(rightPt.x, rightPt.y, rightPt.x, rightPt.y + depth);
+    rightGrad.addColorStop(0, lightenHex(rightStyle, 0.04));
+    rightGrad.addColorStop(1, darkenHex(rightStyle, 0.32));
+    ctx.fillStyle = rightGrad;
+    ctx.beginPath();
+    ctx.moveTo(bottomPt.x, bottomPt.y);
+    ctx.lineTo(rightPt.x, rightPt.y);
+    ctx.lineTo(rightPt.x, rightPt.y + depth);
+    ctx.lineTo(bottomPt.x, bottomPt.y + depth);
+    ctx.closePath();
+    ctx.fill();
+
+    const topGrad = ctx.createLinearGradient(topPt.x, topPt.y, bottomPt.x, bottomPt.y);
+    topGrad.addColorStop(0, lightenHex(topStyle, 0.12));
+    topGrad.addColorStop(0.55, topStyle);
+    topGrad.addColorStop(1, darkenHex(topStyle, 0.08));
+    ctx.fillStyle = topGrad;
+    ctx.beginPath();
+    ctx.moveTo(topPt.x, topPt.y);
+    ctx.lineTo(rightPt.x, rightPt.y);
+    ctx.lineTo(bottomPt.x, bottomPt.y);
+    ctx.lineTo(leftPt.x, leftPt.y);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  function drawEarthTerrainSlab() {
+    const hw = tileW / 2, hh = tileH / 2;
+    const slabDepth = blockDepth + 30;
+
+    const rightPt  = { x: X_center + (COLS - 0) * hw,    y: Y_center + (COLS + 0) * hh - blockDepth };
+    const bottomPt = { x: X_center + (COLS - ROWS) * hw, y: Y_center + (COLS + ROWS + 1) * hh - blockDepth + hh };
+    const leftPt   = { x: X_center + (0 - ROWS) * hw,    y: Y_center + (0 + ROWS) * hh - blockDepth };
+
+    // Soft terrain shadow on earth/water surface
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(leftPt.x, leftPt.y + slabDepth + 14);
+    ctx.lineTo(bottomPt.x, bottomPt.y + slabDepth + 14);
+    ctx.lineTo(rightPt.x, rightPt.y + slabDepth + 14);
+    ctx.lineTo(bottomPt.x, bottomPt.y + slabDepth + 34);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx.filter = 'blur(14px)';
+    ctx.fill();
+    ctx.restore();
+
+    // Geological Earth Strata Left Face
+    const gradL = ctx.createLinearGradient(leftPt.x, leftPt.y, bottomPt.x, bottomPt.y + slabDepth);
+    gradL.addColorStop(0, curLevel.theme.cliffL);
+    gradL.addColorStop(0.5, darkenHex(curLevel.theme.cliffL, 0.25));
+    gradL.addColorStop(1, '#14110f');
+    ctx.fillStyle = gradL;
+    ctx.beginPath();
+    ctx.moveTo(leftPt.x, leftPt.y);
+    ctx.lineTo(bottomPt.x, bottomPt.y);
+    ctx.lineTo(bottomPt.x, bottomPt.y + slabDepth);
+    ctx.lineTo(leftPt.x, leftPt.y + slabDepth - 8);
+    ctx.closePath();
+    ctx.fill();
+
+    // Geological Earth Strata Right Face
+    const gradR = ctx.createLinearGradient(bottomPt.x, bottomPt.y, rightPt.x, rightPt.y + slabDepth);
+    gradR.addColorStop(0, curLevel.theme.cliffR);
+    gradR.addColorStop(0.5, darkenHex(curLevel.theme.cliffR, 0.28));
+    gradR.addColorStop(1, '#0f0d0c');
+    ctx.fillStyle = gradR;
+    ctx.beginPath();
+    ctx.moveTo(bottomPt.x, bottomPt.y);
+    ctx.lineTo(rightPt.x, rightPt.y);
+    ctx.lineTo(rightPt.x, rightPt.y + slabDepth - 8);
+    ctx.lineTo(bottomPt.x, bottomPt.y + slabDepth);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function enemyHitY(e) {
+    if (e.flying) return e.y;
+    return e.y - e.radius * tileW * (e.isVehicle ? 0.9 : 1.45);
+  }
+
+  // Two-segment articulated limb (thigh + shin or upper + lower arm) for realistic human gait
+  function drawArticulatedLeg(hipX, hipY, hipAngle, kneeBend, len, width, pantsColor, bootColor) {
+    const thighLen = len * 0.52;
+    const shinLen = len * 0.48;
+    ctx.save();
+    ctx.translate(hipX, hipY);
+    ctx.rotate(hipAngle);
+    ctx.fillStyle = pantsColor;
+    roundRect(-width / 2, 0, width, thighLen, width * 0.4);
+    ctx.fill();
+
+    ctx.translate(0, thighLen * 0.88);
+    ctx.rotate(kneeBend);
+    ctx.fillStyle = darkenHex(pantsColor, 0.12);
+    roundRect(-width * 0.45, 0, width * 0.9, shinLen, width * 0.35);
+    ctx.fill();
+
+    // Combat boot
+    ctx.fillStyle = bootColor || '#1e293b';
+    roundRect(-width * 0.45, shinLen * 0.78, width * 1.15, shinLen * 0.32, width * 0.25);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawLimb(originX, originY, angle, length, width, color) {
+    ctx.save();
+    ctx.translate(originX, originY);
+    ctx.rotate(angle);
+    ctx.fillStyle = color;
+    roundRect(-width / 2, 0, width, length, width / 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  const SKIN_TONE = '#e0ac79';
+
+  // 1 & 2. Realistic Modern Infantry & Spec-Ops Scout (with Kevlar helmet, tactical vest, assault rifle, knee-bending stride)
+  function drawModernSoldier(e, rad, isRunner) {
+    const phase = e.bobPhase || 0;
+    const swingAmt = isRunner ? 0.85 : 0.52;
+    const swing = Math.sin(phase * Math.PI * 2) * swingAmt;
+    const kneeL = Math.max(0, -Math.cos(phase * Math.PI * 2)) * (isRunner ? 0.75 : 0.45);
+    const kneeR = Math.max(0, Math.cos(phase * Math.PI * 2)) * (isRunner ? 0.75 : 0.45);
+    const bob = (e.z || 0) * 0.45;
+
+    const legLen = rad * (isRunner ? 1.25 : 1.32);
+    const legW = rad * 0.28;
+    const torsoW = rad * (isRunner ? 0.76 : 0.9);
+    const torsoH = rad * (isRunner ? 0.88 : 0.98);
+    const headR = rad * 0.42;
+
+    const hipY = -legLen + bob;
+    const shoulderY = hipY - torsoH;
+    const headCenterY = shoulderY - headR * 1.02;
+    const uniformColor = e.hitFlash > 0 ? '#ffffff' : e.color;
+
+    ctx.save();
+    if (isRunner) ctx.rotate(0.14); // Forward sprint lean
+
+    // Back articulated leg
+    drawArticulatedLeg(-torsoW * 0.1, hipY, -swing, kneeL, legLen, legW * 0.9, darkenHex(uniformColor, 0.28), '#0f172a');
+    // Front articulated leg
+    drawArticulatedLeg(torsoW * 0.1, hipY, swing, kneeR, legLen, legW, uniformColor, '#1e293b');
+
+    // Tactical Rucksack
+    ctx.fillStyle = darkenHex(uniformColor, 0.35);
+    roundRect(-torsoW * 0.68, shoulderY + torsoH * 0.08, torsoW * 0.38, torsoH * 0.76, torsoW * 0.1);
+    ctx.fill();
+
+    // Torso + Plate Carrier Vest
+    ctx.fillStyle = uniformColor;
+    roundRect(-torsoW / 2, shoulderY, torsoW, torsoH, torsoW * 0.25);
+    ctx.fill();
+    ctx.fillStyle = darkenHex(uniformColor, 0.22);
+    roundRect(-torsoW * 0.42, shoulderY + torsoH * 0.12, torsoW * 0.84, torsoH * 0.68, torsoW * 0.15);
+    ctx.fill();
+    // Ammo pouches on chest rig
+    ctx.fillStyle = darkenHex(uniformColor, 0.38);
+    ctx.fillRect(-torsoW * 0.32, shoulderY + torsoH * 0.45, torsoW * 0.2, torsoH * 0.25);
+    ctx.fillRect(0, shoulderY + torsoH * 0.45, torsoW * 0.2, torsoH * 0.25);
+
+    // Assault Rifle / Submachine Gun held across chest
+    const gunSway = Math.sin(phase * Math.PI * 4) * 0.05;
+    ctx.save();
+    ctx.translate(torsoW * 0.1, shoulderY + torsoH * 0.38);
+    ctx.rotate(gunSway);
+    // Rifle stock & receiver
+    ctx.fillStyle = '#1e293b';
+    roundRect(-rad * 0.35, -rad * 0.1, rad * 1.15, rad * 0.22, rad * 0.05);
+    ctx.fill();
+    // Barrel & suppressor
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(rad * 0.75, -rad * 0.06, rad * 0.55, rad * 0.1);
+    // Magazine
+    ctx.fillStyle = '#334155';
+    ctx.fillRect(rad * 0.25, rad * 0.08, rad * 0.16, rad * 0.3);
+    // Holographic sight
+    ctx.fillStyle = '#38bdf8';
+    ctx.fillRect(rad * 0.2, -rad * 0.18, rad * 0.18, rad * 0.08);
+    ctx.restore();
+
+    // Front arm gripping rifle
+    drawLimb(0, shoulderY + torsoH * 0.15, -0.45 + gunSway, rad * 0.78, rad * 0.22, uniformColor);
+
+    // Head + Kevlar Helmet & Tactical Goggles
+    ctx.fillStyle = SKIN_TONE;
+    ctx.beginPath(); ctx.arc(0, headCenterY, headR, 0, Math.PI * 2); ctx.fill();
+
+    // Kevlar helmet dome
+    ctx.fillStyle = darkenHex(uniformColor, 0.12);
+    ctx.beginPath();
+    ctx.arc(0, headCenterY - headR * 0.08, headR * 1.08, Math.PI * 0.92, Math.PI * 0.08, false);
+    ctx.closePath(); ctx.fill();
+
+    // Night-vision / Tactical Goggles
+    ctx.fillStyle = isRunner ? '#22c55e' : '#38bdf8';
+    roundRect(headR * 0.05, headCenterY - headR * 0.18, headR * 0.85, headR * 0.34, headR * 0.12);
+    ctx.fill();
+    ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 1.2;
+    ctx.stroke();
+
+    ctx.restore();
+    return headCenterY - headR * 1.3;
+  }
+
+  // 5. Realistic Combat Medic (White/Olive helmet with Red Cross emblem, medical backpack, first-aid kit)
+  function drawCombatMedic(e, rad) {
+    const phase = e.bobPhase || 0;
+    const swing = Math.sin(phase * Math.PI * 2) * 0.48;
+    const kneeL = Math.max(0, -Math.cos(phase * Math.PI * 2)) * 0.4;
+    const kneeR = Math.max(0, Math.cos(phase * Math.PI * 2)) * 0.4;
+    const bob = (e.z || 0) * 0.45;
+
+    const legLen = rad * 1.28, legW = rad * 0.28;
+    const torsoW = rad * 0.92, torsoH = rad * 0.96;
+    const headR = rad * 0.42;
+    const hipY = -legLen + bob;
+    const shoulderY = hipY - torsoH;
+    const headCenterY = shoulderY - headR * 1.02;
+    const uniformColor = e.hitFlash > 0 ? '#ffffff' : e.color;
+
+    drawArticulatedLeg(-torsoW * 0.1, hipY, -swing, kneeL, legLen, legW * 0.9, darkenHex(uniformColor, 0.25), '#0f172a');
+    drawArticulatedLeg(torsoW * 0.1, hipY, swing, kneeR, legLen, legW, uniformColor, '#1e293b');
+
+    // Large White & Red Cross Medical Backpack
+    ctx.fillStyle = '#f8fafc';
+    roundRect(-torsoW * 0.78, shoulderY + torsoH * 0.04, torsoW * 0.5, torsoH * 0.82, torsoW * 0.12);
+    ctx.fill();
+    ctx.fillStyle = '#ef4444';
+    ctx.fillRect(-torsoW * 0.58, shoulderY + torsoH * 0.25, torsoW * 0.1, torsoH * 0.36);
+    ctx.fillRect(-torsoW * 0.71, shoulderY + torsoH * 0.38, torsoW * 0.36, torsoH * 0.1);
+
+    // Torso with white medic tabard
+    ctx.fillStyle = uniformColor;
+    roundRect(-torsoW / 2, shoulderY, torsoW, torsoH, torsoW * 0.25);
+    ctx.fill();
+    ctx.fillStyle = '#f8fafc';
+    roundRect(-torsoW * 0.35, shoulderY + torsoH * 0.12, torsoW * 0.7, torsoH * 0.72, torsoW * 0.12);
+    ctx.fill();
+    // Red Cross on chest
+    ctx.fillStyle = '#ef4444';
+    ctx.fillRect(-rad * 0.06, shoulderY + torsoH * 0.26, rad * 0.12, rad * 0.36);
+    ctx.fillRect(-rad * 0.18, shoulderY + torsoH * 0.38, rad * 0.36, rad * 0.12);
+
+    // Front arm carrying green trauma kit box
+    drawLimb(0, shoulderY + torsoH * 0.18, -swing * 0.5, rad * 0.82, rad * 0.22, uniformColor);
+
+    // Head + White Medic Helmet
+    ctx.fillStyle = SKIN_TONE;
+    ctx.beginPath(); ctx.arc(0, headCenterY, headR, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#f8fafc';
+    ctx.beginPath();
+    ctx.arc(0, headCenterY - headR * 0.08, headR * 1.08, Math.PI * 0.95, Math.PI * 0.05, false);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#ef4444';
+    ctx.fillRect(-headR * 0.1, headCenterY - headR * 0.75, headR * 0.2, headR * 0.45);
+    ctx.fillRect(-headR * 0.32, headCenterY - headR * 0.58, headR * 0.64, headR * 0.18);
+
+    return headCenterY - headR * 1.3;
+  }
+
+  // 6. Realistic Ghillie Suit Stealth Sniper / Spec-Ops Commando
+  function drawStealthCommando(e, rad) {
+    const phase = e.bobPhase || 0;
+    const swing = Math.sin(phase * Math.PI * 2) * 0.65;
+    const bob = (e.z || 0) * 0.4;
+    const legLen = rad * 1.25, legW = rad * 0.26;
+    const torsoW = rad * 0.88, torsoH = rad * 0.92;
+    const headR = rad * 0.42;
+    const hipY = -legLen + bob;
+    const shoulderY = hipY - torsoH;
+    const headCenterY = shoulderY - headR * 1.0;
+
+    ctx.save();
+    ctx.globalAlpha = 0.82 + 0.15 * Math.sin(state.time * 6 + e.id);
+    ctx.rotate(0.18); // Low crouch-run posture
+
+    drawArticulatedLeg(-torsoW * 0.1, hipY, -swing, 0.5, legLen, legW, '#3f6212', '#1a2e05');
+    drawArticulatedLeg(torsoW * 0.1, hipY, swing, 0.5, legLen, legW, '#4d7c0f', '#1a2e05');
+
+    // Ghillie camouflage cape strips
+    ctx.fillStyle = '#365314';
+    ctx.beginPath();
+    ctx.moveTo(-torsoW * 0.5, shoulderY);
+    ctx.lineTo(torsoW * 0.4, shoulderY);
+    ctx.lineTo(torsoW * 0.3, hipY + rad * 0.3);
+    ctx.lineTo(-torsoW * 0.75, hipY + rad * 0.4);
+    ctx.closePath(); ctx.fill();
+
+    // Torso
+    ctx.fillStyle = e.hitFlash > 0 ? '#fff' : '#4d7c0f';
+    roundRect(-torsoW / 2, shoulderY, torsoW, torsoH, torsoW * 0.28);
+    ctx.fill();
+
+    // Silenced Sniper Rifle
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(-rad * 0.2, shoulderY + torsoH * 0.35, rad * 1.55, rad * 0.15);
+    ctx.fillStyle = '#334155';
+    ctx.fillRect(rad * 0.2, shoulderY + torsoH * 0.22, rad * 0.45, rad * 0.1);
+
+    // Ghillie Hood & Night Vision Goggles
+    ctx.fillStyle = '#3f6212';
+    ctx.beginPath(); ctx.arc(0, headCenterY, headR * 1.12, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#a3e635'; ctx.shadowColor = '#a3e635'; ctx.shadowBlur = 5;
+    ctx.beginPath();
+    ctx.arc(headR * 0.25, headCenterY - headR * 0.05, headR * 0.16, 0, Math.PI * 2);
+    ctx.arc(headR * 0.58, headCenterY - headR * 0.05, headR * 0.16, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    ctx.restore();
+    return headCenterY - headR * 1.35;
+  }
+
+  // 7. Realistic 6x6 UGV Demolition Rover (Unmanned Ground Vehicle with C4 & EMP antenna)
+  function drawUGVRover(e, rad) {
+    const phase = e.bobPhase || 0;
+    const wheelSpin = state.time * 14;
+    const bodyY = -rad * 0.65 - (e.z || 0) * 0.3;
+    const bodyW = rad * 1.45, bodyH = rad * 0.55;
+
+    // Chassis frame
+    ctx.fillStyle = e.hitFlash > 0 ? '#fff' : '#334155';
+    roundRect(-bodyW / 2, bodyY - bodyH / 2, bodyW, bodyH, rad * 0.15);
+    ctx.fill();
+
+    // C4 Demolition Charge Pack + Hazard Stripes
+    ctx.fillStyle = '#dc2626';
+    roundRect(-bodyW * 0.35, bodyY - bodyH * 0.85, bodyW * 0.7, bodyH * 0.5, rad * 0.1);
+    ctx.fill();
+
+    // Blinking EMP Beacon + Whip Antenna
+    const blink = 0.5 + 0.5 * Math.sin(state.time * 12);
+    ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(-bodyW * 0.2, bodyY - bodyH * 0.85); ctx.lineTo(-bodyW * 0.28, bodyY - bodyH * 1.7); ctx.stroke();
+    ctx.fillStyle = `rgba(239, 68, 68, ${0.4 + blink * 0.6})`;
+    ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 8;
+    ctx.beginPath(); ctx.arc(-bodyW * 0.28, bodyY - bodyH * 1.7, rad * 0.14, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // 3 rugged all-terrain wheels on visible side
+    const wheelR = rad * 0.28;
+    [-0.42, 0, 0.42].forEach(wx => {
+      const cx = bodyW * wx, cy = bodyY + bodyH * 0.38;
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath(); ctx.arc(cx, cy, wheelR, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = '#64748b'; ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(cx + Math.cos(wheelSpin) * wheelR * 0.6, cy + Math.sin(wheelSpin) * wheelR * 0.6);
+      ctx.lineTo(cx - Math.cos(wheelSpin) * wheelR * 0.6, cy - Math.sin(wheelSpin) * wheelR * 0.6);
+      ctx.stroke();
+    });
+
+    return bodyY - bodyH * 1.8;
+  }
+
+  // 3. Realistic Main Battle Tank (M1A2 / Type-99 style with rolling treads, reactive armor hull, turret & main gun)
+  function drawMainBattleTank(e, rad) {
+    const bob = (e.z || 0) * 0.25;
+    const hullW = rad * 2.05, hullH = rad * 0.68;
+    const hullY = -rad * 0.38 + bob;
+
+    // Continuous caterpillar track assembly
+    const trackH = rad * 0.42;
+    ctx.fillStyle = '#1e293b';
+    roundRect(-hullW * 0.48, -trackH, hullW * 0.96, trackH, trackH * 0.45);
+    ctx.fill();
+    ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 1.5; ctx.stroke();
+
+    // Rolling road wheels inside track
+    const wheelSpin = state.time * 9;
+    const wheelR = trackH * 0.36;
+    for (let i = -2; i <= 2; i++) {
+      const wx = i * (hullW * 0.18);
+      const wy = -trackH * 0.5;
+      ctx.fillStyle = '#475569';
+      ctx.beginPath(); ctx.arc(wx, wy, wheelR, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath(); ctx.arc(wx + Math.cos(wheelSpin) * wheelR * 0.4, wy + Math.sin(wheelSpin) * wheelR * 0.4, wheelR * 0.3, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // Sloped Armored Hull + Side Skirts
+    const armorColor = e.hitFlash > 0 ? '#ffffff' : e.color;
+    const hGrad = ctx.createLinearGradient(-hullW / 2, hullY - hullH, hullW / 2, hullY);
+    hGrad.addColorStop(0, lightenHex(armorColor, 0.22));
+    hGrad.addColorStop(1, darkenHex(armorColor, 0.24));
+    ctx.fillStyle = hGrad;
+    ctx.beginPath();
+    ctx.moveTo(-hullW * 0.5, hullY);
+    ctx.lineTo(-hullW * 0.42, hullY - hullH * 0.78);
+    ctx.lineTo(hullW * 0.35, hullY - hullH * 0.78);
+    ctx.lineTo(hullW * 0.52, hullY - hullH * 0.25);
+    ctx.lineTo(hullW * 0.48, hullY);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 1; ctx.stroke();
+
+    // Reactive armor blocks on side skirt
+    ctx.strokeStyle = 'rgba(255,255,255,0.16)';
+    for (let i = -2; i <= 2; i++) {
+      ctx.strokeRect(i * hullW * 0.16 - 3, hullY - hullH * 0.45, hullW * 0.13, hullH * 0.35);
+    }
+
+    // Turret + Long 120mm Smoothbore Cannon
+    const turretY = hullY - hullH * 0.75;
+    const turretW = hullW * 0.58, turretH = hullH * 0.65;
+
+    // Main gun barrel
+    ctx.fillStyle = darkenHex(armorColor, 0.15);
+    ctx.fillRect(turretW * 0.3, turretY - turretH * 0.55, hullW * 0.65, rad * 0.18);
+    // Bore evacuator (fume extractor) on barrel
+    ctx.fillStyle = darkenHex(armorColor, 0.28);
+    roundRect(turretW * 0.55, turretY - turretH * 0.62, hullW * 0.2, rad * 0.26, 2);
+    ctx.fill();
+
+    // Wedge-shaped composite turret
+    ctx.fillStyle = lightenHex(armorColor, 0.12);
+    ctx.beginPath();
+    ctx.moveTo(-turretW * 0.55, turretY);
+    ctx.lineTo(-turretW * 0.45, turretY - turretH);
+    ctx.lineTo(turretW * 0.35, turretY - turretH);
+    ctx.lineTo(turretW * 0.58, turretY - turretH * 0.3);
+    ctx.lineTo(turretW * 0.45, turretY);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.4)'; ctx.stroke();
+
+    // Commander cupola & CITV thermal sight
+    ctx.fillStyle = '#38bdf8';
+    ctx.fillRect(turretW * 0.12, turretY - turretH - rad * 0.14, rad * 0.22, rad * 0.14);
+
+    return turretY - turretH - rad * 0.3;
+  }
+
+  // 8. Heavy Armored Command Vehicle / Twin-Barrel Mammoth Tank Boss
+  function drawHeavyCommandTank(e, rad) {
+    const bob = (e.z || 0) * 0.2;
+    const hullW = rad * 2.25, hullH = rad * 0.85;
+    const hullY = -rad * 0.42 + bob;
+    const mainColor = e.hitFlash > 0 ? '#ffffff' : (e.enraged ? '#7c2d12' : e.color);
+
+    // Active Defense Shield Dome when enraged
+    if (e.enraged) {
+      ctx.save();
+      ctx.globalAlpha = 0.28 + 0.15 * Math.sin(state.time * 8);
+      ctx.strokeStyle = '#38bdf8'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.ellipse(0, hullY - hullH * 0.6, hullW * 0.65, hullH * 1.4, 0, 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
+    }
+
+    // Heavy Double-Track Base
+    const trackH = rad * 0.48;
+    ctx.fillStyle = '#0f172a';
+    roundRect(-hullW * 0.5, -trackH, hullW, trackH, trackH * 0.45);
+    ctx.fill();
+    for (let i = -3; i <= 3; i++) {
+      ctx.fillStyle = '#475569';
+      ctx.beginPath(); ctx.arc(i * (hullW * 0.13), -trackH * 0.5, trackH * 0.34, 0, Math.PI * 2); ctx.fill();
+    }
+
+    // Heavy Armored Hull with Hazard Chevron
+    const hGrad = ctx.createLinearGradient(-hullW / 2, hullY - hullH, hullW / 2, hullY);
+    hGrad.addColorStop(0, lightenHex(mainColor, 0.22));
+    hGrad.addColorStop(1, darkenHex(mainColor, 0.28));
+    ctx.fillStyle = hGrad;
+    roundRect(-hullW * 0.5, hullY - hullH, hullW, hullH, rad * 0.18);
+    ctx.fill();
+    ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 1.5;
+    ctx.strokeRect(-hullW * 0.44, hullY - hullH * 0.82, hullW * 0.88, hullH * 0.64);
+
+    // Twin Heavy Cannon Barrels
+    const turretY = hullY - hullH;
+    const turretW = hullW * 0.66, turretH = hullH * 0.78;
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(turretW * 0.25, turretY - turretH * 0.7, hullW * 0.65, rad * 0.16);
+    ctx.fillRect(turretW * 0.25, turretY - turretH * 0.42, hullW * 0.65, rad * 0.16);
+
+    // Turret + Missile Pod + Rotating Radar Dish
+    ctx.fillStyle = lightenHex(mainColor, 0.15);
+    roundRect(-turretW * 0.5, turretY - turretH, turretW, turretH, rad * 0.15);
+    ctx.fill();
+
+    // Rotating Tactical Radar Dish on top
+    const radarSpin = Math.cos(state.time * 5) * rad * 0.35;
+    ctx.strokeStyle = '#fde047'; ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(0, turretY - turretH - rad * 0.22, Math.max(2, Math.abs(radarSpin)), rad * 0.22, 0, 0, Math.PI * 2);
+    ctx.stroke();
+
+    return turretY - turretH - rad * 0.55;
+  }
+
+  // 4. Realistic Apache Attack Helicopter (Fuselage, cockpit canopy, tail boom, rocket pods, spinning main & tail rotors)
+  function drawAttackHelicopter(e, rad) {
+    const bodyW = rad * 1.95, bodyH = rad * 0.62;
+    const propAngle = e.propAngle || 0;
+    const hullColor = e.hitFlash > 0 ? '#ffffff' : e.color;
+
+    ctx.save();
+    ctx.rotate(0.08); // Slight nose-down attack pitch
+
+    // Tail boom & vertical stabilizer + tail rotor
+    ctx.fillStyle = darkenHex(hullColor, 0.18);
+    ctx.beginPath();
+    ctx.moveTo(-bodyW * 0.25, -bodyH * 0.15);
+    ctx.lineTo(-bodyW * 0.98, -bodyH * 0.28);
+    ctx.lineTo(-bodyW * 1.08, -bodyH * 0.75);
+    ctx.lineTo(-bodyW * 0.88, -bodyH * 0.75);
+    ctx.lineTo(-bodyW * 0.82, -bodyH * 0.05);
+    ctx.lineTo(-bodyW * 0.25, bodyH * 0.15);
+    ctx.closePath();
+    ctx.fill();
+
+    // Spinning tail rotor
+    ctx.strokeStyle = 'rgba(226, 232, 240, 0.75)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(-bodyW * 0.96, -bodyH * 0.45, rad * 0.28, propAngle, propAngle + Math.PI * 1.5);
+    ctx.stroke();
+
+    // Landing skids
+    ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(-bodyW * 0.32, bodyH * 0.68); ctx.lineTo(bodyW * 0.38, bodyH * 0.68);
+    ctx.moveTo(-bodyW * 0.18, bodyH * 0.4); ctx.lineTo(-bodyW * 0.18, bodyH * 0.68);
+    ctx.moveTo(bodyW * 0.2, bodyH * 0.4); ctx.lineTo(bodyW * 0.2, bodyH * 0.68);
+    ctx.stroke();
+
+    // Fuselage body
+    const bGrad = ctx.createLinearGradient(0, -bodyH / 2, 0, bodyH / 2);
+    bGrad.addColorStop(0, lightenHex(hullColor, 0.22));
+    bGrad.addColorStop(1, darkenHex(hullColor, 0.25));
+    ctx.fillStyle = bGrad;
+    ctx.beginPath();
+    ctx.moveTo(-bodyW * 0.45, 0);
+    ctx.quadraticCurveTo(-bodyW * 0.2, -bodyH * 0.65, bodyW * 0.35, -bodyH * 0.35);
+    ctx.quadraticCurveTo(bodyW * 0.65, 0, bodyW * 0.48, bodyH * 0.42);
+    ctx.lineTo(-bodyW * 0.35, bodyH * 0.42);
+    ctx.closePath();
+    ctx.fill();
+
+    // Tinted Armored Glass Cockpit Canopy
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.72)';
+    ctx.beginPath();
+    ctx.moveTo(0, -bodyH * 0.42);
+    ctx.lineTo(bodyW * 0.36, -bodyH * 0.28);
+    ctx.lineTo(bodyW * 0.42, bodyH * 0.05);
+    ctx.lineTo(0, bodyH * 0.05);
+    ctx.closePath();
+    ctx.fill();
+
+    // Stub wing & Hydra Rocket Pod + Nose FLIR turret
+    ctx.fillStyle = '#1e293b';
+    roundRect(-bodyW * 0.12, bodyH * 0.08, bodyW * 0.36, bodyH * 0.28, 2);
+    ctx.fill();
+    ctx.beginPath(); ctx.arc(bodyW * 0.52, bodyH * 0.22, rad * 0.15, 0, Math.PI * 2); ctx.fill();
+
+    // Navigation strobe light
+    if (Math.sin(state.time * 10 + e.id * 5) > 0.2) {
+      ctx.fillStyle = '#ef4444'; ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 6;
+      ctx.beginPath(); ctx.arc(-bodyW * 0.95, -bodyH * 0.75, rad * 0.1, 0, Math.PI * 2); ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    // Main 4-Blade Rotor Disc + Motion Blur Ring
+    const rotorY = -bodyH * 0.68;
+    const rotorR = rad * 1.55;
+    ctx.fillStyle = '#1e293b';
+    ctx.fillRect(-rad * 0.08, -bodyH * 0.68, rad * 0.16, bodyH * 0.25);
+
+    ctx.strokeStyle = 'rgba(226, 232, 240, 0.32)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.ellipse(0, rotorY, rotorR, rotorR * 0.32, 0, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.strokeStyle = 'rgba(241, 245, 249, 0.85)';
+    ctx.lineWidth = 2.2;
+    for (let i = 0; i < 2; i++) {
+      const a = propAngle + i * (Math.PI / 2);
+      ctx.beginPath();
+      ctx.moveTo(Math.cos(a) * rotorR, rotorY + Math.sin(a) * rotorR * 0.32);
+      ctx.lineTo(-Math.cos(a) * rotorR, rotorY - Math.sin(a) * rotorR * 0.32);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+    return -bodyH - rad * 0.5;
+  }
+
+  function drawCharacter(e) {
+    const rad = e.radius * tileW;
+    const shadowScale = e.flying ? Math.max(0.22, 1 - e.z / (tileW * 1.7)) : 1;
+    const groundY = e.flying ? e.y + e.z : e.y;
+
+    // Ground shadow
+    ctx.beginPath();
+    ctx.ellipse(e.x, groundY + 2, rad * (e.isVehicle ? 1.25 : 0.85) * shadowScale, rad * 0.42 * shadowScale, 0, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0,0,0,${0.42 * shadowScale})`;
+    ctx.fill();
+
+    // Rotor downwash ring on ground for helicopters
+    if (e.flying) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.14)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.ellipse(e.x, groundY + 2, rad * 1.35, rad * 0.62, 0, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    const facingDir = Math.cos(e.facing || 0) >= 0 ? 1 : -1;
+
+    ctx.save();
+    ctx.translate(e.x, e.y);
+    ctx.scale(facingDir, 1);
+
+    let topY;
+    switch (e.type) {
+      case 'flyer':   topY = drawAttackHelicopter(e, rad); break;
+      case 'tank':    topY = drawMainBattleTank(e, rad); break;
+      case 'bomber':  topY = drawUGVRover(e, rad); break;
+      case 'phantom': topY = drawStealthCommando(e, rad); break;
+      case 'medic':   topY = drawCombatMedic(e, rad); break;
+      case 'boss':    topY = drawHeavyCommandTank(e, rad); break;
+      case 'runner':  topY = drawModernSoldier(e, rad, true); break;
+      default:        topY = drawModernSoldier(e, rad, false); break;
+    }
+
+    // Cryo-foam slow visual overlay
+    if (state.time < e.slowUntil) {
+      ctx.save();
+      ctx.strokeStyle = 'rgba(56, 189, 248, 0.85)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([3, 3]);
+      ctx.strokeRect(-rad * 1.15, topY - 4, rad * 2.3, -topY + 4);
+      ctx.setLineDash([]);
+      ctx.restore();
+    }
+
+    // Health & Shield bar (unflipped so it always reads left-to-right)
+    ctx.scale(facingDir, 1);
+    const barW = rad * 1.65, barH = 3.8;
+    const barX = -barW / 2, barY = topY - 8;
+    const pct = Math.max(0, e.hp / e.maxHp);
+    roundRect(barX, barY, barW, barH, 2);
+    ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fill();
+    roundRect(barX, barY, barW * pct, barH, 2);
+    ctx.fillStyle = pct > 0.5 ? '#4ade80' : (pct > 0.25 ? '#fbbf24' : '#ef4444');
+    ctx.fill();
+    if (e.shield > 0 && e.maxShield > 0) {
+      const sPct = Math.min(1, e.shield / e.maxShield);
+      roundRect(barX, barY - 4, barW * sPct, 2.5, 1);
+      ctx.fillStyle = '#38bdf8'; ctx.fill();
+    }
+
+    ctx.restore();
+  }
+
+  // Draw 3D Military Emplacement & Weapon Turret
+  function drawTower3D(t) {
+    const stats = towerStats(t);
+    const pos = cellToPx(t.c, t.r);
+
+    if (state.selectedTower === t) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(pos.x, pos.y, stats.range, stats.range * 0.5, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(74, 222, 128, 0.08)'; ctx.fill();
+      ctx.strokeStyle = 'rgba(74, 222, 128, 0.65)'; ctx.lineWidth = 2;
+      ctx.setLineDash([6, 4]); ctx.stroke();
+
+      if (stats.chainRange) {
+        ctx.beginPath();
+        ctx.ellipse(pos.x, pos.y, stats.chainRange, stats.chainRange * 0.5, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(96, 165, 250, 0.65)'; ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    const scalePop = t.buildAnim > 0 ? (1 + Math.sin(t.buildAnim * Math.PI) * 0.25) : 1;
+    const pedW = tileW * 0.7 * scalePop, pedH = tileH * 0.7 * scalePop;
+    const pH = tileW * 0.36 * scalePop;
+    const topY = pos.y - pH;
+
+    let topColor = '#64748b', leftColor = '#475569', rightColor = '#334155';
+    if (t.type === 'gatling') {
+      topColor = '#a89070'; leftColor = '#7d694f'; rightColor = '#5e4e3a'; // Sandbag & concrete bunker
+    } else if (t.type === 'cannon') {
+      topColor = '#4d6b53'; leftColor = '#384f3d'; rightColor = '#27382b'; // Olive drab artillery pad
+    } else if (t.type === 'frost') {
+      topColor = '#0284c7'; leftColor = '#0369a1'; rightColor = '#075985'; // Industrial cryo tank base
+    } else if (t.type === 'sniper') {
+      topColor = '#64748b'; leftColor = '#475569'; rightColor = '#334155'; // Steel watchtower base
+    } else if (t.type === 'lightning') {
+      topColor = '#3b82f6'; leftColor = '#1d4ed8'; rightColor = '#1e3a8a'; // HPM radar array base
+    } else if (t.type === 'flak') {
+      topColor = '#3f6212'; leftColor = '#365314'; rightColor = '#1a2e05'; // SAM battery base
+    }
+
+    // Concrete / Sandbag Pedestal Block
+    ctx.fillStyle = leftColor;
+    ctx.beginPath();
+    ctx.moveTo(pos.x - pedW / 2, pos.y);
+    ctx.lineTo(pos.x, pos.y + pedH / 2);
+    ctx.lineTo(pos.x, topY + pedH / 2);
+    ctx.lineTo(pos.x - pedW / 2, topY);
+    ctx.closePath(); ctx.fill();
+
+    ctx.fillStyle = rightColor;
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y + pedH / 2);
+    ctx.lineTo(pos.x + pedW / 2, pos.y);
+    ctx.lineTo(pos.x + pedW / 2, topY);
+    ctx.lineTo(pos.x, topY + pedH / 2);
+    ctx.closePath(); ctx.fill();
+
+    ctx.fillStyle = topColor;
+    ctx.beginPath();
+    ctx.moveTo(pos.x, topY - pedH / 2);
+    ctx.lineTo(pos.x + pedW / 2, topY);
+    ctx.lineTo(pos.x, topY + pedH / 2);
+    ctx.lineTo(pos.x - pedW / 2, topY);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.lineWidth = 1; ctx.stroke();
+
+    // Turret Weapon Assembly
+    ctx.save();
+    ctx.translate(pos.x, topY);
+
+    if (t.type === 'gatling') {
+      ctx.rotate(t.facing || 0);
+      const rec = (t.recoil || 0) * 3;
+      // Rotary Vulcan housing & multi-barrels
+      ctx.fillStyle = '#334155';
+      roundRect(-7 - rec, -6, 11, 12, 3); ctx.fill();
+      ctx.fillStyle = '#94a3b8';
+      const spinOffset = Math.sin(t.barrelSpin || 0) * 1.5;
+      ctx.fillRect(3 - rec, -4.5 + spinOffset * 0.4, 13, 2);
+      ctx.fillRect(3 - rec, -1, 13, 2);
+      ctx.fillRect(3 - rec, 2.5 - spinOffset * 0.4, 13, 2);
+      if (t.muzzleFlash > 0) {
+        ctx.fillStyle = '#fef08a'; ctx.shadowColor = '#f59e0b'; ctx.shadowBlur = 10;
+        ctx.beginPath(); ctx.arc(18 - rec, 0, 4.5, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    } else if (t.type === 'cannon') {
+      ctx.rotate(t.facing || 0);
+      const rec = (t.recoil || 0) * 5;
+      // 155mm Howitzer gun shield & heavy barrel with muzzle brake
+      ctx.fillStyle = '#3f4d3b';
+      roundRect(-8 - rec * 0.5, -7, 13, 14, 3); ctx.fill();
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(2 - rec, -3.5, 17, 7);
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(17 - rec, -5, 4, 10); // Muzzle brake
+      if (t.muzzleFlash > 0) {
+        ctx.fillStyle = '#fb923c'; ctx.shadowColor = '#ea580c'; ctx.shadowBlur = 12;
+        ctx.beginPath(); ctx.arc(23 - rec, 0, 6.5, 0, Math.PI * 2); ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+    } else if (t.type === 'frost') {
+      // Twin pressurized liquid-nitrogen tanks + rotating cryo nozzle
+      ctx.fillStyle = '#e0f2fe';
+      ctx.beginPath(); ctx.arc(-5, -3, 4.5, 0, Math.PI * 2); ctx.arc(5, -3, 4.5, 0, Math.PI * 2); ctx.fill();
+      ctx.rotate(t.facing || 0);
+      ctx.fillStyle = '#0284c7';
+      roundRect(-4, -4, 14, 8, 3); ctx.fill();
+      ctx.fillStyle = '#7dd3fc';
+      ctx.fillRect(9, -3, 5, 6);
+    } else if (t.type === 'sniper') {
+      // Elevated steel watchtower + camo canopy + Barrett anti-materiel rifle
+      ctx.rotate(t.facing || 0);
+      const rec = (t.recoil || 0) * 4;
+      ctx.fillStyle = '#475569';
+      roundRect(-6, -5, 11, 10, 2); ctx.fill();
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(2 - rec, -1.8, 22, 3.6);
+      // Scope & red laser emitter
+      ctx.fillStyle = '#ef4444';
+      ctx.fillRect(4 - rec, -3.5, 6, 2);
+    } else if (t.type === 'lightning') {
+      // High-Power Microwave dish + glowing capacitor coil
+      ctx.rotate(t.radarAngle || 0);
+      ctx.strokeStyle = '#93c5fd'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(0, 0, 8, -0.8, 0.8); ctx.stroke();
+      ctx.fillStyle = '#60a5fa'; ctx.shadowColor = '#3b82f6'; ctx.shadowBlur = 9;
+      ctx.beginPath(); ctx.arc(0, 0, 4.8, 0, Math.PI * 2); ctx.fill();
+      ctx.shadowBlur = 0;
+    } else if (t.type === 'flak') {
+      // Quad SAM Missile Launcher Box + Rotating Radar
+      ctx.rotate(t.facing || 0);
+      const rec = (t.recoil || 0) * 3;
+      ctx.fillStyle = '#365314';
+      roundRect(-7 - rec, -7, 15, 14, 2); ctx.fill();
+      ctx.fillStyle = '#ef4444';
+      ctx.beginPath();
+      ctx.arc(7 - rec, -3.5, 2, 0, Math.PI * 2);
+      ctx.arc(7 - rec, 3.5, 2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    ctx.restore();
+
+    if (state.time < t.disabledUntil) {
+      ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 1.5;
+      ctx.strokeRect(pos.x - pedW / 2, topY - pedH / 2, pedW, pedH + pH);
+    }
+
+    if (t.level > 1) {
+      ctx.fillStyle = '#fbbf24'; ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(t.level === 3 ? '★★★' : '★★', pos.x, topY - pedH / 2 - 8);
+    }
+  }
+
+  // Enemy Forward Outpost / Tunnel Entrance
+  function drawForwardOutpost3D(pos) {
+    ctx.save();
+    ctx.translate(pos.x, pos.y);
+    // Asphalt helipad/staging pad with yellow-black hazard ring
+    ctx.beginPath();
+    ctx.ellipse(0, 0, tileW * 0.44, tileH * 0.44, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(30, 41, 59, 0.85)'; ctx.fill();
+    ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2; ctx.stroke();
+
+    // Concrete tunnel arch & blinking red tactical beacon
+    ctx.fillStyle = '#475569';
+    roundRect(-tileW * 0.28, -tileW * 0.32, tileW * 0.56, tileW * 0.26, 4);
+    ctx.fill();
+    ctx.fillStyle = '#0f172a';
+    roundRect(-tileW * 0.2, -tileW * 0.24, tileW * 0.4, tileW * 0.2, 3);
+    ctx.fill();
+
+    const pulse = 0.5 + 0.5 * Math.sin(state.time * 6);
+    ctx.fillStyle = `rgba(239, 68, 68, ${0.5 + pulse * 0.5})`;
+    ctx.shadowColor = '#ef4444'; ctx.shadowBlur = 8;
+    ctx.beginPath(); ctx.arc(0, -tileW * 0.36, 3.5, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.restore();
+  }
+
+  // Allied Command HQ & Rotating Radar Base (Replaces Magic Crystal Core)
+  function drawCommandHQ3D(pos) {
+    ctx.save();
+    ctx.translate(pos.x, pos.y);
+
+    // Reinforced Helipad / Base Perimeter
+    ctx.beginPath();
+    ctx.ellipse(0, 0, tileW * 0.48, tileH * 0.48, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(34, 197, 94, 0.22)'; ctx.fill();
+    ctx.strokeStyle = '#4ade80'; ctx.lineWidth = 2; ctx.stroke();
+
+    // Armored Command Bunker Building
+    const bw = tileW * 0.56, bh = tileW * 0.38;
+    ctx.fillStyle = '#334155';
+    roundRect(-bw / 2, -bh, bw, bh, 4);
+    ctx.fill();
+    ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 1; ctx.stroke();
+
+    // Command Center Armored Windows
+    ctx.fillStyle = '#38bdf8';
+    ctx.fillRect(-bw * 0.35, -bh * 0.72, bw * 0.7, bh * 0.22);
+
+    // Rotating Satellite Radar Dish on Roof
+    const dishY = -bh - 8;
+    const dishW = Math.max(3, Math.abs(Math.cos(state.time * 2.4)) * 11);
+    ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, -bh); ctx.lineTo(0, dishY); ctx.stroke();
+    ctx.fillStyle = '#4ade80'; ctx.shadowColor = '#4ade80'; ctx.shadowBlur = 8;
+    ctx.beginPath();
+    ctx.ellipse(0, dishY - 3, dishW, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    ctx.restore();
+  }
+
+  function drawObstacle3D(d) {
+    const pos = cellToPx(d.c, d.r);
+    const sway = Math.sin(state.time * 2.2 + d.c * 0.7 + d.r * 0.5) * 1.6;
+
+    if (d.type === 'rock' || d.type === 'sandrock' || d.type === 'icerock') {
+      const sz = tileW * 0.28;
+      ctx.beginPath();
+      ctx.ellipse(pos.x, pos.y + sz * 0.55, sz * 0.9, sz * 0.32, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fill();
+
+      const grad = ctx.createLinearGradient(pos.x - sz, pos.y - sz * 1.3, pos.x + sz, pos.y);
+      if (d.type === 'sandrock') {
+        grad.addColorStop(0, '#d97706'); grad.addColorStop(0.55, '#b45309'); grad.addColorStop(1, '#78350f');
+      } else if (d.type === 'icerock') {
+        grad.addColorStop(0, '#e0f2fe'); grad.addColorStop(0.55, '#94a3b8'); grad.addColorStop(1, '#475569');
+      } else {
+        grad.addColorStop(0, '#6b7d94'); grad.addColorStop(0.55, '#475569'); grad.addColorStop(1, '#2c3644');
+      }
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.moveTo(pos.x - sz, pos.y);
+      ctx.lineTo(pos.x - sz * 0.3, pos.y - sz * 1.3);
+      ctx.lineTo(pos.x + sz * 0.5, pos.y - sz * 0.9);
+      ctx.lineTo(pos.x + sz, pos.y);
+      ctx.lineTo(pos.x + sz * 0.2, pos.y + sz * 0.6);
+      ctx.lineTo(pos.x - sz * 0.4, pos.y + sz * 0.5);
+      ctx.closePath(); ctx.fill();
+    } else if (d.type === 'pinetree' || d.type === 'snowpine') {
+      const h = tileW * 0.55, w = tileW * 0.2;
+      ctx.beginPath();
+      ctx.ellipse(pos.x, pos.y + 3, w * 1.1, w * 0.4, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fill();
+
+      ctx.fillStyle = '#4a2e17';
+      ctx.fillRect(pos.x - w * 0.12, pos.y - h * 0.15, w * 0.24, h * 0.2);
+
+      for (let i = 0; i < 3; i++) {
+        const ty = pos.y - h * 0.15 - i * h * 0.28;
+        const tw = w * (1.15 - i * 0.28);
+        ctx.fillStyle = d.type === 'snowpine' ? (i === 2 ? '#f8fafc' : '#334155') : '#15803d';
+        ctx.beginPath();
+        ctx.moveTo(pos.x - tw + sway * 0.3, ty);
+        ctx.lineTo(pos.x + sway * (0.5 + i * 0.2), ty - h * 0.4);
+        ctx.lineTo(pos.x + tw + sway * 0.3, ty);
+        ctx.closePath(); ctx.fill();
+      }
+    } else if (d.type === 'roundtree') {
+      const h = tileW * 0.5, r = tileW * 0.22;
+      ctx.beginPath();
+      ctx.ellipse(pos.x, pos.y + 3, r * 1.1, r * 0.4, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fill();
+
+      ctx.fillStyle = '#4a2e17';
+      ctx.fillRect(pos.x - r * 0.14, pos.y - h * 0.35, r * 0.28, h * 0.4);
+
+      const foliageY = pos.y - h * 0.55;
+      const grad = ctx.createRadialGradient(pos.x - r * 0.3 + sway * 0.5, foliageY - r * 0.3, 1, pos.x + sway * 0.5, foliageY, r * 1.15);
+      grad.addColorStop(0, '#4ade80');
+      grad.addColorStop(0.7, '#16a34a');
+      grad.addColorStop(1, '#14532d');
+      ctx.fillStyle = grad;
+      ctx.beginPath(); ctx.arc(pos.x + sway * 0.5, foliageY, r, 0, Math.PI * 2); ctx.fill();
+    } else if (d.type === 'cactus') {
+      const h = tileW * 0.42;
+      ctx.fillStyle = '#15803d';
+      roundRect(pos.x - 3, pos.y - h, 6, h, 3); ctx.fill();
+      roundRect(pos.x - 9, pos.y - h * 0.7, 6, 4, 2); ctx.fill();
+      roundRect(pos.x - 9, pos.y - h * 0.9, 4, h * 0.25, 2); ctx.fill();
+      roundRect(pos.x + 3, pos.y - h * 0.55, 6, 4, 2); ctx.fill();
+      roundRect(pos.x + 5, pos.y - h * 0.8, 4, h * 0.3, 2); ctx.fill();
+    } else if (d.type === 'oilbarrel' || d.type === 'bunkerprop') {
+      // Tactical barricade / fuel drums
+      const w = tileW * 0.28, h = tileW * 0.26;
+      ctx.fillStyle = d.type === 'oilbarrel' ? '#b91c1c' : '#475569';
+      roundRect(pos.x - w / 2, pos.y - h, w, h, 3); ctx.fill();
+      ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(pos.x - w / 2, pos.y - h * 0.5); ctx.lineTo(pos.x + w / 2, pos.y - h * 0.5); ctx.stroke();
+    } else {
+      // Grass / bush tufts swaying in wind
+      ctx.strokeStyle = curLevel.weather === 'sand' ? 'rgba(217, 119, 6, 0.65)' : 'rgba(134, 239, 172, 0.65)';
+      ctx.lineCap = 'round';
+      for (let i = -1; i <= 1; i++) {
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.moveTo(pos.x + i * 3, pos.y + 2);
+        ctx.quadraticCurveTo(pos.x + i * 3 + sway, pos.y - 5, pos.x + i * 4 + sway * 1.3, pos.y - 9);
+        ctx.stroke();
+      }
+    }
+  }
+
+  // ---------- Main Render Pipeline ----------
+  function render() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Earth Theater Environment Backdrop
+    const bgGrad = ctx.createRadialGradient(W / 2, H / 2, 80, W / 2, H / 2, Math.max(W, H) * 0.78);
+    bgGrad.addColorStop(0, curLevel.theme.bg0);
+    bgGrad.addColorStop(1, curLevel.theme.bg1);
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Subtle animated ocean/river ripples when theater has water
+    if (curLevel.theme.water) {
+      ctx.strokeStyle = 'rgba(125, 211, 252, 0.08)';
+      ctx.lineWidth = 1.5;
+      for (let i = 0; i < 18; i++) {
+        const rx = ((i * 137 + state.time * 18) % (W + 120)) - 60;
+        const ry = (i * 89) % H;
+        ctx.beginPath();
+        ctx.moveTo(rx, ry);
+        ctx.quadraticCurveTo(rx + 20, ry - 4, rx + 40, ry);
+        ctx.stroke();
+      }
+    }
+
+    // Camera Transform
+    ctx.save();
+    let shakeX = 0, shakeY = 0;
+    if (state.screenShake > 0) {
+      shakeX = (Math.random() - 0.5) * 12 * (state.screenShake / 0.45);
+      shakeY = (Math.random() - 0.5) * 12 * (state.screenShake / 0.45);
+    }
+    ctx.translate(W / 2 + camera.x + shakeX, H / 2 + camera.y + shakeY);
+    ctx.scale(camera.scale, camera.scale);
+    ctx.translate(-W / 2, -H / 2);
+
+    // 1. Geological Earth Strata Base
+    drawEarthTerrainSlab();
+
+    // 2. Render 3D Grid Blocks & Realistic Highway Lane Markings
+    const hoverCell = state.selectedBuildType && state.hover ? state.hover : null;
+
+    for (let depth = 0; depth < COLS + ROWS; depth++) {
+      for (let r = 0; r < ROWS; r++) {
+        const c = depth - r;
+        if (c < 0 || c >= COLS) continue;
+
+        const k = keyOf(c, r);
+        const isPath = pathSet.has(k);
+        const isHovered = hoverCell && hoverCell.c === c && hoverCell.r === r;
+        const liftZ = isHovered ? 8 : 0;
+
+        let topStyle, leftStyle, rightStyle;
+        if (isPath) {
+          topStyle = curLevel.theme.pathTop;
+          leftStyle = curLevel.theme.pathLeft;
+          rightStyle = curLevel.theme.pathRight;
+        } else {
+          const isAlt = (c + r) % 2 === 0;
+          topStyle = isAlt ? curLevel.theme.top : curLevel.theme.alt;
+          leftStyle = curLevel.theme.left;
+          rightStyle = curLevel.theme.right;
+        }
+
+        drawIsoBlock(c, r, topStyle, leftStyle, rightStyle, blockDepth, liftZ);
+
+        // Realistic Highway Dashed Center Line
+        if (isPath) {
+          const pos = cellToPx(c, r, liftZ);
+          const dir = pathDirMap.get(k);
+          ctx.strokeStyle = curLevel.theme.pathLine;
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          if (dir && (dir.dc !== 0 || dir.dr !== 0)) {
+            const nextPos = cellToPx(c + dir.dc * 0.28, r + dir.dr * 0.28, liftZ);
+            const prevPos = cellToPx(c - dir.dc * 0.28, r - dir.dr * 0.28, liftZ);
+            ctx.moveTo(prevPos.x, prevPos.y);
+            ctx.lineTo(nextPos.x, nextPos.y);
+          } else {
+            ctx.arc(pos.x, pos.y, 2, 0, Math.PI * 2);
+          }
+          ctx.stroke();
+        }
+      }
+    }
+
+    // 2.5 Ground Scorch / Crater Marks
+    for (const sm of state.scorchMarks) {
+      ctx.save();
+      ctx.globalAlpha = Math.min(0.45, (sm.life / sm.maxLife) * 0.5);
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.ellipse(sm.x, sm.y, sm.r, sm.r * 0.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // 3. Air Tactical Corridors
+    for (const airPts of airPathsPoints) {
+      if (airPts.length > 1) {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.38)';
+        ctx.lineWidth = Math.max(2, tileW * 0.07);
+        ctx.setLineDash([tileW * 0.35, tileW * 0.25]);
+        ctx.lineDashOffset = -state.time * tileW * 1.5;
+        ctx.beginPath();
+        ctx.moveTo(airPts[0].x, airPts[0].y);
+        for (let i = 1; i < airPts.length; i++) ctx.lineTo(airPts[i].x, airPts[i].y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+    }
+
+    // 4. Forward Outpost Entrances & Command HQ
+    const startKeys = new Set();
+    const endKeys = new Set();
+    for (const gPath of groundPaths) {
+      if (gPath.length > 0) {
+        startKeys.add(keyOf(gPath[0].c, gPath[0].r));
+        endKeys.add(keyOf(gPath[gPath.length - 1].c, gPath[gPath.length - 1].r));
+      }
+    }
+    for (const k of startKeys) {
+      const [c, r] = k.split(",").map(Number);
+      drawForwardOutpost3D(cellToPx(c, r));
+    }
+    for (const k of endKeys) {
+      const [c, r] = k.split(",").map(Number);
+      drawCommandHQ3D(cellToPx(c, r));
+    }
+
+    // 6. Build Hologram Preview
+    if (hoverCell && inGrid(hoverCell.c, hoverCell.r)) {
+      const ok = canBuild(hoverCell.c, hoverCell.r) && state.gold >= TOWER_TYPES[state.selectedBuildType].cost;
+      const pos = cellToPx(hoverCell.c, hoverCell.r, 8);
+      const rangePx = TOWER_TYPES[state.selectedBuildType].range * cellUnit;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(pos.x, pos.y, rangePx, rangePx * 0.5, 0, 0, Math.PI * 2);
+      ctx.fillStyle = ok ? 'rgba(74, 222, 128, 0.14)' : 'rgba(239, 68, 68, 0.14)';
+      ctx.fill();
+      ctx.strokeStyle = ok ? '#4ade80' : '#ef4444';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.font = '20px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.globalAlpha = 0.8;
+      ctx.fillText(TOWER_TYPES[state.selectedBuildType].icon, pos.x, pos.y - tileW * 0.35);
+      ctx.restore();
+    }
+
+    // 7. Depth-Sorted Scene Objects
+    const renderList = [];
+    for (const d of decorations) {
+      renderList.push({ type: 'obstacle', depth: d.c + d.r, item: d });
+    }
+    for (const t of state.towers) {
+      renderList.push({ type: 'tower', depth: t.c + t.r + 0.5, item: t });
+    }
+    for (const e of state.enemies) {
+      const effR = (e.y + (e.flying ? e.z : 0) - Y_center) / tileH;
+      const effC = (e.x - X_center) / tileW;
+      const depth = effC + effR;
+      renderList.push({ type: 'enemy', depth: e.flying ? depth + 4 : depth, item: e });
+    }
+    renderList.sort((a, b) => a.depth - b.depth);
+
+    for (const entity of renderList) {
+      if (entity.type === 'obstacle') drawObstacle3D(entity.item);
+      else if (entity.type === 'tower') drawTower3D(entity.item);
+      else if (entity.type === 'enemy') drawCharacter(entity.item);
+    }
+
+    // 8. Ground Shockwaves
+    for (const sw of state.shockwaves) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.ellipse(sw.x, sw.y, sw.r, sw.r * 0.5, 0, 0, Math.PI * 2);
+      ctx.strokeStyle = sw.color;
+      ctx.lineWidth = 2.5;
+      ctx.globalAlpha = sw.life / sw.maxLife;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    // 8.5 Brass Shell Casings
+    for (const sc of state.shellCasings) {
+      ctx.save();
+      ctx.translate(sc.x, sc.y);
+      ctx.rotate(sc.rot);
+      ctx.globalAlpha = Math.max(0, sc.life / sc.maxLife);
+      ctx.fillStyle = '#fbbf24';
+      ctx.fillRect(-2, -1, 4, 2);
+      ctx.restore();
+    }
+
+    // 9. Projectiles (Artillery Shells, SAM Missiles, Tracer Rounds)
+    for (const p of state.projectiles) {
+      const rad = Math.max(3.2, tileW * 0.068);
+      if (p.type === 'cannon') {
+        const progress = Math.min(1, p.currDist / (p.travelDist || 1));
+        const arcZ = Math.sin(progress * Math.PI) * (tileW * 0.65);
+        ctx.beginPath();
+        ctx.ellipse(p.x, p.y, rad * 0.8, rad * 0.4, 0, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(0,0,0,0.32)'; ctx.fill();
+
+        ctx.save();
+        ctx.translate(p.x, p.y - arcZ);
+        ctx.rotate(p.facing || 0);
+        ctx.fillStyle = '#334155';
+        roundRect(-rad * 1.4, -rad * 0.7, rad * 2.8, rad * 1.4, rad * 0.6);
+        ctx.fill();
+        ctx.fillStyle = '#f97316';
+        ctx.beginPath(); ctx.arc(rad * 1.1, 0, rad * 0.6, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      } else if (p.type === 'flak') {
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.facing || 0);
+        ctx.fillStyle = '#f8fafc';
+        ctx.fillRect(-rad * 1.6, -rad * 0.5, rad * 3.2, rad);
+        ctx.fillStyle = '#ef4444';
+        ctx.fillRect(rad * 1.2, -rad * 0.5, rad * 0.8, rad);
+        ctx.restore();
+      } else {
+        ctx.beginPath(); ctx.arc(p.x, p.y, rad * 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = hexToRgba(p.color, 0.35); ctx.fill();
+        ctx.beginPath(); ctx.arc(p.x, p.y, rad * 0.95, 0, Math.PI * 2);
+        ctx.fillStyle = p.color; ctx.fill();
+      }
+    }
+
+    // 10. Particles & Smoke
+    for (const pt of state.particles) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, pt.life / pt.maxLife);
+      ctx.fillStyle = pt.color;
+      ctx.beginPath(); ctx.arc(pt.x, pt.y, pt.r || 3, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+
+    // 11. Sniper Infrared Laser Beams & HPM Arcs
+    for (const lb of state.laserBeams) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, lb.life / lb.maxLife);
+      ctx.strokeStyle = lb.color;
+      ctx.lineWidth = 2;
+      ctx.shadowColor = lb.color; ctx.shadowBlur = 8;
+      ctx.beginPath(); ctx.moveTo(lb.x1, lb.y1); ctx.lineTo(lb.x2, lb.y2); ctx.stroke();
+      ctx.restore();
+    }
+
+    for (const a of state.lightnings) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, a.life / a.maxLife);
+      ctx.shadowColor = '#60a5fa'; ctx.shadowBlur = 10;
+      ctx.strokeStyle = '#93c5fd'; ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      const mx = (a.x1 + a.x2) / 2 + (Math.random() - 0.5) * tileW * 0.35;
+      const my = (a.y1 + a.y2) / 2 + (Math.random() - 0.5) * tileW * 0.35;
+      ctx.moveTo(a.x1, a.y1); ctx.lineTo(mx, my); ctx.lineTo(a.x2, a.y2);
+      ctx.stroke(); ctx.restore();
+    }
+
+    // 12. Floating Tactical Texts
+    for (const ft of state.floatingTexts) {
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, ft.life / ft.maxLife);
+      ctx.font = 'bold 13px sans-serif';
+      ctx.fillStyle = ft.color;
+      ctx.textAlign = 'center';
+      ctx.shadowColor = '#000'; ctx.shadowBlur = 4;
+      ctx.fillText(ft.text, ft.x, ft.y);
+      ctx.restore();
+    }
+
+    ctx.restore();
+
+    // Screen-Space Weather Overlay (Clouds / Rain / Snow / Sandstorm)
+    ctx.save();
+    for (const wp of weatherParticles) {
+      ctx.globalAlpha = wp.alpha;
+      if (curLevel.weather === 'rain') {
+        ctx.strokeStyle = '#bae6fd';
+        ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        ctx.moveTo(wp.x, wp.y);
+        ctx.lineTo(wp.x - 4, wp.y - 14);
+        ctx.stroke();
+      } else if (curLevel.weather === 'snow') {
+        ctx.fillStyle = '#f8fafc';
+        ctx.beginPath();
+        ctx.arc(wp.x + Math.sin(state.time * 2 + wp.phase) * 4, wp.y, wp.r, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (curLevel.weather === 'sand') {
+        ctx.fillStyle = '#fde68a';
+        ctx.beginPath();
+        ctx.arc(wp.x, wp.y, wp.r, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.fillStyle = '#f8fafc';
+        ctx.beginPath();
+        ctx.ellipse(wp.x, wp.y, wp.r, wp.r * 0.45, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    ctx.restore();
+
+    // Vignette
+    const vig = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.38, W / 2, H / 2, Math.max(W, H) * 0.74);
+    vig.addColorStop(0, 'rgba(0,0,0,0)');
+    vig.addColorStop(1, 'rgba(0,0,0,0.35)');
+    ctx.fillStyle = vig;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // ---------- Utilities ----------
+  function roundRect(x, y, w, h, r) {
+    r = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  const colorCache = new Map();
+  function hexToRgb(hex) {
+    if (colorCache.has(hex)) return colorCache.get(hex);
+    let h = hex.replace('#', '');
+    if (h.length === 3) h = h.split('').map(c => c + c).join('');
+    const num = parseInt(h, 16);
+    const rgb = { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
+    colorCache.set(hex, rgb);
+    return rgb;
+  }
+  function hexToRgba(hex, a) {
+    const { r, g, b } = hexToRgb(hex);
+    return `rgba(${r},${g},${b},${a})`;
+  }
+  function lightenHex(hex, amt) {
+    const { r, g, b } = hexToRgb(hex);
+    const mix = (v) => Math.round(v + (255 - v) * amt);
+    return `rgb(${mix(r)},${mix(g)},${mix(b)})`;
+  }
+  function darkenHex(hex, amt) {
+    const { r, g, b } = hexToRgb(hex);
+    const mix = (v) => Math.round(v * (1 - amt));
+    return `rgb(${mix(r)},${mix(g)},${mix(b)})`;
+  }
+
+  // ---------- UI Synchronization & Modals ----------
+  function syncHud() {
+    levelNameEl.textContent = `战区 ${curLevel.id}: ${curLevel.name}`;
+    goldVal.textContent = state.gold;
+    livesVal.textContent = state.lives;
+    waveVal.textContent = state.wave + '/' + curLevel.wavesCount;
+    scoreVal.textContent = state.score;
+  }
+
+  let bannerTimeout = null;
+  function showBanner(html, ms) {
+    bannerEl.innerHTML = html;
+    bannerEl.style.display = 'block';
+    if (bannerTimeout) clearTimeout(bannerTimeout);
+    if (ms) bannerTimeout = setTimeout(() => { bannerEl.style.display = 'none'; }, ms);
+  }
+
+  function updateBetweenWaveBanner() {
+    if (state.betweenWaves && !state.gameOver && !state.levelClear) {
+      showBanner(`下一波敌军推进倒计时: ${Math.ceil(state.countdown)}s <button id="skipBtn">立即迎敌</button>`, 0);
+      const skipBtn = document.getElementById('skipBtn');
+      if (skipBtn) skipBtn.onclick = () => { state.countdown = 0; };
+    } else if (!bannerTimeout) {
+      bannerEl.style.display = 'none';
+    }
+  }
+
+  function buildShop() {
+    shopEl.innerHTML = '';
+    TOWER_ORDER.forEach((type, idx) => {
+      const info = TOWER_TYPES[type];
+      const btn = document.createElement('div');
+      btn.className = 'tower-btn glass';
+      btn.title = info.desc + (info.airOnly ? '（专精防空）' : (info.canAirTarget ? '（陆空兼备）' : '（对地火力）'));
+      const badge = info.airOnly ? '<span style="font-size:9px;vertical-align:top;">🎯✈️</span>' : (info.canAirTarget ? '<span style="font-size:9px;vertical-align:top;">✈️</span>' : '');
+      btn.innerHTML = `
+        <div class="hotkey">${idx + 1}</div>
+        <div class="icon">${info.icon}${badge}</div>
+        <div class="name">${info.name}</div>
+        <div class="cost">${info.cost}💰</div>
+      `;
+      btn.onclick = () => {
+        ensureAudio();
+        if (state.selectedBuildType === type) { state.selectedBuildType = null; }
+        else { state.selectedBuildType = type; state.selectedTower = null; hideTowerPanel(); }
+        refreshShopSelection();
+      };
+      btn.dataset.type = type;
+      shopEl.appendChild(btn);
+    });
+  }
+
+  function refreshShopSelection() {
+    Array.from(shopEl.children).forEach(btn => {
+      btn.classList.toggle('selected', btn.dataset.type === state.selectedBuildType);
+      const cost = TOWER_TYPES[btn.dataset.type].cost;
+      btn.classList.toggle('disabled', state.gold < cost);
+    });
+  }
+
+  function showTowerPanel(t) {
+    towerPanelEl.style.display = 'block';
+    const info = TOWER_TYPES[t.type];
+    const stats = towerStats(t);
+    document.getElementById('tpTitle').textContent = `${info.icon} ${info.name} Lv.${t.level}`;
+    let statsText = `火力 ${Math.round(stats.dmg)} · 射程 ${(stats.range / cellUnit).toFixed(1)} 格 · 射速 ${stats.rate.toFixed(1)}/s`;
+    statsText += stats.airOnly ? ' · 防空导弹(仅对空)' : (stats.canAirTarget ? ' · 陆空兼备' : ' · 对地重火器');
+    if (stats.chain) statsText += ` · 电磁连锁 ${stats.chain + 1} 目标`;
+    document.getElementById('tpStats').textContent = statsText;
+
+    const upBtn = document.getElementById('upgradeBtn');
+    const sellBtn = document.getElementById('sellBtn');
+    if (t.level >= 3) {
+      upBtn.textContent = '已满级';
+      upBtn.disabled = true;
+    } else {
+      const cost = upgradeCost(t);
+      upBtn.textContent = `升级 (${cost}💰)`;
+      upBtn.disabled = state.gold < cost;
+    }
+    sellBtn.textContent = `撤收 (+${sellValue(t)}💰)`;
+  }
+  function hideTowerPanel() { towerPanelEl.style.display = 'none'; }
+
+  document.getElementById('upgradeBtn').onclick = () => {
+    const t = state.selectedTower;
+    if (!t || t.level >= 3) return;
+    const cost = upgradeCost(t);
+    if (state.gold < cost) { sfx.error(); return; }
+    state.gold -= cost;
+    t.totalSpent += cost;
+    t.level++;
+    t.buildAnim = 1.0;
+    sfx.upgrade();
+    spawnImpactParticles(t.x, t.y - tileW * 0.35, '#fbbf24', 16);
+    showTowerPanel(t);
+  };
+  document.getElementById('sellBtn').onclick = () => {
+    const t = state.selectedTower;
+    if (!t) return;
+    state.gold += sellValue(t);
+    towerAt.delete(keyOf(t.c, t.r));
+    state.towers = state.towers.filter(x => x !== t);
+    state.selectedTower = null;
+    hideTowerPanel();
+    sfx.sell();
+  };
+  document.getElementById('closePanelBtn').onclick = () => {
+    state.selectedTower = null;
+    hideTowerPanel();
+  };
+
+  // ---------- Level Modal Management ----------
+  function openLevelModal() {
+    levelListEl.innerHTML = '';
+    const starData = JSON.parse(localStorage.getItem(STARS_KEY) || '{}');
+
+    LEVELS.forEach((lvl, idx) => {
+      const item = document.createElement('div');
+      item.className = 'level-item' + (idx === currentLevelIdx ? ' active' : '');
+      const stars = starData[lvl.id] || 0;
+      const starStr = stars > 0 ? '★'.repeat(stars) + '☆'.repeat(3 - stars) : '未收复';
+
+      item.innerHTML = `
+        <div class="lvl-info-main">
+          <div class="lvl-name">战区 ${lvl.id}: ${lvl.name} <span style="font-size:12px;color:#fbbf24;margin-left:6px;">${starStr}</span></div>
+          <div class="lvl-desc">${lvl.desc}</div>
+        </div>
+        <div class="lvl-tag">${lvl.wavesCount} 波攻势</div>
+      `;
+      item.onclick = () => {
+        switchLevel(idx);
+        levelModalEl.classList.add('hidden');
+      };
+      levelListEl.appendChild(item);
+    });
+    levelModalEl.classList.remove('hidden');
+  }
+
+  levelBadgeEl.onclick = openLevelModal;
+  levelBtnEl.onclick = openLevelModal;
+  closeLevelModalBtn.onclick = () => levelModalEl.classList.add('hidden');
+
+  function switchLevel(lvlIdx) {
+    currentLevelIdx = lvlIdx;
+    curLevel = LEVELS[currentLevelIdx];
+    COLS = curLevel.cols; ROWS = curLevel.rows;
+    loadLevelPaths(curLevel);
+    resize();
+    resetCamera();
+    resetGame();
+    state.running = true;
+    overlayEl.classList.add('hidden');
+  }
+
+  function levelComplete() {
+    state.levelClear = true;
+    state.running = false;
+
+    const stars = state.lives >= 18 ? 3 : (state.lives >= 10 ? 2 : 1);
+    const starData = JSON.parse(localStorage.getItem(STARS_KEY) || '{}');
+    starData[curLevel.id] = Math.max(starData[curLevel.id] || 0, stars);
+    localStorage.setItem(STARS_KEY, JSON.stringify(starData));
+
+    const best = Math.max(state.score, parseInt(localStorage.getItem(BEST_KEY) || '0', 10));
+    localStorage.setItem(BEST_KEY, String(best));
+
+    document.getElementById('overlayTitle').textContent = `🎖️ 战区防卫成功！${curLevel.name}已稳固`;
+    document.getElementById('overlayStars').textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+    document.getElementById('overlayStars').style.color = '#fbbf24';
+
+    const isLast = currentLevelIdx === LEVELS.length - 1;
+    document.getElementById('overlayDesc').textContent = isLast
+      ? '🏆 最高统帅勋章！你已成功赢下全球五大战区防卫战役，联合指挥部向你致敬！'
+      : `已成功歼灭本战区全部 ${curLevel.wavesCount} 波敌方合成部队，联合指挥所安然无恙！`;
+
+    document.getElementById('overlayStats').textContent = `本战区战功: ${state.score} · 剩余防线耐久: ${state.lives}`;
+
+    const btnRow = document.getElementById('overlayBtnRow');
+    btnRow.innerHTML = '';
+
+    if (!isLast) {
+      const nextBtn = document.createElement('button');
+      nextBtn.className = 'big-btn';
+      nextBtn.textContent = '开赴下一战区 ➔';
+      nextBtn.onclick = () => switchLevel(currentLevelIdx + 1);
+      btnRow.appendChild(nextBtn);
+    }
+
+    const replayBtn = document.createElement('button');
+    replayBtn.className = 'big-btn secondary';
+    replayBtn.textContent = '重演本战区';
+    replayBtn.onclick = () => switchLevel(currentLevelIdx);
+    btnRow.appendChild(replayBtn);
+
+    const selectBtn = document.createElement('button');
+    selectBtn.className = 'big-btn secondary';
+    selectBtn.textContent = '战区列表';
+    selectBtn.onclick = () => { overlayEl.classList.add('hidden'); openLevelModal(); };
+    btnRow.appendChild(selectBtn);
+
+    overlayEl.classList.remove('hidden');
+    sfx.win();
+  }
+
+  function endGame(won) {
+    state.gameOver = true; state.win = won; state.running = false;
+    const best = Math.max(state.score, parseInt(localStorage.getItem(BEST_KEY) || '0', 10));
+    localStorage.setItem(BEST_KEY, String(best));
+
+    document.getElementById('overlayTitle').textContent = '💥 联合指挥部失守';
+    document.getElementById('overlayStars').textContent = '';
+    document.getElementById('overlayDesc').textContent = `在第 ${state.wave} 波攻势中，敌军装甲集群突破了防线。调整火力配系，重整防线再战！`;
+    document.getElementById('overlayStats').textContent = `本局战功: ${state.score}　最高纪录: ${best}`;
+
+    const btnRow = document.getElementById('overlayBtnRow');
+    btnRow.innerHTML = `
+      <button class="big-btn" id="retryBtn">重整防线</button>
+      <button class="big-btn secondary" id="chooseLvlBtn">切换战区</button>
+    `;
+    document.getElementById('retryBtn').onclick = () => switchLevel(currentLevelIdx);
+    document.getElementById('chooseLvlBtn').onclick = () => { overlayEl.classList.add('hidden'); openLevelModal(); };
+
+    overlayEl.classList.remove('hidden');
+    sfx.gameover();
+  }
+
+  function resetGame() {
+    state = freshState(currentLevelIdx);
+    buildMapExtras(curLevel);
+    hideTowerPanel();
+    bannerEl.style.display = 'none';
+    speedBtn.textContent = 'x1';
+    pauseBtn.textContent = '暂停';
+    pauseBtn.classList.remove('active');
+    refreshShopSelection();
+    syncHud();
+  }
+
+  document.getElementById('startBtn').onclick = () => {
+    ensureAudio();
+    resetGame();
+    state.running = true;
+    overlayEl.classList.add('hidden');
+  };
+
+  zoomInBtn.onclick = () => setZoom(1.2);
+  zoomOutBtn.onclick = () => setZoom(0.83);
+  zoomResetBtn.onclick = resetCamera;
+
+  canvas.addEventListener('wheel', (ev) => {
+    ev.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const sx = ev.clientX - rect.left;
+    const sy = ev.clientY - rect.top;
+    const factor = ev.deltaY < 0 ? 1.15 : 0.87;
+    setZoom(factor, sx, sy);
+  }, { passive: false });
+
+  function eventToScreen(ev) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: ev.clientX - rect.left,
+      y: ev.clientY - rect.top
+    };
+  }
+
+  canvas.addEventListener('pointerdown', (ev) => {
+    ensureAudio();
+    const sPos = eventToScreen(ev);
+    camera.isDragging = true;
+    camera.dragStartX = sPos.x;
+    camera.dragStartY = sPos.y;
+    camera.lastScreenX = sPos.x;
+    camera.lastScreenY = sPos.y;
+    camera.moved = false;
+  });
+
+  window.addEventListener('pointermove', (ev) => {
+    if (!state) return;
+    const sPos = eventToScreen(ev);
+
+    if (camera.isDragging) {
+      const dx = sPos.x - camera.lastScreenX;
+      const dy = sPos.y - camera.lastScreenY;
+      const totalMoved = Math.hypot(sPos.x - camera.dragStartX, sPos.y - camera.dragStartY);
+
+      if (totalMoved > 6) {
+        camera.moved = true;
+        camera.x += dx;
+        camera.y += dy;
+      }
+      camera.lastScreenX = sPos.x;
+      camera.lastScreenY = sPos.y;
+    }
+
+    if (state.selectedBuildType) {
+      const wPos = screenToWorld(sPos.x, sPos.y);
+      state.hover = pxToCell(wPos.x, wPos.y);
+    }
+  });
+
+  window.addEventListener('pointerup', (ev) => {
+    if (!camera.isDragging) return;
+    camera.isDragging = false;
+    if (camera.moved) return;
+
+    const sPos = eventToScreen(ev);
+    const wPos = screenToWorld(sPos.x, sPos.y);
+
+    if (state.selectedBuildType) {
+      const { c, r } = pxToCell(wPos.x, wPos.y);
+      placeTower(state.selectedBuildType, c, r);
+      state.selectedBuildType = null;
+      state.hover = null;
+      refreshShopSelection();
+      return;
+    }
+
+    const clickedTower = findTowerAtPx(wPos.x, wPos.y);
+    if (clickedTower) {
+      state.selectedTower = clickedTower;
+      showTowerPanel(clickedTower);
+      return;
+    }
+
+    const { c, r } = pxToCell(wPos.x, wPos.y);
+    const t = towerAt.get(keyOf(c, r));
+    if (t) {
+      state.selectedTower = t;
+      showTowerPanel(t);
+    } else {
+      state.selectedTower = null;
+      hideTowerPanel();
+    }
+  });
+
+  canvas.addEventListener('touchstart', (ev) => {
+    if (ev.touches.length === 2) {
+      const t1 = ev.touches[0], t2 = ev.touches[1];
+      camera.touchDist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+    }
+  }, { passive: true });
+
+  canvas.addEventListener('touchmove', (ev) => {
+    if (ev.touches.length === 2) {
+      const t1 = ev.touches[0], t2 = ev.touches[1];
+      const dist = Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
+      if (camera.touchDist > 0) {
+        const factor = dist / camera.touchDist;
+        const midX = (t1.clientX + t2.clientX) / 2;
+        const midY = (t1.clientY + t2.clientY) / 2;
+        setZoom(factor, midX, midY);
+      }
+      camera.touchDist = dist;
+    }
+  }, { passive: true });
+
+  window.addEventListener('keydown', (ev) => {
+    if (ev.key === '1') { state.selectedBuildType = 'gatling'; refreshShopSelection(); }
+    else if (ev.key === '2') { state.selectedBuildType = 'cannon'; refreshShopSelection(); }
+    else if (ev.key === '3') { state.selectedBuildType = 'frost'; refreshShopSelection(); }
+    else if (ev.key === '4') { state.selectedBuildType = 'sniper'; refreshShopSelection(); }
+    else if (ev.key === '5') { state.selectedBuildType = 'lightning'; refreshShopSelection(); }
+    else if (ev.key === '6') { state.selectedBuildType = 'flak'; refreshShopSelection(); }
+    else if (ev.key === 'Escape') {
+      state.selectedBuildType = null; state.selectedTower = null;
+      hideTowerPanel(); refreshShopSelection();
+    }
+    else if (ev.key === 'r' || ev.key === 'R') { resetCamera(); }
+    else if (ev.key === '+' || ev.key === '=') { setZoom(1.2); }
+    else if (ev.key === '-' || ev.key === '_') { setZoom(0.83); }
+    else if (ev.key === ' ') { togglePause(); ev.preventDefault(); }
+    else if (ev.key === 'Enter') { if (state.betweenWaves) state.countdown = 0; }
+  });
+
+  speedBtn.onclick = () => {
+    const opts = [1, 2, 3];
+    const idx = opts.indexOf(state.speedMult);
+    state.speedMult = opts[(idx + 1) % opts.length];
+    speedBtn.textContent = 'x' + state.speedMult;
+  };
+  function togglePause() {
+    state.paused = !state.paused;
+    pauseBtn.textContent = state.paused ? '继续' : '暂停';
+    pauseBtn.classList.toggle('active', state.paused);
+  }
+  pauseBtn.onclick = togglePause;
+
+  let lastTs = 0;
+  function loop(ts) {
+    requestAnimationFrame(loop);
+    if (!lastTs) lastTs = ts;
+    let dt = (ts - lastTs) / 1000;
+    lastTs = ts;
+    dt = Math.min(dt, 0.05);
+
+    if (state && state.running && !state.paused && !state.gameOver && !state.levelClear) {
+      update(dt);
+    }
+    if (state) {
+      render();
+      syncHud();
+      refreshShopSelection();
+      updateBetweenWaveBanner();
+    }
+  }
+
+  window.addEventListener('resize', resize);
+  loadLevelPaths(curLevel);
+  resize();
+  buildShop();
+  resetGame();
+
+  const best0 = parseInt(localStorage.getItem(BEST_KEY) || '0', 10);
+  document.getElementById('overlayStats').textContent = best0 > 0 ? (`最高战功纪录: ${best0}`) : '';
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
