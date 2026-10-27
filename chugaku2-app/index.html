@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>中2 5教科 総合学習・定期テスト対策 (国・数・英・理・社)</title>
+  <meta name="description" content="日本の中学2年生向け 5教科（国語・数学・英語・理科・社会）の定期テスト対策・高校入試基礎固めアプリ。論理証明パズル・KaTeX数式・エビングハウス錯問ノート完備。">
+  
+  <!-- KaTeX CSS & Custom Theme CSS -->
+  <link rel="stylesheet" href="css/katex.min.css">
+  <link rel="stylesheet" href="css/chugaku2-common.css?v=20261027e">
+
+  <!-- Core Scripts -->
+  <script src="data/grade2/registry.js?v=20261027e"></script>
+  <script src="js/katex.min.js"></script>
+  <script src="js/audio-controller.js?v=20261027e"></script>
+  <script src="js/srs-storage.js?v=20261027e"></script>
+  <script src="js/app-engine.js?v=20261027e"></script>
+</head>
+<body>
+
+<div id="app-container">
+  <!-- 顶部状态栏 -->
+  <header class="app-header">
+    <div class="header-left">
+      <button class="btn-icon" id="btnNavBack" style="visibility: hidden;" aria-label="戻る">❮</button>
+    </div>
+    <div class="app-title-box">
+      <div class="app-title">中2 5教科 総合学習</div>
+      <div class="app-subtitle">国・数・英・理・社 定期考査＆高校入試対策</div>
+    </div>
+    <div class="header-right">
+      <div class="badge-stars">⭐ <span id="headerStarCount">0</span></div>
+    </div>
+  </header>
+
+  <!-- 主画面容器 -->
+  <main class="app-main">
+
+    <!-- 1. HOME SCREEN (全単元・科目カタログ) -->
+    <section class="screen active" id="screen-home">
+      <!-- 快捷入口：冲刺测验与错题本 -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-bottom: 6px;">
+        <button class="btn btn-warning" id="btnStartSprintTest" style="padding: 10px 12px; font-size: 13px; border-radius: var(--radius-md);">
+          ⏱️ 15分テスト
+        </button>
+        <button class="btn btn-secondary" id="btnOpenWeaknessReview" style="padding: 10px 12px; font-size: 13px; border-radius: var(--radius-md); position: relative;">
+          📚 苦手ノート
+          <span id="homeSrsBadge" style="display:none; position:absolute; top:-6px; right:-6px; background:var(--danger); color:#fff; font-size:10px; font-weight:800; border-radius:var(--radius-full); padding:2px 6px;">0</span>
+        </button>
+      </div>
+
+      <!-- 科目 Tab 切换 -->
+      <div class="subject-tabs">
+        <button class="subject-tab active" data-subject="all">全教科</button>
+        <button class="subject-tab" data-subject="math">数学</button>
+        <button class="subject-tab" data-subject="english">英語</button>
+        <button class="subject-tab" data-subject="science">理科</button>
+        <button class="subject-tab" data-subject="society">社会</button>
+        <button class="subject-tab" data-subject="japanese">国語</button>
+      </div>
+
+      <!-- 单元卡片列表 -->
+      <div class="unit-list" id="homeUnitList"></div>
+    </section>
+
+    <!-- 2. UNIT DETAIL SCREEN (单元6大模式选择) -->
+    <section class="screen" id="screen-unit-detail">
+      <div style="width: 100%; text-align: left; margin-bottom: 4px;">
+        <span class="unit-badge math" id="unitDetailBadge">数学</span>
+      </div>
+      <h2 class="section-title" id="unitDetailTitle">一次関数</h2>
+      <p class="section-desc" id="unitDetailDesc">変化の割合・傾きと切片・直線の式</p>
+
+      <div class="mode-grid">
+        <div class="mode-card" onclick="window.appEngine.startUnitMode('story')">
+          <span class="mode-badge" id="badge-mode-story" style="display:none;">★ クリア</span>
+          <div class="mode-icon">📖</div>
+          <div class="mode-title">講義・音読</div>
+          <div class="mode-desc">要点と発音を確認</div>
+        </div>
+
+        <div class="mode-card" onclick="window.appEngine.startUnitMode('flash')">
+          <span class="mode-badge" id="badge-mode-flash" style="display:none;">★ クリア</span>
+          <div class="mode-icon">🗂️</div>
+          <div class="mode-title">重要カード</div>
+          <div class="mode-desc">定理・公式・定義の速記</div>
+        </div>
+
+        <div class="mode-card" onclick="window.appEngine.startUnitMode('scramble')">
+          <span class="mode-badge" id="badge-mode-scramble" style="display:none;">★ クリア</span>
+          <div class="mode-icon">🔄</div>
+          <div class="mode-title">証明・語順</div>
+          <div class="mode-desc">論理ステップ組み立て</div>
+        </div>
+
+        <div class="mode-card" onclick="window.appEngine.startUnitMode('match')">
+          <span class="mode-badge" id="badge-mode-match" style="display:none;">★ クリア</span>
+          <div class="mode-icon">🧩</div>
+          <div class="mode-title">ペアマッチ</div>
+          <div class="mode-desc">用語と意味の結びつけ</div>
+        </div>
+
+        <div class="mode-card" onclick="window.appEngine.startUnitMode('cloze')">
+          <span class="mode-badge" id="badge-mode-cloze" style="display:none;">★ クリア</span>
+          <div class="mode-icon">✏️</div>
+          <div class="mode-title">穴埋め演習</div>
+          <div class="mode-desc">要所を的確に補充</div>
+        </div>
+
+        <div class="mode-card" onclick="window.appEngine.startUnitMode('quiz')">
+          <span class="mode-badge" id="badge-mode-quiz" style="display:none;">★ クリア</span>
+          <div class="mode-icon">❓</div>
+          <div class="mode-title">単問クイズ</div>
+          <div class="mode-desc">実戦形式の4択テスト</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. STORY / READER SCREEN (精读与听读) -->
+    <section class="screen" id="screen-story">
+      <div style="font-size: 13px; font-weight: 800; color: var(--ink-muted);" id="storyProgress">1 / 5</div>
+      <div class="story-panel">
+        <div class="story-text-primary" id="storyTextPrimary"></div>
+        <div class="story-text-secondary" id="storyTextSecondary"></div>
+        <div class="story-controls">
+          <button class="btn btn-secondary" onclick="window.appEngine.storyPrev()" style="padding: 8px 16px;">❮ 前へ</button>
+          <button class="btn-icon" onclick="window.appEngine.storyRepeatAudio()" title="もう一度聴く">🔊</button>
+          <button class="btn" onclick="window.appEngine.storyNext()" style="padding: 8px 16px;">次へ ❯</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. FLASHCARD SCREEN (闪卡速记) -->
+    <section class="screen" id="screen-flash">
+      <div style="font-size: 13px; font-weight: 800; color: var(--ink-muted);" id="flashProgress">1 / 5</div>
+      <div class="flash-wrapper">
+        <div class="flash-card" id="flashCardElement" onclick="window.appEngine.flipFlashCard()">
+          <div class="flash-front">
+            <div class="flash-hint">タップして裏面を確認</div>
+            <div class="flash-term" id="flashFrontTerm"></div>
+          </div>
+          <div class="flash-back">
+            <div class="flash-desc" id="flashBackDesc"></div>
+            <div class="flash-hint" id="flashBackHint"></div>
+          </div>
+        </div>
+      </div>
+      <div style="display: flex; gap: 12px; width: 100%; max-width: 440px;">
+        <button class="btn btn-secondary" style="flex: 1;" onclick="window.appEngine.handleFlashAction(false)">✕ まだ不安</button>
+        <button class="btn-icon" onclick="window.appEngine.flashAudio()">🔊</button>
+        <button class="btn btn-success" style="flex: 1;" onclick="window.appEngine.handleFlashAction(true)">✔ 覚えた！</button>
+      </div>
+    </section>
+
+    <!-- 5. SCRAMBLE / PROOF PUZZLE SCREEN (语序与几何证明重组) -->
+    <section class="screen" id="screen-scramble">
+      <div style="font-size: 13px; font-weight: 800; color: var(--ink-muted);" id="scrambleProgress">1 / 2</div>
+      <div class="scramble-box">
+        <div class="scramble-question" id="scrambleQuestionText"></div>
+        <!-- 目标放置区 -->
+        <div class="scramble-target-zone" id="scrambleTargetZone"></div>
+        <!-- 待选块区 -->
+        <div class="scramble-source-zone" id="scrambleSourceZone"></div>
+        <button class="btn btn-full" onclick="window.appEngine.checkScramble()">判定する ✔</button>
+      </div>
+    </section>
+
+    <!-- 6. MATCH SCREEN (连线配对) -->
+    <section class="screen" id="screen-match">
+      <p class="section-desc" style="margin-bottom: 8px;">左と右の対応するペアをタップしてマッチングさせてください</p>
+      <div class="match-container">
+        <div class="match-col" id="matchLeftCol"></div>
+        <div class="match-col" id="matchRightCol"></div>
+      </div>
+    </section>
+
+    <!-- 7. CLOZE SCREEN (完形填空) -->
+    <section class="screen" id="screen-cloze">
+      <div style="font-size: 13px; font-weight: 800; color: var(--ink-muted);" id="clozeProgress">1 / 3</div>
+      <div class="quiz-box">
+        <div class="quiz-question" id="clozeQuestionText"></div>
+        <div class="quiz-options" id="clozeOptionsContainer"></div>
+        <div class="quiz-explanation" id="clozeExplanationBox"></div>
+      </div>
+    </section>
+
+    <!-- 8. QUIZ SCREEN (单选测验) -->
+    <section class="screen" id="screen-quiz">
+      <div style="font-size: 13px; font-weight: 800; color: var(--ink-muted);" id="quizProgress">1 / 4</div>
+      <div class="quiz-box">
+        <div class="quiz-question" id="quizQuestionText"></div>
+        <div class="quiz-options" id="quizOptionsContainer"></div>
+        <div class="quiz-explanation" id="quizExplanationBox"></div>
+      </div>
+    </section>
+
+    <!-- 9. SPRINT TEST SCREEN (15分钟定期考冲刺小测) -->
+    <section class="screen" id="screen-test">
+      <div class="test-header-bar">
+        <div class="test-timer" id="testTimerDisplay">⏱️ 15:00</div>
+        <div id="testProgressDisplay">第 1 問 / 全 10 問</div>
+      </div>
+      <div class="quiz-box" style="margin-top: 12px;">
+        <div class="quiz-question" id="testQuestionText"></div>
+        <div class="quiz-options" id="testOptionsContainer"></div>
+      </div>
+    </section>
+
+    <!-- 10. REVIEW SCREEN (艾宾浩斯 SRS 错题与弱点) -->
+    <section class="screen" id="screen-review">
+      <h2 class="section-title">弱点克服ノート</h2>
+      <p class="section-desc">エビングハウスの忘却曲線に基づき、定着度順に管理されています</p>
+
+      <div class="srs-boxes-grid">
+        <div class="srs-box-card">
+          <div class="box-count" id="srsBox1Count">0</div>
+          <div class="box-label">Box 1 · 今日復習</div>
+        </div>
+        <div class="srs-box-card">
+          <div class="box-count" id="srsBox2Count">0</div>
+          <div class="box-label">Box 2 · 3日後</div>
+        </div>
+        <div class="srs-box-card">
+          <div class="box-count" id="srsBox3Count">0</div>
+          <div class="box-label">Box 3 · 1週間後</div>
+        </div>
+        <div class="srs-box-card">
+          <div class="box-count" id="srsBox4Count" style="color:var(--success);">0</div>
+          <div class="box-label">Box 4 · 完全習得</div>
+        </div>
+      </div>
+
+      <div style="width: 100%; max-width: 520px; margin-top: 14px;">
+        <div style="font-size: 14px; font-weight: 800; margin-bottom: 8px;">未克服の苦手項目一覧</div>
+        <div id="weaknessItemList"></div>
+      </div>
+    </section>
+
+    <!-- 11. RESULT SCREEN (通关结算与星级) -->
+    <section class="screen" id="screen-result">
+      <div class="result-card">
+        <div class="result-stars-row" id="resultStarsDisplay">⭐⭐⭐</div>
+        <h2 class="section-title" id="resultTitleText">ステージクリア！</h2>
+        <div class="result-score" id="resultScoreText">100%</div>
+        <p class="section-desc" id="resultMetaText">獲得スター: +2 ★</p>
+
+        <div style="display: flex; gap: 10px; width: 100%; margin-top: 10px;">
+          <button class="btn btn-secondary btn-full" onclick="window.appEngine.handleBackNavigation()">メニューに戻る</button>
+          <button class="btn btn-success btn-full" onclick="window.appEngine.backToCurrentUnit()">単元トップへ</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- 轻量 Toast 提示 -->
+<div class="toast-msg" id="appToast"></div>
+
+</body>
+</html>
