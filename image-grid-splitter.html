@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <!-- Google tag (gtag.js) -->
+  <script src="js/consent-default.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -16,8 +17,8 @@
   </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>九宫格切图工坊 · 纯前端免安装工具</title>
-<meta name="description" content="纯前端社交媒体九宫格、四宫格、长图三联屏无损切图，一键导出序号序列，100% 离线。">
+<title>九宫格切图 · 图片分割为 3×3 / 2×2 / 3×2</title>
+<meta name="description" content="把一张图片按 3×3、2×2、3×2、1×3、3×1 等比例切成宫格小图，可选每格 1:1，按顺序编号，一键打包 ZIP 下载。图片只在浏览器本地处理，不上传。">
 <style>
 :root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--purple:#8b5cf6;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,.06);--shadow-lg:0 10px 15px -3px rgba(0,0,0,.08);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
 [data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
@@ -47,6 +48,53 @@ input:focus,textarea:focus,select:focus{border-color:var(--border-focus);}
 label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;}
 </style>
     <link rel="canonical" href="https://tool.0101.click/image-grid-splitter.html">
+    <!-- og+ld (#43) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="0101.click 实用工具箱">
+    <meta property="og:title" content="九宫格切图 · 图片分割为 3×3 / 2×2 / 3×2">
+    <meta property="og:description" content="把一张图片按 3×3、2×2、3×2、1×3、3×1 等比例切成宫格小图，可选每格 1:1，按顺序编号，一键打包 ZIP 下载。图片只在浏览器本地处理，不上传。">
+    <meta property="og:url" content="https://tool.0101.click/image-grid-splitter.html">
+    <meta property="og:image" content="https://tool.0101.click/assets/og/image-grid-splitter.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="九宫格切图 · 图片分割为 3×3 / 2×2 / 3×2">
+    <meta property="og:locale" content="zh_CN">
+    <meta name="twitter:card" content="summary_large_image">
+    <script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "WebApplication",
+   "name": "九宫格切图 · 图片分割为 3×3 / 2×2 / 3×2",
+   "url": "https://tool.0101.click/image-grid-splitter.html",
+   "description": "把一张图片按 3×3、2×2、3×2、1×3、3×1 等比例切成宫格小图，可选每格 1:1，按顺序编号，一键打包 ZIP 下载。图片只在浏览器本地处理，不上传。",
+   "applicationCategory": "DesignApplication",
+   "operatingSystem": "Any",
+   "browserRequirements": "Requires JavaScript",
+   "inLanguage": "zh-CN",
+   "image": "https://tool.0101.click/assets/og/image-grid-splitter.png"
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "工具箱",
+     "item": "https://tool.0101.click/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "九宫格切图 · 图片分割为 3×3 / 2×2 / 3×2",
+     "item": "https://tool.0101.click/image-grid-splitter.html"
+    }
+   ]
+  }
+ ]
+}
+    </script>
     <link rel="stylesheet" href="css/tools-header.css">
   <script src="js/pwa-register.js"></script>
 </head>
@@ -54,6 +102,13 @@ label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display
 .splitter-layout{display:grid;grid-template-columns:300px 1fr;gap:24px;align-items:start;}
 @media(max-width:768px){.splitter-layout{grid-template-columns:1fr;}}
 .grid-preview{display:grid;gap:6px;background:var(--bg-subtle);padding:14px;border-radius:var(--radius-lg);border:1px solid var(--border-color);max-width:440px;margin:0 auto;}
+.preset-row{display:flex;flex-wrap:wrap;gap:6px;}
+.preset-btn{padding:7px 12px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;font-weight:700;cursor:pointer;}
+.preset-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+.guide{margin-top:24px;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;font-size:14px;line-height:1.8;}
+.guide h2{font-size:17px;margin-bottom:8px;}
+.guide h3{font-size:15px;margin:14px 0 4px;}
+.guide ul{padding-left:20px;}
 .slice-cell{position:relative;border-radius:6px;overflow:hidden;aspect-ratio:1/1;background:#fff;border:1px solid var(--border-color);box-shadow:var(--shadow-sm);}
 .slice-cell canvas{width:100%;height:100%;display:block;}
 .slice-num{position:absolute;top:4px;left:4px;background:rgba(0,0,0,.6);color:#fff;font-size:11px;font-weight:800;padding:2px 6px;border-radius:4px;}
@@ -68,7 +123,7 @@ label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display
       </a>
       <div class="app-brand">
         <span class="brand-icon">🧩</span>
-        <span class="brand-title">九宫格切图工坊</span>
+        <span class="brand-title">九宫格切图</span>
       </div>
     </div>
     <div class="header-right">
@@ -132,7 +187,6 @@ label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display
           <option value="tech-blogs.html">📡 企业技术博客雷达</option>
           <option value="network-info.html">🌐 网络信息查询探针</option>
           <option value="doh-lookup.html">🔍 浏览器原生 DNS 探针</option>
-          <option value="iss-tracker.html">🛰️ 国际空间站实时追踪</option>
         </optgroup>
       </select>
       <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="切换深色/浅色模式">🌓</button>
@@ -141,11 +195,11 @@ label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display
 <main class="container">
   <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
     <div>
-      <h1 class="page-title">🧩 九宫格切图工坊</h1>
-      <p class="page-sub">朋友圈、微博九宫格、三联屏横图与小红书竖拼一键裁切分割，按顺序批量下载。</p>
+      <h1 class="page-title">🧩 九宫格切图 · 图片分割为 3×3 / 2×2 / 3×2</h1>
+      <p class="page-sub">选一个比例，图片自动等分成宫格小图，按从左到右、从上到下编号，可单张保存或打包成 ZIP 下载。</p>
   <details class="local-note" style="margin:8px 0 12px;padding:8px 12px;border:1px solid rgba(16,185,129,.35);background:rgba(16,185,129,.08);border-radius:8px;font-size:13px;line-height:1.7;"><summary style="cursor:pointer;font-weight:700;color:#059669;">🔒 本地处理 · 不上传服务器</summary><p style="margin:6px 0 0;">你选择的图片和切出的小图只在你的浏览器中用 JavaScript 处理，本页没有任何上传接口，不会发送到本站或第三方服务器。页面加载完成后断网也能继续使用，你也可以打开浏览器开发者工具的 Network 面板自行验证。本站用 Google Analytics 统计匿名访问量，只记录访问了哪个页面、是否使用过工具，不包含你输入的内容。详见<a href="https://0101.click/privacy.html#local">隐私政策</a>。</p></details>
     </div>
-    <button class="btn" onclick="downloadAllSlices()">💾 批量下载所有切片</button>
+    <button class="btn" id="zipBtn" onclick="downloadZip()">📦 打包下载 ZIP</button>
   </div>
 
   <div class="splitter-layout">
@@ -156,23 +210,33 @@ label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display
       </div>
 
       <div style="margin-bottom:14px;">
-        <label class="field-label">宫格版式</label>
-        <select id="gridType" onchange="updateGrid()">
-          <option value="3x3" selected>3 × 3 九宫格 (朋友圈/微博)</option>
-          <option value="3x1">3 × 1 三联横图 (横屏连贯)</option>
-          <option value="1x3">1 × 3 三格竖图 (小红书/海报)</option>
-          <option value="2x2">2 × 2 四宫格</option>
-          <option value="3x2">3 × 2 六宫格</option>
-        </select>
+        <label class="field-label">比例预设（列 × 行）</label>
+        <div class="preset-row" id="presetRow">
+          <button type="button" class="preset-btn active" data-grid="3x3">3×3</button>
+          <button type="button" class="preset-btn" data-grid="2x2">2×2</button>
+          <button type="button" class="preset-btn" data-grid="3x2">3×2</button>
+          <button type="button" class="preset-btn" data-grid="1x3">1×3</button>
+          <button type="button" class="preset-btn" data-grid="3x1">3×1</button>
+        </div>
+        <input type="hidden" id="gridType" value="3x3">
       </div>
 
       <div style="margin-bottom:14px;">
         <label class="field-label">裁剪模式</label>
         <select id="cropMode" onchange="updateGrid()">
-          <option value="square" selected>居中智能正方形 (1:1)</option>
-          <option value="original">保持原图完整比例</option>
+          <option value="square" selected>每格 1:1（从中间裁成 列:行 比例）</option>
+          <option value="original">不裁剪，按原图等分</option>
         </select>
       </div>
+
+      <div style="margin-bottom:14px;">
+        <label class="field-label">导出格式</label>
+        <select id="outFormat">
+          <option value="png" selected>PNG（无损，适合文字和插画）</option>
+          <option value="jpg">JPG 92%（体积小，适合照片）</option>
+        </select>
+      </div>
+      <div id="sizeInfo" style="font-size:12px;color:var(--text-muted);line-height:1.6;"></div>
     </div>
 
     <div class="panel active" style="text-align:center;">
@@ -180,7 +244,26 @@ label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display
       <div style="margin-top:14px;font-size:12px;color:var(--text-muted);">点击任意单张可单独保存</div>
     </div>
   </div>
+
+  <section class="guide">
+    <h2>切图指南：怎样切出不糊、不错位的宫格图</h2>
+    <h3>先选比例</h3>
+    <ul>
+      <li><b>3×3</b>：最常见的九宫格，适合在朋友圈一次发 9 张拼成一整幅图。</li>
+      <li><b>2×2</b>：四宫格，格子大、细节多，适合小红书这类首页按格展示的笔记封面，或者商品四视图。</li>
+      <li><b>3×2</b>：六宫格，适合横向偏宽的风景照或活动合影。</li>
+      <li><b>1×3 / 3×1</b>：把长图拆成上下三张或把宽图拆成左右三张，适合长海报、全景照。</li>
+    </ul>
+    <h3>"每格 1:1"是怎么裁的</h3>
+    <p>选了 3×2，本工具会先从原图中间裁出 3:2 的区域，再平均分成 6 块，所以每块都是正方形，发出去拼起来不会错位。主体请尽量放在画面中间，四周可能被裁掉；想保留全图就选"不裁剪"，但每格不一定是正方形。</p>
+    <h3>减少发糊和断线</h3>
+    <p>大多数社交平台都会再压缩一遍上传的图片。左侧会显示每张小图的尺寸，建议单格不低于 360 px。有文字、线条的图选 PNG，照片选 JPG 体积更小。格子之间显示时会留几像素的缝，跨格的文字和细线容易被切断，关键内容尽量别压在分割线上。</p>
+    <h3>按顺序发布</h3>
+    <p>文件名按从左到右、从上到下编号（grid_3x3_01、02……），上传时按编号依次选择就是原图的排列。ZIP 里的文件也是这个顺序。</p>
+    <p style="color:var(--text-muted);font-size:13px;">图片只在你的浏览器里用 Canvas 处理，切图和打包 ZIP 都在本地完成，不会上传到服务器。ZIP 打包使用开源库 JSZip（MIT 许可，<a href="js/vendor/THIRD-PARTY-LICENSES.txt">许可声明</a>）。</p>
+  </section>
 </main>
+<script src="js/vendor/jszip.min.js"></script>
 
 <script>
 let loadedImg = null;
@@ -214,21 +297,28 @@ function updateGrid() {
   let srcX = 0, srcY = 0, srcW = loadedImg.width, srcH = loadedImg.height;
 
   if (mode === 'square') {
-    const minDim = Math.min(srcW, srcH);
-    srcX = (srcW - minDim) / 2;
-    srcY = (srcH - minDim) / 2;
-    srcW = minDim;
-    srcH = minDim;
+    // 把原图从中间裁成 cols:rows，这样每一格都是正方形
+    const target = cols / rows;
+    if (srcW / srcH > target) {
+      const w = srcH * target;
+      srcX = (srcW - w) / 2;
+      srcW = w;
+    } else {
+      const h = srcW / target;
+      srcY = (srcH - h) / 2;
+      srcH = h;
+    }
   }
 
-  const sliceW = srcW / cols;
-  const sliceH = srcH / rows;
+  const sliceW = Math.floor(srcW / cols);
+  const sliceH = Math.floor(srcH / rows);
   let counter = 1;
 
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       const cell = document.createElement('div');
       cell.className = 'slice-cell';
+      cell.style.aspectRatio = sliceW + ' / ' + sliceH;
 
       const cv = document.createElement('canvas');
       cv.width = sliceW;
@@ -246,25 +336,85 @@ function updateGrid() {
       container.appendChild(cell);
     }
   }
+  document.getElementById('sizeInfo').textContent =
+    '原图 ' + loadedImg.width + '×' + loadedImg.height + ' px → ' + (cols * rows) + ' 张，每张 ' + sliceW + '×' + sliceH + ' px' +
+    (Math.min(sliceW, sliceH) < 360 ? '（单格偏小，发布后可能发糊，建议换更大的原图）' : '');
 }
 
-function downloadSingle(canvas, num) {
+function outputType() {
+  return document.getElementById('outFormat').value === 'jpg'
+    ? { mime: 'image/jpeg', ext: 'jpg', q: 0.92 }
+    : { mime: 'image/png', ext: 'png', q: undefined };
+}
+
+function sliceName(num, ext) {
+  return 'grid_' + document.getElementById('gridType').value + '_' + String(num).padStart(2, '0') + '.' + ext;
+}
+
+// JPG 没有透明通道，先铺白底，避免透明区域变黑
+function exportCanvas(canvas, t) {
+  if (t.ext !== 'jpg') return canvas;
+  const c = document.createElement('canvas');
+  c.width = canvas.width;
+  c.height = canvas.height;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, c.width, c.height);
+  ctx.drawImage(canvas, 0, 0);
+  return c;
+}
+
+function canvasToBlob(canvas, t) {
+  return new Promise((resolve, reject) => {
+    exportCanvas(canvas, t).toBlob(b => b ? resolve(b) : reject(new Error('导出失败')), t.mime, t.q);
+  });
+}
+
+function saveBlob(blob, name) {
+  const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = canvas.toDataURL('image/png');
-  a.download = 'grid_slice_' + String(num).padStart(2, '0') + '.png';
+  a.href = url;
+  a.download = name;
+  document.body.appendChild(a);
   a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-function downloadAllSlices() {
+async function downloadSingle(canvas, num) {
+  const t = outputType();
+  saveBlob(await canvasToBlob(canvas, t), sliceName(num, t.ext));
+}
+
+async function downloadZip() {
   const canvases = document.querySelectorAll('.slice-cell canvas');
   if (canvases.length === 0) return showToast('请先选择一张图片！');
-  canvases.forEach((cv, idx) => {
-    setTimeout(() => {
-      downloadSingle(cv, idx + 1);
-    }, idx * 200);
-  });
-  showToast('正在按顺序批量下载 ' + canvases.length + ' 张切片...');
+  if (typeof JSZip === 'undefined') return showToast('ZIP 组件没有加载成功，请刷新页面后再试');
+  const btn = document.getElementById('zipBtn');
+  btn.disabled = true;
+  try {
+    const t = outputType();
+    const zip = new JSZip();
+    for (let i = 0; i < canvases.length; i++) {
+      zip.file(sliceName(i + 1, t.ext), await canvasToBlob(canvases[i], t));
+    }
+    const blob = await zip.generateAsync({ type: 'blob' });
+    saveBlob(blob, 'grid_' + document.getElementById('gridType').value + '.zip');
+    showToast('已打包 ' + canvases.length + ' 张小图');
+  } catch (err) {
+    showToast('打包失败：' + err.message);
+  } finally {
+    btn.disabled = false;
+  }
 }
+
+document.getElementById('presetRow').addEventListener('click', e => {
+  const btn = e.target.closest('.preset-btn');
+  if (!btn) return;
+  document.querySelectorAll('.preset-btn').forEach(b => b.classList.toggle('active', b === btn));
+  document.getElementById('gridType').value = btn.dataset.grid;
+  updateGrid();
+});
 
 // Generate sample graphic on load
 window.addEventListener('DOMContentLoaded', () => {

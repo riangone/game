@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <!-- Google tag (gtag.js) -->
+  <script src="js/consent-default.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -16,8 +17,8 @@
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>通用单位换算器 · 纯前端离线工具</title>
-  <meta name="description" content="零依赖、纯前端通用单位换算工具。涵盖长度、重量、面积、温度、数据存储、进制转换，任意单位即时双向联动推导，100% 离线可用。">
+  <title>单位换算器 · 长度/重量/面积/温度</title>
+  <meta name="description" content="单位换算器：长度、重量、面积、温度、数据存储和进制转换。输入任意一个单位的数值，其余单位同时换算出结果。在浏览器本地计算，可离线使用。">
   <style>
     :root {
       --bg-base: #f8fafc;
@@ -326,6 +327,86 @@
       background: var(--bg-surface);
     }
 
+    /* 速查表与常见问题 */
+    .ref-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      line-height: 1.7;
+    }
+
+    .ref-section h2 {
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .ref-section h3 {
+      font-size: 15px;
+      margin: 20px 0 6px;
+    }
+
+    .ref-section p {
+      font-size: 14px;
+      color: var(--text-main);
+    }
+
+    .ref-intro, .ref-note {
+      color: var(--text-muted) !important;
+    }
+
+    .ref-note {
+      font-size: 13px !important;
+      margin-top: 6px;
+    }
+
+    .ref-formula {
+      font-size: 13px !important;
+      font-family: var(--font-mono);
+      background: var(--primary-subtle);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      margin-bottom: 8px;
+    }
+
+    .ref-table-wrap {
+      overflow-x: auto;
+    }
+
+    .ref-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      white-space: nowrap;
+    }
+
+    .ref-table caption {
+      text-align: left;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      padding-bottom: 4px;
+    }
+
+    .ref-table th, .ref-table td {
+      border-bottom: 1px solid var(--border-color);
+      padding: 6px 10px;
+      text-align: right;
+      font-family: var(--font-mono);
+    }
+
+    .ref-table thead th {
+      background: var(--bg-base);
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+    }
+
+    .ref-table th[scope="row"], .ref-table thead th:first-child {
+      text-align: left;
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
     /* 底部提示 */
     footer.app-footer {
       background: var(--bg-surface);
@@ -362,6 +443,90 @@
     }
   </style>
     <link rel="canonical" href="https://tool.0101.click/unit-converter.html">
+    <!-- og+ld (#43) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="0101.click 实用工具箱">
+    <meta property="og:title" content="单位换算器 · 长度/重量/面积/温度">
+    <meta property="og:description" content="单位换算器：长度、重量、面积、温度、数据存储和进制转换。输入任意一个单位的数值，其余单位同时换算出结果。在浏览器本地计算，可离线使用。">
+    <meta property="og:url" content="https://tool.0101.click/unit-converter.html">
+    <meta property="og:image" content="https://tool.0101.click/assets/og/unit-converter.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="单位换算器">
+    <meta property="og:locale" content="zh_CN">
+    <meta name="twitter:card" content="summary_large_image">
+    <script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "WebApplication",
+   "name": "单位换算器",
+   "url": "https://tool.0101.click/unit-converter.html",
+   "description": "单位换算器：长度、重量、面积、温度、数据存储和进制转换。输入任意一个单位的数值，其余单位同时换算出结果。在浏览器本地计算，可离线使用。",
+   "applicationCategory": "UtilitiesApplication",
+   "operatingSystem": "Any",
+   "browserRequirements": "Requires JavaScript",
+   "inLanguage": "zh-CN",
+   "image": "https://tool.0101.click/assets/og/unit-converter.png"
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "工具箱",
+     "item": "https://tool.0101.click/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "单位换算器",
+     "item": "https://tool.0101.click/unit-converter.html"
+    }
+   ]
+  },
+  {
+   "@type": "FAQPage",
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "1 斤到底是多少克？老话说的“半斤八两”又是怎么回事？",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "现在通用的市斤是 1 斤 = 500 克 = 10 两，1 两 = 50 克，所以 1 公斤正好是 2 斤。老式的旧制是 1 斤 = 16 两，半斤就是 8 两，“半斤八两”这个成语就是这么来的。我国 1959 年起统一改为 1 斤 = 10 两，现在买菜说的“二两”就是 100 克。另外，台湾、香港等地习惯用的“台斤”“司马斤”（约 600 克、604.8 克）和市斤不同，本工具里的“斤”都指市斤。"
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "1 亩地有多大？和公顷、平方米怎么换？",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "1 市亩 = 2000/3 平方米，约 666.67 平方米，大约相当于 25.8 米 × 25.8 米的正方形。记住“15 亩 = 1 公顷”就能快速换算：1 公顷 = 10000 平方米 = 15 亩，1 平方千米 = 1500 亩。反过来，平方米数 × 0.0015 就是亩数，例如 2000 平方米 = 3 亩。英美常用的英亩比市亩大得多，1 英亩约等于 6.07 亩。"
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "华氏度怎么快速心算成摄氏度？",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "精确公式是 °C = (°F − 32) × 5/9。心算时可以用“减 30 再除以 2”估算：例如 80 °F → (80 − 30) ÷ 2 = 25 °C，精确值是 26.7 °C，在室温范围误差只有一两度。反过来摄氏转华氏可以用“乘 2 再加 30”：20 °C → 70 °F（精确值 68 °F）。体温、烹饪等需要准确数值时，请用上方换算器或查表，不要用估算。"
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "为什么同样叫“加仑”“盎司”，换算结果却不一样？",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "因为美制和英制是两套标准。1 美制加仑约 3.785 升，1 英制加仑是 4.546 升，相差约两成；液量盎司也是美制（约 29.57 毫升）比英制（约 28.41 毫升）大一点。另外要注意，“盎司”既可能是重量单位（常衡盎司 oz，约 28.35 克），也可能是体积单位（液量盎司 fl oz）。看美国菜谱、饮料标签时，一般按美制体积换算；称重时才用重量盎司。"
+     }
+    }
+   ]
+  }
+ ]
+}
+    </script>
     <link rel="stylesheet" href="css/tools-header.css">
   <script src="js/pwa-register.js"></script>
 </head>
@@ -377,7 +542,7 @@
       </a>
       <div class="app-brand">
         <span class="brand-icon">📐</span>
-        <span class="brand-title">全能单位换算器</span>
+        <h1 class="brand-title" style="margin:0">单位换算器</h1>
       </div>
     </div>
     <div class="header-right">
@@ -441,7 +606,6 @@
           <option value="tech-blogs.html">📡 企业技术博客雷达</option>
           <option value="network-info.html">🌐 网络信息查询探针</option>
           <option value="doh-lookup.html">🔍 浏览器原生 DNS 探针</option>
-          <option value="iss-tracker.html">🛰️ 国际空间站实时追踪</option>
         </optgroup>
       </select>
       <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="切换深色/浅色模式">🌓</button>
@@ -473,6 +637,140 @@
     <div class="converter-grid" id="converterGrid">
       <!-- 动态根据当前类别渲染各个单位卡片 -->
     </div>
+
+    <!-- 常用单位速查表（#32：表内数值由换算公式程序生成） -->
+    <section class="ref-section" id="cheatsheet" aria-labelledby="cheatsheetTitle">
+      <h2 id="cheatsheetTitle">常用单位速查表</h2>
+      <p class="ref-intro">下面几张表是日常最常查的换算，不用输入就能看。数值按国际通行的换算定义计算，保留 6 位有效数字；要算其他数值，用上方的换算器即可。</p>
+
+      <h3>🌡️ 温度</h3>
+      <p class="ref-formula">公式：°F = °C × 9/5 + 32　·　°C = (°F − 32) × 5/9　·　K = °C + 273.15</p>
+      <div class="ref-table-wrap">
+<table class="ref-table">
+<caption>温度对照（以摄氏度为准）</caption>
+<thead><tr><th scope="col">摄氏度</th><th scope="col">华氏度</th><th scope="col">开尔文</th></tr></thead>
+<tbody>
+<tr><th scope="row">-40 °C</th><td>-40 °F</td><td>233.15 K</td></tr>
+<tr><th scope="row">-18 °C</th><td>-0.4 °F</td><td>255.15 K</td></tr>
+<tr><th scope="row">0 °C</th><td>32 °F</td><td>273.15 K</td></tr>
+<tr><th scope="row">4 °C</th><td>39.2 °F</td><td>277.15 K</td></tr>
+<tr><th scope="row">20 °C</th><td>68 °F</td><td>293.15 K</td></tr>
+<tr><th scope="row">25 °C</th><td>77 °F</td><td>298.15 K</td></tr>
+<tr><th scope="row">30 °C</th><td>86 °F</td><td>303.15 K</td></tr>
+<tr><th scope="row">36.5 °C</th><td>97.7 °F</td><td>309.65 K</td></tr>
+<tr><th scope="row">37 °C</th><td>98.6 °F</td><td>310.15 K</td></tr>
+<tr><th scope="row">40 °C</th><td>104 °F</td><td>313.15 K</td></tr>
+<tr><th scope="row">60 °C</th><td>140 °F</td><td>333.15 K</td></tr>
+<tr><th scope="row">100 °C</th><td>212 °F</td><td>373.15 K</td></tr>
+<tr><th scope="row">180 °C</th><td>356 °F</td><td>453.15 K</td></tr>
+<tr><th scope="row">200 °C</th><td>392 °F</td><td>473.15 K</td></tr>
+<tr><th scope="row">250 °C</th><td>482 °F</td><td>523.15 K</td></tr>
+</tbody>
+</table>
+      </div>
+      <p class="ref-note">−40 度是摄氏和华氏唯一相等的温度；−18 °C 是冰箱冷冻室的常见设定，180 °C 和 200 °C 是烤箱菜谱里常见的温度。</p>
+
+      <h3>⚖️ 重量</h3>
+      <p class="ref-formula">公式：1 千克 = 2 市斤　·　1 市斤 = 10 市两 = 500 克　·　1 市两 = 10 市钱 = 50 克　·　1 磅 = 0.45359237 千克 = 16 盎司</p>
+      <div class="ref-table-wrap">
+<table class="ref-table">
+<caption>重量对照</caption>
+<thead><tr><th scope="col">单位</th><th scope="col">克 g</th><th scope="col">市斤</th><th scope="col">市两</th><th scope="col">磅 lb</th></tr></thead>
+<tbody>
+<tr><th scope="row">1 千克（公斤）</th><td>1,000</td><td>2</td><td>20</td><td>2.20462</td></tr>
+<tr><th scope="row">1 市斤</th><td>500</td><td>1</td><td>10</td><td>1.10231</td></tr>
+<tr><th scope="row">1 市两</th><td>50</td><td>0.1</td><td>1</td><td>0.110231</td></tr>
+<tr><th scope="row">1 市钱</th><td>5</td><td>0.01</td><td>0.1</td><td>0.0110231</td></tr>
+<tr><th scope="row">1 克</th><td>1</td><td>0.002</td><td>0.02</td><td>0.00220462</td></tr>
+<tr><th scope="row">1 公吨</th><td>1,000,000</td><td>2,000</td><td>20,000</td><td>2,204.62</td></tr>
+<tr><th scope="row">1 磅 lb</th><td>453.592</td><td>0.907185</td><td>9.07185</td><td>1</td></tr>
+<tr><th scope="row">1 盎司 oz</th><td>28.3495</td><td>0.056699</td><td>0.56699</td><td>0.0625</td></tr>
+<tr><th scope="row">1 克拉 ct</th><td>0.2</td><td>0.0004</td><td>0.004</td><td>0.000440925</td></tr>
+</tbody>
+</table>
+      </div>
+
+      <h3>📏 长度</h3>
+      <p class="ref-formula">公式：1 市尺 = 1/3 米　·　1 市丈 = 10 市尺　·　1 市尺 = 10 市寸　·　1 市里 = 500 米　·　1 英尺 = 12 英寸 = 0.3048 米　·　1 英里 = 5280 英尺　·　1 海里 = 1852 米</p>
+      <div class="ref-table-wrap">
+<table class="ref-table">
+<caption>长度对照</caption>
+<thead><tr><th scope="col">单位</th><th scope="col">米 m</th><th scope="col">厘米 cm</th><th scope="col">市尺</th><th scope="col">英尺 ft</th></tr></thead>
+<tbody>
+<tr><th scope="row">1 千米（公里）</th><td>1,000</td><td>100,000</td><td>3,000</td><td>3,280.84</td></tr>
+<tr><th scope="row">1 米</th><td>1</td><td>100</td><td>3</td><td>3.28084</td></tr>
+<tr><th scope="row">1 厘米</th><td>0.01</td><td>1</td><td>0.03</td><td>0.0328084</td></tr>
+<tr><th scope="row">1 市里</th><td>500</td><td>50,000</td><td>1,500</td><td>1,640.42</td></tr>
+<tr><th scope="row">1 市丈</th><td>3.33333</td><td>333.333</td><td>10</td><td>10.9361</td></tr>
+<tr><th scope="row">1 市尺</th><td>0.333333</td><td>33.3333</td><td>1</td><td>1.09361</td></tr>
+<tr><th scope="row">1 市寸</th><td>0.0333333</td><td>3.33333</td><td>0.1</td><td>0.109361</td></tr>
+<tr><th scope="row">1 英里 mi</th><td>1,609.34</td><td>160,934</td><td>4,828.03</td><td>5,280</td></tr>
+<tr><th scope="row">1 海里 nmi</th><td>1,852</td><td>185,200</td><td>5,556</td><td>6,076.12</td></tr>
+<tr><th scope="row">1 码 yd</th><td>0.9144</td><td>91.44</td><td>2.7432</td><td>3</td></tr>
+<tr><th scope="row">1 英尺 ft</th><td>0.3048</td><td>30.48</td><td>0.9144</td><td>1</td></tr>
+<tr><th scope="row">1 英寸 in</th><td>0.0254</td><td>2.54</td><td>0.0762</td><td>0.0833333</td></tr>
+</tbody>
+</table>
+      </div>
+
+      <h3>🗺️ 面积</h3>
+      <p class="ref-formula">公式：1 市亩 = 2000/3 平方米 ≈ 666.67 平方米　·　1 公顷 = 15 市亩 = 10000 平方米　·　1 平方千米 = 100 公顷 = 1500 市亩　·　1 英亩 = 43560 平方英尺</p>
+      <div class="ref-table-wrap">
+<table class="ref-table">
+<caption>面积对照</caption>
+<thead><tr><th scope="col">单位</th><th scope="col">平方米 m²</th><th scope="col">市亩</th><th scope="col">公顷 ha</th><th scope="col">平方英尺</th></tr></thead>
+<tbody>
+<tr><th scope="row">1 平方千米</th><td>1,000,000</td><td>1,500</td><td>100</td><td>10,763,910</td></tr>
+<tr><th scope="row">1 公顷 ha</th><td>10,000</td><td>15</td><td>1</td><td>107,639</td></tr>
+<tr><th scope="row">1 市亩</th><td>666.667</td><td>1</td><td>0.0666667</td><td>7,175.94</td></tr>
+<tr><th scope="row">1 英亩 acre</th><td>4,046.86</td><td>6.07028</td><td>0.404686</td><td>43,560</td></tr>
+<tr><th scope="row">1 平方米</th><td>1</td><td>0.0015</td><td>0.0001</td><td>10.7639</td></tr>
+<tr><th scope="row">1 平方码</th><td>0.836127</td><td>0.00125419</td><td>8.36127×10<sup>-5</sup></td><td>9</td></tr>
+<tr><th scope="row">1 平方英尺</th><td>0.092903</td><td>0.000139355</td><td>9.2903×10<sup>-6</sup></td><td>1</td></tr>
+</tbody>
+</table>
+      </div>
+
+      <h3>🧪 体积 / 容积</h3>
+      <p class="ref-formula">公式：1 升 = 1000 毫升 = 1 立方分米　·　1 毫升 = 1 立方厘米　·　1 美制加仑 = 231 立方英寸 ≈ 3.785 升　·　1 英制加仑 = 4.54609 升　·　1 美制杯 = 1/16 美制加仑</p>
+      <div class="ref-table-wrap">
+<table class="ref-table">
+<caption>体积 / 容积对照</caption>
+<thead><tr><th scope="col">单位</th><th scope="col">毫升 mL</th><th scope="col">升 L</th><th scope="col">美制加仑</th></tr></thead>
+<tbody>
+<tr><th scope="row">1 立方米 m³</th><td>1,000,000</td><td>1,000</td><td>264.172</td></tr>
+<tr><th scope="row">1 升 L（= 1 立方分米）</th><td>1,000</td><td>1</td><td>0.264172</td></tr>
+<tr><th scope="row">1 毫升 mL（= 1 立方厘米）</th><td>1</td><td>0.001</td><td>0.000264172</td></tr>
+<tr><th scope="row">1 美制加仑</th><td>3,785.41</td><td>3.78541</td><td>1</td></tr>
+<tr><th scope="row">1 英制加仑</th><td>4,546.09</td><td>4.54609</td><td>1.20095</td></tr>
+<tr><th scope="row">1 立方英尺</th><td>28,316.8</td><td>28.3168</td><td>7.48052</td></tr>
+<tr><th scope="row">1 美制杯 cup</th><td>236.588</td><td>0.236588</td><td>0.0625</td></tr>
+<tr><th scope="row">1 美制液量盎司</th><td>29.5735</td><td>0.0295735</td><td>0.0078125</td></tr>
+<tr><th scope="row">1 英制液量盎司</th><td>28.4131</td><td>0.0284131</td><td>0.00750594</td></tr>
+<tr><th scope="row">1 美制汤匙 tbsp</th><td>14.7868</td><td>0.0147868</td><td>0.00390625</td></tr>
+<tr><th scope="row">1 美制茶匙 tsp</th><td>4.92892</td><td>0.00492892</td><td>0.00130208</td></tr>
+</tbody>
+</table>
+      </div>
+      <p class="ref-note">上方换算器暂时没有体积类别，体积请直接查这张表。</p>
+    </section>
+
+    <!-- 常见问题 -->
+    <section class="ref-section" id="faq" aria-labelledby="faqTitle">
+      <h2 id="faqTitle">常见问题</h2>
+
+      <h3>1 斤到底是多少克？老话说的“半斤八两”又是怎么回事？</h3>
+      <p>现在通用的市斤是 1 斤 = 500 克 = 10 两，1 两 = 50 克，所以 1 公斤正好是 2 斤。老式的旧制是 1 斤 = 16 两，半斤就是 8 两，“半斤八两”这个成语就是这么来的。我国 1959 年起统一改为 1 斤 = 10 两，现在买菜说的“二两”就是 100 克。另外，台湾、香港等地习惯用的“台斤”“司马斤”（约 600 克、604.8 克）和市斤不同，本工具里的“斤”都指市斤。</p>
+
+      <h3>1 亩地有多大？和公顷、平方米怎么换？</h3>
+      <p>1 市亩 = 2000/3 平方米，约 666.67 平方米，大约相当于 25.8 米 × 25.8 米的正方形。记住“15 亩 = 1 公顷”就能快速换算：1 公顷 = 10000 平方米 = 15 亩，1 平方千米 = 1500 亩。反过来，平方米数 × 0.0015 就是亩数，例如 2000 平方米 = 3 亩。英美常用的英亩比市亩大得多，1 英亩约等于 6.07 亩。</p>
+
+      <h3>华氏度怎么快速心算成摄氏度？</h3>
+      <p>精确公式是 °C = (°F − 32) × 5/9。心算时可以用“减 30 再除以 2”估算：例如 80 °F → (80 − 30) ÷ 2 = 25 °C，精确值是 26.7 °C，在室温范围误差只有一两度。反过来摄氏转华氏可以用“乘 2 再加 30”：20 °C → 70 °F（精确值 68 °F）。体温、烹饪等需要准确数值时，请用上方换算器或查表，不要用估算。</p>
+
+      <h3>为什么同样叫“加仑”“盎司”，换算结果却不一样？</h3>
+      <p>因为美制和英制是两套标准。1 美制加仑约 3.785 升，1 英制加仑是 4.546 升，相差约两成；液量盎司也是美制（约 29.57 毫升）比英制（约 28.41 毫升）大一点。另外要注意，“盎司”既可能是重量单位（常衡盎司 oz，约 28.35 克），也可能是体积单位（液量盎司 fl oz）。看美国菜谱、饮料标签时，一般按美制体积换算；称重时才用重量盎司。</p>
+    </section>
   </main>
 
   <footer class="app-footer">

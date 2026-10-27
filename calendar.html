@@ -2,6 +2,7 @@
 <html lang="zh-CN" id="htmlRoot">
 <head>
   <!-- Google tag (gtag.js) -->
+  <script src="js/consent-default.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -16,11 +17,11 @@
   </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>万年历 · 农历与多国节假日查询</title>
-<meta name="description" content="纯前端万年历：农历公历互转（1900-2100）、中国/香港/中国台湾/日本/韩国/美国/英国法定节假日查询，界面语言随国家自动切换，数据基于官方公告与法定算法规则。">
+<title>万年历 · 农历公历互转与多国节假日、中小学放假校历查询</title>
+<meta name="description" content="纯前端万年历：农历公历互转（1900-2100）、中国/香港/中国台湾/日本/韩国/美国/英国法定节假日与中小学/高中学校放假校历查询，界面语言随国家自动切换，支持显隐与学段筛选。">
 <style>
-:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--holiday:#e11d48;--holiday-bg:rgba(225,29,72,.08);--observance:#f59e0b;--workday:#6366f1;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
-[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);--holiday:#fb7185;--holiday-bg:rgba(251,113,133,.12);--observance:#fbbf24;--workday:#818cf8;}
+:root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--holiday:#e11d48;--holiday-bg:rgba(225,29,72,.08);--observance:#f59e0b;--workday:#6366f1;--school-vac:#7c3aed;--school-vac-bg:rgba(124,58,237,.08);--school-vac-border:rgba(124,58,237,.25);--school-vac-text:#6d28d9;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+[data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);--holiday:#fb7185;--holiday-bg:rgba(251,113,133,.12);--observance:#fbbf24;--workday:#818cf8;--school-vac:#a78bfa;--school-vac-bg:rgba(167,139,250,.15);--school-vac-border:rgba(167,139,250,.32);--school-vac-text:#c4b5fd;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:var(--font-sans);background:var(--bg-base);color:var(--text-main);min-height:100vh;display:flex;flex-direction:column;}
 header.app-header{background:var(--bg-surface);border-bottom:1px solid var(--border-color);position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 20px;flex-wrap:wrap;}
@@ -57,6 +58,7 @@ select#countrySelect{padding:9px 12px;border-radius:var(--radius-sm);border:1px 
 .dot.observance{background:var(--observance);}
 .dot.weekend{background:var(--text-light);}
 .dot.workday{background:var(--workday);}
+.dot.school{background:var(--school-vac);}
 .calendar-layout{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:start;}
 @media (max-width:860px){.calendar-layout{grid-template-columns:1fr;}}
 .calendar-card{background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:16px;box-shadow:var(--shadow-sm);}
@@ -67,12 +69,16 @@ select#countrySelect{padding:9px 12px;border-radius:var(--radius-sm);border:1px 
 .day-cell:hover{border-color:var(--primary);}
 .day-cell.other-month{opacity:.32;}
 .day-cell.weekend{background:var(--bg-subtle);}
+.day-cell.in-school-vac{background:linear-gradient(180deg,var(--school-vac-bg) 0%,transparent 65%),var(--bg-surface);}
+.day-cell.in-school-vac.weekend{background:linear-gradient(180deg,var(--school-vac-bg) 0%,transparent 65%),var(--bg-subtle);}
+.school-track{position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--school-vac);border-radius:0 0 8px 8px;}
 .day-cell.today{border-color:var(--primary);border-width:2px;}
 .day-cell.selected{background:var(--primary-subtle);border-color:var(--primary);}
 .day-cell .dnum{font-size:15px;font-weight:800;line-height:1;}
 .day-cell.has-public .dnum{color:var(--holiday);}
 .day-cell .lunar-txt{font-size:10px;color:var(--text-muted);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .day-cell .lunar-txt.is-festival{color:var(--holiday);font-weight:700;}
+.day-cell .school-tag{font-size:9px;color:var(--school-vac-text);background:var(--school-vac-bg);border:1px solid var(--school-vac-border);border-radius:3px;padding:0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;font-weight:700;line-height:1.3;}
 .day-cell .hbadge{font-size:9px;color:#fff;background:var(--holiday);border-radius:4px;padding:1px 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;font-weight:600;margin-top:auto;}
 .day-cell .hbadge.observance{background:var(--observance);}
 .day-cell .workday-flag{position:absolute;top:3px;right:3px;font-size:8.5px;background:var(--workday);color:#fff;border-radius:3px;padding:1px 3px;font-weight:700;}
@@ -81,9 +87,19 @@ select#countrySelect{padding:9px 12px;border-radius:var(--radius-sm);border:1px 
 .detail-box .ddate{font-size:18px;font-weight:800;margin-bottom:6px;}
 .detail-box .drow b{color:var(--text-muted);font-weight:700;margin-right:6px;}
 .detail-box .dholiday{margin-top:8px;padding:8px 10px;border-radius:var(--radius-sm);background:var(--holiday-bg);color:var(--holiday);font-weight:700;font-size:13px;}
+.detail-box .dschool-vac{margin-top:6px;padding:6px 10px;border-radius:var(--radius-sm);background:var(--school-vac-bg);color:var(--school-vac-text);border:1px solid var(--school-vac-border);font-weight:700;font-size:12px;line-height:1.5;}
+.detail-box .dschool-grades{font-size:11px;font-weight:500;opacity:.88;margin-left:4px;}
 .detail-box .dworkday-note{margin-top:6px;padding:6px 10px;border-radius:var(--radius-sm);background:rgba(99,102,241,.1);color:var(--workday);font-weight:700;font-size:12px;}
+.school-grade-select{padding:6px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:12px;font-weight:600;cursor:pointer;}
 .sidebar-box{background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:16px;box-shadow:var(--shadow-sm);max-height:520px;overflow-y:auto;}
 .sidebar-box h3{font-size:14px;font-weight:800;margin-bottom:10px;}
+.school-vac-item{padding:8px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-color);background:var(--bg-subtle);margin-bottom:8px;cursor:pointer;transition:all .15s;}
+.school-vac-item:hover{border-color:var(--school-vac);background:var(--school-vac-bg);}
+.school-vac-hdr{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:3px;}
+.school-vac-title{font-weight:800;font-size:12.5px;color:var(--school-vac-text);}
+.school-vac-days{font-size:11px;font-weight:700;padding:1px 5px;border-radius:4px;background:var(--bg-surface);color:var(--text-muted);}
+.school-vac-dates{font-family:var(--font-mono);font-size:11.5px;color:var(--text-muted);margin-bottom:2px;}
+.school-vac-grades{font-size:10.5px;color:var(--text-light);}
 .hl-item{display:flex;align-items:center;gap:8px;padding:7px 6px;border-radius:var(--radius-sm);cursor:pointer;font-size:12.5px;}
 .hl-item:hover{background:var(--bg-subtle);}
 .hl-item.past{opacity:.45;}
@@ -94,6 +110,53 @@ select#countrySelect{padding:9px 12px;border-radius:var(--radius-sm);border:1px 
 .footer-note{margin-top:18px;font-size:11px;color:var(--text-light);line-height:1.8;border-top:1px solid var(--border-color);padding-top:12px;}
 </style>
     <link rel="canonical" href="https://tool.0101.click/calendar.html">
+    <!-- og+ld (#43) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="0101.click 实用工具箱">
+    <meta property="og:title" content="万年历 · 农历公历互转与多国节假日、中小学放假校历查询">
+    <meta property="og:description" content="纯前端万年历：农历公历互转（1900-2100）、中国/香港/中国台湾/日本/韩国/美国/英国法定节假日与中小学/高中学校放假校历查询，界面语言随国家自动切换，支持显隐与学段筛选。">
+    <meta property="og:url" content="https://tool.0101.click/calendar.html">
+    <meta property="og:image" content="https://tool.0101.click/assets/og/calendar.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="万年历">
+    <meta property="og:locale" content="zh_CN">
+    <meta name="twitter:card" content="summary_large_image">
+    <script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "WebApplication",
+   "name": "万年历",
+   "url": "https://tool.0101.click/calendar.html",
+   "description": "纯前端万年历：农历公历互转（1900-2100）、中国/香港/中国台湾/日本/韩国/美国/英国法定节假日与中小学/高中学校放假校历查询，界面语言随国家自动切换，支持显隐与学段筛选。",
+   "applicationCategory": "ReferenceApplication",
+   "operatingSystem": "Any",
+   "browserRequirements": "Requires JavaScript",
+   "inLanguage": "zh-CN",
+   "image": "https://tool.0101.click/assets/og/calendar.png"
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "工具箱",
+     "item": "https://tool.0101.click/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "万年历",
+     "item": "https://tool.0101.click/calendar.html"
+    }
+   ]
+  }
+ ]
+}
+    </script>
     <link rel="stylesheet" href="css/tools-header.css">
   <script src="js/pwa-register.js"></script>
 </head>
@@ -171,7 +234,6 @@ select#countrySelect{padding:9px 12px;border-radius:var(--radius-sm);border:1px 
           <option value="tech-blogs.html">📡 企业技术博客雷达</option>
           <option value="network-info.html">🌐 网络信息查询探针</option>
           <option value="doh-lookup.html">🔍 浏览器原生 DNS 探针</option>
-          <option value="iss-tracker.html">🛰️ 国际空间站实时追踪</option>
         </optgroup>
       </select>
       <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="切换深色/浅色模式">🌓</button>
@@ -196,6 +258,10 @@ select#countrySelect{padding:9px 12px;border-radius:var(--radius-sm);border:1px 
     </div>
     <button class="btn" id="todayBtn" onclick="goToday()">今天</button>
     <label class="switch-label"><input type="checkbox" id="lunarToggle" checked onchange="renderAll()"><span id="lblLunarToggle">显示农历</span></label>
+    <label class="switch-label"><input type="checkbox" id="schoolToggle" checked onchange="onSchoolToggleChange(this.checked)"><span id="lblSchoolToggle">学校放假</span></label>
+    <div class="control-group" id="gradeControlGroup">
+      <select id="schoolGradeSelect" class="school-grade-select" onchange="onSchoolGradeChange(this.value)" title="筛选学段"></select>
+    </div>
   </div>
 
   <div class="data-banner" id="dataBanner"></div>
@@ -212,6 +278,20 @@ select#countrySelect{padding:9px 12px;border-radius:var(--radius-sm);border:1px 
       <div class="sidebar-box">
         <h3 id="lblSidebarTitle">本年节假日一览</h3>
         <div id="holidayList"></div>
+      </div>
+      <div class="sidebar-box" id="schoolVacationBox">
+        <h3 id="lblSchoolSidebarTitle">🏫 学期放假校历（参考）</h3>
+        <div id="schoolVacationList"></div>
+      </div>
+      <div class="sidebar-box" style="max-height:none;padding:12px 16px;font-size:12px;line-height:1.8;">
+        <div style="font-weight:700;margin-bottom:6px;color:var(--text-color);">⏳ 节日倒计时专项联动</div>
+        <div style="color:var(--text-muted);">
+          <a href="countdown.html" style="color:var(--primary);text-decoration:none;">倒数日与纪念日</a> · 
+          <a href="holiday-chunjie.html" style="color:var(--primary);text-decoration:none;">春节倒计时</a> · 
+          <a href="holiday-yuandan.html" style="color:var(--primary);text-decoration:none;">元旦倒计时</a> · 
+          <a href="holiday-hanjia.html" style="color:var(--primary);text-decoration:none;">寒假倒计时</a> · 
+          <a href="exam-countdown.html" style="color:var(--primary);text-decoration:none;">考试季倒排</a>
+        </div>
       </div>
     </div>
   </div>
@@ -581,6 +661,130 @@ function isOfficialYear(country,year){
 }
 
 /* =========================================================================
+ * 中小学及高中学校放假数据模型 (K-12 School Vacation Model)
+ * 支持多国（CN, HK, TW, JP, KR, US, GB）及多学段（小学 primary、初中 middle、高中 high）
+ * ======================================================================= */
+function diffDaysIso(s1, s2){
+  const d1 = parseIso(s1), d2 = parseIso(s2);
+  return Math.round((d2 - d1) / 86400000) + 1;
+}
+
+const SCHOOL_VACATIONS = {
+  CN: function(y) {
+    const ny = findLunarDateInYear(y, 1, 1, false) || isoDate(y, 2, 10);
+    return [
+      { id: 'winter', names: { zh: '寒假', zhHant: '寒假', ja: '冬休み', ko: '겨울방학', en: 'Winter Vacation' }, schedules: { primary: { start: addDaysIso(ny, -24), end: addDaysIso(ny, 12) }, middle: { start: addDaysIso(ny, -24), end: addDaysIso(ny, 12) }, high: { start: addDaysIso(ny, -17), end: addDaysIso(ny, 6) } } },
+      { id: 'summer', names: { zh: '暑假', zhHant: '暑假', ja: '夏休み', ko: '여름방학', en: 'Summer Vacation' }, schedules: { primary: { start: isoDate(y, 7, 1), end: isoDate(y, 8, 31) }, middle: { start: isoDate(y, 7, 1), end: isoDate(y, 8, 31) }, high: { start: isoDate(y, 7, 15), end: isoDate(y, 8, 25) } } }
+    ];
+  },
+  HK: function(y) {
+    const ny = findLunarDateInYear(y, 1, 1, false) || isoDate(y, 2, 10);
+    const es = easterSunday(y);
+    return [
+      { id: 'xmas_jan', names: { zh: '新年假期', zhHant: '新年假期', ja: '年始休暇', ko: '연초 방학', en: 'New Year Break' }, schedules: { primary: { start: isoDate(y, 1, 1), end: isoDate(y, 1, 2) }, middle: { start: isoDate(y, 1, 1), end: isoDate(y, 1, 2) }, high: { start: isoDate(y, 1, 1), end: isoDate(y, 1, 2) } } },
+      { id: 'lny', names: { zh: '农历新年假', zhHant: '農曆新年假', ja: '春節（旧正月）休暇', ko: '설날 방학', en: 'Lunar New Year Break' }, schedules: { primary: { start: addDaysIso(ny, -2), end: addDaysIso(ny, 8) }, middle: { start: addDaysIso(ny, -2), end: addDaysIso(ny, 8) }, high: { start: addDaysIso(ny, -2), end: addDaysIso(ny, 7) } } },
+      { id: 'easter', names: { zh: '复活节假', zhHant: '復活節假', ja: 'イースター休暇', ko: '부활절 방학', en: 'Easter Break' }, schedules: { primary: { start: addDaysIso(es, -7), end: addDaysIso(es, 4) }, middle: { start: addDaysIso(es, -7), end: addDaysIso(es, 4) }, high: { start: addDaysIso(es, -7), end: addDaysIso(es, 4) } } },
+      { id: 'summer', names: { zh: '暑假', zhHant: '暑假', ja: '夏休み', ko: '여름방학', en: 'Summer Vacation' }, schedules: { primary: { start: isoDate(y, 7, 13), end: isoDate(y, 8, 31) }, middle: { start: isoDate(y, 7, 13), end: isoDate(y, 8, 31) }, high: { start: isoDate(y, 7, 18), end: isoDate(y, 8, 31) } } },
+      { id: 'xmas_dec', names: { zh: '圣诞假', zhHant: '聖誕假', ja: 'クリスマス休暇', ko: '성탄절 방학', en: 'Christmas Break' }, schedules: { primary: { start: isoDate(y, 12, 22), end: isoDate(y, 12, 31) }, middle: { start: isoDate(y, 12, 22), end: isoDate(y, 12, 31) }, high: { start: isoDate(y, 12, 23), end: isoDate(y, 12, 31) } } }
+    ];
+  },
+  TW: function(y) {
+    const ny = findLunarDateInYear(y, 1, 1, false) || isoDate(y, 2, 10);
+    const wStart = isoDate(y, 1, 21);
+    const wEnd = ny > isoDate(y, 2, 10) ? addDaysIso(ny, 5) : isoDate(y, 2, 10);
+    return [
+      { id: 'winter', names: { zh: '寒假', zhHant: '寒假', ja: '冬休み', ko: '겨울방학', en: 'Winter Vacation' }, schedules: { primary: { start: wStart, end: wEnd }, middle: { start: wStart, end: wEnd }, high: { start: wStart, end: wEnd } } },
+      { id: 'summer', names: { zh: '暑假', zhHant: '暑假', ja: '夏休み', ko: '여름방학', en: 'Summer Vacation' }, schedules: { primary: { start: isoDate(y, 7, 1), end: isoDate(y, 8, 29) }, middle: { start: isoDate(y, 7, 1), end: isoDate(y, 8, 29) }, high: { start: isoDate(y, 7, 5), end: isoDate(y, 8, 28) } } }
+    ];
+  },
+  JP: function(y) {
+    return [
+      { id: 'winter_jan', names: { zh: '新年冬假', zhHant: '新年冬假', ja: '冬休み', ko: '겨울방학', en: 'Winter Vacation' }, schedules: { primary: { start: isoDate(y, 1, 1), end: isoDate(y, 1, 7) }, middle: { start: isoDate(y, 1, 1), end: isoDate(y, 1, 7) }, high: { start: isoDate(y, 1, 1), end: isoDate(y, 1, 7) } } },
+      { id: 'spring', names: { zh: '春假', zhHant: '春假', ja: '春休み', ko: '봄방학', en: 'Spring Vacation' }, schedules: { primary: { start: isoDate(y, 3, 25), end: isoDate(y, 4, 5) }, middle: { start: isoDate(y, 3, 25), end: isoDate(y, 4, 5) }, high: { start: isoDate(y, 3, 25), end: isoDate(y, 4, 5) } } },
+      { id: 'summer', names: { zh: '暑假', zhHant: '暑假', ja: '夏休み', ko: '여름방학', en: 'Summer Vacation' }, schedules: { primary: { start: isoDate(y, 7, 21), end: isoDate(y, 8, 31) }, middle: { start: isoDate(y, 7, 21), end: isoDate(y, 8, 31) }, high: { start: isoDate(y, 7, 25), end: isoDate(y, 8, 31) } } },
+      { id: 'winter_dec', names: { zh: '年末冬假', zhHant: '年末冬假', ja: '冬休み', ko: '겨울방학', en: 'Winter Vacation' }, schedules: { primary: { start: isoDate(y, 12, 25), end: isoDate(y, 12, 31) }, middle: { start: isoDate(y, 12, 25), end: isoDate(y, 12, 31) }, high: { start: isoDate(y, 12, 25), end: isoDate(y, 12, 31) } } }
+    ];
+  },
+  KR: function(y) {
+    return [
+      { id: 'winter_jan', names: { zh: '冬假', zhHant: '冬假', ja: '冬休み', ko: '겨울방학', en: 'Winter Vacation' }, schedules: { primary: { start: isoDate(y, 1, 1), end: isoDate(y, 1, 31) }, middle: { start: isoDate(y, 1, 1), end: isoDate(y, 1, 31) }, high: { start: isoDate(y, 1, 1), end: isoDate(y, 1, 31) } } },
+      { id: 'spring', names: { zh: '春假(学年更替)', zhHant: '春假(學年更替)', ja: '春休み', ko: '봄방학', en: 'Spring/Grade Break' }, schedules: { primary: { start: isoDate(y, 2, 14), end: isoDate(y, 2, 28) }, middle: { start: isoDate(y, 2, 14), end: isoDate(y, 2, 28) }, high: { start: isoDate(y, 2, 18), end: isoDate(y, 2, 28) } } },
+      { id: 'summer', names: { zh: '暑假', zhHant: '暑假', ja: '夏休み', ko: '여름방학', en: 'Summer Vacation' }, schedules: { primary: { start: isoDate(y, 7, 20), end: isoDate(y, 8, 23) }, middle: { start: isoDate(y, 7, 20), end: isoDate(y, 8, 23) }, high: { start: isoDate(y, 7, 24), end: isoDate(y, 8, 18) } } },
+      { id: 'winter_dec', names: { zh: '冬假', zhHant: '冬假', ja: '冬休み', ko: '겨울방학', en: 'Winter Vacation' }, schedules: { primary: { start: isoDate(y, 12, 28), end: isoDate(y, 12, 31) }, middle: { start: isoDate(y, 12, 28), end: isoDate(y, 12, 31) }, high: { start: isoDate(y, 12, 28), end: isoDate(y, 12, 31) } } }
+    ];
+  },
+  US: function(y) {
+    const es = easterSunday(y);
+    const tg = isoDate(y, 11, nthWeekday(y, 11, 4, 4));
+    return [
+      { id: 'winter_jan', names: { zh: '新年假期', zhHant: '新年假期', ja: '年始休暇', ko: '연초 방학', en: 'Winter Break' }, schedules: { primary: { start: isoDate(y, 1, 1), end: isoDate(y, 1, 3) }, middle: { start: isoDate(y, 1, 1), end: isoDate(y, 1, 3) }, high: { start: isoDate(y, 1, 1), end: isoDate(y, 1, 3) } } },
+      { id: 'spring', names: { zh: '春假', zhHant: '春假', ja: '春休み', ko: '봄방학', en: 'Spring Break' }, schedules: { primary: { start: addDaysIso(es, -7), end: addDaysIso(es, -1) }, middle: { start: addDaysIso(es, -7), end: addDaysIso(es, -1) }, high: { start: addDaysIso(es, -7), end: addDaysIso(es, -1) } } },
+      { id: 'summer', names: { zh: '暑假', zhHant: '暑假', ja: '夏休み', ko: '여름방학', en: 'Summer Break' }, schedules: { primary: { start: isoDate(y, 6, 5), end: isoDate(y, 8, 20) }, middle: { start: isoDate(y, 6, 5), end: isoDate(y, 8, 20) }, high: { start: isoDate(y, 6, 10), end: isoDate(y, 8, 15) } } },
+      { id: 'thanksgiving', names: { zh: '感恩节假', zhHant: '感恩節假', ja: '感謝祭休暇', ko: '추수감사절 방학', en: 'Thanksgiving Break' }, schedules: { primary: { start: addDaysIso(tg, -1), end: addDaysIso(tg, 2) }, middle: { start: addDaysIso(tg, -1), end: addDaysIso(tg, 2) }, high: { start: addDaysIso(tg, -1), end: addDaysIso(tg, 2) } } },
+      { id: 'winter_dec', names: { zh: '圣诞及寒假', zhHant: '聖誕及寒假', ja: 'クリスマス休暇', ko: '성탄절 방학', en: 'Winter Break' }, schedules: { primary: { start: isoDate(y, 12, 21), end: isoDate(y, 12, 31) }, middle: { start: isoDate(y, 12, 21), end: isoDate(y, 12, 31) }, high: { start: isoDate(y, 12, 22), end: isoDate(y, 12, 31) } } }
+    ];
+  },
+  GB: function(y) {
+    const es = easterSunday(y);
+    const octLastMon = isoDate(y, 10, lastWeekday(y, 10, 1));
+    return [
+      { id: 'xmas_jan', names: { zh: '新年假期', zhHant: '新年假期', ja: '年始休暇', ko: '연초 방학', en: 'Christmas Holiday' }, schedules: { primary: { start: isoDate(y, 1, 1), end: isoDate(y, 1, 4) }, middle: { start: isoDate(y, 1, 1), end: isoDate(y, 1, 4) }, high: { start: isoDate(y, 1, 1), end: isoDate(y, 1, 4) } } },
+      { id: 'easter', names: { zh: '复活节假', zhHant: '復活節假', ja: 'イースター休暇', ko: '부활절 방학', en: 'Easter Holiday' }, schedules: { primary: { start: addDaysIso(es, -8), end: addDaysIso(es, 5) }, middle: { start: addDaysIso(es, -8), end: addDaysIso(es, 5) }, high: { start: addDaysIso(es, -8), end: addDaysIso(es, 5) } } },
+      { id: 'summer', names: { zh: '暑假', zhHant: '暑假', ja: '夏休み', ko: '여름방학', en: 'Summer Holiday' }, schedules: { primary: { start: isoDate(y, 7, 22), end: isoDate(y, 9, 1) }, middle: { start: isoDate(y, 7, 22), end: isoDate(y, 9, 1) }, high: { start: isoDate(y, 7, 24), end: isoDate(y, 9, 1) } } },
+      { id: 'autumn_half', names: { zh: '秋季期中假', zhHant: '秋季期中假', ja: '秋休み（ハーフターム）', ko: '가을 학기중 방학', en: 'Autumn Half Term' }, schedules: { primary: { start: octLastMon, end: addDaysIso(octLastMon, 4) }, middle: { start: octLastMon, end: addDaysIso(octLastMon, 4) }, high: { start: octLastMon, end: addDaysIso(octLastMon, 4) } } },
+      { id: 'xmas_dec', names: { zh: '圣诞假', zhHant: '聖誕假', ja: 'クリスマス休暇', ko: '성탄절 방학', en: 'Christmas Holiday' }, schedules: { primary: { start: isoDate(y, 12, 20), end: isoDate(y, 12, 31) }, middle: { start: isoDate(y, 12, 20), end: isoDate(y, 12, 31) }, high: { start: isoDate(y, 12, 21), end: isoDate(y, 12, 31) } } }
+    ];
+  }
+};
+
+function getSchoolVacationsForYear(country, year){
+  const key = country + '_' + year;
+  if(!state.schoolCache[key]){
+    const fn = SCHOOL_VACATIONS[country];
+    state.schoolCache[key] = fn ? fn(year) : [];
+  }
+  return state.schoolCache[key];
+}
+
+function getSchoolVacationsForDate(country, iso, gradeLevel){
+  const [y] = iso.split('-').map(Number);
+  const vacs = getSchoolVacationsForYear(country, y);
+  const lang = currentLang();
+  const matched = [];
+  const t = T();
+  for(const v of vacs){
+    const grades = ['primary', 'middle', 'high'];
+    const activeGrades = [];
+    if(gradeLevel === 'all'){
+      for(const g of grades){
+        const sched = v.schedules[g];
+        if(sched && iso >= sched.start && iso <= sched.end){
+          activeGrades.push(g);
+        }
+      }
+    } else {
+      const sched = v.schedules[gradeLevel];
+      if(sched && iso >= sched.start && iso <= sched.end){
+        activeGrades.push(gradeLevel);
+      }
+    }
+
+    if(activeGrades.length > 0){
+      const gradeNames = activeGrades.map(g => t['grade_' + g] || g);
+      const name = v.names[lang] || v.names.zh || v.names.en;
+      matched.push({
+        id: v.id,
+        name,
+        grades: activeGrades,
+        gradesLabel: gradeNames.join('·'),
+        isAllGrades: activeGrades.length === 3
+      });
+    }
+  }
+  return matched;
+}
+
+/* =========================================================================
  * 国家与多语言 i18n
  * ======================================================================= */
 const COUNTRIES=[
@@ -593,51 +797,90 @@ const COUNTRIES=[
   {code:'GB',flag:'🇬🇧',label:'United Kingdom 英国',lang:'en'},
 ];
 const I18N={
-  zh:{brand:'万年历',subtitle:'农历公历互转 · 多国法定节假日查询，界面语言随国家自动切换。',country:'国家/地区',today:'今天',lunarToggle:'显示农历',
-    legendPublic:'法定假日',legendObservance:'观察日',legendWeekend:'周末',legendWorkday:'调休上班',
+  zh:{brand:'万年历',subtitle:'农历公历互转 · 多国法定节假日查询与中小学/高中放假校历，界面语言随国家自动切换。',country:'国家/地区',today:'今天',lunarToggle:'显示农历',
+    schoolToggle:'学校放假',schoolGradeAll:'全学段 (中小学+高中)',schoolGradePrimary:'小学',schoolGradeMiddle:'初中',schoolGradeHigh:'高中',
+    legendPublic:'法定假日',legendObservance:'观察日',legendWeekend:'周末',legendWorkday:'调休上班',legendSchool:'学校放假',
     sidebarTitle:'本年节假日一览',sidebarEmpty:'本年暂无节假日数据',
-    detailSolar:'公历',detailWeekday:'星期',detailLunar:'农历',detailZodiac:'生肖',detailGanzhi:'干支年',detailHoliday:'节假日',detailNoHoliday:'今日无节假日',detailWorkdayNote:'⚠️ 此日为调休上班日',
+    schoolSidebarTitle:'🏫 学期放假校历（参考）',schoolEmpty:'该国家/地区该年暂无校历放假数据',daysUnit:'天',
+    grade_primary:'小学',grade_middle:'初中',grade_high:'高中',grade_all:'全学段',
+    detailSolar:'公历',detailWeekday:'星期',detailLunar:'农历',detailZodiac:'生肖',detailGanzhi:'干支年',detailHoliday:'法定假日',detailSchoolHoliday:'学校放假',detailNoHoliday:'今日无节假日',detailWorkdayNote:'⚠️ 此日为调休上班日',
     dataOfficial:'✅ 已核实官方数据：该年节假日安排来自官方公告',dataApprox:'⚙️ 算法推算：该年尚无官方公告，以下为法定基准日期推算，具体放假安排请以政府最终公告为准',
     weekday:['日','一','二','三','四','五','六'],period:(y,m)=>y+'年'+m+'月',
-    footer:'农历换算数据区间：1900–2100年（参考香港天文台公历农历对照数据）。节假日数据来源：中国——国务院办公厅《关于2025/2026年部分节假日安排的通知》；香港——香港政府一站通GovHK；中国台湾——行政院人事行政总处；日本——《国民の祝日に関する法律》算法实现；韩国——《관공서의 공휴일에 관한 규정》算法实现；美国——5 U.S.C. §6103联邦假日法算法实现；英国——GOV.UK银行假日规则算法实现。算法推算年度（非官方已公布年度）仅供参考，具体以当地政府公告为准。'},
-  zhHant:{brand:'萬年曆',subtitle:'農曆公曆互轉 · 多國法定節假日查詢，介面語言隨國家自動切換。',country:'國家/地區',today:'今天',lunarToggle:'顯示農曆',
-    legendPublic:'法定假日',legendObservance:'觀察日',legendWeekend:'週末',legendWorkday:'調休上班',
+    footer:'农历换算数据区间：1900–2100年（参考香港天文台公历农历对照数据）。节假日数据来源：中国——国务院办公厅《关于2025/2026年部分节假日安排的通知》；香港——香港政府一站通GovHK；中国台湾——行政院人事行政总处；日本——《国民の祝日に関する法律》算法实现；韩国——《관공서의 공휴일에 관한 규정》算法实现；美国——5 U.S.C. §6103联邦假日法算法实现；英国——GOV.UK银行假日规则算法实现。学校放假日期依据各国教育部基准校历推算，供参考，具体以各地教育部门和学校通知为准。'},
+  zhHant:{brand:'萬年曆',subtitle:'農曆公曆互轉 · 多國法定節假日查詢與中小學/高中放假校曆，介面語言隨國家自動切換。',country:'國家/地區',today:'今天',lunarToggle:'顯示農曆',
+    schoolToggle:'學校放假',schoolGradeAll:'全學段 (中小學+高中)',schoolGradePrimary:'小學',schoolGradeMiddle:'初中',schoolGradeHigh:'高中',
+    legendPublic:'法定假日',legendObservance:'觀察日',legendWeekend:'週末',legendWorkday:'調休上班',legendSchool:'學校放假',
     sidebarTitle:'本年節假日一覽',sidebarEmpty:'本年暫無節假日資料',
-    detailSolar:'公曆',detailWeekday:'星期',detailLunar:'農曆',detailZodiac:'生肖',detailGanzhi:'干支年',detailHoliday:'節假日',detailNoHoliday:'今日無節假日',detailWorkdayNote:'⚠️ 此日為調休上班日',
+    schoolSidebarTitle:'🏫 學期放假校曆（參考）',schoolEmpty:'該國家/地區該年暫無校曆放假資料',daysUnit:'天',
+    grade_primary:'小學',grade_middle:'初中',grade_high:'高中',grade_all:'全學段',
+    detailSolar:'公曆',detailWeekday:'星期',detailLunar:'農曆',detailZodiac:'生肖',detailGanzhi:'干支年',detailHoliday:'法定假日',detailSchoolHoliday:'學校放假',detailNoHoliday:'今日無節假日',detailWorkdayNote:'⚠️ 此日為調休上班日',
     dataOfficial:'✅ 已核實官方資料：該年節假日安排來自官方公告',dataApprox:'⚙️ 演算法推算：該年尚無官方公告，以下為基準日期推算，具體放假安排請以當地政府最終公告為準',
     weekday:['日','一','二','三','四','五','六'],period:(y,m)=>y+'年'+m+'月',
-    footer:'農曆換算資料區間：1900–2100年（參考香港天文台公曆農曆對照資料）。節假日資料來源：香港——香港政府一站通GovHK；中國台灣——行政院人事行政總處。演算法推算年度（非官方已公布年度）僅供參考，具體以當地政府公告為準。'},
-  ja:{brand:'万年暦',subtitle:'旧暦・新暦変換 ／ 各国法定祝日検索。国を選ぶと表示言語が自動的に切り替わります。',country:'国・地域',today:'今日',lunarToggle:'旧暦を表示',
-    legendPublic:'法定祝日',legendObservance:'記念日',legendWeekend:'週末',legendWorkday:'振替勤務日',
+    footer:'農曆換算資料區間：1900–2100年（參考香港天文台公曆農曆對照資料）。節假日資料來源：香港——香港政府一站通GovHK；中國台灣——行政院人事行政總處。學校放假日期依據各地教育部基準校曆推算，僅供參考，具體以各地教育主管部門及學校公告為準。'},
+  ja:{brand:'万年暦',subtitle:'旧暦・新暦変換 ／ 各国法定祝日検索・小中高校の学校休暇。国を選ぶと表示言語が自動的に切り替わります。',country:'国・地域',today:'今日',lunarToggle:'旧暦を表示',
+    schoolToggle:'学校休暇',schoolGradeAll:'全校種 (小・中・高校)',schoolGradePrimary:'小学校',schoolGradeMiddle:'中学校',schoolGradeHigh:'高校',
+    legendPublic:'法定祝日',legendObservance:'記念日',legendWeekend:'週末',legendWorkday:'振替勤務日',legendSchool:'学校休暇',
     sidebarTitle:'今年の祝日一覧',sidebarEmpty:'データがありません',
-    detailSolar:'新暦',detailWeekday:'曜日',detailLunar:'旧暦',detailZodiac:'干支（十二支）',detailGanzhi:'干支年',detailHoliday:'祝日',detailNoHoliday:'祝日なし',detailWorkdayNote:'⚠️ 振替勤務日です',
+    schoolSidebarTitle:'🏫 年間学校休暇（目安）',schoolEmpty:'学校休暇データがありません',daysUnit:'日',
+    grade_primary:'小学校',grade_middle:'中学校',grade_high:'高校',grade_all:'全校種',
+    detailSolar:'新暦',detailWeekday:'曜日',detailLunar:'旧暦',detailZodiac:'干支（十二支）',detailGanzhi:'干支年',detailHoliday:'法定祝日',detailSchoolHoliday:'学校休暇',detailNoHoliday:'祝日なし',detailWorkdayNote:'⚠️ 振替勤務日です',
     dataOfficial:'✅ 確認済み公式データ',dataApprox:'⚙️ 法律に基づく算出値（内閣府の官報と照合済み）',
     weekday:['日','月','火','水','木','金','土'],period:(y,m)=>y+'年'+m+'月',
-    footer:'旧暦変換データ範囲：1900–2100年（香港天文台の新暦旧暦対照データを参考）。祝日データは「国民の祝日に関する法律」に基づくアルゴリズム実装で、2026年の内閣府発表の祝日一覧と照合済みです。'},
-  ko:{brand:'만세력',subtitle:'음력·양력 변환 및 각국 법정 공휴일 조회. 국가를 선택하면 표시 언어가 자동으로 전환됩니다.',country:'국가/지역',today:'오늘',lunarToggle:'음력 표시',
-    legendPublic:'법정공휴일',legendObservance:'기념일',legendWeekend:'주말',legendWorkday:'대체근무일',
+    footer:'旧暦変換データ範囲：1900–2100年（香港天文台の新暦旧暦対照データを参考）。祝日データは「国民の祝日に関する法律」に基づくアルゴリズム実装です。学校休暇は文部科学省及び各地の標準的な学事日程を基にした目安であり、自治体や学校により異なります。'},
+  ko:{brand:'만세력',subtitle:'음력·양력 변환 및 각국 법정 공휴일·초중고 방학 조회. 국가를 선택하면 표시 언어가 자동으로 전환됩니다.',country:'국가/지역',today:'오늘',lunarToggle:'음력 표시',
+    schoolToggle:'학교 방학',schoolGradeAll:'전체 학년 (초·중·고)',schoolGradePrimary:'초등학교',schoolGradeMiddle:'중학교',schoolGradeHigh:'고등학교',
+    legendPublic:'법정공휴일',legendObservance:'기념일',legendWeekend:'주말',legendWorkday:'대체근무일',legendSchool:'학교 방학',
     sidebarTitle:'올해 공휴일 목록',sidebarEmpty:'데이터 없음',
-    detailSolar:'양력',detailWeekday:'요일',detailLunar:'음력',detailZodiac:'십이지',detailGanzhi:'간지년',detailHoliday:'공휴일',detailNoHoliday:'공휴일 없음',detailWorkdayNote:'⚠️ 대체근무일입니다',
+    schoolSidebarTitle:'🏫 학기별 방학 일정(참고)',schoolEmpty:'방학 데이터가 없습니다',daysUnit:'일',
+    grade_primary:'초등',grade_middle:'중학',grade_high:'고등',grade_all:'전체',
+    detailSolar:'양력',detailWeekday:'요일',detailLunar:'음력',detailZodiac:'십이지',detailGanzhi:'간지년',detailHoliday:'법정공휴일',detailSchoolHoliday:'학교 방학',detailNoHoliday:'공휴일 없음',detailWorkdayNote:'⚠️ 대체근무일입니다',
     dataOfficial:'✅ 확인된 공식 데이터',dataApprox:'⚙️ 법령에 근거한 알고리즘 산출값(2026년 공식 목록과 대조 완료)',
     weekday:['일','월','화','수','목','금','토'],period:(y,m)=>y+'년 '+m+'월',
-    footer:'음력 변환 데이터 범위: 1900–2100년(홍콩 천문대 음양력 대조 데이터 참고). 공휴일 데이터는 "관공서의 공휴일에 관한 규정" 및 대체공휴일 제도에 기반한 알고리즘 구현이며, 2026년 공식 공휴일 목록과 대조하여 검증되었습니다.'},
-  en:{brand:'Calendar & Holidays',subtitle:'Lunar/solar date converter and public holiday lookup. UI language switches automatically with the selected country.',country:'Country/Region',today:'Today',lunarToggle:'Show lunar date',
-    legendPublic:'Public holiday',legendObservance:'Observance',legendWeekend:'Weekend',legendWorkday:'Make-up workday',
+    footer:'음력 변환 데이터 범위: 1900–2100년(홍콩 천문대 음양력 대조 데이터 참고). 공휴일 데이터는 "관공서의 공휴일에 관한 규정"에 기반하며, 학교 방학은 표준 학사일정 모델에 따른 참고치입니다.'},
+  en:{brand:'Calendar & Holidays',subtitle:'Lunar/solar date converter, public holidays, and K-12 school breaks. UI language switches automatically with the selected country.',country:'Country/Region',today:'Today',lunarToggle:'Show lunar date',
+    schoolToggle:'School Breaks',schoolGradeAll:'All Grades (K-12)',schoolGradePrimary:'Elementary',schoolGradeMiddle:'Middle School',schoolGradeHigh:'High School',
+    legendPublic:'Public holiday',legendObservance:'Observance',legendWeekend:'Weekend',legendWorkday:'Make-up workday',legendSchool:'School Break',
     sidebarTitle:'Holidays this year',sidebarEmpty:'No data available',
-    detailSolar:'Solar date',detailWeekday:'Weekday',detailLunar:'Lunar date',detailZodiac:'Zodiac',detailGanzhi:'Ganzhi year',detailHoliday:'Holiday',detailNoHoliday:'No holiday today',detailWorkdayNote:'⚠️ Make-up working day',
+    schoolSidebarTitle:'🏫 Academic School Breaks (Approx.)',schoolEmpty:'No school vacation data for this year',daysUnit:'days',
+    grade_primary:'Primary',grade_middle:'Middle',grade_high:'High',grade_all:'All',
+    detailSolar:'Solar date',detailWeekday:'Weekday',detailLunar:'Lunar date',detailZodiac:'Zodiac',detailGanzhi:'Ganzhi year',detailHoliday:'Public Holiday',detailSchoolHoliday:'School Break',detailNoHoliday:'No holiday today',detailWorkdayNote:'⚠️ Make-up working day',
     dataOfficial:'✅ Verified official data',dataApprox:'⚙️ Algorithmically computed per statutory rules (cross-checked against the official 2026 list)',
     weekday:['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],period:(y,m)=>['January','February','March','April','May','June','July','August','September','October','November','December'][m-1]+' '+y,
-    footer:'Lunar conversion data range: 1900-2100 (reference: Hong Kong Observatory solar-lunar calendar data). Holiday data sources: US — 5 U.S.C. §6103 Federal holiday law (algorithmic); UK — GOV.UK bank holiday rules (algorithmic). Algorithmically generated years are for reference only — always confirm with official government announcements.'}
+    footer:'Lunar conversion data range: 1900-2100 (reference: Hong Kong Observatory solar-lunar calendar data). Statutory holiday data is algorithmically calculated. School vacation schedules are standard baseline estimates across primary, middle, and high schools and vary by district.'}
 };
 
 /* =========================================================================
  * 应用状态与渲染
  * ======================================================================= */
 const today = new Date();
-const state = { country: localStorage.getItem('calendar_country_v1') || 'CN', year: today.getFullYear(), month: today.getMonth()+1, selected: isoDate(today.getFullYear(),today.getMonth()+1,today.getDate()), holidayCache:{} };
+const state = {
+  country: localStorage.getItem('calendar_country_v1') || 'CN',
+  year: today.getFullYear(),
+  month: today.getMonth()+1,
+  selected: isoDate(today.getFullYear(),today.getMonth()+1,today.getDate()),
+  showSchool: localStorage.getItem('cal_show_school_v1') !== 'false',
+  schoolGrade: localStorage.getItem('cal_school_grade_v1') || 'all',
+  holidayCache:{},
+  schoolCache:{}
+};
 
 function currentLang(){ return (COUNTRIES.find(c=>c.code===state.country)||COUNTRIES[0]).lang; }
 function T(){ return I18N[currentLang()]; }
+
+function onSchoolToggleChange(checked){
+  state.showSchool = checked;
+  localStorage.setItem('cal_show_school_v1', String(checked));
+  const gradeGroup = document.getElementById('gradeControlGroup');
+  if(gradeGroup) gradeGroup.style.display = checked ? 'flex' : 'none';
+  applyI18n();
+  renderAll();
+}
+
+function onSchoolGradeChange(val){
+  state.schoolGrade = val;
+  localStorage.setItem('cal_school_grade_v1', val);
+  renderAll();
+}
 
 function getHolidayMap(country,year){
   const key=country+'_'+year;
@@ -680,14 +923,32 @@ function applyI18n(){
   document.getElementById('lblCountry').textContent = t.country;
   document.getElementById('todayBtn').textContent = t.today;
   document.getElementById('lblLunarToggle').textContent = t.lunarToggle;
+  const lblSchool = document.getElementById('lblSchoolToggle');
+  if(lblSchool) lblSchool.textContent = t.schoolToggle;
+  const schoolToggleEl = document.getElementById('schoolToggle');
+  if(schoolToggleEl) schoolToggleEl.checked = state.showSchool;
+  const gradeSel = document.getElementById('schoolGradeSelect');
+  if(gradeSel){
+    gradeSel.innerHTML = `
+      <option value="all" ${state.schoolGrade==='all'?'selected':''}>${t.schoolGradeAll}</option>
+      <option value="primary" ${state.schoolGrade==='primary'?'selected':''}>${t.schoolGradePrimary}</option>
+      <option value="middle" ${state.schoolGrade==='middle'?'selected':''}>${t.schoolGradeMiddle}</option>
+      <option value="high" ${state.schoolGrade==='high'?'selected':''}>${t.schoolGradeHigh}</option>
+    `;
+  }
+  const gradeGroup = document.getElementById('gradeControlGroup');
+  if(gradeGroup) gradeGroup.style.display = state.showSchool ? 'flex' : 'none';
   document.getElementById('lblSidebarTitle').textContent = t.sidebarTitle;
+  const lblSchoolSide = document.getElementById('lblSchoolSidebarTitle');
+  if(lblSchoolSide) lblSchoolSide.textContent = t.schoolSidebarTitle;
   document.getElementById('footerNote').textContent = t.footer;
   document.getElementById('weekdayRow').innerHTML = t.weekday.map(w=>`<div>${w}</div>`).join('');
   document.getElementById('legendBar').innerHTML = `
     <span><span class="dot public"></span>${t.legendPublic}</span>
     <span><span class="dot observance"></span>${t.legendObservance}</span>
     <span><span class="dot weekend"></span>${t.legendWeekend}</span>
-    <span><span class="dot workday"></span>${t.legendWorkday}</span>`;
+    <span><span class="dot workday"></span>${t.legendWorkday}</span>
+    <span style="${state.showSchool?'':'display:none;'}"><span class="dot school"></span>${t.legendSchool}</span>`;
 }
 
 function navMonth(delta){
@@ -766,11 +1027,29 @@ function renderCalendarGrid(){
     else if(h && h.type==='observance'){ badgeHtml = `<div class="hbadge observance" title="${h.name}">${h.name}</div>`; }
     let workdayFlag='';
     if(h && h.type==='workday'){ workdayFlag = `<div class="workday-flag">${currentLang()==='en'?'W':'班'}</div>`; }
+    
+    let schoolTrackHtml = '';
+    let schoolTagHtml = '';
+    if(state.showSchool){
+      const schoolMatches = getSchoolVacationsForDate(state.country, iso, state.schoolGrade);
+      if(schoolMatches.length > 0){
+        cls += ' in-school-vac';
+        const topVac = schoolMatches[0];
+        const tipText = schoolMatches.map(m => `${m.name} (${m.gradesLabel})`).join(' / ');
+        schoolTrackHtml = `<div class="school-track" title="${tipText}"></div>`;
+        if(!h || (h.type !== 'public' && h.type !== 'observance')){
+          schoolTagHtml = `<div class="school-tag" title="${tipText}">🎒 ${topVac.name}</div>`;
+        }
+      }
+    }
+
     return `<div class="${cls}" onclick="selectDate(${c.y},${c.m},${c.d})">
       <div class="dnum">${c.d}</div>
       ${lunarHtml}
+      ${schoolTagHtml}
       ${badgeHtml}
       ${workdayFlag}
+      ${schoolTrackHtml}
     </div>`;
   }).join('');
   document.getElementById('daysGrid').innerHTML = html;
@@ -795,6 +1074,16 @@ function renderDetail(){
   } else {
     html += `<div class="drow" style="color:var(--text-light);">${t.detailNoHoliday}</div>`;
   }
+
+  if(state.showSchool){
+    const schoolMatches = getSchoolVacationsForDate(state.country, state.selected, state.schoolGrade);
+    if(schoolMatches.length > 0){
+      schoolMatches.forEach(sm => {
+        html += `<div class="dschool-vac">🎒 <b>${t.detailSchoolHoliday}：</b>${sm.name} <span class="dschool-grades">(${sm.gradesLabel})</span></div>`;
+      });
+    }
+  }
+
   document.getElementById('detailBox').innerHTML = html;
 }
 
@@ -818,11 +1107,76 @@ function renderSidebarList(){
   }).join('');
 }
 
+function renderSchoolVacationList(){
+  const box = document.getElementById('schoolVacationBox');
+  if(!box) return;
+  if(!state.showSchool){
+    box.style.display = 'none';
+    return;
+  }
+  box.style.display = 'block';
+  const t = T();
+  const vacs = getSchoolVacationsForYear(state.country, state.year);
+  const lang = currentLang();
+  const listEl = document.getElementById('schoolVacationList');
+  if(!vacs || vacs.length === 0){
+    listEl.innerHTML = `<div class="empty-note">${t.schoolEmpty}</div>`;
+    return;
+  }
+  let itemsHtml = '';
+  vacs.forEach(v => {
+    const name = v.names[lang] || v.names.zh || v.names.en;
+    if(state.schoolGrade === 'all'){
+      const p = v.schedules.primary, m = v.schedules.middle, h = v.schedules.high;
+      if(p.start === h.start && p.end === h.end && p.start === m.start && p.end === m.end){
+        const days = diffDaysIso(p.start, p.end);
+        const [sy,sm,sd] = p.start.split('-').map(Number);
+        itemsHtml += `<div class="school-vac-item" onclick="selectDate(${sy},${sm},${sd})">
+          <div class="school-vac-hdr">
+            <span class="school-vac-title">🎒 ${name}</span>
+            <span class="school-vac-days">${days} ${t.daysUnit}</span>
+          </div>
+          <div class="school-vac-dates">${p.start} ~ ${p.end}</div>
+          <div class="school-vac-grades">${t.grade_primary} · ${t.grade_middle} · ${t.grade_high}</div>
+        </div>`;
+      } else {
+        const pDays = diffDaysIso(p.start, p.end);
+        const hDays = diffDaysIso(h.start, h.end);
+        const [sy,sm,sd] = p.start.split('-').map(Number);
+        itemsHtml += `<div class="school-vac-item" onclick="selectDate(${sy},${sm},${sd})">
+          <div class="school-vac-hdr">
+            <span class="school-vac-title">🎒 ${name}</span>
+            <span class="school-vac-days">${pDays} / ${hDays} ${t.daysUnit}</span>
+          </div>
+          <div class="school-vac-dates">${t.grade_primary}/${t.grade_middle}: ${p.start} ~ ${p.end}</div>
+          <div class="school-vac-dates" style="margin-top:2px;">${t.grade_high}: ${h.start} ~ ${h.end}</div>
+        </div>`;
+      }
+    } else {
+      const sched = v.schedules[state.schoolGrade];
+      if(sched){
+        const days = diffDaysIso(sched.start, sched.end);
+        const [sy,sm,sd] = sched.start.split('-').map(Number);
+        const gName = t['grade_' + state.schoolGrade] || state.schoolGrade;
+        itemsHtml += `<div class="school-vac-item" onclick="selectDate(${sy},${sm},${sd})">
+          <div class="school-vac-hdr">
+            <span class="school-vac-title">🎒 ${name} (${gName})</span>
+            <span class="school-vac-days">${days} ${t.daysUnit}</span>
+          </div>
+          <div class="school-vac-dates">${sched.start} ~ ${sched.end}</div>
+        </div>`;
+      }
+    }
+  });
+  listEl.innerHTML = itemsHtml;
+}
+
 function renderAll(){
   renderDataBanner();
   renderCalendarGrid();
   renderDetail();
   renderSidebarList();
+  renderSchoolVacationList();
 }
 
 buildCountrySelect();

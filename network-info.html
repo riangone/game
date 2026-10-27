@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <!-- Google tag (gtag.js) -->
+  <script src="js/consent-default.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -17,7 +18,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>网络信息查询 · IP与浏览器指纹</title>
-<meta name="description" content="查询公网IP地址、User-Agent解析、浏览器与系统指纹信息，免Key开放接口，断网自动降级为仅展示本机信息。">
+<meta name="description" content="在浏览器本机查看 User-Agent 解析、浏览器与系统指纹、网络连接状态，信息不上传。公网IP查询暂停中。">
 <style>
 :root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--danger:#ef4444;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
 [data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
@@ -46,6 +47,53 @@ p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
 .refresh-btn{padding:8px 16px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:12px;font-weight:700;cursor:pointer;}
 </style>
     <link rel="canonical" href="https://tool.0101.click/network-info.html">
+    <!-- og+ld (#43) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="0101.click 实用工具箱">
+    <meta property="og:title" content="网络信息查询 · IP与浏览器指纹">
+    <meta property="og:description" content="在浏览器本机查看 User-Agent 解析、浏览器与系统指纹、网络连接状态，信息不上传。公网IP查询暂停中。">
+    <meta property="og:url" content="https://tool.0101.click/network-info.html">
+    <meta property="og:image" content="https://tool.0101.click/assets/og/network-info.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="网络信息查询">
+    <meta property="og:locale" content="zh_CN">
+    <meta name="twitter:card" content="summary_large_image">
+    <script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "WebApplication",
+   "name": "网络信息查询",
+   "url": "https://tool.0101.click/network-info.html",
+   "description": "在浏览器本机查看 User-Agent 解析、浏览器与系统指纹、网络连接状态，信息不上传。公网IP查询暂停中。",
+   "applicationCategory": "DeveloperApplication",
+   "operatingSystem": "Any",
+   "browserRequirements": "Requires JavaScript",
+   "inLanguage": "zh-CN",
+   "image": "https://tool.0101.click/assets/og/network-info.png"
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "工具箱",
+     "item": "https://tool.0101.click/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "网络信息查询",
+     "item": "https://tool.0101.click/network-info.html"
+    }
+   ]
+  }
+ ]
+}
+    </script>
     <link rel="stylesheet" href="css/tools-header.css">
   <script src="js/pwa-register.js"></script>
 </head>
@@ -123,7 +171,6 @@ p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
           <option value="tech-blogs.html">📡 企业技术博客雷达</option>
           <option value="network-info.html" selected>🌐 网络信息查询探针</option>
           <option value="doh-lookup.html">🔍 浏览器原生 DNS 探针</option>
-          <option value="iss-tracker.html">🛰️ 国际空间站实时追踪</option>
         </optgroup>
       </select>
       <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="切换深色/浅色模式">🌓</button>
@@ -132,7 +179,7 @@ p.page-sub{color:var(--text-muted);font-size:13px;margin-bottom:18px;}
 
 <main class="container">
   <h1 class="page-title">🌐 网络信息查询</h1>
-  <p class="page-sub">查询公网 IP、地理位置参考、User-Agent 解析与浏览器/系统指纹信息。免 Key 开放接口，断网自动降级仅展示本机信息。</p>
+  <p class="page-sub">查询公网 IP、地理位置参考、User-Agent 解析与浏览器/系统指纹信息。公网 IP 查询依赖第三方接口，目前暂停；本机信息在浏览器内读取，不上传。</p>
 
   <div class="hero-card">
     <div class="ip" id="ipDisplay">查询中...</div>
@@ -170,10 +217,18 @@ function toggleTheme(){const cur=document.documentElement.getAttribute('data-the
 
 function row(k,v,note){ return `<div class="info-row"><span class="k">${k}</span><span class="v">${v}${note?` <span title="${note}" style="cursor:help;opacity:.55;">ⓘ</span>`:''}</span></div>`; }
 
+const IP_LOOKUP_ENABLED = false;
 async function fetchIpInfo(){
   document.getElementById('ipDisplay').textContent = '查询中...';
   document.getElementById('statusBadge').textContent = '🔄 正在连接...';
   document.getElementById('ipInfoGrid').innerHTML = row('状态','加载中...');
+  // ipapi.co 免费档仅限测试/开发，不允许正式站点使用（待办 #10）。站长确认可用的接口前暂停在线查询。
+  if (!IP_LOOKUP_ENABLED) {
+    document.getElementById('ipDisplay').textContent = '暂停查询';
+    document.getElementById('statusBadge').textContent = 'ⓘ 第三方 IP 查询接口条款核对中，下方仅展示本机信息';
+    document.getElementById('ipInfoGrid').innerHTML = row('状态', '公网 IP 与归属地查询暂时停用；浏览器、设备与网络连接信息照常在本机读取，不上传。');
+    return;
+  }
   try{
     const controller = new AbortController();
     const timeout = setTimeout(()=>controller.abort(), 6000);

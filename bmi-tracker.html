@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <!-- Google tag (gtag.js) -->
+  <script src="js/consent-default.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -16,8 +17,8 @@
   </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>BMI 与健康指标追踪 · 纯前端免安装工具</title>
-<meta name="description" content="纯前端个人健康评估：计算 BMI、体型判定、理想体重、基础代谢率 BMR 与体脂率估算，Canvas 走势图。">
+<title>BMI 与 TDEE 计算器 · 基础代谢 BMR、每日总消耗</title>
+<meta name="description" content="在线 BMI 计算器，同时估算基础代谢 BMR（Mifflin-St Jeor 公式）和每日总消耗 TDEE，附活动系数说明。数据只在浏览器本地计算，结果为估算值，仅供参考。">
 <style>
 :root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--purple:#8b5cf6;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,.06);--shadow-lg:0 10px 15px -3px rgba(0,0,0,.08);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
 [data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
@@ -50,6 +51,98 @@ label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display
 .stat-card span{font-size:12px;color:var(--text-muted);}
 </style>
     <link rel="canonical" href="https://tool.0101.click/bmi-tracker.html">
+    <!-- og+ld (#43) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="0101.click 实用工具箱">
+    <meta property="og:title" content="BMI 与 TDEE 计算器 · 基础代谢 BMR、每日总消耗">
+    <meta property="og:description" content="在线 BMI 计算器，同时估算基础代谢 BMR（Mifflin-St Jeor 公式）和每日总消耗 TDEE，附活动系数说明。数据只在浏览器本地计算，结果为估算值，仅供参考。">
+    <meta property="og:url" content="https://tool.0101.click/bmi-tracker.html">
+    <meta property="og:image" content="https://tool.0101.click/assets/og/bmi-tracker.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="BMI 与 TDEE 计算器">
+    <meta property="og:locale" content="zh_CN">
+    <meta name="twitter:card" content="summary_large_image">
+    <script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "WebApplication",
+   "name": "BMI 与 TDEE 计算器",
+   "url": "https://tool.0101.click/bmi-tracker.html",
+   "description": "在线 BMI 计算器，同时估算基础代谢 BMR（Mifflin-St Jeor 公式）和每日总消耗 TDEE，附活动系数说明。数据只在浏览器本地计算，结果为估算值，仅供参考。",
+   "applicationCategory": "HealthApplication",
+   "operatingSystem": "Any",
+   "browserRequirements": "Requires JavaScript",
+   "inLanguage": "zh-CN",
+   "image": "https://tool.0101.click/assets/og/bmi-tracker.png"
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "工具箱",
+     "item": "https://tool.0101.click/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "BMI 与 TDEE 计算器",
+     "item": "https://tool.0101.click/bmi-tracker.html"
+    }
+   ]
+  },
+  {
+   "@type": "FAQPage",
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "BMI 是怎么算的？",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "BMI = 体重（kg）÷ 身高（m）²。它只用身高和体重两个数，适合粗略判断体重是否在常见范围内，不能反映肌肉量、脂肪分布和骨架大小。"
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "基础代谢率和体脂率准吗？",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "基础代谢率用 Mifflin-St Jeor 公式估算，体脂率由 BMI、年龄和性别推算，都是人群平均意义上的估计，个人误差可能较大。想要更准确的数值，需要专业的身体成分测量。"
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "哪些人不适合用这个估算？",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "未成年人（仍在生长发育）、孕期或哺乳期女性、患有甲状腺等代谢相关疾病或正在服药的人、职业运动员，公式误差会更大，结果可能没有参考意义。这些情况请先咨询医生。"
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "可以根据结果调整饮食或用药吗？",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "本工具仅供参考，不构成医疗建议。请不要仅凭计算结果节食、增重或调整用药。如果体重变化明显或有健康方面的担心，请咨询医生或注册营养师。"
+     }
+    },
+    {
+     "@type": "Question",
+     "name": "我的身高体重记录存在哪里？",
+     "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "只保存在你当前浏览器的 localStorage 中，不会上传到服务器。换设备或清除浏览器数据后记录会消失，也可以点上方\"清空历史\"随时删除。"
+     }
+    }
+   ]
+  }
+ ]
+}
+    </script>
     <link rel="stylesheet" href="css/tools-header.css">
   <script src="js/pwa-register.js"></script>
 </head>
@@ -71,7 +164,7 @@ label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display
       </a>
       <div class="app-brand">
         <span class="brand-icon">⚖️</span>
-        <span class="brand-title">BMI 与健康指标追踪</span>
+        <span class="brand-title">BMI 与 TDEE 计算器</span>
       </div>
     </div>
     <div class="header-right">
@@ -135,7 +228,6 @@ label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display
           <option value="tech-blogs.html">📡 企业技术博客雷达</option>
           <option value="network-info.html">🌐 网络信息查询探针</option>
           <option value="doh-lookup.html">🔍 浏览器原生 DNS 探针</option>
-          <option value="iss-tracker.html">🛰️ 国际空间站实时追踪</option>
         </optgroup>
       </select>
       <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="切换深色/浅色模式">🌓</button>
@@ -144,8 +236,8 @@ label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display
 <main class="container">
   <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
     <div>
-      <h1 class="page-title">⚖️ BMI 与健康指标追踪</h1>
-      <p class="page-sub">卫健委与 WHO 双标准对照，BMR 基础代谢率与体脂率推算，本地趋势记录，保护健康隐私。</p>
+      <h1 class="page-title">⚖️ BMI 与 TDEE 计算器</h1>
+      <p class="page-sub">计算 BMI，估算基础代谢 BMR 与每日总消耗 TDEE，附体脂率推算和本地体重趋势记录，数据只在浏览器本地计算。</p>
   <details class="local-note" style="margin:8px 0 12px;padding:8px 12px;border:1px solid rgba(16,185,129,.35);background:rgba(16,185,129,.08);border-radius:8px;font-size:13px;line-height:1.7;"><summary style="cursor:pointer;font-weight:700;color:#059669;">🔒 本地处理 · 不上传服务器</summary><p style="margin:6px 0 0;">你输入的身高、体重、年龄等数据只在你的浏览器中用 JavaScript 处理，本页没有任何上传接口，不会发送到本站或第三方服务器。页面加载完成后断网也能继续使用，你也可以打开浏览器开发者工具的 Network 面板自行验证。“记录今日数据”保存在本浏览器的 localStorage 中，只在你的设备上，可随时点“清空历史”删除。本站用 Google Analytics 统计匿名访问量，只记录访问了哪个页面、是否使用过工具，不包含你输入的内容。详见<a href="https://0101.click/privacy.html#local">隐私政策</a>。</p></details>
     </div>
     <button class="btn btn-subtle" onclick="saveRecord()">📌 记录今日数据</button>
@@ -172,6 +264,16 @@ label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display
         <label class="field-label">年龄 (岁)</label>
         <input type="number" id="ageInput" value="28" min="1" max="120" oninput="calculateBMI()">
       </div>
+      <div>
+        <label class="field-label">日常活动水平（用于估算 TDEE）</label>
+        <select id="activityInput" onchange="calculateBMI()">
+          <option value="1.2">久坐：几乎不运动 ×1.2</option>
+          <option value="1.375" selected>轻度：每周运动 1–3 天 ×1.375</option>
+          <option value="1.55">中度：每周运动 3–5 天 ×1.55</option>
+          <option value="1.725">高度：每周运动 6–7 天 ×1.725</option>
+          <option value="1.9">极高：体力劳动或每天高强度训练 ×1.9</option>
+        </select>
+      </div>
     </div>
 
     <div class="result-grid">
@@ -188,7 +290,12 @@ label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display
       <div class="stat-card">
         <span>基础代谢率 (BMR)</span>
         <b id="bmrVal">1650 kcal</b>
-        <span style="display:block;margin-top:6px;">Mifflin-St Jeor 公式</span>
+        <span style="display:block;margin-top:6px;">Mifflin-St Jeor 公式 · 估算值</span>
+      </div>
+      <div class="stat-card">
+        <span>每日总消耗 (TDEE)</span>
+        <b id="tdeeVal">2269 kcal</b>
+        <span id="tdeeNote" style="display:block;margin-top:6px;">BMR × 活动系数 · 估算值</span>
       </div>
       <div class="stat-card">
         <span>估算体脂率 (BFR)</span>
@@ -209,7 +316,7 @@ label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display
         </tbody>
       </table>
     </div>
-    <p style="margin-top:12px;padding:8px 10px;border-left:3px solid #f59e0b;background:rgba(245,158,11,.08);border-radius:4px;font-size:13px;line-height:1.6;">⚠️ 以上结果均为公式估算，仅供参考，不构成医疗建议。BMI 和体脂率估算无法区分肌肉与脂肪，也不适用于儿童、孕妇和运动员等人群。如需判断健康状况，请咨询医生或营养师。</p>
+    <p style="margin-top:12px;padding:8px 10px;border-left:3px solid #f59e0b;background:rgba(245,158,11,.08);border-radius:4px;font-size:13px;line-height:1.6;">⚠️ 以上结果均为公式估算，仅供参考，不构成医疗建议。BMI、BMR、TDEE 和体脂率估算无法区分肌肉与脂肪，也不适用于儿童、孕妇和运动员等人群。<strong>未成年人、孕期或哺乳期女性、以及患有疾病或正在服药的人</strong>，请先咨询医生，不要依据本页结果安排饮食或运动。</p>
   </div>
 
   <div class="panel active">
@@ -226,6 +333,31 @@ label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display
     <p>BMI = 体重（kg）÷ 身高（m）²。它只用身高和体重两个数，适合粗略判断体重是否在常见范围内，不能反映肌肉量、脂肪分布和骨架大小。</p>
     <h3 style="font-size:14px;font-weight:700;margin:12px 0 4px;">基础代谢率和体脂率准吗？</h3>
     <p>基础代谢率用 Mifflin-St Jeor 公式估算，体脂率由 BMI、年龄和性别推算，都是人群平均意义上的估计，个人误差可能较大。想要更准确的数值，需要专业的身体成分测量。</p>
+    <h3 style="font-size:14px;font-weight:700;margin:12px 0 4px;">BMR 和 TDEE 分别是什么？</h3>
+    <p><strong>BMR（基础代谢率）</strong>是人在完全静息状态下维持呼吸、心跳、体温等基本生理活动所需的能量。<strong>TDEE（每日总能量消耗）</strong>是在 BMR 基础上，再加上日常活动、运动和消化食物所消耗的能量，也就是一天大致消耗的总热量。两者都是根据公式推算的<strong>估算值</strong>，不是实测值。</p>
+    <!-- 待核对（K）：Mifflin-St Jeor 系数与活动系数需站长终审 -->
+    <h3 style="font-size:14px;font-weight:700;margin:12px 0 4px;">用的是什么公式？</h3>
+    <p>BMR 采用 Mifflin-St Jeor 公式（1990 年发表，适用于成年人）：</p>
+    <ul style="margin:6px 0 6px 20px;">
+      <li>男性：BMR = 10 × 体重(kg) + 6.25 × 身高(cm) − 5 × 年龄 + 5</li>
+      <li>女性：BMR = 10 × 体重(kg) + 6.25 × 身高(cm) − 5 × 年龄 − 161</li>
+    </ul>
+    <p>TDEE = BMR × 活动系数。公式本身不考虑肌肉量、激素水平和个体差异，同样身高体重的两个人，实际消耗可能相差一两百千卡甚至更多。<span style="color:var(--text-muted);font-size:12px;">（公式系数待核对）</span></p>
+    <h3 style="font-size:14px;font-weight:700;margin:12px 0 4px;">活动系数是什么意思？怎么选？</h3>
+    <p>活动系数是把静息消耗换算成全天消耗的倍数，反映的是你平均一天的活动量，而不是某一天：</p>
+    <table class="table-std">
+      <thead><tr><th>活动水平</th><th>系数</th><th>大致对应的生活方式</th></tr></thead>
+      <tbody>
+        <tr><td>久坐</td><td>1.2</td><td>办公室工作，几乎不运动</td></tr>
+        <tr><td>轻度</td><td>1.375</td><td>每周轻量运动 1–3 天</td></tr>
+        <tr><td>中度</td><td>1.55</td><td>每周中等强度运动 3–5 天</td></tr>
+        <tr><td>高度</td><td>1.725</td><td>每周高强度运动 6–7 天</td></tr>
+        <tr><td>极高</td><td>1.9</td><td>重体力劳动，或每天高强度训练</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:6px;">拿不准时，大多数人会高估自己的活动量，选低一档通常更接近实际。<span style="color:var(--text-muted);font-size:12px;">（活动系数待核对）</span></p>
+    <h3 style="font-size:14px;font-weight:700;margin:12px 0 4px;">哪些人不适合用这个估算？</h3>
+    <p>未成年人（仍在生长发育）、孕期或哺乳期女性、患有甲状腺等代谢相关疾病或正在服药的人、职业运动员，公式误差会更大，结果可能没有参考意义。这些情况请先咨询医生。</p>
     <h3 style="font-size:14px;font-weight:700;margin:12px 0 4px;">可以根据结果调整饮食或用药吗？</h3>
     <p><strong>本工具仅供参考，不构成医疗建议。</strong>请不要仅凭计算结果节食、增重或调整用药。如果体重变化明显或有健康方面的担心，请咨询医生或注册营养师。</p>
     <h3 style="font-size:14px;font-weight:700;margin:12px 0 4px;">我的身高体重记录存在哪里？</h3>
@@ -271,9 +403,21 @@ function calculateBMI() {
   // BMR (Mifflin-St Jeor)
   // Men: 10 * w + 6.25 * h_cm - 5 * age + 5
   // Women: 10 * w + 6.25 * h_cm - 5 * age - 161
-  let bmr = (10 * w) + (6.25 * h * 100) - (5 * age);
-  bmr += gender === 'male' ? 5 : -161;
-  document.getElementById('bmrVal').textContent = Math.round(bmr) + ' kcal';
+  const tdeeNote = document.getElementById('tdeeNote');
+  if (!age || age < 18) {
+    // Formula is for adults only
+    document.getElementById('bmrVal').textContent = '—';
+    document.getElementById('tdeeVal').textContent = '—';
+    tdeeNote.textContent = '公式仅适用于 18 岁以上成年人';
+  } else {
+    let bmr = (10 * w) + (6.25 * h * 100) - (5 * age);
+    bmr += gender === 'male' ? 5 : -161;
+    // TDEE = BMR * activity factor
+    const factor = parseFloat(document.getElementById('activityInput').value);
+    document.getElementById('bmrVal').textContent = Math.round(bmr) + ' kcal';
+    document.getElementById('tdeeVal').textContent = Math.round(bmr * factor) + ' kcal';
+    tdeeNote.textContent = 'BMR × 活动系数 ' + factor + ' · 估算值';
+  }
 
   // BFR (Deurenberg)
   // BFR = (1.20 * BMI) + (0.23 * Age) - (10.8 * gender[male=1,female=0]) - 5.4

@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <!-- Google tag (gtag.js) -->
+  <script src="js/consent-default.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -16,8 +17,8 @@
   </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>全球实时汇率换算器 · 纯前端离线容灾工具</title>
-  <meta name="description" content="零构建、免API Key、支持离线缓存的纯前端实时汇率换算器。支持全球30+主流法定货币即时双向联动计算、千分位格式化、离线基准容灾。">
+  <title>汇率换算器 · 32 种货币互相换算</title>
+  <meta name="description" content="汇率换算器：人民币、美元、日元、欧元、港币等 32 种货币互相换算，输入任意币种金额即可同步算出其余币种。汇率来自公开接口，通常每日更新，仅供参考。">
   <style>
     :root {
       --bg-base: #f8fafc;
@@ -177,6 +178,25 @@
       display: flex;
       flex-direction: column;
       gap: 16px;
+    }
+
+    /* 顶部免责与数据来源 */
+    .ref-notice {
+      background: var(--warning-bg);
+      border: 1px solid var(--warning-border);
+      border-radius: var(--radius-md);
+      padding: 10px 16px;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text-main);
+    }
+
+    .ref-notice strong {
+      color: var(--warning-text);
+    }
+
+    .ref-notice a {
+      color: var(--primary);
     }
 
     /* 状态与控制栏 */
@@ -619,6 +639,53 @@
     }
   </style>
     <link rel="canonical" href="https://tool.0101.click/currency.html">
+    <!-- og+ld (#43) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="0101.click 实用工具箱">
+    <meta property="og:title" content="汇率换算器 · 32 种货币互相换算">
+    <meta property="og:description" content="汇率换算器：人民币、美元、日元、欧元、港币等 32 种货币互相换算，输入任意币种金额即可同步算出其余币种。汇率来自公开接口，通常每日更新，仅供参考。">
+    <meta property="og:url" content="https://tool.0101.click/currency.html">
+    <meta property="og:image" content="https://tool.0101.click/assets/og/currency.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="汇率换算器">
+    <meta property="og:locale" content="zh_CN">
+    <meta name="twitter:card" content="summary_large_image">
+    <script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "WebApplication",
+   "name": "汇率换算器",
+   "url": "https://tool.0101.click/currency.html",
+   "description": "汇率换算器：人民币、美元、日元、欧元、港币等 32 种货币互相换算，输入任意币种金额即可同步算出其余币种。汇率来自公开接口，通常每日更新，仅供参考。",
+   "applicationCategory": "FinanceApplication",
+   "operatingSystem": "Any",
+   "browserRequirements": "Requires JavaScript",
+   "inLanguage": "zh-CN",
+   "image": "https://tool.0101.click/assets/og/currency.png"
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "工具箱",
+     "item": "https://tool.0101.click/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "汇率换算器",
+     "item": "https://tool.0101.click/currency.html"
+    }
+   ]
+  }
+ ]
+}
+    </script>
     <link rel="stylesheet" href="css/tools-header.css">
   <script src="js/pwa-register.js"></script>
 </head>
@@ -634,7 +701,7 @@
       </a>
       <div class="app-brand">
         <span class="brand-icon">💱</span>
-        <span class="brand-title">全球实时汇率换算</span>
+        <h1 class="brand-title" style="margin:0">汇率换算器</h1>
       </div>
     </div>
     <div class="header-right">
@@ -648,7 +715,7 @@
           <option value="calculator.html">🧮 表达式计算器</option>
           <option value="notepad.html">📝 极简便签</option>
           <option value="unit-converter.html">📐 全能单位换算器</option>
-          <option value="currency.html" selected>💱 全球实时汇率换算</option>
+          <option value="currency.html" selected>💱 汇率换算（参考）</option>
           <option value="weather.html">🌤️ 极简实时天气看板</option>
           <option value="qrcode.html">📱 二维码大师</option>
           <option value="pomodoro.html">🍅 极简番茄时钟</option>
@@ -698,7 +765,6 @@
           <option value="tech-blogs.html">📡 企业技术博客雷达</option>
           <option value="network-info.html">🌐 网络信息查询探针</option>
           <option value="doh-lookup.html">🔍 浏览器原生 DNS 探针</option>
-          <option value="iss-tracker.html">🛰️ 国际空间站实时追踪</option>
         </optgroup>
       </select>
       <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="切换深色/浅色模式">🌓</button>
@@ -706,14 +772,20 @@
   </header>
 
   <main class="main-content">
+    <!-- 免责与数据来源（红线第 4 条） -->
+    <section class="ref-notice" role="note">
+      <div><strong>仅供参考，非交易报价，不构成投资建议。</strong>这里的汇率是公开接口提供的每日参考中间价，和银行、换汇机构的实际买入价 / 卖出价、手续费不同，换汇请以办理机构的报价为准。</div>
+      <div>数据来源：<a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">Rates By Exchange Rate API</a>（备用：<a href="https://frankfurter.dev/" target="_blank" rel="noopener">Frankfurter</a>，欧洲央行等央行公布的参考汇率）。本页把汇率缓存在你的浏览器里，24 小时内自动使用缓存、不重复请求（可点「刷新汇率」手动更新）；数据的更新时间见下方。</div>
+    </section>
+
     <!-- 状态面板 -->
     <section class="status-panel">
       <div class="status-left">
-        <span class="rate-badge live" id="statusBadge">● 实时汇率已就绪</span>
-        <span class="update-time" id="updateTimeText">数据源：ExchangeRate-API · 正在获取中...</span>
+        <span class="rate-badge live" id="statusBadge">● 参考汇率</span>
+        <span class="update-time" id="updateTimeText">数据源：Exchange Rate API · 正在获取中...</span>
       </div>
       <div class="status-actions">
-        <button class="btn-refresh" id="refreshBtn" onclick="fetchLiveRates(true)" title="立即拉取最新汇率行情">
+        <button class="btn-refresh" id="refreshBtn" onclick="fetchLiveRates(true)" title="重新获取参考汇率">
           <span class="icon">🔄</span>
           <span>刷新汇率</span>
         </button>
@@ -756,7 +828,8 @@
   <!-- 底部说明与免责 -->
   <footer class="app-footer">
     <div>💡 提示：在任意货币卡片中输入金额，其余币种将即时自动换算。支持离线容灾，数据本地自动缓存。</div>
-    <div>免责声明：汇率数据均来自开放公开接口，仅供日常换算参考，不构成投资或交易结汇凭据。</div>
+    <div>免责声明：<strong>汇率仅供参考，非交易报价</strong>。数据来自开放公开接口，通常每日更新一次，与银行、换汇机构的实际买卖价不同，不构成投资或交易结汇凭据。</div>
+    <div>数据来源：<a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">Rates By Exchange Rate API</a> · 备用：<a href="https://frankfurter.dev/" target="_blank" rel="noopener">Frankfurter</a>（欧洲央行等央行公布的参考汇率）</div>
   </footer>
 
   <!-- 浮动 Toast 提示 -->
@@ -842,6 +915,7 @@
     // -------------------------------------------------------------
     const STORAGE_KEY_RATES = 'currency_rates_cache_v2';
     const STORAGE_KEY_THEME = 'app_theme_mode';
+    const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 小时内直接用缓存，不重复请求接口
 
     let currentRates = { ...DEFAULT_FALLBACK_RATES };
     let baseCurrency = 'USD';
@@ -856,14 +930,15 @@
     // -------------------------------------------------------------
     document.addEventListener('DOMContentLoaded', () => {
       initTheme();
-      loadCachedRates();
+      const cacheFresh = loadCachedRates();
       renderAll();
-      fetchLiveRates(false); // 静默加载最新
+      if (!cacheFresh) fetchLiveRates(false); // 缓存不存在或超过 24 小时才静默拉取
     });
 
     // -------------------------------------------------------------
     // 4. 数据获取与缓存层
     // -------------------------------------------------------------
+    // 返回缓存是否仍在 24 小时有效期内
     function loadCachedRates() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY_RATES);
@@ -871,12 +946,16 @@
           const parsed = JSON.parse(raw);
           if (parsed && parsed.rates) {
             currentRates = { ...currentRates, ...parsed.rates };
-            updateStatusUI(false, parsed.lastUpdated ? new Date(parsed.lastUpdated) : null, parsed.source || '本地缓存');
+            const fetchedAt = parsed.lastUpdated ? new Date(parsed.lastUpdated) : null;
+            const dataTime = parsed.dataTime ? new Date(parsed.dataTime) : null;
+            updateStatusUI(false, fetchedAt, parsed.source || '本地缓存', dataTime, !!parsed.dateOnly);
+            return !!fetchedAt && Date.now() - fetchedAt.getTime() < CACHE_TTL_MS;
           }
         }
       } catch (e) {
         console.warn('读取汇率缓存失败', e);
       }
+      return false;
     }
 
     async function fetchLiveRates(isUserInitiated = false) {
@@ -887,7 +966,7 @@
       if (refreshBtn) refreshBtn.classList.add('loading');
 
       if (isUserInitiated) {
-        showToast('正在获取全球最新汇率行情...');
+        showToast('正在获取参考汇率...');
       }
 
       let success = false;
@@ -898,7 +977,8 @@
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         if (data && data.rates) {
-          applyNewRates(data.rates, new Date(), 'ExchangeRate-API 实时源');
+          const dataTime = data.time_last_update_unix ? new Date(data.time_last_update_unix * 1000) : null;
+          applyNewRates(data.rates, new Date(), 'Exchange Rate API', dataTime);
           success = true;
         }
       } catch (errPrimary) {
@@ -910,7 +990,9 @@
           const data = await res.json();
           if (data && data.rates) {
             const combinedRates = { ...data.rates, USD: 1.0 };
-            applyNewRates(combinedRates, new Date(), 'Frankfurter 开放源');
+            // Frankfurter 只给日期（欧洲央行约在中欧时间 16:00 公布）
+            const dataTime = data.date ? new Date(data.date + 'T00:00:00Z') : null;
+            applyNewRates(combinedRates, new Date(), 'Frankfurter（备用）', dataTime, true);
             success = true;
           }
         } catch (errFallback) {
@@ -924,43 +1006,54 @@
           showToast('无法连接汇率服务器，已保留当前缓存数据');
         }
       } else if (isUserInitiated) {
-        showToast('汇率已更新至最新行情！');
+        showToast('参考汇率已更新');
       }
 
       isFetching = false;
       if (refreshBtn) refreshBtn.classList.remove('loading');
     }
 
-    function applyNewRates(newRates, updateDate, sourceName) {
+    function applyNewRates(newRates, updateDate, sourceName, dataTime, dateOnly = false) {
       currentRates = { ...currentRates, ...newRates };
       // 持久化到 localStorage
       try {
         localStorage.setItem(STORAGE_KEY_RATES, JSON.stringify({
           rates: currentRates,
           lastUpdated: updateDate.toISOString(),
+          dataTime: dataTime ? dataTime.toISOString() : null,
+          dateOnly: dateOnly,
           source: sourceName
         }));
       } catch (e) {
         console.warn('缓存汇率失败', e);
       }
-      updateStatusUI(false, updateDate, sourceName);
+      updateStatusUI(false, updateDate, sourceName, dataTime, dateOnly);
       renderTicker();
       updateAllInputsExcept(null);
     }
 
-    function updateStatusUI(isOffline, date, sourceName) {
+    function formatDateTime(d, dateOnly) {
+      const opts = dateOnly
+        ? { year: 'numeric', month: '2-digit', day: '2-digit', timeZone: 'UTC' }
+        : { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false };
+      return d.toLocaleString('zh-CN', opts);
+    }
+
+    function updateStatusUI(isOffline, fetchedAt, sourceName, dataTime, dateOnly) {
       const badge = document.getElementById('statusBadge');
       const timeText = document.getElementById('updateTimeText');
 
       if (isOffline) {
         badge.className = 'rate-badge cached';
         badge.textContent = '● 离线基准模式';
-        timeText.textContent = `提示：当前使用离线汇率数据，数据仅供参考`;
+        timeText.textContent = `提示：暂时连不上汇率接口，当前显示的是缓存或内置的旧汇率，仅供参考`;
       } else {
         badge.className = 'rate-badge live';
-        badge.textContent = '● 实时汇率同步中';
-        const timeStr = date ? date.toLocaleTimeString('zh-CN', { hour12: false }) : '刚刚';
-        timeText.textContent = `数据源：${sourceName} · 更新时间：${timeStr}`;
+        badge.textContent = '● 参考汇率';
+        const parts = [`数据源：${sourceName}`];
+        if (dataTime) parts.push(`数据更新时间：${formatDateTime(dataTime, dateOnly)}`);
+        if (fetchedAt) parts.push(`本机获取于：${formatDateTime(fetchedAt, false)}`);
+        timeText.textContent = parts.join(' · ');
       }
     }
 

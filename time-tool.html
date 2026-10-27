@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <!-- Google tag (gtag.js) -->
+  <script src="js/consent-default.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -16,8 +17,8 @@
   </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>时间工具箱 · 时间戳/世界时钟/日期计算</title>
-<meta name="description" content="纯前端时间工具箱：Unix时间戳互转、多时区世界时钟、日期间隔计算器、年龄计算器，基于Intl.DateTimeFormat原生实现。">
+<title>Unix 时间戳转换 · 秒/毫秒互转、北京时间与世界时钟</title>
+<meta name="description" content="Unix 时间戳在线转换：自动识别 10 位秒级和 13 位毫秒级时间戳，同时显示北京时间、UTC 与本地时间；附 JS/Python/Java/Go/MySQL 获取时间戳代码和多时区世界时钟，纯本地计算。">
 <style>
 :root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
 [data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
@@ -51,8 +52,95 @@ label.small{font-size:12px;color:var(--text-muted);font-weight:700;display:block
 .stat-card{background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:12px;text-align:center;}
 .stat-card b{display:block;font-size:20px;color:var(--primary);}
 .stat-card span{font-size:11px;color:var(--text-muted);}
+.now-bar{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;background:var(--primary-subtle);border-radius:var(--radius-md);padding:10px 14px;margin-bottom:16px;font-size:13px;}
+.now-bar b{font-family:var(--font-mono);color:var(--primary);font-size:15px;}
+.tag{display:inline-block;padding:2px 8px;border-radius:var(--radius-pill);background:var(--primary-subtle);color:var(--primary);font-size:12px;font-weight:700;font-family:var(--font-sans);}
+select.tz-sel{padding:10px 12px;border-radius:var(--radius-md);border:1px solid var(--border-color);background:var(--bg-subtle);color:var(--text-main);font-size:13px;}
+.ref-section{background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);margin-top:20px;}
+.ref-section h2{font-size:17px;font-weight:800;margin-bottom:10px;}
+.ref-section h3{font-size:14px;font-weight:800;margin:16px 0 6px;}
+.ref-section p,.ref-note{font-size:13px;line-height:1.8;color:var(--text-main);}
+.ref-note{color:var(--text-muted);margin-top:10px;}
+.code-table-wrap{overflow-x:auto;}
+.code-table{width:100%;border-collapse:collapse;font-size:12px;min-width:640px;}
+.code-table th,.code-table td{border:1px solid var(--border-color);padding:8px 10px;text-align:left;vertical-align:top;}
+.code-table th{background:var(--bg-subtle);font-weight:800;}
+.code-table code{font-family:var(--font-mono);white-space:pre;line-height:1.6;}
+.ref-section a{color:var(--primary);}
 </style>
     <link rel="canonical" href="https://tool.0101.click/time-tool.html">
+    <!-- og+ld (#43) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="0101.click 实用工具箱">
+    <meta property="og:title" content="Unix 时间戳转换 · 秒/毫秒互转、北京时间与世界时钟">
+    <meta property="og:description" content="Unix 时间戳在线转换：自动识别 10 位秒级和 13 位毫秒级时间戳，同时显示北京时间、UTC 与本地时间；附 JS/Python/Java/Go/MySQL 获取时间戳代码和多时区世界时钟，纯本地计算。">
+    <meta property="og:url" content="https://tool.0101.click/time-tool.html">
+    <meta property="og:image" content="https://tool.0101.click/assets/og/time-tool.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Unix 时间戳转换">
+    <meta property="og:locale" content="zh_CN">
+    <meta name="twitter:card" content="summary_large_image">
+    <script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "WebApplication",
+   "name": "Unix 时间戳转换",
+   "url": "https://tool.0101.click/time-tool.html",
+   "description": "Unix 时间戳在线转换：自动识别 10 位秒级和 13 位毫秒级时间戳，同时显示北京时间、UTC 与本地时间；附 JS/Python/Java/Go/MySQL 获取时间戳代码和多时区世界时钟，纯本地计算。",
+   "applicationCategory": "UtilitiesApplication",
+   "operatingSystem": "Any",
+   "browserRequirements": "Requires JavaScript",
+   "inLanguage": "zh-CN",
+   "image": "https://tool.0101.click/assets/og/time-tool.png"
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "工具箱",
+     "item": "https://tool.0101.click/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Unix 时间戳转换",
+     "item": "https://tool.0101.click/time-tool.html"
+    }
+   ]
+  },
+  {
+   "@type": "FAQPage",
+   "mainEntity": [
+    {
+     "@type": "Question",
+     "name": "10 位和 13 位时间戳有什么区别？怎么判断是秒还是毫秒？",
+     "acceptedAnswer": {"@type": "Answer", "text": "两者都是从 1970-01-01 00:00:00 UTC 起算的时长，只是单位不同：10 位是秒，13 位是毫秒，13 位的数值正好是 10 位的 1000 倍。Unix 命令、PHP、MySQL 的 UNIX_TIMESTAMP() 和 Python 的 time.time()（取整后）通常给出秒；JavaScript 的 Date.now() 和 Java 的 System.currentTimeMillis() 给出毫秒。看位数就能判断：2001 年 9 月到 2286 年 11 月之间的秒级时间戳都是 10 位，同期的毫秒级都是 13 位。本页会按位数自动识别，并在结果里注明识别成了哪一种。如果把毫秒当成秒去转换，会得到几万年以后的日期；反过来则会落在 1970 年 1 月附近，看到这类结果基本就是单位弄错了。"}
+    },
+    {
+     "@type": "Question",
+     "name": "时间戳和时区有关吗？为什么同一个时间戳在北京和伦敦显示的时间不一样？",
+     "acceptedAnswer": {"@type": "Answer", "text": "时间戳本身与时区无关，它表示的是全世界同一个瞬间，同一时刻在北京和伦敦取到的时间戳完全相同。不同的只是把它换算成“几点几分”时采用的时区：北京时间是 UTC+8，全年不实行夏令时；伦敦冬季是 UTC+0，夏令时期间是 UTC+1。所以同一个时间戳，北京显示的时间比伦敦早 8 小时（夏季为 7 小时）。存储和传输时建议一律用时间戳或带时区的 UTC 时间，只在展示给用户时再转成当地时间，这样跨时区的服务器和客户端就不会对不上。"}
+    },
+    {
+     "@type": "Question",
+     "name": "什么是 2038 年问题？",
+     "acceptedAnswer": {"@type": "Answer", "text": "很多老系统用 32 位有符号整数保存秒级时间戳，它能表示的最大值是 2147483647，对应 2038-01-19 03:14:07 UTC（北京时间同日 11:14:07）。再过一秒数值就会溢出变成负数，时间会被解释成 1901 年 12 月，可能导致排序、过期判断、证书校验等逻辑出错。现代操作系统和主流语言大多已改用 64 位整数，足够用到非常遥远的未来；需要留意的是嵌入式设备、旧的 C 程序、数据库里定义为 32 位 INT 的字段，以及 MySQL 的 TIMESTAMP 列类型，它的上限同样是 2038-01-19 03:14:07 UTC，新项目可以改用 DATETIME 或 BIGINT 保存。"}
+    },
+    {
+     "@type": "Question",
+     "name": "时间戳可以是负数吗？",
+     "acceptedAnswer": {"@type": "Answer", "text": "可以。负数表示 1970-01-01 00:00:00 UTC 之前的时刻，例如 -86400 就是 1969-12-31 00:00:00 UTC。JavaScript、Python、Java、Go 都支持负的时间戳，本页也可以直接输入负数转换。不过有些数据库函数和老系统只接受非负值，例如 MySQL 的 FROM_UNIXTIME() 遇到负数会返回 NULL，保存 1970 年以前的日期时建议直接用日期类型。"}
+    }
+   ]
+  }
+ ]
+}
+    </script>
     <link rel="stylesheet" href="css/tools-header.css">
   <script src="js/pwa-register.js"></script>
 </head>
@@ -130,7 +218,6 @@ label.small{font-size:12px;color:var(--text-muted);font-weight:700;display:block
           <option value="tech-blogs.html">📡 企业技术博客雷达</option>
           <option value="network-info.html">🌐 网络信息查询探针</option>
           <option value="doh-lookup.html">🔍 浏览器原生 DNS 探针</option>
-          <option value="iss-tracker.html">🛰️ 国际空间站实时追踪</option>
         </optgroup>
       </select>
       <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="切换深色/浅色模式">🌓</button>
@@ -138,8 +225,8 @@ label.small{font-size:12px;color:var(--text-muted);font-weight:700;display:block
   </header>
 
 <main class="container">
-  <h1 class="page-title">🕐 时间工具箱</h1>
-  <p class="page-sub">Unix 时间戳互转、多时区世界时钟、日期间隔计算、年龄计算器，基于浏览器原生 Intl API，纯本地计算。</p>
+  <h1 class="page-title">Unix 时间戳转换 · 秒/毫秒互转、北京时间与世界时钟</h1>
+  <p class="page-sub">粘贴时间戳即可转换，自动识别 10 位秒级和 13 位毫秒级；也可以把日期按北京时间、UTC 或本地时区转回时间戳。另附世界时钟、日期间隔和年龄计算，全部在浏览器本地完成。</p>
 
   <div class="tabs">
     <button class="tab-btn active" data-tab="ts" onclick="switchTab('ts')">时间戳转换</button>
@@ -150,15 +237,25 @@ label.small{font-size:12px;color:var(--text-muted);font-weight:700;display:block
 
   <!-- 时间戳 -->
   <section class="panel active" id="panel-ts">
-    <label class="small">Unix 时间戳（秒或毫秒）</label>
+    <div class="now-bar">
+      <span>当前秒级时间戳 <b id="nowSec">-</b></span>
+      <span>毫秒级 <b id="nowMs">-</b></span>
+      <span>北京时间 <b id="nowBj">-</b></span>
+    </div>
+    <label class="small" for="tsInput">Unix 时间戳（自动识别 10 位秒 / 13 位毫秒）</label>
     <div class="row">
-      <input type="text" id="tsInput" placeholder="输入时间戳..." style="flex:1;min-width:200px;">
+      <input type="text" id="tsInput" inputmode="numeric" placeholder="例如 1700000000 或 1700000000000" style="flex:1;min-width:200px;">
       <button class="btn" onclick="tsToDate()">→ 转为日期</button>
       <button class="btn" style="background:var(--bg-subtle);color:var(--text-main);" onclick="useNowTs()">使用当前时间</button>
     </div>
-    <label class="small">日期时间</label>
+    <label class="small" for="dateInput">日期时间</label>
     <div class="row">
       <input type="datetime-local" id="dateInput" step="1" style="flex:1;min-width:200px;">
+      <select class="tz-sel" id="dateTz" title="按哪个时区理解左边的日期">
+        <option value="local">按本机时区</option>
+        <option value="bj">按北京时间 (UTC+8)</option>
+        <option value="utc">按 UTC</option>
+      </select>
       <button class="btn" onclick="dateToTs()">→ 转为时间戳</button>
     </div>
     <div class="result-box" id="tsResult">结果将显示在这里...</div>
@@ -187,6 +284,64 @@ label.small{font-size:12px;color:var(--text-muted);font-weight:700;display:block
     </div>
     <div class="stat-grid" id="ageResult"></div>
   </section>
+
+  <!-- 各语言获取时间戳 -->
+  <section class="ref-section" id="code" aria-labelledby="codeTitle">
+    <h2 id="codeTitle">各语言获取时间戳</h2>
+    <p>下面是几种常用语言获取当前时间戳、以及把时间戳转回日期的写法。注意每种语言默认给出的单位不一样，混用时最容易出错。</p>
+    <div class="code-table-wrap">
+      <table class="code-table">
+        <thead><tr><th>语言</th><th>当前秒级（10 位）</th><th>当前毫秒级（13 位）</th><th>时间戳 → 日期</th></tr></thead>
+        <tbody>
+          <tr><td>JavaScript</td>
+            <td><code>Math.floor(Date.now() / 1000)</code></td>
+            <td><code>Date.now()</code></td>
+            <td><code>new Date(sec * 1000)
+new Date(ms).toLocaleString('zh-CN',
+  { timeZone: 'Asia/Shanghai' })</code></td></tr>
+          <tr><td>Python</td>
+            <td><code>import time
+int(time.time())</code></td>
+            <td><code>time.time_ns() // 1_000_000</code></td>
+            <td><code>from datetime import datetime, timezone
+datetime.fromtimestamp(sec, tz=timezone.utc)</code></td></tr>
+          <tr><td>Java</td>
+            <td><code>Instant.now().getEpochSecond()</code></td>
+            <td><code>System.currentTimeMillis()</code></td>
+            <td><code>Instant.ofEpochSecond(sec)
+  .atZone(ZoneId.of("Asia/Shanghai"))</code></td></tr>
+          <tr><td>Go</td>
+            <td><code>time.Now().Unix()</code></td>
+            <td><code>time.Now().UnixMilli()</code></td>
+            <td><code>time.Unix(sec, 0).UTC()
+time.UnixMilli(ms)</code></td></tr>
+          <tr><td>MySQL</td>
+            <td><code>SELECT UNIX_TIMESTAMP();</code></td>
+            <td><code>SELECT FLOOR(UNIX_TIMESTAMP(NOW(3)) * 1000);</code></td>
+            <td><code>SELECT FROM_UNIXTIME(sec);</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="ref-note">说明：Python 的 <code>time.time()</code> 返回带小数的秒，取整后才是 10 位；Java 需要 <code>import java.time.*</code>；Go 的 <code>UnixMilli</code> 需要 Go 1.17 及以上；MySQL 的 <code>FROM_UNIXTIME()</code> 按当前会话的 <code>time_zone</code> 输出，服务器时区不是北京时间时结果会差几个小时。</p>
+  </section>
+
+  <!-- 常见问题 -->
+  <section class="ref-section" id="faq" aria-labelledby="faqTitle">
+    <h2 id="faqTitle">常见问题</h2>
+
+    <h3>10 位和 13 位时间戳有什么区别？怎么判断是秒还是毫秒？</h3>
+    <p>两者都是从 1970-01-01 00:00:00 UTC 起算的时长，只是单位不同：10 位是秒，13 位是毫秒，13 位的数值正好是 10 位的 1000 倍。Unix 命令、PHP、MySQL 的 UNIX_TIMESTAMP() 和 Python 的 time.time()（取整后）通常给出秒；JavaScript 的 Date.now() 和 Java 的 System.currentTimeMillis() 给出毫秒。看位数就能判断：2001 年 9 月到 2286 年 11 月之间的秒级时间戳都是 10 位，同期的毫秒级都是 13 位。本页会按位数自动识别，并在结果里注明识别成了哪一种。如果把毫秒当成秒去转换，会得到几万年以后的日期；反过来则会落在 1970 年 1 月附近，看到这类结果基本就是单位弄错了。</p>
+
+    <h3>时间戳和时区有关吗？为什么同一个时间戳在北京和伦敦显示的时间不一样？</h3>
+    <p>时间戳本身与时区无关，它表示的是全世界同一个瞬间，同一时刻在北京和伦敦取到的时间戳完全相同。不同的只是把它换算成“几点几分”时采用的时区：北京时间是 UTC+8，全年不实行夏令时；伦敦冬季是 UTC+0，夏令时期间是 UTC+1。所以同一个时间戳，北京显示的时间比伦敦早 8 小时（夏季为 7 小时）。存储和传输时建议一律用时间戳或带时区的 UTC 时间，只在展示给用户时再转成当地时间，这样跨时区的服务器和客户端就不会对不上。</p>
+
+    <h3>什么是 2038 年问题？</h3>
+    <p>很多老系统用 32 位有符号整数保存秒级时间戳，它能表示的最大值是 2147483647，对应 2038-01-19 03:14:07 UTC（北京时间同日 11:14:07）。再过一秒数值就会溢出变成负数，时间会被解释成 1901 年 12 月，可能导致排序、过期判断、证书校验等逻辑出错。现代操作系统和主流语言大多已改用 64 位整数，足够用到非常遥远的未来；需要留意的是嵌入式设备、旧的 C 程序、数据库里定义为 32 位 INT 的字段，以及 MySQL 的 TIMESTAMP 列类型，它的上限同样是 2038-01-19 03:14:07 UTC，新项目可以改用 DATETIME 或 BIGINT 保存。</p>
+    <p class="ref-note">想亲眼看看这个临界点：<a href="?ts=2147483647">转换 2147483647</a>。</p>
+
+    <h3>时间戳可以是负数吗？</h3>
+    <p>可以。负数表示 1970-01-01 00:00:00 UTC 之前的时刻，例如 -86400 就是 1969-12-31 00:00:00 UTC。JavaScript、Python、Java、Go 都支持负的时间戳，本页也可以直接输入负数转换。不过有些数据库函数和老系统只接受非负值，例如 MySQL 的 FROM_UNIXTIME() 遇到负数会返回 NULL，保存 1970 年以前的日期时建议直接用日期类型。</p>
+  </section>
 </main>
 
 <script>
@@ -208,35 +363,81 @@ function useNowTs(){
   tsToDate();
 }
 
-function tsToDate(){
-  let v = document.getElementById('tsInput').value.trim();
-  if(!v){ return; }
-  let n = Number(v);
-  if(isNaN(n)){ document.getElementById('tsResult').textContent = '✗ 请输入有效数字'; return; }
-  if(String(Math.trunc(n)).length <= 10) n *= 1000; // 秒 -> 毫秒
-  const d = new Date(n);
-  if(isNaN(d.getTime())){ document.getElementById('tsResult').textContent = '✗ 无效的时间戳'; return; }
-  document.getElementById('dateInput').value = toLocalInputValue(d);
-  document.getElementById('tsResult').innerHTML =
-    '本地时间: ' + d.toLocaleString('zh-CN', {hour12:false}) + '<br>' +
+function fmtIn(d, tz){
+  return d.toLocaleString('zh-CN', {timeZone:tz, hour12:false, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit', weekday:'short'});
+}
+function relTime(ms){
+  const diff = ms - Date.now(), a = Math.abs(diff), suf = diff < 0 ? '前' : '后';
+  if(a < 60000) return '刚刚';
+  const units = [[31536000000,'年'],[86400000,'天'],[3600000,'小时'],[60000,'分钟']];
+  for(const [u,name] of units){ if(a >= u) return Math.floor(a/u) + ' ' + name + suf; }
+}
+// 按整数部分位数识别单位：≤11 位秒，12–14 位毫秒，15–17 位微秒，18–20 位纳秒
+function detectUnit(v){
+  const digits = v.replace(/^[-+]/,'').split('.')[0].replace(/^0+(?=\d)/,'').length;
+  if(digits <= 11) return {name:'秒级', mul:1000};
+  if(digits <= 14) return {name:'毫秒级', mul:1};
+  if(digits <= 17) return {name:'微秒级', mul:1e-3};
+  if(digits <= 20) return {name:'纳秒级', mul:1e-6};
+  return null;
+}
+
+function tsToDate(keepDate){
+  const out = document.getElementById('tsResult');
+  let v = document.getElementById('tsInput').value.trim().replace(/[\s,_]/g,'');
+  if(!v){ out.textContent = '结果将显示在这里...'; return; }
+  if(!/^[-+]?\d+(\.\d+)?$/.test(v)){ out.textContent = '✗ 请输入数字时间戳，例如 1700000000'; return; }
+  const unit = detectUnit(v);
+  if(!unit){ out.textContent = '✗ 位数过长，无法识别为时间戳'; return; }
+  const ms = Math.floor(Number(v) * unit.mul);
+  const d = new Date(ms);
+  if(isNaN(d.getTime())){ out.textContent = '✗ 超出可表示的日期范围'; return; }
+  if(keepDate !== true) document.getElementById('dateInput').value = toLocalInputValue(d);
+  const digits = v.replace(/^[-+]/,'').split('.')[0].length;
+  out.innerHTML =
+    '<span class="tag">识别为' + unit.name + '时间戳（' + digits + ' 位）</span><br>' +
+    '北京时间: ' + fmtIn(d, 'Asia/Shanghai') + '<br>' +
+    'UTC 时间: ' + fmtIn(d, 'UTC') + '<br>' +
+    '本机时间: ' + d.toLocaleString('zh-CN', {hour12:false}) + '（' + Intl.DateTimeFormat().resolvedOptions().timeZone + '）<br>' +
     'ISO 8601: ' + d.toISOString() + '<br>' +
-    'UTC 时间: ' + d.toUTCString() + '<br>' +
-    '秒级时间戳: ' + Math.floor(d.getTime()/1000) + '<br>' +
-    '毫秒级时间戳: ' + d.getTime();
+    '相对现在: ' + relTime(ms) + '<br>' +
+    '秒级时间戳: ' + Math.floor(ms/1000) + '<br>' +
+    '毫秒级时间戳: ' + ms;
 }
 
 function dateToTs(){
   const v = document.getElementById('dateInput').value;
   if(!v){ return; }
-  const d = new Date(v);
-  if(isNaN(d.getTime())){ document.getElementById('tsResult').textContent = '✗ 无效日期'; return; }
-  document.getElementById('tsInput').value = Math.floor(d.getTime()/1000);
-  document.getElementById('tsResult').innerHTML =
-    '秒级时间戳: ' + Math.floor(d.getTime()/1000) + '<br>' +
-    '毫秒级时间戳: ' + d.getTime() + '<br>' +
-    'ISO 8601: ' + d.toISOString() + '<br>' +
-    'UTC 时间: ' + d.toUTCString();
+  const tz = document.getElementById('dateTz').value;
+  const m = v.match(/^(\d{4,})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?/);
+  let ms;
+  if(tz === 'local' || !m){
+    ms = new Date(v).getTime();
+  } else {
+    // 北京时间自 1992 年起不实行夏令时，固定按 UTC+8 处理
+    ms = Date.UTC(+m[1], +m[2]-1, +m[3], +m[4], +m[5], +(m[6]||0)) - (tz === 'bj' ? 8*3600000 : 0);
+  }
+  if(isNaN(ms)){ document.getElementById('tsResult').textContent = '✗ 无效日期'; return; }
+  document.getElementById('tsInput').value = Math.floor(ms/1000);
+  tsToDate(true);
 }
+
+// ?ts= 参数直达：/time-tool.html?ts=1700000000
+(function(){
+  const q = new URLSearchParams(location.search).get('ts');
+  if(q){ document.getElementById('tsInput').value = q; tsToDate(); }
+})();
+document.getElementById('tsInput').addEventListener('input', () => tsToDate());
+document.getElementById('tsInput').addEventListener('keydown', e => { if(e.key === 'Enter') tsToDate(); });
+
+function tickNow(){
+  const n = Date.now();
+  document.getElementById('nowSec').textContent = Math.floor(n/1000);
+  document.getElementById('nowMs').textContent = n;
+  document.getElementById('nowBj').textContent = new Date(n).toLocaleTimeString('zh-CN', {timeZone:'Asia/Shanghai', hour12:false});
+}
+tickNow();
+setInterval(tickNow, 1000);
 
 // 世界时钟
 const ZONES = [

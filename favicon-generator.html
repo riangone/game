@@ -2,6 +2,7 @@
 <html lang="zh-CN">
 <head>
   <!-- Google tag (gtag.js) -->
+  <script src="js/consent-default.js"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -16,8 +17,8 @@
   </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Favicon / 应用图标生成器 · 纯前端免安装工具</title>
-<meta name="description" content="纯前端生成标准 .ico 二进制文件与多尺寸 Web 图标（16/32/48/192/512px），标签页实时模拟，零依赖。">
+<title>Favicon / PWA 图标生成器 · 16 到 512 全套尺寸、manifest、ZIP 打包</title>
+<meta name="description" content="在浏览器本地生成 favicon.ico 与 16/32/48/180/192/512 全套 PNG 图标，附可复制的 head 代码和 site.webmanifest 模板，一键打包 ZIP，图片不上传。">
 <style>
 :root{--bg-base:#f8fafc;--bg-surface:#fff;--bg-subtle:#f1f5f9;--border-color:#e2e8f0;--border-focus:#0284c7;--text-main:#0f172a;--text-muted:#64748b;--text-light:#94a3b8;--primary:#0284c7;--primary-hover:#0369a1;--primary-subtle:#e0f2fe;--success:#10b981;--warning:#f59e0b;--danger:#ef4444;--purple:#8b5cf6;--radius-sm:8px;--radius-md:14px;--radius-lg:20px;--radius-pill:9999px;--shadow-sm:0 1px 3px rgba(0,0,0,.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,.06);--shadow-lg:0 10px 15px -3px rgba(0,0,0,.08);--font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
 [data-theme="dark"]{--bg-base:#090d16;--bg-surface:#111827;--bg-subtle:#1f2937;--border-color:#374151;--border-focus:#38bdf8;--text-main:#f9fafb;--text-muted:#9ca3af;--text-light:#6b7280;--primary:#38bdf8;--primary-hover:#0ea5e9;--primary-subtle:rgba(56,189,248,.15);}
@@ -47,6 +48,53 @@ input:focus,textarea:focus,select:focus{border-color:var(--border-focus);}
 label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display:block;margin-bottom:6px;}
 </style>
     <link rel="canonical" href="https://tool.0101.click/favicon-generator.html">
+    <!-- og+ld (#43) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="0101.click 实用工具箱">
+    <meta property="og:title" content="Favicon / PWA 图标生成器 · 16 到 512 全套尺寸、manifest、ZIP 打包">
+    <meta property="og:description" content="在浏览器本地生成 favicon.ico 与 16/32/48/180/192/512 全套 PNG 图标，附可复制的 head 代码和 site.webmanifest 模板，一键打包 ZIP，图片不上传。">
+    <meta property="og:url" content="https://tool.0101.click/favicon-generator.html">
+    <meta property="og:image" content="https://tool.0101.click/assets/og/favicon-generator.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Favicon / PWA 图标生成器">
+    <meta property="og:locale" content="zh_CN">
+    <meta name="twitter:card" content="summary_large_image">
+    <script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "WebApplication",
+   "name": "Favicon / PWA 图标生成器",
+   "url": "https://tool.0101.click/favicon-generator.html",
+   "description": "在浏览器本地生成 favicon.ico 与 16/32/48/180/192/512 全套 PNG 图标，附可复制的 head 代码和 site.webmanifest 模板，一键打包 ZIP，图片不上传。",
+   "applicationCategory": "DeveloperApplication",
+   "operatingSystem": "Any",
+   "browserRequirements": "Requires JavaScript",
+   "inLanguage": "zh-CN",
+   "image": "https://tool.0101.click/assets/og/favicon-generator.png"
+  },
+  {
+   "@type": "BreadcrumbList",
+   "itemListElement": [
+    {
+     "@type": "ListItem",
+     "position": 1,
+     "name": "工具箱",
+     "item": "https://tool.0101.click/"
+    },
+    {
+     "@type": "ListItem",
+     "position": 2,
+     "name": "Favicon / PWA 图标生成器",
+     "item": "https://tool.0101.click/favicon-generator.html"
+    }
+   ]
+  }
+ ]
+}
+    </script>
     <link rel="stylesheet" href="css/tools-header.css">
   <script src="js/pwa-register.js"></script>
 </head>
@@ -55,9 +103,26 @@ label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display
 @media(max-width:768px){.icon-layout{grid-template-columns:1fr;}}
 .tab-mock{background:#202124;color:#fff;padding:8px 14px;border-radius:10px 10px 0 0;display:inline-flex;align-items:center;gap:8px;font-size:12px;max-width:240px;box-shadow:var(--shadow-sm);}
 .tab-mock-light{background:#f1f3f4;color:#202124;padding:8px 14px;border-radius:10px 10px 0 0;display:inline-flex;align-items:center;gap:8px;font-size:12px;max-width:240px;border:1px solid #dadce0;}
-.size-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-top:14px;}
+.size-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-top:14px;}
 .size-card{background:var(--bg-subtle);border:1px solid var(--border-color);border-radius:var(--radius-md);padding:12px;text-align:center;}
-.size-card canvas{display:block;margin:0 auto 8px;border:1px solid var(--border-color);border-radius:4px;background:#fff;}
+.size-card canvas{display:block;margin:0 auto 8px;border:1px solid var(--border-color);border-radius:4px;background:repeating-conic-gradient(#e2e8f0 0 25%,#fff 0 50%) 0 0/10px 10px;}
+.size-card .fname{font-family:var(--font-mono);font-size:11px;color:var(--text-muted);word-break:break-all;margin-bottom:6px;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.field-row input[type=color]{width:100%;height:40px;cursor:pointer;}
+.check-line{display:flex;align-items:center;gap:6px;font-size:13px;margin-bottom:8px;}
+.code-head{display:flex;justify-content:space-between;align-items:center;margin:18px 0 6px;}
+.code-head .field-label{margin:0;}
+.home-mock{display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap;margin-top:8px;}
+.home-mock figure{text-align:center;font-size:11px;color:var(--text-muted);}
+.home-mock img{display:block;margin:0 auto 4px;}
+.guide{margin-top:24px;background:var(--bg-surface);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:20px;font-size:14px;line-height:1.8;}
+.guide h2{font-size:17px;margin-bottom:8px;}
+.guide h3{font-size:15px;margin:14px 0 4px;}
+.guide ul{padding-left:20px;}
+.guide table{border-collapse:collapse;width:100%;font-size:13px;margin:8px 0;}
+.guide th,.guide td{border:1px solid var(--border-color);padding:6px 8px;text-align:left;}
+.guide th{background:var(--bg-subtle);}
+.guide code{font-family:var(--font-mono);font-size:12px;}
 </style>
 
   <!-- 统一小工具顶部导航 -->
@@ -133,7 +198,6 @@ label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display
           <option value="tech-blogs.html">📡 企业技术博客雷达</option>
           <option value="network-info.html">🌐 网络信息查询探针</option>
           <option value="doh-lookup.html">🔍 浏览器原生 DNS 探针</option>
-          <option value="iss-tracker.html">🛰️ 国际空间站实时追踪</option>
         </optgroup>
       </select>
       <button class="theme-btn" onclick="toggleTheme()" id="themeBtn" title="切换深色/浅色模式">🌓</button>
@@ -142,92 +206,167 @@ label.field-label{font-size:12px;font-weight:700;color:var(--text-muted);display
 <main class="container">
   <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:12px;">
     <div>
-      <h1 class="page-title">🌐 Favicon / 应用图标生成器</h1>
-      <p class="page-sub">纯前端手写 Windows ICO 二进制生成器，多尺寸 PNG 导出与标签页真实模拟，100% 离线。</p>
+      <h1 class="page-title">🌐 Favicon / PWA 图标生成器</h1>
+      <p class="page-sub">一张图生成 favicon.ico 和 16、32、48、180、192、512 全套 PNG，附 head 代码与 manifest 模板，可一键打包 ZIP。</p>
   <details class="local-note" style="margin:8px 0 12px;padding:8px 12px;border:1px solid rgba(16,185,129,.35);background:rgba(16,185,129,.08);border-radius:8px;font-size:13px;line-height:1.7;"><summary style="cursor:pointer;font-weight:700;color:#059669;">🔒 本地处理 · 不上传服务器</summary><p style="margin:6px 0 0;">你选择的图片和生成的图标只在你的浏览器中用 JavaScript 处理，本页没有任何上传接口，不会发送到本站或第三方服务器。页面加载完成后断网也能继续使用，你也可以打开浏览器开发者工具的 Network 面板自行验证。本站用 Google Analytics 统计匿名访问量，只记录访问了哪个页面、是否使用过工具，不包含你输入的内容。详见<a href="https://0101.click/privacy.html#local">隐私政策</a>。</p></details>
     </div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn" onclick="downloadIco()">💾 下载 favicon.ico</button>
-      <button class="btn btn-subtle" onclick="copyHtmlTags()">📋 复制代码</button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn" onclick="downloadZip()">📦 打包下载 ZIP</button>
+      <button class="btn btn-subtle" onclick="downloadIco()">💾 只下载 favicon.ico</button>
     </div>
   </div>
 
   <div class="tabs">
-    <button class="tab-btn active" data-tab="upload" onclick="switchTab('upload')">📁 上传图片生成</button>
-    <button class="tab-btn" data-tab="emoji" onclick="switchTab('emoji')">🎨 字母 / Emoji 制作</button>
+    <button class="tab-btn active" data-tab="emoji" onclick="switchTab('emoji')">🎨 文字 / Emoji 制作</button>
+    <button class="tab-btn" data-tab="upload" onclick="switchTab('upload')">📁 上传图片生成</button>
   </div>
 
   <div class="icon-layout">
     <div>
-      <div class="panel active" id="panel-upload">
-        <label class="field-label">上传源图 (建议正方形透明 PNG)</label>
-        <input type="file" id="srcFile" accept="image/*" onchange="handleImage(event)" style="margin-bottom:14px;">
+      <div class="panel" id="panel-upload">
+        <label class="field-label">上传源图（建议 512×512 以上的正方形 PNG 或 SVG）</label>
+        <input type="file" id="srcFile" accept="image/*" onchange="handleImage(event)" style="margin-bottom:12px;">
+        <label class="field-label">非正方形图片的处理方式</label>
+        <select id="fitMode" onchange="redrawUpload()">
+          <option value="contain">完整放入，四周留透明</option>
+          <option value="cover">从中间裁成正方形</option>
+        </select>
       </div>
 
-      <div class="panel" id="panel-emoji">
+      <div class="panel active" id="panel-emoji">
         <div style="margin-bottom:12px;">
-          <label class="field-label">图标文字 / Emoji</label>
-          <input type="text" id="emojiInput" value="🚀" maxlength="4" oninput="drawEmojiSource()">
+          <label class="field-label">图标文字 / Emoji（1–3 个字符效果最好）</label>
+          <input type="text" id="emojiInput" value="01" maxlength="4" oninput="drawEmojiSource()">
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+        <div class="field-row">
           <div>
             <label class="field-label">背景颜色</label>
-            <input type="color" id="emojiBg" value="#0284c7" oninput="drawEmojiSource()" style="width:100%;height:40px;cursor:pointer;">
+            <input type="color" id="emojiBg" value="#0284c7" oninput="drawEmojiSource()">
           </div>
           <div>
             <label class="field-label">文字颜色</label>
-            <input type="color" id="emojiColor" value="#ffffff" oninput="drawEmojiSource()" style="width:100%;height:40px;cursor:pointer;">
+            <input type="color" id="emojiColor" value="#ffffff" oninput="drawEmojiSource()">
           </div>
         </div>
         <div>
-          <label class="field-label">形状圆角</label>
+          <label class="field-label">形状</label>
           <select id="emojiShape" onchange="drawEmojiSource()">
-            <option value="squircle">圆角方块 (Squircle)</option>
-            <option value="circle">圆形 (Circle)</option>
-            <option value="square">直角正方形 (Square)</option>
+            <option value="squircle">圆角方块</option>
+            <option value="circle">圆形</option>
+            <option value="square">直角正方形</option>
           </select>
         </div>
       </div>
 
       <div class="panel active" style="margin-top:16px;">
-        <label class="field-label">🖥️ 浏览器标签页模拟预览</label>
+        <label class="field-label">站点信息（写进 manifest 和 head 代码）</label>
+        <div style="margin-bottom:10px;">
+          <input type="text" id="appName" value="我的网站" placeholder="name：完整名称" oninput="updateCode()">
+        </div>
+        <div style="margin-bottom:10px;">
+          <input type="text" id="shortName" value="我的网站" placeholder="short_name：主屏幕下的短名称" maxlength="24" oninput="updateCode()">
+        </div>
+        <div class="field-row">
+          <div>
+            <label class="field-label">theme_color</label>
+            <input type="color" id="themeColor" value="#0284c7" oninput="updateCode()">
+          </div>
+          <div>
+            <label class="field-label">background_color</label>
+            <input type="color" id="bgColor" value="#ffffff" oninput="renderAllSizes()">
+          </div>
+        </div>
+        <div style="margin-bottom:10px;">
+          <label class="field-label">图标存放路径</label>
+          <input type="text" id="pathPrefix" value="/" placeholder="/ 或 /static/icons/" oninput="updateCode()">
+        </div>
+        <label class="check-line"><input type="checkbox" id="optMaskable" checked onchange="renderAllSizes()">额外生成 maskable 图标（Android 自适应形状）</label>
+        <p style="font-size:12px;color:var(--text-muted);line-height:1.6;">apple-touch-icon 和 maskable 图标会先铺满 background_color 再放图案，因为 iOS 会把透明区域显示成黑色，Android 会按设备形状裁掉边缘。</p>
+      </div>
+
+      <div class="panel active" style="margin-top:16px;">
+        <label class="field-label">🖥️ 浏览器标签页预览（16×16）</label>
         <div style="margin-bottom:10px;">
           <div class="tab-mock">
-            <img id="tabMockDark" width="16" height="16" style="vertical-align:middle;">
-            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">我的应用 · Chrome 暗色</span>
+            <img id="tabMockDark" width="16" height="16" alt="" style="vertical-align:middle;">
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">我的网站 · 暗色标签</span>
           </div>
         </div>
         <div>
           <div class="tab-mock-light">
-            <img id="tabMockLight" width="16" height="16" style="vertical-align:middle;">
-            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">我的应用 · Chrome 明亮</span>
+            <img id="tabMockLight" width="16" height="16" alt="" style="vertical-align:middle;">
+            <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">我的网站 · 明亮标签</span>
           </div>
+        </div>
+        <label class="field-label" style="margin-top:14px;">📱 主屏幕预览</label>
+        <div class="home-mock">
+          <figure><img id="homeIos" width="60" height="60" alt="" style="border-radius:13px;">iOS 180</figure>
+          <figure><img id="homeAndroid" width="60" height="60" alt="" style="border-radius:50%;">Android 圆形裁切</figure>
         </div>
       </div>
     </div>
 
     <div>
       <div class="panel active">
-        <h3 style="font-size:15px;font-weight:700;margin-bottom:6px;">📦 自动生成的图标规格</h3>
-        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">包含浏览器标准 Favicon、PWA 高清图标与桌面图标。</p>
-        
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:6px;">📦 生成的文件</h3>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:4px;">文件名与下方代码一一对应，打包下载后直接放到网站对应目录即可。</p>
+
         <div class="size-grid" id="sizeGrid"></div>
 
-        <div style="margin-top:20px;">
-          <label class="field-label">HTML 头部引用代码</label>
-          <textarea id="htmlCodeArea" style="height:110px;font-family:var(--font-mono);font-size:12px;" readonly></textarea>
+        <div class="code-head">
+          <label class="field-label">&lt;head&gt; 引用代码</label>
+          <button class="btn btn-subtle btn-sm" onclick="copyText('htmlCodeArea','head 代码已复制')">📋 复制</button>
         </div>
+        <textarea id="htmlCodeArea" style="height:150px;font-family:var(--font-mono);font-size:12px;" readonly></textarea>
+
+        <div class="code-head">
+          <label class="field-label">site.webmanifest 模板</label>
+          <button class="btn btn-subtle btn-sm" onclick="copyText('manifestArea','manifest 已复制')">📋 复制</button>
+        </div>
+        <textarea id="manifestArea" style="height:260px;font-family:var(--font-mono);font-size:12px;" readonly></textarea>
       </div>
     </div>
   </div>
+
+  <section class="guide">
+    <h2>尺寸规范：每个图标用在哪里</h2>
+    <table>
+      <tr><th>文件</th><th>尺寸</th><th>用途</th></tr>
+      <tr><td><code>favicon.ico</code></td><td>16 / 32 / 48</td><td>老浏览器和直接请求 /favicon.ico 的程序</td></tr>
+      <tr><td><code>favicon-16x16.png</code></td><td>16</td><td>普通屏幕的标签页、书签栏</td></tr>
+      <tr><td><code>favicon-32x32.png</code></td><td>32</td><td>高分屏标签页、Windows 任务栏</td></tr>
+      <tr><td><code>favicon-48x48.png</code></td><td>48</td><td>Windows 桌面快捷方式、搜索结果里的站点图标</td></tr>
+      <tr><td><code>apple-touch-icon.png</code></td><td>180</td><td>iPhone / iPad “添加到主屏幕”</td></tr>
+      <tr><td><code>android-chrome-192x192.png</code></td><td>192</td><td>Android 主屏幕、PWA 安装</td></tr>
+      <tr><td><code>android-chrome-512x512.png</code></td><td>512</td><td>PWA 启动画面、安装对话框里的大图</td></tr>
+    </table>
+    <p>浏览器会根据屏幕密度自动挑选最合适的尺寸，所以小尺寸也要单独准备，而不是只放一张大图让浏览器缩小。16 和 32 像素实际只有几十个点，细线和小字会糊成一团，图案要简单、对比要强，最好单独检查一遍预览。</p>
+    <p>iOS 不支持透明的 apple-touch-icon，透明部分会变成黑色，系统还会自动加圆角，所以这张图要铺满背景色、不要自己画圆角。Android 的 maskable 图标会被裁成圆形或圆角方形，只有中间直径 80% 的区域保证可见，重要图案要放在这个范围内。</p>
+    <p>PWA 想要能被“安装”，manifest 里至少要有 192 和 512 两个尺寸。改了图标后浏览器常常还显示旧的，可以在文件名后加版本号（如 <code>favicon.ico?v=2</code>）强制刷新缓存。</p>
+    <p style="color:var(--text-muted);font-size:13px;">所有图标都在你的浏览器里用 Canvas 生成，ICO 文件由本页脚本直接写出二进制，ZIP 打包使用开源库 JSZip（MIT 许可，<a href="js/vendor/THIRD-PARTY-LICENSES.txt">许可声明</a>），整个过程不会上传任何文件。</p>
+  </section>
 </main>
 
+<script src="js/vendor/jszip.min.js"></script>
 <script>
-let curTab = 'upload';
-const SIZES = [16, 32, 48, 64, 128, 192, 512];
+let curTab = 'emoji';
+const SRC = 512;
+const ICO_SIZES = [16, 32, 48];
+// 每个输出文件：尺寸、文件名、是否先铺背景色、图案缩放比例
+const OUTPUTS = [
+  { size: 16,  name: 'favicon-16x16.png' },
+  { size: 32,  name: 'favicon-32x32.png' },
+  { size: 48,  name: 'favicon-48x48.png' },
+  { size: 180, name: 'apple-touch-icon.png', solid: true },
+  { size: 192, name: 'android-chrome-192x192.png' },
+  { size: 512, name: 'android-chrome-512x512.png' },
+  { size: 512, name: 'maskable-icon-512x512.png', solid: true, scale: 0.8, maskable: true }
+];
 let sourceCanvas = document.createElement('canvas');
-sourceCanvas.width = 512;
-sourceCanvas.height = 512;
+sourceCanvas.width = SRC;
+sourceCanvas.height = SRC;
+let uploadedImg = null;
+const outCanvases = {};
 
 function switchTab(tab) {
   curTab = tab;
@@ -235,34 +374,53 @@ function switchTab(tab) {
   document.getElementById('panel-upload').classList.toggle('active', tab === 'upload');
   document.getElementById('panel-emoji').classList.toggle('active', tab === 'emoji');
   if (tab === 'emoji') drawEmojiSource();
+  else if (uploadedImg) redrawUpload();
 }
 
 function handleImage(e) {
   const file = e.target.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    const img = new Image();
-    img.onload = () => {
-      const ctx = sourceCanvas.getContext('2d');
-      ctx.clearRect(0, 0, 512, 512);
-      ctx.drawImage(img, 0, 0, 512, 512);
-      renderAllSizes();
-      showToast('图片加载成功，已生成各尺寸图标');
-    };
-    img.src = ev.target.result;
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = () => {
+    uploadedImg = img;
+    redrawUpload();
+    if (Math.min(img.naturalWidth, img.naturalHeight) < 512 && !/svg/.test(file.type)) {
+      showToast('源图小于 512px，大尺寸图标可能会发虚', 3200);
+    } else {
+      showToast('图片加载成功，已生成全套图标');
+    }
   };
-  reader.readAsDataURL(file);
+  img.onerror = () => showToast('无法读取这张图片，请换 PNG / JPG / SVG');
+  img.src = url;
+}
+
+function redrawUpload() {
+  if (!uploadedImg) return;
+  const img = uploadedImg;
+  const w = img.naturalWidth || SRC, h = img.naturalHeight || SRC;
+  const fit = document.getElementById('fitMode').value;
+  const ctx = sourceCanvas.getContext('2d');
+  ctx.clearRect(0, 0, SRC, SRC);
+  if (fit === 'cover') {
+    const s = Math.min(w, h);
+    ctx.drawImage(img, (w - s) / 2, (h - s) / 2, s, s, 0, 0, SRC, SRC);
+  } else {
+    const k = SRC / Math.max(w, h);
+    const dw = w * k, dh = h * k;
+    ctx.drawImage(img, (SRC - dw) / 2, (SRC - dh) / 2, dw, dh);
+  }
+  renderAllSizes();
 }
 
 function drawEmojiSource() {
-  const text = document.getElementById('emojiInput').value || '🚀';
+  const text = document.getElementById('emojiInput').value || '01';
   const bg = document.getElementById('emojiBg').value;
   const color = document.getElementById('emojiColor').value;
   const shape = document.getElementById('emojiShape').value;
 
   const ctx = sourceCanvas.getContext('2d');
-  ctx.clearRect(0, 0, 512, 512);
+  ctx.clearRect(0, 0, SRC, SRC);
 
   ctx.fillStyle = bg;
   if (shape === 'circle') {
@@ -277,130 +435,203 @@ function drawEmojiSource() {
     ctx.fillRect(0, 0, 512, 512);
   }
 
+  // 字数越多字号越小，保证小尺寸下仍然清楚
+  const len = Array.from(text).length;
+  const fontSize = len <= 1 ? 300 : len === 2 ? 240 : 170;
   ctx.fillStyle = color;
-  ctx.font = '280px sans-serif';
+  ctx.font = '800 ' + fontSize + 'px ' + getComputedStyle(document.body).fontFamily;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(text, 256, 276);
+  ctx.fillText(text, 256, 272, 460);
 
   renderAllSizes();
+}
+
+// 逐级减半缩小，避免 512 直接缩到 16 时出现锯齿
+function downscale(src, size) {
+  let cur = src, w = src.width;
+  while (w / 2 >= size * 2) {
+    w = Math.floor(w / 2);
+    const tmp = document.createElement('canvas');
+    tmp.width = tmp.height = w;
+    const c = tmp.getContext('2d');
+    c.imageSmoothingQuality = 'high';
+    c.drawImage(cur, 0, 0, w, w);
+    cur = tmp;
+  }
+  return cur;
+}
+
+function renderOutput(o) {
+  const cv = document.createElement('canvas');
+  cv.width = cv.height = o.size;
+  const ctx = cv.getContext('2d');
+  ctx.imageSmoothingQuality = 'high';
+  if (o.solid) {
+    ctx.fillStyle = document.getElementById('bgColor').value;
+    ctx.fillRect(0, 0, o.size, o.size);
+  }
+  const inner = Math.round(o.size * (o.scale || 1));
+  const off = (o.size - inner) / 2;
+  ctx.drawImage(downscale(sourceCanvas, inner), off, off, inner, inner);
+  return cv;
+}
+
+function activeOutputs() {
+  const maskable = document.getElementById('optMaskable').checked;
+  return OUTPUTS.filter(o => !o.maskable || maskable);
 }
 
 function renderAllSizes() {
   const grid = document.getElementById('sizeGrid');
   grid.innerHTML = '';
 
-  SIZES.forEach(sz => {
+  activeOutputs().forEach(o => {
+    const cv = renderOutput(o);
+    outCanvases[o.name] = cv;
     const card = document.createElement('div');
     card.className = 'size-card';
-
-    const cv = document.createElement('canvas');
-    cv.width = sz;
-    cv.height = sz;
-    cv.style.width = Math.min(64, sz) + 'px';
-    cv.style.height = Math.min(64, sz) + 'px';
-    cv.id = 'cv_' + sz;
-    const ctx = cv.getContext('2d');
-    ctx.drawImage(sourceCanvas, 0, 0, sz, sz);
-
+    const shown = Math.min(64, o.size);
+    cv.style.width = shown + 'px';
+    cv.style.height = shown + 'px';
+    if (o.size <= 32) cv.style.imageRendering = 'pixelated';
     card.appendChild(cv);
     const label = document.createElement('div');
-    label.style.cssText = 'font-weight:700;font-size:12px;margin-bottom:6px;';
-    label.textContent = sz + '×' + sz;
+    label.style.cssText = 'font-weight:700;font-size:12px;margin-bottom:2px;';
+    label.textContent = o.size + '×' + o.size + (o.maskable ? ' maskable' : '');
     card.appendChild(label);
+    const fname = document.createElement('div');
+    fname.className = 'fname';
+    fname.textContent = o.name;
+    card.appendChild(fname);
     const btn = document.createElement('button');
     btn.className = 'btn btn-subtle btn-sm';
     btn.textContent = '下载';
-    btn.onclick = () => downloadPng(sz);
+    btn.onclick = () => downloadPng(o.name);
     card.appendChild(btn);
     grid.appendChild(card);
   });
 
-  // Mock icons
-  const cv16 = document.getElementById('cv_16') || sourceCanvas;
-  const url16 = cv16.toDataURL('image/png');
+  const url16 = outCanvases['favicon-16x16.png'].toDataURL('image/png');
   document.getElementById('tabMockDark').src = url16;
   document.getElementById('tabMockLight').src = url16;
+  document.getElementById('homeIos').src = outCanvases['apple-touch-icon.png'].toDataURL('image/png');
+  const androidSrc = outCanvases['maskable-icon-512x512.png'] || outCanvases['android-chrome-192x192.png'];
+  document.getElementById('homeAndroid').src = androidSrc.toDataURL('image/png');
 
-  // HTML tags
-  const tags = '<link rel="icon" type="image/x-icon" href="/favicon.ico">\n' +
-    '<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">\n' +
-    '<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">\n' +
-    '<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">';
-  document.getElementById('htmlCodeArea').value = tags;
+  updateCode();
 }
 
-function downloadPng(sz) {
-  const cv = document.getElementById('cv_' + sz);
-  if (!cv) return;
+function getPrefix() {
+  let p = document.getElementById('pathPrefix').value.trim() || '/';
+  if (!p.endsWith('/')) p += '/';
+  return p;
+}
+
+function buildHead() {
+  const p = getPrefix();
+  return '<link rel="icon" href="' + p + 'favicon.ico" sizes="16x16 32x32 48x48">\n' +
+    '<link rel="icon" type="image/png" sizes="32x32" href="' + p + 'favicon-32x32.png">\n' +
+    '<link rel="icon" type="image/png" sizes="16x16" href="' + p + 'favicon-16x16.png">\n' +
+    '<link rel="apple-touch-icon" sizes="180x180" href="' + p + 'apple-touch-icon.png">\n' +
+    '<link rel="manifest" href="' + p + 'site.webmanifest">\n' +
+    '<meta name="theme-color" content="' + document.getElementById('themeColor').value + '">';
+}
+
+function buildManifest() {
+  const p = getPrefix();
+  const icons = [
+    { src: p + 'android-chrome-192x192.png', sizes: '192x192', type: 'image/png' },
+    { src: p + 'android-chrome-512x512.png', sizes: '512x512', type: 'image/png' }
+  ];
+  if (document.getElementById('optMaskable').checked) {
+    icons.push({ src: p + 'maskable-icon-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' });
+  }
+  return JSON.stringify({
+    name: document.getElementById('appName').value || '我的网站',
+    short_name: document.getElementById('shortName').value || '我的网站',
+    icons: icons,
+    start_url: '/',
+    display: 'standalone',
+    theme_color: document.getElementById('themeColor').value,
+    background_color: document.getElementById('bgColor').value
+  }, null, 2);
+}
+
+function updateCode() {
+  document.getElementById('htmlCodeArea').value = buildHead();
+  document.getElementById('manifestArea').value = buildManifest();
+}
+
+function canvasBytes(cv) {
+  return new Promise(r => cv.toBlob(b => b.arrayBuffer().then(buf => r(new Uint8Array(buf))), 'image/png'));
+}
+
+function downloadBlob(blob, name) {
   const a = document.createElement('a');
-  a.href = cv.toDataURL('image/png');
-  a.download = 'favicon-' + sz + 'x' + sz + '.png';
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
   a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
-// Pure client-side binary ICO generator (Windows Icon format)
-async function downloadIco() {
-  // We embed 16x16 and 32x32 PNGs
-  const cv16 = document.getElementById('cv_16');
-  const cv32 = document.getElementById('cv_32');
-  if (!cv16 || !cv32) return;
+function downloadPng(name) {
+  const cv = outCanvases[name];
+  if (!cv) return;
+  cv.toBlob(b => downloadBlob(b, name), 'image/png');
+}
 
-  const blob16 = await new Promise(r => cv16.toBlob(r, 'image/png'));
-  const blob32 = await new Promise(r => cv32.toBlob(r, 'image/png'));
-  const buf16 = new Uint8Array(await blob16.arrayBuffer());
-  const buf32 = new Uint8Array(await blob32.arrayBuffer());
-
-  const numImages = 2;
-  const headerLen = 6;
-  const dirEntryLen = 16;
-  const offset16 = headerLen + numImages * dirEntryLen;
-  const offset32 = offset16 + buf16.length;
-  const totalLen = offset32 + buf32.length;
-
-  const icoBuf = new Uint8Array(totalLen);
-  const view = new DataView(icoBuf.buffer);
-
-  // ICONDIR: reserved (0), type (1 for ico), count (2)
+// 纯前端写出 Windows ICO 二进制：ICONDIR + 每张图 16 字节目录项 + PNG 数据
+async function buildIco() {
+  const pngs = [];
+  for (const sz of ICO_SIZES) {
+    pngs.push(await canvasBytes(renderOutput({ size: sz })));
+  }
+  const headerLen = 6 + ICO_SIZES.length * 16;
+  const total = headerLen + pngs.reduce((s, b) => s + b.length, 0);
+  const ico = new Uint8Array(total);
+  const view = new DataView(ico.buffer);
   view.setUint16(0, 0, true);
   view.setUint16(2, 1, true);
-  view.setUint16(4, numImages, true);
-
-  // Entry 1: 16x16
-  icoBuf[6] = 16; // width
-  icoBuf[7] = 16; // height
-  icoBuf[8] = 0;  // color count
-  icoBuf[9] = 0;  // reserved
-  view.setUint16(10, 1, true); // color planes
-  view.setUint16(12, 32, true); // bpp
-  view.setUint32(14, buf16.length, true); // size
-  view.setUint32(18, offset16, true); // offset
-
-  // Entry 2: 32x32
-  icoBuf[22] = 32;
-  icoBuf[23] = 32;
-  icoBuf[24] = 0;
-  icoBuf[25] = 0;
-  view.setUint16(26, 1, true);
-  view.setUint16(28, 32, true);
-  view.setUint32(30, buf32.length, true);
-  view.setUint32(34, offset32, true);
-
-  // Copy PNG image data
-  icoBuf.set(buf16, offset16);
-  icoBuf.set(buf32, offset32);
-
-  const icoBlob = new Blob([icoBuf], { type: 'image/x-icon' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(icoBlob);
-  a.download = 'favicon.ico';
-  a.click();
-  showToast('已生成标准二进制 favicon.ico！');
+  view.setUint16(4, ICO_SIZES.length, true);
+  let offset = headerLen;
+  ICO_SIZES.forEach((sz, i) => {
+    const e = 6 + i * 16;
+    ico[e] = sz;
+    ico[e + 1] = sz;
+    view.setUint16(e + 4, 1, true);
+    view.setUint16(e + 6, 32, true);
+    view.setUint32(e + 8, pngs[i].length, true);
+    view.setUint32(e + 12, offset, true);
+    ico.set(pngs[i], offset);
+    offset += pngs[i].length;
+  });
+  return ico;
 }
 
-function copyHtmlTags() {
-  const val = document.getElementById('htmlCodeArea').value;
-  navigator.clipboard.writeText(val).then(() => showToast('HTML 标签代码已复制'));
+async function downloadIco() {
+  const ico = await buildIco();
+  downloadBlob(new Blob([ico], { type: 'image/x-icon' }), 'favicon.ico');
+  showToast('已生成 favicon.ico（内含 16 / 32 / 48）');
+}
+
+async function downloadZip() {
+  if (typeof JSZip === 'undefined') return showToast('ZIP 组件没有加载成功，请刷新页面后再试');
+  const zip = new JSZip();
+  zip.file('favicon.ico', await buildIco());
+  for (const o of activeOutputs()) {
+    zip.file(o.name, await canvasBytes(outCanvases[o.name]));
+  }
+  zip.file('site.webmanifest', buildManifest() + '\n');
+  zip.file('head-snippet.html', buildHead() + '\n');
+  const blob = await zip.generateAsync({ type: 'blob' });
+  downloadBlob(blob, 'favicon-package.zip');
+  showToast('已打包：图标 + site.webmanifest + head-snippet.html');
+}
+
+function copyText(id, msg) {
+  const val = document.getElementById(id).value;
+  navigator.clipboard.writeText(val).then(() => showToast(msg));
 }
 
 window.addEventListener('DOMContentLoaded', drawEmojiSource);
