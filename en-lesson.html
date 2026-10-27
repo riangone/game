@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script src="js/consent-default.js"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y1P7PMMM6V"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied'});
+      gtag('config', 'G-Y1P7PMMM6V');
+    </script>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>英语微情境互动课文 - 3层渐进学习器</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=M+PLUS+Rounded+1c:wght@500;700;800;900&display=swap" rel="stylesheet">
+<script src="data/en-lessons-data.js"></script>
+<style>
+  :root {
+    --primary: #4338ca;
+    --primary-light: #6366f1;
+    --primary-soft: #eef2ff;
+    --accent: #0284c7;
+    --accent-soft: #e0f2fe;
+    --success: #059669;
+    --success-soft: #d1fae5;
+    --amber: #d97706;
+    --amber-soft: #fef3c7;
+    --danger: #e11d48;
+    --danger-soft: #ffe4e6;
+    --ink: #0f172a;
+    --ink-sub: #334155;
+    --muted: #64748b;
+    --card: #ffffff;
+    --paper: #f8fafc;
+    --border: #e2e8f0;
+    --radius-xl: 24px;
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+    --shadow-card: 0 10px 25px -5px rgba(67, 56, 202, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+    --shadow-pop: 0 4px 0 #312e81;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    width: 100%;
+    min-height: 100%;
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: "Outfit", "M PLUS Rounded 1c", system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+  }
+
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  #app {
+    width: 100%;
+    max-width: 680px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    box-shadow: 0 0 40px rgba(0,0,0,0.05);
+  }
+
+  /* Top Navigation Bar */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .nav-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-sub);
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .nav-btn:hover { background: var(--primary-soft); color: var(--primary); }
+
+  .header-titles {
+    flex: 1;
+    text-align: center;
+    padding: 0 10px;
+  }
+  .header-titles h1 {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .header-titles .lesson-sub {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .lesson-picker-select {
+    padding: 6px 10px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: var(--paper);
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-sub);
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  /* 3-Tier Step Navigator */
+  .step-nav {
+    display: flex;
+    background: #f1f5f9;
+    padding: 6px 12px;
+    border-bottom: 1px solid var(--border);
+    gap: 6px;
+  }
+  .step-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 4px;
+    border-radius: 12px;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .step-tab .step-num {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #cbd5e1;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+  }
+  .step-tab.active {
+    background: #ffffff;
+    color: var(--primary);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .step-tab.active .step-num {
+    background: var(--primary);
+  }
+
+  /* Main Container */
+  main {
+    flex: 1;
+    padding: 20px 16px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .tier-view {
+    display: none;
+    flex-direction: column;
+    gap: 18px;
+    animation: fadeIn .2s ease;
+  }
+  .tier-view.active {
+    display: flex;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Situation Card */
+  .situation-banner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #eef2ff, #f0fdf4);
+    border: 1px solid #c7d2fe;
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+  }
+  .situation-icon {
+    font-size: 32px;
+  }
+  .situation-text h3 {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--primary);
+  }
+  .situation-text p {
+    font-size: 12px;
+    color: var(--ink-sub);
+    margin-top: 2px;
+  }
+
+  /* ========== TIER 1: CHUNKS WARMUP ========== */
+  .chunk-card {
+    background: var(--card);
+    border: 2px solid #e0e7ff;
+    border-radius: var(--radius-xl);
+    padding: 24px 20px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+  }
+  .chunk-progress {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--primary);
+    background: var(--primary-soft);
+    padding: 3px 10px;
+    border-radius: 9999px;
+    align-self: flex-start;
+  }
+  .chunk-main-display {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .chunk-text {
+    font-size: 26px;
+    font-weight: 900;
+    color: #1e1b4b;
+    letter-spacing: -0.3px;
+  }
+  .chunk-ipa {
+    font-size: 15px;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .chunk-meaning {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink-sub);
+  }
+  .chunk-tip {
+    font-size: 12px;
+    color: var(--muted);
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: var(--radius-md);
+    padding: 8px 12px;
+    line-height: 1.5;
+  }
+
+  /* Tap-to-assemble puzzle */
+  .assemble-area {
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: var(--radius-md);
+    min-height: 54px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+  }
+  .assemble-prompt {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink-sub);
+    text-align: center;
+    margin-top: 4px;
+  }
+  .tokens-bank {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .token-pill {
+    padding: 10px 16px;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    box-shadow: 0 3px 0 #cbd5e1;
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--ink);
+    cursor: pointer;
+    user-select: none;
+    transition: all .1s;
+  }
+  .token-pill:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #cbd5e1;
+  }
+  .token-pill.selected {
+    opacity: 0.25;
+    pointer-events: none;
+  }
+  .assembled-token {
+    padding: 8px 14px;
+    border-radius: 10px;
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    animation: popIn .12s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  @keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .chunk-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    gap: 10px;
+  }
+
+  .btn {
+    border: none;
+    border-radius: 14px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-shadow: var(--shadow-pop);
+    transition: transform .08s, box-shadow .08s;
+    font-family: inherit;
+  }
+  .btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #312e81;
+  }
+  .btn.primary { background: var(--primary); color: #ffffff; }
+  .btn.success { background: var(--success); color: #ffffff; box-shadow: 0 4px 0 #065f46; }
+  .btn.secondary { background: var(--paper); border: 1px solid var(--border); color: var(--ink); box-shadow: 0 2px 0 #cbd5e1; }
+  .btn.full { width: 100%; }
+
+  /* ========== TIER 2: NARRATIVE READER ========== */
+  .narrative-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    background: var(--paper);
+    padding: 10px 14px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+  }
+  .toolbar-left, .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .toggle-chip {
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-sub);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .toggle-chip.active {
+    background: var(--primary-soft);
+    border-color: #c7d2fe;
+    color: var(--primary);
+  }
+
+  /* Dialogue Bubbles */
+  .dialogue-stream {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .dialogue-bubble-wrap {
+    display: flex;
+    gap: 12px;
+    position: relative;
+    cursor: pointer;
+  }
+  .dialogue-bubble-wrap.speaker-A {
+    flex-direction: row-reverse;
+  }
+
+  .bubble-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  }
+  .speaker-A .bubble-avatar {
+    background: #e0e7ff;
+    border-color: #a5b4fc;
+  }
+  .speaker-B .bubble-avatar {
+    background: #fef3c7;
+    border-color: #fde68a;
+  }
+
+  .bubble-content {
+    max-width: 82%;
+    background: #ffffff;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+    transition: border-color .15s, box-shadow .15s, transform .1s;
+  }
+  .dialogue-bubble-wrap:hover .bubble-content {
+    border-color: #a5b4fc;
+  }
+  .dialogue-bubble-wrap.playing .bubble-content {
+    border-color: var(--primary);
+    background: #faf5ff;
+    box-shadow: 0 4px 18px rgba(99, 102, 241, 0.15);
+    transform: scale(1.01);
+  }
+  .speaker-A .bubble-content {
+    border-top-right-radius: 4px;
+  }
+  .speaker-B .bubble-content {
+    border-top-left-radius: 4px;
+  }
+
+  .bubble-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .bubble-name {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--muted);
+  }
+  .bubble-speaker-tag {
+    font-size: 10px;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 6px;
+    background: #f1f5f9;
+    color: var(--muted);
+  }
+  .speaker-A .bubble-speaker-tag {
+    background: #e0e7ff;
+    color: var(--primary);
+  }
+
+  .bubble-en {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.6;
+  }
+  .bubble-zh {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  /* Phonetic highlighting */
+  .phonetic-mode-on .linking {
+    background: #fef08a;
+    padding: 0 4px;
+    border-radius: 4px;
+    border-bottom: 2px solid #ca8a04;
+    font-weight: 800;
+  }
+  .phonetic-mode-on .reduction {
+    color: #94a3b8;
+    text-decoration: line-through 1px #cbd5e1;
+  }
+
+  /* Audio play badge on bubble */
+  .bubble-audio-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1px solid var(--border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--primary);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .notes-box {
+    margin-top: 10px;
+    background: #f8fafc;
+    border-radius: var(--radius-md);
+    padding: 8px 12px;
+    font-size: 11px;
+    color: var(--ink-sub);
+    border-left: 3px solid var(--accent);
+  }
+
+  /* ========== TIER 3: ROLE-PLAY ========== */
+  .roleplay-card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 24px 20px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .rp-step-indicator {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--success);
+    background: var(--success-soft);
+    padding: 4px 12px;
+    border-radius: 9999px;
+    align-self: center;
+  }
+
+  .rp-dialog-window {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+  }
+  .rp-speaker-role {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .rp-en-line {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .rp-zh-line {
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .rp-action-cluster {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .mic-practice-btn {
+    background: linear-gradient(135deg, #4f46e5, #4338ca);
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 800;
+    padding: 14px 24px;
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 4px 0 #312e81;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .mic-practice-btn.recording {
+    background: linear-gradient(135deg, #e11d48, #be123c);
+    box-shadow: 0 4px 0 #881337;
+    animation: pulse 1s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+  }
+
+  /* Completion celebration */
+  .celebration-view {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+    padding: 40px 20px;
+  }
+  .star-trophy {
+    font-size: 64px;
+    filter: drop-shadow(0 6px 12px rgba(217, 119, 6, 0.3));
+    animation: bounce 1s ease infinite alternate;
+  }
+  @keyframes bounce {
+    from { transform: translateY(0); }
+    to { transform: translateY(-10px); }
+  }
+</style>
+</head>
+<body>
+
+<div id="app">
+  <!-- Top Navigation Header -->
+  <header>
+    <a href="en-index.html" class="nav-btn" title="返回课程列表">‹</a>
+    <div class="header-titles">
+      <h1 id="headerLessonTitle">Loading...</h1>
+      <div class="lesson-sub" id="headerLessonZh">微情境互动学习</div>
+    </div>
+    <select class="lesson-picker-select" id="lessonPicker" onchange="switchLesson(this.value)">
+      <!-- Options injected by JS -->
+    </select>
+  </header>
+
+  <!-- 3-Tier Step Navigator -->
+  <div class="step-nav">
+    <button class="step-tab active" id="tabTier1" onclick="switchTier(1)">
+      <span class="step-num">1</span>
+      <span>语块预热</span>
+    </button>
+    <button class="step-tab" id="tabTier2" onclick="switchTier(2)">
+      <span class="step-num">2</span>
+      <span>情境课文</span>
+    </button>
+    <button class="step-tab" id="tabTier3" onclick="switchTier(3)">
+      <span class="step-num">3</span>
+      <span>角色演练</span>
+    </button>
+  </div>
+
+  <main>
+    <!-- Situation Overview Banner -->
+    <div class="situation-banner">
+      <div class="situation-icon" id="situationIcon">☕</div>
+      <div class="situation-text">
+        <h3 id="situationTitle">场景定位</h3>
+        <p id="situationDesc">加载中...</p>
+      </div>
+    </div>
+
+    <!-- TIER 1: CHUNK WARMUP -->
+    <section class="tier-view active" id="tier1View">
+      <div class="chunk-card">
+        <span class="chunk-progress" id="chunkProgressBadge">Chunk 1 / 3</span>
+        
+        <div class="chunk-main-display">
+          <div class="chunk-text" id="chunkText">...</div>
+          <div class="chunk-ipa" id="chunkIpa">/.../</div>
+          <div class="chunk-meaning" id="chunkMeaning">...</div>
+          <div class="chunk-tip" id="chunkTip">...</div>
+        </div>
+
+        <div class="assemble-prompt" id="assemblePrompt">请根据中文释义拼接语块：</div>
+
+        <!-- Assembled Tokens Target Area -->
+        <div class="assemble-area" id="assembledTokensArea">
+          <!-- Clicked tokens appear here -->
+        </div>
+
+        <!-- Scrambled Tokens Bank -->
+        <div class="tokens-bank" id="tokensBank">
+          <!-- Token options appear here -->
+        </div>
+
+        <div class="chunk-controls">
+          <button class="btn secondary" onclick="playCurrentChunkAudio()">
+            🔊 听示范读音
+          </button>
+          <button class="btn primary" id="btnNextChunk" onclick="handleChunkStep()">
+            核对并继续 ➔
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- TIER 2: NARRATIVE READER -->
+    <section class="tier-view" id="tier2View">
+      <div class="narrative-toolbar">
+        <div class="toolbar-left">
+          <button class="btn primary" id="btnPlayAll" onclick="togglePlayAll()">
+            ▶ 连贯朗读全文
+          </button>
+          <button class="toggle-chip" id="chipSpeed" onclick="togglePlaybackSpeed()">
+            ⚡ 1.0x 速
+          </button>
+        </div>
+        <div class="toolbar-right">
+          <button class="toggle-chip active" id="chipPhonetic" onclick="togglePhoneticMode()">
+            ‿ 连读标注
+          </button>
+          <button class="toggle-chip active" id="chipZh" onclick="toggleZhSubtitles()">
+            译 中文
+          </button>
+        </div>
+      </div>
+
+      <!-- Dialogue Bubbles Stream -->
+      <div class="dialogue-stream phonetic-mode-on" id="dialogueStream">
+        <!-- Rendered by JS -->
+      </div>
+
+      <button class="btn success full" style="margin-top: 14px;" onclick="switchTier(3)">
+        完成阅读，进入角色演练 (Role-play) ➔
+      </button>
+    </section>
+
+    <!-- TIER 3: ROLE-PLAY -->
+    <section class="tier-view" id="tier3View">
+      <div class="roleplay-card" id="rpActiveCard">
+        <span class="rp-step-indicator" id="rpTurnIndicator">轮次 1 / 4 · 对话演练</span>
+        
+        <div class="rp-dialog-window">
+          <div class="rp-speaker-role" id="rpSpeakerRole">PARTNER</div>
+          <div class="rp-en-line" id="rpPromptEn">...</div>
+          <div class="rp-zh-line" id="rpPromptZh">...</div>
+        </div>
+
+        <div class="rp-action-cluster">
+          <button class="mic-practice-btn" id="btnMicAction" onclick="handleMicOrPractice()">
+            🎙️ 轮到你了，点击开口跟读！
+          </button>
+          <button class="btn secondary" onclick="listenRpModelAudio()">
+            🔊 听示范原音
+          </button>
+          <button class="btn primary" id="btnRpNext" onclick="nextRpTurn()">
+            继续下一轮 ➔
+          </button>
+        </div>
+      </div>
+
+      <!-- Completion Screen -->
+      <div class="celebration-view" id="celebrationView">
+        <div class="star-trophy">🎉🌟🏆</div>
+        <h2 style="font-size:24px; font-weight:900; color:var(--primary);">恭喜完成本课全部演练！</h2>
+        <p style="font-size:14px; color:var(--muted); max-width:440px;">
+          你已完成语块原子拼装、微情境连读解析与双人对话角色扮演闭环！
+        </p>
+        <div style="display:flex; gap:10px; margin-top:12px;">
+          <button class="btn secondary" onclick="restartLesson()">
+            🔄 重温本课
+          </button>
+          <button class="btn primary" onclick="goToNextLesson()">
+            下一课 ➔
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+  let currentLesson = null;
+  let currentChunkIdx = 0;
+  let currentTier = 1;
+  let currentAssembled = [];
+  let isPhoneticMode = true;
+  let showZhSubtitles = true;
+  let playbackSpeed = 1.0;
+  let isPlayingAll = false;
+  let playAllIndex = 0;
+  let currentAudio = null;
+
+  // Role Play State
+  let rpCurrentIdx = 0;
+  let isRecording = false;
+
+  function getQueryParam(key) {
+    const p = new URLSearchParams(window.location.search);
+    return p.get(key) || "en1";
+  }
+
+  function initApp() {
+    if (!window.EN_LESSONS_DATA) return;
+    
+    // Init Lesson Picker
+    const picker = document.getElementById("lessonPicker");
+    picker.innerHTML = window.EN_LESSONS_DATA.map(l => 
+      `<option value="${l.id}">${l.id.toUpperCase()}: ${l.title}</option>`
+    ).join("");
+
+    const targetId = getQueryParam("id");
+    picker.value = targetId;
+    loadLesson(targetId);
+  }
+
+  function loadLesson(lessonId) {
+    currentLesson = window.EN_LESSONS_DATA.find(l => l.id === lessonId) || window.EN_LESSONS_DATA[0];
+    
+    document.getElementById("headerLessonTitle").innerText = `${currentLesson.id.toUpperCase()}: ${currentLesson.title}`;
+    document.getElementById("headerLessonZh").innerText = currentLesson.titleZh;
+    document.getElementById("situationIcon").innerText = currentLesson.icon;
+    document.getElementById("situationTitle").innerText = `微情境: ${currentLesson.titleZh}`;
+    document.getElementById("situationDesc").innerText = currentLesson.situation;
+
+    // Reset Tier 1
+    currentChunkIdx = 0;
+    renderChunk();
+
+    // Render Tier 2 Dialogue
+    renderDialogue();
+
+    // Reset Tier 3 Roleplay
+    initRolePlay();
+
+    switchTier(1);
+  }
+
+  function switchLesson(id) {
+    history.pushState(null, "", `?id=${id}`);
+    loadLesson(id);
+  }
+
+  function switchTier(tierNum) {
+    currentTier = tierNum;
+    stopAudio();
+
+    document.querySelectorAll(".step-tab").forEach((tab, i) => {
+      tab.classList.toggle("active", i + 1 === tierNum);
+    });
+
+    document.getElementById("tier1View").classList.toggle("active", tierNum === 1);
+    document.getElementById("tier2View").classList.toggle("active", tierNum === 2);
+    document.getElementById("tier3View").classList.toggle("active", tierNum === 3);
+  }
+
+  // ========== AUDIO HELPER ==========
+  function playAudioFile(src, fallbackText, onEnded) {
+    stopAudio();
+
+    const audio = new Audio(src);
+    currentAudio = audio;
+    audio.playbackRate = playbackSpeed;
+
+    audio.onended = () => {
+      currentAudio = null;
+      if (onEnded) onEnded();
+    };
+
+    audio.onerror = () => {
+      console.warn("Audio file failed to load, falling back to Web Speech:", src);
+      if ('speechSynthesis' in window && fallbackText) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(fallbackText);
+        utter.lang = "en-US";
+        utter.rate = playbackSpeed;
+        utter.onend = () => {
+          currentAudio = null;
+          if (onEnded) onEnded();
+        };
+        window.speechSynthesis.speak(utter);
+      } else {
+        if (onEnded) onEnded();
+      }
+    };
+
+    audio.play().catch(e => {
+      console.warn("Audio play prevented:", e);
+      if (onEnded) onEnded();
+    });
+  }
+
+  function stopAudio() {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio = null;
+    }
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    isPlayingAll = false;
+    document.getElementById("btnPlayAll").innerText = "▶ 连贯朗读全文";
+    document.querySelectorAll(".dialogue-bubble-wrap").forEach(b => b.classList.remove("playing"));
+  }
+
+  // ========== TIER 1: CHUNK LOGIC ==========
+  function renderChunk() {
+    const chunk = currentLesson.chunks[currentChunkIdx];
+    document.getElementById("chunkProgressBadge").innerText = `Chunk ${currentChunkIdx + 1} / ${currentLesson.chunks.length}`;
+    document.getElementById("chunkText").innerText = chunk.text;
+    document.getElementById("chunkIpa").innerText = chunk.phonetic;
+    document.getElementById("chunkMeaning").innerText = chunk.meaning;
+    document.getElementById("chunkTip").innerText = `💡 口语诀窍: ${chunk.usageTip}`;
+
+    // Setup puzzle
+    currentAssembled = [];
+    const quiz = chunk.warmupQuiz;
+    document.getElementById("assemblePrompt").innerText = quiz.prompt;
+
+    const assembledArea = document.getElementById("assembledTokensArea");
+    assembledArea.innerHTML = `<span style="font-size:12px; color:var(--muted)">点击下方词块装配此句</span>`;
+
+    const tokensBank = document.getElementById("tokensBank");
+    tokensBank.innerHTML = "";
+
+    // Shuffle tokens
+    const shuffled = [...quiz.tokens].sort(() => Math.random() - 0.5);
+    shuffled.forEach(t => {
+      const btn = document.createElement("button");
+      btn.className = "token-pill";
+      btn.innerText = t;
+      btn.onclick = () => selectToken(t, btn);
+      tokensBank.appendChild(btn);
+    });
+
+    document.getElementById("btnNextChunk").innerText = "核对并继续 ➔";
+  }
+
+  function selectToken(tokenText, btnElement) {
+    btnElement.classList.add("selected");
+    currentAssembled.push({ text: tokenText, btn: btnElement });
+    renderAssembled();
+  }
+
+  function removeAssembled(index) {
+    const item = currentAssembled[index];
+    item.btn.classList.remove("selected");
+    currentAssembled.splice(index, 1);
+    renderAssembled();
+  }
+
+  function renderAssembled() {
+    const area = document.getElementById("assembledTokensArea");
+    if (currentAssembled.length === 0) {
+      area.innerHTML = `<span style="font-size:12px; color:var(--muted)">点击下方词块装配此句</span>`;
+      return;
+    }
+    area.innerHTML = "";
+    currentAssembled.forEach((item, idx) => {
+      const token = document.createElement("div");
+      token.className = "assembled-token";
+      token.innerHTML = `${item.text} <span style="font-size:10px; opacity:0.8;">✕</span>`;
+      token.onclick = () => removeAssembled(idx);
+      area.appendChild(token);
+    });
+  }
+
+  function playCurrentChunkAudio() {
+    const chunk = currentLesson.chunks[currentChunkIdx];
+    playAudioFile(`audio/en_chunks/${chunk.id}.mp3`, chunk.text);
+  }
+
+  function handleChunkStep() {
+    const chunk = currentLesson.chunks[currentChunkIdx];
+    const target = chunk.warmupQuiz.correct.join(" ");
+    const userVal = currentAssembled.map(a => a.text).join(" ");
+
+    if (userVal === target || currentAssembled.length === 0) {
+      // Correct! Play audio
+      playCurrentChunkAudio();
+
+      if (currentChunkIdx < currentLesson.chunks.length - 1) {
+        currentChunkIdx++;
+        renderChunk();
+      } else {
+        // Finished all chunks! Proceed to tier 2
+        switchTier(2);
+      }
+    } else {
+      // Shake animation on assembled area
+      const area = document.getElementById("assembledTokensArea");
+      area.style.borderColor = "var(--danger)";
+      setTimeout(() => area.style.borderColor = "#cbd5e1", 800);
+      alert(`顺序稍有偏差，正确语序为：${target}`);
+    }
+  }
+
+  // ========== TIER 2: NARRATIVE READER ==========
+  function renderDialogue() {
+    const stream = document.getElementById("dialogueStream");
+    stream.innerHTML = "";
+
+    currentLesson.dialogue.forEach((line, idx) => {
+      const wrap = document.createElement("div");
+      wrap.className = `dialogue-bubble-wrap speaker-${line.speaker}`;
+      wrap.id = `bubble_${idx}`;
+
+      const avatar = line.speaker === "A" ? "👤" : "☕";
+      const notesHtml = (line.linkingNotes && line.linkingNotes.length > 0)
+        ? `<div class="notes-box">🔍 <b>连读诀窍:</b> ${line.linkingNotes.join(" ")}</div>`
+        : "";
+
+      wrap.innerHTML = `
+        <div class="bubble-avatar">${avatar}</div>
+        <div class="bubble-content" onclick="playSentence(${idx})">
+          <div class="bubble-meta">
+            <span class="bubble-name">${line.speakerName} (${line.role})</span>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span class="bubble-speaker-tag">ROLE ${line.speaker}</span>
+              <button class="bubble-audio-btn" title="朗读此句">🔊</button>
+            </div>
+          </div>
+          <div class="bubble-en">${line.phoneticHtml}</div>
+          <div class="bubble-zh" style="display: ${showZhSubtitles ? 'block' : 'none'};">${line.zh}</div>
+          ${notesHtml}
+        </div>
+      `;
+      stream.appendChild(wrap);
+    });
+  }
+
+  function playSentence(idx, onEnd) {
+    const line = currentLesson.dialogue[idx];
+    document.querySelectorAll(".dialogue-bubble-wrap").forEach((b, i) => {
+      b.classList.toggle("playing", i === idx);
+    });
+
+    playAudioFile(`audio/en_dialogues/${line.id}.mp3`, line.en, () => {
+      document.getElementById(`bubble_${idx}`)?.classList.remove("playing");
+      if (onEnd) onEnd();
+    });
+  }
+
+  function togglePlayAll() {
+    if (isPlayingAll) {
+      stopAudio();
+      return;
+    }
+    isPlayingAll = true;
+    document.getElementById("btnPlayAll").innerText = "⏹ 停止播放";
+    playAllIndex = 0;
+    playNextInStream();
+  }
+
+  function playNextInStream() {
+    if (!isPlayingAll) return;
+    if (playAllIndex >= currentLesson.dialogue.length) {
+      stopAudio();
+      return;
+    }
+    playSentence(playAllIndex, () => {
+      playAllIndex++;
+      setTimeout(playNextInStream, 400);
+    });
+  }
+
+  function togglePlaybackSpeed() {
+    playbackSpeed = playbackSpeed === 1.0 ? 0.8 : 1.0;
+    document.getElementById("chipSpeed").innerText = playbackSpeed === 1.0 ? "⚡ 1.0x 速" : "🐢 0.8x 慢速";
+  }
+
+  function togglePhoneticMode() {
+    isPhoneticMode = !isPhoneticMode;
+    const stream = document.getElementById("dialogueStream");
+    stream.classList.toggle("phonetic-mode-on", isPhoneticMode);
+    document.getElementById("chipPhonetic").classList.toggle("active", isPhoneticMode);
+  }
+
+  function toggleZhSubtitles() {
+    showZhSubtitles = !showZhSubtitles;
+    document.querySelectorAll(".bubble-zh").forEach(el => {
+      el.style.display = showZhSubtitles ? "block" : "none";
+    });
+    document.getElementById("chipZh").classList.toggle("active", showZhSubtitles);
+  }
+
+  // ========== TIER 3: ROLE-PLAY ==========
+  function initRolePlay() {
+    rpCurrentIdx = 0;
+    document.getElementById("rpActiveCard").style.display = "flex";
+    document.getElementById("celebrationView").style.display = "none";
+    renderRpTurn();
+  }
+
+  function renderRpTurn() {
+    const totalTurns = currentLesson.dialogue.length;
+    if (rpCurrentIdx >= totalTurns) {
+      // Completed!
+      document.getElementById("rpActiveCard").style.display = "none";
+      document.getElementById("celebrationView").style.display = "flex";
+      return;
+    }
+
+    const line = currentLesson.dialogue[rpCurrentIdx];
+    const isUserTurn = line.speaker === currentLesson.rolePlay.userRole;
+
+    document.getElementById("rpTurnIndicator").innerText = `轮次 ${rpCurrentIdx + 1} / ${totalTurns} · ${isUserTurn ? '你的轮次 (YOU)' : '对方回答 (PARTNER)'}`;
+    document.getElementById("rpSpeakerRole").innerText = `${line.speakerName} · ${line.role}`;
+    document.getElementById("rpPromptEn").innerText = line.en;
+    document.getElementById("rpPromptZh").innerText = line.zh;
+
+    const micBtn = document.getElementById("btnMicAction");
+    if (isUserTurn) {
+      micBtn.style.display = "flex";
+      micBtn.innerText = "🎙️ 轮到你了，点击开口跟读！";
+      micBtn.className = "mic-practice-btn";
+    } else {
+      micBtn.style.display = "none";
+      // Auto play partner audio
+      playAudioFile(`audio/en_dialogues/${line.id}.mp3`, line.en);
+    }
+  }
+
+  function handleMicOrPractice() {
+    const micBtn = document.getElementById("btnMicAction");
+    if (!isRecording) {
+      isRecording = true;
+      micBtn.classList.add("recording");
+      micBtn.innerText = "⏹ 正在聆听你的发音... 再次点击完成";
+      // Optional speech recognition or simulated waveform
+    } else {
+      isRecording = false;
+      micBtn.classList.remove("recording");
+      micBtn.innerText = "✅ 发音录入完毕！点下方继续";
+    }
+  }
+
+  function listenRpModelAudio() {
+    const line = currentLesson.dialogue[rpCurrentIdx];
+    playAudioFile(`audio/en_dialogues/${line.id}.mp3`, line.en);
+  }
+
+  function nextRpTurn() {
+    rpCurrentIdx++;
+    renderRpTurn();
+  }
+
+  function restartLesson() {
+    initRolePlay();
+  }
+
+  function goToNextLesson() {
+    const currId = currentLesson.id;
+    const currNum = parseInt(currId.replace("en", ""), 10);
+    const nextId = `en${currNum + 1}`;
+    const nextExists = window.EN_LESSONS_DATA.some(l => l.id === nextId);
+    if (nextExists) {
+      switchLesson(nextId);
+    } else {
+      window.location.href = "en-index.html";
+    }
+  }
+
+  window.addEventListener("DOMContentLoaded", initApp);
+</script>
+</body>
+</html>
