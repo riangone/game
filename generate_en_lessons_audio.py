@@ -1,81 +1,79 @@
 #!/usr/bin/env python3
 """
-Generate neural-TTS MP3 audio for English Micro-Narrative lessons.
-Uses Microsoft Neural voices via edge-tts:
-  - Female voice: en-US-JennyNeural
-  - Male voice: en-US-GuyNeural
-Generates:
-  1. Chunk audio: audio/en_chunks/{chunk_id}.mp3
-  2. Dialogue sentence audio: audio/en_dialogues/{dialogue_id}.mp3
+Generate neural-TTS MP3 audio for English Micro-Narrative lessons (edge-tts).
+  - Female voice: en-US-JennyNeural (chunks, vocabulary, speaker B)
+  - Male voice:   en-US-GuyNeural   (speaker A)
+Outputs:
+  audio/en_chunks/{chunk_id}.mp3
+  audio/en_dialogues/{dialogue_id}.mp3
+  audio/en_vocab/{vocab_id|topic_id}.mp3
+
+audio/en_audio_manifest.json 记录每个文件对应的 (文本, 声音, 语速) 指纹：
+文本改动后会自动重新生成；不再被任何课文引用的旧文件会被删除。
+用法: python3 generate_en_lessons_audio.py [--force]
 """
 import asyncio
+import hashlib
 import json
-import re
+import sys
 from pathlib import Path
+
 import edge_tts
 
 ROOT = Path(__file__).resolve().parent
 DATA_FILE = ROOT / "data" / "en-lessons-data.json"
-CHUNKS_DIR = ROOT / "audio" / "en_chunks"
-DIALOGUES_DIR = ROOT / "audio" / "en_dialogues"
-VOCAB_DIR = ROOT / "audio" / "en_vocab"
-
-CHUNKS_DIR.mkdir(parents=True, exist_ok=True)
-DIALOGUES_DIR.mkdir(parents=True, exist_ok=True)
-VOCAB_DIR.mkdir(parents=True, exist_ok=True)
+AUDIO = ROOT / "audio"
+DIRS = {"chunk": AUDIO / "en_chunks", "dialogue": AUDIO / "en_dialogues", "vocab": AUDIO / "en_vocab"}
+MANIFEST = AUDIO / "en_audio_manifest.json"
 
 VOICE_FEMALE = "en-US-JennyNeural"
 VOICE_MALE = "en-US-GuyNeural"
 RATE_NORMAL = "+0%"
-RATE_SLOW = "-12%"
 
-def load_lessons():
-    return json.loads(DATA_FILE.read_text(encoding="utf-8"))
 
-async def synthesize(text: str, voice: str, rate: str, out_path: Path):
-    if not text.strip():
-        return
-    if out_path.exists() and out_path.stat().st_size > 0:
-        return
-    communicator = edge_tts.Communicate(text, voice, rate=rate)
-    await communicator.save(str(out_path))
-    print(f"  [OK] {out_path.name}: {text}")
-
-async def main(max_lessons=None):
-    lessons = load_lessons()
-    if max_lessons:
-        lessons = lessons[:max_lessons]
-    
-    print(f"Generating neural TTS for {len(lessons)} English lessons...")
-    
+def jobs(lessons):
     for lesson in lessons:
-        lid = lesson["id"]
-        print(f"\nProcessing {lid}: {lesson['title']} ({lesson['titleZh']})")
-        
-        # 1. Synthesize chunks
-        for chunk in lesson.get("chunks", []):
-            cid = chunk["id"]
-            clean_text = chunk["text"].replace("...", "")
-            out_file = CHUNKS_DIR / f"{cid}.mp3"
-            await synthesize(clean_text, VOICE_FEMALE, RATE_NORMAL, out_file)
+        for c in lesson.get("chunks", []):
+            yield DIRS["chunk"] / f"{c['id']}.mp3", c["text"].replace("...", ""), VOICE_FEMALE
+        for v in lesson.get("vocabulary", []) + lesson.get("topicWords", []):
+            yield DIRS["vocab"] / f"{v['id']}.mp3", v["word"], VOICE_FEMALE
+        for d in lesson.get("dialogue", []):
+            voice = VOICE_MALE if d.get("speaker") == "A" else VOICE_FEMALE
+            yield DIRS["dialogue"] / f"{d['id']}.mp3", d["en"], voice
 
-        # 2. Synthesize vocabulary
-        for vocab in lesson.get("vocabulary", []):
-            vid = vocab["id"]
-            out_file = VOCAB_DIR / f"{vid}.mp3"
-            await synthesize(vocab["word"], VOICE_FEMALE, RATE_NORMAL, out_file)
-            
-        # 3. Synthesize dialogues
-        for diag in lesson.get("dialogue", []):
-            did = diag["id"]
-            # Speaker A uses Guy/Jenny, Speaker B uses alternating voice
-            voice = VOICE_MALE if diag.get("speaker") == "A" else VOICE_FEMALE
-            out_file = DIALOGUES_DIR / f"{did}.mp3"
-            await synthesize(diag["en"], voice, RATE_NORMAL, out_file)
 
-    print("\nAudio generation complete!")
+def fingerprint(text, voice):
+    return hashlib.sha1(f"{text}|{voice}|{RATE_NORMAL}".encode()).hexdigest()[:16]
+
+
+async def main(force=False):
+    lessons = json.loads(DATA_FILE.read_text(encoding="utf-8"))
+    manifest = json.loads(MANIFEST.read_text()) if MANIFEST.exists() else {}
+    for d in DIRS.values():
+        d.mkdir(parents=True, exist_ok=True)
+
+    wanted, made = {}, 0
+    for path, text, voice in jobs(lessons):
+        key = str(path.relative_to(ROOT))
+        fp = fingerprint(text, voice)
+        wanted[key] = fp
+        if not force and path.exists() and path.stat().st_size > 0 and manifest.get(key) == fp:
+            continue
+        await edge_tts.Communicate(text, voice, rate=RATE_NORMAL).save(str(path))
+        made += 1
+        print(f"  [TTS] {key}: {text}")
+
+    removed = 0
+    for d in DIRS.values():
+        for f in d.glob("*.mp3"):
+            if str(f.relative_to(ROOT)) not in wanted:
+                f.unlink()
+                removed += 1
+                print(f"  [DEL] {f.relative_to(ROOT)}")
+
+    MANIFEST.write_text(json.dumps(dict(sorted(wanted.items())), indent=1) + "\n")
+    print(f"\n生成 {made} 个，删除 {removed} 个，共 {len(wanted)} 个音频")
+
 
 if __name__ == "__main__":
-    import sys
-    limit = int(sys.argv[1]) if len(sys.argv) > 1 else None
-    asyncio.run(main(limit))
+    asyncio.run(main(force="--force" in sys.argv))
