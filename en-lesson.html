@@ -992,6 +992,14 @@
     transform: translateY(-1px);
   }
 
+  /* 之前课文学过的基石词：绿色虚线，提示“复习” */
+  .inline-vocab-word.is-review {
+    border-bottom-color: #059669;
+    color: #065f46;
+    background: rgba(16, 185, 129, 0.08);
+  }
+  .inline-vocab-word.is-review:hover { background: #a7f3d0; }
+
   /* Speech Feedback in Tier 3 */
   .speech-feedback-box {
     background: #f8fafc;
@@ -1699,23 +1707,51 @@
     if (btn) btn.innerText = isVocabDrawerOpen ? "收起 ▴" : "展开 (6词) ▾";
   }
 
+  // 词形列表（build_en_lessons.py 生成 forms；旧数据回退到 word）
+  function vocabForms(v) {
+    return (v.forms && v.forms.length) ? v.forms : [v.word.toLowerCase()];
+  }
+  function vocabRegex(v, flags = 'i') {
+    const alts = vocabForms(v).map(f => f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+    return new RegExp(`\\b(?:${alts})\\b`, flags);
+  }
+
+  // 本课可点查的词：本课基石词 + 本课情境词 + 之前各课的基石词（复习）
+  function lessonLookupList() {
+    if (!currentLesson) return [];
+    const list = [];
+    const seen = new Set();
+    const add = (v, kind, lessonId) => {
+      const key = v.word.toLowerCase();
+      if (seen.has(key)) return;
+      seen.add(key);
+      list.push({ ...v, kind, fromLesson: lessonId });
+    };
+    (currentLesson.vocabulary || []).forEach(v => add(v, "new", currentLesson.id));
+    (currentLesson.topicWords || []).forEach(v => add(v, "topic", currentLesson.id));
+    const all = window.EN_LESSONS_DATA || [];
+    const idx = all.findIndex(l => l.id === currentLesson.id);
+    all.slice(0, Math.max(idx, 0)).forEach(l => (l.vocabulary || []).forEach(v => add(v, "review", l.id)));
+    return list;
+  }
+
+  function findLookupEntry(word) {
+    const clean = word.trim().toLowerCase();
+    return lessonLookupList().find(v => vocabForms(v).includes(clean) || v.word.toLowerCase() === clean);
+  }
+
   function inspectVocab(word) {
-    if (!currentLesson || !currentLesson.vocabulary) return;
-    const cleanWord = word.trim().toLowerCase();
-    const vocab = currentLesson.vocabulary.find(v => 
-      v.word.toLowerCase() === cleanWord ||
-      cleanWord.startsWith(v.word.toLowerCase()) ||
-      v.word.toLowerCase().startsWith(cleanWord)
-    );
+    const vocab = findLookupEntry(word);
     if (!vocab) return;
 
     currentInspectedVocab = vocab;
+    const tag = vocab.kind === "review" ? ` · 复习（${vocab.fromLesson}）` : vocab.kind === "topic" ? " · 情境词" : "";
     document.getElementById("wiWord").innerText = vocab.word;
-    document.getElementById("wiPos").innerText = vocab.pos;
+    document.getElementById("wiPos").innerText = vocab.pos + tag;
     document.getElementById("wiIpa").innerText = vocab.phonetic;
     document.getElementById("wiMeaning").innerText = vocab.meaning;
-    document.getElementById("wiExampleEn").innerText = vocab.example;
-    document.getElementById("wiExampleZh").innerText = vocab.exampleZh;
+    document.getElementById("wiExampleEn").innerText = vocab.example || "";
+    document.getElementById("wiExampleZh").innerText = vocab.exampleZh || "";
 
     document.getElementById("wordInspectorBackdrop").classList.add("active");
     document.getElementById("wordInspectorSheet").classList.add("active");
@@ -1738,7 +1774,9 @@
   // ========== INLINE VOCABULARY HIGHLIGHTING (DOM TEXTWALKER) ==========
   function decorateVocabTextNodes(containerElement, vocabs) {
     if (!containerElement || !vocabs || vocabs.length === 0) return;
-    const sorted = [...vocabs].sort((a, b) => b.word.length - a.word.length);
+    const formMap = new Map();
+    vocabs.forEach(v => vocabForms(v).forEach(f => { if (!formMap.has(f)) formMap.set(f, v); }));
+    const sorted = [...formMap.keys()].sort((a, b) => b.length - a.length);
 
     const walker = document.createTreeWalker(containerElement, NodeFilter.SHOW_TEXT, null, false);
     const textNodes = [];
@@ -1749,8 +1787,8 @@
       }
     }
 
-    const patternParts = sorted.map(v => {
-      const escaped = v.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const patternParts = sorted.map(form => {
+      const escaped = form.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       return `\\b${escaped}\\b|(?<=‿)${escaped}\\b|\\b${escaped}(?=‿)`;
     });
     const combinedRegex = new RegExp(`(${patternParts.join('|')})`, 'gi');
@@ -1768,12 +1806,13 @@
           frag.appendChild(document.createTextNode(str.substring(lastIdx, match.index)));
         }
         const span = document.createElement('span');
-        span.className = 'inline-vocab-word';
-        span.textContent = match[0];
         const matchedLower = match[0].toLowerCase();
-        const targetVocab = sorted.find(v => v.word.toLowerCase() === matchedLower);
+        const targetVocab = formMap.get(matchedLower);
+        span.className = 'inline-vocab-word' + (targetVocab && targetVocab.kind === 'review' ? ' is-review' : '');
+        span.textContent = match[0];
         const vWord = targetVocab ? targetVocab.word : matchedLower;
-        span.title = `点击查词: ${vWord}`;
+        span.title = targetVocab && targetVocab.kind === 'review'
+          ? `复习词（${targetVocab.fromLesson}）: ${vWord}` : `点击查词: ${vWord}`;
         span.onclick = (e) => {
           e.stopPropagation();
           inspectVocab(vWord);
@@ -1806,10 +1845,7 @@
         : "";
 
       // Match which vocabulary words appear in this line
-      const matchedVocabs = (currentLesson.vocabulary || []).filter(v => {
-        const re = new RegExp(`\\b${v.word}\\b`, 'i');
-        return re.test(line.en);
-      });
+      const matchedVocabs = (currentLesson.vocabulary || []).filter(v => vocabRegex(v).test(line.en));
       const vocabChipsHtml = matchedVocabs.length > 0 ? `
         <div class="bubble-vocab-chips">
           <span class="vocab-chips-label">🎯 核心词:</span>
@@ -1837,7 +1873,7 @@
       // Decorate text with inline clickable vocabulary tags
       const bubbleEn = wrap.querySelector(".bubble-en");
       if (bubbleEn) {
-        decorateVocabTextNodes(bubbleEn, currentLesson.vocabulary);
+        decorateVocabTextNodes(bubbleEn, lessonLookupList());
       }
 
       stream.appendChild(wrap);
@@ -2144,7 +2180,7 @@
 
     // Pick 2 Dialogue lines with vocabulary for Cloze
     const dialogueLinesWithVocab = (currentLesson.dialogue || []).filter(line => {
-      return vocabs.some(v => new RegExp(`\\b${v.word}\\b`, 'i').test(line.en));
+      return vocabs.some(v => vocabRegex(v).test(line.en));
     });
 
     const selectedLines = (dialogueLinesWithVocab.length > 0)
@@ -2153,14 +2189,17 @@
 
     selectedLines.forEach(line => {
       // Find which vocab is in line
-      const targetVocab = vocabs.find(v => new RegExp(`\\b${v.word}\\b`, 'i').test(line.en)) || vocabs[0];
-      const re = new RegExp(`\\b${targetVocab.word}\\b`, 'i');
+      const targetVocab = vocabs.find(v => vocabRegex(v).test(line.en)) || vocabs[0];
+      const re = vocabRegex(targetVocab);
+      const hit = line.en.match(re);
+      // 正确答案用句中的实际词形（如 minutes），保证填回去语法正确
+      const answer = hit ? hit[0].toLowerCase() : targetVocab.word;
       const clozeSentence = line.en.replace(re, "【 ____ 】");
 
       // Pick other words as distractors
       const otherWords = vocabs.filter(v => v.word.toLowerCase() !== targetVocab.word.toLowerCase()).map(v => v.word);
       const dist = otherWords.sort(() => Math.random() - 0.5).slice(0, 2);
-      const options = [targetVocab.word, ...dist].sort(() => Math.random() - 0.5);
+      const options = [answer, ...dist].sort(() => Math.random() - 0.5);
 
       quizQuestions.push({
         type: "cloze",
@@ -2172,7 +2211,7 @@
         audio: `audio/en_dialogues/${line.id}.mp3`,
         audioFallbackText: line.en,
         options: options,
-        correctAnswer: targetVocab.word,
+        correctAnswer: answer,
         targetVocab: targetVocab,
         hint: `原句: ${line.en}`
       });
