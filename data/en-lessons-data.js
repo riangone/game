@@ -730,7 +730,7 @@ window.EN_LESSONS_DATA = [
     "rolePlay": {
       "userRole": "A",
       "targetRoleName": "Alex (员工)",
-      "description": "因堵车打电话向主管请假说明，保持专业、得体与从容。"
+      "description": "地铁临时停车要迟到，打电话向主管说明情况，请大家先开始。"
     },
     "vocabulary": [
       {
@@ -993,7 +993,7 @@ window.EN_LESSONS_DATA = [
     "rolePlay": {
       "userRole": "A",
       "targetRoleName": "Alex (顾客)",
-      "description": "在快餐店完成点餐、配菜二选一确认并完成结账。"
+      "description": "在快餐店点餐、配饮料、刷卡付款，并临时把饮料换成茶。"
     },
     "vocabulary": [
       {
@@ -1282,7 +1282,7 @@ window.EN_LESSONS_DATA = [
     "rolePlay": {
       "userRole": "A",
       "targetRoleName": "Alex (顾客)",
-      "description": "向超市店员询问货架具体位置并确认库存状态。"
+      "description": "向超市店员询问鲜牛奶的位置和路线，确认打折和付款方式。"
     },
     "vocabulary": [
       {
@@ -1808,7 +1808,7 @@ window.EN_LESSONS_DATA = [
     "rolePlay": {
       "userRole": "A",
       "targetRoleName": "Alex (住客)",
-      "description": "在前台报出姓名拿到房卡，并了解早餐信息。"
+      "description": "在前台报出姓名办理入住，拿到房卡，问清早餐、付款方式和能见朋友的地方。"
     },
     "vocabulary": [
       {
@@ -2362,7 +2362,7 @@ window.EN_LESSONS_DATA = [
     "rolePlay": {
       "userRole": "A",
       "targetRoleName": "Alex (你)",
-      "description": "手提大件行李向路人求助，并在得到帮助后表达由衷感谢。"
+      "description": "搬重箱子时向路人求助，途中休息一下，最后真诚道谢。"
     },
     "vocabulary": [
       {
