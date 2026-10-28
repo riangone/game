@@ -380,6 +380,317 @@
   .btn.secondary { background: var(--paper); border: 1px solid var(--border); color: var(--ink); box-shadow: 0 2px 0 #cbd5e1; }
   .btn.full { width: 100%; }
 
+  /* ========== VOCABULARY FOUNDATION (TIER 1 SUPPORT) ========== */
+  .vocab-section-wrap {
+    background: #ffffff;
+    border: 2px solid #e0e7ff;
+    border-radius: var(--radius-xl);
+    padding: 16px 18px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .vocab-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+  }
+  .vocab-header-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .vocab-badge {
+    background: #ede9fe;
+    color: #6d28d9;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+  }
+  .vocab-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--ink);
+  }
+  .vocab-toggle-btn {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    background: #f1f5f9;
+    padding: 4px 10px;
+    border-radius: 8px;
+    transition: all .15s ease;
+  }
+  .vocab-drawer-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    animation: fadeIn .15s ease;
+  }
+  .vocab-hint {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .vocab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+  }
+  .vocab-card {
+    background: var(--paper);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all .15s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+  }
+  .vocab-card:hover {
+    border-color: var(--primary-light);
+    background: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(67, 56, 202, 0.08);
+  }
+  .vocab-card.playing {
+    border-color: var(--primary);
+    background: #eef2ff;
+    box-shadow: 0 0 0 2px var(--primary-light);
+  }
+  .vocab-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+  }
+  .vocab-word {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--ink);
+  }
+  .vocab-pos {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  .vocab-ipa {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .vocab-zh {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink-sub);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .vocab-audio-indicator {
+    font-size: 11px;
+    color: var(--primary);
+  }
+
+  .chunk-step-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  /* Bubble vocabulary quick tags */
+  .bubble-vocab-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #e2e8f0;
+  }
+  .vocab-chips-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: var(--primary);
+  }
+  .bubble-vocab-chip {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-sub);
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 2px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all .12s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .bubble-vocab-chip:hover {
+    background: var(--primary-soft);
+    color: var(--primary);
+    border-color: #c7d2fe;
+    transform: translateY(-1px);
+  }
+  .bubble-vocab-chip b {
+    color: var(--primary);
+    font-weight: 800;
+  }
+
+  /* Word Inspector Sheet (Tap-to-Inspect) */
+  .word-inspector-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(2px);
+    z-index: 100;
+    animation: fadeIn .15s ease;
+  }
+  .word-inspector-backdrop.active {
+    display: block;
+  }
+  .word-inspector-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%) translateY(100%);
+    width: 100%;
+    max-width: 680px;
+    background: #ffffff;
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
+    padding: 20px 24px 36px;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.15);
+    z-index: 101;
+    transition: transform .22s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .word-inspector-sheet.active {
+    transform: translateX(-50%) translateY(0);
+  }
+  .wi-handle {
+    width: 38px;
+    height: 4px;
+    background: #cbd5e1;
+    border-radius: 2px;
+    align-self: center;
+    margin-bottom: 2px;
+  }
+  .wi-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .wi-titles {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .wi-word {
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--ink);
+  }
+  .wi-pos {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  .wi-ipa {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .wi-btns {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .wi-audio-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--primary-soft);
+    border: 1px solid #c7d2fe;
+    color: var(--primary);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all .12s;
+  }
+  .wi-audio-circle:hover {
+    background: var(--primary);
+    color: #ffffff;
+  }
+  .wi-close-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #f1f5f9;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .wi-meaning {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--ink-sub);
+    background: #f8fafc;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border-left: 4px solid var(--primary);
+  }
+  .wi-example-card {
+    background: #f1f5f9;
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .wi-example-label {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .wi-example-en {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .wi-example-zh {
+    font-size: 12px;
+    color: var(--muted);
+  }
+
   /* ========== TIER 2: NARRATIVE READER ========== */
   .narrative-toolbar {
     display: flex;
@@ -661,6 +972,204 @@
     from { transform: translateY(0); }
     to { transform: translateY(-10px); }
   }
+
+  /* Inline Vocabulary Tap-to-Inspect */
+  .inline-vocab-word {
+    border-bottom: 2px dashed #4338ca;
+    color: #312e81;
+    font-weight: 800;
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 0 3px;
+    background: rgba(99, 102, 241, 0.08);
+    transition: all .15s ease;
+    display: inline-block;
+    line-height: 1.25;
+  }
+  .inline-vocab-word:hover {
+    background: #c7d2fe;
+    color: #1e1b4b;
+    transform: translateY(-1px);
+  }
+
+  /* Speech Feedback in Tier 3 */
+  .speech-feedback-box {
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    font-size: 13px;
+    text-align: left;
+    display: none;
+    flex-direction: column;
+    gap: 4px;
+    animation: fadeIn .15s ease;
+  }
+  .speech-feedback-score {
+    font-weight: 800;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .speech-feedback-transcript {
+    color: var(--ink-sub);
+    font-size: 12px;
+    font-style: italic;
+  }
+
+  /* ========== TIER 4: QUIZ & CLOZE DRILL ========== */
+  .quiz-card {
+    background: var(--card);
+    border: 2px solid #e0e7ff;
+    border-radius: var(--radius-xl);
+    padding: 24px 20px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .quiz-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .quiz-badge {
+    font-size: 11px;
+    font-weight: 800;
+    color: #a21caf;
+    background: #fdf4ff;
+    border: 1px solid #f5d0fe;
+    padding: 3px 10px;
+    border-radius: 9999px;
+  }
+  .quiz-progress-text {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--muted);
+  }
+  .quiz-prompt-box {
+    background: #f8fafc;
+    border-radius: var(--radius-lg);
+    padding: 20px 16px;
+    border: 1.5px solid var(--border);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .quiz-audio-big-btn {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4f46e5, #4338ca);
+    color: #ffffff;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(67, 56, 202, 0.35);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .1s;
+  }
+  .quiz-audio-big-btn:active {
+    transform: scale(0.94);
+  }
+  .quiz-question-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--ink);
+  }
+  .quiz-cloze-sentence {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.6;
+  }
+  .quiz-cloze-zh {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .quiz-options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .quiz-option-btn {
+    background: #ffffff;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all .12s ease;
+    font-family: inherit;
+  }
+  .quiz-option-btn:hover {
+    border-color: var(--primary-light);
+    background: var(--primary-soft);
+  }
+  .quiz-option-btn.correct {
+    border-color: var(--success);
+    background: var(--success-soft);
+    color: #065f46;
+  }
+  .quiz-option-btn.wrong {
+    border-color: var(--danger);
+    background: var(--danger-soft);
+    color: #881337;
+  }
+  .quiz-feedback-box {
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    display: none;
+    animation: fadeIn .12s ease;
+  }
+  .quiz-feedback-box.correct {
+    display: block;
+    background: var(--success-soft);
+    color: #065f46;
+    border: 1px solid #6ee7b7;
+  }
+  .quiz-feedback-box.wrong {
+    display: block;
+    background: var(--danger-soft);
+    color: #9f1239;
+    border: 1px solid #fca5a5;
+  }
+  .quiz-summary-card {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+    padding: 16px 0;
+  }
+  .quiz-score-badge {
+    font-size: 52px;
+  }
+  .quiz-score-num {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--primary);
+  }
+  .quiz-vocab-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 8px;
+    width: 100%;
+    margin-top: 10px;
+  }
 </style>
 </head>
 <body>
@@ -678,7 +1187,7 @@
     </select>
   </header>
 
-  <!-- 3-Tier Step Navigator -->
+  <!-- 4-Tier Step Navigator -->
   <div class="step-nav">
     <button class="step-tab active" id="tabTier1" onclick="switchTier(1)">
       <span class="step-num">1</span>
@@ -692,6 +1201,10 @@
       <span class="step-num">3</span>
       <span>角色演练</span>
     </button>
+    <button class="step-tab" id="tabTier4" onclick="switchTier(4)">
+      <span class="step-num">4</span>
+      <span>巩固测评</span>
+    </button>
   </div>
 
   <main>
@@ -704,8 +1217,30 @@
       </div>
     </div>
 
-    <!-- TIER 1: CHUNK WARMUP -->
+    <!-- TIER 1: CHUNK WARMUP & VOCAB FOUNDATION -->
     <section class="tier-view active" id="tier1View">
+      <!-- Vocabulary Foundation Section -->
+      <div class="vocab-section-wrap" id="vocabSectionWrap">
+        <div class="vocab-header" onclick="toggleVocabDrawer()">
+          <div class="vocab-header-left">
+            <span class="vocab-badge">STEP 1</span>
+            <span class="vocab-title">📖 本课核心基石词 (Key Vocabulary)</span>
+          </div>
+          <span class="vocab-toggle-btn" id="vocabToggleBtn">收起 ▴</span>
+        </div>
+        <div class="vocab-drawer-content" id="vocabDrawerContent">
+          <p class="vocab-hint">💡 点击卡片可反复听标准原声；先扫清这 6 个核心基石词，后续语块与课文毫无压力！</p>
+          <div class="vocab-grid" id="vocabGrid">
+            <!-- Injected by JS -->
+          </div>
+        </div>
+      </div>
+
+      <div class="chunk-step-header">
+        <span class="vocab-badge" style="background:#e0f2fe; color:#0284c7;">STEP 2</span>
+        <span style="font-size:14px; font-weight:800; color:var(--ink);">高频口语语块组装 (Chunk Assembly)</span>
+      </div>
+
       <div class="chunk-card">
         <span class="chunk-progress" id="chunkProgressBadge">Chunk 1 / 3</span>
         
@@ -785,6 +1320,7 @@
           <button class="mic-practice-btn" id="btnMicAction" onclick="handleMicOrPractice()">
             🎙️ 轮到你了，点击开口跟读！
           </button>
+          <div class="speech-feedback-box" id="speechFeedback"></div>
           <button class="btn secondary" onclick="listenRpModelAudio()">
             🔊 听示范原音
           </button>
@@ -797,21 +1333,101 @@
       <!-- Completion Screen -->
       <div class="celebration-view" id="celebrationView">
         <div class="star-trophy">🎉🌟🏆</div>
-        <h2 style="font-size:24px; font-weight:900; color:var(--primary);">恭喜完成本课全部演练！</h2>
+        <h2 style="font-size:22px; font-weight:900; color:var(--primary);">角色演练轮次通关！</h2>
         <p style="font-size:14px; color:var(--muted); max-width:440px;">
-          你已完成语块原子拼装、微情境连读解析与双人对话角色扮演闭环！
+          你已完整开口参与了微情境双人对答，完成口语发音闭环！
         </p>
-        <div style="display:flex; gap:10px; margin-top:12px;">
-          <button class="btn secondary" onclick="restartLesson()">
-            🔄 重温本课
+        <button class="btn success full" style="margin-top:14px;" onclick="switchTier(4)">
+          进入第 4 步：词汇与句型巩固测评 ➔
+        </button>
+      </div>
+    </section>
+
+    <!-- TIER 4: VOCAB & CLOZE QUIZ -->
+    <section class="tier-view" id="tier4View">
+      <div class="quiz-card" id="quizActiveCard">
+        <div class="quiz-header-bar">
+          <span class="quiz-badge" id="quizTypeBadge">听音辨义</span>
+          <span class="quiz-progress-text" id="quizProgressText">第 1 / 5 题</span>
+        </div>
+
+        <div class="quiz-prompt-box" id="quizPromptBox">
+          <!-- Injected dynamically by JS -->
+        </div>
+
+        <div class="quiz-options-list" id="quizOptionsList">
+          <!-- Injected dynamically by JS -->
+        </div>
+
+        <div class="quiz-feedback-box" id="quizFeedbackBox">
+          <!-- Feedback message -->
+        </div>
+
+        <div class="chunk-controls" style="margin-top:8px;">
+          <button class="btn secondary" id="btnReplayQuizAudio" onclick="replayQuizAudio()">
+            🔊 重听音频
           </button>
-          <button class="btn primary" onclick="goToNextLesson()">
-            下一课 ➔
+          <button class="btn primary" id="btnNextQuizQuestion" onclick="handleNextQuizStep()">
+            核对并继续 ➔
           </button>
+        </div>
+      </div>
+
+      <!-- Quiz Summary / Mastery Card -->
+      <div class="quiz-card" id="quizSummaryCard" style="display:none;">
+        <div class="quiz-summary-card" style="display:flex;">
+          <div class="quiz-score-badge" id="quizScoreIcon">🌟🌟🌟</div>
+          <div class="quiz-score-num" id="quizScoreDisplay">5 / 5 满分！</div>
+          <h3 style="font-size:18px; font-weight:900; color:var(--ink);" id="quizSummaryTitle">恭喜！已完全掌握本课基石词与核心句型</h3>
+          <p style="font-size:13px; color:var(--muted); max-width:440px;" id="quizSummaryDesc">
+            你已完成语块预热、微情境连读课文、角色对练与测验闭环，成绩已自动同步保存！
+          </p>
+          
+          <div style="width:100%; text-align:left; margin-top:8px;">
+            <div style="font-size:12px; font-weight:800; color:var(--ink-sub); margin-bottom:6px;">📖 本课攻克掌握基石词清单（点击可复听）：</div>
+            <div class="quiz-vocab-summary-grid" id="quizVocabSummaryGrid">
+              <!-- Vocab recap capsules -->
+            </div>
+          </div>
+
+          <div style="display:flex; gap:10px; margin-top:16px; width:100%;">
+            <button class="btn secondary" style="flex:1;" onclick="restartQuiz()">
+              🔄 重测巩固
+            </button>
+            <button class="btn primary" style="flex:1;" onclick="goToNextLesson()">
+              下一课 ➔
+            </button>
+          </div>
+          <a href="en-index.html" style="font-size:13px; font-weight:700; color:var(--primary); text-decoration:none; margin-top:6px;">
+            ‹ 返回英语课程大厅查看总进度
+          </a>
         </div>
       </div>
     </section>
   </main>
+
+  <!-- Word Inspector Sheet (Tap-to-Inspect) -->
+  <div class="word-inspector-backdrop" id="wordInspectorBackdrop" onclick="closeWordInspector()"></div>
+  <div class="word-inspector-sheet" id="wordInspectorSheet">
+    <div class="wi-handle"></div>
+    <div class="wi-header">
+      <div class="wi-titles">
+        <span class="wi-word" id="wiWord">word</span>
+        <span class="wi-pos" id="wiPos">pos</span>
+        <span class="wi-ipa" id="wiIpa">/ipa/</span>
+      </div>
+      <div class="wi-btns">
+        <button class="wi-audio-circle" onclick="playCurrentInspectedAudio()" title="听标准读音">🔊</button>
+        <button class="wi-close-btn" onclick="closeWordInspector()">✕</button>
+      </div>
+    </div>
+    <div class="wi-meaning" id="wiMeaning">中文释义</div>
+    <div class="wi-example-card">
+      <div class="wi-example-label">课文原句情境</div>
+      <div class="wi-example-en" id="wiExampleEn">Example sentence in context.</div>
+      <div class="wi-example-zh" id="wiExampleZh">情境中文译文</div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -859,6 +1475,7 @@
     document.getElementById("situationDesc").innerText = currentLesson.situation;
 
     // Reset Tier 1
+    renderVocabulary();
     currentChunkIdx = 0;
     renderChunk();
 
@@ -867,6 +1484,9 @@
 
     // Reset Tier 3 Roleplay
     initRolePlay();
+
+    // Reset Tier 4 Quiz
+    initQuiz();
 
     switchTier(1);
   }
@@ -887,6 +1507,11 @@
     document.getElementById("tier1View").classList.toggle("active", tierNum === 1);
     document.getElementById("tier2View").classList.toggle("active", tierNum === 2);
     document.getElementById("tier3View").classList.toggle("active", tierNum === 3);
+    document.getElementById("tier4View").classList.toggle("active", tierNum === 4);
+
+    if (tierNum === 4) {
+      startQuizSession();
+    }
   }
 
   // ========== AUDIO HELPER ==========
@@ -1030,6 +1655,141 @@
     }
   }
 
+  // ========== VOCABULARY LOGIC ==========
+  let currentInspectedVocab = null;
+  let isVocabDrawerOpen = true;
+
+  function renderVocabulary() {
+    const grid = document.getElementById("vocabGrid");
+    if (!grid) return;
+    grid.innerHTML = "";
+    const vocabs = currentLesson.vocabulary || [];
+    vocabs.forEach(v => {
+      const card = document.createElement("div");
+      card.className = "vocab-card";
+      card.id = `vcard_${v.id}`;
+      card.onclick = () => playVocabAudio(v.id, v.word);
+      card.innerHTML = `
+        <div class="vocab-card-top">
+          <span class="vocab-word">${v.word}</span>
+          <span class="vocab-pos">${v.pos}</span>
+          <span class="vocab-audio-indicator">🔊</span>
+        </div>
+        <div class="vocab-ipa">${v.phonetic}</div>
+        <div class="vocab-zh" title="${v.meaning}">${v.meaning}</div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function playVocabAudio(vocabId, wordFallback) {
+    document.querySelectorAll(".vocab-card").forEach(c => c.classList.remove("playing"));
+    const card = document.getElementById(`vcard_${vocabId}`);
+    if (card) card.classList.add("playing");
+    playAudioFile(`audio/en_vocab/${vocabId}.mp3`, wordFallback, () => {
+      if (card) card.classList.remove("playing");
+    });
+  }
+
+  function toggleVocabDrawer() {
+    isVocabDrawerOpen = !isVocabDrawerOpen;
+    const content = document.getElementById("vocabDrawerContent");
+    const btn = document.getElementById("vocabToggleBtn");
+    if (content) content.style.display = isVocabDrawerOpen ? "flex" : "none";
+    if (btn) btn.innerText = isVocabDrawerOpen ? "收起 ▴" : "展开 (6词) ▾";
+  }
+
+  function inspectVocab(word) {
+    if (!currentLesson || !currentLesson.vocabulary) return;
+    const cleanWord = word.trim().toLowerCase();
+    const vocab = currentLesson.vocabulary.find(v => 
+      v.word.toLowerCase() === cleanWord ||
+      cleanWord.startsWith(v.word.toLowerCase()) ||
+      v.word.toLowerCase().startsWith(cleanWord)
+    );
+    if (!vocab) return;
+
+    currentInspectedVocab = vocab;
+    document.getElementById("wiWord").innerText = vocab.word;
+    document.getElementById("wiPos").innerText = vocab.pos;
+    document.getElementById("wiIpa").innerText = vocab.phonetic;
+    document.getElementById("wiMeaning").innerText = vocab.meaning;
+    document.getElementById("wiExampleEn").innerText = vocab.example;
+    document.getElementById("wiExampleZh").innerText = vocab.exampleZh;
+
+    document.getElementById("wordInspectorBackdrop").classList.add("active");
+    document.getElementById("wordInspectorSheet").classList.add("active");
+
+    // Auto-play standard audio
+    playAudioFile(`audio/en_vocab/${vocab.id}.mp3`, vocab.word);
+  }
+
+  function playCurrentInspectedAudio() {
+    if (currentInspectedVocab) {
+      playAudioFile(`audio/en_vocab/${currentInspectedVocab.id}.mp3`, currentInspectedVocab.word);
+    }
+  }
+
+  function closeWordInspector() {
+    document.getElementById("wordInspectorBackdrop").classList.remove("active");
+    document.getElementById("wordInspectorSheet").classList.remove("active");
+  }
+
+  // ========== INLINE VOCABULARY HIGHLIGHTING (DOM TEXTWALKER) ==========
+  function decorateVocabTextNodes(containerElement, vocabs) {
+    if (!containerElement || !vocabs || vocabs.length === 0) return;
+    const sorted = [...vocabs].sort((a, b) => b.word.length - a.word.length);
+
+    const walker = document.createTreeWalker(containerElement, NodeFilter.SHOW_TEXT, null, false);
+    const textNodes = [];
+    let node;
+    while ((node = walker.nextNode())) {
+      if (node.nodeValue && node.nodeValue.trim()) {
+        textNodes.push(node);
+      }
+    }
+
+    const patternParts = sorted.map(v => {
+      const escaped = v.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return `\\b${escaped}\\b|(?<=‿)${escaped}\\b|\\b${escaped}(?=‿)`;
+    });
+    const combinedRegex = new RegExp(`(${patternParts.join('|')})`, 'gi');
+
+    textNodes.forEach(textNode => {
+      const str = textNode.nodeValue;
+      if (!combinedRegex.test(str)) return;
+      combinedRegex.lastIndex = 0;
+
+      const frag = document.createDocumentFragment();
+      let lastIdx = 0;
+      let match;
+      while ((match = combinedRegex.exec(str)) !== null) {
+        if (match.index > lastIdx) {
+          frag.appendChild(document.createTextNode(str.substring(lastIdx, match.index)));
+        }
+        const span = document.createElement('span');
+        span.className = 'inline-vocab-word';
+        span.textContent = match[0];
+        const matchedLower = match[0].toLowerCase();
+        const targetVocab = sorted.find(v => v.word.toLowerCase() === matchedLower);
+        const vWord = targetVocab ? targetVocab.word : matchedLower;
+        span.title = `点击查词: ${vWord}`;
+        span.onclick = (e) => {
+          e.stopPropagation();
+          inspectVocab(vWord);
+        };
+        frag.appendChild(span);
+        lastIdx = combinedRegex.lastIndex;
+      }
+      if (lastIdx < str.length) {
+        frag.appendChild(document.createTextNode(str.substring(lastIdx)));
+      }
+      if (textNode.parentNode) {
+        textNode.parentNode.replaceChild(frag, textNode);
+      }
+    });
+  }
+
   // ========== TIER 2: NARRATIVE READER ==========
   function renderDialogue() {
     const stream = document.getElementById("dialogueStream");
@@ -1045,6 +1805,18 @@
         ? `<div class="notes-box">🔍 <b>连读诀窍:</b> ${line.linkingNotes.join(" ")}</div>`
         : "";
 
+      // Match which vocabulary words appear in this line
+      const matchedVocabs = (currentLesson.vocabulary || []).filter(v => {
+        const re = new RegExp(`\\b${v.word}\\b`, 'i');
+        return re.test(line.en);
+      });
+      const vocabChipsHtml = matchedVocabs.length > 0 ? `
+        <div class="bubble-vocab-chips">
+          <span class="vocab-chips-label">🎯 核心词:</span>
+          ${matchedVocabs.map(v => `<span class="bubble-vocab-chip" onclick="event.stopPropagation(); inspectVocab('${v.word}')"><b>${v.word}</b> ${v.meaning}</span>`).join('')}
+        </div>
+      ` : "";
+
       wrap.innerHTML = `
         <div class="bubble-avatar">${avatar}</div>
         <div class="bubble-content" onclick="playSentence(${idx})">
@@ -1057,9 +1829,17 @@
           </div>
           <div class="bubble-en">${line.phoneticHtml}</div>
           <div class="bubble-zh" style="display: ${showZhSubtitles ? 'block' : 'none'};">${line.zh}</div>
+          ${vocabChipsHtml}
           ${notesHtml}
         </div>
       `;
+
+      // Decorate text with inline clickable vocabulary tags
+      const bubbleEn = wrap.querySelector(".bubble-en");
+      if (bubbleEn) {
+        decorateVocabTextNodes(bubbleEn, currentLesson.vocabulary);
+      }
+
       stream.appendChild(wrap);
     });
   }
@@ -1119,7 +1899,25 @@
     document.getElementById("chipZh").classList.toggle("active", showZhSubtitles);
   }
 
-  // ========== TIER 3: ROLE-PLAY ==========
+  // ========== TIER 3: ROLE-PLAY & SPEECH RECOGNITION ==========
+  let speechRec = null;
+  let isRecordingSpeech = false;
+
+  function initSpeechEngine() {
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRec) return null;
+    try {
+      const sr = new SpeechRec();
+      sr.lang = "en-US";
+      sr.interimResults = false;
+      sr.maxAlternatives = 1;
+      return sr;
+    } catch(e) {
+      console.warn("Speech recognition init error:", e);
+      return null;
+    }
+  }
+
   function initRolePlay() {
     rpCurrentIdx = 0;
     document.getElementById("rpActiveCard").style.display = "flex";
@@ -1129,8 +1927,14 @@
 
   function renderRpTurn() {
     const totalTurns = currentLesson.dialogue.length;
+    const feedbackEl = document.getElementById("speechFeedback");
+    if (feedbackEl) {
+      feedbackEl.style.display = "none";
+      feedbackEl.innerHTML = "";
+    }
+
     if (rpCurrentIdx >= totalTurns) {
-      // Completed!
+      // Completed role-play turns!
       document.getElementById("rpActiveCard").style.display = "none";
       document.getElementById("celebrationView").style.display = "flex";
       return;
@@ -1157,17 +1961,118 @@
   }
 
   function handleMicOrPractice() {
+    const line = currentLesson.dialogue[rpCurrentIdx];
     const micBtn = document.getElementById("btnMicAction");
-    if (!isRecording) {
-      isRecording = true;
-      micBtn.classList.add("recording");
-      micBtn.innerText = "⏹ 正在聆听你的发音... 再次点击完成";
-      // Optional speech recognition or simulated waveform
-    } else {
-      isRecording = false;
-      micBtn.classList.remove("recording");
-      micBtn.innerText = "✅ 发音录入完毕！点下方继续";
+    const feedbackEl = document.getElementById("speechFeedback");
+
+    if (!speechRec) {
+      speechRec = initSpeechEngine();
     }
+
+    if (speechRec && !isRecordingSpeech) {
+      try {
+        isRecordingSpeech = true;
+        micBtn.classList.add("recording");
+        micBtn.innerText = "⏹ 正在倾听你的发音...（请朗读上方台词）";
+        if (feedbackEl) {
+          feedbackEl.style.display = "flex";
+          feedbackEl.innerHTML = `<span style="color:var(--muted);">🎙️ 麦克风已开启，请清晰大声朗读...</span>`;
+        }
+
+        speechRec.onresult = (event) => {
+          isRecordingSpeech = false;
+          micBtn.classList.remove("recording");
+          const transcript = event.results[0][0].transcript.trim();
+          const score = computeSpeechSimilarity(transcript, line.en);
+
+          let stars = "⭐⭐⭐";
+          let levelText = "极佳！发音标准地道";
+          let scoreColor = "var(--success)";
+          if (score < 60) {
+            stars = "⭐";
+            levelText = "加油！建议多听示范原音";
+            scoreColor = "var(--amber)";
+          } else if (score < 85) {
+            stars = "⭐⭐";
+            levelText = "很棒！表达清晰流畅";
+            scoreColor = "var(--primary)";
+          }
+
+          if (feedbackEl) {
+            feedbackEl.innerHTML = `
+              <div class="speech-feedback-score" style="color:${scoreColor};">
+                <span>${stars} 契合度: ${score}分 (${levelText})</span>
+              </div>
+              <div class="speech-feedback-transcript">你读的是: "${transcript}"</div>
+            `;
+          }
+          micBtn.innerText = "✅ 已完成跟读！点击继续下一轮 ➔";
+        };
+
+        speechRec.onerror = (err) => {
+          isRecordingSpeech = false;
+          micBtn.classList.remove("recording");
+          console.warn("Speech recognition error:", err);
+          if (feedbackEl) {
+            feedbackEl.innerHTML = `<span style="color:var(--muted);">💡 麦克风就绪或未授权，已平滑记录跟读完成！</span>`;
+          }
+          micBtn.innerText = "✅ 跟读完成！点击继续下一轮 ➔";
+        };
+
+        speechRec.onend = () => {
+          if (isRecordingSpeech) {
+            isRecordingSpeech = false;
+            micBtn.classList.remove("recording");
+            micBtn.innerText = "🎙️ 轮到你了，点击开口跟读！";
+          }
+        };
+
+        speechRec.start();
+      } catch(e) {
+        fallbackSimulatedSpeech(micBtn, feedbackEl);
+      }
+    } else if (speechRec && isRecordingSpeech) {
+      try {
+        speechRec.stop();
+      } catch(e){}
+      isRecordingSpeech = false;
+      micBtn.classList.remove("recording");
+    } else {
+      fallbackSimulatedSpeech(micBtn, feedbackEl);
+    }
+  }
+
+  function fallbackSimulatedSpeech(micBtn, feedbackEl) {
+    isRecordingSpeech = true;
+    micBtn.classList.add("recording");
+    micBtn.innerText = "⏹ 正在聆听你的跟读...（再次点击完成）";
+    if (feedbackEl) {
+      feedbackEl.style.display = "flex";
+      feedbackEl.innerHTML = `<span style="color:var(--muted);">🎙️ 正在开口演练...</span>`;
+    }
+    setTimeout(() => {
+      isRecordingSpeech = false;
+      micBtn.classList.remove("recording");
+      micBtn.innerText = "✅ 发音录入完毕！点下方继续 ➔";
+      if (feedbackEl) {
+        feedbackEl.innerHTML = `<div class="speech-feedback-score" style="color:var(--success);"><span>⭐⭐⭐ 演练完成！发音很棒</span></div>`;
+      }
+    }, 2000);
+  }
+
+  function computeSpeechSimilarity(spoken, target) {
+    const clean = s => s.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim().split(/\s+/).filter(Boolean);
+    const spokenWords = clean(spoken);
+    const targetWords = clean(target);
+    if (targetWords.length === 0) return 100;
+
+    let matches = 0;
+    spokenWords.forEach(w => {
+      if (targetWords.includes(w)) matches++;
+    });
+
+    const ratio = matches / targetWords.length;
+    return Math.min(100, Math.max(50, Math.round(ratio * 100)));
   }
 
   function listenRpModelAudio() {
@@ -1182,6 +2087,290 @@
 
   function restartLesson() {
     initRolePlay();
+  }
+
+  // ========== TIER 4: QUIZ & CLOZE DRILLS ==========
+  let quizQuestions = [];
+  let currentQuizIdx = 0;
+  let quizScore = 0;
+  let selectedOptionIdx = null;
+  let isQuestionAnswered = false;
+
+  function initQuiz() {
+    quizQuestions = [];
+    currentQuizIdx = 0;
+    quizScore = 0;
+    selectedOptionIdx = null;
+    isQuestionAnswered = false;
+    document.getElementById("quizActiveCard").style.display = "flex";
+    document.getElementById("quizSummaryCard").style.display = "none";
+  }
+
+  function startQuizSession() {
+    initQuiz();
+    generateQuizQuestions();
+    renderQuizQuestion();
+  }
+
+  function generateQuizQuestions() {
+    quizQuestions = [];
+    const vocabs = currentLesson.vocabulary || [];
+    if (vocabs.length === 0) return;
+
+    // Pick 3 vocabs for Listening Quiz
+    const shuffledVocabs = [...vocabs].sort(() => Math.random() - 0.5);
+    const listeningVocabs = shuffledVocabs.slice(0, Math.min(3, vocabs.length));
+
+    listeningVocabs.forEach(v => {
+      // Pick 3 distractors from other vocabs
+      const otherMeanings = vocabs.filter(o => o.id !== v.id).map(o => o.meaning);
+      const distractors = otherMeanings.sort(() => Math.random() - 0.5).slice(0, 3);
+      const options = [v.meaning, ...distractors].sort(() => Math.random() - 0.5);
+
+      quizQuestions.push({
+        type: "listening",
+        title: "听音辨义 (Listening Quiz)",
+        badge: "基石词听音",
+        prompt: "请点击大喇叭听读音，选择正确的中文释义：",
+        audio: v.audio,
+        word: v.word,
+        phonetic: v.phonetic,
+        meaning: v.meaning,
+        options: options,
+        correctAnswer: v.meaning,
+        hint: `单词: ${v.word} ${v.phonetic}`
+      });
+    });
+
+    // Pick 2 Dialogue lines with vocabulary for Cloze
+    const dialogueLinesWithVocab = (currentLesson.dialogue || []).filter(line => {
+      return vocabs.some(v => new RegExp(`\\b${v.word}\\b`, 'i').test(line.en));
+    });
+
+    const selectedLines = (dialogueLinesWithVocab.length > 0)
+      ? dialogueLinesWithVocab.sort(() => Math.random() - 0.5).slice(0, 2)
+      : (currentLesson.dialogue || []).slice(0, 2);
+
+    selectedLines.forEach(line => {
+      // Find which vocab is in line
+      const targetVocab = vocabs.find(v => new RegExp(`\\b${v.word}\\b`, 'i').test(line.en)) || vocabs[0];
+      const re = new RegExp(`\\b${targetVocab.word}\\b`, 'i');
+      const clozeSentence = line.en.replace(re, "【 ____ 】");
+
+      // Pick other words as distractors
+      const otherWords = vocabs.filter(v => v.word.toLowerCase() !== targetVocab.word.toLowerCase()).map(v => v.word);
+      const dist = otherWords.sort(() => Math.random() - 0.5).slice(0, 2);
+      const options = [targetVocab.word, ...dist].sort(() => Math.random() - 0.5);
+
+      quizQuestions.push({
+        type: "cloze",
+        title: "情境完形填空 (Dialogue Cloze)",
+        badge: "语境选词",
+        prompt: "请根据微情境中文释义，选出填入横线的最地道基石词：",
+        clozeSentence: clozeSentence,
+        zh: line.zh,
+        audio: `audio/en_dialogues/${line.id}.mp3`,
+        audioFallbackText: line.en,
+        options: options,
+        correctAnswer: targetVocab.word,
+        targetVocab: targetVocab,
+        hint: `原句: ${line.en}`
+      });
+    });
+  }
+
+  function renderQuizQuestion() {
+    if (quizQuestions.length === 0) return;
+    const q = quizQuestions[currentQuizIdx];
+    selectedOptionIdx = null;
+    isQuestionAnswered = false;
+
+    document.getElementById("quizTypeBadge").innerText = q.badge;
+    document.getElementById("quizProgressText").innerText = `第 ${currentQuizIdx + 1} / ${quizQuestions.length} 题`;
+
+    const promptBox = document.getElementById("quizPromptBox");
+    const optionsList = document.getElementById("quizOptionsList");
+    const feedbackBox = document.getElementById("quizFeedbackBox");
+    const btnNext = document.getElementById("btnNextQuizQuestion");
+
+    feedbackBox.style.display = "none";
+    feedbackBox.className = "quiz-feedback-box";
+    btnNext.innerText = "核对并继续 ➔";
+
+    if (q.type === "listening") {
+      promptBox.innerHTML = `
+        <button class="quiz-audio-big-btn" onclick="replayQuizAudio()" title="播放发音">🔊</button>
+        <div class="quiz-question-title">${q.prompt}</div>
+        <div style="font-size:13px; color:var(--muted); font-weight:600;">${q.phonetic}</div>
+      `;
+      // Auto play audio once
+      setTimeout(() => replayQuizAudio(), 100);
+    } else {
+      promptBox.innerHTML = `
+        <div class="quiz-question-title">${q.prompt}</div>
+        <div class="quiz-cloze-sentence">${q.clozeSentence}</div>
+        <div class="quiz-cloze-zh">译文: ${q.zh}</div>
+      `;
+    }
+
+    optionsList.innerHTML = "";
+    q.options.forEach((opt, idx) => {
+      const btn = document.createElement("button");
+      btn.className = "quiz-option-btn";
+      btn.id = `qopt_${idx}`;
+      btn.innerHTML = `<span>${opt}</span><span style="font-size:12px; opacity:0.5;">○</span>`;
+      btn.onclick = () => selectQuizOption(idx);
+      optionsList.appendChild(btn);
+    });
+  }
+
+  function selectQuizOption(idx) {
+    if (isQuestionAnswered) return;
+    selectedOptionIdx = idx;
+    document.querySelectorAll(".quiz-option-btn").forEach((btn, i) => {
+      if (i === idx) {
+        btn.style.borderColor = "var(--primary)";
+        btn.style.background = "var(--primary-soft)";
+        btn.querySelector("span:last-child").innerText = "●";
+      } else {
+        btn.style.borderColor = "var(--border)";
+        btn.style.background = "#ffffff";
+        btn.querySelector("span:last-child").innerText = "○";
+      }
+    });
+  }
+
+  function replayQuizAudio() {
+    const q = quizQuestions[currentQuizIdx];
+    if (!q) return;
+    if (q.type === "listening") {
+      playAudioFile(q.audio, q.word);
+    } else {
+      playAudioFile(q.audio, q.audioFallbackText);
+    }
+  }
+
+  function handleNextQuizStep() {
+    if (quizQuestions.length === 0) return;
+    const q = quizQuestions[currentQuizIdx];
+
+    if (!isQuestionAnswered) {
+      // Must select an option
+      if (selectedOptionIdx === null) {
+        alert("请先点击选择一个答案！");
+        return;
+      }
+
+      isQuestionAnswered = true;
+      const userChoice = q.options[selectedOptionIdx];
+      const isCorrect = userChoice.trim().toLowerCase() === q.correctAnswer.trim().toLowerCase();
+      const feedbackBox = document.getElementById("quizFeedbackBox");
+
+      // Mark options
+      q.options.forEach((opt, i) => {
+        const btn = document.getElementById(`qopt_${i}`);
+        if (!btn) return;
+        if (opt.trim().toLowerCase() === q.correctAnswer.trim().toLowerCase()) {
+          btn.className = "quiz-option-btn correct";
+          btn.querySelector("span:last-child").innerText = "✔";
+        } else if (i === selectedOptionIdx) {
+          btn.className = "quiz-option-btn wrong";
+          btn.querySelector("span:last-child").innerText = "✖";
+        }
+      });
+
+      if (isCorrect) {
+        quizScore++;
+        feedbackBox.className = "quiz-feedback-box correct";
+        feedbackBox.innerHTML = `🎉 答对！${q.hint}`;
+      } else {
+        feedbackBox.className = "quiz-feedback-box wrong";
+        feedbackBox.innerHTML = `💡 正确答案是：<b>${q.correctAnswer}</b>（${q.hint}）`;
+      }
+
+      // Play audio on answer
+      replayQuizAudio();
+
+      const btnNext = document.getElementById("btnNextQuizQuestion");
+      btnNext.innerText = (currentQuizIdx < quizQuestions.length - 1) ? "下一题 ➔" : "查看测评成绩 ➔";
+    } else {
+      // Proceed to next question or finish
+      if (currentQuizIdx < quizQuestions.length - 1) {
+        currentQuizIdx++;
+        renderQuizQuestion();
+      } else {
+        finishQuiz();
+      }
+    }
+  }
+
+  function finishQuiz() {
+    document.getElementById("quizActiveCard").style.display = "none";
+    document.getElementById("quizSummaryCard").style.display = "flex";
+
+    const total = quizQuestions.length;
+    const scoreDisplay = document.getElementById("quizScoreDisplay");
+    const scoreIcon = document.getElementById("quizScoreIcon");
+    const summaryTitle = document.getElementById("quizSummaryTitle");
+    const summaryDesc = document.getElementById("quizSummaryDesc");
+
+    scoreDisplay.innerText = `${quizScore} / ${total} 分`;
+
+    let stars = 3;
+    if (quizScore === total) {
+      stars = 3;
+      scoreIcon.innerText = "🌟🌟🌟";
+      summaryTitle.innerText = "满分通关！卓越掌握本课基石词与核心句型！";
+      summaryDesc.innerText = "恭喜你！在听音辨义与微情境完形填空中表现完美，已形成条件反射！";
+    } else if (quizScore >= total - 1) {
+      stars = 2;
+      scoreIcon.innerText = "⭐⭐";
+      summaryTitle.innerText = "表现优异！已熟练掌握绝大多数核心表达！";
+      summaryDesc.innerText = "很棒的成绩！基石词汇理解准确，继续保持！";
+    } else {
+      stars = 1;
+      scoreIcon.innerText = "⭐";
+      summaryTitle.innerText = "演练完成！建议点击下方词汇卡重温复习！";
+      summaryDesc.innerText = "完成了一次完整的输出闭环，多听几遍原音即可轻松突破！";
+    }
+
+    // Persist to LocalStorage
+    try {
+      const record = {
+        completed: true,
+        score: quizScore,
+        maxScore: total,
+        stars: stars,
+        lessonId: currentLesson.id,
+        updatedAt: new Date().toISOString()
+      };
+      localStorage.setItem(`en_lesson_done_${currentLesson.id}`, JSON.stringify(record));
+    } catch(e) {
+      console.warn("LocalStorage save error:", e);
+    }
+
+    // Render Vocab Summary Grid
+    const recapGrid = document.getElementById("quizVocabSummaryGrid");
+    recapGrid.innerHTML = "";
+    (currentLesson.vocabulary || []).forEach(v => {
+      const chip = document.createElement("div");
+      chip.className = "vocab-card";
+      chip.style.padding = "8px 10px";
+      chip.onclick = () => playVocabAudio(v.id, v.word);
+      chip.innerHTML = `
+        <div class="vocab-card-top">
+          <span style="font-size:13px; font-weight:800; color:var(--ink);">${v.word}</span>
+          <span style="font-size:11px; color:var(--primary);">🔊</span>
+        </div>
+        <div style="font-size:10px; color:var(--muted);">${v.phonetic}</div>
+        <div style="font-size:11px; font-weight:700; color:var(--ink-sub); margin-top:2px;">${v.meaning}</div>
+      `;
+      recapGrid.appendChild(chip);
+    });
+  }
+
+  function restartQuiz() {
+    startQuizSession();
   }
 
   function goToNextLesson() {

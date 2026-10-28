@@ -18,9 +18,11 @@ ROOT = Path(__file__).resolve().parent
 DATA_FILE = ROOT / "data" / "en-lessons-data.json"
 CHUNKS_DIR = ROOT / "audio" / "en_chunks"
 DIALOGUES_DIR = ROOT / "audio" / "en_dialogues"
+VOCAB_DIR = ROOT / "audio" / "en_vocab"
 
 CHUNKS_DIR.mkdir(parents=True, exist_ok=True)
 DIALOGUES_DIR.mkdir(parents=True, exist_ok=True)
+VOCAB_DIR.mkdir(parents=True, exist_ok=True)
 
 VOICE_FEMALE = "en-US-JennyNeural"
 VOICE_MALE = "en-US-GuyNeural"
@@ -56,8 +58,14 @@ async def main(max_lessons=None):
             clean_text = chunk["text"].replace("...", "")
             out_file = CHUNKS_DIR / f"{cid}.mp3"
             await synthesize(clean_text, VOICE_FEMALE, RATE_NORMAL, out_file)
+
+        # 2. Synthesize vocabulary
+        for vocab in lesson.get("vocabulary", []):
+            vid = vocab["id"]
+            out_file = VOCAB_DIR / f"{vid}.mp3"
+            await synthesize(vocab["word"], VOICE_FEMALE, RATE_NORMAL, out_file)
             
-        # 2. Synthesize dialogues
+        # 3. Synthesize dialogues
         for diag in lesson.get("dialogue", []):
             did = diag["id"]
             # Speaker A uses Guy/Jenny, Speaker B uses alternating voice

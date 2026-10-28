@@ -1,964 +1,1940 @@
 // English Micro-Narrative Curriculum Data
-// 3-Tier Scaffolding Architecture (Chunks -> Narrative -> Role-play)
+// 3-Tier Scaffolding Architecture + Lexical Vocabulary Support
 window.EN_LESSONS_DATA = [
   {
-    id: "en1",
-    level: 1,
-    title: "Morning Coffee",
-    titleZh: "晨间咖啡点单",
-    situation: "在街角咖啡馆点一杯拿铁，定制甜度与打包偏好。",
-    icon: "☕",
-    tags: ["日常生存", "高频点单", "连读突破"],
-    chunks: [
+    "id": "en1",
+    "level": 1,
+    "title": "Morning Coffee",
+    "titleZh": "晨间咖啡点单",
+    "situation": "在街角咖啡馆点一杯拿铁，定制甜度与打包偏好。",
+    "icon": "☕",
+    "tags": [
+      "日常生存",
+      "高频点单",
+      "连读突破"
+    ],
+    "chunks": [
       {
-        id: "en1_c1",
-        text: "Can I get a...",
-        meaning: "请给我来一份……（口语最自然点单句式）",
-        phonetic: "/kən aɪ ˈɡet ə/",
-        usageTip: "在美语口语中比 'I want...' 礼貌自然得多，Can I 与 get a 均发生辅元连读。",
-        warmupQuiz: {
-          prompt: "组装短语：“请给我来一份……”",
-          tokens: ["get a", "Can I", "latte", "please"],
-          correct: ["Can I", "get a"]
+        "id": "en1_c1",
+        "text": "Can I get a...",
+        "meaning": "请给我来一份……（口语最自然点单句式）",
+        "phonetic": "/kən aɪ ˈɡet ə/",
+        "usageTip": "在美语口语中比 'I want...' 礼貌自然得多，Can I 与 get a 均发生辅元连读。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“请给我来一份……”",
+          "tokens": [
+            "get a",
+            "Can I",
+            "latte",
+            "please"
+          ],
+          "correct": [
+            "Can I",
+            "get a"
+          ]
         }
       },
       {
-        id: "en1_c2",
-        text: "For here or to go?",
-        meaning: "在这儿喝还是打包带走？",
-        phonetic: "/fər hɪər ɔːr tə ɡoʊ/",
-        usageTip: "柜台点餐必问金句。英音常作 'Eat in or take away?'。",
-        warmupQuiz: {
-          prompt: "组装短语：“堂食还是外带？”",
-          tokens: ["to go", "or", "For here"],
-          correct: ["For here", "or", "to go"]
+        "id": "en1_c2",
+        "text": "For here or to go?",
+        "meaning": "在这儿喝还是打包带走？",
+        "phonetic": "/fər hɪər ɔːr tə ɡoʊ/",
+        "usageTip": "柜台点餐必问金句。英音常作 'Eat in or take away?'。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“堂食还是外带？”",
+          "tokens": [
+            "to go",
+            "or",
+            "For here"
+          ],
+          "correct": [
+            "For here",
+            "or",
+            "to go"
+          ]
         }
       },
       {
-        id: "en1_c3",
-        text: "Take your time.",
-        meaning: "不着急，您慢慢看 / 慢慢来。",
-        phonetic: "/teɪk jər taɪm/",
-        usageTip: "当你还在看菜单迟疑时，店员常说的暖心表达。",
-        warmupQuiz: {
-          prompt: "组装短语：“您慢慢来”",
-          tokens: ["your", "Take", "time"],
-          correct: ["Take", "your", "time"]
+        "id": "en1_c3",
+        "text": "Take your time.",
+        "meaning": "不着急，您慢慢看 / 慢慢来。",
+        "phonetic": "/teɪk jər taɪm/",
+        "usageTip": "当你还在看菜单迟疑时，店员常说的暖心表达。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“您慢慢来”",
+          "tokens": [
+            "your",
+            "Take",
+            "time"
+          ],
+          "correct": [
+            "Take",
+            "your",
+            "time"
+          ]
         }
       }
     ],
-    dialogue: [
+    "dialogue": [
       {
-        id: "en1_d1",
-        speaker: "B",
-        speakerName: "Barista",
-        role: "咖啡师",
-        en: "Good morning! What can I get started for you?",
-        zh: "早上好！今天想喝点什么？",
-        phoneticHtml: "Good morning! <span class='linking'>What‿can‿I</span> get started for you?",
-        linkingNotes: ["What can I 中 t与c发生失去爆破，can 与 I 顺畅连读。"]
+        "id": "en1_d1",
+        "speaker": "B",
+        "speakerName": "Barista",
+        "role": "咖啡师",
+        "en": "Good morning! What can I get started for you?",
+        "zh": "早上好！今天想喝点什么？",
+        "phoneticHtml": "Good morning! <span class='linking'>What‿can‿I</span> get started for you?",
+        "linkingNotes": [
+          "What can I 中 t与c发生失去爆破，can 与 I 顺畅连读。"
+        ]
       },
       {
-        id: "en1_d2",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "顾客 (你)",
-        en: "Hi! Can I get an iced oat latte, please?",
-        zh: "嗨！请给我来一杯冰燕麦拿铁好吗？",
-        phoneticHtml: "Hi! <span class='linking'>Can‿I</span> <span class='linking'>get‿an</span> iced <span class='linking'>oat‿latte</span>, please?",
-        linkingNotes: ["Can I 连读为 /kə-naɪ/，get an 连读且 t 浊化为轻弹音 /ɡe-dən/。"]
+        "id": "en1_d2",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "顾客 (你)",
+        "en": "Hi! Can I get an iced oat latte, please?",
+        "zh": "嗨！请给我来一杯冰燕麦拿铁好吗？",
+        "phoneticHtml": "Hi! <span class='linking'>Can‿I</span> <span class='linking'>get‿an</span> iced <span class='linking'>oat‿latte</span>, please?",
+        "linkingNotes": [
+          "Can I 连读为 /kə-naɪ/，get an 连读且 t 浊化为轻弹音 /ɡe-dən/。"
+        ]
       },
       {
-        id: "en1_d3",
-        speaker: "B",
-        speakerName: "Barista",
-        role: "咖啡师",
-        en: "Sure thing. For here or to go?",
-        zh: "没问题。在这儿喝还是打包带走？",
-        phoneticHtml: "Sure thing. For <span class='linking'>here‿or</span> <span class='reduction'>to</span> go?",
-        linkingNotes: ["here or 卷舌连读 /hɪə-rɔːr/，to 弱读为 /tə/。"]
+        "id": "en1_d3",
+        "speaker": "B",
+        "speakerName": "Barista",
+        "role": "咖啡师",
+        "en": "Sure thing. For here or to go?",
+        "zh": "没问题。在这儿喝还是打包带走？",
+        "phoneticHtml": "Sure thing. For <span class='linking'>here‿or</span> <span class='reduction'>to</span> go?",
+        "linkingNotes": [
+          "here or 卷舌连读 /hɪə-rɔːr/，to 弱读为 /tə/。"
+        ]
       },
       {
-        id: "en1_d4",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "顾客 (你)",
-        en: "To go, please. And could you make it less sweet?",
-        zh: "打包带走，谢谢。另外能帮我做半糖（少甜）吗？",
-        phoneticHtml: "To go, please. <span class='linking'>And‿could‿you</span> <span class='linking'>make‿it</span> less sweet?",
-        linkingNotes: ["could you 同化为 /kʊ-dʒuː/，make it 连读为 /meɪ-kɪt/。"]
+        "id": "en1_d4",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "顾客 (你)",
+        "en": "To go, please. And could you make it less sweet?",
+        "zh": "打包带走，谢谢。另外能帮我做半糖（少甜）吗？",
+        "phoneticHtml": "To go, please. <span class='linking'>And‿could‿you</span> <span class='linking'>make‿it</span> less sweet?",
+        "linkingNotes": [
+          "could you 同化为 /kʊ-dʒuː/，make it 连读为 /meɪ-kɪt/。"
+        ]
       },
       {
-        id: "en1_d5",
-        speaker: "B",
-        speakerName: "Barista",
-        role: "咖啡师",
-        en: "You got it! It will be ready at the counter in two minutes.",
-        zh: "妥了！两分钟后在吧台出单取餐哦。",
-        phoneticHtml: "<span class='linking'>You‿got‿it</span>! It'll be ready <span class='linking'>at‿the</span> counter in two minutes.",
-        linkingNotes: ["got it 连读且 t 浊化为 /ɡɑ-dɪt/。"]
+        "id": "en1_d5",
+        "speaker": "B",
+        "speakerName": "Barista",
+        "role": "咖啡师",
+        "en": "You got it! It will be ready at the counter in two minutes.",
+        "zh": "妥了！两分钟后在吧台出单取餐哦。",
+        "phoneticHtml": "<span class='linking'>You‿got‿it</span>! It'll be ready <span class='linking'>at‿the</span> counter in two minutes.",
+        "linkingNotes": [
+          "got it 连读且 t 浊化为 /ɡɑ-dɪt/。"
+        ]
       }
     ],
-    rolePlay: {
-      userRole: "A",
-      targetRoleName: "Alex (顾客)",
-      description: "扮演到店顾客 Alex，跟随咖啡师的问询完成自然点餐与定制要求。"
-    }
+    "rolePlay": {
+      "userRole": "A",
+      "targetRoleName": "Alex (顾客)",
+      "description": "扮演到店顾客 Alex，跟随咖啡师的问询完成自然点餐与定制要求。"
+    },
+    "vocabulary": [
+      {
+        "id": "en1_v1",
+        "word": "latte",
+        "phonetic": "/ˈlɑːteɪ/",
+        "pos": "n.",
+        "meaning": "拿铁咖啡",
+        "example": "Can I get an iced oat latte, please?",
+        "exampleZh": "请给我来一杯冰燕麦拿铁好吗？",
+        "audio": "audio/en_vocab/en1_v1.mp3"
+      },
+      {
+        "id": "en1_v2",
+        "word": "iced",
+        "phonetic": "/aɪst/",
+        "pos": "adj.",
+        "meaning": "加冰的，冰镇的",
+        "example": "Can I get an iced oat latte, please?",
+        "exampleZh": "请给我来一杯冰燕麦拿铁好吗？",
+        "audio": "audio/en_vocab/en1_v2.mp3"
+      },
+      {
+        "id": "en1_v3",
+        "word": "oat",
+        "phonetic": "/oʊt/",
+        "pos": "n.",
+        "meaning": "燕麦（常指燕麦奶）",
+        "example": "Can I get an iced oat latte, please?",
+        "exampleZh": "请给我来一杯冰燕麦拿铁好吗？",
+        "audio": "audio/en_vocab/en1_v3.mp3"
+      },
+      {
+        "id": "en1_v4",
+        "word": "sweet",
+        "phonetic": "/swiːt/",
+        "pos": "adj.",
+        "meaning": "甜的，有甜味的",
+        "example": "Could you make it less sweet?",
+        "exampleZh": "能帮我做半糖（少甜）吗？",
+        "audio": "audio/en_vocab/en1_v4.mp3"
+      },
+      {
+        "id": "en1_v5",
+        "word": "counter",
+        "phonetic": "/ˈkaʊntər/",
+        "pos": "n.",
+        "meaning": "柜台，出餐台",
+        "example": "It will be ready at the counter in two minutes.",
+        "exampleZh": "两分钟后在吧台出单取餐哦。",
+        "audio": "audio/en_vocab/en1_v5.mp3"
+      },
+      {
+        "id": "en1_v6",
+        "word": "ready",
+        "phonetic": "/ˈredi/",
+        "pos": "adj.",
+        "meaning": "准备好的，备齐的",
+        "example": "It will be ready at the counter in two minutes.",
+        "exampleZh": "两分钟后在吧台出单取餐哦。",
+        "audio": "audio/en_vocab/en1_v6.mp3"
+      }
+    ]
   },
   {
-    id: "en2",
-    level: 1,
-    title: "Lost in the Subway",
-    titleZh: "地铁站问路与换乘",
-    situation: "在繁忙的地铁站向工作人员确认换乘线路与上车方向。",
-    icon: "🚇",
-    tags: ["公共出行", "方向问询", "辅元连读"],
-    chunks: [
+    "id": "en2",
+    "level": 1,
+    "title": "Lost in the Subway",
+    "titleZh": "地铁站问路与换乘",
+    "situation": "在繁忙的地铁站向工作人员确认换乘线路与上车方向。",
+    "icon": "🚇",
+    "tags": [
+      "公共出行",
+      "方向问询",
+      "辅元连读"
+    ],
+    "chunks": [
       {
-        id: "en2_c1",
-        text: "Which train goes to...",
-        meaning: "哪趟车是去往……的？",
-        phonetic: "/wɪtʃ treɪn ɡoʊz tuː/",
-        usageTip: "在多站台交通枢纽询问列车去向的标准问法。",
-        warmupQuiz: {
-          prompt: "组装短语：“哪趟车是去中央车站的？”",
-          tokens: ["Central Station?", "goes to", "Which train"],
-          correct: ["Which train", "goes to", "Central Station?"]
+        "id": "en2_c1",
+        "text": "Which train goes to...",
+        "meaning": "哪趟车是去往……的？",
+        "phonetic": "/wɪtʃ treɪn ɡoʊz tuː/",
+        "usageTip": "在多站台交通枢纽询问列车去向的标准问法。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“哪趟车是去中央车站的？”",
+          "tokens": [
+            "Central Station?",
+            "goes to",
+            "Which train"
+          ],
+          "correct": [
+            "Which train",
+            "goes to",
+            "Central Station?"
+          ]
         }
       },
       {
-        id: "en2_c2",
-        text: "Make sure to...",
-        meaning: "请务必…… / 一定要记得……",
-        phonetic: "/meɪk ʃʊr tuː/",
-        usageTip: "提示对方注意核心动作的固定语块。",
-        warmupQuiz: {
-          prompt: "组装短语：“务必换乘”",
-          tokens: ["transfer", "Make sure", "to"],
-          correct: ["Make sure", "to", "transfer"]
+        "id": "en2_c2",
+        "text": "Make sure to...",
+        "meaning": "请务必…… / 一定要记得……",
+        "phonetic": "/meɪk ʃʊr tuː/",
+        "usageTip": "提示对方注意核心动作的固定语块。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“务必换乘”",
+          "tokens": [
+            "transfer",
+            "Make sure",
+            "to"
+          ],
+          "correct": [
+            "Make sure",
+            "to",
+            "transfer"
+          ]
         }
       },
       {
-        id: "en2_c3",
-        text: "Get off at...",
-        meaning: "在……站下车",
-        phonetic: "/ɡet ɔːf æt/",
-        usageTip: "get off 发生连读，表示从公共交通工具下来。",
-        warmupQuiz: {
-          prompt: "组装短语：“在第五大道下车”",
-          tokens: ["5th Avenue", "Get off", "at"],
-          correct: ["Get off", "at", "5th Avenue"]
+        "id": "en2_c3",
+        "text": "Get off at...",
+        "meaning": "在……站下车",
+        "phonetic": "/ɡet ɔːf æt/",
+        "usageTip": "get off 发生连读，表示从公共交通工具下来。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“在第五大道下车”",
+          "tokens": [
+            "5th Avenue",
+            "Get off",
+            "at"
+          ],
+          "correct": [
+            "Get off",
+            "at",
+            "5th Avenue"
+          ]
         }
       }
     ],
-    dialogue: [
+    "dialogue": [
       {
-        id: "en2_d1",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "乘客 (你)",
-        en: "Excuse me, which train goes to Central Park?",
-        zh: "打扰一下，请问哪趟车是去中央公园的？",
-        phoneticHtml: "<span class='linking'>Excuse‿me</span>, which train goes to Central Park?",
-        linkingNotes: ["Excuse me 常用连缀。"]
+        "id": "en2_d1",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "乘客 (你)",
+        "en": "Excuse me, which train goes to Central Park?",
+        "zh": "打扰一下，请问哪趟车是去中央公园的？",
+        "phoneticHtml": "<span class='linking'>Excuse‿me</span>, which train goes to Central Park?",
+        "linkingNotes": [
+          "Excuse me 常用连缀。"
+        ]
       },
       {
-        id: "en2_d2",
-        speaker: "B",
-        speakerName: "Officer",
-        role: "站台工作人员",
-        en: "Take the Blue Line uptown. It's on platform two.",
-        zh: "坐蓝线往上城方向。在二号站台。",
-        phoneticHtml: "Take the Blue Line uptown. <span class='linking'>It's‿on</span> platform two.",
-        linkingNotes: ["It's on 连读为 /ɪt-sɒn/。"]
+        "id": "en2_d2",
+        "speaker": "B",
+        "speakerName": "Officer",
+        "role": "站台工作人员",
+        "en": "Take the Blue Line uptown. It's on platform two.",
+        "zh": "坐蓝线往上城方向。在二号站台。",
+        "phoneticHtml": "Take the Blue Line uptown. <span class='linking'>It's‿on</span> platform two.",
+        "linkingNotes": [
+          "It's on 连读为 /ɪt-sɒn/。"
+        ]
       },
       {
-        id: "en2_d3",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "乘客 (你)",
-        en: "Do I need to transfer along the way?",
-        zh: "我中途需要换乘吗？",
-        phoneticHtml: "Do <span class='linking'>I‿need‿to</span> transfer <span class='linking'>along‿the</span> way?",
-        linkingNotes: ["need to 中 d 失去爆破。"]
+        "id": "en2_d3",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "乘客 (你)",
+        "en": "Do I need to transfer along the way?",
+        "zh": "我中途需要换乘吗？",
+        "phoneticHtml": "Do <span class='linking'>I‿need‿to</span> transfer <span class='linking'>along‿the</span> way?",
+        "linkingNotes": [
+          "need to 中 d 失去爆破。"
+        ]
       },
       {
-        id: "en2_d4",
-        speaker: "B",
-        speakerName: "Officer",
-        role: "站台工作人员",
-        en: "No, it's direct. Just make sure to get off at 72nd Street.",
-        zh: "不用，直达。只要记得在72街下车就行。",
-        phoneticHtml: "No, <span class='linking'>it's‿direct</span>. Just make sure to <span class='linking'>get‿off‿at</span> 72nd Street.",
-        linkingNotes: ["get off at 连续连读 /ɡe-dɔː-fæt/。"]
+        "id": "en2_d4",
+        "speaker": "B",
+        "speakerName": "Officer",
+        "role": "站台工作人员",
+        "en": "No, it's direct. Just make sure to get off at 72nd Street.",
+        "zh": "不用，直达。只要记得在72街下车就行。",
+        "phoneticHtml": "No, <span class='linking'>it's‿direct</span>. Just make sure to <span class='linking'>get‿off‿at</span> 72nd Street.",
+        "linkingNotes": [
+          "get off at 连续连读 /ɡe-dɔː-fæt/。"
+        ]
       },
       {
-        id: "en2_d5",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "乘客 (你)",
-        en: "Got it. Thanks a lot for your help!",
-        zh: "明白了。非常感谢您的指引！",
-        phoneticHtml: "<span class='linking'>Got‿it</span>. <span class='linking'>Thanks‿a</span> lot for your help!",
-        linkingNotes: ["Thanks a 连读为 /θæŋk-sə/。"]
+        "id": "en2_d5",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "乘客 (你)",
+        "en": "Got it. Thanks a lot for your help!",
+        "zh": "明白了。非常感谢您的指引！",
+        "phoneticHtml": "<span class='linking'>Got‿it</span>. <span class='linking'>Thanks‿a</span> lot for your help!",
+        "linkingNotes": [
+          "Thanks a 连读为 /θæŋk-sə/。"
+        ]
       }
     ],
-    rolePlay: {
-      userRole: "A",
-      targetRoleName: "Alex (乘客)",
-      description: "扮演找不到站台的乘客，向工作人员核对列车方向与下车站点。"
-    }
+    "rolePlay": {
+      "userRole": "A",
+      "targetRoleName": "Alex (乘客)",
+      "description": "扮演找不到站台的乘客，向工作人员核对列车方向与下车站点。"
+    },
+    "vocabulary": [
+      {
+        "id": "en2_v1",
+        "word": "train",
+        "phonetic": "/treɪn/",
+        "pos": "n.",
+        "meaning": "列车，地铁车次",
+        "example": "Which train goes to Central Park?",
+        "exampleZh": "哪趟车去中央公园？",
+        "audio": "audio/en_vocab/en2_v1.mp3"
+      },
+      {
+        "id": "en2_v2",
+        "word": "platform",
+        "phonetic": "/ˈplætfɔːrm/",
+        "pos": "n.",
+        "meaning": "月台，站台",
+        "example": "It's on platform two.",
+        "exampleZh": "在二号站台上车。",
+        "audio": "audio/en_vocab/en2_v2.mp3"
+      },
+      {
+        "id": "en2_v3",
+        "word": "transfer",
+        "phonetic": "/trænsˈfɜːr/",
+        "pos": "v.",
+        "meaning": "换乘，转车",
+        "example": "Do I need to transfer along the way?",
+        "exampleZh": "我中途需要换乘吗？",
+        "audio": "audio/en_vocab/en2_v3.mp3"
+      },
+      {
+        "id": "en2_v4",
+        "word": "direct",
+        "phonetic": "/daɪˈrekt/",
+        "pos": "adj.",
+        "meaning": "直达的，直接的",
+        "example": "No, it's direct.",
+        "exampleZh": "不用，这趟是直达的。",
+        "audio": "audio/en_vocab/en2_v4.mp3"
+      },
+      {
+        "id": "en2_v5",
+        "word": "uptown",
+        "phonetic": "/ˌʌpˈtaʊn/",
+        "pos": "adv./adj.",
+        "meaning": "往北区，上城方向",
+        "example": "Take the Blue Line uptown.",
+        "exampleZh": "乘坐蓝线上行方向。",
+        "audio": "audio/en_vocab/en2_v5.mp3"
+      },
+      {
+        "id": "en2_v6",
+        "word": "street",
+        "phonetic": "/striːt/",
+        "pos": "n.",
+        "meaning": "街，街道",
+        "example": "Just make sure to get off at 72nd Street.",
+        "exampleZh": "只要在第72街下车就行了。",
+        "audio": "audio/en_vocab/en2_v6.mp3"
+      }
+    ]
   },
   {
-    id: "en3",
-    level: 1,
-    title: "Late for Meeting",
-    titleZh: "会议迟到说明与致歉",
-    situation: "在前往公司的路上因突发拥堵，提前发消息/电话向主管沟通。",
-    icon: "⏰",
-    tags: ["职场日常", "轻微致歉", "地道表达"],
-    chunks: [
+    "id": "en3",
+    "level": 1,
+    "title": "Late for Meeting",
+    "titleZh": "会议迟到说明与致歉",
+    "situation": "在前往公司的路上因突发拥堵，提前发消息/电话向主管沟通。",
+    "icon": "⏰",
+    "tags": [
+      "职场日常",
+      "轻微致歉",
+      "地道表达"
+    ],
+    "chunks": [
       {
-        id: "en3_c1",
-        text: "Running a bit late",
-        meaning: "稍微会晚到一会儿",
-        phonetic: "/ˈrʌnɪŋ ə bɪt leɪt/",
-        usageTip: "比生硬的 'I will be late' 更委婉、更自然的口语习惯表达。",
-        warmupQuiz: {
-          prompt: "组装短语：“我稍微有点晚了”",
-          tokens: ["late", "a bit", "Running", "I'm"],
-          correct: ["I'm", "Running", "a bit", "late"]
+        "id": "en3_c1",
+        "text": "Running a bit late",
+        "meaning": "稍微会晚到一会儿",
+        "phonetic": "/ˈrʌnɪŋ ə bɪt leɪt/",
+        "usageTip": "比生硬的 'I will be late' 更委婉、更自然的口语习惯表达。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“我稍微有点晚了”",
+          "tokens": [
+            "late",
+            "a bit",
+            "Running",
+            "I'm"
+          ],
+          "correct": [
+            "I'm",
+            "Running",
+            "a bit",
+            "late"
+          ]
         }
       },
       {
-        id: "en3_c2",
-        text: "Caught in traffic",
-        meaning: "被堵在路上了",
-        phonetic: "/kɔːt ɪn ˈtræfɪk/",
-        usageTip: "be caught in 固定短语，caught in 发生辅元连读。",
-        warmupQuiz: {
-          prompt: "组装短语：“堵在路上了”",
-          tokens: ["in traffic", "Caught", "I got"],
-          correct: ["I got", "Caught", "in traffic"]
+        "id": "en3_c2",
+        "text": "Caught in traffic",
+        "meaning": "被堵在路上了",
+        "phonetic": "/kɔːt ɪn ˈtræfɪk/",
+        "usageTip": "be caught in 固定短语，caught in 发生辅元连读。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“堵在路上了”",
+          "tokens": [
+            "in traffic",
+            "Caught",
+            "I got"
+          ],
+          "correct": [
+            "I got",
+            "Caught",
+            "in traffic"
+          ]
         }
       },
       {
-        id: "en3_c3",
-        text: "Go ahead without me",
-        meaning: "你们先开始，不用等我",
-        phonetic: "/ɡoʊ əˈhed wɪˈðaʊt miː/",
-        usageTip: "职场开会礼貌且职业的交代方式。",
-        warmupQuiz: {
-          prompt: "组装短语：“你们先开始”",
-          tokens: ["without me", "Go ahead", "Please"],
-          correct: ["Please", "Go ahead", "without me"]
+        "id": "en3_c3",
+        "text": "Go ahead without me",
+        "meaning": "你们先开始，不用等我",
+        "phonetic": "/ɡoʊ əˈhed wɪˈðaʊt miː/",
+        "usageTip": "职场开会礼貌且职业的交代方式。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“你们先开始”",
+          "tokens": [
+            "without me",
+            "Go ahead",
+            "Please"
+          ],
+          "correct": [
+            "Please",
+            "Go ahead",
+            "without me"
+          ]
         }
       }
     ],
-    dialogue: [
+    "dialogue": [
       {
-        id: "en3_d1",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "员工 (你)",
-        en: "Hi Sarah, I'm so sorry, but I'm running a bit late.",
-        zh: "嗨 Sarah，非常抱歉，我路上稍微耽搁了点时间。",
-        phoneticHtml: "Hi Sarah, <span class='linking'>I'm‿so</span> sorry, but I'm <span class='linking'>running‿a‿bit</span> late.",
-        linkingNotes: ["running a bit 连续平滑过渡。"]
+        "id": "en3_d1",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "员工 (你)",
+        "en": "Hi Sarah, I'm so sorry, but I'm running a bit late.",
+        "zh": "嗨 Sarah，非常抱歉，我路上稍微耽搁了点时间。",
+        "phoneticHtml": "Hi Sarah, <span class='linking'>I'm‿so</span> sorry, but I'm <span class='linking'>running‿a‿bit</span> late.",
+        "linkingNotes": [
+          "running a bit 连续平滑过渡。"
+        ]
       },
       {
-        id: "en3_d2",
-        speaker: "B",
-        speakerName: "Sarah",
-        role: "团队主管",
-        en: "No worries at all! Are you caught in traffic?",
-        zh: "完全没事！是被堵在早高峰路上了吗？",
-        phoneticHtml: "No worries <span class='linking'>at‿all</span>! Are you <span class='linking'>caught‿in</span> traffic?",
-        linkingNotes: ["at all 连读 /æ-tɔːl/，caught in 连读 /kɔː-tɪn/。"]
+        "id": "en3_d2",
+        "speaker": "B",
+        "speakerName": "Sarah",
+        "role": "团队主管",
+        "en": "No worries at all! Are you caught in traffic?",
+        "zh": "完全没事！是被堵在早高峰路上了吗？",
+        "phoneticHtml": "No worries <span class='linking'>at‿all</span>! Are you <span class='linking'>caught‿in</span> traffic?",
+        "linkingNotes": [
+          "at all 连读 /æ-tɔːl/，caught in 连读 /kɔː-tɪn/。"
+        ]
       },
       {
-        id: "en3_d3",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "员工 (你)",
-        en: "Yeah, my bus got stuck. Please go ahead without me.",
-        zh: "是的，公交车动不了了。请你们先开始开会，不用等我。",
-        phoneticHtml: "Yeah, my bus <span class='linking'>got‿stuck</span>. Please go ahead <span class='linking'>without‿me</span>.",
-        linkingNotes: ["got stuck 中 t 失爆。"]
+        "id": "en3_d3",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "员工 (你)",
+        "en": "Yeah, my bus got stuck. Please go ahead without me.",
+        "zh": "是的，公交车动不了了。请你们先开始开会，不用等我。",
+        "phoneticHtml": "Yeah, my bus <span class='linking'>got‿stuck</span>. Please go ahead <span class='linking'>without‿me</span>.",
+        "linkingNotes": [
+          "got stuck 中 t 失爆。"
+        ]
       },
       {
-        id: "en3_d4",
-        speaker: "B",
-        speakerName: "Sarah",
-        role: "团队主管",
-        en: "Will do. Take your time and stay safe!",
-        zh: "好的收到。安全第一，路上别着急！",
-        phoneticHtml: "Will do. Take your time <span class='linking'>and‿stay</span> safe!",
-        linkingNotes: ["and 弱读为 /ən/。"]
+        "id": "en3_d4",
+        "speaker": "B",
+        "speakerName": "Sarah",
+        "role": "团队主管",
+        "en": "Will do. Take your time and stay safe!",
+        "zh": "好的收到。安全第一，路上别着急！",
+        "phoneticHtml": "Will do. Take your time <span class='linking'>and‿stay</span> safe!",
+        "linkingNotes": [
+          "and 弱读为 /ən/。"
+        ]
       }
     ],
-    rolePlay: {
-      userRole: "A",
-      targetRoleName: "Alex (员工)",
-      description: "因堵车打电话向主管请假说明，保持专业、得体与从容。"
-    }
+    "rolePlay": {
+      "userRole": "A",
+      "targetRoleName": "Alex (员工)",
+      "description": "因堵车打电话向主管请假说明，保持专业、得体与从容。"
+    },
+    "vocabulary": [
+      {
+        "id": "en3_v1",
+        "word": "traffic",
+        "phonetic": "/ˈtræfɪk/",
+        "pos": "n.",
+        "meaning": "交通，车流",
+        "example": "Are you caught in traffic?",
+        "exampleZh": "你路上堵车了吗？",
+        "audio": "audio/en_vocab/en3_v1.mp3"
+      },
+      {
+        "id": "en3_v2",
+        "word": "stuck",
+        "phonetic": "/stʌk/",
+        "pos": "adj.",
+        "meaning": "被卡住的，困住的",
+        "example": "Yeah, my bus got stuck.",
+        "exampleZh": "对啊，我坐的公交车被堵住了。",
+        "audio": "audio/en_vocab/en3_v2.mp3"
+      },
+      {
+        "id": "en3_v3",
+        "word": "ahead",
+        "phonetic": "/əˈhed/",
+        "pos": "adv.",
+        "meaning": "往前，先行，提前",
+        "example": "Please go ahead without me.",
+        "exampleZh": "你们先开吧，不用等我。",
+        "audio": "audio/en_vocab/en3_v3.mp3"
+      },
+      {
+        "id": "en3_v4",
+        "word": "safe",
+        "phonetic": "/seɪf/",
+        "pos": "adj.",
+        "meaning": "安全的，平安的",
+        "example": "Take your time and stay safe!",
+        "exampleZh": "慢慢来，路上注意安全！",
+        "audio": "audio/en_vocab/en3_v4.mp3"
+      },
+      {
+        "id": "en3_v5",
+        "word": "late",
+        "phonetic": "/leɪt/",
+        "pos": "adj.",
+        "meaning": "迟到的，晚的",
+        "example": "I'm running a bit late.",
+        "exampleZh": "我稍微有点赶不上时间了。",
+        "audio": "audio/en_vocab/en3_v5.mp3"
+      },
+      {
+        "id": "en3_v6",
+        "word": "worries",
+        "phonetic": "/ˈwɜːriz/",
+        "pos": "n.",
+        "meaning": "担忧，顾虑 (No worries 别客气/没关系)",
+        "example": "No worries at all!",
+        "exampleZh": "完全没关系！",
+        "audio": "audio/en_vocab/en3_v6.mp3"
+      }
+    ]
   },
   {
-    id: "en4",
-    level: 1,
-    title: "Quick Lunch Order",
-    titleZh: "轻食快餐快捷点选",
-    situation: "在沙拉百吉饼快餐店点选套餐与饮品组合。",
-    icon: "🥪",
-    tags: ["午餐就餐", "偏好选择", "辅元连读"],
-    chunks: [
+    "id": "en4",
+    "level": 1,
+    "title": "Quick Lunch Order",
+    "titleZh": "轻食快餐快捷点选",
+    "situation": "在沙拉百吉饼快餐店点选套餐与饮品组合。",
+    "icon": "🥪",
+    "tags": [
+      "午餐就餐",
+      "偏好选择",
+      "辅元连读"
+    ],
+    "chunks": [
       {
-        id: "en4_c1",
-        text: "I'll go with...",
-        meaning: "我选…… / 我要……（口语决定用语）",
-        phonetic: "/aɪl ɡoʊ wɪð/",
-        usageTip: "在若干备选菜单项中做出决定的地道表达。",
-        warmupQuiz: {
-          prompt: "组装短语：“我要鸡肉沙拉”",
-          tokens: ["chicken salad", "I'll go", "with the"],
-          correct: ["I'll go", "with the", "chicken salad"]
+        "id": "en4_c1",
+        "text": "I'll go with...",
+        "meaning": "我选…… / 我要……（口语决定用语）",
+        "phonetic": "/aɪl ɡoʊ wɪð/",
+        "usageTip": "在若干备选菜单项中做出决定的地道表达。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“我要鸡肉沙拉”",
+          "tokens": [
+            "chicken salad",
+            "I'll go",
+            "with the"
+          ],
+          "correct": [
+            "I'll go",
+            "with the",
+            "chicken salad"
+          ]
         }
       },
       {
-        id: "en4_c2",
-        text: "Does it come with...",
-        meaning: "这个套餐附带……吗？",
-        phonetic: "/dʌz ɪt kʌm wɪð/",
-        usageTip: "询问附赠配菜、饮品或酱料时使用。",
-        warmupQuiz: {
-          prompt: "组装短语：“附带饮品吗？”",
-          tokens: ["a drink?", "come with", "Does it"],
-          correct: ["Does it", "come with", "a drink?"]
+        "id": "en4_c2",
+        "text": "Does it come with...",
+        "meaning": "这个套餐附带……吗？",
+        "phonetic": "/dʌz ɪt kʌm wɪð/",
+        "usageTip": "询问附赠配菜、饮品或酱料时使用。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“附带饮品吗？”",
+          "tokens": [
+            "a drink?",
+            "come with",
+            "Does it"
+          ],
+          "correct": [
+            "Does it",
+            "come with",
+            "a drink?"
+          ]
         }
       },
       {
-        id: "en4_c3",
-        text: "Keep the change",
-        meaning: "零钱不用找了",
-        phonetic: "/kiːp ðə tʃeɪndʒ/",
-        usageTip: "现金支付或留给服务人员小费时的经典表达。",
-        warmupQuiz: {
-          prompt: "组装短语：“不用找零了”",
-          tokens: ["the change", "Keep"],
-          correct: ["Keep", "the change"]
+        "id": "en4_c3",
+        "text": "Keep the change",
+        "meaning": "零钱不用找了",
+        "phonetic": "/kiːp ðə tʃeɪndʒ/",
+        "usageTip": "现金支付或留给服务人员小费时的经典表达。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“不用找零了”",
+          "tokens": [
+            "the change",
+            "Keep"
+          ],
+          "correct": [
+            "Keep",
+            "the change"
+          ]
         }
       }
     ],
-    dialogue: [
+    "dialogue": [
       {
-        id: "en4_d1",
-        speaker: "B",
-        speakerName: "Clerk",
-        role: "点餐店员",
-        en: "Hi there! What can I get for your lunch today?",
-        zh: "嗨！今天午餐想吃点什么？",
-        phoneticHtml: "Hi there! What can <span class='linking'>I‿get</span> for your lunch today?",
-        linkingNotes: ["What can I 连贯发音。"]
+        "id": "en4_d1",
+        "speaker": "B",
+        "speakerName": "Clerk",
+        "role": "点餐店员",
+        "en": "Hi there! What can I get for your lunch today?",
+        "zh": "嗨！今天午餐想吃点什么？",
+        "phoneticHtml": "Hi there! What can <span class='linking'>I‿get</span> for your lunch today?",
+        "linkingNotes": [
+          "What can I 连贯发音。"
+        ]
       },
       {
-        id: "en4_d2",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "顾客 (你)",
-        en: "I'll go with the turkey sandwich combo.",
-        zh: "我选火鸡三明治套餐吧。",
-        phoneticHtml: "<span class='linking'>I'll‿go</span> with the turkey sandwich combo.",
-        linkingNotes: ["I'll go 平顺过渡。"]
+        "id": "en4_d2",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "顾客 (你)",
+        "en": "I'll go with the turkey sandwich combo.",
+        "zh": "我选火鸡三明治套餐吧。",
+        "phoneticHtml": "<span class='linking'>I'll‿go</span> with the turkey sandwich combo.",
+        "linkingNotes": [
+          "I'll go 平顺过渡。"
+        ]
       },
       {
-        id: "en4_d3",
-        speaker: "B",
-        speakerName: "Clerk",
-        role: "点餐店员",
-        en: "Great pick! Chips or an apple on the side?",
-        zh: "很棒的选择！配菜选薯片还是苹果？",
-        phoneticHtml: "Great pick! Chips <span class='linking'>or‿an</span> apple <span class='linking'>on‿the</span> side?",
-        linkingNotes: ["or an 连读 /ɔː-rən/。"]
+        "id": "en4_d3",
+        "speaker": "B",
+        "speakerName": "Clerk",
+        "role": "点餐店员",
+        "en": "Great pick! Chips or an apple on the side?",
+        "zh": "很棒的选择！配菜选薯片还是苹果？",
+        "phoneticHtml": "Great pick! Chips <span class='linking'>or‿an</span> apple <span class='linking'>on‿the</span> side?",
+        "linkingNotes": [
+          "or an 连读 /ɔː-rən/。"
+        ]
       },
       {
-        id: "en4_d4",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "顾客 (你)",
-        en: "Chips, please. Here is ten dollars, keep the change!",
-        zh: "请给我薯片。给你十美元，零钱不用找了！",
-        phoneticHtml: "Chips, please. <span class='linking'>Here‿is</span> ten dollars, <span class='linking'>keep‿the</span> change!",
-        linkingNotes: ["Here is 连读 /hɪə-rɪz/。"]
+        "id": "en4_d4",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "顾客 (你)",
+        "en": "Chips, please. Here is ten dollars, keep the change!",
+        "zh": "请给我薯片。给你十美元，零钱不用找了！",
+        "phoneticHtml": "Chips, please. <span class='linking'>Here‿is</span> ten dollars, <span class='linking'>keep‿the</span> change!",
+        "linkingNotes": [
+          "Here is 连读 /hɪə-rɪz/。"
+        ]
       }
     ],
-    rolePlay: {
-      userRole: "A",
-      targetRoleName: "Alex (顾客)",
-      description: "在快餐店完成点餐、配菜二选一确认并完成结账。"
-    }
+    "rolePlay": {
+      "userRole": "A",
+      "targetRoleName": "Alex (顾客)",
+      "description": "在快餐店完成点餐、配菜二选一确认并完成结账。"
+    },
+    "vocabulary": [
+      {
+        "id": "en4_v1",
+        "word": "sandwich",
+        "phonetic": "/ˈsænwɪtʃ/",
+        "pos": "n.",
+        "meaning": "三明治",
+        "example": "I'll go with the turkey sandwich combo.",
+        "exampleZh": "我要火鸡三明治套餐。",
+        "audio": "audio/en_vocab/en4_v1.mp3"
+      },
+      {
+        "id": "en4_v2",
+        "word": "combo",
+        "phonetic": "/ˈkɑːmboʊ/",
+        "pos": "n.",
+        "meaning": "套餐，组合餐",
+        "example": "I'll go with the turkey sandwich combo.",
+        "exampleZh": "我要火鸡三明治套餐。",
+        "audio": "audio/en_vocab/en4_v2.mp3"
+      },
+      {
+        "id": "en4_v3",
+        "word": "chips",
+        "phonetic": "/tʃɪps/",
+        "pos": "n.",
+        "meaning": "薯片，炸薯条",
+        "example": "Chips or an apple on the side?",
+        "exampleZh": "配菜要薯片还是苹果？",
+        "audio": "audio/en_vocab/en4_v3.mp3"
+      },
+      {
+        "id": "en4_v4",
+        "word": "change",
+        "phonetic": "/tʃeɪndʒ/",
+        "pos": "n.",
+        "meaning": "零钱，找零",
+        "example": "Here is ten dollars, keep the change!",
+        "exampleZh": "这是十美元，不用找零啦！",
+        "audio": "audio/en_vocab/en4_v4.mp3"
+      },
+      {
+        "id": "en4_v5",
+        "word": "turkey",
+        "phonetic": "/ˈtɜːrki/",
+        "pos": "n.",
+        "meaning": "火鸡肉",
+        "example": "I'll go with the turkey sandwich combo.",
+        "exampleZh": "我要火鸡三明治套餐。",
+        "audio": "audio/en_vocab/en4_v5.mp3"
+      },
+      {
+        "id": "en4_v6",
+        "word": "pick",
+        "phonetic": "/pɪk/",
+        "pos": "n.",
+        "meaning": "选择，挑选出的物品",
+        "example": "Great pick!",
+        "exampleZh": "选得好！/ 眼光不错！",
+        "audio": "audio/en_vocab/en4_v6.mp3"
+      }
+    ]
   },
   {
-    id: "en5",
-    level: 2,
-    title: "Supermarket Aisle",
-    titleZh: "超市货架导购与寻物",
-    situation: "在大型超市寻找特定食材调料，向理货店员求助。",
-    icon: "🛒",
-    tags: ["生活购物", "位置询问", "常用句型"],
-    chunks: [
+    "id": "en5",
+    "level": 2,
+    "title": "Supermarket Aisle",
+    "titleZh": "超市货架导购与寻物",
+    "situation": "在大型超市寻找特定食材调料，向理货店员求助。",
+    "icon": "🛒",
+    "tags": [
+      "生活购物",
+      "位置询问",
+      "常用句型"
+    ],
+    "chunks": [
       {
-        id: "en5_c1",
-        text: "Where can I find...",
-        meaning: "请问……在哪个区域/货架？",
-        phonetic: "/wer kən aɪ faɪnd/",
-        usageTip: "超市、书店等实体店寻物最地道的句式。",
-        warmupQuiz: {
-          prompt: "组装短语：“橄榄油在哪里？”",
-          tokens: ["olive oil?", "Where can I", "find the"],
-          correct: ["Where can I", "find the", "olive oil?"]
+        "id": "en5_c1",
+        "text": "Where can I find...",
+        "meaning": "请问……在哪个区域/货架？",
+        "phonetic": "/wer kən aɪ faɪnd/",
+        "usageTip": "超市、书店等实体店寻物最地道的句式。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“橄榄油在哪里？”",
+          "tokens": [
+            "olive oil?",
+            "Where can I",
+            "find the"
+          ],
+          "correct": [
+            "Where can I",
+            "find the",
+            "olive oil?"
+          ]
         }
       },
       {
-        id: "en5_c2",
-        text: "Out of stock",
-        meaning: "缺货 / 卖光了",
-        phonetic: "/aʊt əv stɑːk/",
-        usageTip: "零售业最高频商业词块，out of 弱读连读 /aʊ-təv/。",
-        warmupQuiz: {
-          prompt: "组装短语：“缺货了”",
-          tokens: ["stock", "of", "Out"],
-          correct: ["Out", "of", "stock"]
+        "id": "en5_c2",
+        "text": "Out of stock",
+        "meaning": "缺货 / 卖光了",
+        "phonetic": "/aʊt əv stɑːk/",
+        "usageTip": "零售业最高频商业词块，out of 弱读连读 /aʊ-təv/。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“缺货了”",
+          "tokens": [
+            "stock",
+            "of",
+            "Out"
+          ],
+          "correct": [
+            "Out",
+            "of",
+            "stock"
+          ]
         }
       },
       {
-        id: "en5_c3",
-        text: "Aisle number...",
-        meaning: "第……排货架通道",
-        phonetic: "/aɪl ˈnʌmbər/",
-        usageTip: "aisle 中 s 不发音，读作 /aɪl/。",
-        warmupQuiz: {
-          prompt: "组装短语：“三号通道”",
-          tokens: ["three", "number", "Aisle"],
-          correct: ["Aisle", "number", "three"]
+        "id": "en5_c3",
+        "text": "Aisle number...",
+        "meaning": "第……排货架通道",
+        "phonetic": "/aɪl ˈnʌmbər/",
+        "usageTip": "aisle 中 s 不发音，读作 /aɪl/。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“三号通道”",
+          "tokens": [
+            "three",
+            "number",
+            "Aisle"
+          ],
+          "correct": [
+            "Aisle",
+            "number",
+            "three"
+          ]
         }
       }
     ],
-    dialogue: [
+    "dialogue": [
       {
-        id: "en5_d1",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "顾客 (你)",
-        en: "Excuse me, where can I find olive oil?",
-        zh: "打扰一下，请问橄榄油放在哪排货架？",
-        phoneticHtml: "Excuse me, <span class='linking'>where‿can‿I</span> find olive oil?",
-        linkingNotes: ["where can I 顺畅连缀。"]
+        "id": "en5_d1",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "顾客 (你)",
+        "en": "Excuse me, where can I find olive oil?",
+        "zh": "打扰一下，请问橄榄油放在哪排货架？",
+        "phoneticHtml": "Excuse me, <span class='linking'>where‿can‿I</span> find olive oil?",
+        "linkingNotes": [
+          "where can I 顺畅连缀。"
+        ]
       },
       {
-        id: "en5_d2",
-        speaker: "B",
-        speakerName: "Staff",
-        role: "理货员",
-        en: "It's in aisle four, right next to the vinegar.",
-        zh: "在四号通道，就在醋的旁边。",
-        phoneticHtml: "<span class='linking'>It's‿in</span> aisle four, right <span class='linking'>next‿to</span> the vinegar.",
-        linkingNotes: ["It's in 连读 /ɪt-sɪn/，next to 失去前一个爆破。"]
+        "id": "en5_d2",
+        "speaker": "B",
+        "speakerName": "Staff",
+        "role": "理货员",
+        "en": "It's in aisle four, right next to the vinegar.",
+        "zh": "在四号通道，就在醋的旁边。",
+        "phoneticHtml": "<span class='linking'>It's‿in</span> aisle four, right <span class='linking'>next‿to</span> the vinegar.",
+        "linkingNotes": [
+          "It's in 连读 /ɪt-sɪn/，next to 失去前一个爆破。"
+        ]
       },
       {
-        id: "en5_d3",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "顾客 (你)",
-        en: "Thanks! And are organic eggs in the back?",
-        zh: "谢谢！还有有机鸡蛋是在最里面的冷藏区吗？",
-        phoneticHtml: "Thanks! <span class='linking'>And‿are</span> organic <span class='linking'>eggs‿in</span> the back?",
-        linkingNotes: ["eggs in 连读 /eɡ-zɪn/。"]
+        "id": "en5_d3",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "顾客 (你)",
+        "en": "Thanks! And are organic eggs in the back?",
+        "zh": "谢谢！还有有机鸡蛋是在最里面的冷藏区吗？",
+        "phoneticHtml": "Thanks! <span class='linking'>And‿are</span> organic <span class='linking'>eggs‿in</span> the back?",
+        "linkingNotes": [
+          "eggs in 连读 /eɡ-zɪn/。"
+        ]
       },
       {
-        id: "en5_d4",
-        speaker: "B",
-        speakerName: "Staff",
-        role: "理货员",
-        en: "Yes, but they are currently out of stock. A new batch arrives tomorrow.",
-        zh: "是的，不过目前刚好卖断货了。明天会到一批新的。",
-        phoneticHtml: "Yes, but they are currently <span class='linking'>out‿of</span> stock. A new batch arrives tomorrow.",
-        linkingNotes: ["out of 连读为 /aʊ-təv/ 或 /aʊ-dəv/。"]
+        "id": "en5_d4",
+        "speaker": "B",
+        "speakerName": "Staff",
+        "role": "理货员",
+        "en": "Yes, but they are currently out of stock. A new batch arrives tomorrow.",
+        "zh": "是的，不过目前刚好卖断货了。明天会到一批新的。",
+        "phoneticHtml": "Yes, but they are currently <span class='linking'>out‿of</span> stock. A new batch arrives tomorrow.",
+        "linkingNotes": [
+          "out of 连读为 /aʊ-təv/ 或 /aʊ-dəv/。"
+        ]
       }
     ],
-    rolePlay: {
-      userRole: "A",
-      targetRoleName: "Alex (顾客)",
-      description: "向超市店员询问货架具体位置并确认库存状态。"
-    }
+    "rolePlay": {
+      "userRole": "A",
+      "targetRoleName": "Alex (顾客)",
+      "description": "向超市店员询问货架具体位置并确认库存状态。"
+    },
+    "vocabulary": [
+      {
+        "id": "en5_v1",
+        "word": "aisle",
+        "phonetic": "/aɪl/",
+        "pos": "n.",
+        "meaning": "过道，货架走廊",
+        "example": "It's in aisle four, right next to the vinegar.",
+        "exampleZh": "在4号通道，就在醋的旁边。",
+        "audio": "audio/en_vocab/en5_v1.mp3"
+      },
+      {
+        "id": "en5_v2",
+        "word": "organic",
+        "phonetic": "/ɔːrˈɡænɪk/",
+        "pos": "adj.",
+        "meaning": "有机的，纯天然的",
+        "example": "And are organic eggs in the back?",
+        "exampleZh": "请问有机鸡蛋在后排吗？",
+        "audio": "audio/en_vocab/en5_v2.mp3"
+      },
+      {
+        "id": "en5_v3",
+        "word": "stock",
+        "phonetic": "/stɑːk/",
+        "pos": "n.",
+        "meaning": "存货，库存 (out of stock 缺货)",
+        "example": "They are currently out of stock.",
+        "exampleZh": "目前已经卖完了（缺货）。",
+        "audio": "audio/en_vocab/en5_v3.mp3"
+      },
+      {
+        "id": "en5_v4",
+        "word": "batch",
+        "phonetic": "/bætʃ/",
+        "pos": "n.",
+        "meaning": "一批，批次",
+        "example": "A new batch arrives tomorrow.",
+        "exampleZh": "明天会新到一批。",
+        "audio": "audio/en_vocab/en5_v4.mp3"
+      },
+      {
+        "id": "en5_v5",
+        "word": "vinegar",
+        "phonetic": "/ˈvɪnɪɡər/",
+        "pos": "n.",
+        "meaning": "食醋",
+        "example": "Right next to the vinegar.",
+        "exampleZh": "就在食醋的旁边。",
+        "audio": "audio/en_vocab/en5_v5.mp3"
+      },
+      {
+        "id": "en5_v6",
+        "word": "arrive",
+        "phonetic": "/əˈraɪv/",
+        "pos": "v.",
+        "meaning": "到达，到货",
+        "example": "A new batch arrives tomorrow.",
+        "exampleZh": "新的一批货明天送到。",
+        "audio": "audio/en_vocab/en5_v6.mp3"
+      }
+    ]
   },
   {
-    id: "en6",
-    level: 2,
-    title: "Weekend Catch-up",
-    titleZh: "周末邀约与看展协商",
-    situation: "与好友商定周末日程，提议去看新开的美术展览。",
-    icon: "🎨",
-    tags: ["社交闲聊", "时间协商", "口语同化"],
-    chunks: [
+    "id": "en6",
+    "level": 2,
+    "title": "Weekend Catch-up",
+    "titleZh": "周末邀约与看展协商",
+    "situation": "与好友商定周末日程，提议去看新开的美术展览。",
+    "icon": "🎨",
+    "tags": [
+      "社交闲聊",
+      "时间协商",
+      "口语同化"
+    ],
+    "chunks": [
       {
-        id: "en6_c1",
-        text: "Are you up for...",
-        meaning: "你感兴趣/想一起去……吗？",
-        phonetic: "/ɑːr juː ʌp fər/",
-        usageTip: "非正式社交中询问意愿极高频的句式。",
-        warmupQuiz: {
-          prompt: "组装短语：“你想看电影吗？”",
-          tokens: ["a movie?", "up for", "Are you"],
-          correct: ["Are you", "up for", "a movie?"]
+        "id": "en6_c1",
+        "text": "Are you up for...",
+        "meaning": "你感兴趣/想一起去……吗？",
+        "phonetic": "/ɑːr juː ʌp fər/",
+        "usageTip": "非正式社交中询问意愿极高频的句式。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“你想看电影吗？”",
+          "tokens": [
+            "a movie?",
+            "up for",
+            "Are you"
+          ],
+          "correct": [
+            "Are you",
+            "up for",
+            "a movie?"
+          ]
         }
       },
       {
-        id: "en6_c2",
-        text: "Sounds like a plan",
-        meaning: "听起来很棒，就这么定了！",
-        phonetic: "/saʊndz laɪk ə plæn/",
-        usageTip: "口语中赞同提议的万能拍板句。",
-        warmupQuiz: {
-          prompt: "组装短语：“听起来不错，就这么定”",
-          tokens: ["a plan", "like", "Sounds"],
-          correct: ["Sounds", "like", "a plan"]
+        "id": "en6_c2",
+        "text": "Sounds like a plan",
+        "meaning": "听起来很棒，就这么定了！",
+        "phonetic": "/saʊndz laɪk ə plæn/",
+        "usageTip": "口语中赞同提议的万能拍板句。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“听起来不错，就这么定”",
+          "tokens": [
+            "a plan",
+            "like",
+            "Sounds"
+          ],
+          "correct": [
+            "Sounds",
+            "like",
+            "a plan"
+          ]
         }
       },
       {
-        id: "en6_c3",
-        text: "How about...",
-        meaning: "那……怎么样？（提议时间地点）",
-        phonetic: "/haʊ əˈbaʊt/",
-        usageTip: "推进讨论、提出备选时间的过渡词块。",
-        warmupQuiz: {
-          prompt: "组装短语：“周六下午怎么样？”",
-          tokens: ["Saturday afternoon?", "How about"],
-          correct: ["How about", "Saturday afternoon?"]
+        "id": "en6_c3",
+        "text": "How about...",
+        "meaning": "那……怎么样？（提议时间地点）",
+        "phonetic": "/haʊ əˈbaʊt/",
+        "usageTip": "推进讨论、提出备选时间的过渡词块。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“周六下午怎么样？”",
+          "tokens": [
+            "Saturday afternoon?",
+            "How about"
+          ],
+          "correct": [
+            "How about",
+            "Saturday afternoon?"
+          ]
         }
       }
     ],
-    dialogue: [
+    "dialogue": [
       {
-        id: "en6_d1",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "你",
-        en: "Hey Emma, are you up for that modern art exhibition this Saturday?",
-        zh: "嘿 Emma，这周六有兴趣一起去看那个现代艺术展吗？",
-        phoneticHtml: "Hey Emma, are you <span class='linking'>up‿for</span> that modern art exhibition this Saturday?",
-        linkingNotes: ["up for 连读为 /ʌp-fər/。"]
+        "id": "en6_d1",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "你",
+        "en": "Hey Emma, are you up for that modern art exhibition this Saturday?",
+        "zh": "嘿 Emma，这周六有兴趣一起去看那个现代艺术展吗？",
+        "phoneticHtml": "Hey Emma, are you <span class='linking'>up‿for</span> that modern art exhibition this Saturday?",
+        "linkingNotes": [
+          "up for 连读为 /ʌp-fər/。"
+        ]
       },
       {
-        id: "en6_d2",
-        speaker: "B",
-        speakerName: "Emma",
-        role: "好友",
-        en: "I'd love to! What time works best for you?",
-        zh: "太想去了！你几点最方便？",
-        phoneticHtml: "<span class='linking'>I'd‿love</span> to! <span class='linking'>What‿time</span> works best for you?",
-        linkingNotes: ["What time 中 t 与 t 重叠，只读一次。"]
+        "id": "en6_d2",
+        "speaker": "B",
+        "speakerName": "Emma",
+        "role": "好友",
+        "en": "I'd love to! What time works best for you?",
+        "zh": "太想去了！你几点最方便？",
+        "phoneticHtml": "<span class='linking'>I'd‿love</span> to! <span class='linking'>What‿time</span> works best for you?",
+        "linkingNotes": [
+          "What time 中 t 与 t 重叠，只读一次。"
+        ]
       },
       {
-        id: "en6_d3",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "你",
-        en: "How about two in the afternoon? We could grab lunch before that.",
-        zh: "下午两点怎么样？我们还可以顺便在展前吃个午饭。",
-        phoneticHtml: "<span class='linking'>How‿about</span> two in the afternoon? We could <span class='linking'>grab‿lunch</span> before that.",
-        linkingNotes: ["How about 连读 /haʊ-wə-baʊt/。"]
+        "id": "en6_d3",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "你",
+        "en": "How about two in the afternoon? We could grab lunch before that.",
+        "zh": "下午两点怎么样？我们还可以顺便在展前吃个午饭。",
+        "phoneticHtml": "<span class='linking'>How‿about</span> two in the afternoon? We could <span class='linking'>grab‿lunch</span> before that.",
+        "linkingNotes": [
+          "How about 连读 /haʊ-wə-baʊt/。"
+        ]
       },
       {
-        id: "en6_d4",
-        speaker: "B",
-        speakerName: "Emma",
-        role: "好友",
-        en: "Sounds like a plan! Let's meet in front of the gallery.",
-        zh: "就这么愉快地定了！我们在美术馆正门口碰头吧。",
-        phoneticHtml: "Sounds <span class='linking'>like‿a</span> plan! Let's meet in front of the gallery.",
-        linkingNotes: ["like a 连读 /laɪ-kə/。"]
+        "id": "en6_d4",
+        "speaker": "B",
+        "speakerName": "Emma",
+        "role": "好友",
+        "en": "Sounds like a plan! Let's meet in front of the gallery.",
+        "zh": "就这么愉快地定了！我们在美术馆正门口碰头吧。",
+        "phoneticHtml": "Sounds <span class='linking'>like‿a</span> plan! Let's meet in front of the gallery.",
+        "linkingNotes": [
+          "like a 连读 /laɪ-kə/。"
+        ]
       }
     ],
-    rolePlay: {
-      userRole: "A",
-      targetRoleName: "Alex",
-      description: "向好友发出看展邀约，商榷集合时间并达成共识。"
-    }
+    "rolePlay": {
+      "userRole": "A",
+      "targetRoleName": "Alex",
+      "description": "向好友发出看展邀约，商榷集合时间并达成共识。"
+    },
+    "vocabulary": [
+      {
+        "id": "en6_v1",
+        "word": "exhibition",
+        "phonetic": "/ˌeksɪˈbɪʃn/",
+        "pos": "n.",
+        "meaning": "展览，展出",
+        "example": "Are you up for that modern art exhibition this Saturday?",
+        "exampleZh": "这周六有兴趣去看看那个现代艺术展吗？",
+        "audio": "audio/en_vocab/en6_v1.mp3"
+      },
+      {
+        "id": "en6_v2",
+        "word": "modern",
+        "phonetic": "/ˈmɑːdərn/",
+        "pos": "adj.",
+        "meaning": "现代的，摩登的",
+        "example": "Are you up for that modern art exhibition this Saturday?",
+        "exampleZh": "这周六有兴趣去看看那个现代艺术展吗？",
+        "audio": "audio/en_vocab/en6_v2.mp3"
+      },
+      {
+        "id": "en6_v3",
+        "word": "gallery",
+        "phonetic": "/ˈɡæləri/",
+        "pos": "n.",
+        "meaning": "画廊，艺术展馆",
+        "example": "Let's meet in front of the gallery.",
+        "exampleZh": "咱们在美术馆门口碰头吧。",
+        "audio": "audio/en_vocab/en6_v3.mp3"
+      },
+      {
+        "id": "en6_v4",
+        "word": "grab",
+        "phonetic": "/ɡræb/",
+        "pos": "v.",
+        "meaning": "抓取；(口语)顺便吃/买",
+        "example": "We could grab lunch before that.",
+        "exampleZh": "在那之前我们还可以顺便吃个午饭。",
+        "audio": "audio/en_vocab/en6_v4.mp3"
+      },
+      {
+        "id": "en6_v5",
+        "word": "afternoon",
+        "phonetic": "/ˌæftərˈnuːn/",
+        "pos": "n.",
+        "meaning": "下午",
+        "example": "How about two in the afternoon?",
+        "exampleZh": "下午两点怎么样？",
+        "audio": "audio/en_vocab/en6_v5.mp3"
+      },
+      {
+        "id": "en6_v6",
+        "word": "plan",
+        "phonetic": "/plæn/",
+        "pos": "n.",
+        "meaning": "计划 (Sounds like a plan 好主意/就这么定)",
+        "example": "Sounds like a plan!",
+        "exampleZh": "听起来是个好主意！",
+        "audio": "audio/en_vocab/en6_v6.mp3"
+      }
+    ]
   },
   {
-    id: "en7",
-    level: 2,
-    title: "Hotel Check-in",
-    titleZh: "酒店入住与前台咨询",
-    situation: "旅行抵达酒店前台办理入住，领取房卡并询问早餐与WiFi。",
-    icon: "🏨",
-    tags: ["海外差旅", "酒店沟通", "核心服务"],
-    chunks: [
+    "id": "en7",
+    "level": 2,
+    "title": "Hotel Check-in",
+    "titleZh": "酒店入住与前台咨询",
+    "situation": "旅行抵达酒店前台办理入住，领取房卡并询问早餐与WiFi。",
+    "icon": "🏨",
+    "tags": [
+      "海外差旅",
+      "酒店沟通",
+      "核心服务"
+    ],
+    "chunks": [
       {
-        id: "en7_c1",
-        text: "Checking in under...",
-        meaning: "办理入住，预订名字是……",
-        phonetic: "/ˈtʃekɪŋ ɪn ˈʌndər/",
-        usageTip: "向酒店前台自报家门的标准商务与旅行句型。",
-        warmupQuiz: {
-          prompt: "组装短语：“我用 Alex 的名字办理入住”",
-          tokens: ["under Alex", "Checking in", "I'm"],
-          correct: ["I'm", "Checking in", "under Alex"]
+        "id": "en7_c1",
+        "text": "Checking in under...",
+        "meaning": "办理入住，预订名字是……",
+        "phonetic": "/ˈtʃekɪŋ ɪn ˈʌndər/",
+        "usageTip": "向酒店前台自报家门的标准商务与旅行句型。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“我用 Alex 的名字办理入住”",
+          "tokens": [
+            "under Alex",
+            "Checking in",
+            "I'm"
+          ],
+          "correct": [
+            "I'm",
+            "Checking in",
+            "under Alex"
+          ]
         }
       },
       {
-        id: "en7_c2",
-        text: "What time is breakfast served?",
-        meaning: "早餐几点供应？",
-        phonetic: "/wɑːt taɪm ɪz ˈbrekfəst sɜːrvd/",
-        usageTip: "入住酒店核心问题，词块整体记忆。",
-        warmupQuiz: {
-          prompt: "组装短语：“早餐几点供应？”",
-          tokens: ["breakfast served?", "is", "What time"],
-          correct: ["What time", "is", "breakfast served?"]
+        "id": "en7_c2",
+        "text": "What time is breakfast served?",
+        "meaning": "早餐几点供应？",
+        "phonetic": "/wɑːt taɪm ɪz ˈbrekfəst sɜːrvd/",
+        "usageTip": "入住酒店核心问题，词块整体记忆。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“早餐几点供应？”",
+          "tokens": [
+            "breakfast served?",
+            "is",
+            "What time"
+          ],
+          "correct": [
+            "What time",
+            "is",
+            "breakfast served?"
+          ]
         }
       },
       {
-        id: "en7_c3",
-        text: "Enjoy your stay!",
-        meaning: "祝您入住愉快！",
-        phonetic: "/ɪnˈdʒɔɪ jər steɪ/",
-        usageTip: "酒店服务人员最标牌的送客祝福语。",
-        warmupQuiz: {
-          prompt: "组装短语：“祝您入住愉快”",
-          tokens: ["your stay!", "Enjoy"],
-          correct: ["Enjoy", "your stay!"]
+        "id": "en7_c3",
+        "text": "Enjoy your stay!",
+        "meaning": "祝您入住愉快！",
+        "phonetic": "/ɪnˈdʒɔɪ jər steɪ/",
+        "usageTip": "酒店服务人员最标牌的送客祝福语。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“祝您入住愉快”",
+          "tokens": [
+            "your stay!",
+            "Enjoy"
+          ],
+          "correct": [
+            "Enjoy",
+            "your stay!"
+          ]
         }
       }
     ],
-    dialogue: [
+    "dialogue": [
       {
-        id: "en7_d1",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "房客 (你)",
-        en: "Good afternoon. I'm checking in under Alex Taylor.",
-        zh: "下午好。我办理入住，预订名字是 Alex Taylor。",
-        phoneticHtml: "Good afternoon. I'm <span class='linking'>checking‿in‿under</span> Alex Taylor.",
-        linkingNotes: ["checking in under 连续连读 /tʃekɪŋ-ɪ-nʌndər/。"]
+        "id": "en7_d1",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "房客 (你)",
+        "en": "Good afternoon. I'm checking in under Alex Taylor.",
+        "zh": "下午好。我办理入住，预订名字是 Alex Taylor。",
+        "phoneticHtml": "Good afternoon. I'm <span class='linking'>checking‿in‿under</span> Alex Taylor.",
+        "linkingNotes": [
+          "checking in under 连续连读 /tʃekɪŋ-ɪ-nʌndər/。"
+        ]
       },
       {
-        id: "en7_d2",
-        speaker: "B",
-        speakerName: "Front Desk",
-        role: "前台接待",
-        en: "Welcome! Here is your keycard for room 508 on the top floor.",
-        zh: "欢迎光临！这是您的房卡，顶层508房间。",
-        phoneticHtml: "Welcome! <span class='linking'>Here‿is</span> your keycard for room 508 <span class='linking'>on‿the</span> top floor.",
-        linkingNotes: ["Here is 连读。"]
+        "id": "en7_d2",
+        "speaker": "B",
+        "speakerName": "Front Desk",
+        "role": "前台接待",
+        "en": "Welcome! Here is your keycard for room 508 on the top floor.",
+        "zh": "欢迎光临！这是您的房卡，顶层508房间。",
+        "phoneticHtml": "Welcome! <span class='linking'>Here‿is</span> your keycard for room 508 <span class='linking'>on‿the</span> top floor.",
+        "linkingNotes": [
+          "Here is 连读。"
+        ]
       },
       {
-        id: "en7_d3",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "房客 (你)",
-        en: "Thank you. What time is breakfast served tomorrow?",
-        zh: "谢谢。请问明早早餐从几点开始供应？",
-        phoneticHtml: "Thank you. <span class='linking'>What‿time‿is</span> breakfast served tomorrow?",
-        linkingNotes: ["What time is 连读。"]
+        "id": "en7_d3",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "房客 (你)",
+        "en": "Thank you. What time is breakfast served tomorrow?",
+        "zh": "谢谢。请问明早早餐从几点开始供应？",
+        "phoneticHtml": "Thank you. <span class='linking'>What‿time‿is</span> breakfast served tomorrow?",
+        "linkingNotes": [
+          "What time is 连读。"
+        ]
       },
       {
-        id: "en7_d4",
-        speaker: "B",
-        speakerName: "Front Desk",
-        role: "前台接待",
-        en: "From seven to ten on the second floor. Enjoy your stay!",
-        zh: "二楼餐厅，早7点到10点。祝您入住愉快！",
-        phoneticHtml: "From seven to ten <span class='linking'>on‿the</span> second floor. <span class='linking'>Enjoy‿your</span> stay!",
-        linkingNotes: ["Enjoy your 顺畅过渡。"]
+        "id": "en7_d4",
+        "speaker": "B",
+        "speakerName": "Front Desk",
+        "role": "前台接待",
+        "en": "From seven to ten on the second floor. Enjoy your stay!",
+        "zh": "二楼餐厅，早7点到10点。祝您入住愉快！",
+        "phoneticHtml": "From seven to ten <span class='linking'>on‿the</span> second floor. <span class='linking'>Enjoy‿your</span> stay!",
+        "linkingNotes": [
+          "Enjoy your 顺畅过渡。"
+        ]
       }
     ],
-    rolePlay: {
-      userRole: "A",
-      targetRoleName: "Alex (房客)",
-      description: "在前台报出姓名拿到房卡，并了解早餐信息。"
-    }
+    "rolePlay": {
+      "userRole": "A",
+      "targetRoleName": "Alex (房客)",
+      "description": "在前台报出姓名拿到房卡，并了解早餐信息。"
+    },
+    "vocabulary": [
+      {
+        "id": "en7_v1",
+        "word": "keycard",
+        "phonetic": "/ˈkiːkɑːrd/",
+        "pos": "n.",
+        "meaning": "房卡，感应钥匙卡",
+        "example": "Here is your keycard for room 508.",
+        "exampleZh": "这是您508号房间的房卡。",
+        "audio": "audio/en_vocab/en7_v1.mp3"
+      },
+      {
+        "id": "en7_v2",
+        "word": "floor",
+        "phonetic": "/flɔːr/",
+        "pos": "n.",
+        "meaning": "楼层",
+        "example": "Room 508 on the top floor.",
+        "exampleZh": "顶层的508号房。",
+        "audio": "audio/en_vocab/en7_v2.mp3"
+      },
+      {
+        "id": "en7_v3",
+        "word": "breakfast",
+        "phonetic": "/ˈbrekfəst/",
+        "pos": "n.",
+        "meaning": "早餐",
+        "example": "What time is breakfast served tomorrow?",
+        "exampleZh": "明天早餐几点供应？",
+        "audio": "audio/en_vocab/en7_v3.mp3"
+      },
+      {
+        "id": "en7_v4",
+        "word": "served",
+        "phonetic": "/sɜːrvd/",
+        "pos": "v.",
+        "meaning": "供应，提供（serve的过去分词）",
+        "example": "From seven to ten on the second floor.",
+        "exampleZh": "早上7点到10点在二楼供应。",
+        "audio": "audio/en_vocab/en7_v4.mp3"
+      },
+      {
+        "id": "en7_v5",
+        "word": "welcome",
+        "phonetic": "/ˈwelkəm/",
+        "pos": "interj./v.",
+        "meaning": "欢迎",
+        "example": "Welcome! Here is your keycard.",
+        "exampleZh": "欢迎光临！这是您的房卡。",
+        "audio": "audio/en_vocab/en7_v5.mp3"
+      },
+      {
+        "id": "en7_v6",
+        "word": "enjoy",
+        "phonetic": "/ɪnˈdʒɔɪ/",
+        "pos": "v.",
+        "meaning": "享受，祝...愉快",
+        "example": "Enjoy your stay!",
+        "exampleZh": "祝您入住愉快！",
+        "audio": "audio/en_vocab/en7_v6.mp3"
+      }
+    ]
   },
   {
-    id: "en8",
-    level: 2,
-    title: "Returning an Item",
-    titleZh: "服装店尺码换退",
-    situation: "在服装店为买小了一码的外套申请换货并出示小票。",
-    icon: "🧥",
-    tags: ["售后维权", "尺码沟通", "礼貌协商"],
-    chunks: [
+    "id": "en8",
+    "level": 2,
+    "title": "Returning an Item",
+    "titleZh": "服装店尺码换退",
+    "situation": "在服装店为买小了一码的外套申请换货并出示小票。",
+    "icon": "🧥",
+    "tags": [
+      "售后维权",
+      "尺码沟通",
+      "礼貌协商"
+    ],
+    "chunks": [
       {
-        id: "en8_c1",
-        text: "Looking to exchange...",
-        meaning: "想调换一下……",
-        phonetic: "/ˈlʊkɪŋ tuː ɪksˈtʃeɪndʒ/",
-        usageTip: "表达换货意图的得体礼貌句式。",
-        warmupQuiz: {
-          prompt: "组装短语：“我想调换一下这个”",
-          tokens: ["this jacket", "to exchange", "I'm looking"],
-          correct: ["I'm looking", "to exchange", "this jacket"]
+        "id": "en8_c1",
+        "text": "Looking to exchange...",
+        "meaning": "想调换一下……",
+        "phonetic": "/ˈlʊkɪŋ tuː ɪksˈtʃeɪndʒ/",
+        "usageTip": "表达换货意图的得体礼貌句式。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“我想调换一下这个”",
+          "tokens": [
+            "this jacket",
+            "to exchange",
+            "I'm looking"
+          ],
+          "correct": [
+            "I'm looking",
+            "to exchange",
+            "this jacket"
+          ]
         }
       },
       {
-        id: "en8_c2",
-        text: "A size up / down",
-        meaning: "大 / 小一号",
-        phonetic: "/ə saɪz ʌp / daʊn/",
-        usageTip: "买衣服试鞋换尺码专用黄金词块。",
-        warmupQuiz: {
-          prompt: "组装短语：“大一号”",
-          tokens: ["up", "A size"],
-          correct: ["A size", "up"]
+        "id": "en8_c2",
+        "text": "A size up / down",
+        "meaning": "大 / 小一号",
+        "phonetic": "/ə saɪz ʌp / daʊn/",
+        "usageTip": "买衣服试鞋换尺码专用黄金词块。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“大一号”",
+          "tokens": [
+            "up",
+            "A size"
+          ],
+          "correct": [
+            "A size",
+            "up"
+          ]
         }
       },
       {
-        id: "en8_c3",
-        text: "Have the receipt",
-        meaning: "留有收据 / 小票",
-        phonetic: "/hæv ðə rɪˈsiːt/",
-        usageTip: "receipt 中的 p 不发音，读作 /rɪˈsiːt/。",
-        warmupQuiz: {
-          prompt: "组装短语：“我有购物小票”",
-          tokens: ["the receipt", "I have"],
-          correct: ["I have", "the receipt"]
+        "id": "en8_c3",
+        "text": "Have the receipt",
+        "meaning": "留有收据 / 小票",
+        "phonetic": "/hæv ðə rɪˈsiːt/",
+        "usageTip": "receipt 中的 p 不发音，读作 /rɪˈsiːt/。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“我有购物小票”",
+          "tokens": [
+            "the receipt",
+            "I have"
+          ],
+          "correct": [
+            "I have",
+            "the receipt"
+          ]
         }
       }
     ],
-    dialogue: [
+    "dialogue": [
       {
-        id: "en8_d1",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "顾客 (你)",
-        en: "Hi, I'm looking to exchange this jacket for a size up.",
-        zh: "您好，我想把这件外套换大一个尺码。",
-        phoneticHtml: "Hi, I'm <span class='linking'>looking‿to</span> exchange this jacket for <span class='linking'>a‿size‿up</span>.",
-        linkingNotes: ["a size up 连读 /ə-saɪ-zʌp/。"]
+        "id": "en8_d1",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "顾客 (你)",
+        "en": "Hi, I'm looking to exchange this jacket for a size up.",
+        "zh": "您好，我想把这件外套换大一个尺码。",
+        "phoneticHtml": "Hi, I'm <span class='linking'>looking‿to</span> exchange this jacket for <span class='linking'>a‿size‿up</span>.",
+        "linkingNotes": [
+          "a size up 连读 /ə-saɪ-zʌp/。"
+        ]
       },
       {
-        id: "en8_d2",
-        speaker: "B",
-        speakerName: "Associate",
-        role: "店员",
-        en: "Sure thing! Do you happen to have the receipt with you?",
-        zh: "没问题！请问您手头带着购物小票吗？",
-        phoneticHtml: "Sure thing! Do you <span class='linking'>happen‿to</span> have the receipt <span class='linking'>with‿you</span>?",
-        linkingNotes: ["receipt 字母 p 绝对不发音。"]
+        "id": "en8_d2",
+        "speaker": "B",
+        "speakerName": "Associate",
+        "role": "店员",
+        "en": "Sure thing! Do you happen to have the receipt with you?",
+        "zh": "没问题！请问您手头带着购物小票吗？",
+        "phoneticHtml": "Sure thing! Do you <span class='linking'>happen‿to</span> have the receipt <span class='linking'>with‿you</span>?",
+        "linkingNotes": [
+          "receipt 字母 p 绝对不发音。"
+        ]
       },
       {
-        id: "en8_d3",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "顾客 (你)",
-        en: "Yes, here it is. It's just a bit tight around the shoulders.",
-        zh: "有的，在这儿。主要肩膀那块有点紧了。",
-        phoneticHtml: "Yes, <span class='linking'>here‿it‿is</span>. It's just <span class='linking'>a‿bit</span> tight around the shoulders.",
-        linkingNotes: ["here it is 连读 /hɪə-rɪ-dɪz/。"]
+        "id": "en8_d3",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "顾客 (你)",
+        "en": "Yes, here it is. It's just a bit tight around the shoulders.",
+        "zh": "有的，在这儿。主要肩膀那块有点紧了。",
+        "phoneticHtml": "Yes, <span class='linking'>here‿it‿is</span>. It's just <span class='linking'>a‿bit</span> tight around the shoulders.",
+        "linkingNotes": [
+          "here it is 连读 /hɪə-rɪ-dɪz/。"
+        ]
       },
       {
-        id: "en8_d4",
-        speaker: "B",
-        speakerName: "Associate",
-        role: "店员",
-        en: "Let me grab a medium from the back for you right now.",
-        zh: "我这就去仓库给您取一件中码过来试穿。",
-        phoneticHtml: "<span class='linking'>Let‿me</span> <span class='linking'>grab‿a</span> medium from the back for you right now.",
-        linkingNotes: ["grab a 连读 /ɡræ-bə/。"]
+        "id": "en8_d4",
+        "speaker": "B",
+        "speakerName": "Associate",
+        "role": "店员",
+        "en": "Let me grab a medium from the back for you right now.",
+        "zh": "我这就去仓库给您取一件中码过来试穿。",
+        "phoneticHtml": "<span class='linking'>Let‿me</span> <span class='linking'>grab‿a</span> medium from the back for you right now.",
+        "linkingNotes": [
+          "grab a 连读 /ɡræ-bə/。"
+        ]
       }
     ],
-    rolePlay: {
-      userRole: "A",
-      targetRoleName: "Alex (顾客)",
-      description: "向店员说明换大号外套的需求，出示小票并完成调换。"
-    }
+    "rolePlay": {
+      "userRole": "A",
+      "targetRoleName": "Alex (顾客)",
+      "description": "向店员说明换大号外套的需求，出示小票并完成调换。"
+    },
+    "vocabulary": [
+      {
+        "id": "en8_v1",
+        "word": "exchange",
+        "phonetic": "/ɪksˈtʃeɪndʒ/",
+        "pos": "v./n.",
+        "meaning": "调换，换货",
+        "example": "I'm looking to exchange this jacket for a size up.",
+        "exampleZh": "我想把这件夹克换大一个尺码。",
+        "audio": "audio/en_vocab/en8_v1.mp3"
+      },
+      {
+        "id": "en8_v2",
+        "word": "jacket",
+        "phonetic": "/ˈdʒækɪt/",
+        "pos": "n.",
+        "meaning": "夹克，外套",
+        "example": "Exchange this jacket for a size up.",
+        "exampleZh": "把这件夹克换大一个尺码。",
+        "audio": "audio/en_vocab/en8_v2.mp3"
+      },
+      {
+        "id": "en8_v3",
+        "word": "receipt",
+        "phonetic": "/rɪˈsiːt/",
+        "pos": "n.",
+        "meaning": "收据，购物小票",
+        "example": "Do you happen to have the receipt with you?",
+        "exampleZh": "请问您身上带了小票吗？",
+        "audio": "audio/en_vocab/en8_v3.mp3"
+      },
+      {
+        "id": "en8_v4",
+        "word": "tight",
+        "phonetic": "/taɪt/",
+        "pos": "adj.",
+        "meaning": "紧绷的，偏紧的",
+        "example": "It's just a bit tight around the shoulders.",
+        "exampleZh": "肩膀位置稍微有点紧。",
+        "audio": "audio/en_vocab/en8_v4.mp3"
+      },
+      {
+        "id": "en8_v5",
+        "word": "shoulder",
+        "phonetic": "/ˈʃoʊldər/",
+        "pos": "n.",
+        "meaning": "肩膀，肩部",
+        "example": "A bit tight around the shoulders.",
+        "exampleZh": "肩膀位置稍微有点紧。",
+        "audio": "audio/en_vocab/en8_v5.mp3"
+      },
+      {
+        "id": "en8_v6",
+        "word": "medium",
+        "phonetic": "/ˈmiːdiəm/",
+        "pos": "n./adj.",
+        "meaning": "中号，中码",
+        "example": "Let me grab a medium from the back for you right now.",
+        "exampleZh": "我现在去库房为您取一件中码。",
+        "audio": "audio/en_vocab/en8_v6.mp3"
+      }
+    ]
   },
   {
-    id: "en9",
-    level: 3,
-    title: "Asking for a Hand",
-    titleZh: "即时求助与感激致谢",
-    situation: "在机场/车站手提重物无法开门，请求路人顺手帮个忙。",
-    icon: "🤝",
-    tags: ["即时求助", "礼貌委婉", "浊化同化"],
-    chunks: [
+    "id": "en9",
+    "level": 3,
+    "title": "Asking for a Hand",
+    "titleZh": "即时求助与感激致谢",
+    "situation": "在机场/车站手提重物无法开门，请求路人顺手帮个忙。",
+    "icon": "🤝",
+    "tags": [
+      "即时求助",
+      "礼貌委婉",
+      "浊化同化"
+    ],
+    "chunks": [
       {
-        id: "en9_c1",
-        text: "Could you give me a hand?",
-        meaning: "能顺手帮我搭把手吗？",
-        phonetic: "/kʊdʒuː ɡɪv miː ə hænd/",
-        usageTip: "比单纯的 'Help me!' 委婉得多，日常最受青睐的求助短语。",
-        warmupQuiz: {
-          prompt: "组装短语：“能帮我搭把手吗？”",
-          tokens: ["a hand?", "give me", "Could you"],
-          correct: ["Could you", "give me", "a hand?"]
+        "id": "en9_c1",
+        "text": "Could you give me a hand?",
+        "meaning": "能顺手帮我搭把手吗？",
+        "phonetic": "/kʊdʒuː ɡɪv miː ə hænd/",
+        "usageTip": "比单纯的 'Help me!' 委婉得多，日常最受青睐的求助短语。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“能帮我搭把手吗？”",
+          "tokens": [
+            "a hand?",
+            "give me",
+            "Could you"
+          ],
+          "correct": [
+            "Could you",
+            "give me",
+            "a hand?"
+          ]
         }
       },
       {
-        id: "en9_c2",
-        text: "Do you mind holding...",
-        meaning: "介意帮我扶一下……吗？",
-        phonetic: "/duː juː maɪnd ˈhoʊldɪŋ/",
-        usageTip: "mind 后面接动名词 -ing，对方回答 No 表示乐意帮忙。",
-        warmupQuiz: {
-          prompt: "组装短语：“介意帮我扶一下门吗？”",
-          tokens: ["the door?", "holding", "Do you mind"],
-          correct: ["Do you mind", "holding", "the door?"]
+        "id": "en9_c2",
+        "text": "Do you mind holding...",
+        "meaning": "介意帮我扶一下……吗？",
+        "phonetic": "/duː juː maɪnd ˈhoʊldɪŋ/",
+        "usageTip": "mind 后面接动名词 -ing，对方回答 No 表示乐意帮忙。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“介意帮我扶一下门吗？”",
+          "tokens": [
+            "the door?",
+            "holding",
+            "Do you mind"
+          ],
+          "correct": [
+            "Do you mind",
+            "holding",
+            "the door?"
+          ]
         }
       },
       {
-        id: "en9_c3",
-        text: "I really appreciate it!",
-        meaning: "真的太感谢你了！",
-        phonetic: "/aɪ ˈriːəli əˈpriːʃieɪt ɪt/",
-        usageTip: "比普通的 Thank you 包含更多真挚感激之情。",
-        warmupQuiz: {
-          prompt: "组装短语：“非常感激你！”",
-          tokens: ["appreciate it!", "really", "I"],
-          correct: ["I", "really", "appreciate it!"]
+        "id": "en9_c3",
+        "text": "I really appreciate it!",
+        "meaning": "真的太感谢你了！",
+        "phonetic": "/aɪ ˈriːəli əˈpriːʃieɪt ɪt/",
+        "usageTip": "比普通的 Thank you 包含更多真挚感激之情。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“非常感激你！”",
+          "tokens": [
+            "appreciate it!",
+            "really",
+            "I"
+          ],
+          "correct": [
+            "I",
+            "really",
+            "appreciate it!"
+          ]
         }
       }
     ],
-    dialogue: [
+    "dialogue": [
       {
-        id: "en9_d1",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "求助者 (你)",
-        en: "Excuse me, could you give me a hand with this heavy box?",
-        zh: "打扰一下，能帮我一起搭把手抬一下这个沉箱子吗？",
-        phoneticHtml: "Excuse me, <span class='linking'>could‿you</span> give me a hand with this heavy box?",
-        linkingNotes: ["could you 音变同化为 /kʊ-dʒuː/。"]
+        "id": "en9_d1",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "求助者 (你)",
+        "en": "Excuse me, could you give me a hand with this heavy box?",
+        "zh": "打扰一下，能帮我一起搭把手抬一下这个沉箱子吗？",
+        "phoneticHtml": "Excuse me, <span class='linking'>could‿you</span> give me a hand with this heavy box?",
+        "linkingNotes": [
+          "could you 音变同化为 /kʊ-dʒuː/。"
+        ]
       },
       {
-        id: "en9_d2",
-        speaker: "B",
-        speakerName: "Passerby",
-        role: "热心路人",
-        en: "Sure thing! Do you mind if I grab this side?",
-        zh: "没问题！我抓这边可以吗？",
-        phoneticHtml: "Sure thing! Do you <span class='linking'>mind‿if‿I</span> grab this side?",
-        linkingNotes: ["mind if I 连读 /maɪn-dɪ-faɪ/。"]
+        "id": "en9_d2",
+        "speaker": "B",
+        "speakerName": "Passerby",
+        "role": "热心路人",
+        "en": "Sure thing! Do you mind if I grab this side?",
+        "zh": "没问题！我抓这边可以吗？",
+        "phoneticHtml": "Sure thing! Do you <span class='linking'>mind‿if‿I</span> grab this side?",
+        "linkingNotes": [
+          "mind if I 连读 /maɪn-dɪ-faɪ/。"
+        ]
       },
       {
-        id: "en9_d3",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "求助者 (你)",
-        en: "Perfect! Just over by the trunk. I really appreciate it!",
-        zh: "太完美了！抬到后备箱旁边就行。真的太感谢你了！",
-        phoneticHtml: "Perfect! Just <span class='linking'>over‿by</span> the trunk. I really <span class='linking'>appreciate‿it</span>!",
-        linkingNotes: ["appreciate it 连读 /əˈpriːʃieɪ-tɪt/。"]
+        "id": "en9_d3",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "求助者 (你)",
+        "en": "Perfect! Just over by the trunk. I really appreciate it!",
+        "zh": "太完美了！抬到后备箱旁边就行。真的太感谢你了！",
+        "phoneticHtml": "Perfect! Just <span class='linking'>over‿by</span> the trunk. I really <span class='linking'>appreciate‿it</span>!",
+        "linkingNotes": [
+          "appreciate it 连读 /əˈpriːʃieɪ-tɪt/。"
+        ]
       },
       {
-        id: "en9_d4",
-        speaker: "B",
-        speakerName: "Passerby",
-        role: "热心路人",
-        en: "Glad to help. Have a good one!",
-        zh: "举手之劳。祝你今天过得愉快！",
-        phoneticHtml: "<span class='linking'>Glad‿to</span> help. <span class='linking'>Have‿a</span> good one!",
-        linkingNotes: ["Have a 连读 /hæ-və/。"]
+        "id": "en9_d4",
+        "speaker": "B",
+        "speakerName": "Passerby",
+        "role": "热心路人",
+        "en": "Glad to help. Have a good one!",
+        "zh": "举手之劳。祝你今天过得愉快！",
+        "phoneticHtml": "<span class='linking'>Glad‿to</span> help. <span class='linking'>Have‿a</span> good one!",
+        "linkingNotes": [
+          "Have a 连读 /hæ-və/。"
+        ]
       }
     ],
-    rolePlay: {
-      userRole: "A",
-      targetRoleName: "Alex",
-      description: "手提大件行李向路人求助，并在得到帮助后表达由衷感谢。"
-    }
+    "rolePlay": {
+      "userRole": "A",
+      "targetRoleName": "Alex",
+      "description": "手提大件行李向路人求助，并在得到帮助后表达由衷感谢。"
+    },
+    "vocabulary": [
+      {
+        "id": "en9_v1",
+        "word": "heavy",
+        "phonetic": "/ˈhevi/",
+        "pos": "adj.",
+        "meaning": "沉重的，厚重的",
+        "example": "Could you give me a hand with this heavy box?",
+        "exampleZh": "能搭把手帮我抬一下这个沉箱子吗？",
+        "audio": "audio/en_vocab/en9_v1.mp3"
+      },
+      {
+        "id": "en9_v2",
+        "word": "trunk",
+        "phonetic": "/trʌŋk/",
+        "pos": "n.",
+        "meaning": "(汽车的) 后备箱",
+        "example": "Just over by the trunk.",
+        "exampleZh": "就在后备箱旁边就行。",
+        "audio": "audio/en_vocab/en9_v2.mp3"
+      },
+      {
+        "id": "en9_v3",
+        "word": "appreciate",
+        "phonetic": "/əˈpriːʃieɪt/",
+        "pos": "v.",
+        "meaning": "感激，感谢",
+        "example": "I really appreciate it!",
+        "exampleZh": "真的太感谢你了！",
+        "audio": "audio/en_vocab/en9_v3.mp3"
+      },
+      {
+        "id": "en9_v4",
+        "word": "hand",
+        "phonetic": "/hænd/",
+        "pos": "n.",
+        "meaning": "帮助，援手 (give a hand 帮把手)",
+        "example": "Could you give me a hand with this heavy box?",
+        "exampleZh": "能搭把手帮我抬一下这个沉箱子吗？",
+        "audio": "audio/en_vocab/en9_v4.mp3"
+      },
+      {
+        "id": "en9_v5",
+        "word": "mind",
+        "phonetic": "/maɪnd/",
+        "pos": "v.",
+        "meaning": "介意，在乎 (Do you mind... 介意...吗)",
+        "example": "Do you mind if I grab this side?",
+        "exampleZh": "你介意我抓这一侧吗？",
+        "audio": "audio/en_vocab/en9_v5.mp3"
+      },
+      {
+        "id": "en9_v6",
+        "word": "glad",
+        "phonetic": "/ɡlæd/",
+        "pos": "adj.",
+        "meaning": "乐意的，高兴的 (Glad to help 很高兴能帮上忙)",
+        "example": "Glad to help. Have a good one!",
+        "exampleZh": "乐意效劳，祝你有愉快的一天！",
+        "audio": "audio/en_vocab/en9_v6.mp3"
+      }
+    ]
   },
   {
-    id: "en10",
-    level: 3,
-    title: "Weather Small Talk",
-    titleZh: "电梯天气与日常破冰",
-    situation: "在办公楼电梯遇到隔壁组同事，以骤变的天气自然破冰闲聊。",
-    icon: "🌦️",
-    tags: ["职场破冰", "闲聊艺术", "自然语调"],
-    chunks: [
+    "id": "en10",
+    "level": 3,
+    "title": "Weather Small Talk",
+    "titleZh": "电梯天气与日常破冰",
+    "situation": "在办公楼电梯遇到隔壁组同事，以骤变的天气自然破冰闲聊。",
+    "icon": "🌦️",
+    "tags": [
+      "职场破冰",
+      "闲聊艺术",
+      "自然语调"
+    ],
+    "chunks": [
       {
-        id: "en10_c1",
-        text: "Crazy weather, huh?",
-        meaning: "这天气真是够反常的，对吧？",
-        phonetic: "/ˈkreɪzi ˈweðər hʌ/",
-        usageTip: "英美文化中无压力开启对话的终极破冰金句。",
-        warmupQuiz: {
-          prompt: "组装短语：“今天天气真够怪的，对吧？”",
-          tokens: ["huh?", "weather,", "Crazy"],
-          correct: ["Crazy", "weather,", "huh?"]
+        "id": "en10_c1",
+        "text": "Crazy weather, huh?",
+        "meaning": "这天气真是够反常的，对吧？",
+        "phonetic": "/ˈkreɪzi ˈweðər hʌ/",
+        "usageTip": "英美文化中无压力开启对话的终极破冰金句。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“今天天气真够怪的，对吧？”",
+          "tokens": [
+            "huh?",
+            "weather,",
+            "Crazy"
+          ],
+          "correct": [
+            "Crazy",
+            "weather,",
+            "huh?"
+          ]
         }
       },
       {
-        id: "en10_c2",
-        text: "Looks like rain",
-        meaning: "看着好像要下雨了",
-        phonetic: "/lʊks laɪk reɪn/",
-        usageTip: "判断天气的口语简短表达（省略了 It）。",
-        warmupQuiz: {
-          prompt: "组装短语：“看起来要下雨了”",
-          tokens: ["rain", "like", "Looks"],
-          correct: ["Looks", "like", "rain"]
+        "id": "en10_c2",
+        "text": "Looks like rain",
+        "meaning": "看着好像要下雨了",
+        "phonetic": "/lʊks laɪk reɪn/",
+        "usageTip": "判断天气的口语简短表达（省略了 It）。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“看起来要下雨了”",
+          "tokens": [
+            "rain",
+            "like",
+            "Looks"
+          ],
+          "correct": [
+            "Looks",
+            "like",
+            "rain"
+          ]
         }
       },
       {
-        id: "en10_c3",
-        text: "Have a good one!",
-        meaning: "祝你今天过得愉快！（再见）",
-        phonetic: "/hæv ə ɡʊd wʌn/",
-        usageTip: "北美最通用的日常道别语，相当于 Have a good day/afternoon。",
-        warmupQuiz: {
-          prompt: "组装短语：“祝你一切顺利 / 拜拜！”",
-          tokens: ["good one!", "a", "Have"],
-          correct: ["Have", "a", "good one!"]
+        "id": "en10_c3",
+        "text": "Have a good one!",
+        "meaning": "祝你今天过得愉快！（再见）",
+        "phonetic": "/hæv ə ɡʊd wʌn/",
+        "usageTip": "北美最通用的日常道别语，相当于 Have a good day/afternoon。",
+        "warmupQuiz": {
+          "prompt": "组装短语：“祝你一切顺利 / 拜拜！”",
+          "tokens": [
+            "good one!",
+            "a",
+            "Have"
+          ],
+          "correct": [
+            "Have",
+            "a",
+            "good one!"
+          ]
         }
       }
     ],
-    dialogue: [
+    "dialogue": [
       {
-        id: "en10_d1",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "你",
-        en: "Crazy weather today, huh? It was completely sunny this morning.",
-        zh: "今天天气真是够怪的，对吧？早上还晴空万里呢。",
-        phoneticHtml: "Crazy weather today, huh? <span class='linking'>It‿was</span> completely sunny this morning.",
-        linkingNotes: ["It was 弱读。"]
+        "id": "en10_d1",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "你",
+        "en": "Crazy weather today, huh? It was completely sunny this morning.",
+        "zh": "今天天气真是够怪的，对吧？早上还晴空万里呢。",
+        "phoneticHtml": "Crazy weather today, huh? <span class='linking'>It‿was</span> completely sunny this morning.",
+        "linkingNotes": [
+          "It was 弱读。"
+        ]
       },
       {
-        id: "en10_d2",
-        speaker: "B",
-        speakerName: "David",
-        role: "同事",
-        en: "I know! Looks like rain any minute now. Did you bring an umbrella?",
-        zh: "可不是嘛！看这阵势随时要下暴雨。你带伞了吗？",
-        phoneticHtml: "I know! Looks like rain <span class='linking'>any‿minute‿now</span>. Did you <span class='linking'>bring‿an</span> umbrella?",
-        linkingNotes: ["bring an 连读 /brɪŋ-ən/，Did you 同化 /dɪ-dʒuː/。"]
+        "id": "en10_d2",
+        "speaker": "B",
+        "speakerName": "David",
+        "role": "同事",
+        "en": "I know! Looks like rain any minute now. Did you bring an umbrella?",
+        "zh": "可不是嘛！看这阵势随时要下暴雨。你带伞了吗？",
+        "phoneticHtml": "I know! Looks like rain <span class='linking'>any‿minute‿now</span>. Did you <span class='linking'>bring‿an</span> umbrella?",
+        "linkingNotes": [
+          "bring an 连读 /brɪŋ-ən/，Did you 同化 /dɪ-dʒuː/。"
+        ]
       },
       {
-        id: "en10_d3",
-        speaker: "A",
-        speakerName: "Alex",
-        role: "你",
-        en: "Luckily, I keep one in my bag. Here is my floor, see you around!",
-        zh: "幸好我包里常备着一把。我到了，先撤啦，回头见！",
-        phoneticHtml: "Luckily, I <span class='linking'>keep‿one‿in</span> my bag. <span class='linking'>Here‿is</span> my floor, <span class='linking'>see‿you‿around</span>!",
-        linkingNotes: ["keep one in 连读 /kiː-pwʌ-nɪn/。"]
+        "id": "en10_d3",
+        "speaker": "A",
+        "speakerName": "Alex",
+        "role": "你",
+        "en": "Luckily, I keep one in my bag. Here is my floor, see you around!",
+        "zh": "幸好我包里常备着一把。我到了，先撤啦，回头见！",
+        "phoneticHtml": "Luckily, I <span class='linking'>keep‿one‿in</span> my bag. <span class='linking'>Here‿is</span> my floor, <span class='linking'>see‿you‿around</span>!",
+        "linkingNotes": [
+          "keep one in 连读 /kiː-pwʌ-nɪn/。"
+        ]
       },
       {
-        id: "en10_d4",
-        speaker: "B",
-        speakerName: "David",
-        role: "同事",
-        en: "Take care and have a good one!",
-        zh: "好的，祝你今天工作顺利！",
-        phoneticHtml: "Take care <span class='linking'>and‿have‿a</span> good one!",
-        linkingNotes: ["and have a 顺畅连读。"]
+        "id": "en10_d4",
+        "speaker": "B",
+        "speakerName": "David",
+        "role": "同事",
+        "en": "Take care and have a good one!",
+        "zh": "好的，祝你今天工作顺利！",
+        "phoneticHtml": "Take care <span class='linking'>and‿have‿a</span> good one!",
+        "linkingNotes": [
+          "and have a 顺畅连读。"
+        ]
       }
     ],
-    rolePlay: {
-      userRole: "A",
-      targetRoleName: "Alex",
-      description: "在电梯与同事就天气展开破冰闲聊，自然道别。"
-    }
+    "rolePlay": {
+      "userRole": "A",
+      "targetRoleName": "Alex",
+      "description": "在电梯与同事就天气展开破冰闲聊，自然道别。"
+    },
+    "vocabulary": [
+      {
+        "id": "en10_v1",
+        "word": "weather",
+        "phonetic": "/ˈweðər/",
+        "pos": "n.",
+        "meaning": "天气，气象",
+        "example": "Crazy weather today, huh?",
+        "exampleZh": "今天天气真怪，是吧？",
+        "audio": "audio/en_vocab/en10_v1.mp3"
+      },
+      {
+        "id": "en10_v2",
+        "word": "umbrella",
+        "phonetic": "/ʌmˈbrelə/",
+        "pos": "n.",
+        "meaning": "雨伞",
+        "example": "Did you bring an umbrella?",
+        "exampleZh": "你带伞了吗？",
+        "audio": "audio/en_vocab/en10_v2.mp3"
+      },
+      {
+        "id": "en10_v3",
+        "word": "sunny",
+        "phonetic": "/ˈsʌni/",
+        "pos": "adj.",
+        "meaning": "晴朗的，充满阳光的",
+        "example": "It was completely sunny this morning.",
+        "exampleZh": "今天早上还大晴天呢。",
+        "audio": "audio/en_vocab/en10_v3.mp3"
+      },
+      {
+        "id": "en10_v4",
+        "word": "luckily",
+        "phonetic": "/ˈlʌkɪli/",
+        "pos": "adv.",
+        "meaning": "幸运的是，万幸",
+        "example": "Luckily, I keep one in my bag.",
+        "exampleZh": "幸好我包里常备着一把。",
+        "audio": "audio/en_vocab/en10_v4.mp3"
+      },
+      {
+        "id": "en10_v5",
+        "word": "completely",
+        "phonetic": "/kəmˈpliːtli/",
+        "pos": "adv.",
+        "meaning": "完全地，彻底地",
+        "example": "It was completely sunny this morning.",
+        "exampleZh": "今天早上完全是个大晴天。",
+        "audio": "audio/en_vocab/en10_v5.mp3"
+      },
+      {
+        "id": "en10_v6",
+        "word": "minute",
+        "phonetic": "/ˈmɪnɪt/",
+        "pos": "n.",
+        "meaning": "分钟；片刻 (any minute now 随时都会)",
+        "example": "Looks like rain any minute now.",
+        "exampleZh": "看着随时都会下雨的样子。",
+        "audio": "audio/en_vocab/en10_v6.mp3"
+      }
+    ]
   }
 ];
